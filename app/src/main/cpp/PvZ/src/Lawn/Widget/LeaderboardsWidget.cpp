@@ -223,7 +223,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     mVTable->ButtonDownTick = (void *)Sexy_ButtonListener_ButtonDownTick;
     int holder[1];
     TodStringTranslate(holder, "[CLOSE]");
-    Sexy::GameButton *aBackButton = MakeButton(1000, mLeaderboardsListener, this, holder);
+    Sexy::GameButton *aBackButton = MakeButton(1000, mLeaderboardsListener, this, (SexyString &)holder);
     LOG_DEBUG("aBackButton {} ", (void*)aBackButton);
     Sexy_String_Delete(holder);
     Sexy_Widget_Resize(aBackButton, 1040, 590, 120, 50);
@@ -348,7 +348,7 @@ void DaveHelp_Delete2(LeaderboardsWidget *leaderboardsWidget) {
         leaderboardsWidget->mLeaderboardReanimations->achievementReanim[i]->Delete();
         operator delete(leaderboardsWidget->mLeaderboardReanimations->achievementReanim[i]);
     }
-    GameButton_Delete(leaderboardsWidget->mBackButton);
+    leaderboardsWidget->mBackButton->~GameButton();
     operator delete(leaderboardsWidget->mButtonListener->vTable);
     operator delete(leaderboardsWidget->mButtonListener);
     operator delete(leaderboardsWidget->mLeaderboardReanimations);

@@ -11,7 +11,6 @@
 #include "PvZ/SexyAppFramework/Misc/SexyMatrix.h"
 #include "PvZ/SexyAppFramework/SexyAppBase.h"
 #include "PvZ/SexyAppFramework/Widget/Checkbox.h"
-#include "PvZ/SexyAppFramework/Widget/GameButton.h"
 #include "PvZ/TodLib/Common/TodFoley.h"
 #include "PvZ/TodLib/Common/TodList.h"
 #include "TodLib/Common/TodCommon.h"
@@ -29,28 +28,6 @@ inline int (*LawnPlayerInfo_GetFlag)(PlayerInfo *, int);
 inline void (*GetFlashingColor)(Sexy::Color *, int, int);
 
 inline bool (*Sexy_GamepadApp_HasGamepad)(LawnApp *);
-
-inline bool (*GameButton_IsMouseOver)(Sexy::GameButton *);
-
-inline void (*GameButton_Resize)(Sexy::GameButton *a, int a2, int a3, int a4, int a5);
-
-inline void (*GameButton_Update)(Sexy::GameButton *a);
-
-inline void (*GameButton_GameButton)(Sexy::GameButton *a, int id, int *);
-
-inline void (*GameButton_SetLabel)(Sexy::GameButton *a, int *);
-
-inline void (*GameButton_SetDisabled)(Sexy::GameButton *a, bool);
-
-inline Sexy::GameButton *(*MakeButton)(int id, Sexy::ButtonListener *listener, Sexy::Widget *theParent, int *name);
-
-inline Sexy::Checkbox *(*MakeNewCheckbox)(int id, int **listener, Sexy::Widget *theParent, bool checkedByDefault);
-
-inline void (*GameButton_Draw)(Sexy::GameButton *a, Sexy::Graphics *a2);
-
-inline void (*GameButton_OnPressed)(Sexy::GameButton *a);
-
-inline void (*GameButton_Delete)(Sexy::GameButton *a);
 
 inline void (*Sexy_SexyMatrix3_SexyMatrix3)(int *);
 

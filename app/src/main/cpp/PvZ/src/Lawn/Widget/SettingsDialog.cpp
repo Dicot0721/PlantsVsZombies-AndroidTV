@@ -5,12 +5,13 @@
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
 #include "PvZ/Symbols.h"
+//#include "PvZ/Lawn/Common/LawnCommon.h"
 
 using namespace Sexy;
 
 namespace {
-Sexy::Checkbox *m3DAccleratedCheckbox;
-Sexy::Checkbox *mVibrateCheckbox;
+Sexy::Checkbox *g3DAccleratedCheckbox;
+Sexy::Checkbox *gVibrateCheckbox;
 } // namespace
 
 
@@ -21,44 +22,44 @@ void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, int *manager)
     Sexy::Widget *mBackButton = settingsDialog->mBackButton;
 
 
-    m3DAccleratedCheckbox = MakeNewCheckbox(1024, &settingsDialog->mCheckboxListener, settingsDialog, Sexy_SexyAppBase_Is3DAccelerated(lawnApp));
-    mVibrateCheckbox = MakeNewCheckbox(1025, &settingsDialog->mCheckboxListener, settingsDialog, !lawnApp->mPlayerInfo->mIsVibrateClosed);
+    g3DAccleratedCheckbox = MakeNewCheckbox(1024, settingsDialog->mCheckboxListener, (Widget*)settingsDialog, Sexy_SexyAppBase_Is3DAccelerated(lawnApp));
+    gVibrateCheckbox = MakeNewCheckbox(1025, settingsDialog->mCheckboxListener, (Widget*)settingsDialog, !lawnApp->mPlayerInfo->mIsVibrateClosed);
 
-    Sexy_Widget_Resize(m3DAccleratedCheckbox, 80, 260, 300, 50);
-    Sexy_Widget_Resize(mVibrateCheckbox, 80, 320, 300, 50);
+    Sexy_Widget_Resize(g3DAccleratedCheckbox, 80, 260, 300, 50);
+    Sexy_Widget_Resize(gVibrateCheckbox, 80, 320, 300, 50);
 
-    Sexy_Widget_AddWidget(settingsDialog, m3DAccleratedCheckbox);
-    Sexy_Widget_AddWidget(settingsDialog, mVibrateCheckbox);
+    Sexy_Widget_AddWidget(settingsDialog, g3DAccleratedCheckbox);
+    Sexy_Widget_AddWidget(settingsDialog, gVibrateCheckbox);
 
-    mSoundSlider->mFocusLinks[1] = m3DAccleratedCheckbox;
-    m3DAccleratedCheckbox->mFocusLinks[1] = mVibrateCheckbox;
-    mVibrateCheckbox->mFocusLinks[1] = mBackButton;
+    mSoundSlider->mFocusLinks[1] = g3DAccleratedCheckbox;
+    g3DAccleratedCheckbox->mFocusLinks[1] = gVibrateCheckbox;
+    gVibrateCheckbox->mFocusLinks[1] = mBackButton;
 
-    mBackButton->mFocusLinks[0] = mVibrateCheckbox;
-    mVibrateCheckbox->mFocusLinks[0] = m3DAccleratedCheckbox;
-    m3DAccleratedCheckbox->mFocusLinks[0] = mSoundSlider;
+    mBackButton->mFocusLinks[0] = gVibrateCheckbox;
+    gVibrateCheckbox->mFocusLinks[0] = g3DAccleratedCheckbox;
+    g3DAccleratedCheckbox->mFocusLinks[0] = mSoundSlider;
 }
 
 void SettingsDialog_RemovedFromManager(SettingsDialog *settingsDialog, int *manager) {
     old_SettingsDialog_RemovedFromManager(settingsDialog, manager);
-    Sexy_Widget_RemoveWidget(settingsDialog, m3DAccleratedCheckbox);
-    Sexy_Widget_RemoveWidget(settingsDialog, mVibrateCheckbox);
+    Sexy_Widget_RemoveWidget(settingsDialog, g3DAccleratedCheckbox);
+    Sexy_Widget_RemoveWidget(settingsDialog, gVibrateCheckbox);
 }
 
 void SettingsDialog_Delete2(SettingsDialog *settingsDialog) {
     old_SettingsDialog_Delete2(settingsDialog);
-    //    Sexy_Checkbox_Delete(m3DAccleratedCheckbox); // 在安卓4.2上，这么Delete会闪退
-    (*((void (**)(Sexy::Widget *))m3DAccleratedCheckbox->vTable + 1))(m3DAccleratedCheckbox); // Delete() ，用这种方式Delete在安卓4.2上就不会闪退，虽然我也不知道为什么会这样
-    m3DAccleratedCheckbox = nullptr;
-    (*((void (**)(Sexy::Widget *))mVibrateCheckbox->vTable + 1))(mVibrateCheckbox); // Delete() ，用这种方式Delete在安卓4.2上就不会闪退，虽然我也不知道为什么会这样
-    mVibrateCheckbox = nullptr;
+    //    Sexy_Checkbox_Delete(g3DAccleratedCheckbox); // 在安卓4.2上，这么Delete会闪退
+    (*((void (**)(Sexy::Widget *))g3DAccleratedCheckbox->vTable + 1))(g3DAccleratedCheckbox); // Delete() ，用这种方式Delete在安卓4.2上就不会闪退，虽然我也不知道为什么会这样
+    g3DAccleratedCheckbox = nullptr;
+    (*((void (**)(Sexy::Widget *))gVibrateCheckbox->vTable + 1))(gVibrateCheckbox); // Delete() ，用这种方式Delete在安卓4.2上就不会闪退，虽然我也不知道为什么会这样
+    gVibrateCheckbox = nullptr;
 }
 
 void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g) {
     old_SettingsDialog_Draw(settingsDialog, g);
 
     Color color = {107, 110, 145, 255};
-    if (settingsDialog->mFocusedChildWidget == m3DAccleratedCheckbox) {
+    if (settingsDialog->mFocusedChildWidget == g3DAccleratedCheckbox) {
         color.mRed = 0;
         color.mGreen = 255;
         color.mBlue = 0;
@@ -68,11 +69,11 @@ void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g) {
     g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
     g->SetColor(color);
     TodStringTranslate((int*)holder, "[OPTIONS_3D_ACCELERATION]");
-    g->DrawString((SexyString&)holder, m3DAccleratedCheckbox->mX + 80, m3DAccleratedCheckbox->mY + 20);
+    g->DrawString((SexyString&)holder, g3DAccleratedCheckbox->mX + 80, g3DAccleratedCheckbox->mY + 20);
     Sexy_String_Delete((int*)holder);
 
     Color color1 = {107, 110, 145, 255};
-    if (settingsDialog->mFocusedChildWidget == mVibrateCheckbox) {
+    if (settingsDialog->mFocusedChildWidget == gVibrateCheckbox) {
         color1.mRed = 0;
         color1.mGreen = 255;
         color1.mBlue = 0;
@@ -82,7 +83,7 @@ void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g) {
     g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
     g->SetColor(color1);
     TodStringTranslate((int*)holder1, "[OPTIONS_VIBRATE]");
-    g->DrawString((SexyString&)holder1, mVibrateCheckbox->mX + 80, mVibrateCheckbox->mY + 20);
+    g->DrawString((SexyString&)holder1, gVibrateCheckbox->mX + 80, gVibrateCheckbox->mY + 20);
     Sexy_String_Delete((int*)holder1);
 }
 

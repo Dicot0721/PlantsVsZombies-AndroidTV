@@ -10,9 +10,9 @@ void ConfirmBackToMainDialog_MouseDrag(ConfirmBackToMainDialog *confirmBackToMai
     old_ConfirmBackToMainDialog_MouseDrag(confirmBackToMainDialog, x, y);
     int theButtonXStart = (confirmBackToMainDialog->mWidth - 509) / 2;
     int mLawnYesButtonY = confirmBackToMainDialog->mLawnYesButton->mY;
-    GameButton_Resize(confirmBackToMainDialog->mLawnYesButton, theButtonXStart, mLawnYesButtonY, 163, 46);
-    GameButton_Resize(confirmBackToMainDialog->mRestartButton, theButtonXStart + 173, mLawnYesButtonY, 163, 46);
-    GameButton_Resize(confirmBackToMainDialog->mLawnNoButton, theButtonXStart + 346, mLawnYesButtonY, 163, 46);
+    confirmBackToMainDialog->mLawnYesButton->Resize(theButtonXStart, mLawnYesButtonY, 163, 46);
+    confirmBackToMainDialog->mRestartButton->Resize(theButtonXStart + 173, mLawnYesButtonY, 163, 46);
+    confirmBackToMainDialog->mLawnNoButton->Resize(theButtonXStart + 346, mLawnYesButtonY, 163, 46);
 }
 
 void ConfirmBackToMainDialog_AddedToManager(ConfirmBackToMainDialog *confirmBackToMainDialog, int a2) {

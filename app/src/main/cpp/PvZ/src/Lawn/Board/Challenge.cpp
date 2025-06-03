@@ -70,25 +70,25 @@ void Challenge::Update() {
         TutorialState mTutorialState = mBoard->mTutorialState;
         if (mTutorialState == TutorialState::TUTORIAL_ZEN_GARDEN_PICKUP_WATER || mTutorialState == TutorialState::TUTORIAL_ZEN_GARDEN_WATER_PLANT
             || mTutorialState == TutorialState::TUTORIAL_ZEN_GARDEN_KEEP_WATERING) {
-            mBoardMenuButton->mBtnNoDraw = true;
-            mBoardStoreButton->mBtnNoDraw = true;
-            mBoardStoreButton->mDisabled = true;
-            mBoardMenuButton->mDisabled = true;
+            gBoardMenuButton->mBtnNoDraw = true;
+            gBoardStoreButton->mBtnNoDraw = true;
+            gBoardStoreButton->mDisabled = true;
+            gBoardMenuButton->mDisabled = true;
         } else if (mApp->mCrazyDaveState != CrazyDaveState::CRAZY_DAVE_OFF) {
-            mBoardStoreButton->mBtnNoDraw = true;
-            mBoardMenuButton->mBtnNoDraw = true;
-            mBoardStoreButton->mDisabled = true;
-            mBoardMenuButton->mDisabled = true;
+            gBoardStoreButton->mBtnNoDraw = true;
+            gBoardMenuButton->mBtnNoDraw = true;
+            gBoardStoreButton->mDisabled = true;
+            gBoardMenuButton->mDisabled = true;
         } else if (mTutorialState == TutorialState::TUTORIAL_ZEN_GARDEN_VISIT_STORE) {
-            mBoardStoreButton->mBtnNoDraw = false;
-            mBoardMenuButton->mBtnNoDraw = true;
-            mBoardStoreButton->mDisabled = false;
-            mBoardMenuButton->mDisabled = true;
+            gBoardStoreButton->mBtnNoDraw = false;
+            gBoardMenuButton->mBtnNoDraw = true;
+            gBoardStoreButton->mDisabled = false;
+            gBoardMenuButton->mDisabled = true;
         } else {
-            mBoardStoreButton->mBtnNoDraw = false;
-            mBoardMenuButton->mBtnNoDraw = false;
-            mBoardStoreButton->mDisabled = false;
-            mBoardMenuButton->mDisabled = false;
+            gBoardStoreButton->mBtnNoDraw = false;
+            gBoardMenuButton->mBtnNoDraw = false;
+            gBoardStoreButton->mDisabled = false;
+            gBoardMenuButton->mDisabled = false;
         }
     }
 
@@ -347,24 +347,24 @@ void Challenge::TreeOfWisdomFertilize() {
 }
 
 void Challenge::LastStandUpdate() {
-    if (mBoard->mNextSurvivalStageCounter == 0 && mChallengeState == ChallengeState::STATECHALLENGE_NORMAL && mBoardStoreButton->mBtnNoDraw) {
-        mBoardStoreButton->mBtnNoDraw = false;
-        mBoardStoreButton->mDisabled = false;
+    if (mBoard->mNextSurvivalStageCounter == 0 && mChallengeState == ChallengeState::STATECHALLENGE_NORMAL && gBoardStoreButton->mBtnNoDraw) {
+        gBoardStoreButton->mBtnNoDraw = false;
+        gBoardStoreButton->mDisabled = false;
         int holder[1];
         TodStringTranslate(holder, mSurvivalStage == 0 ? "[START_ONSLAUGHT]" : "[CONTINUE_ONSLAUGHT]");
-        GameButton_SetLabel(mBoardStoreButton, holder);
+        gBoardStoreButton->SetLabel((SexyString&)holder);
         Sexy_String_Delete(holder);
-        GameButton_Resize(mBoardStoreButton, 325, 555, 170, 120);
+        gBoardStoreButton->Resize(325, 555, 170, 120);
     }
 
     if (mChallengeState == ChallengeState::STATECHALLENGE_LAST_STAND_ONSLAUGHT && mApp->mGameScene == GameScenes::SCENE_PLAYING) {
         mChallengeStateCounter++;
     }
 
-    if (mChallengeState == ChallengeState::STATECHALLENGE_NORMAL && !mBoardStoreButton->mBtnNoDraw) {
-        GameButton_Resize(mBoardStoreButton, 325, 555, 170, 120);
-        mBoardStoreButton->mBtnNoDraw = false;
-        mBoardStoreButton->mDisabled = false;
+    if (mChallengeState == ChallengeState::STATECHALLENGE_NORMAL && !gBoardStoreButton->mBtnNoDraw) {
+        gBoardStoreButton->Resize(325, 555, 170, 120);
+        gBoardStoreButton->mBtnNoDraw = false;
+        gBoardStoreButton->mDisabled = false;
     }
 }
 

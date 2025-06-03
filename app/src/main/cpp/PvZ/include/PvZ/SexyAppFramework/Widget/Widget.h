@@ -36,7 +36,7 @@ public:
     int *mAnimatorForState[4];   // 60 ~ 63
 }; // 大小64个整数！
 
-}
+} // namespace Sexy
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_WIDGET_H

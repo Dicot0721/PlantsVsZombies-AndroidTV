@@ -15,8 +15,8 @@ namespace {
 constexpr int mSeedPacketWidth = 53;
 constexpr int mSeedPacketHeight = 70;
 
-Sexy::GameButton *mSeedChooserScreenMainMenuButton;
-SeedChooserTouchState mSeedChooserTouchState = SeedChooserTouchState::SEEDCHOOSER_TOUCHSTATE_NONE;
+Sexy::GameButton *gSeedChooserScreenMainMenuButton;
+SeedChooserTouchState gSeedChooserTouchState = SeedChooserTouchState::SEEDCHOOSER_TOUCHSTATE_NONE;
 } // namespace
 
 
@@ -143,10 +143,10 @@ void SeedChooserScreen::Create(bool theIsZombieChooser) {
     if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS && !mIsZombieChooser) {
         int holder[1];
         TodStringTranslate(holder, "[MENU_BUTTON]");
-        mSeedChooserScreenMainMenuButton = MakeButton(104, &mButtonListener, this, holder);
-        GameButton_Resize(mSeedChooserScreenMainMenuButton, mApp->IsCoopMode() ? 345 : 650, -3, 120, 80);
+        gSeedChooserScreenMainMenuButton = MakeButton(104, &mButtonListener, this, (SexyString &)holder);
+        gSeedChooserScreenMainMenuButton->Resize(mApp->IsCoopMode() ? 345 : 650, -3, 120, 80);
         Sexy_String_Delete(holder);
-        Sexy_Widget_AddWidget(this, mSeedChooserScreenMainMenuButton);
+        Sexy_Widget_AddWidget(this, gSeedChooserScreenMainMenuButton);
     }
 }
 
@@ -154,9 +154,9 @@ void SeedChooserScreen::Create(bool theIsZombieChooser) {
 void LawnApp::KillSeedChooserScreen() {
     SeedChooserScreen *seedChooserScreen = mSeedChooserScreen;
     if (seedChooserScreen != nullptr && mGameMode != GameMode::GAMEMODE_MP_VS) {
-        Sexy_Widget_RemoveWidget(seedChooserScreen, mSeedChooserScreenMainMenuButton);
-        GameButton_Delete(mSeedChooserScreenMainMenuButton);
-        mSeedChooserScreenMainMenuButton = nullptr;
+        Sexy_Widget_RemoveWidget(seedChooserScreen, gSeedChooserScreenMainMenuButton);
+        gSeedChooserScreenMainMenuButton->~GameButton();
+        gSeedChooserScreenMainMenuButton = nullptr;
     }
 
     old_LawnApp_KillSeedChooserScreen(this);
@@ -379,7 +379,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         //        LOGD("mStoreButtonRect:%d %d %d %d",mStoreButtonRect[0],mStoreButtonRect[1],mStoreButtonRect[2],mStoreButtonRect[3]);
         if (TRect_Contains(&mViewLawnButtonRect, x, y)) {
             LawnApp_PlaySample(mApp, *Sexy_SOUND_TAP_Addr);
-            mSeedChooserTouchState = SeedChooserTouchState::ViewLawnButton;
+            gSeedChooserTouchState = SeedChooserTouchState::ViewLawnButton;
             //            GameButtonDown(seedChooserScreen, 8, 0);
             return;
         }
@@ -390,7 +390,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         //        LOGD("mStoreButtonRect:%d %d %d %d",mStoreButtonRect[0],mStoreButtonRect[1],mStoreButtonRect[2],mStoreButtonRect[3]);
         if (TRect_Contains(&mStoreButtonRect, x, y)) {
             LawnApp_PlaySample(mApp, *Sexy_SOUND_TAP_Addr);
-            mSeedChooserTouchState = SeedChooserTouchState::StoreButton;
+            gSeedChooserTouchState = SeedChooserTouchState::StoreButton;
             //            GameButtonDown(seedChooserScreen, 8, 0);
             return;
         }
@@ -400,7 +400,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         Sexy::Rect mStartButtonRect = {mStartButton->mX, mStartButton->mY, mStartButton->mWidth, 50};
         if (TRect_Contains(&mStartButtonRect, x, y)) {
             LawnApp_PlaySample(mApp, *Sexy_SOUND_TAP_Addr);
-            mSeedChooserTouchState = SeedChooserTouchState::StartButton;
+            gSeedChooserTouchState = SeedChooserTouchState::StartButton;
 
             //            SeedChooserScreen_OnStartButton(seedChooserScreen);
             return;
@@ -411,7 +411,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         Sexy::Rect mAlmanacButtonRect = {mAlmanacButton->mX, mAlmanacButton->mY, mAlmanacButton->mWidth, 50};
         if (TRect_Contains(&mAlmanacButtonRect, x, y)) {
             LawnApp_PlaySample(mApp, *Sexy_SOUND_TAP_Addr);
-            mSeedChooserTouchState = SeedChooserTouchState::AlmanacButton;
+            gSeedChooserTouchState = SeedChooserTouchState::AlmanacButton;
 
             //            GameButtonDown(seedChooserScreen, 9, 0);
             return;
@@ -461,11 +461,11 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         SeedChooserScreen_GetSeedPositionInChooser(this, aSeedType, &mCursorPositionX2, &mCursorPositionY2);
         mSeedType2 = aSeedType;
     }
-    mSeedChooserTouchState = SeedChooserTouchState::SeedChooser;
+    gSeedChooserTouchState = SeedChooserTouchState::SeedChooser;
 }
 
 void SeedChooserScreen::MouseDrag(int x, int y) {
-    if (mSeedChooserTouchState == SeedChooserTouchState::SeedChooser) {
+    if (gSeedChooserTouchState == SeedChooserTouchState::SeedChooser) {
         SeedType aSeedType = SeedChooserScreen_SeedHitTest(this, x, y);
         // 该函数探测不到模仿者位置
         if (aSeedType == SeedType::SEED_NONE) {
@@ -488,7 +488,7 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
 }
 
 void SeedChooserScreen::MouseUp(int x, int y) {
-    switch (mSeedChooserTouchState) {
+    switch (gSeedChooserTouchState) {
         case SeedChooserTouchState::ViewLawnButton:
             ButtonDepress(SeedChooserScreen_ViewLawn);
             break;
@@ -513,5 +513,5 @@ void SeedChooserScreen::MouseUp(int x, int y) {
         default:
             break;
     }
-    mSeedChooserTouchState = SeedChooserTouchState::SEEDCHOOSER_TOUCHSTATE_NONE;
+    gSeedChooserTouchState = SeedChooserTouchState::SEEDCHOOSER_TOUCHSTATE_NONE;
 }

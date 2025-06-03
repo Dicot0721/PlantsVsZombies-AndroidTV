@@ -39,8 +39,8 @@ void HelpOptionsDialog_HelpOptionsDialog(HelpOptionsDialog *a, LawnApp *a2) {
         int theHeight = switchUserButton->mHeight;
         switchUserButton->mDisabled = true;
         switchUserButton->mVisible = false;
-        GameButton_Resize(switchUserButton, 0, 0, 0, 0);
-        GameButton_Resize(settingsButton, theX, theY, theWidth, theHeight);
+        switchUserButton->Resize(0, 0, 0, 0);
+        settingsButton->Resize(theX, theY, theWidth, theHeight);
     }
 }
 
@@ -56,7 +56,7 @@ void HelpOptionsDialog_Resize(HelpOptionsDialog *a, int a2, int a3, int a4, int 
         int theHeight = switchUserButton->mHeight;
         switchUserButton->mDisabled = true;
         switchUserButton->mVisible = false;
-        GameButton_Resize(switchUserButton, 0, 0, 0, 0);
-        GameButton_Resize(settingsButton, theX, theY, theWidth, theHeight);
+        switchUserButton->Resize(0, 0, 0, 0);
+        settingsButton->Resize(theX, theY, theWidth, theHeight);
     }
 }

@@ -33,42 +33,43 @@ constexpr int mAlmanacButtonHeight = 50;
 constexpr int mAlmanacPlantRectX = 521 - 8;
 constexpr int mAlmanacPlantRectY = 107 + 20;
 
-Sexy::GameButton *mAlmanacBackButton;
-Sexy::GameButton *mAlmanacCloseButton;
+Sexy::GameButton *gAlmanacBackButton;
+Sexy::GameButton *gAlmanacCloseButton;
 
 } // namespace
 
 
 void AlmanacDialog_Delete2(AlmanacDialog *almanacDialog) {
     old_AlmanacDialog_Delete2(almanacDialog);
-    GameButton_Delete(mAlmanacBackButton);
-    GameButton_Delete(mAlmanacCloseButton);
-    mAlmanacBackButton = nullptr;
-    mAlmanacCloseButton = nullptr;
+
+    gAlmanacBackButton->~GameButton();
+    gAlmanacCloseButton->~GameButton();
+    gAlmanacBackButton = nullptr;
+    gAlmanacCloseButton = nullptr;
 }
 
 void AlmanacDialog_SetPage(AlmanacDialog *almanacDialog, int targetPage) {
     // 修复点击气球僵尸进植物图鉴、点击介绍文字进植物图鉴
     if (targetPage != 0) {
         // 在前往其他图鉴页面时，显示返回按钮
-        if (mAlmanacBackButton != nullptr) {
-            GameButton_Resize(mAlmanacBackButton, mAlmanacBackButtonX, mAlmanacBackButtonY, mAlmanacButtonWidth, mAlmanacButtonHeight);
-            mAlmanacBackButton->mBtnNoDraw = false;
-            mAlmanacBackButton->mDisabled = false;
+        if (gAlmanacBackButton != nullptr) {
+            gAlmanacBackButton->Resize(mAlmanacBackButtonX, mAlmanacBackButtonY, mAlmanacButtonWidth, mAlmanacButtonHeight);
+            gAlmanacBackButton->mBtnNoDraw = false;
+            gAlmanacBackButton->mDisabled = false;
         }
         // 在前往其他图鉴页面时，将按钮缩小为0x0
-        GameButton_Resize(almanacDialog->mViewPlantButton, 0, 0, 0, 0);
-        GameButton_Resize(almanacDialog->mViewZombieButton, 0, 0, 0, 0);
+        almanacDialog->mViewPlantButton->Resize(0, 0, 0, 0);
+        almanacDialog->mViewZombieButton->Resize(0, 0, 0, 0);
     } else {
         // 回到图鉴首页时，将返回按钮禁用
-        if (mAlmanacBackButton != nullptr) {
-            GameButton_Resize(mAlmanacBackButton, 0, 0, 0, 0);
-            mAlmanacBackButton->mBtnNoDraw = true;
-            mAlmanacBackButton->mDisabled = true;
+        if (gAlmanacBackButton != nullptr) {
+            gAlmanacBackButton->Resize(0, 0, 0, 0);
+            gAlmanacBackButton->mBtnNoDraw = true;
+            gAlmanacBackButton->mDisabled = true;
         }
         // 回到图鉴首页时，将按钮恢复为正常大小
-        GameButton_Resize(almanacDialog->mViewPlantButton, 130, 345, 156, 42);
-        GameButton_Resize(almanacDialog->mViewZombieButton, 487, 345, 210, 48);
+        almanacDialog->mViewPlantButton->Resize(130, 345, 156, 42);
+        almanacDialog->mViewZombieButton->Resize(487, 345, 210, 48);
     }
     return old_AlmanacDialog_SetPage(almanacDialog, targetPage);
 }
@@ -84,9 +85,9 @@ void AlmanacDialog_MouseDown(AlmanacDialog *almanacDialog, int x, int y, int a4)
     // 修复点击气球僵尸进植物图鉴、点击介绍文字进植物图鉴
     if (almanacDialog->mOpenPage == 0) {
         // 如果当前的Page是Index Page
-        if (GameButton_IsMouseOver(almanacDialog->mViewPlantButton))
+        if (almanacDialog->mViewPlantButton->IsMouseOver())
             LawnApp_PlaySample(almanacDialog->mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
-        if (GameButton_IsMouseOver(almanacDialog->mViewZombieButton))
+        if (almanacDialog->mViewZombieButton->IsMouseOver())
             LawnApp_PlaySample(almanacDialog->mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
         return;
     } else if (TRect_Contains(&mTextRect, x, y)) {
@@ -126,8 +127,8 @@ void AlmanacDialog_MouseUp(AlmanacDialog *almanacDialog, int x, int y, int a4) {
 void AlmanacDialog_RemovedFromManager(AlmanacDialog *almanacDialog, int *manager) {
     // 记录当前游戏状态
     old_AlmanacDialog_RemovedFromManager(almanacDialog, manager);
-    Sexy_Widget_RemoveWidget(almanacDialog, mAlmanacBackButton);
-    Sexy_Widget_RemoveWidget(almanacDialog, mAlmanacCloseButton);
+    Sexy_Widget_RemoveWidget(almanacDialog, gAlmanacBackButton);
+    Sexy_Widget_RemoveWidget(almanacDialog, gAlmanacCloseButton);
 }
 
 void AlmanacDialog_AlmanacDialog(AlmanacDialog *almanacDialog, LawnApp *lawnApp) {
@@ -136,18 +137,18 @@ void AlmanacDialog_AlmanacDialog(AlmanacDialog *almanacDialog, LawnApp *lawnApp)
     old_AlmanacDialog_AlmanacDialog(almanacDialog, lawnApp);
     int holder[1];
     TodStringTranslate(holder, "[ALMANAC_INDEX]");
-    mAlmanacBackButton = MakeButton(theBackId, &almanacDialog->mButtonListener, almanacDialog, holder);
-    GameButton_Resize(mAlmanacBackButton, 0, 0, 0, 0);
-    mAlmanacBackButton->mBtnNoDraw = true;
-    mAlmanacBackButton->mDisabled = true;
+    gAlmanacBackButton = MakeButton(theBackId, &almanacDialog->mButtonListener, almanacDialog, (SexyString &)holder);
+    gAlmanacBackButton->Resize(0, 0, 0, 0);
+    gAlmanacBackButton->mBtnNoDraw = true;
+    gAlmanacBackButton->mDisabled = true;
     Sexy_String_Delete(holder);
     int holder1[1];
     TodStringTranslate(holder1, "[CLOSE]");
-    mAlmanacCloseButton = MakeButton(theCloseId, &almanacDialog->mButtonListener, almanacDialog, holder1);
-    GameButton_Resize(mAlmanacCloseButton, mAlmanacCloseButtonX, mAlmanacCloseButtonY, mAlmanacButtonWidth, mAlmanacButtonHeight);
+    gAlmanacCloseButton = MakeButton(theCloseId, &almanacDialog->mButtonListener, almanacDialog, (SexyString &)holder1);
+    gAlmanacCloseButton->Resize(mAlmanacCloseButtonX, mAlmanacCloseButtonY, mAlmanacButtonWidth, mAlmanacButtonHeight);
     Sexy_String_Delete(holder1);
-    Sexy_Widget_AddWidget(almanacDialog, mAlmanacBackButton);
-    Sexy_Widget_AddWidget(almanacDialog, mAlmanacCloseButton);
+    Sexy_Widget_AddWidget(almanacDialog, gAlmanacBackButton);
+    Sexy_Widget_AddWidget(almanacDialog, gAlmanacCloseButton);
 
 
     //   为泳池背景加入PoolEffect。这里挖空背景图，挖出一块透明方形

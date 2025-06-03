@@ -59,20 +59,6 @@ inline void InitInGameFunction() {
     TodAnimateCurveFloatTime = (decltype(TodAnimateCurveFloatTime))TodAnimateCurveFloatTimeAddr;
 
 
-    GameButton_IsMouseOver = (decltype(GameButton_IsMouseOver))GameButton_IsMouseOverAddr;
-    GameButton_OnPressed = (decltype(GameButton_OnPressed))GameButton_OnPressedAddr;
-    GameButton_Delete = (decltype(GameButton_Delete))GameButton_DeleteAddr;
-    GameButton_Resize = (decltype(GameButton_Resize))GameButton_ResizeAddr;
-    GameButton_GameButton = (decltype(GameButton_GameButton))GameButton_GameButtonAddr;
-    GameButton_SetLabel = (decltype(GameButton_SetLabel))GameButton_SetLabelAddr;
-    GameButton_SetDisabled = (decltype(GameButton_SetDisabled))GameButton_SetDisabledAddr;
-    GameButton_Update = (decltype(GameButton_Update))GameButton_UpdateAddr;
-    GameButton_Draw = (decltype(GameButton_Draw))GameButton_DrawAddr;
-    MakeButton = (decltype(MakeButton))MakeButtonAddr;
-    MakeNewCheckbox = (decltype(MakeNewCheckbox))MakeNewCheckboxAddr;
-    Sexy_ButtonWidget_ButtonWidget = (decltype(Sexy_ButtonWidget_ButtonWidget))Sexy_ButtonWidget_ButtonWidgetAddr;
-
-
     AlmanacDialog_SeedHitTest = (decltype(AlmanacDialog_SeedHitTest))AlmanacDialog_SeedHitTestAddr;
     AlmanacDialog_ZombieHitTest = (decltype(AlmanacDialog_ZombieHitTest))AlmanacDialog_ZombieHitTestAddr;
     AlmanacDialog_SetupPlant = (decltype(AlmanacDialog_SetupPlant))AlmanacDialog_SetupPlantAddr;

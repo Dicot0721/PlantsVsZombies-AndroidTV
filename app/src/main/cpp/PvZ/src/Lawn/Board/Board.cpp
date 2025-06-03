@@ -41,48 +41,48 @@ Board::Board(LawnApp *theApp) {
 void Board::Create(LawnApp *theApp) {
     old_Board_Board(this, theApp);
 
-    if (mBoardMenuButton != nullptr) {
-        GameButton_Delete(mBoardMenuButton);
+    if (gBoardMenuButton != nullptr) {
+        gBoardMenuButton->~GameButton();
     }
-    if (mBoardStoreButton != nullptr) {
-        GameButton_Delete(mBoardStoreButton);
+    if (gBoardStoreButton != nullptr) {
+        gBoardStoreButton->~GameButton();
     }
     int holder[1];
     TodStringTranslate(holder, (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) ? "[MAIN_MENU_BUTTON]" : "[MENU_BUTTON]");
-    mBoardMenuButton = MakeButton(1000, &mButtonListener, this, holder);
-    GameButton_Resize(mBoardMenuButton, 705, -3, 120, 80);
-    mBoardMenuButton->mBtnNoDraw = true;
-    mBoardMenuButton->mDisabled = true;
+    gBoardMenuButton = MakeButton(1000, &mButtonListener, this, (SexyString &)holder);
+    gBoardMenuButton->Resize(705, -3, 120, 80);
+    gBoardMenuButton->mBtnNoDraw = true;
+    gBoardMenuButton->mDisabled = true;
     if (theApp->IsCoopMode() || theApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        GameButton_Resize(mBoardMenuButton, 880, -3, 120, 80);
+        gBoardMenuButton->Resize(880, -3, 120, 80);
     } else if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
-        GameButton_Resize(mBoardMenuButton, 650, 550, 170, 120);
+        gBoardMenuButton->Resize(650, 550, 170, 120);
     }
     Sexy_String_Delete(holder);
 
     if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND) {
         int holder1[1];
         TodStringTranslate(holder1, "[START_ONSLAUGHT]");
-        mBoardStoreButton = MakeButton(1001, &mButtonListener, this, holder1);
-        GameButton_Resize(mBoardStoreButton, 0, 0, 0, 0);
-        mBoardStoreButton->mBtnNoDraw = true;
-        mBoardStoreButton->mDisabled = true;
+        gBoardStoreButton = MakeButton(1001, &mButtonListener, this, (SexyString &)holder1);
+        gBoardStoreButton->Resize(0, 0, 0, 0);
+        gBoardStoreButton->mBtnNoDraw = true;
+        gBoardStoreButton->mDisabled = true;
         Sexy_String_Delete(holder1);
     } else {
         int holder1[1];
         TodStringTranslate(holder1, "[SHOP_BUTTON]");
-        mBoardStoreButton = MakeButton(1001, &mButtonListener, this, holder1);
+        gBoardStoreButton = MakeButton(1001, &mButtonListener, this, (SexyString &)holder1);
         Sexy_String_Delete(holder1);
         if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
-            GameButton_Resize(mBoardStoreButton, 0, 550, 170, 120);
+            gBoardStoreButton->Resize(0, 550, 170, 120);
         } else {
-            GameButton_Resize(mBoardStoreButton, 0, 0, 0, 0);
-            mBoardStoreButton->mBtnNoDraw = true;
-            mBoardStoreButton->mDisabled = true;
+            gBoardStoreButton->Resize(0, 0, 0, 0);
+            gBoardStoreButton->mBtnNoDraw = true;
+            gBoardStoreButton->mDisabled = true;
         }
     }
-    Sexy_Widget_AddWidget(this, mBoardMenuButton);
-    Sexy_Widget_AddWidget(this, mBoardStoreButton);
+    Sexy_Widget_AddWidget(this, gBoardMenuButton);
+    Sexy_Widget_AddWidget(this, gBoardStoreButton);
     MessageWidget_Delete(mAdvice);
     CustomMessageWidget *theAdvice = (CustomMessageWidget *)operator new(820u);
     MessageWidget_MessageWidget(theAdvice, mApp);
@@ -903,7 +903,7 @@ void Board::Update() {
             }
         }
     }
-    //    GameButton_Update(mBoardMenuButton);
+    //    GameButton_Update(gBoardMenuButton);
     if (isKeyboardTwoPlayerMode) {
         mGamepadControls1->mIsInShopSeedBank = false;
         mGamepadControls2->mIsInShopSeedBank = false;
@@ -2986,31 +2986,31 @@ void Board_startLevel(Board *board) {
 
 
 void Board::RemovedFromManager(int *theManager) {
-    Sexy_Widget_RemoveWidget(this, mBoardMenuButton);
-    Sexy_Widget_RemoveWidget(this, mBoardStoreButton);
-    GameButton_Delete(mBoardMenuButton);
-    GameButton_Delete(mBoardStoreButton);
-    mBoardMenuButton = nullptr;
-    mBoardStoreButton = nullptr;
+    Sexy_Widget_RemoveWidget(this, gBoardMenuButton);
+    Sexy_Widget_RemoveWidget(this, gBoardStoreButton);
+    gBoardMenuButton->~GameButton();
+    gBoardStoreButton->~GameButton();
+    gBoardMenuButton = nullptr;
+    gBoardStoreButton = nullptr;
     old_Board_RemovedFromManager(this, theManager);
 }
 
 void Board_UpdateButtons(Board *board) {
     if (board->mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        mBoardMenuButton->mBtnNoDraw = false;
-        mBoardMenuButton->mDisabled = false;
+        gBoardMenuButton->mBtnNoDraw = false;
+        gBoardMenuButton->mDisabled = false;
     } else {
         if (board->mApp->mGameScene == GameScenes::SCENE_PLAYING) {
-            mBoardMenuButton->mBtnNoDraw = false;
-            mBoardMenuButton->mDisabled = false;
+            gBoardMenuButton->mBtnNoDraw = false;
+            gBoardMenuButton->mDisabled = false;
         } else {
-            mBoardMenuButton->mBtnNoDraw = true;
-            mBoardMenuButton->mDisabled = true;
+            gBoardMenuButton->mBtnNoDraw = true;
+            gBoardMenuButton->mDisabled = true;
         }
     }
     if (board->mBoardFadeOutCounter > 0) {
-        mBoardMenuButton->mBtnNoDraw = true;
-        mBoardMenuButton->mDisabled = true;
+        gBoardMenuButton->mBtnNoDraw = true;
+        gBoardMenuButton->mDisabled = true;
     }
 }
 
@@ -3030,9 +3030,9 @@ void Board::ButtonDepress(int theId) {
         if (lawnApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND) {
             Board *mBoard = lawnApp->mBoard;
             mBoard->mChallenge->mChallengeState = ChallengeState::STATECHALLENGE_LAST_STAND_ONSLAUGHT;
-            mBoardStoreButton->mBtnNoDraw = true;
-            mBoardStoreButton->mDisabled = true;
-            GameButton_Resize(mBoardStoreButton, 0, 0, 0, 0);
+            gBoardStoreButton->mBtnNoDraw = true;
+            gBoardStoreButton->mDisabled = true;
+            gBoardStoreButton->Resize(0, 0, 0, 0);
             mBoard->mZombieCountDown = 9;
             mBoard->mZombieCountDownStart = mBoard->mZombieCountDown;
         } else if (lawnApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN) {

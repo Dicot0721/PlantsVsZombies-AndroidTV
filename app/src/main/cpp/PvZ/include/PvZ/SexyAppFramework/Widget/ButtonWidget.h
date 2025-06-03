@@ -5,8 +5,10 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_BUTTONWIDGET_H
 #define PLANTSVSZOMBIES_ANDROIDTV_BUTTONWIDGET_H
 
-#include "ButtonListener.h"
 #include "PvZ/SexyAppFramework/Misc/TextLayout.h"
+#include "PvZ/Symbols.h"
+
+#include "ButtonListener.h"
 #include "SelectableWidget.h"
 
 namespace Sexy {
@@ -36,10 +38,14 @@ public:
     bool unkBool3;          // 808
     bool unkBool4;          // 809
     int unkMem2;            // 203
-}; // 大小204个整数
+    // 大小204个整数
+
+    ButtonWidget(int theId, ButtonListener *theButtonListener) {
+        reinterpret_cast<void (*)(ButtonWidget *, int theId, ButtonListener *theButtonListener)>(Sexy_ButtonWidget_ButtonWidgetAddr)(this, theId, theButtonListener);
+    }
+};
 
 }
 
-inline void (*Sexy_ButtonWidget_ButtonWidget)(Sexy::ButtonWidget *, int, Sexy::ButtonListener *);
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_BUTTONWIDGET_H

@@ -13,19 +13,19 @@ constexpr int nextPageButtonY = 318;
 constexpr int prevPageButtonX = 2540;
 constexpr int prevPageButtonY = 318;
 
-Sexy::GameButton *mHelpTextScreenCloseButton;
+Sexy::GameButton *gHelpTextScreenCloseButton;
 } // namespace
 
 
 void HelpTextScreen_Update(Sexy::Widget *helpTextScreen) {
-    if (mHelpTextScreenCloseButton == nullptr) {
+    if (gHelpTextScreenCloseButton == nullptr) {
         int holder[1];
         TodStringTranslate(holder, "[CLOSE]");
-        mHelpTextScreenCloseButton = MakeButton(1000, (Sexy::ButtonListener *)helpTextScreen + 64, helpTextScreen, holder);
+        gHelpTextScreenCloseButton = MakeButton(1000, (Sexy::ButtonListener *)helpTextScreen + 64, helpTextScreen, (SexyString &)holder);
         Sexy_String_Delete(holder);
-        Sexy_Widget_AddWidget(helpTextScreen, (Sexy::Widget*)mHelpTextScreenCloseButton);
+        Sexy_Widget_AddWidget(helpTextScreen, (Sexy::Widget*)gHelpTextScreenCloseButton);
     }
-    GameButton_Resize(mHelpTextScreenCloseButton, 650 - helpTextScreen->mX, 540 - helpTextScreen->mY, 170, 50);
+    gHelpTextScreenCloseButton->Resize(650 - helpTextScreen->mX, 540 - helpTextScreen->mY, 170, 50);
     old_HelpTextScreen_Update(helpTextScreen);
 }
 
@@ -70,17 +70,17 @@ void HelpTextScreen_MouseDown(Sexy::Widget *helpTextScreen, int x, int y, int th
 
 void HelpTextScreen_RemovedFromManager(Sexy::Widget *helpTextScreen, int *widgetManager) {
     // 修复MailScreen的可触控区域不为全屏
-    if (mHelpTextScreenCloseButton != nullptr) {
-        Sexy_Widget_RemoveWidget(helpTextScreen, (Sexy::Widget*)mHelpTextScreenCloseButton);
+    if (gHelpTextScreenCloseButton != nullptr) {
+        Sexy_Widget_RemoveWidget(helpTextScreen, (Sexy::Widget*)gHelpTextScreenCloseButton);
     }
     old_HelpTextScreen_RemovedFromManager(helpTextScreen, widgetManager);
 }
 
 void HelpTextScreen_Delete2(Sexy::Widget *helpTextScreen) {
     old_HelpTextScreen_Delete2(helpTextScreen);
-    if (mHelpTextScreenCloseButton != nullptr) {
-        GameButton_Delete(mHelpTextScreenCloseButton);
-        mHelpTextScreenCloseButton = nullptr;
+    if (gHelpTextScreenCloseButton != nullptr) {
+        gHelpTextScreenCloseButton->~GameButton();
+        gHelpTextScreenCloseButton = nullptr;
     }
 }
 

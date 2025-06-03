@@ -105,8 +105,8 @@ void ChallengeScreen::AddedToManager(int *theWidgetManager) {
     // 记录当前游戏状态
     int holder[1];
     TodStringTranslate(holder, "[CLOSE]");
-    gChallengeScreenCloseButton = MakeButton(1000, &mButtonListener, this, holder);
-    GameButton_Resize(gChallengeScreenCloseButton, 800, 520, 170, 50);
+    gChallengeScreenCloseButton = MakeButton(1000, &mButtonListener, this, (SexyString &)holder);
+    gChallengeScreenCloseButton->Resize(800, 520, 170, 50);
     Sexy_String_Delete(holder);
     Sexy_Widget_AddWidget(this, gChallengeScreenCloseButton);
 
@@ -132,7 +132,7 @@ void ChallengeScreen::Delete2() {
     old_ChallengeScreen_Delete2(this);
 
     if (gChallengeScreenCloseButton != nullptr) {
-        GameButton_Delete(gChallengeScreenCloseButton);
+        gChallengeScreenCloseButton->~GameButton();
         gChallengeScreenCloseButton = nullptr;
     }
 }

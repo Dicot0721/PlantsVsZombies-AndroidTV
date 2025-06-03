@@ -49,7 +49,7 @@ public:
 
 }; // 大小95个整数
 
-static Sexy::GameButton *mCreditScreenBackButton;
+static Sexy::GameButton *gCreditScreenBackButton;
 
 inline void (*old_CreditScreen_CreditScreen)(Sexy::Widget *a, LawnApp *a2, bool a3);
 

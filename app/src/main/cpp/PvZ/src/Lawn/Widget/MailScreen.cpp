@@ -7,9 +7,9 @@
 #include "PvZ/Symbols.h"
 
 namespace {
-Sexy::GameButton *mMailScreenCloseButton;
-Sexy::GameButton *mMailScreenReadButton;
-Sexy::GameButton *mMailScreenSwitchButton;
+Sexy::GameButton *gMailScreenCloseButton;
+Sexy::GameButton *gMailScreenReadButton;
+Sexy::GameButton *gMailScreenSwitchButton;
 } // namespace
 
 MailScreen::MailScreen(LawnApp *theApp) {
@@ -22,25 +22,25 @@ void MailScreen::Create(LawnApp *theApp) {
 
     int holder2[1];
     TodStringTranslate(holder2, "[MARK_MESSAGE_READ]");
-    mMailScreenReadButton = MakeButton(1002, &mButtonListener, this, holder2);
-    GameButton_Resize(mMailScreenReadButton, -150, 450, 170, 80);
+    gMailScreenReadButton = MakeButton(1002, &mButtonListener, this, (SexyString &)holder2);
+    gMailScreenReadButton->Resize(-150, 450, 170, 80);
     Sexy_String_Delete(holder2);
-    Sexy_Widget_AddWidget(this, (Sexy::Widget*)mMailScreenReadButton);
+    Sexy_Widget_AddWidget(this, (Sexy::Widget*)gMailScreenReadButton);
 
     int holder1[1];
     TodStringTranslate(holder1, "[GO_TO_READ_MAIL]");
-    mMailScreenSwitchButton = MakeButton(1001, &mButtonListener, this, holder1);
-    GameButton_Resize(mMailScreenSwitchButton, -150, 520, 170, 80);
+    gMailScreenSwitchButton = MakeButton(1001, &mButtonListener, this, (SexyString &)holder1);
+    gMailScreenSwitchButton->Resize(-150, 520, 170, 80);
     Sexy_String_Delete(holder1);
-    Sexy_Widget_AddWidget(this, (Sexy::Widget*)mMailScreenSwitchButton);
+    Sexy_Widget_AddWidget(this, (Sexy::Widget*)gMailScreenSwitchButton);
 
 
     int holder[1];
     TodStringTranslate(holder, "[CLOSE]");
-    mMailScreenCloseButton = MakeButton(1000, &mButtonListener, this, holder);
-    GameButton_Resize(mMailScreenCloseButton, 800, 520, 170, 80);
+    gMailScreenCloseButton = MakeButton(1000, &mButtonListener, this, (SexyString &)holder);
+    gMailScreenCloseButton->Resize(800, 520, 170, 80);
     Sexy_String_Delete(holder);
-    Sexy_Widget_AddWidget(this, (Sexy::Widget*)mMailScreenCloseButton);
+    Sexy_Widget_AddWidget(this, (Sexy::Widget*)gMailScreenCloseButton);
 
     Sexy_Widget_Resize(this, 0, 0, 800, 600);
 }
@@ -52,9 +52,9 @@ void MailScreen::AddedToManager(int *theWidgetManager) {
 
 void MailScreen::RemovedFromManager(int *widgetManager) {
     // 修复MailScreen的可触控区域不为全屏
-    Sexy_Widget_RemoveWidget(this, (Sexy::Widget*)mMailScreenCloseButton);
-    Sexy_Widget_RemoveWidget(this, (Sexy::Widget*)mMailScreenReadButton);
-    Sexy_Widget_RemoveWidget(this, (Sexy::Widget*)mMailScreenSwitchButton);
+    Sexy_Widget_RemoveWidget(this, (Sexy::Widget*)gMailScreenCloseButton);
+    Sexy_Widget_RemoveWidget(this, (Sexy::Widget*)gMailScreenReadButton);
+    Sexy_Widget_RemoveWidget(this, (Sexy::Widget*)gMailScreenSwitchButton);
 
     old_MailScreen_RemovedFromManager(this, widgetManager);
 }
@@ -62,12 +62,12 @@ void MailScreen::RemovedFromManager(int *widgetManager) {
 void MailScreen::Delete2() {
     old_MailScreen_Delete2(this);
 
-    GameButton_Delete(mMailScreenCloseButton);
-    mMailScreenCloseButton = nullptr;
-    GameButton_Delete(mMailScreenReadButton);
-    mMailScreenReadButton = nullptr;
-    GameButton_Delete(mMailScreenSwitchButton);
-    mMailScreenSwitchButton = nullptr;
+    gMailScreenCloseButton->~GameButton();
+    gMailScreenCloseButton = nullptr;
+    gMailScreenReadButton->~GameButton();
+    gMailScreenReadButton = nullptr;
+    gMailScreenSwitchButton->~GameButton();
+    gMailScreenSwitchButton = nullptr;
 }
 
 void MailScreen::ButtonPress(int theId) {
@@ -82,11 +82,11 @@ void MailScreen::ButtonDepress(int theId) {
     } else if (theId == 1001) {
         aRealMailScreen->KeyDown(307, 0, 0);
         bool isAtInBox = aRealMailScreen->mPage == 0;
-        mMailScreenReadButton->mDisabled = !isAtInBox;
-        mMailScreenReadButton->mBtnNoDraw = !isAtInBox;
+        gMailScreenReadButton->mDisabled = !isAtInBox;
+        gMailScreenReadButton->mBtnNoDraw = !isAtInBox;
         int holder[1];
         TodStringTranslate(holder, isAtInBox ? "[GO_TO_READ_MAIL]" : "[GO_TO_INBOX]");
-        GameButton_SetLabel(mMailScreenSwitchButton, holder);
+        gMailScreenSwitchButton->SetLabel((SexyString&)holder);
         Sexy_String_Delete(holder);
     } else
         old_MailScreen_ButtonDepress(this, theId);
