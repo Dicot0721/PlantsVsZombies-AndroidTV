@@ -3,10 +3,12 @@
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
+#include "PvZ/Symbols.h"
 
 class LawnApp;
 class Board;
 class PottedPlant;
+class GridItem;
 class SpecialGridPlacement {
 public:
     int mPixelX;
@@ -21,27 +23,23 @@ public:
     Board *mBoard;          //+0x4
     GardenType mGardenType; //+0x8
 
+    bool IsStinkyHighOnChocolate() { return reinterpret_cast<bool (*)(ZenGarden *)>(ZenGarden_IsStinkyHighOnChocolateAddr)(this); }
+    void OpenStore() { reinterpret_cast<void (*)(ZenGarden *)>(ZenGarden_OpenStoreAddr)(this); }
+    PottedPlant *GetPottedPlantInWheelbarrow() { return reinterpret_cast<PottedPlant * (*)(ZenGarden *)>(ZenGarden_GetPottedPlantInWheelbarrowAddr)(this); }
+    void DrawPottedPlant(Sexy::Graphics *g, float x, float y, PottedPlant *thePottedPlant, float theScale, bool theDrawPot) {
+        reinterpret_cast<void (*)(ZenGarden *, Sexy::Graphics *, float, float, PottedPlant *, float, bool)>(ZenGarden_DrawPottedPlantAddr)(this, g, x, y, thePottedPlant, theScale, theDrawPot);
+    }
+
     SpecialGridPlacement *GetSpecialGridPlacements(int &theCount);
     int GridToPixelX(int theGridX, int theGridY);
     int GridToPixelY(int theGridX, int theGridY);
+    GridItem *GetStinky();
+    void DrawBackdrop(Sexy::Graphics *g);
 };
 
-inline int *(*ZenGarden_GetStinky)(ZenGarden **zenGarden);
 
-inline bool (*ZenGarden_IsStinkyHighOnChocolate)(ZenGarden *zenGarden);
-
-inline void (*ZenGarden_OpenStore)(ZenGarden *);
-
-inline int (*ZenGarden_GetPottedPlantInWheelbarrow)(ZenGarden *);
-
-inline void (*ZenGarden_DrawPottedPlant)(ZenGarden *a1, Sexy::Graphics *g, float x, float y, PottedPlant *thePottedPlant, float theScale, bool theDrawPot);
-
-inline float (*PlantFlowerPotHeightOffset)(SeedType, float);
+inline void (*old_ZenGarden_DrawBackdrop)(ZenGarden *zenGarden, Sexy::Graphics *graphics);
 
 
-inline void (*old_ZenGarden_DrawBackdrop)(ZenGarden *zenGarden, int *graphics);
-
-
-void ZenGarden_DrawBackdrop(ZenGarden *zenGarden, int *graphics);
 
 #endif // PVZ_LAWN_ZEN_GARDEN_H

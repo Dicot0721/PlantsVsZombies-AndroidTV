@@ -2192,7 +2192,7 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     Sexy_Widget_Resize(backButton, 471, 628, addonZombatarImages.zombatar_mainmenuback_highlight->mWidth, addonZombatarImages.zombatar_mainmenuback_highlight->mHeight);
     Sexy_Widget_AddWidget(this, backButton);
     backButton->mDrawStoneButton = false;
-    backButton->mButtonImage = *Sexy_IMAGE_BLANK_Addr;
+    backButton->mButtonImage = *IMAGE_BLANK;
     backButton->mDownImage = addonZombatarImages.zombatar_mainmenuback_highlight;
     backButton->mOverImage = addonZombatarImages.zombatar_mainmenuback_highlight;
     mBackButton = backButton;
@@ -2242,7 +2242,7 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     aZombie->ZombieInitialize(0, ZombieType::ZOMBIE_FLAG, false, nullptr, -3, true);
     Reanimation *aBodyReanim = aZombie->mApp->ReanimationGet(aZombie->mBodyReanimID);
     ReanimatorTrackInstance *aHeadTrackInstance = aBodyReanim->GetTrackInstanceByName("anim_head1");
-    aHeadTrackInstance->mImageOverride = *Sexy_IMAGE_BLANK_Addr;
+    aHeadTrackInstance->mImageOverride = *IMAGE_BLANK;
 
     Reanimation *aZombatarHeadReanim = theApp->AddReanimation(0, 0, 0, ReanimationType::REANIM_ZOMBATAR_HEAD);
     aZombatarHeadReanim->PlayReanim("anim_head_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0);

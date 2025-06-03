@@ -43,7 +43,7 @@ public:
                                     //    short mNewProjectileLastY; // 在对齐空隙新增成员，130 ~ 131
     int mDamageRangeFlags;          // 33
     int mHitTorchwoodGridX;         // 34
-    int *mAttachmentID;             // 35
+    AttachmentID mAttachmentID;     // 35
     float mCobTargetX;              // 36
     int mCobTargetRow;              // 37
     ZombieID mTargetZombieID;       // 38
@@ -72,6 +72,7 @@ public:
     unsigned int GetDamageFlags(Zombie *theZombie);
     bool PeaAboutToHitTorchwood();
     Zombie *FindCollisionTarget();
+    void Draw(Sexy::Graphics *g);
 };
 
 /***************************************************************************************************************/
@@ -94,12 +95,12 @@ inline bool ColdPeaCanPassFireWood;
 
 inline int (*old_Projectile_ProjectileInitialize)(Projectile *projectile, int theX, int theY, int theRenderOrder, int theRow, ProjectileType theProjectileType);
 
-inline void (*old_Projectile_ConvertToFireball)(Projectile *projectile, int aGridX);
-
 inline void (*old_Projectile_ConvertToPea)(Projectile *projectile, int aGridX);
 
 inline void (*old_Projectile_Update)(Projectile *a);
 
 inline void (*old_Projectile_DoImpact)(Projectile *a1, Zombie *a2);
+
+inline void (*old_Projectile_Draw)(Projectile *, Sexy::Graphics *);
 
 #endif // PVZ_LAWN_PROJECTILE_H

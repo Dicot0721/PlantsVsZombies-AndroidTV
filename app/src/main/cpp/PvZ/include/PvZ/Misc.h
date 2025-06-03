@@ -18,8 +18,6 @@
 
 class TodParticleSystem;
 
-inline int (*Attachment_AttachmentDie)(int *);
-
 inline int (*WaitForSecondPlayerDialog_GameButtonDown)(int *a1, int a2, int a3);
 
 inline void (*Sexy_StrFormat)(int *holder, const char *theFormat, ...);
@@ -85,8 +83,6 @@ inline int (*Sexy_Image_GetWidth)(Sexy::Image *);
 inline int (*Sexy_Image_GetHeight)(Sexy::Image *);
 
 inline int (*Sexy_Image_GetCelHeight)(Sexy::Image *);
-
-inline float (*PlantDrawHeightOffset)(Board *, int, SeedType, int, int);
 
 inline void (*TypingCheck_SetPhrase)(int *a1, int *a2);
 

@@ -33,6 +33,10 @@ public:
 inline AttachEffect *AttachReanim(AttachmentID &theAttachmentID, Reanimation *theReanimation, float theOffsetX, float theOffsetY) {
     return reinterpret_cast<AttachEffect *(*)(AttachmentID &, Reanimation *, float, float)>(AttachReanimAddr)(theAttachmentID, theReanimation, theOffsetX, theOffsetY);
 }
+inline void AttachmentDraw(AttachmentID& theAttachmentID, Graphics* g, bool theParentHidden) {
+    reinterpret_cast<void (*)(AttachmentID &, Graphics*, bool)>(AttachmentDrawAddr)(theAttachmentID, g, theParentHidden);
+}
+inline void AttachmentDie(AttachmentID& theAttachmentID) { reinterpret_cast<void (*)(AttachmentID&)>(AttachmentDieAddr)(theAttachmentID); }
 
 class AttachmentHolder {};
 

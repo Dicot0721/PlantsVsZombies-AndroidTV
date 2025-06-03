@@ -63,11 +63,8 @@ ZombieDefinition &GetZombieDefinition(ZombieType theZombieType) {
 }
 
 void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Zombie *theParentZombie, int theFromWave, bool isVisible) {
-    // TODO: 修复高级暂停时放的IZ僵尸只显示虚影
     old_Zombie_ZombieInitialize(this, theRow, theType, theVariant, theParentZombie, theFromWave, isVisible);
-    //    if (requestPause) {
-    //        old_Zombie_Update(zombie);
-    //    }
+
     if (zombieSetScale != 0 && mZombieType != ZombieType::ZOMBIE_BOSS) {
         mScaleZombie = 0.2 * zombieSetScale;
         UpdateAnimSpeed();
@@ -100,21 +97,25 @@ void Zombie::Update() {
         // 如果开启了“普僵必噎死”
         mBloated = mZombieType == ZombieType::ZOMBIE_NORMAL && !mInPool;
     }
-    //    if (requestPause && zombie->mZombiePhase == ZombiePhase::RisingFromGrave) {
-    //        // 试图修复高级暂停时IZ放僵尸只显示虚影。失败。
-    //        Zombie_UpdatePlaying(zombie);
-    //        return;
-    //    }
+
     if (requestPause) {
         // 如果开了高级暂停
         return;
     }
+
     if (mZombieType == ZombieType::ZOMBIE_FLAG && mBossFireBallReanimID != 0) {
         Reanimation *reanimation = mApp->ReanimationTryToGet(mBossFireBallReanimID);
         if (reanimation != nullptr)
             reanimation->Update();
     }
+
     return old_Zombie_Update(this);
+}
+
+void Zombie::UpdateActions() {
+    old_Zombie_UpdateActions(this);
+
+    // UpdateZombieType类函数在此处添加
 }
 
 void Zombie::SquishAllInSquare(int theX, int theY, ZombieAttackType theAttackType) {
@@ -269,17 +270,17 @@ void Zombie::UpdateZombiePeaHead() {
         return;
 
     if (mPhaseCounter == 35) {
-        Reanimation *mSpecialHeadReanim = mApp->ReanimationGet(mSpecialHeadReanimID);
-        mSpecialHeadReanim->PlayReanim("anim_shooting", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 35.0f);
+        Reanimation *aHeadReanim = mApp->ReanimationGet(mSpecialHeadReanimID);
+        aHeadReanim->PlayReanim("anim_shooting", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 35.0f);
     } else if (mPhaseCounter <= 0) {
-        Reanimation *mSpecialHeadReanim = mApp->ReanimationGet(mSpecialHeadReanimID);
-        mSpecialHeadReanim->PlayReanim("anim_head_idle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 15.0f);
+        Reanimation *aHeadReanim = mApp->ReanimationGet(mSpecialHeadReanimID);
+        aHeadReanim->PlayReanim("anim_head_idle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 15.0f);
         mApp->PlayFoley(FoleyType::FOLEY_THROW);
 
-        Reanimation *mBodyReanim = mApp->ReanimationGet(mBodyReanimID);
-        int index = mBodyReanim->FindTrackIndexById(*ReanimTrackId_anim_head1_Addr);
+        Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+        int index = aBodyReanim->FindTrackIndexById(*ReanimTrackId_anim_head1_Addr);
         ReanimatorTransform aTransForm = ReanimatorTransform();
-        mBodyReanim->GetCurrentTransform(index, &aTransForm);
+        aBodyReanim->GetCurrentTransform(index, &aTransForm);
 
         float aOriginX = mPosX + aTransForm.mTransX - 9.0f;
         float aOriginY = mPosY + aTransForm.mTransY + 6.0f - mAltitude;
@@ -311,10 +312,10 @@ void Zombie::UpdateZombieGatlingHead() {
     } else if (mPhaseCounter == 18 || mPhaseCounter == 35 || mPhaseCounter == 51 || mPhaseCounter == 68) {
         mApp->PlayFoley(FoleyType::FOLEY_THROW);
 
-        Reanimation *mBodyReanim = mApp->ReanimationGet(mBodyReanimID);
-        int index = mBodyReanim->FindTrackIndexById(*ReanimTrackId_anim_head1_Addr);
+        Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+        int aTrackIndex = aBodyReanim->FindTrackIndexById(*ReanimTrackId_anim_head1_Addr);
         ReanimatorTransform aTransForm = ReanimatorTransform();
-        mBodyReanim->GetCurrentTransform(index, &aTransForm);
+        aBodyReanim->GetCurrentTransform(aTrackIndex, &aTransForm);
 
         float aOriginX = mPosX + aTransForm.mTransX - 9.0f;
         float aOriginY = mPosY + aTransForm.mTransY + 6.0f - mAltitude;
@@ -917,7 +918,7 @@ void Zombie::SetZombatarReanim() {
         return;
     Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
     ReanimatorTrackInstance *aHeadTrackInstance = aBodyReanim->GetTrackInstanceByName("anim_head1");
-    aHeadTrackInstance->mImageOverride = *Sexy_IMAGE_BLANK_Addr;
+    aHeadTrackInstance->mImageOverride = *IMAGE_BLANK;
     Reanimation *aZombatarHeadReanim = mApp->AddReanimation(0, 0, 0, ReanimationType::REANIM_ZOMBATAR_HEAD);
     Reanimation_SetZombatarHats(aZombatarHeadReanim, aPlayerInfo->mZombatarHat, aPlayerInfo->mZombatarHatColor);
     Reanimation_SetZombatarHair(aZombatarHeadReanim, aPlayerInfo->mZombatarHair, aPlayerInfo->mZombatarHairColor);
@@ -1453,3 +1454,42 @@ void Zombie::SetupLostArmReanim() {
         }
     }
 }
+
+void Zombie::PickRandomSpeed() {
+    if (mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING_IN_POOL) {
+        mVelX = 0.3f;
+    } else if (mZombiePhase == ZombiePhase::PHASE_DIGGER_WALKING) // 矿工行走
+    {
+        if (mApp->IsIZombieLevel()) {
+            mVelX = 0.23f; // IZ模式
+        } else {
+            mVelX = 0.12f; // 一般模式
+        }
+    } else if (mZombieType == ZombieType::ZOMBIE_IMP && mApp->IsIZombieLevel()) // IZ小鬼
+    {
+        mVelX = 0.9f;
+    } else if (mZombiePhase == ZombiePhase::PHASE_YETI_RUNNING) {
+        mVelX = 0.8f;
+    } else if (mZombieType == ZombieType::ZOMBIE_YETI) {
+        mVelX = 0.4f;
+    } else if (mZombieType == ZombieType::ZOMBIE_DANCER || mZombieType == ZombieType::ZOMBIE_BACKUP_DANCER || mZombieType == ZombieType::ZOMBIE_POGO || mZombieType == ZombieType::ZOMBIE_FLAG) {
+        mVelX = 0.45f;
+    } else if (mZombiePhase == ZombiePhase::PHASE_DIGGER_TUNNELING || mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT || mZombieType == ZombieType::ZOMBIE_FOOTBALL
+               || mZombieType == ZombieType::ZOMBIE_SNORKEL || mZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX) {
+        mVelX = RandRangeFloat(0.66f, 0.68f);
+    } else if (mZombiePhase == ZombiePhase::PHASE_LADDER_CARRYING || mZombieType == ZombieType::ZOMBIE_SQUASH_HEAD) {
+        mVelX = RandRangeFloat(0.79f, 0.81f);
+    } else if (mZombiePhase == ZombiePhase::PHASE_NEWSPAPER_MAD || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING_WITHOUT_DOLPHIN) {
+        mVelX = RandRangeFloat(0.89f, 0.91f);
+    } else {
+        mVelX = RandRangeFloat(0.23f, 0.32f); // 普僵
+        if (mVelX < 0.3f) {
+            mAnimTicksPerFrame = 12;
+        } else {
+            mAnimTicksPerFrame = 15;
+        }
+    }
+
+    UpdateAnimSpeed();
+}
+

@@ -29,6 +29,7 @@ public:
 
     bool BeginDraw(Sexy::Graphics *g) { return reinterpret_cast<bool (*)(GameObject *, Sexy::Graphics *)>(GameObject_BeginDrawAddr)(this, g); }
     void EndDraw(Sexy::Graphics *g) { reinterpret_cast<void (*)(GameObject *, Sexy::Graphics *)>(GameObject_EndDrawAddr)(this, g); }
+    void MakeParentGraphicsFrame(Sexy::Graphics* g) { reinterpret_cast<void (*)(GameObject *, Sexy::Graphics *)>(GameObject_MakeParentGraphicsFrameAddr)(this, g); }
 };
 
 

@@ -2,6 +2,8 @@
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/SexyAppFramework/Misc/Common.h"
 
+using namespace Sexy;
+
 static SpecialGridPlacement gGreenhouseGridPlacement[] = {{73, 73, 0, 0},   {155, 71, 1, 0},  {239, 68, 2, 0},  {321, 73, 3, 0},  {406, 71, 4, 0},  {484, 67, 5, 0},  {566, 70, 6, 0},
                                                           {648, 72, 7, 0},  {67, 168, 0, 1},  {150, 165, 1, 1}, {232, 170, 2, 1}, {314, 175, 3, 1}, {416, 173, 4, 1}, {497, 170, 5, 1},
                                                           {578, 164, 6, 1}, {660, 168, 7, 1}, {41, 268, 0, 2},  {130, 266, 1, 2}, {219, 260, 2, 2}, {310, 266, 3, 2}, {416, 267, 4, 2},
@@ -12,8 +14,8 @@ static SpecialGridPlacement gMushroomGridPlacement[] = {{110, 441, 0, 0}, {237, 
 
 static SpecialGridPlacement gAquariumGridPlacement[] = {{113, 185, 0, 0}, {306, 120, 1, 0}, {356, 270, 2, 0}, {622, 120, 3, 0}, {669, 270, 4, 0}, {122, 355, 5, 0}, {365, 458, 6, 0}, {504, 417, 7, 0}};
 
-void ZenGarden_DrawBackdrop(ZenGarden* zenGarden, int* graphics) {
-    old_ZenGarden_DrawBackdrop(zenGarden, graphics);
+void ZenGarden::DrawBackdrop(Graphics *g) {
+    old_ZenGarden_DrawBackdrop(this, g);
 }
 
 SpecialGridPlacement* ZenGarden::GetSpecialGridPlacements(int& theCount) {
@@ -55,4 +57,14 @@ int ZenGarden::GridToPixelY(int theGridX, int theGridY) {
         }
     }
     return -1;
+}
+
+GridItem* ZenGarden::GetStinky() {
+    GridItem* aGridItem = nullptr;
+    while (mBoard->IterateGridItems(aGridItem)) {
+        if (aGridItem->mGridItemType == GridItemType::GRIDITEM_STINKY) {
+            return aGridItem;
+        }
+    }
+    return nullptr;
 }

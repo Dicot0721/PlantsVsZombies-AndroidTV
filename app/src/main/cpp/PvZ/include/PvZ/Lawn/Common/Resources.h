@@ -10,11 +10,9 @@
 using namespace Sexy;
 
 namespace Sexy {
-extern Image *IMAGE_SHOVELBANK;
-extern Image *IMAGE_SEEDBANK;
+//inline Image *IMAGE_SHOVELBANK = *Sexy_IMAGE_SHOVELBANK_Addr;
+//inline Image *IMAGE_SEEDBANK = *Sexy_IMAGE_SEEDBANK_Addr;
+//inline Image *IMAGE_BLANK = *Sexy_IMAGE_BLANK_Addr;
 }
-
-//Image* Sexy::IMAGE_SHOVELBANK = *Sexy_IMAGE_SHOVELBANK_Addr;
-//Image* Sexy::IMAGE_SEEDBANK = *Sexy_IMAGE_SEEDBANK_Addr;
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_RESOURCES_H

@@ -19,11 +19,9 @@ SeedBank::SeedBank(bool thePlayerIndex) {
 
 void SeedBank::Create(bool thePlayerIndex) {
     old_SeedBank_SeedBank(this, thePlayerIndex);
-    //    LOG_DEBUG("this->mBoard: {}", (void*)this->mBoard);
 }
 
 void SeedBank::Draw(Sexy::Graphics *g) {
-    //    LOG_INFO("this->mBoard: {}", (void*)this->mBoard);
     // 在对战模式取消0.9倍缩放
     if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS) {
         return old_SeedBank_Draw(this, g);
@@ -206,7 +204,6 @@ void SeedBank::Draw(Sexy::Graphics *g) {
 }
 
 bool SeedBank::MouseHitTest(int x, int y, HitResult *theHitResult) {
-    LOG_INFO("this->mBoard: {}", (void *)this->mBoard);
     int relativeX = x - mX;
     int relativeY = y - mY;
     if (mWidth - 4 <= relativeX || mNumPackets <= 0) {
@@ -228,23 +225,14 @@ bool SeedBank::MouseHitTest(int x, int y, HitResult *theHitResult) {
 
 
 void SeedBank::UpdateWidth() {
-    //    LOG_DEBUG("this->mBoard: {}", (void*)this->mBoard);
-    //    LOG_DEBUG("this->mApp: {}", (void*)this->mApp);
-    //    LOG_DEBUG("this->mSeedPackets: {}", (void*)this->mSeedPackets);
-    //    LOG_DEBUG("this->mNumPackets: {}", this->mNumPackets);
-    //    LOG_DEBUG("this->mToolTipWidget: {}", (void*)this->mToolTipWidget);
-    //    LOG_DEBUG("this->mX: {}", this->mX);
-    //    LOG_DEBUG("this->mWidth: {}", this->mWidth);
     old_SeedBank_UpdateWidth(this);
 }
 
 bool SeedBank_ContainsPoint(SeedBank *seedBank, int theX, int theY) {
-    LOG_INFO("this->mBoard: {}", (void *)seedBank->mBoard);
     return theX >= seedBank->mX && theX < seedBank->mX + seedBank->mWidth && theY >= seedBank->mY && theY < seedBank->mY + seedBank->mHeight;
 }
 
 void SeedBank::Move(int x, int y) {
-    LOG_INFO("this->mBoard: {}", (void *)this->mBoard);
     // 在对战模式 错开双方的Bank
     mX = x;
     mY = y;
@@ -259,12 +247,10 @@ void SeedBank::Move(int x, int y) {
 }
 
 bool SeedBank_BeginDraw(SeedBank *seedBank, Sexy::Graphics *graphics) {
-    LOG_INFO("this->mBoard: {}", (void *)seedBank->mBoard);
     return old_SeedBank_BeginDraw(seedBank, graphics);
 }
 
 
 void SeedBank_EndDraw(SeedBank *seedBank, Sexy::Graphics *graphics) {
-    LOG_INFO("this->mBoard: {}", (void *)seedBank->mBoard);
     old_SeedBank_EndDraw(seedBank, graphics);
 }

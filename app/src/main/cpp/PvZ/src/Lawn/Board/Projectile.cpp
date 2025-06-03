@@ -9,6 +9,10 @@
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodCommon.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
+#include "PvZ/TodLib/Effect/Attachment.h"
+
+#include "Homura/Logger.h"
+
 using namespace Sexy;
 using namespace std;
 
@@ -165,13 +169,32 @@ void Projectile::ConvertToFireball(int theGridX) {
         }
     }
 
-    return old_Projectile_ConvertToFireball(this, theGridX);
+    if (mHitTorchwoodGridX == theGridX)
+        return;
+
+    mProjectileType = ProjectileType::PROJECTILE_FIREBALL;
+    mHitTorchwoodGridX = theGridX;
+    mApp->PlayFoley(FoleyType::FOLEY_FIREPEA);
+
+    float aOffsetX = -25.0f;
+    float aOffsetY = -25.0f;
+    Reanimation* aFirePeaReanim = mApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_FIRE_PEA);
+    if (mMotionType == ProjectileMotion::MOTION_BACKWARDS)
+    {
+        aFirePeaReanim->OverrideScale(-1.0f, 1.0f);
+        aOffsetX += 80.0f;
+    }
+
+    aFirePeaReanim->SetPosition(mPosX + aOffsetX, mPosY + aOffsetY);
+    aFirePeaReanim->mLoopType = ReanimLoopType::REANIM_LOOP;
+    aFirePeaReanim->mAnimRate = RandRangeFloat(50.0f, 80.0f);
+    AttachReanim(mAttachmentID, aFirePeaReanim, aOffsetX, aOffsetY);
 }
 
 void Projectile::ConvertToPea(int theGridX) {
     if (ColdPeaCanPassFireWood) {
         if (mHitTorchwoodGridX != theGridX) {
-            Attachment_AttachmentDie(mAttachmentID);
+            AttachmentDie(mAttachmentID);
             mHitTorchwoodGridX = theGridX;
             mProjectileType = ProjectileType::PROJECTILE_SNOWPEA;
             mApp->PlayFoley(FoleyType::FOLEY_THROW);
@@ -467,4 +490,50 @@ ProjectileDefinition& Projectile::GetProjectileDef() {
     ProjectileDefinition& aProjectileDef = gProjectileDefinition[(int)mProjectileType];
 
     return aProjectileDef;
+}
+
+void Projectile::Draw(Graphics *g) {
+        old_Projectile_Draw(this, g);
+
+//    const ProjectileDefinition& aProjectileDef = GetProjectileDef();
+//
+//    Image* aImage;
+//    float aScale = 1.0f;
+//    if (mProjectileType == ProjectileType::)
+//    {
+//        aImage = ;
+//    }
+//
+    //    bool aMirror = false;
+    //    if (mMotionType == ProjectileMotion::MOTION_BEE_BACKWARDS)
+    //    {
+    //        aMirror = true;
+    //    }
+    //
+    //    if (aImage)
+    //    {
+    //        int aCelWidth = aImage->GetCelWidth();
+    //        int aCelHeight = aImage->GetCelHeight();
+    //        Rect aSrcRect(aCelWidth * mFrame, aCelHeight * aProjectileDef.mImageRow, aCelWidth, aCelHeight);
+    //        if (FloatApproxEqual(mRotation, 0.0f) && FloatApproxEqual(aScale, 1.0f))
+    //        {
+    //            Rect aDestRect(0, 0, aCelWidth, aCelHeight);
+    //            g->DrawImageMirror(aImage, aDestRect, aSrcRect, aMirror);
+    //        }
+    //        else
+    //        {
+    //            float aOffsetX = mPosX + aCelWidth * 0.5f;
+    //            float aOffsetY = mPosZ + mPosY + aCelHeight * 0.5f;
+    //            SexyTransform2D aTransform;
+    //            TodScaleRotateTransformMatrix(aTransform, aOffsetX + mBoard->mX, aOffsetY + mBoard->mY, mRotation, aScale, aScale);
+    //            TodBltMatrix(g, aImage, aTransform, g->mClipRect, Color::White, g->mDrawMode, aSrcRect);
+    //        }
+    //    }
+
+    //    if (mAttachmentID != AttachmentID::ATTACHMENTID_NULL)
+    //    {
+    //        Graphics theParticleGraphics(*g);
+    //        MakeParentGraphicsFrame(&theParticleGraphics);
+    //        AttachmentDraw(mAttachmentID, &theParticleGraphics, false);
+    //    }
 }

@@ -59,14 +59,6 @@ inline void InitInGameFunction() {
     TodAnimateCurveFloatTime = (decltype(TodAnimateCurveFloatTime))TodAnimateCurveFloatTimeAddr;
 
 
-    ZenGarden_GetStinky = (decltype(ZenGarden_GetStinky))ZenGarden_GetStinkyAddr;
-    ZenGarden_IsStinkyHighOnChocolate = (decltype(ZenGarden_IsStinkyHighOnChocolate))ZenGarden_IsStinkyHighOnChocolateAddr;
-    ZenGarden_OpenStore = (decltype(ZenGarden_OpenStore))ZenGarden_OpenStoreAddr;
-    ZenGarden_GetPottedPlantInWheelbarrow = (decltype(ZenGarden_GetPottedPlantInWheelbarrow))ZenGarden_GetPottedPlantInWheelbarrowAddr;
-    ZenGarden_DrawPottedPlant = (decltype(ZenGarden_DrawPottedPlant))ZenGarden_DrawPottedPlantAddr;
-    PlantFlowerPotHeightOffset = (decltype(PlantFlowerPotHeightOffset))PlantFlowerPotHeightOffsetAddr;
-
-
     GameButton_IsMouseOver = (decltype(GameButton_IsMouseOver))GameButton_IsMouseOverAddr;
     GameButton_OnPressed = (decltype(GameButton_OnPressed))GameButton_OnPressedAddr;
     GameButton_Delete = (decltype(GameButton_Delete))GameButton_DeleteAddr;
@@ -124,7 +116,6 @@ inline void InitInGameFunction() {
     //    DrawSeedPacket = (void (*)(Sexy::Graphics *, int, int, int, int, float, int, bool, bool, bool,bool)) DrawSeedPacketAddr;
     WaitForSecondPlayerDialog_GameButtonDown = (decltype(WaitForSecondPlayerDialog_GameButtonDown))WaitForSecondPlayerDialog_GameButtonDownAddr;
     HelpTextScreen_KeyDown = (decltype(HelpTextScreen_KeyDown))HelpTextScreen_KeyDownAddr;
-    Attachment_AttachmentDie = (decltype(Attachment_AttachmentDie))AttachmentDieAddr;
     AwardScreen_StartButtonPressed = (decltype(AwardScreen_StartButtonPressed))AwardScreen_StartButtonPressedAddr;
     ShopSeedPacket_Update = (decltype(ShopSeedPacket_Update))ShopSeedPacket_UpdateAddr;
     GetFlashingColor = (decltype(GetFlashingColor))GetFlashingColorAddr;
@@ -148,7 +139,6 @@ inline void InitInGameFunction() {
     ImitaterDialog_SeedHitTest = (decltype(ImitaterDialog_SeedHitTest))ImitaterDialog_SeedHitTestAddr;
     SaveGameContext_SyncInt = (decltype(SaveGameContext_SyncInt))SaveGameContext_SyncIntAddr;
     Sexy_ScrollbarWidget_SetMaxValue = (decltype(Sexy_ScrollbarWidget_SetMaxValue))Sexy_ScrollbarWidget_SetMaxValueAddr;
-    PlantDrawHeightOffset = (decltype(PlantDrawHeightOffset))PlantDrawHeightOffsetAddr;
     TypingCheck_SetPhrase = (decltype(TypingCheck_SetPhrase))TypingCheck_SetPhraseAddr;
     Sexy_SexyAppBase_RegistryReadString = (decltype(Sexy_SexyAppBase_RegistryReadString))Sexy_SexyAppBase_RegistryReadStringAddr;
     Sexy_SexyAppBase_CopyImage = (decltype(Sexy_SexyAppBase_CopyImage))Sexy_SexyAppBase_CopyImageAddr;
@@ -452,11 +442,13 @@ inline void InitHookFunction() {
 
 
     homura::HookFunction(Projectile_ProjectileInitializeAddr, &Projectile::ProjectileInitialize, &old_Projectile_ProjectileInitialize);
-    homura::HookFunction(Projectile_ConvertToFireballAddr, &Projectile::ConvertToFireball, &old_Projectile_ConvertToFireball);
+    homura::HookFunction(Projectile_ConvertToFireballAddr, &Projectile::ConvertToFireball, nullptr);
     homura::HookFunction(Projectile_ConvertToPeaAddr, &Projectile::ConvertToPea, &old_Projectile_ConvertToPea);
     homura::HookFunction(Projectile_UpdateAddr, &Projectile::Update, &old_Projectile_Update);
     homura::HookFunction(Projectile_DoImpactAddr, &Projectile::DoImpact, &old_Projectile_DoImpact);
     homura::HookFunction(Projectile_CheckForCollisionAddr, &Projectile::CheckForCollision, nullptr);
+    homura::HookFunction(Projectile_GetProjectileDefAddr, &Projectile::GetProjectileDef, nullptr);
+    homura::HookFunction(Projectile_DrawAddr, &Projectile::Draw, &old_Projectile_Draw);
 
 
     homura::HookFunction(SeedPacket_UpdateAddr, &SeedPacket::Update, &old_SeedPacket_Update);
@@ -545,7 +537,7 @@ inline void InitHookFunction() {
 
 
     homura::HookFunction(ZenGardenControls_UpdateAddr, &ZenGardenControls::Update, &old_ZenGardenControls_Update);
-    homura::HookFunction(ZenGarden_DrawBackdropAddr, &ZenGarden_DrawBackdrop, &old_ZenGarden_DrawBackdrop);
+    homura::HookFunction(ZenGarden_DrawBackdropAddr, &ZenGarden::DrawBackdrop, &old_ZenGarden_DrawBackdrop);
     //    MSHookFunction(ZenGarden_MouseDownWithFeedingToolAddr, (void *) ZenGarden_MouseDownWithFeedingTool, (void **) &old_ZenGarden_MouseDownWithFeedingTool);
     // MSHookFunction(ZenGarden_DrawPottedPlantAddr, (void *) ZenGarden_DrawPottedPlant, nullptr);
 

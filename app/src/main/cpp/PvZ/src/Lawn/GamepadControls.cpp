@@ -338,7 +338,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_head2", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("anim_head1");
-                    aTrackInstance->mImageOverride = *Sexy_IMAGE_BLANK_Addr;
+                    aTrackInstance->mImageOverride = *IMAGE_BLANK;
                     Reanimation *aPeaHeadReanim = aApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_PEASHOOTER);
                     aPeaHeadReanim->PlayReanim("anim_head_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aPeaHeadReanim, 0.0f, 0.0f);
@@ -382,7 +382,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_head2", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("anim_head1");
-                    aTrackInstance->mImageOverride = *Sexy_IMAGE_BLANK_Addr;
+                    aTrackInstance->mImageOverride = *IMAGE_BLANK;
                     Reanimation *aGatlingHeadReanim = aApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_GATLINGPEA);
                     aGatlingHeadReanim->PlayReanim("anim_head_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aGatlingHeadReanim, 0.0f, 0.0f);
@@ -393,7 +393,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_head2", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("anim_head1");
-                    aTrackInstance->mImageOverride = *Sexy_IMAGE_BLANK_Addr;
+                    aTrackInstance->mImageOverride = *IMAGE_BLANK;
                     Reanimation *aSquashHeadReanim = aApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_SQUASH);
                     aSquashHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aSquashHeadReanim, 0.0f, 0.0f);

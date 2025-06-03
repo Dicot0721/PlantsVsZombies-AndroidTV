@@ -22,7 +22,12 @@ public:
     int mVertWrapMode;                // 6
 };
 
-class Graphics {
+class GraphicsState {
+public:
+    void CopyStateFrom(const GraphicsState* theState) { reinterpret_cast<void (*)(GraphicsState *, const GraphicsState*)>(Sexy_GraphicsState_CopyStateFromAddr)(this, theState); }
+};
+
+class Graphics : public GraphicsState {
 public:
     enum DrawMode {
         DRAWMODE_NORMAL = 0,
@@ -45,9 +50,9 @@ public:
     DrawMode mDrawMode;           // 24
     bool mColorizeImages;         // 100
     bool mFastStretch;            // 101
-    bool unkbool1;                // 102
+    bool mWriteColoredString;     // 102
     bool mLinearBlend;            // 103
-    bool unkbool2;                // 104
+    bool mIs3D;                   // 104
     bool mGlobalScale;            // 105
     bool mGlobalTrackDeviceState; // 106
     int *unkPushPopTramsform;     // 27
@@ -60,7 +65,7 @@ public:
     Graphics(Image* theDestImage = NULL) { CreateImage(theDestImage); }
     void CreateGraphics(const Graphics& theGraphics) { reinterpret_cast<void (*)(Graphics *, const Graphics&)>(Sexy_Graphics_GraphicsAddr)(this, theGraphics); }
     void CreateImage(Image* theDestImage = NULL) { reinterpret_cast<void (*)(Graphics *, Image*)>(Sexy_Graphics_Graphics2Addr)(this, theDestImage); }
-    ~Graphics() { reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_Delete2Addr)(this); }
+    ~Graphics() { reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_DeleteAddr)(this); }
     void PushState() { reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_PushStateAddr)(this); }
     void PopState() { reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_PopStateAddr)(this); }
     void ClipRect(int theX, int theY, int theWidth, int theHeight) { reinterpret_cast<void (*)(Graphics *, int, int, int, int)>(Sexy_Graphics_ClipRectAddr)(this, theX, theY, theWidth, theHeight); }
@@ -87,6 +92,9 @@ public:
         reinterpret_cast<void (*)(Graphics *, Image *, int, int, int, int)>(Sexy_Graphics_DrawImageCel2Addr)(this, theImageStrip, theX, theY, theCelCol, theCelRow);
     }
     void DrawImageMirror(Image* theImage, int theX, int theY, bool mirror) { reinterpret_cast<void (*)(Graphics *, int, int, bool)>(Sexy_Graphics_DrawImageMirrorAddr)(this, theX, theY, mirror); }
+    void DrawImageMirror(Image *theImage, const Rect &theDestRect, const Rect &theSrcRect, bool mirror) {
+        reinterpret_cast<void (*)(Graphics *, const Rect &, const Rect &, bool)>(Sexy_Graphics_DrawImageMirror2Addr)(this, theDestRect, theSrcRect, mirror);
+    }
     void DrawTrianglesTex(Image *theTexture, const SexyVertex2D theVertices[][3], int theNumTriangles) {
         reinterpret_cast<void (*)(Graphics *, Image *, const SexyVertex2D[][3], int)>(Sexy_Graphics_DrawTrianglesTexAddr)(this, theTexture, theVertices, theNumTriangles);
     }
@@ -94,6 +102,7 @@ public:
         reinterpret_cast<void (*)(Graphics *, Image *, const SexyMatrix3 &, const Rect &, float, float, bool)>(Sexy_Graphics_DrawImageMatrixAddr)(this, theImage, theMatrix, theSrcRect, x, y, theBool);
     }
     void SetWrapMode(int theHorizonWrapMode, int theVertWrapMode) { reinterpret_cast<void (*)(Graphics *, int, int)>(Sexy_GLGraphics_SetWrapModeAddr)(this, theHorizonWrapMode, theVertWrapMode); }
+
 
     void SetFont(Font *theFont);
     Font *GetFont();

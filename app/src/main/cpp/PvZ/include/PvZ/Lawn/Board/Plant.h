@@ -225,6 +225,13 @@ public:
     void BurnRow(int theRow);
 };
 
+inline float PlantDrawHeightOffset(Board *theBoard, Plant *thePlant, SeedType theSeedType, int theCol, int theRow) {
+    return reinterpret_cast<float (*)(Board *, Plant *, SeedType, int, int)>(PlantDrawHeightOffsetAddr)(theBoard, thePlant, theSeedType, theCol, theRow);
+}
+inline float PlantFlowerPotHeightOffset(SeedType theSeedType, float theFlowerPotScale) {
+    return reinterpret_cast<float (*)(SeedType, float)>(PlantFlowerPotHeightOffsetAddr)(theSeedType, theFlowerPotScale);
+}
+
 class PlantDefinition {
 public:
     SeedType mSeedType;               //+0x0

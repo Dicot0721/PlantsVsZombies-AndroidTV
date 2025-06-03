@@ -21,7 +21,11 @@ public:
     };
 };
 
-class SexyTransform2D : public Sexy::SexyMatrix3 {};
+class SexyTransform2D : public Sexy::SexyMatrix3 {
+public:
+//    SexyTransform2D() { Create(); }
+//    Create() { reinterpret_cast<void (*)()>; }
+};
 
 }
 

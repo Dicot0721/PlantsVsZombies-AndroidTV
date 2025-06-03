@@ -3,3 +3,6 @@
 //
 
 #include "PvZ/Lawn/Board/GameObject.h"
+
+using namespace Sexy;
+
