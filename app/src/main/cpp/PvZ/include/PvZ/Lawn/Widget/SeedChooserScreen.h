@@ -99,12 +99,14 @@ public:
         return reinterpret_cast<SeedType (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_FindSeedInBankAddr)(this, theIndexInBank, thePlayerIndex);
     }
     bool HasPacket(SeedType theSeedType, bool theIsZombieChooser) {
-        return reinterpret_cast<bool (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_HasPacketAddr)(this, theSeedType, theIsZombieChooser);
+        return reinterpret_cast<bool (*)(SeedChooserScreen *, SeedType, bool)>(SeedChooserScreen_HasPacketAddr)(this, theSeedType, theIsZombieChooser);
     }
     bool Has7Rows() { return reinterpret_cast<bool (*)(SeedChooserScreen *)>(SeedChooserScreen_Has7RowsAddr)(this); }
     bool CancelLawnView() { return reinterpret_cast<bool (*)(SeedChooserScreen *)>(SeedChooserScreen_CancelLawnViewAddr)(this); }
     void GetNextSeedInDir(int theNumSeed, int thePlayerIndex) { reinterpret_cast<void (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_GetNextSeedInDirAddr)(this, theNumSeed, thePlayerIndex); }
-    void GetSeedPositionInChooser(SeedType theSeedType, int &x, int &y) { reinterpret_cast<void (*)(SeedChooserScreen *, int &, int &)>(SeedChooserScreen_GetSeedPositionInChooserAddr)(this, x, y); }
+    void GetSeedPositionInChooser(SeedType theSeedType, int &x, int &y) {
+        reinterpret_cast<void (*)(SeedChooserScreen *, SeedType, int &, int &)>(SeedChooserScreen_GetSeedPositionInChooserAddr)(this, theSeedType, x, y);
+    }
     void UpdateImitaterButton() { reinterpret_cast<void (*)(SeedChooserScreen *)>(SeedChooserScreen_UpdateImitaterButtonAddr)(this); }
     SeedType SeedHitTest(int x, int y) { return reinterpret_cast<SeedType (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_SeedHitTestAddr)(this, x, y); }
     void LandFlyingSeed(ChosenSeed &theChosenSeed) { reinterpret_cast<void (*)(SeedChooserScreen *, ChosenSeed &)>(SeedChooserScreen_LandFlyingSeedAddr)(this, theChosenSeed); }
