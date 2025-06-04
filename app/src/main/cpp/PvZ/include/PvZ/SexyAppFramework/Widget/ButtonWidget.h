@@ -8,10 +8,13 @@
 #include "PvZ/SexyAppFramework/Misc/TextLayout.h"
 #include "PvZ/Symbols.h"
 
-#include "ButtonListener.h"
+//#include "ButtonListener.h"
 #include "SelectableWidget.h"
 
 namespace Sexy {
+
+class Image;
+class ButtonListener;
 
 class ButtonWidget : public SelectableWidget {
 public:
@@ -29,9 +32,9 @@ public:
     Rect mOverRect;         // 181 ~ 184
     Rect mDownRect;         // 185 ~ 188
     Rect mDisabledRect;     // 189 ~ 192
-    bool unkBool1;          // 772
+    bool mInverted;         // 772
     bool mBtnNoDraw;        // 773
-    bool unkBool2;          // 774
+    bool mFrameNoDraw;      // 774
     int unkMems3[2];        // 194 ~ 195
     double mOverAlpha;      // 197 ~ 198
     int unkMems4[4];        // 198 ~ 201
@@ -41,7 +44,7 @@ public:
     // 大小204个整数
 
     ButtonWidget(int theId, ButtonListener *theButtonListener) {
-        reinterpret_cast<void (*)(ButtonWidget *, int theId, ButtonListener *theButtonListener)>(Sexy_ButtonWidget_ButtonWidgetAddr)(this, theId, theButtonListener);
+        reinterpret_cast<void (*)(ButtonWidget *, int, ButtonListener *)>(Sexy_ButtonWidget_ButtonWidgetAddr)(this, theId, theButtonListener);
     }
 };
 

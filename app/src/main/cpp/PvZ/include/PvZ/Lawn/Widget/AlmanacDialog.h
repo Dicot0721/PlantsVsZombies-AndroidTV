@@ -1,9 +1,15 @@
 #ifndef PVZ_LAWN_ALMANAC_DIALOG_H
 #define PVZ_LAWN_ALMANAC_DIALOG_H
 
-#include "LawnDialog.h"
-#include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Widget/CustomScrollbarWidget.h"
+#include "PvZ/Symbols.h"
+
+#include "LawnDialog.h"
+
+namespace Sexy {
+class WidgetManager;
+//class CustomScrollbarWidget;
+}
 
 class Plant;
 class Zombie;
@@ -12,10 +18,10 @@ class AlmanacDialog : public LawnDialog {
 public:
     int *mScrollListener;                           // 191
     LawnApp *mApp;                                  // 192
-    Sexy::GameButton *mViewPlantButton;             // 193
-    Sexy::GameButton *mViewZombieButton;            // 194
+    Sexy::GameButton *mPlantButton;                 // 193
+    Sexy::GameButton *mZombieButton;                // 194
     Sexy::CustomScrollbarWidget *mScrollTextView;   // 195
-    int mOpenPage;                                  // 196
+    AlmanacPage mOpenPage;                          // 196
     SeedType mSelectedSeed;                         // 197
     ZombieType mSelectedZombie;                     // 198
     Plant *mPlant;                                  // 199
@@ -37,56 +43,44 @@ public:
     double unk3;                                    // 228 ~ 229
     int *mHelpBarWidget;                            // 230
     int unk4[11];                                   // 231 ~ 233
-}; // 115: 234, 111: 236
+    // 115: 234, 111: 236
 
-inline bool (*AlmanacDialog_KeyDown)(AlmanacDialog *, int);
+    void KeyDown(Sexy::KeyCode theKey) { reinterpret_cast<void (*)(AlmanacDialog *, Sexy::KeyCode)>(AlmanacDialog_KeyDownAddr)(this, theKey); }
+    SeedType SeedHitTest(int x, int y) { return reinterpret_cast<SeedType (*)(AlmanacDialog *, int, int)>(AlmanacDialog_SeedHitTestAddr)(this, x, y); }
+    ZombieType ZombieHitTest(int x, int y) { return reinterpret_cast<ZombieType (*)(AlmanacDialog *, int, int)>(AlmanacDialog_ZombieHitTestAddr)(this, x, y); }
+    void SetupPlant() { reinterpret_cast<void (*)(AlmanacDialog *)>(AlmanacDialog_SetupPlantAddr)(this); }
+    void SetupZombie() { reinterpret_cast<void (*)(AlmanacDialog *)>(AlmanacDialog_SetupZombieAddr)(this); }
+    void GetSeedPosition(SeedType theSeedType, int& x, int& y) { reinterpret_cast<void (*)(AlmanacDialog *, SeedType, int &, int &)>(AlmanacDialog_GetSeedPositionAddr)(this, theSeedType, x, y); }
 
-inline SeedType (*AlmanacDialog_SeedHitTest)(AlmanacDialog *, int, int);
+    AlmanacDialog(LawnApp *theApp);
+    void Create( LawnApp *theApp);
+    ~AlmanacDialog();
+    void Delete2();
+    void SetPage(AlmanacPage thePage);
+    void RemovedFromManager(Sexy::WidgetManager *theWidgetManager);
+    void ButtonDepress(int theId);
+    void DrawPlants_Unmodified(Sexy::Graphics *g);
+    void DrawPlants(Sexy::Graphics *g);
+    void SetupLayoutPlants(Sexy::Graphics *g);
 
-inline ZombieType (*AlmanacDialog_ZombieHitTest)(AlmanacDialog *, int, int);
-
-inline void (*AlmanacDialog_SetupPlant)(AlmanacDialog *);
-
-inline void (*AlmanacDialog_SetupZombie)(AlmanacDialog *);
-
-inline void (*AlmanacDialog_GetSeedPosition)(AlmanacDialog *almanacDialog, int seedType, int *x, int *y);
+    void MouseDown(int x, int y, int theClickCount);
+    void MouseDrag(int x, int y);
+    void MouseUp(int x, int y, int theClickCount);
+};
 
 
 inline void (*old_AlmanacDialog_AlmanacDialog)(AlmanacDialog *almanacDialog, LawnApp *lawnApp);
 
-inline void (*old_AlmanacDialog_SetPage)(AlmanacDialog *almanacDialog, int targetPage);
+inline void (*old_AlmanacDialog_SetPage)(AlmanacDialog *almanacDialog, AlmanacPage thePage);
 
 inline void (*old_AlmanacDialog_MouseDrag)(AlmanacDialog *almanacDialog, int, int);
 
-inline void (*old_AlmanacDialog_RemovedFromManager)(AlmanacDialog *almanacDialog, int *manager);
+inline void (*old_AlmanacDialog_RemovedFromManager)(AlmanacDialog *almanacDialog, Sexy::WidgetManager *manager);
 
 inline void (*old_AlmanacDialog_Delete2)(AlmanacDialog *almanacDialog);
 
 inline void (*old_AlmanacDialog_DrawPlants)(AlmanacDialog *almanacDialog, Sexy::Graphics *graphics);
 
 inline void (*old_AlmanacDialog_SetupLayoutPlants)(AlmanacDialog *almanacDialog, Sexy::Graphics *graphics);
-
-
-void AlmanacDialog_AlmanacDialog(AlmanacDialog *almanacDialog, LawnApp *lawnApp);
-
-void AlmanacDialog_SetPage(AlmanacDialog *almanacDialog, int targetPage);
-
-void AlmanacDialog_MouseDown(AlmanacDialog *almanacDialog, int x, int y, int a4);
-
-void AlmanacDialog_MouseDrag(AlmanacDialog *almanacDialog, int x, int y);
-
-void AlmanacDialog_MouseUp(AlmanacDialog *almanacDialog, int x, int y, int a4);
-
-void AlmanacDialog_RemovedFromManager(AlmanacDialog *almanacDialog, int *manager);
-
-void AlmanacDialog_Delete2(AlmanacDialog *almanacDialog);
-
-void AlmanacDialog_ButtonDepress(AlmanacDialog *almanacDialog, int id);
-
-void AlmanacDialog_DrawPlants_Unmodified(AlmanacDialog *almanacDialog, Sexy::Graphics *g);
-
-void AlmanacDialog_DrawPlants(AlmanacDialog *almanacDialog, Sexy::Graphics *g);
-
-void AlmanacDialog_SetupLayoutPlants(AlmanacDialog *almanacDialog, Sexy::Graphics *graphics);
 
 #endif // PVZ_LAWN_ALMANAC_DIALOG_H

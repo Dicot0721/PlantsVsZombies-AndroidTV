@@ -5,6 +5,8 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_SCROLLBARWIDGET_H
 #define PLANTSVSZOMBIES_ANDROIDTV_SCROLLBARWIDGET_H
 
+#include "PvZ/Symbols.h"
+
 #include "Widget.h"
 
 namespace Sexy {
@@ -34,10 +36,12 @@ public:
     Image *mThumbImage;     // 87
     Image *mBarImage;       // 88
     Image *mPagingImage;    // 89
-}; // 大小90个整数
+    // 大小90个整数
+
+    void SetMaxValue(double theValue) { reinterpret_cast<void (*)(Sexy::ScrollbarWidget *, double)>(Sexy_ScrollbarWidget_SetMaxValueAddr)(this, theValue); }
+};
 
 }
 
-inline void (*Sexy_ScrollbarWidget_SetMaxValue)(Sexy::ScrollbarWidget *, double);
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_SCROLLBARWIDGET_H

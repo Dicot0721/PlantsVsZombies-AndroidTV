@@ -40,12 +40,6 @@ void WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(int *a, int *a2) {
     WaitForSecondPlayerDialog_GameButtonDown(a, 6, 1);
 }
 
-void CustomScrollbarWidget_RemoveScrollButtons(Sexy::CustomScrollbarWidget *scrollbarWidget) {
-    // 修复点击图鉴介绍文本的滚动条时闪退的问题。将Remove改为Hide，从而解决缺少mUpButton、mDownButton导致的空指针闪退。
-    scrollbarWidget->mUpButton->mVisible = false;
-    scrollbarWidget->mDownButton->mVisible = false;
-}
-
 void Sexy_Image_PushTransform(Sexy::Image *image, int *transform, bool concatenate) {
     old_Sexy_Image_PushTransform(image, transform, concatenate);
 }

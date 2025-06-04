@@ -59,14 +59,6 @@ inline void InitInGameFunction() {
     TodAnimateCurveFloatTime = (decltype(TodAnimateCurveFloatTime))TodAnimateCurveFloatTimeAddr;
 
 
-    AlmanacDialog_SeedHitTest = (decltype(AlmanacDialog_SeedHitTest))AlmanacDialog_SeedHitTestAddr;
-    AlmanacDialog_ZombieHitTest = (decltype(AlmanacDialog_ZombieHitTest))AlmanacDialog_ZombieHitTestAddr;
-    AlmanacDialog_SetupPlant = (decltype(AlmanacDialog_SetupPlant))AlmanacDialog_SetupPlantAddr;
-    AlmanacDialog_SetupZombie = (decltype(AlmanacDialog_SetupZombie))AlmanacDialog_SetupZombieAddr;
-    AlmanacDialog_KeyDown = (decltype(AlmanacDialog_KeyDown))AlmanacDialog_KeyDownAddr;
-    AlmanacDialog_GetSeedPosition = (decltype(AlmanacDialog_GetSeedPosition))AlmanacDialog_GetSeedPositionAddr;
-
-
     SeedChooserScreen_CancelLawnView = (decltype(SeedChooserScreen_CancelLawnView))SeedChooserScreen_CancelLawnViewAddr;
     SeedChooserScreen_GetNextSeedInDir = (decltype(SeedChooserScreen_GetNextSeedInDir))SeedChooserScreen_GetNextSeedInDirAddr;
     SeedChooserScreen_GetSeedPositionInChooser = (decltype(SeedChooserScreen_GetSeedPositionInChooser))SeedChooserScreen_GetSeedPositionInChooserAddr;
@@ -124,7 +116,6 @@ inline void InitInGameFunction() {
     Sexy_WidgetContainer_MarkDirty = (decltype(Sexy_WidgetContainer_MarkDirty))Sexy_WidgetContainer_MarkDirtyAddr;
     ImitaterDialog_SeedHitTest = (decltype(ImitaterDialog_SeedHitTest))ImitaterDialog_SeedHitTestAddr;
     SaveGameContext_SyncInt = (decltype(SaveGameContext_SyncInt))SaveGameContext_SyncIntAddr;
-    Sexy_ScrollbarWidget_SetMaxValue = (decltype(Sexy_ScrollbarWidget_SetMaxValue))Sexy_ScrollbarWidget_SetMaxValueAddr;
     TypingCheck_SetPhrase = (decltype(TypingCheck_SetPhrase))TypingCheck_SetPhraseAddr;
     Sexy_SexyAppBase_RegistryReadString = (decltype(Sexy_SexyAppBase_RegistryReadString))Sexy_SexyAppBase_RegistryReadStringAddr;
     Sexy_SexyAppBase_CopyImage = (decltype(Sexy_SexyAppBase_CopyImage))Sexy_SexyAppBase_CopyImageAddr;
@@ -350,15 +341,15 @@ inline void InitHookFunction() {
     homura::HookFunction(GridItem_DrawCraterAddr, &GridItem::DrawCrater, nullptr);
 
 
-    homura::HookFunction(AlmanacDialog_RemovedFromManagerAddr, &AlmanacDialog_RemovedFromManager, &old_AlmanacDialog_RemovedFromManager);
-    homura::HookFunction(AlmanacDialog_AlmanacDialogAddr, &AlmanacDialog_AlmanacDialog, &old_AlmanacDialog_AlmanacDialog);
-    homura::HookFunction(AlmanacDialog_SetPageAddr, &AlmanacDialog_SetPage, &old_AlmanacDialog_SetPage);
-    homura::HookFunction(AlmanacDialog_MouseDownAddr, &AlmanacDialog_MouseDown, nullptr);
-    homura::HookFunction(AlmanacDialog_MouseUpAddr, &AlmanacDialog_MouseUp, nullptr);
-    homura::HookFunction(AlmanacDialog_ButtonDepressAddr, &AlmanacDialog_ButtonDepress, nullptr);
-    homura::HookFunction(AlmanacDialog_Delete2Addr, &AlmanacDialog_Delete2, &old_AlmanacDialog_Delete2);
-    homura::HookFunction(AlmanacDialog_DrawPlantsAddr, &AlmanacDialog_DrawPlants, &old_AlmanacDialog_DrawPlants);
-    homura::HookFunction(AlmanacDialog_SetupLayoutPlantsAddr, &AlmanacDialog_SetupLayoutPlants, &old_AlmanacDialog_SetupLayoutPlants);
+    homura::HookFunction(AlmanacDialog_RemovedFromManagerAddr, &AlmanacDialog::RemovedFromManager, &old_AlmanacDialog_RemovedFromManager);
+    homura::HookFunction(AlmanacDialog_AlmanacDialogAddr, &AlmanacDialog::Create, &old_AlmanacDialog_AlmanacDialog);
+    homura::HookFunction(AlmanacDialog_SetPageAddr, &AlmanacDialog::SetPage, &old_AlmanacDialog_SetPage);
+    homura::HookFunction(AlmanacDialog_MouseDownAddr, &AlmanacDialog::MouseDown, nullptr);
+    homura::HookFunction(AlmanacDialog_MouseUpAddr, &AlmanacDialog::MouseUp, nullptr);
+    homura::HookFunction(AlmanacDialog_ButtonDepressAddr, &AlmanacDialog::ButtonDepress, nullptr);
+    homura::HookFunction(AlmanacDialog_Delete2Addr, &AlmanacDialog::Delete2, &old_AlmanacDialog_Delete2);
+    homura::HookFunction(AlmanacDialog_DrawPlantsAddr, &AlmanacDialog::DrawPlants, &old_AlmanacDialog_DrawPlants);
+    homura::HookFunction(AlmanacDialog_SetupLayoutPlantsAddr, &AlmanacDialog::SetupLayoutPlants, &old_AlmanacDialog_SetupLayoutPlants);
 
 
     homura::HookFunction(SeedChooserScreen_EnableStartButtonAddr, &SeedChooserScreen::EnableStartButton, &old_SeedChooserScreen_EnableStartButton);
@@ -536,15 +527,20 @@ inline void InitHookFunction() {
 
 
     homura::HookFunction(BaseGamepadControls_GetGamepadVelocityAddr, &BaseGamepadControls::GetGamepadVelocity, nullptr);
+
     homura::HookFunction(LookupFoleyAddr, &LookupFoley, &old_LookupFoley);
+
     //    MSHookFunction(TodDrawStringWrappedHelperAddr, (void *) TodDrawStringWrappedHelper, (void **) &old_TodDrawStringWrappedHelper);
     homura::HookFunction(MessageWidget_ClearLabelAddr, &MessageWidget_ClearLabel, &old_MessageWidget_ClearLabel);
     homura::HookFunction(MessageWidget_SetLabelAddr, &MessageWidget_SetLabel, &old_MessageWidget_SetLabel);
     homura::HookFunction(MessageWidget_UpdateAddr, &MessageWidget_Update, &old_MessageWidget_Update);
     homura::HookFunction(MessageWidget_DrawAddr, &MessageWidget_Draw, &old_MessageWidget_Draw);
+
     homura::HookFunction(Sexy_ExtractLoadingSoundsResourcesAddr, &Sexy_ExtractLoadingSoundsResources, &old_Sexy_ExtractLoadingSoundsResources);
     //    MSHookFunction(Sexy_ScrollbarWidget_MouseDownAddr, (void *) Sexy_ScrollbarWidget_MouseDown,nullptr);
-    homura::HookFunction(CustomScrollbarWidget_RemoveScrollButtonsAddr, &CustomScrollbarWidget_RemoveScrollButtons, nullptr);
+
+    homura::HookFunction(CustomScrollbarWidget_RemoveScrollButtonsAddr, &CustomScrollbarWidget::RemoveScrollButtons, nullptr);
+
     homura::HookFunction(CreditScreen_CreditScreenAddr, &CreditScreen_CreditScreen, &old_CreditScreen_CreditScreen);
     homura::HookFunction(CreditScreen_RemovedFromManagerAddr, &CreditScreen_RemovedFromManager, &old_CreditScreen_RemovedFromManager);
     homura::HookFunction(CreditScreen_Delete2Addr, &CreditScreen_Delete2, &old_CreditScreen_Delete2);
@@ -652,7 +648,7 @@ inline void InitVTableHookFunction() {
     //    VTableHookFunction(vTableForHelpTextScreenAddr, 83, (void *) HelpTextScreen_MouseDrag,(void **) &old_HelpTextScreen_MouseDrag);
     homura::HookVirtualFunc(vTableForHelpTextScreenAddr, 136, &HelpTextScreen_ButtonDepress, &old_HelpTextScreen_ButtonDepress);
 
-    homura::HookVirtualFunc(vTableForAlmanacDialogAddr, 83, &AlmanacDialog_MouseDrag, &old_AlmanacDialog_MouseDrag);
+    homura::HookVirtualFunc(vTableForAlmanacDialogAddr, 83, &AlmanacDialog::MouseDrag, &old_AlmanacDialog_MouseDrag);
 
     homura::HookVirtualFunc(vTableForHouseChooserDialogAddr, 73, &HouseChooserDialog_KeyDown, &old_HouseChooserDialog_KeyDown);
     homura::HookVirtualFunc(vTableForHouseChooserDialogAddr, 78, &HouseChooserDialog_MouseDown, &old_HouseChooserDialog_MouseDown);

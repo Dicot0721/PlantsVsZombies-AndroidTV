@@ -15,6 +15,8 @@
 
 namespace Sexy {
 
+//class WidgetManager;
+
 class Widget : public WidgetContainer {
 public:
     bool mVisible;               // 116

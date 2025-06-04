@@ -8,13 +8,15 @@
 #include "ScrollbarWidget.h"
 
 namespace Sexy {
-
+// 没有新增任何成员，6，这个类不知道什么意义
 class CustomScrollbarWidget : public ScrollbarWidget {
-    // 没有新增任何成员，6，这个类不知道什么意义
-}; // 大小90个整数
+public:
+    // 大小90个整数
+
+    void RemoveScrollButtons();
+};
 
 }
 
-void CustomScrollbarWidget_RemoveScrollButtons(Sexy::CustomScrollbarWidget *scrollbarWidget);
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_CUSTOMSCROLLBARWIDGET_H
