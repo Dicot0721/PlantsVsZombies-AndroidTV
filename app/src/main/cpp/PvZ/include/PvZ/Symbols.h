@@ -402,6 +402,7 @@ inline void *SeedChooserScreen_LandFlyingSeedAddr;
 inline void *SeedChooserScreen_RemoveToolTipAddr;
 inline void *SeedChooserScreen_ClickedSeedInChooserAddr;
 inline void *SeedChooserScreen_CrazyDavePickSeedsAddr;
+inline void *SeedChooserScreen_FindSeedInBankAddr;
 
 
 inline void *Coin_UpadteAddr;
@@ -1558,6 +1559,7 @@ inline bool GetFunctionAddr() {
     SeedChooserScreen_RemoveToolTipAddr = dlsym(handle, "_ZN17SeedChooserScreen13RemoveToolTipEi");
     SeedChooserScreen_ClickedSeedInChooserAddr = dlsym(handle, "_ZN17SeedChooserScreen20ClickedSeedInChooserER10ChosenSeedi");
     SeedChooserScreen_CrazyDavePickSeedsAddr = dlsym(handle, "_ZN17SeedChooserScreen18CrazyDavePickSeedsEv");
+    SeedChooserScreen_FindSeedInBankAddr = dlsym(handle, "_ZN17SeedChooserScreen14FindSeedInBankEii");
 
 
     Coin_UpadteAddr = dlsym(handle, "_ZN4Coin6UpdateEv");

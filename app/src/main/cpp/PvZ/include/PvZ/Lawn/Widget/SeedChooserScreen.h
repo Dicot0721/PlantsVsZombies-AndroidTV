@@ -1,12 +1,15 @@
 #ifndef PVZ_LAWN_SEED_CHOOSER_SCREEN_H
 #define PVZ_LAWN_SEED_CHOOSER_SCREEN_H
 
-#include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
+#include "PvZ/Symbols.h"
 
+class Board;
+class LawnApp;
+class SeedBank;
 namespace Sexy {
 class GameButton;
 }
@@ -91,8 +94,22 @@ public:
     int unkMems3[4];                      // 962 ~ 965
     // 大小966个整数
 
-    SeedChooserScreen(bool theIsZombieChooser);
+    void CloseSeedChooser() { reinterpret_cast<void (*)(SeedChooserScreen *)>(SeedChooserScreen_CloseSeedChooserAddr)(this); }
+    SeedType FindSeedInBank(int theIndexInBank, int thePlayerIndex) {
+        return reinterpret_cast<SeedType (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_FindSeedInBankAddr)(this, theIndexInBank, thePlayerIndex);
+    }
+    bool HasPacket(SeedType theSeedType, bool theIsZombieChooser) {
+        return reinterpret_cast<bool (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_HasPacketAddr)(this, theSeedType, theIsZombieChooser);
+    }
+    bool Has7Rows() { return reinterpret_cast<bool (*)(SeedChooserScreen *)>(SeedChooserScreen_Has7RowsAddr)(this); }
+    bool CancelLawnView() { return reinterpret_cast<bool (*)(SeedChooserScreen *)>(SeedChooserScreen_CancelLawnViewAddr)(this); }
+    void GetNextSeedInDir(int theNumSeed, int thePlayerIndex) { reinterpret_cast<void (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_GetNextSeedInDirAddr)(this, theNumSeed, thePlayerIndex); }
+    void GetSeedPositionInChooser(SeedType theSeedType, int &x, int &y) { reinterpret_cast<void (*)(SeedChooserScreen *, int &, int &)>(SeedChooserScreen_GetSeedPositionInChooserAddr)(this, x, y); }
+    void UpdateImitaterButton() { reinterpret_cast<void (*)(SeedChooserScreen *)>(SeedChooserScreen_UpdateImitaterButtonAddr)(this); }
+    SeedType SeedHitTest(int x, int y) { return reinterpret_cast<SeedType (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_SeedHitTestAddr)(this, x, y); }
+    void LandFlyingSeed(ChosenSeed &theChosenSeed) { reinterpret_cast<void (*)(SeedChooserScreen *, ChosenSeed &)>(SeedChooserScreen_LandFlyingSeedAddr)(this, theChosenSeed); }
 
+    SeedChooserScreen(bool theIsZombieChooser);
     void Create(bool theIsZombieChooser);
     void EnableStartButton(int theIsEnabled);
     void RebuildHelpbar();
@@ -120,27 +137,6 @@ public:
 
 /***************************************************************************************************************/
 inline bool daveNoPickSeeds;
-
-
-inline void (*SeedChooserScreen_CloseSeedChooser)(SeedChooserScreen *a);
-
-inline int (*SeedChooserScreen_FindSeedInBank)(SeedChooserScreen *a1, int a2, int a3);
-
-inline bool (*SeedChooserScreen_HasPacket)(SeedChooserScreen *a, int a2, bool a3);
-
-inline bool (*SeedChooserScreen_Has7Rows)(SeedChooserScreen *instance);
-
-inline bool (*SeedChooserScreen_CancelLawnView)(SeedChooserScreen *seedChooserScreen);
-
-inline void (*SeedChooserScreen_GetNextSeedInDir)(SeedChooserScreen *seedChooserScreen, int a2, int a3);
-
-inline void (*SeedChooserScreen_GetSeedPositionInChooser)(SeedChooserScreen *, SeedType, int *, int *);
-
-inline void (*SeedChooserScreen_UpdateImitaterButton)(SeedChooserScreen *);
-
-inline SeedType (*SeedChooserScreen_SeedHitTest)(SeedChooserScreen *, int, int);
-
-inline void (*SeedChooserScreen_LandFlyingSeed)(SeedChooserScreen *, int *);
 
 
 inline void (*old_SeedChooserScreen_RebuildHelpbar)(SeedChooserScreen *instance);

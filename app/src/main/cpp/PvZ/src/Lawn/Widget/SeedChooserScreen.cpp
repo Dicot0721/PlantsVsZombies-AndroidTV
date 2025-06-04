@@ -200,7 +200,7 @@ void SeedChooserScreen::EnableStartButton(int theIsEnabled) {
 void SeedChooserScreen::OnStartButton() {
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         // 如果是对战模式，则直接关闭种子选择界面。用于修复对战模式选卡完毕后点击开始按钮导致的闪退
-        return SeedChooserScreen_CloseSeedChooser(this);
+        return CloseSeedChooser();
     }
 
     return old_SeedChooserScreen_OnStartButton(this);
@@ -329,7 +329,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
     old_SeedChooserScreen_ShowToolTip(this, thePlayerIndex);
 
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && mIsZombieChooser) {
-        SeedType aSeedType = SeedChooserScreen_SeedHitTest(this, mCursorPositionX2, mCursorPositionY2);
+        SeedType aSeedType = SeedHitTest(mCursorPositionX2, mCursorPositionY2);
         if (mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_TOMBSTONE].mSeedState == ChosenSeedState::SEED_IN_BANK && mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_TOMBSTONE].mCrazyDavePicked) {
             int holder[1];
             TodStringTranslate(holder, "[ZOMBIE_BOSS_WANTS]");
@@ -344,22 +344,22 @@ SeedType SeedChooserScreen::GetZombieIndexBySeedType(SeedType theSeedType) {
 }
 
 void SeedChooserScreen::MouseMove(int x, int y) {
-    SeedType seedType = SeedChooserScreen_SeedHitTest(this, x, y);
+    SeedType seedType = SeedHitTest(x, y);
     // 该函数探测不到模仿者位置
     if (seedType == SeedType::SEED_NONE) {
         return;
     }
     if (mIsZombieChooser) {
         SeedType zombieSeedType = GetZombieIndexBySeedType(seedType);
-        SeedChooserScreen_GetSeedPositionInChooser(this, zombieSeedType, &mCursorPositionX2, &mCursorPositionY2);
+        GetSeedPositionInChooser(zombieSeedType, mCursorPositionX2, mCursorPositionY2);
         mSeedType2 = zombieSeedType;
     } else if (m1PChoosingSeeds) {
         if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && seedType > SeedType::SEED_MELONPULT)
             return;
-        SeedChooserScreen_GetSeedPositionInChooser(this, seedType, &mCursorPositionX1, &mCursorPositionY1);
+        GetSeedPositionInChooser(seedType, mCursorPositionX1, mCursorPositionY1);
         mSeedType1 = seedType;
     } else {
-        SeedChooserScreen_GetSeedPositionInChooser(this, seedType, &mCursorPositionX2, &mCursorPositionY2);
+        GetSeedPositionInChooser(seedType, mCursorPositionX2, mCursorPositionY2);
         mSeedType2 = seedType;
     }
 }
@@ -418,10 +418,10 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         }
     }
 
-    if (SeedChooserScreen_HasPacket(this, SeedType::SEED_IMITATER, 0) && mGameMode != GameMode::GAMEMODE_MP_VS && !mIsZombieChooser) {
+    if (HasPacket(SeedType::SEED_IMITATER, 0) && mGameMode != GameMode::GAMEMODE_MP_VS && !mIsZombieChooser) {
         int mImitaterPositionX = 0;
         int mImitaterPositionY = 0;
-        SeedChooserScreen_GetSeedPositionInChooser(this, SeedType::SEED_IMITATER, &mImitaterPositionX, &mImitaterPositionY);
+        GetSeedPositionInChooser(SeedType::SEED_IMITATER, mImitaterPositionX, mImitaterPositionY);
         Sexy::Rect mImitaterPositionRect = {mImitaterPositionX, mImitaterPositionY, mSeedPacketWidth, mSeedPacketHeight};
         if (TRect_Contains(&mImitaterPositionRect, x, y)) {
             if (m1PChoosingSeeds) {
@@ -437,7 +437,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
             return;
         }
     }
-    SeedType aSeedType = SeedChooserScreen_SeedHitTest(this, x, y);
+    SeedType aSeedType = SeedHitTest(x, y);
     // 该函数探测不到模仿者位置
 
     if (aSeedType == SeedType::SEED_NONE) {
@@ -450,15 +450,15 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
 
     if (mIsZombieChooser) {
         SeedType zombieSeedType = GetZombieIndexBySeedType(aSeedType);
-        SeedChooserScreen_GetSeedPositionInChooser(this, zombieSeedType, &mCursorPositionX2, &mCursorPositionY2);
+        GetSeedPositionInChooser(zombieSeedType, mCursorPositionX2, mCursorPositionY2);
         mSeedType2 = zombieSeedType;
     } else if (m1PChoosingSeeds) {
         if (mGameMode == GameMode::GAMEMODE_MP_VS && aSeedType > SeedType::SEED_MELONPULT)
             return;
-        SeedChooserScreen_GetSeedPositionInChooser(this, aSeedType, &mCursorPositionX1, &mCursorPositionY1);
+        GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
         mSeedType1 = aSeedType;
     } else {
-        SeedChooserScreen_GetSeedPositionInChooser(this, aSeedType, &mCursorPositionX2, &mCursorPositionY2);
+        GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
         mSeedType2 = aSeedType;
     }
     gSeedChooserTouchState = SeedChooserTouchState::SeedChooser;
@@ -466,22 +466,22 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
 
 void SeedChooserScreen::MouseDrag(int x, int y) {
     if (gSeedChooserTouchState == SeedChooserTouchState::SeedChooser) {
-        SeedType aSeedType = SeedChooserScreen_SeedHitTest(this, x, y);
+        SeedType aSeedType = SeedHitTest(x, y);
         // 该函数探测不到模仿者位置
         if (aSeedType == SeedType::SEED_NONE) {
             return;
         }
         if (mIsZombieChooser) {
             SeedType zombieSeedType = GetZombieIndexBySeedType(aSeedType);
-            SeedChooserScreen_GetSeedPositionInChooser(this, zombieSeedType, &mCursorPositionX2, &mCursorPositionY2);
+            GetSeedPositionInChooser(zombieSeedType, mCursorPositionX2, mCursorPositionY2);
             mSeedType2 = zombieSeedType;
         } else if (m1PChoosingSeeds) {
             if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && aSeedType > SeedType::SEED_MELONPULT)
                 return;
-            SeedChooserScreen_GetSeedPositionInChooser(this, aSeedType, &mCursorPositionX1, &mCursorPositionY1);
+            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
             mSeedType1 = aSeedType;
         } else {
-            SeedChooserScreen_GetSeedPositionInChooser(this, aSeedType, &mCursorPositionX2, &mCursorPositionY2);
+            GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
             mSeedType2 = aSeedType;
         }
     }

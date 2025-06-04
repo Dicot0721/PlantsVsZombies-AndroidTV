@@ -59,22 +59,6 @@ inline void InitInGameFunction() {
     TodAnimateCurveFloatTime = (decltype(TodAnimateCurveFloatTime))TodAnimateCurveFloatTimeAddr;
 
 
-    SeedChooserScreen_CancelLawnView = (decltype(SeedChooserScreen_CancelLawnView))SeedChooserScreen_CancelLawnViewAddr;
-    SeedChooserScreen_GetNextSeedInDir = (decltype(SeedChooserScreen_GetNextSeedInDir))SeedChooserScreen_GetNextSeedInDirAddr;
-    SeedChooserScreen_GetSeedPositionInChooser = (decltype(SeedChooserScreen_GetSeedPositionInChooser))SeedChooserScreen_GetSeedPositionInChooserAddr;
-    //    GetSeedPositionInBank=(void (*)(SeedChooserScreen*,int,int*,int*,int))SeedChooserScreen_GetSeedPositionInBankAddr;
-    SeedChooserScreen_UpdateImitaterButton = (decltype(SeedChooserScreen_UpdateImitaterButton))SeedChooserScreen_UpdateImitaterButtonAddr;
-    SeedChooserScreen_SeedHitTest = (decltype(SeedChooserScreen_SeedHitTest))SeedChooserScreen_SeedHitTestAddr;
-    //    SeedChooserScreen_ButtonDePress = (void (*)(SeedChooserScreen *, int)) SeedChooserScreen_ButtonDepressAddr;
-    SeedChooserScreen_LandFlyingSeed = (decltype(SeedChooserScreen_LandFlyingSeed))SeedChooserScreen_LandFlyingSeedAddr;
-    //    SeedChooserScreen_ClickedSeedInBank = (void (*)(int *, int *, unsigned int)) SeedChooserScreen_ClickedSeedInBankAddr;
-    //    GameButtonDown = (int (*)(int *, int, unsigned int)) SeedChooserScreen_GameButtonDownAddr;
-    SeedChooserScreen_CloseSeedChooser = (decltype(SeedChooserScreen_CloseSeedChooser))SeedChooserScreen_CloseSeedChooserAddr;
-    //    SeedChooserScreen_OnKeyDown = (void (*)(int *, int, unsigned int)) SeedChooserScreen_OnKeyDownAddr;
-    SeedChooserScreen_HasPacket = (decltype(SeedChooserScreen_HasPacket))SeedChooserScreen_HasPacketAddr;
-    SeedChooserScreen_Has7Rows = (decltype(SeedChooserScreen_Has7Rows))SeedChooserScreen_Has7RowsAddr;
-
-
     Sexy_SexyTransform2D_SexyTransform2D = (decltype(Sexy_SexyTransform2D_SexyTransform2D))Sexy_SexyTransform2D_SexyTransform2DAddr;
     Sexy_SexyTransform2D_Scale = (decltype(Sexy_SexyTransform2D_Scale))Sexy_SexyTransform2D_ScaleAddr;
     Sexy_SexyTransform2D_Translate = (decltype(Sexy_SexyTransform2D_Translate))Sexy_SexyTransform2D_TranslateAddr;
