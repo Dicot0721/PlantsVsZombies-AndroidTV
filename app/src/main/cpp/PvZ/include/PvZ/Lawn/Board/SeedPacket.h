@@ -1,8 +1,10 @@
 #ifndef PVZ_LAWN_SEED_PACKET_H
 #define PVZ_LAWN_SEED_PACKET_H
 
-#include "GameObject.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/Symbols.h"
+
+#include "GameObject.h"
 
 class HitResult;
 class SeedBank;
@@ -27,26 +29,24 @@ public:
     bool mSelectedBy2P;              // 112
     bool mSelectedBy1P;              // 113
     // 大小29个整数
-public:
+
+    void DrawBackground(Sexy::Graphics *g) { reinterpret_cast<void (*)(SeedPacket *, Sexy::Graphics *)>(SeedPacket_DrawBackgroundAddr)(this, g); }
+    bool CanPickUp() { return reinterpret_cast<bool (*)(SeedPacket *)>(SeedPacket_CanPickUpAddr)(this); }
+    bool MouseHitTest(int x, int y, HitResult *theHitResult ) { return reinterpret_cast<bool (*)(SeedPacket *, int, int, HitResult *)>(SeedPacket_MouseHitTestAddr)(this, x, y, theHitResult); }
+    bool GetPlayerIndex() { return reinterpret_cast<bool (*)(SeedPacket *)>(SeedPacket_GetPlayerIndexAddr)(this); }
+    void DrawMiddle(Sexy::Graphics *g) { reinterpret_cast<void (*)(SeedPacket *, Sexy::Graphics *)>(SeedPacket_DrawMiddleAddr)(this, g); }
+
     void Update();
     void UpdateSelected();
     void DrawOverlay(Sexy::Graphics *g);
     void Draw(Sexy::Graphics *g);
     void FlashIfReady();
+    bool BeginDraw(Sexy::Graphics *g);
+    void EndDraw(Sexy::Graphics *g);
 };
 
 /***************************************************************************************************************/
 inline bool showCoolDown;
-
-inline void (*SeedPacket_DrawBackground)(SeedPacket *seedPacket, Sexy::Graphics *graphics);
-
-inline bool (*SeedPacket_CanPickUp)(SeedPacket *seedPacket);
-
-inline bool (*SeedPacket_MouseHitTest)(SeedPacket *, int, int, HitResult *);
-
-inline bool (*SeedPacket_GetPlayerIndex)(SeedPacket *);
-
-inline void (*SeedPacket_DrawMiddle)(SeedPacket *seedPacket, Sexy::Graphics *graphics);
 
 
 inline void (*old_SeedPacket_Update)(SeedPacket *seedPacket);
@@ -64,11 +64,6 @@ inline bool (*old_SeedPacket_BeginDraw)(SeedPacket *, Sexy::Graphics *);
 inline void (*old_SeedPacket_EndDraw)(SeedPacket *, Sexy::Graphics *);
 
 inline void (*old_SeedPacket_FlashIfReady)(SeedPacket *seedPacket);
-
-
-bool SeedPacket_BeginDraw(SeedPacket *a, Sexy::Graphics *a2);
-
-void SeedPacket_EndDraw(SeedPacket *a, Sexy::Graphics *a2);
 
 
 #endif // PVZ_LAWN_SEED_PACKET_H

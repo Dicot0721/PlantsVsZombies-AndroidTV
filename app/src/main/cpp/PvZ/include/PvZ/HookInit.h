@@ -65,14 +65,6 @@ inline void InitInGameFunction() {
     Sexy_SexyTransform2D_RotateRad = (decltype(Sexy_SexyTransform2D_RotateRad))Sexy_SexyTransform2D_RotateRadAddr;
 
 
-    SeedPacket_DrawBackground = (decltype(SeedPacket_DrawBackground))SeedPacket_DrawBackgroundAddr;
-    // SeedPacket_MouseDown = (void (*)(int *, int, int, int)) SeedPacket_MouseDownAddr;
-    SeedPacket_CanPickUp = (decltype(SeedPacket_CanPickUp))SeedPacket_CanPickUpAddr;
-    SeedPacket_MouseHitTest = (decltype(SeedPacket_MouseHitTest))SeedPacket_MouseHitTestAddr;
-    SeedPacket_GetPlayerIndex = (decltype(SeedPacket_GetPlayerIndex))SeedPacket_GetPlayerIndexAddr;
-    SeedPacket_DrawMiddle = (decltype(SeedPacket_DrawMiddle))SeedPacket_DrawMiddleAddr;
-
-
     Sexy_StrFormat = (decltype(Sexy_StrFormat))Sexy_StrFormatAddr;
     TodStringTranslate = (decltype(TodStringTranslate))TodStringTranslateAddr;
     //    DrawSeedPacket = (void (*)(Sexy::Graphics *, int, int, int, int, float, int, bool, bool, bool,bool)) DrawSeedPacketAddr;
@@ -637,8 +629,8 @@ inline void InitVTableHookFunction() {
     homura::HookVirtualFunc(vTableForHouseChooserDialogAddr, 73, &HouseChooserDialog_KeyDown, &old_HouseChooserDialog_KeyDown);
     homura::HookVirtualFunc(vTableForHouseChooserDialogAddr, 78, &HouseChooserDialog_MouseDown, &old_HouseChooserDialog_MouseDown);
 
-    homura::HookVirtualFunc(vTableForSeedPacketAddr, 4, &SeedPacket_BeginDraw, &old_SeedPacket_BeginDraw);
-    homura::HookVirtualFunc(vTableForSeedPacketAddr, 5, &SeedPacket_EndDraw, &old_SeedPacket_EndDraw);
+    homura::HookVirtualFunc(vTableForSeedPacketAddr, 4, &SeedPacket::BeginDraw, &old_SeedPacket_BeginDraw);
+    homura::HookVirtualFunc(vTableForSeedPacketAddr, 5, &SeedPacket::EndDraw, &old_SeedPacket_EndDraw);
 
     homura::HookVirtualFunc(vTableForSeedBankAddr, 4, &SeedBank_BeginDraw, &old_SeedBank_BeginDraw);
     homura::HookVirtualFunc(vTableForSeedBankAddr, 5, &SeedBank_EndDraw, &old_SeedBank_EndDraw);

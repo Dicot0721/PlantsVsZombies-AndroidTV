@@ -1845,7 +1845,7 @@ void Board::MouseDown(int x, int y, int theClickCount) {
         if (mGameScene == GameScenes::SCENE_LEVEL_INTRO)
             return;
         SeedPacket *seedPacket = (SeedPacket *)hitResult.mObject;
-        gPlayerIndex = (TouchPlayerIndex)SeedPacket_GetPlayerIndex(seedPacket); // 玩家1或玩家2
+        gPlayerIndex = (TouchPlayerIndex)seedPacket->GetPlayerIndex(); // 玩家1或玩家2
         if (gPlayerIndex == TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
             requestDrawShovelInCursor = false; // 不再绘制铲子
             if (isCobCannonSelected) {         // 如果拿着加农炮，将其放下
@@ -1853,7 +1853,7 @@ void Board::MouseDown(int x, int y, int theClickCount) {
             }
             if (mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST
                 || mGameMode == GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM) {
-                if (SeedPacket_CanPickUp(seedPacket)) {
+                if (seedPacket->CanPickUp()) {
                     mSendKeyWhenTouchUp = true;
                 } else {
                     LawnApp_PlaySample(mApp, *Sexy_SOUND_BUZZER_Addr);
@@ -1886,7 +1886,7 @@ void Board::MouseDown(int x, int y, int theClickCount) {
             }
             if (mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST
                 || mGameMode == GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM) {
-                if (SeedPacket_CanPickUp(seedPacket)) {
+                if (seedPacket->CanPickUp()) {
                     mSendKeyWhenTouchUp = true;
                 } else {
                     LawnApp_PlaySample(mApp, *Sexy_SOUND_BUZZER_Addr);
@@ -2435,7 +2435,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
             return;
         SeedPacket *seedPacket = (SeedPacket *)hitResult.mObject;
         int newSeedPacketIndex = seedPacket->mIndex;
-        gPlayerIndexSecond = (TouchPlayerIndex)SeedPacket_GetPlayerIndex(seedPacket); // 玩家1或玩家2
+        gPlayerIndexSecond = (TouchPlayerIndex)seedPacket->GetPlayerIndex(); // 玩家1或玩家2
 
         if (gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
             requestDrawShovelInCursor = false; // 不再绘制铲子
@@ -2444,7 +2444,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
             }
             if (mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST
                 || mGameMode == GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM) {
-                if (SeedPacket_CanPickUp(seedPacket)) {
+                if (seedPacket->CanPickUp()) {
                     gSendKeyWhenTouchUpSecond = true;
                 } else {
                     LawnApp_PlaySample(mApp, *Sexy_SOUND_BUZZER_Addr);
@@ -2478,7 +2478,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
             }
             if (mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST
                 || mGameMode == GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM) {
-                if (SeedPacket_CanPickUp(seedPacket)) {
+                if (seedPacket->CanPickUp()) {
                     gSendKeyWhenTouchUpSecond = true;
                 } else {
                     LawnApp_PlaySample(mApp, *Sexy_SOUND_BUZZER_Addr);

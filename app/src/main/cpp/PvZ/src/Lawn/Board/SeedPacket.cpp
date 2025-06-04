@@ -39,7 +39,7 @@ void SeedPacket::UpdateSelected() {
         // 如果是双人模式关卡(对战或结盟)，则使用下面的逻辑来更新当前选中的卡片。用于修复1P和2P的卡片选择框同时出现在两个人各自的植物栏里(也就是植物栏一共出现四个选择框)的问题。
         int mSelectedSeedIndex1P = mBoard->mGamepadControls1->mSelectedSeedIndex;
         int mSelectedSeedIndex2P = mBoard->mGamepadControls2->mSelectedSeedIndex;
-        bool playerIndex = SeedPacket_GetPlayerIndex(this);
+        bool playerIndex = GetPlayerIndex();
         bool selectedBy1P = playerIndex == 0 && mIndex == mSelectedSeedIndex1P;
         bool selectedBy2P = playerIndex == 1 && mIndex == mSelectedSeedIndex2P;
         mSelectedBy1P = selectedBy1P || selectedBy2P;
@@ -58,7 +58,7 @@ void SeedPacket::DrawOverlay(Sexy::Graphics *g) {
         int holder[1];
         int coolDownRemaining = mRefreshTime - mRefreshCounter;
         Sexy_StrFormat(holder, "%1.1f", coolDownRemaining / 100.0f);
-        g->SetColor(SeedPacket_GetPlayerIndex(this) ? yellow : blue);
+        g->SetColor(GetPlayerIndex() ? yellow : blue);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
         g->DrawString((SexyString&)holder, coolDownRemaining < 1000 ? 10 : 0, 39);
         Sexy_String_Delete(holder);
@@ -76,18 +76,18 @@ void SeedPacket_MouseDown(SeedPacket *seedPacket, int x, int y, int c, int unk) 
     old_SeedPacket_MouseDown(seedPacket, x, y, c, unk);
 }
 
-bool SeedPacket_BeginDraw(SeedPacket *a, Sexy::Graphics *a2) {
-    return old_SeedPacket_BeginDraw(a, a2);
+bool SeedPacket::BeginDraw(Sexy::Graphics *g) {
+    return old_SeedPacket_BeginDraw(this, g);
 }
 
-void SeedPacket_EndDraw(SeedPacket *a, Sexy::Graphics *a2) {
-    old_SeedPacket_EndDraw(a, a2);
+void SeedPacket::EndDraw(Sexy::Graphics *g) {
+    old_SeedPacket_EndDraw(this, g);
 }
 
 void SeedPacket::FlashIfReady() {
     // 去除对战模式下的闪光效果的缩放
 
-    if (!SeedPacket_CanPickUp(this)) {
+    if (!CanPickUp()) {
         return;
     }
     if (mApp->mEasyPlantingCheat) {

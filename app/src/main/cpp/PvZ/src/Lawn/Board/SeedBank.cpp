@@ -110,9 +110,9 @@ void SeedBank::Draw(Sexy::Graphics *g) {
                     }
                 }
             }
-            if (SeedPacket_BeginDraw(seedPacket, g)) {
-                SeedPacket_DrawBackground(seedPacket, g);
-                SeedPacket_EndDraw(seedPacket, g);
+            if (seedPacket->BeginDraw(g)) {
+                seedPacket->DrawBackground(g);
+                seedPacket->EndDraw(g);
             }
         }
         for (int i = 0; i < mNumPackets; ++i) {
@@ -123,9 +123,9 @@ void SeedBank::Draw(Sexy::Graphics *g) {
             if (seedPacket == seedPacket1 || seedPacket == seedPacket2) {
                 continue;
             }
-            if (SeedPacket_BeginDraw(seedPacket, g)) {
-                SeedPacket_DrawMiddle(seedPacket, g);
-                SeedPacket_EndDraw(seedPacket, g);
+            if (seedPacket->BeginDraw(g)) {
+                seedPacket->DrawMiddle(g);
+                seedPacket->EndDraw(g);
             }
         }
 
@@ -137,9 +137,9 @@ void SeedBank::Draw(Sexy::Graphics *g) {
             if (seedPacket == seedPacket1 || seedPacket == seedPacket2) {
                 continue;
             }
-            if (SeedPacket_BeginDraw(seedPacket, g)) {
+            if (seedPacket->BeginDraw(g)) {
                 seedPacket->DrawOverlay(g);
-                SeedPacket_EndDraw(seedPacket, g);
+                seedPacket->EndDraw(g);
             }
         }
     }
@@ -147,13 +147,13 @@ void SeedBank::Draw(Sexy::Graphics *g) {
     g->mClipRect.mY -= 20;
     g->mClipRect.mWidth += 20;
     g->mClipRect.mHeight += 30;
-    if (seedPacket2 != nullptr && SeedPacket_BeginDraw(seedPacket2, g)) {
+    if (seedPacket2 != nullptr && seedPacket2->BeginDraw(g)) {
         seedPacket2->Draw(g);
-        SeedPacket_EndDraw(seedPacket2, g);
+        seedPacket2->EndDraw(g);
     }
-    if (seedPacket1 != nullptr && SeedPacket_BeginDraw(seedPacket1, g)) {
+    if (seedPacket1 != nullptr && seedPacket1->BeginDraw(g)) {
         seedPacket1->Draw(g);
-        SeedPacket_EndDraw(seedPacket1, g);
+        seedPacket1->EndDraw(g);
     }
     g->ClearClipRect();
     if (mApp->IsSlotMachineLevel()) {
@@ -213,7 +213,7 @@ bool SeedBank::MouseHitTest(int x, int y, HitResult *theHitResult) {
     }
 
     for (int i = 0; i < mNumPackets; i++) {
-        if (SeedPacket_MouseHitTest(&mSeedPackets[i], relativeX, relativeY, theHitResult)) {
+        if ((&mSeedPackets[i])->MouseHitTest(relativeX, relativeY, theHitResult)) {
             return true;
         }
     }
