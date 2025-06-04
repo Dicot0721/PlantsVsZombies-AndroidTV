@@ -2,6 +2,8 @@
 #define PVZ_LAWN_SEED_BANK_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/Symbols.h"
+
 #include "SeedPacket.h"
 
 struct ShopSeedPacket {
@@ -22,16 +24,20 @@ public:
     int unknownMembers[100];            // 355 ~ 454
     // 大小455个整数
 
+    int GetNumSeedsOnConveyorBelt() { return reinterpret_cast<int (*)(SeedBank *)>(SeedBank_GetNumSeedsOnConveyorBeltAddr)(this); }
+
     SeedBank(bool thePlayerIndex);
     void Create(bool thePlayerIndex);
     void Draw(Sexy::Graphics *g);
     bool MouseHitTest(int x, int y, HitResult *theHitResult);
     void UpdateWidth();
     void Move(int x, int y);
+    bool ContainsPoint(int x, int y);
+    bool BeginDraw(Sexy::Graphics *g);
+    void EndDraw(Sexy::Graphics *g);
 };
 
 /***************************************************************************************************************/
-inline int (*SeedBank_GetNumSeedsOnConveyorBelt)(SeedBank *);
 
 
 inline void (*old_SeedBank_Draw)(SeedBank *seedBank, Sexy::Graphics *graphics);
@@ -45,10 +51,5 @@ inline bool (*old_SeedBank_BeginDraw)(SeedBank *seedBank, Sexy::Graphics *graphi
 inline void (*old_SeedBank_EndDraw)(SeedBank *seedBank, Sexy::Graphics *graphics);
 
 
-bool SeedBank_ContainsPoint(SeedBank *, int x, int y);
-
-bool SeedBank_BeginDraw(SeedBank *seedBank, Sexy::Graphics *graphics);
-
-void SeedBank_EndDraw(SeedBank *seedBank, Sexy::Graphics *graphics);
 
 #endif // PVZ_LAWN_SEED_BANK_H

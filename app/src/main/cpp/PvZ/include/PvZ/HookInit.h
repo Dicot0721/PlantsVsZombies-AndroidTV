@@ -124,8 +124,8 @@ inline void InitInGameFunction() {
     PoolEffect_BilinearLookupFixedPoint = (decltype(PoolEffect_BilinearLookupFixedPoint))PoolEffect_BilinearLookupFixedPointAddr;
     Sexy_DefaultProfileMgr_GetAnyProfile = (decltype(Sexy_DefaultProfileMgr_GetAnyProfile))Sexy_DefaultProfileMgr_GetAnyProfileAddr;
     // Sexy_WidgetManager_MouseDown=(int (*)(int *manager, int x, int y, int theClickCount))Sexy_WidgetManager_MouseDownAddr;
-    SeedBank_GetNumSeedsOnConveyorBelt = (decltype(SeedBank_GetNumSeedsOnConveyorBelt))SeedBank_GetNumSeedsOnConveyorBeltAddr;
-    // SeedBank_ContainsPoint=(bool (*)(SeedBank *, int x, int y))SeedBank_ContainsPointAddr;
+
+
     Music2_Delete = (decltype(Music2_Delete))Music2_DeleteAddr;
     Music_Music = (decltype(Music_Music))Music_MusicAddr;
     //    Music2_Music2=(void (*)(Music2*))Music2_Music2Addr;
@@ -134,6 +134,7 @@ inline void InitInGameFunction() {
     Music_GetMusicOrder = (decltype(Music_GetMusicOrder))Music_GetMusicOrderAddr;
     // Music_PlayFromOffset=(void (*)(Music*,MusicFile,int,double))Music_PlayFromOffsetAddr;
     Music_SetupMusicFileForTune = (decltype(Music_SetupMusicFileForTune))Music_SetupMusicFileForTuneAddr;
+
     Sexy_AudiereMusicInterface_SetVolume = (decltype(Sexy_AudiereMusicInterface_SetVolume))Sexy_AudiereMusicInterface_SetVolumeAddr;
     Sexy_AudiereMusicInterface_SetSongVolume = (decltype(Sexy_AudiereMusicInterface_SetSongVolume))Sexy_AudiereMusicInterface_SetSongVolumeAddr;
     Sexy_AudiereMusicInterface_PlayMusic = (decltype(Sexy_AudiereMusicInterface_PlayMusic))Sexy_AudiereMusicInterface_PlayMusicAddr;
@@ -632,8 +633,8 @@ inline void InitVTableHookFunction() {
     homura::HookVirtualFunc(vTableForSeedPacketAddr, 4, &SeedPacket::BeginDraw, &old_SeedPacket_BeginDraw);
     homura::HookVirtualFunc(vTableForSeedPacketAddr, 5, &SeedPacket::EndDraw, &old_SeedPacket_EndDraw);
 
-    homura::HookVirtualFunc(vTableForSeedBankAddr, 4, &SeedBank_BeginDraw, &old_SeedBank_BeginDraw);
-    homura::HookVirtualFunc(vTableForSeedBankAddr, 5, &SeedBank_EndDraw, &old_SeedBank_EndDraw);
+    homura::HookVirtualFunc(vTableForSeedBankAddr, 4, &SeedBank::BeginDraw, &old_SeedBank_BeginDraw);
+    homura::HookVirtualFunc(vTableForSeedBankAddr, 5, &SeedBank::EndDraw, &old_SeedBank_EndDraw);
 
     homura::HookVirtualFunc(vTableForGraphicsAddr, 4, &Sexy::Graphics::PushTransform, &old_Sexy_Graphics_PushTransform);
     homura::HookVirtualFunc(vTableForGraphicsAddr, 5, &Sexy::Graphics::PopTransform, &old_Sexy_Graphics_PopTransform);

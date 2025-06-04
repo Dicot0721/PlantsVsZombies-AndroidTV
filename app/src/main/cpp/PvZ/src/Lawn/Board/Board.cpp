@@ -1755,7 +1755,7 @@ bool Board::MouseHitTest(int x, int y, HitResult *theHitResult, bool thePlayerIn
     }
 
     SeedBank *mSeedBank = mGamepadControls1->GetSeedBank();
-    if (SeedBank_ContainsPoint(mSeedBank, x, y)) {
+    if (mSeedBank->ContainsPoint(x, y)) {
         if (mSeedBank->SeedBank::MouseHitTest(x, y, theHitResult)) {
             CursorType mCursorType = mCursorObject1->mCursorType;
             if (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_BANK) {
@@ -1769,7 +1769,7 @@ bool Board::MouseHitTest(int x, int y, HitResult *theHitResult, bool thePlayerIn
 
     if (mGameMode == GameMode::GAMEMODE_MP_VS || mApp->IsCoopMode()) {
         SeedBank *mSeedBank2 = mGamepadControls2->GetSeedBank();
-        if (SeedBank_ContainsPoint(mSeedBank2, x, y)) {
+        if (mSeedBank2->ContainsPoint(x, y)) {
             if (mSeedBank2->SeedBank::MouseHitTest(x, y, theHitResult)) {
                 CursorType mCursorType_2P = mCursorObject2->mCursorType;
                 if (mCursorType_2P == CursorType::CURSOR_TYPE_PLANT_FROM_BANK) {
@@ -2295,12 +2295,12 @@ void Board::MouseUp(int x, int y, int theClickCount) {
     if (mTouchState != TouchState::TOUCHSTATE_NONE && mSendKeyWhenTouchUp) {
         SeedBank *seedBank = mGamepadControls1->GetSeedBank();
         int currentSeedBankIndex = mGamepadControls1->mSelectedSeedIndex;
-        int numSeedsInBank = SeedBank_GetNumSeedsOnConveyorBelt(seedBank);
+        int numSeedsInBank = seedBank->GetNumSeedsOnConveyorBelt();
         int mGameState = mGamepadControls1->mGamepadState;
         bool isCobCannonSelected = mGamepadControls1->mIsCobCannonSelected;
 
         SeedBank *seedBank_2P = mGamepadControls2->GetSeedBank();
-        int numSeedsInBank_2P = SeedBank_GetNumSeedsOnConveyorBelt(seedBank_2P);
+        int numSeedsInBank_2P = seedBank_2P->GetNumSeedsOnConveyorBelt();
         int currentSeedBankIndex_2P = mGamepadControls2->mSelectedSeedIndex;
         int mGameState_2P = mGamepadControls2->mGamepadState;
         bool isCobCannonSelected_2P = mGamepadControls2->mIsCobCannonSelected;
@@ -2328,7 +2328,7 @@ void Board::MouseUp(int x, int y, int theClickCount) {
                 }
                 int mGameStateNew = mGamepadControls1->mGamepadState;
                 int seedPacketIndexNew = mGamepadControls1->mSelectedSeedIndex;
-                int numSeedsInBankNew = SeedBank_GetNumSeedsOnConveyorBelt(seedBank);
+                int numSeedsInBankNew = seedBank->GetNumSeedsOnConveyorBelt();
                 mGamepadControls1->mIsInShopSeedBank = mGameStateNew != 7;
                 if (mGameState != mGameStateNew) {
                     if (!HasConveyorBeltSeedBank(0) || numSeedsInBank == numSeedsInBankNew) { // 修复传送带关卡种植之后SeedBank动画不正常
@@ -2365,7 +2365,7 @@ void Board::MouseUp(int x, int y, int theClickCount) {
                 }
                 int mGameStateNew_2P = mGamepadControls2->mGamepadState;
                 int seedPacketIndexNew_2P = mGamepadControls2->mSelectedSeedIndex;
-                int numSeedsInBankNew_2P = SeedBank_GetNumSeedsOnConveyorBelt(seedBank_2P);
+                int numSeedsInBankNew_2P = seedBank_2P->GetNumSeedsOnConveyorBelt();
                 mGamepadControls2->mIsInShopSeedBank = mGameStateNew_2P != 7;
                 if (mGameState_2P != mGameStateNew_2P) {
                     if (!HasConveyorBeltSeedBank(1) || numSeedsInBank_2P == numSeedsInBankNew_2P) { // 修复传送带关卡种植之后SeedBank动画不正常
@@ -2895,13 +2895,13 @@ void Board::MouseDragSecond(int x, int y) {
 void Board::MouseUpSecond(int x, int y, int theClickCount) {
     if (gTouchStateSecond != TouchState::TOUCHSTATE_NONE && gSendKeyWhenTouchUpSecond) {
         SeedBank *aSeedBank = mGamepadControls1->GetSeedBank();
-        int aNumSeedsOnConveyor = SeedBank_GetNumSeedsOnConveyorBelt(aSeedBank);
+        int aNumSeedsOnConveyor = aSeedBank->GetNumSeedsOnConveyorBelt();
         int aCurrentSeedBankIndex = mGamepadControls1->mSelectedSeedIndex;
         int aGameState = mGamepadControls1->mGamepadState;
         bool aIsCobCannonSelected = mGamepadControls1->mIsCobCannonSelected;
 
         SeedBank *aSeedBank_2P = mGamepadControls2->GetSeedBank();
-        int aNumSeedsOnConveyor_2P = SeedBank_GetNumSeedsOnConveyorBelt(aSeedBank_2P);
+        int aNumSeedsOnConveyor_2P = aSeedBank_2P->GetNumSeedsOnConveyorBelt();
         int aCurrentSeedBankIndex_2P = mGamepadControls2->mSelectedSeedIndex;
         int aGameState_2P = mGamepadControls2->mGamepadState;
         bool aIsCobCannonSelected_2P = mGamepadControls2->mIsCobCannonSelected;
@@ -2929,7 +2929,7 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
                     mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
                 }
                 int mGameStateNew = mGamepadControls1->mGamepadState;
-                int numSeedsInBankNew = SeedBank_GetNumSeedsOnConveyorBelt(aSeedBank);
+                int numSeedsInBankNew = aSeedBank->GetNumSeedsOnConveyorBelt();
                 int seedPacketIndexNew = mGamepadControls1->mSelectedSeedIndex;
                 mGamepadControls1->mIsInShopSeedBank = mGameStateNew != 7;
                 if (aGameState != mGameStateNew) {
@@ -2955,7 +2955,7 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
                 }
                 int mGameStateNew_2P = mGamepadControls2->mGamepadState;
-                int numSeedsInBankNew_2P = SeedBank_GetNumSeedsOnConveyorBelt(aSeedBank_2P);
+                int numSeedsInBankNew_2P = aSeedBank_2P->GetNumSeedsOnConveyorBelt();
                 int seedPacketIndexNew_2P = mGamepadControls2->mSelectedSeedIndex;
                 mGamepadControls2->mIsInShopSeedBank = mGameStateNew_2P != 7;
                 if (aGameState_2P != mGameStateNew_2P) {
@@ -3190,15 +3190,15 @@ void Board::DoPlantingAchievementCheck(SeedType theSeedType) {
 void Board::DrawUITop(Sexy::Graphics *g) {
     if (seedBankPin && !mApp->IsSlotMachineLevel()) {
         if (mApp->mGameScene != GameScenes::SCENE_LEADER_BOARD && mApp->mGameScene != GameScenes::SCENE_ZOMBIES_WON) {
-            if (SeedBank_BeginDraw(mSeedBank1, g)) {
+            if (mSeedBank1->BeginDraw(g)) {
                 mSeedBank1->SeedBank::Draw(g);
-                SeedBank_EndDraw(mSeedBank1, g);
+                mSeedBank1->EndDraw(g);
             }
 
             if (mSeedBank2 != nullptr) {
-                if (SeedBank_BeginDraw(mSeedBank2, g)) {
+                if (mSeedBank2->BeginDraw(g)) {
                     mSeedBank2->SeedBank::Draw(g);
-                    SeedBank_EndDraw(mSeedBank2, g);
+                    mSeedBank2->EndDraw(g);
                 }
             }
         }

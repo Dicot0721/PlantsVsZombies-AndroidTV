@@ -228,8 +228,8 @@ void SeedBank::UpdateWidth() {
     old_SeedBank_UpdateWidth(this);
 }
 
-bool SeedBank_ContainsPoint(SeedBank *seedBank, int theX, int theY) {
-    return theX >= seedBank->mX && theX < seedBank->mX + seedBank->mWidth && theY >= seedBank->mY && theY < seedBank->mY + seedBank->mHeight;
+bool SeedBank::ContainsPoint(int theX, int theY) {
+    return theX >= mX && theX < mX + mWidth && theY >= mY && theY < mY + mHeight;
 }
 
 void SeedBank::Move(int x, int y) {
@@ -246,11 +246,11 @@ void SeedBank::Move(int x, int y) {
     }
 }
 
-bool SeedBank_BeginDraw(SeedBank *seedBank, Sexy::Graphics *graphics) {
-    return old_SeedBank_BeginDraw(seedBank, graphics);
+bool SeedBank::BeginDraw(Sexy::Graphics *g) {
+    return old_SeedBank_BeginDraw(this, g);
 }
 
 
-void SeedBank_EndDraw(SeedBank *seedBank, Sexy::Graphics *graphics) {
-    old_SeedBank_EndDraw(seedBank, graphics);
+void SeedBank::EndDraw(Sexy::Graphics *g) {
+    old_SeedBank_EndDraw(this, g);
 }
