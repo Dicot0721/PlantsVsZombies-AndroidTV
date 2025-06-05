@@ -1,7 +1,13 @@
 #ifndef PVZ_LAWN_MUSIC_H
 #define PVZ_LAWN_MUSIC_H
 
+#include "PvZ/Symbols.h"
+#include "PvZ/SexyAppFramework/Sound/MusicInterface.h"
+
 class LawnApp;
+namespace Sexy {
+
+}
 
 enum MusicTune {
     MUSIC_TUNE_NONE = -1,
@@ -51,12 +57,12 @@ public:
     int* vTable;                                       // 0
     int unkMems[3];                                    // 1 ~ 3
     LawnApp* mApp;                                     // 4
-    int* mMusicInterface;                              // 5
-    MusicTune mCurMusicTune;                // 6
-    MusicTune mLastMusicTune;               // 7
-    MusicFile mCurMusicFileMain;            // 8
-    MusicFile mCurMusicFileDrums;           // 9
-    MusicFile mCurMusicFileHihats;          // 10
+    Sexy::MusicInterface* mMusicInterface;             // 5
+    MusicTune mCurMusicTune;                           // 6
+    MusicTune mLastMusicTune;                          // 7
+    MusicFile mCurMusicFileMain;                       // 8
+    MusicFile mCurMusicFileDrums;                      // 9
+    MusicFile mCurMusicFileHihats;                     // 10
     int mBurstOverride;                                // 11
     int mBaseBPM;                                      // 12
     int mBaseModSpeed;                                 // 13
@@ -74,35 +80,39 @@ public:
     float mPauseVolume;                                // 24
     float mNormalVolume;                               // 25
     // 大小26个整数
-public:
+
+    void Create() { reinterpret_cast<void (*)(Music *)>(Music_MusicAddr)(this); }
+    void StopAllMusic() { reinterpret_cast<void (*)(Music *)>(Music_StopAllMusicAddr)(this); }
+    unsigned long GetMusicOrder(MusicFile theMusicFile) { return reinterpret_cast<unsigned long (*)(Music *, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile); }
+    void SetupMusicFileForTune(MusicFile theMusicFile, MusicTune theMusicTune) {
+        reinterpret_cast<void (*)(Music*, MusicFile, MusicTune)>(Music_SetupMusicFileForTuneAddr)(this, theMusicFile, theMusicTune);
+    }
+
     void PlayMusic(MusicTune theMusicTune, int theOffset, int theDrumsOffset);
     void MusicUpdate();
     void UpdateMusicBurst();
+    void MusicResync();
+    void StartBurst();
+    void PlayFromOffset(MusicFile theMusicFile, int theOffset, double theVolume);
+    void UpdateMusicBurst1();
+    void UpdateMusicBurst2();
+    void ResyncChannel(MusicFile theFile1, MusicFile theFile2);
+    void SetupMusicFileForTune1(MusicFile theMusicFile, MusicTune theMusicTune);
+    void StartGameMusic(bool theStart);
 };
 
 class Music2 : public Music { // 加载TV版ogg格式音乐时用。无鼓点。
+public:
+    // 大小26个整数
 
-}; // 大小26个整数
-
-inline void (*Music2_Delete)(Music2* music);
-
-inline void (*Music_Music)(Music*);
-
-inline void (*Sexy_AudiereMusicInterface_SetVolume)(int* interface, double theVolume);
-
-inline void (*Sexy_AudiereMusicInterface_SetSongVolume)(int* interface, int theSongId, double theVolume);
-
-inline void (*Sexy_AudiereMusicInterface_PlayMusic)(int* interface, int, int, bool noLoop);
-
-inline void (*Music_StopAllMusic)(Music*);
-
-inline int (*Music_GetMusicOrder)(Music*, MusicFile);
-
-inline void (*Music_SetupMusicFileForTune)(Music*, MusicFile, MusicTune);
-
-inline void (*Sexy_AudiereMusicInterface_StopMusic)(int*, int);
-
-inline void (*Sexy_AudiereMusicInterface_SetChannelVolume)(int*, int, int, float);
+    Music2();
+    void Create();
+    ~Music2() { reinterpret_cast<void (*)(Music2 *)>(Music2_DeleteAddr)(this); }
+    void StopAllMusic();
+    void StartGameMusic(bool theStart);
+    void GameMusicPause(bool thePause);
+    void FadeOut(int theFadeOutDuration);
+};
 
 
 inline void (*old_Music_StartGameMusic)(Music* music, bool a2);
@@ -120,24 +130,5 @@ inline void (*old_Music2_GameMusicPause)(Music2* music, bool pause);
 inline void (*old_Music2_FadeOut)(Music2* music, int aFadeOutDuration);
 
 
-void Music2_StopAllMusic(Music2* music);
-
-void Music2_StartGameMusic(Music2* music, bool start);
-
-void Music2_GameMusicPause(Music2* music, bool pause);
-
-void Music2_FadeOut(Music2* music, int aFadeOutDuration);
-
-void Music2_Music2(Music2*);
-
-void Music_MusicResync(Music*);
-
-void Music_StartBurst(Music* music);
-
-void Music_PlayFromOffset(Music*, MusicFile, int, double);
-
-void Music_UpdateMusicBurst1(Music*);
-
-void Music_UpdateMusicBurst2(Music*);
 
 #endif // PVZ_LAWN_MUSIC_H

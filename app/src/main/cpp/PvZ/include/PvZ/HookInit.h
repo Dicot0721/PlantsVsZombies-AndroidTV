@@ -126,20 +126,6 @@ inline void InitInGameFunction() {
     // Sexy_WidgetManager_MouseDown=(int (*)(int *manager, int x, int y, int theClickCount))Sexy_WidgetManager_MouseDownAddr;
 
 
-    Music2_Delete = (decltype(Music2_Delete))Music2_DeleteAddr;
-    Music_Music = (decltype(Music_Music))Music_MusicAddr;
-    //    Music2_Music2=(void (*)(Music2*))Music2_Music2Addr;
-    Music_StopAllMusic = (decltype(Music_StopAllMusic))Music_StopAllMusicAddr;
-    //    Music_MusicResync=(void (*)(Music*))Music_MusicResyncAddr;
-    Music_GetMusicOrder = (decltype(Music_GetMusicOrder))Music_GetMusicOrderAddr;
-    // Music_PlayFromOffset=(void (*)(Music*,MusicFile,int,double))Music_PlayFromOffsetAddr;
-    Music_SetupMusicFileForTune = (decltype(Music_SetupMusicFileForTune))Music_SetupMusicFileForTuneAddr;
-
-    Sexy_AudiereMusicInterface_SetVolume = (decltype(Sexy_AudiereMusicInterface_SetVolume))Sexy_AudiereMusicInterface_SetVolumeAddr;
-    Sexy_AudiereMusicInterface_SetSongVolume = (decltype(Sexy_AudiereMusicInterface_SetSongVolume))Sexy_AudiereMusicInterface_SetSongVolumeAddr;
-    Sexy_AudiereMusicInterface_PlayMusic = (decltype(Sexy_AudiereMusicInterface_PlayMusic))Sexy_AudiereMusicInterface_PlayMusicAddr;
-    Sexy_AudiereMusicInterface_StopMusic = (decltype(Sexy_AudiereMusicInterface_StopMusic))Sexy_AudiereMusicInterface_StopMusicAddr;
-    Sexy_AudiereMusicInterface_SetChannelVolume = (decltype(Sexy_AudiereMusicInterface_SetChannelVolume))Sexy_AudiereMusicInterface_SetChannelVolumeAddr;
     TodFoley_IsFoleyPlaying = (decltype(TodFoley_IsFoleyPlaying))TodFoley_IsFoleyPlayingAddr;
     TodFoley_StopFoley = (decltype(TodFoley_StopFoley))TodFoley_StopFoleyAddr;
     SoundSystemFindInstance = (decltype(SoundSystemFindInstance))SoundSystemFindInstanceAddr;
@@ -553,7 +539,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Music_PlayMusicAddr, &Music::PlayMusic, nullptr);
     homura::HookFunction(Music_MusicUpdateAddr, &Music::MusicUpdate, nullptr);
     homura::HookFunction(Music_UpdateMusicBurstAddr, &Music::UpdateMusicBurst, &old_Music_UpdateMusicBurst);
-    homura::HookFunction(Music2_Music2Addr, &Music2_Music2, &old_Music2_Music2);
+    homura::HookFunction(Music2_Music2Addr, &Music2::Create, &old_Music2_Music2);
     homura::HookFunction(LawnPlayerInfo_AddCoinsAddr, &LawnPlayerInfo_AddCoins, nullptr);
     homura::HookFunction(MaskHelpWidget_UpdateAddr, &MaskHelpWidget_Update, nullptr);
     homura::HookFunction(MaskHelpWidget_DrawAddr, &MaskHelpWidget_Draw, nullptr);
@@ -650,12 +636,12 @@ inline void InitVTableHookFunction() {
     homura::HookVirtualFunc(vTableForMemoryImageAddr, 38, &Sexy_MemoryImage_PopTransform, &old_Sexy_MemoryImage_PopTransform);
 
 
-    homura::HookVirtualFunc(vTableForMusic2Addr, 7, &Music2_StopAllMusic, &old_Music2_StopAllMusic);
-    homura::HookVirtualFunc(vTableForMusic2Addr, 8, &Music2_StartGameMusic, &old_Music2_StartGameMusic);
-    homura::HookVirtualFunc(vTableForMusic2Addr, 11, &Music2_GameMusicPause, &old_Music2_GameMusicPause);
+    homura::HookVirtualFunc(vTableForMusic2Addr, 7, &Music2::StopAllMusic, &old_Music2_StopAllMusic);
+    homura::HookVirtualFunc(vTableForMusic2Addr, 8, &Music2::StartGameMusic, &old_Music2_StartGameMusic);
+    homura::HookVirtualFunc(vTableForMusic2Addr, 11, &Music2::GameMusicPause, &old_Music2_GameMusicPause);
     //    VTableHookFunction(vTableForMusic2Addr, 12, (void *) Music2_UpdateMusicBurst,(void **) &old_Music2_UpdateMusicBurst);
     //    VTableHookFunction(vTableForMusic2Addr, 13, (void *) Music2_StartBurst,(void **) &old_Music2_StartBurst);
-    homura::HookVirtualFunc(vTableForMusic2Addr, 17, &Music2_FadeOut, &old_Music2_FadeOut);
+    homura::HookVirtualFunc(vTableForMusic2Addr, 17, &Music2::FadeOut, &old_Music2_FadeOut);
 
 
     //    VTableHookFunction(vTableForMaskHelpWidgetAddr, 71, (void *) MaskHelpWidget_KeyDown,nullptr);

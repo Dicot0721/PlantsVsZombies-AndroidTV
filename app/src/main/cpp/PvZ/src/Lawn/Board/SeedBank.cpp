@@ -213,7 +213,7 @@ bool SeedBank::MouseHitTest(int x, int y, HitResult *theHitResult) {
     }
 
     for (int i = 0; i < mNumPackets; i++) {
-        if ((&mSeedPackets[i])->MouseHitTest(relativeX, relativeY, theHitResult)) {
+        if (mSeedPackets[i].MouseHitTest(relativeX, relativeY, theHitResult)) {
             return true;
         }
     }
