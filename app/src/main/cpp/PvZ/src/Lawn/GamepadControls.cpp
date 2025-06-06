@@ -343,7 +343,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     aPeaHeadReanim->PlayReanim("anim_head_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aPeaHeadReanim, 0.0f, 0.0f);
                     zombieReanim->mFrameBasePose = 0;
-                    TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 65.0f, -8.0f, 0.2f, -1.0f, 1.0f);
+                    TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 65.0f, -8.0f, 0.2f, -1.0f, 1.0f);
                 } else if (theZombieType == ZombieType::ZOMBIE_WALLNUT_HEAD) {
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_head", true);
@@ -354,7 +354,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     aWallnutHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aWallnutHeadReanim, 0.0f, 0.0f);
                     zombieReanim->mFrameBasePose = 0;
-                    TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 50.0f, 0.0f, 0.2f, -0.8f, 0.8f);
+                    TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 50.0f, 0.0f, 0.2f, -0.8f, 0.8f);
                 } else if (theZombieType == ZombieType::ZOMBIE_TALLNUT_HEAD) {
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_head", true);
@@ -365,7 +365,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     aTallnutHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aTallnutHeadReanim, 0.0f, 0.0f);
                     zombieReanim->mFrameBasePose = 0;
-                    TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 37.0f, 0.0f, 0.2f, -0.8f, 0.8f);
+                    TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 37.0f, 0.0f, 0.2f, -0.8f, 0.8f);
                 } else if (theZombieType == ZombieType::ZOMBIE_JALAPENO_HEAD) {
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_head", true);
@@ -376,7 +376,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     aJalapenoHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aJalapenoHeadReanim, 0.0f, 0.0f);
                     zombieReanim->mFrameBasePose = 0;
-                    TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 55.0f, -5.0f, 0.2f, -1.0f, 1.0f);
+                    TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 55.0f, -5.0f, 0.2f, -1.0f, 1.0f);
                 } else if (theZombieType == ZombieType::ZOMBIE_GATLING_HEAD) {
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_head2", true);
@@ -387,7 +387,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     aGatlingHeadReanim->PlayReanim("anim_head_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aGatlingHeadReanim, 0.0f, 0.0f);
                     zombieReanim->mFrameBasePose = 0;
-                    TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 65.0f, -5.0f, 0.2f, -1.0f, 1.0f);
+                    TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 65.0f, -5.0f, 0.2f, -1.0f, 1.0f);
                 } else if (theZombieType == ZombieType::ZOMBIE_SQUASH_HEAD) {
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_head2", true);
@@ -398,7 +398,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     aSquashHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aSquashHeadReanim, 0.0f, 0.0f);
                     zombieReanim->mFrameBasePose = 0;
-                    TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 55.0f, -15.0f, 0.2f, -0.75f, 0.75f);
+                    TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 55.0f, -15.0f, 0.2f, -0.75f, 0.75f);
                 }
                 zombieReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 12.0);
             }

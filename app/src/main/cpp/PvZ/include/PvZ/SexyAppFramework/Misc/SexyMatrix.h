@@ -5,11 +5,15 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_SEXYMATRIX_H
 #define PLANTSVSZOMBIES_ANDROIDTV_SEXYMATRIX_H
 
+#include "Homura/StructWrapper.h"
+#include "PvZ/Symbols.h"
+
 #include "SexyVector.h"
 
 namespace Sexy {
 
-class SexyMatrix3 {
+template <homura::BaseOrDerived T = homura::BaseClass>
+class __SexyMatrix3 {
 public:
     union {
         float m[3][3];
@@ -19,15 +23,36 @@ public:
             float m20, m21, m22;
         };
     };
+
+    __SexyMatrix3()
+        requires std::is_same_v<T, homura::BaseClass>
+    {
+        Create();
+    }
+
+    void Create() { reinterpret_cast<void (*)(ThisType *)>(Sexy_SexyMatrix3_SexyMatrix3Addr)(this); }
+
+protected:
+    __SexyMatrix3()
+        requires std::is_same_v<T, homura::DerivedClass>
+    {}
+
+private:
+    using ThisType = __SexyMatrix3<T>;
 };
 
-class SexyTransform2D : public Sexy::SexyMatrix3 {
+class SexyTransform2D : public __SexyMatrix3<homura::DerivedClass> {
 public:
-//    SexyTransform2D() { Create(); }
-//    Create() { reinterpret_cast<void (*)()>; }
+    SexyTransform2D() { Create(); }
+    void Create() { reinterpret_cast<void (*)(SexyTransform2D *)>(Sexy_SexyTransform2D_SexyTransform2DAddr)(this); }
+    void Scale(float sx, float sy) { reinterpret_cast<void (*)(SexyTransform2D *, float, float)>(Sexy_SexyTransform2D_ScaleAddr)(this, sx, sy); }
+    void Translate(float tx, float ty) { reinterpret_cast<void (*)(SexyTransform2D *, float, float)>(Sexy_SexyTransform2D_TranslateAddr)(this, tx, ty); }
+    void RotateRad(float rot) { reinterpret_cast<void (*)(SexyTransform2D *, float)>(Sexy_SexyTransform2D_RotateRadAddr)(this, rot); }
 };
 
-}
+using SexyMatrix3 = __SexyMatrix3<homura::BaseClass>;
+
+}; // namespace Sexy
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_SEXYMATRIX_H

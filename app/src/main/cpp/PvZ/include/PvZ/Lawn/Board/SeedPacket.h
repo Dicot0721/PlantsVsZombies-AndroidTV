@@ -45,6 +45,18 @@ public:
     void EndDraw(Sexy::Graphics *g);
 };
 
+void DrawSeedPacket(Sexy::Graphics *g,
+                    float x,
+                    float y,
+                    SeedType theSeedType,
+                    SeedType theImitaterType,
+                    float thePercentDark,
+                    int theGrayness,
+                    bool theDrawCost,
+                    bool theUseCurrentCost,
+                    bool isZombieSeed,
+                    bool isSeedPacketSelected);
+
 /***************************************************************************************************************/
 inline bool showCoolDown;
 

@@ -59,12 +59,6 @@ inline void InitInGameFunction() {
     TodAnimateCurveFloatTime = (decltype(TodAnimateCurveFloatTime))TodAnimateCurveFloatTimeAddr;
 
 
-    Sexy_SexyTransform2D_SexyTransform2D = (decltype(Sexy_SexyTransform2D_SexyTransform2D))Sexy_SexyTransform2D_SexyTransform2DAddr;
-    Sexy_SexyTransform2D_Scale = (decltype(Sexy_SexyTransform2D_Scale))Sexy_SexyTransform2D_ScaleAddr;
-    Sexy_SexyTransform2D_Translate = (decltype(Sexy_SexyTransform2D_Translate))Sexy_SexyTransform2D_TranslateAddr;
-    Sexy_SexyTransform2D_RotateRad = (decltype(Sexy_SexyTransform2D_RotateRad))Sexy_SexyTransform2D_RotateRadAddr;
-
-
     Sexy_StrFormat = (decltype(Sexy_StrFormat))Sexy_StrFormatAddr;
     TodStringTranslate = (decltype(TodStringTranslate))TodStringTranslateAddr;
     //    DrawSeedPacket = (void (*)(Sexy::Graphics *, int, int, int, int, float, int, bool, bool, bool,bool)) DrawSeedPacketAddr;
@@ -77,7 +71,6 @@ inline void InitInGameFunction() {
     //    DrawSeedType = (void (*)(float *, float, float, int, int, float, float,float)) DrawSeedTypeAddr;
     //    MailScreen_KeyDown = (decltype(MailScreen_KeyDown))MailScreen_KeyDownAddr;
     Sexy_GamepadApp_HasGamepad = (decltype(Sexy_GamepadApp_HasGamepad))Sexy_GamepadApp_HasGamepadAddr;
-    Sexy_SexyMatrix3_SexyMatrix3 = (decltype(Sexy_SexyMatrix3_SexyMatrix3))Sexy_SexyMatrix3_SexyMatrix3Addr;
     Sexy_SexyAppBase_GetImage = (decltype(Sexy_SexyAppBase_GetImage))Sexy_SexyAppBase_GetImageAddr;
     Sexy_Widget_Resize = (decltype(Sexy_Widget_Resize))Sexy_Widget_ResizeAddr;
     Sexy_Widget_Widget = (decltype(Sexy_Widget_Widget))Sexy_Widget_WidgetAddr;

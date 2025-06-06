@@ -930,7 +930,7 @@ void Zombie::SetZombatarReanim() {
     aZombatarHeadReanim->AssignRenderGroupToTrack("anim_hair", -1);
     mBossFireBallReanimID = mApp->ReanimationGetID(aZombatarHeadReanim);
     AttachEffect *attachEffect = AttachReanim(aHeadTrackInstance->mAttachmentID, aZombatarHeadReanim, 0.0f, 0.0f);
-    TodScaleRotateTransformMatrix(attachEffect->mOffset, -20.0, -1.0, 0.2, 1.0, 1.0);
+    TodScaleRotateTransformMatrix((SexyMatrix3 &)attachEffect->mOffset, -20.0, -1.0, 0.2, 1.0, 1.0);
     ReanimShowPrefix("anim_hair", -1);
     ReanimShowPrefix("anim_head2", -1);
 }

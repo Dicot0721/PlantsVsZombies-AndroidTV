@@ -29,16 +29,6 @@ inline void (*GetFlashingColor)(Sexy::Color *, int, int);
 
 inline bool (*Sexy_GamepadApp_HasGamepad)(LawnApp *);
 
-inline void (*Sexy_SexyMatrix3_SexyMatrix3)(int *);
-
-inline void (*Sexy_SexyTransform2D_SexyTransform2D)(Sexy::SexyTransform2D *);
-
-inline void (*Sexy_SexyTransform2D_Scale)(Sexy::SexyTransform2D *, float, float);
-
-inline void (*Sexy_SexyTransform2D_Translate)(Sexy::SexyTransform2D *, float, float);
-
-inline void (*Sexy_SexyTransform2D_RotateRad)(Sexy::SexyTransform2D *, float);
-
 inline void (*ShopSeedPacket_Update)(int *seedPacket);
 
 inline Sexy::Image *(*Sexy_SexyAppBase_GetImage)(LawnApp *, int *, int);
@@ -199,9 +189,6 @@ inline void (*old_MessageWidget_Update)(CustomMessageWidget *messageWidget);
 
 
 int randomInt(int a, int b);
-
-void DrawSeedPacket(
-    Sexy::Graphics *g, float x, float y, SeedType seedType, SeedType imitaterType, float coolDownPercent, int grayness, bool drawCostText, bool isInGame, bool isZombieSeed, bool a11);
 
 void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, SeedType theImitaterType, float xOffset, float yOffset, float scale);
 

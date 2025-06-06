@@ -80,9 +80,9 @@ inline void (*TodDrawImageCenterScaledF)(Sexy::Graphics *, Sexy::Image *, float,
 
 inline void (*TodDrawString)(Sexy::Graphics *, int *, int, int, Sexy::Font *, Sexy::Color color, DrawStringJustification);
 
-inline void (*TodScaleTransformMatrix)(int *, float, float, float, float);
+inline void (*TodScaleTransformMatrix)(Sexy::SexyMatrix3 &, float, float, float, float);
 
-inline void (*TodDrawStringMatrix)(Sexy::Graphics *, Sexy::Font *, int *, int *, Sexy::Color *);
+inline void (*TodDrawStringMatrix)(Sexy::Graphics *, Sexy::Font *, Sexy::SexyMatrix3 &, int *, Sexy::Color *);
 
 inline int (*TodAnimateCurve)(int theTimeStart, int theTimeEnd, int theTimeAge, int thePositionStart, int thePositionEnd, TodCurves theCurve);
 

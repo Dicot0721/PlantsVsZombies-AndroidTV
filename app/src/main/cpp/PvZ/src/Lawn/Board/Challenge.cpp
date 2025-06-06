@@ -113,13 +113,12 @@ void Challenge::HeavyWeaponReanimUpdate() {
     if (heavyWeaponReanim == nullptr)
         return;
 
-    SexyTransform2D sexyTransform2D;
-    Sexy_SexyTransform2D_SexyTransform2D(&sexyTransform2D);
-    Sexy_SexyTransform2D_Translate(&sexyTransform2D, -129.55, -71.45);
-    Sexy_SexyTransform2D_RotateRad(&sexyTransform2D, mHeavyWeaponAngle);
-    Sexy_SexyTransform2D_Translate(&sexyTransform2D, mHeavyWeaponX, mHeavyWeaponY);
-    Sexy_SexyTransform2D_Translate(&sexyTransform2D, 129.55, 71.45);
-    Sexy_SexyTransform2D_Translate(&sexyTransform2D, 0.0, -20.0);
+    SexyTransform2D sexyTransform2D{};
+    sexyTransform2D.Translate(-129.55, -71.45);
+    sexyTransform2D.RotateRad(mHeavyWeaponAngle);
+    sexyTransform2D.Translate(mHeavyWeaponX, mHeavyWeaponY);
+    sexyTransform2D.Translate(129.55, 71.45);
+    sexyTransform2D.Translate(0.0, -20.0);
     heavyWeaponReanim->mOverlayMatrix = sexyTransform2D;
 }
 

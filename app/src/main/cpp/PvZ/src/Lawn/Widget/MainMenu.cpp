@@ -550,7 +550,7 @@ void MainMenu::Draw(Sexy::Graphics *g) {
     if (skyReanim != nullptr && sky2Reanim != nullptr) {
         skyReanim->DrawRenderGroup(g, 0);
         SexyTransform2D tmp = sky2Reanim->mOverlayMatrix;
-        Sexy_SexyTransform2D_Scale(&sky2Reanim->mOverlayMatrix, 1.0, 0.4);
+        sky2Reanim->mOverlayMatrix.Scale(1.0, 0.4);
         sky2Reanim->mOverlayMatrix.m[0][1] = -0.4;
         sky2Reanim->DrawRenderGroup(g, 2);
         sky2Reanim->mOverlayMatrix = tmp;
@@ -560,12 +560,11 @@ void MainMenu::Draw(Sexy::Graphics *g) {
     if (houseAnim != nullptr) {
 
         int TrackIndex = mainMenuReanim->FindTrackIndex("House");
-        ReanimatorTransform v52 = ReanimatorTransform();
-        SexyTransform2D v48;
-        Sexy_SexyTransform2D_SexyTransform2D(&v48);
+        ReanimatorTransform v52{};
+        SexyTransform2D v48{};
         mainMenuReanim->GetCurrentTransform(TrackIndex, &v52);
-        Reanimation::MatrixFromTransform(v52, v48);
-        Sexy_SexyTransform2D_Translate(&v48, mCameraPositionX + theOffsetX1, mCameraPositionY + theOffsetY1);
+        Reanimation::MatrixFromTransform(v52, (SexyMatrix3 &)v48);
+        v48.Translate(mCameraPositionX + theOffsetX1, mCameraPositionY + theOffsetY1);
         houseAnim->mOverlayMatrix = v48;
         houseAnim->DrawRenderGroup(g, 0);
     }
@@ -584,7 +583,7 @@ void MainMenu::Draw(Sexy::Graphics *g) {
     Sexy_Widget_DeferOverlay(this, 0);
     if (!InTransition())
         (*((void (**)(MainMenu *, Sexy::Graphics *))vTable + 129))(this, g);
-    SexyTransform2D v42;
+    SexyTransform2D aSexyTransform2D;
     ReanimatorTransform v43;
     int mailAlertTrackIndex = mainMenuReanim->FindTrackIndex("mail alert");
     if (mailAlertTrackIndex > 0 && Mailbox_GetNumUnseenMessages(mApp->mMailBox) > 0) {
@@ -593,38 +592,38 @@ void MainMenu::Draw(Sexy::Graphics *g) {
             v43 = ReanimatorTransform();
             mainMenuReanim->GetCurrentTransform(mailAlertTrackIndex, &v43);
             Sexy::Image *mailAlertImage = v43.mImage;
-            Sexy_SexyTransform2D_SexyTransform2D(&v42);
-            Reanimation::MatrixFromTransform(v43, v42);
-            Sexy_SexyTransform2D_Translate(&v42, mCameraPositionX, mCameraPositionY);
+            aSexyTransform2D.Create();
+            Reanimation::MatrixFromTransform(v43, (SexyMatrix3 &)aSexyTransform2D);
+            aSexyTransform2D.Translate(mCameraPositionX, mCameraPositionY);
             int v14 = mailAlertImage->mWidth;
             int v15 = v14 + 3;
             int v16 = v14 < 0;
             int v17 = v14 & ~(v14 >> 31);
             if (v16)
                 v17 = v15;
-            Sexy_SexyTransform2D_Translate(&v42, v17 >> 2, 0.0);
+            aSexyTransform2D.Translate(v17 >> 2, 0.0);
             int v18 = unkMems3[3];
             if (v18 > 99)
                 v18 = 0;
             unkMems3[3] = v18;
             TodAnimateCurveFloat(0, 100, v18, 0.75, 0.8, TodCurves::CURVE_SIN_WAVE);
             Sexy::Rect v38 = {0, 0, mailAlertImage->mWidth, mailAlertImage->mHeight};
-            g->DrawImageMatrix(mailAlertImage, v42, v38, 0.0, 0.0, 1);
+            g->DrawImageMatrix(mailAlertImage, (SexyMatrix3 &)aSexyTransform2D, v38, 0.0, 0.0, 1);
         }
     }
     int moreTrackIndex = mainMenuReanim->FindTrackIndex("more");
     v43 = ReanimatorTransform();
     mainMenuReanim->GetCurrentTransform(moreTrackIndex, &v43);
-    Sexy_SexyTransform2D_SexyTransform2D(&v42);
-    Reanimation::MatrixFromTransform(v43, v42);
-    Sexy_SexyTransform2D_Translate(&v42, mCameraPositionX, mCameraPositionY);
-    Sexy_SexyTransform2D_Translate(&v42, 120.0, 200.0);
+    aSexyTransform2D.Create();
+    Reanimation::MatrixFromTransform(v43, (SexyMatrix3 &)aSexyTransform2D);
+    aSexyTransform2D.Translate(mCameraPositionX, mCameraPositionY);
+    aSexyTransform2D.Translate(120.0, 200.0);
 
     Sexy::Rect v37 = {0, 0, m2DMarkImage->mWidth, m2DMarkImage->mHeight};
-    g->DrawImageMatrix(m2DMarkImage, v42, v37, 0.0, 0.0, 1);
+    g->DrawImageMatrix(m2DMarkImage, (SexyMatrix3 &)aSexyTransform2D, v37, 0.0, 0.0, 1);
     Sexy::Rect v38 = {15, 15, 90, 90};
-    Sexy_SexyTransform2D_Translate(&v42, -4.0, -16.0);
-    g->DrawImageMatrix(mApp->mQRCodeImage, v42, v38, 0.0, 0.0, 1);
+    aSexyTransform2D.Translate(-4.0, -16.0);
+    g->DrawImageMatrix(mApp->mQRCodeImage, (SexyMatrix3 &)aSexyTransform2D, v38, 0.0, 0.0, 1);
 }
 
 void MainMenu::DrawOverlay(Sexy::Graphics *g) {
@@ -2249,7 +2248,7 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     aZombatarHeadReanim->AssignRenderGroupToTrack("anim_hair", -1);
     aZombie->mBossFireBallReanimID = aZombie->mApp->ReanimationGetID(aZombatarHeadReanim);
     AttachEffect *attachEffect = AttachReanim(aHeadTrackInstance->mAttachmentID, aZombatarHeadReanim, 0.0f, 0.0f);
-    TodScaleRotateTransformMatrix(attachEffect->mOffset, -20.0, -1.0, 0.2, 1.0, 1.0);
+    TodScaleRotateTransformMatrix((SexyMatrix3 &)attachEffect->mOffset, -20.0, -1.0, 0.2, 1.0, 1.0);
     mZombatarReanim = aZombatarHeadReanim;
     aZombie->ReanimShowPrefix("anim_hair", -1);
     aZombie->ReanimShowPrefix("anim_head2", -1);

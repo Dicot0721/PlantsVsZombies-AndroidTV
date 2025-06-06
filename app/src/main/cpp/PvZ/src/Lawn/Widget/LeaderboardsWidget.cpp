@@ -174,8 +174,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
 
     int zombieTrackIndex = mLeaderboardReanimations->backgroundReanim[0]->FindTrackIndex("PvZ/zombie_tra.h");
     LOG_DEBUG("zombieTrackIndex {} ", zombieTrackIndex);
-    SexyTransform2D zombieSexyTransform2D;
-    Sexy_SexyTransform2D_SexyTransform2D(&zombieSexyTransform2D);
+    SexyTransform2D zombieSexyTransform2D{};
     LOG_DEBUG("zombieSexyTransform2D {} ", (void*)&zombieSexyTransform2D);
     LOG_DEBUG("backgroundReanim {} ", (void*)mLeaderboardReanimations->backgroundReanim[0]);
     mLeaderboardReanimations->backgroundReanim[0]->GetTrackMatrix(zombieTrackIndex, zombieSexyTransform2D);
@@ -186,8 +185,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     Sexy_Widget_Move(mZombieTrashBin, zombieSexyTransform2D.m[0][2], zombieSexyTransform2D.m[1][2]);
 
     int plantTrackIndex = mLeaderboardReanimations->backgroundReanim[0]->FindTrackIndex("PvZ/plant_tra.h");
-    SexyTransform2D plantSexyTransform2D;
-    Sexy_SexyTransform2D_SexyTransform2D(&plantSexyTransform2D);
+    SexyTransform2D plantSexyTransform2D{};
     mLeaderboardReanimations->backgroundReanim[0]->GetTrackMatrix(plantTrackIndex, plantSexyTransform2D);
     mPlantTrashBin = (TrashBin *)operator new(sizeof(TrashBin));
     mPlantTrashBin->Create(TrashBin::PLANT_PILE, theApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED] / 125.0f);
