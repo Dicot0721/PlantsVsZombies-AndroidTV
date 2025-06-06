@@ -22,6 +22,12 @@ struct DerivedClass {};
 template <typename T>
 concept BaseOrDerived = std::is_same_v<T, BaseClass> || std::is_same_v<T, DerivedClass>;
 
+template <typename T>
+constexpr bool isBase = std::is_same_v<T, BaseClass>;
+
+template <typename T>
+constexpr bool isDerived = std::is_same_v<T, DerivedClass>;
+
 /**
  * @brief 通过对象地址和非静态成员变量的偏移量, 获取该成员变量的地址.
  *

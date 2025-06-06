@@ -25,7 +25,7 @@ public:
     };
 
     __SexyMatrix3()
-        requires std::is_same_v<T, homura::BaseClass>
+        requires homura::isBase<T>
     {
         Create();
     }
@@ -34,7 +34,7 @@ public:
 
 protected:
     __SexyMatrix3()
-        requires std::is_same_v<T, homura::DerivedClass>
+        requires homura::isDerived<T>
     {}
 
 private:
