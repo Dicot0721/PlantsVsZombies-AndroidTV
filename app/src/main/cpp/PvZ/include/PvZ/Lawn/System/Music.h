@@ -3,6 +3,7 @@
 
 #include "PvZ/SexyAppFramework/Sound/MusicInterface.h"
 #include "PvZ/Symbols.h"
+#include "Homura/StructWrapper.h"
 
 class LawnApp;
 namespace Sexy {
@@ -52,7 +53,8 @@ enum MusicDrumsState {
     MUSIC_DRUMS_FADING = 4,
 };
 
-class Music { // 加载XBOX版xm格式音乐时用。优：音质好、有鼓点。缺：鼓点BUG多，xm格式难以修改
+template <homura::BaseOrDerived T = homura::BaseClass>
+class __Music { // 加载XBOX版xm格式音乐时用。优：音质好、有鼓点。缺：鼓点BUG多，xm格式难以修改
 public:
     int* vTable;                                       // 0
     int unkMems[3];                                    // 1 ~ 3
@@ -81,12 +83,16 @@ public:
     float mNormalVolume;                               // 25
     // 大小26个整数
 
-    Music() { Create(); }
-    void Create() { reinterpret_cast<void (*)(Music *)>(Music_MusicAddr)(this); }
-    void StopAllMusic() { reinterpret_cast<void (*)(Music *)>(Music_StopAllMusicAddr)(this); }
-    unsigned long GetMusicOrder(MusicFile theMusicFile) { return reinterpret_cast<unsigned long (*)(Music *, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile); }
+    __Music()
+        requires std::is_same_v<T, homura::BaseClass>
+    {
+        Create();
+    }
+    void Create() { reinterpret_cast<void (*)(ThisType *)>(Music_MusicAddr)(this); }
+    void StopAllMusic() { reinterpret_cast<void (*)(ThisType *)>(Music_StopAllMusicAddr)(this); }
+    unsigned long GetMusicOrder(MusicFile theMusicFile) { return reinterpret_cast<unsigned long (*)(ThisType *, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile); }
     void SetupMusicFileForTune(MusicFile theMusicFile, MusicTune theMusicTune) {
-        reinterpret_cast<void (*)(Music*, MusicFile, MusicTune)>(Music_SetupMusicFileForTuneAddr)(this, theMusicFile, theMusicTune);
+        reinterpret_cast<void (*)(ThisType*, MusicFile, MusicTune)>(Music_SetupMusicFileForTuneAddr)(this, theMusicFile, theMusicTune);
     }
 
     void PlayMusic(MusicTune theMusicTune, int theOffset, int theDrumsOffset);
@@ -100,9 +106,17 @@ public:
     void ResyncChannel(MusicFile theFile1, MusicFile theFile2);
     void SetupMusicFileForTune1(MusicFile theMusicFile, MusicTune theMusicTune);
     void StartGameMusic(bool theStart);
+
+protected:
+    __Music()
+        requires std::is_same_v<T, homura::DerivedClass>
+    {}
+
+private:
+    using ThisType = __Music<T>;
 };
 
-class Music2 : public Music { // 加载TV版ogg格式音乐时用。无鼓点。
+class Music2 : public __Music<homura::DerivedClass> { // 加载TV版ogg格式音乐时用。无鼓点。
 public:
     // 大小26个整数
 
@@ -116,6 +130,13 @@ public:
     void FadeOut(int theFadeOutDuration);
 };
 
+template <>
+void __Music<>::UpdateMusicBurst2();
+
+template <>
+void __Music<>::MusicResync();
+
+using Music = __Music<>;
 
 inline void (*old_Music_StartGameMusic)(Music* music, bool a2);
 

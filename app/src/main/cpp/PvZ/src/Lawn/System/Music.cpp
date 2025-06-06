@@ -13,6 +13,7 @@
 #define LOWORD(a) ((a) & 0xFFFF)
 
 
+template <>
 void Music::StartGameMusic(bool theStart) {
     old_Music_StartGameMusic(this, theStart);
 }
@@ -23,6 +24,7 @@ bool muteMusic;
 int theCounter;
 } // namespace
 
+template <>
 void Music::SetupMusicFileForTune1(MusicFile theMusicFile, MusicTune theMusicTune) {
     int v7;  // r7
     int v9;  // r9
@@ -144,6 +146,7 @@ void Music::SetupMusicFileForTune1(MusicFile theMusicFile, MusicTune theMusicTun
     } while (v10 >= v11);
 }
 
+template <>
 void Music::PlayFromOffset(MusicFile theMusicFile, int theOffset, double theVolume) {
     mMusicInterface->StopMusic(theMusicFile);
     SetupMusicFileForTune(theMusicFile, mCurMusicTune);
@@ -159,6 +162,7 @@ void Music::PlayFromOffset(MusicFile theMusicFile, int theOffset, double theVolu
     }
 }
 
+template <>
 void Music::PlayMusic(MusicTune theMusicTune, int theOffset, int theDrumsOffset) {
     if (mMusicDisabled)
         return;
@@ -283,6 +287,7 @@ void Music::PlayMusic(MusicTune theMusicTune, int theOffset, int theDrumsOffset)
     }
 }
 
+template <>
 void Music::UpdateMusicBurst() {
     // 加90ms静音，用于去除莫名其妙的开头鼓点声
     if (muteMusic) {
@@ -297,6 +302,7 @@ void Music::UpdateMusicBurst() {
     UpdateMusicBurst2();
 }
 
+template <>
 void Music::UpdateMusicBurst2() {
     int MusicOrder;                                    // ebx
     double v7;                                         // st7
@@ -307,8 +313,8 @@ void Music::UpdateMusicBurst2() {
     int v16;                                           // edi
     int aQueuedDrumTrackPackedOrder_low;               // ecx
     int v18;                                           // eax
-    float aPositionStart;                            // [esp+4h] [ebp-2Ch]
-    float aPositionEnd;                              // [esp+8h] [ebp-28h]
+    float aPositionStart;                              // [esp+4h] [ebp-2Ch]
+    float aPositionEnd;                                // [esp+8h] [ebp-28h]
     float aFadeTrackVolume;                            // [esp+1Ch] [ebp-14h]
     float aMainTrackVolume;                            // [esp+20h] [ebp-10h]
     float aDrumsJumpOrder;                             // [esp+24h] [ebp-Ch]
@@ -465,6 +471,7 @@ void Music::UpdateMusicBurst2() {
     }
 }
 
+template <>
 void Music::StartBurst() {
     if (mMusicBurstState == MusicBurstState::MUSIC_BURST_OFF) {
         mMusicBurstState = MusicBurstState::MUSIC_BURST_STARTING;
@@ -472,6 +479,7 @@ void Music::StartBurst() {
     }
 }
 
+template <>
 void Music::MusicUpdate() {
     if (mFadeOutCounter <= 0) {
         if (mNormalVolume != mPauseVolume) {
@@ -494,18 +502,20 @@ void Music::MusicUpdate() {
     }
 }
 
+template <>
 void Music::ResyncChannel(MusicFile theFile1, MusicFile theFile2) {}
 
 void Music2::Create() {
     // 选择使用哪一版本的音乐。xbox版是xm格式，有鼓点；TV版则是ogg格式，无鼓点。
     if (useXboxMusic) {
-        Music::Create();
+        __Music::Create();
         return;
     }
 
     old_Music2_Music2(this);
 }
 
+template <>
 void Music::MusicResync() {
     if (mCurMusicFileMain != MusicFile::MUSIC_FILE_NONE) {
         if (mCurMusicFileDrums != MusicFile::MUSIC_FILE_NONE)
