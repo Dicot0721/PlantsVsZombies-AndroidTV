@@ -310,7 +310,7 @@ inline void InitHookFunction() {
     homura::HookFunction(AlmanacDialog_MouseDownAddr, &AlmanacDialog::MouseDown, nullptr);
     homura::HookFunction(AlmanacDialog_MouseUpAddr, &AlmanacDialog::MouseUp, nullptr);
     homura::HookFunction(AlmanacDialog_ButtonDepressAddr, &AlmanacDialog::ButtonDepress, nullptr);
-    homura::HookFunction(AlmanacDialog_Delete2Addr, &AlmanacDialog::Delete2, &old_AlmanacDialog_Delete2);
+    homura::HookFunction(AlmanacDialog_Delete2Addr, &AlmanacDialog::Destroy, &old_AlmanacDialog_Delete2);
     homura::HookFunction(AlmanacDialog_DrawPlantsAddr, &AlmanacDialog::DrawPlants, &old_AlmanacDialog_DrawPlants);
     homura::HookFunction(AlmanacDialog_SetupLayoutPlantsAddr, &AlmanacDialog::SetupLayoutPlants, &old_AlmanacDialog_SetupLayoutPlants);
 
@@ -536,10 +536,12 @@ inline void InitHookFunction() {
     homura::HookFunction(HelpBarWidget_HelpBarWidgetAddr, &HelpBarWidget_HelpBarWidget, &old_HelpBarWidget_HelpBarWidget);
     homura::HookFunction(DrawSeedTypeAddr, &DrawSeedType, nullptr);
     homura::HookFunction(DrawSeedPacketAddr, &DrawSeedPacket, nullptr);
+
     homura::HookFunction(Music_PlayMusicAddr, &Music::PlayMusic, nullptr);
     homura::HookFunction(Music_MusicUpdateAddr, &Music::MusicUpdate, nullptr);
     homura::HookFunction(Music_UpdateMusicBurstAddr, &Music::UpdateMusicBurst, &old_Music_UpdateMusicBurst);
     homura::HookFunction(Music2_Music2Addr, &Music2::Create, &old_Music2_Music2);
+    
     homura::HookFunction(LawnPlayerInfo_AddCoinsAddr, &LawnPlayerInfo_AddCoins, nullptr);
     homura::HookFunction(MaskHelpWidget_UpdateAddr, &MaskHelpWidget_Update, nullptr);
     homura::HookFunction(MaskHelpWidget_DrawAddr, &MaskHelpWidget_Draw, nullptr);

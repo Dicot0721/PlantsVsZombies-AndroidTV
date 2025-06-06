@@ -62,11 +62,11 @@ void MailScreen::RemovedFromManager(int *widgetManager) {
 void MailScreen::Delete2() {
     old_MailScreen_Delete2(this);
 
-    gMailScreenCloseButton->~GameButton();
+    gMailScreenCloseButton->Destroy();
     gMailScreenCloseButton = nullptr;
-    gMailScreenReadButton->~GameButton();
+    gMailScreenReadButton->Destroy();
     gMailScreenReadButton = nullptr;
-    gMailScreenSwitchButton->~GameButton();
+    gMailScreenSwitchButton->Destroy();;
     gMailScreenSwitchButton = nullptr;
 }
 

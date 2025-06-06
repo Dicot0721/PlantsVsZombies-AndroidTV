@@ -1,8 +1,8 @@
 #ifndef PVZ_LAWN_MUSIC_H
 #define PVZ_LAWN_MUSIC_H
 
-#include "PvZ/Symbols.h"
 #include "PvZ/SexyAppFramework/Sound/MusicInterface.h"
+#include "PvZ/Symbols.h"
 
 class LawnApp;
 namespace Sexy {
@@ -81,6 +81,7 @@ public:
     float mNormalVolume;                               // 25
     // 大小26个整数
 
+    Music() { Create(); }
     void Create() { reinterpret_cast<void (*)(Music *)>(Music_MusicAddr)(this); }
     void StopAllMusic() { reinterpret_cast<void (*)(Music *)>(Music_StopAllMusicAddr)(this); }
     unsigned long GetMusicOrder(MusicFile theMusicFile) { return reinterpret_cast<unsigned long (*)(Music *, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile); }
@@ -105,9 +106,10 @@ class Music2 : public Music { // 加载TV版ogg格式音乐时用。无鼓点。
 public:
     // 大小26个整数
 
-    Music2();
+    Music2() { Create(); }
+    ~Music2() { Destroy(); }
     void Create();
-    ~Music2() { reinterpret_cast<void (*)(Music2 *)>(Music2_DeleteAddr)(this); }
+    void Destroy() { reinterpret_cast<void (*)(Music2 *)>(Music2_DeleteAddr)(this); };
     void StopAllMusic();
     void StartGameMusic(bool theStart);
     void GameMusicPause(bool thePause);

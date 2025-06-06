@@ -132,7 +132,7 @@ void ChallengeScreen::Delete2() {
     old_ChallengeScreen_Delete2(this);
 
     if (gChallengeScreenCloseButton != nullptr) {
-        gChallengeScreenCloseButton->~GameButton();
+        gChallengeScreenCloseButton->Destroy();
         gChallengeScreenCloseButton = nullptr;
     }
 }

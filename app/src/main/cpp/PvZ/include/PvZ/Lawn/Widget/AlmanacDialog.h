@@ -52,10 +52,8 @@ public:
     void SetupZombie() { reinterpret_cast<void (*)(AlmanacDialog *)>(AlmanacDialog_SetupZombieAddr)(this); }
     void GetSeedPosition(SeedType theSeedType, int& x, int& y) { reinterpret_cast<void (*)(AlmanacDialog *, SeedType, int &, int &)>(AlmanacDialog_GetSeedPositionAddr)(this, theSeedType, x, y); }
 
-    AlmanacDialog(LawnApp *theApp);
-    void Create( LawnApp *theApp);
-    ~AlmanacDialog();
-    void Delete2();
+    void Create(LawnApp *theApp);
+    void Destroy();
     void SetPage(AlmanacPage thePage);
     void RemovedFromManager(Sexy::WidgetManager *theWidgetManager);
     void ButtonDepress(int theId);

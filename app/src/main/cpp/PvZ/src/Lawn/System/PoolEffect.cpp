@@ -396,11 +396,10 @@ void PoolEffect_PoolEffectDraw(PoolEffect *poolEffect, Sexy::Graphics *g, bool t
         g->DrawTrianglesTex(*Sexy_IMAGE_POOL_SHADING_Addr, v140[1], 150);
     }
     PoolEffect_UpdateWaterEffect(poolEffect);
-    Graphics *newGraphics = new Graphics(*g);
-    newGraphics->SetWrapMode(0, 0);
-    newGraphics->DrawTrianglesTex((Image*)poolEffect->mCausticImage, v140[2], 150);
-    newGraphics->SetWrapMode(1, 1);
-    newGraphics->~Graphics();
+    Graphics aPoolG(*g);
+    aPoolG.SetWrapMode(0, 0);
+    aPoolG.DrawTrianglesTex((Image*)poolEffect->mCausticImage, v140[2], 150);
+    aPoolG.SetWrapMode(1, 1);
 
     if (poolEffect->mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_POOL_PARTY && poolEffect->mApp->mBoard != nullptr) {
         float theTmpTransY = g->mTransY;
@@ -420,11 +419,10 @@ void PoolEffect_PoolEffectDraw(PoolEffect *poolEffect, Sexy::Graphics *g, bool t
                     TodParticleSystem_Draw(thePoolSparkle, g);
                 }
             }
-            Graphics *newGraphics = new Graphics(*g);
-            newGraphics->SetWrapMode(0, 0);
-            newGraphics->DrawTrianglesTex((Image*)poolEffect->mCausticImage, v140[2], 150);
-            newGraphics->SetWrapMode(1, 1);
-            newGraphics->~Graphics();
+            Graphics aPoolG2(*g);
+            aPoolG2.SetWrapMode(0, 0);
+            aPoolG2.DrawTrianglesTex((Image*)poolEffect->mCausticImage, v140[2], 150);
+            aPoolG2.SetWrapMode(1, 1);
             g->mTransY = theTmpTransY;
         }
     }

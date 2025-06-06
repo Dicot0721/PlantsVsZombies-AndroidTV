@@ -532,20 +532,19 @@ void GamepadControls::UpdatePreviewReanim() {
         }
     }
 
-    Graphics *newGraphics = new Graphics(mPreviewImage);
-    newGraphics->ClearRect(0, 0, mPreviewImage->mWidth, mPreviewImage->mHeight);
-    newGraphics->Translate(256, 256);
+    Graphics newGraphics(mPreviewImage);
+    newGraphics.ClearRect(0, 0, mPreviewImage->mWidth, mPreviewImage->mHeight);
+    newGraphics.Translate(256, 256);
     if (flagUpdateCanPlant || flagUpdateChangeType)
         mPreviewReanim4->Update();
     if (flagDrawGray) {
-        newGraphics->SetColorizeImages(true);
-        (newGraphics)->SetColor(gray);
+        newGraphics.SetColorizeImages(true);
+        (newGraphics).SetColor(gray);
     }
-    mPreviewReanim4->Draw(newGraphics);
-    mPreviewReanim4->DrawRenderGroup(newGraphics, 2);
-    mPreviewReanim4->DrawRenderGroup(newGraphics, 1);
-    mPreviewReanim4->DrawRenderGroup(newGraphics, 3);
-    newGraphics->~Graphics();
+    mPreviewReanim4->Draw(&newGraphics);
+    mPreviewReanim4->DrawRenderGroup(&newGraphics, 2);
+    mPreviewReanim4->DrawRenderGroup(&newGraphics, 1);
+    mPreviewReanim4->DrawRenderGroup(&newGraphics, 3);
 }
 
 void GamepadControls::DrawPreview(Sexy::Graphics *g) {

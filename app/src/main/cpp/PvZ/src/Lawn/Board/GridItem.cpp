@@ -51,10 +51,10 @@ void GridItem::DrawScaryPot(Sexy::Graphics* g) {
         } else if (mScaryPotType == ScaryPotType::SCARYPOT_SUN) {
             int aSuns = mBoard->mChallenge->ScaryPotterCountSunInPot(this);
 
-            Reanimation aReanim = Reanimation();
-            (&aReanim)->ReanimationInitializeType(0.0, 0.0, ReanimationType::REANIM_SUN);
-            (&aReanim)->OverrideScale(0.5f, 0.5f);
-            (&aReanim)->Update();                                                  // 一次Update是必要的，否则绘制出来是Empty
+            Reanimation aReanim{};
+            aReanim.ReanimationInitializeType(0.0, 0.0, ReanimationType::REANIM_SUN);
+            aReanim.OverrideScale(0.5f, 0.5f);
+            aReanim.Update();                                                  // 一次Update是必要的，否则绘制出来是Empty
             aReanim.mFrameStart = (mBoard->mMainCounter / 10) % (aReanim.mFrameCount - 1); // 这行代码可让阳光动起来
 
             for (int i = 0; i < aSuns; i++) {
@@ -77,17 +77,16 @@ void GridItem::DrawScaryPot(Sexy::Graphics* g) {
                         aOffsetX += 5.0f; // aOffsetY -= 15.0f;          break;
                 }
 
-                (&aReanim)->SetPosition(aXPos + aOffsetX, aYPos + aOffsetY);
-                (&aReanim)->Draw(g);
+                aReanim.SetPosition(aXPos + aOffsetX, aYPos + aOffsetY);
+                aReanim.Draw(g);
             }
-            (&aReanim)->Delete();
         }
 
         int aAlpha = TodAnimateCurve(0, 50, mTransparentCounter, 255, 58, TodCurves::CURVE_LINEAR);
         g->SetColorizeImages(true);
         Color aColor = {255, 255, 255, aAlpha};
         g->SetColor(aColor);
-        aInsideGraphics->~Graphics();
+        delete aInsideGraphics;
     }
 
     g->DrawImageCel(*Sexy_IMAGE_SCARY_POT_Addr, aXPos, aYPos, aImageCol, 1);

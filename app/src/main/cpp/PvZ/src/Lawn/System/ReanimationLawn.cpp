@@ -100,15 +100,14 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
     ReanimationType reanimationType = GetZombieDefinition(zombieType_reanim).mReanimationType;
     float x = 40;
     float y = 60;
-    Reanimation reanimation = Reanimation();
-    (&reanimation)->ReanimationInitializeType(x, y, reanimationType);
-    (&reanimation)->SetFramesForLayer("anim_idle");
+    Reanimation reanimation;
+    reanimation.ReanimationInitializeType(x, y, reanimationType);
+    reanimation.SetFramesForLayer("anim_idle");
     Zombie::SetupReanimLayers(&reanimation, zombieType_reanim);
-    (&reanimation)->SetImageOverride("anim_head1", *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD_REDEYE_Addr);
-    (&reanimation)->Update();
-    (&reanimation)->Draw(graphics);
-    (&reanimation)->Delete();
+    reanimation.SetImageOverride("anim_head1", *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD_REDEYE_Addr);
+    reanimation.Update();
+    reanimation.Draw(graphics);
     mZombieImages[theZombieType] = BlankCanvasImage;
-    graphics->~Graphics();
+    delete graphics;
     return BlankCanvasImage;
 }

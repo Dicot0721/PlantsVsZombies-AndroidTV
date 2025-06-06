@@ -141,14 +141,16 @@ public:
     int mReanimationID;                         // 54
     // 大小55个整数
 
-    Reanimation() { reinterpret_cast<void (*)(Reanimation *)>(Reanimation_ReanimationAddr)(this); }
+    Reanimation() { Create(); }
+    void Create() { reinterpret_cast<void (*)(Reanimation *)>(Reanimation_ReanimationAddr)(this); }
+    ~Reanimation() { Destroy(); }
+    void Destroy() { reinterpret_cast<void (*)(Reanimation *)>(Reanimation_Delete2Addr)(this); }
     void SetPosition(float theX, float theY) { reinterpret_cast<void (*)(Reanimation *, float, float)>(Reanimation_SetPositionAddr)(this, theX, theY); }
     void OverrideScale(float theScaleX, float theScaleY) { reinterpret_cast<void (*)(Reanimation *, float theX, float theY)>(Reanimation_OverrideScaleAddr)(this, theScaleX, theScaleY); }
     void DrawRenderGroup(Sexy::Graphics *g, int theRenderGroup) { reinterpret_cast<void (*)(Reanimation *, Sexy::Graphics *, int)>(Reanimation_DrawRenderGroupAddr)(this, g, theRenderGroup); }
     void ReanimationInitializeType(float theX, float theY, ReanimationType theReanimType) {
         reinterpret_cast<void (*)(Reanimation *, float, float, ReanimationType)>(Reanimation_ReanimationInitializeTypeAddr)(this, theX, theY, theReanimType);
     }
-    void Delete() { reinterpret_cast<void (*)(Reanimation *)>(Reanimation_Delete2Addr)(this); }
     int FindTrackIndexById(const char *theTrackName) { return reinterpret_cast<int (*)(Reanimation *, const char *)>(Reanimation_FindTrackIndexByIdAddr)(this, theTrackName); };
     void GetCurrentTransform(int theTrackIndex, ReanimatorTransform *theTransformCurrent) {
         reinterpret_cast<void (*)(Reanimation *, int, ReanimatorTransform *)>(Reanimation_GetCurrentTransformAddr)(this, theTrackIndex, theTransformCurrent);

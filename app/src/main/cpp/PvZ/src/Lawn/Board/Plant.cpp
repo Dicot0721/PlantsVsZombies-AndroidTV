@@ -259,58 +259,60 @@ void Plant::Draw(Sexy::Graphics *g) {
 
     g->SetDrawMode(Graphics::DRAWMODE_NORMAL);
     int theCelRow = 0;
-    float num = 0.0f;
-    float num2 = PlantDrawHeightOffset(mBoard, 0, mSeedType, mPlantCol, mRow);
+    float aOffsetX = 0.0f;
+    float aOffsetY = PlantDrawHeightOffset(mBoard, 0, mSeedType, mPlantCol, mRow);
     if (IsFlying(mSeedType) && mSquished) {
-        num2 += 30.0f;
+        aOffsetY += 30.0f;
     }
     int theCelCol = mFrame;
     Image *aImage = GetImage(mSeedType);
     if (mSquished) {
         if (mSeedType == SeedType::SEED_FLOWERPOT) {
-            num2 -= 15.0f;
+            aOffsetY -= 15.0f;
         }
         if (mSeedType == SeedType::SEED_INSTANT_COFFEE) {
-            num2 -= 20.0f;
+            aOffsetY -= 20.0f;
         }
         float ratioSquished = 0.5f;
         g->SetScale(1.0f, ratioSquished, 0.0f, 0.0f);
         g->SetColorizeImages(true);
         Color color = {255, 255, 255, (int)(255.0f * min(1.0f, mDisappearCountdown / 100.0f))};
         g->SetColor(color);
-        Plant::DrawSeedType(g, mSeedType, mImitaterType, DrawVariation::VARIATION_NORMAL, num, num2 + 85.0f * (1 - ratioSquished));
+        Plant::DrawSeedType(g, mSeedType, mImitaterType, DrawVariation::VARIATION_NORMAL, aOffsetX, aOffsetY + 85.0f * (1 - ratioSquished));
         g->SetScale(1.0f, 1.0f, 0.0f, 0.0f);
         g->SetColorizeImages(false);
         return;
     }
-    bool flag = false;
-    Plant *thePlant = nullptr;
+
+    bool aDrawPumpkinBack = false;
+    Plant *aPumpkin = nullptr;
+
     if (IsOnBoard()) {
-        thePlant = mBoard->GetPumpkinAt(mPlantCol, mRow);
-        if (thePlant != nullptr) {
-            Plant *plant2 = mBoard->GetTopPlantAt(mPlantCol, mRow, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
-            if (plant2 != nullptr && plant2->mRenderOrder > thePlant->mRenderOrder) {
-                plant2 = nullptr;
+        aPumpkin = mBoard->GetPumpkinAt(mPlantCol, mRow);
+        if (aPumpkin != nullptr) {
+            Plant *aPlantInPumpkin = mBoard->GetTopPlantAt(mPlantCol, mRow, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
+            if (aPlantInPumpkin != nullptr && aPlantInPumpkin->mRenderOrder > aPumpkin->mRenderOrder) {
+                aPlantInPumpkin = nullptr;
             }
-            if (plant2 != nullptr && plant2->mOnBungeeState == PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE) {
-                plant2 = nullptr;
+            if (aPlantInPumpkin != nullptr && aPlantInPumpkin->mOnBungeeState == PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE) {
+                aPlantInPumpkin = nullptr;
             }
-            if (plant2 == this) {
-                flag = true;
+            if (aPlantInPumpkin == this) {
+                aDrawPumpkinBack = true;
             }
-            if (plant2 == nullptr && mSeedType == SeedType::SEED_PUMPKINSHELL) {
-                flag = true;
+            if (aPlantInPumpkin == nullptr && mSeedType == SeedType::SEED_PUMPKINSHELL) {
+                aDrawPumpkinBack = true;
             }
         } else if (mSeedType == SeedType::SEED_PUMPKINSHELL) {
-            flag = true;
-            thePlant = this;
+            aDrawPumpkinBack = true;
+            aPumpkin = this;
         }
     } else if (mSeedType == SeedType::SEED_PUMPKINSHELL) {
-        flag = true;
-        thePlant = this;
+        aDrawPumpkinBack = true;
+        aPumpkin = this;
     }
 
-    DrawShadow(g, num, num2);
+    DrawShadow(g, aOffsetX, aOffsetY);
 
     if (IsFlying(mSeedType)) {
         int num3;
@@ -321,18 +323,19 @@ void Plant::Draw(Sexy::Graphics *g) {
         }
         float num4 = (num3 + mRow * 97 + mPlantCol * 61) * 0.03f;
         float num5 = sin(num4) * 2.0f;
-        num2 += num5;
+        aOffsetY += num5;
     }
-    if (flag) {
-        Reanimation *reanimation = mApp->ReanimationGet(thePlant->mBodyReanimID);
-        Graphics *newGraphics = new Graphics(*g);
-        newGraphics->mTransX += thePlant->mX - mX;
-        newGraphics->mTransY += thePlant->mY - mY;
-        reanimation->DrawRenderGroup(newGraphics, 1);
-        newGraphics->~Graphics();
+
+    if (aDrawPumpkinBack) {
+        Reanimation *reanimation = mApp->ReanimationGet(aPumpkin->mBodyReanimID);
+        Graphics aPumpkinGraphics(*g);
+        aPumpkinGraphics.mTransX += aPumpkin->mX - mX;
+        aPumpkinGraphics.mTransY += aPumpkin->mY - mY;
+        reanimation->DrawRenderGroup(&aPumpkinGraphics, 1);
     }
-    num += mShakeOffsetX;
-    num2 += mShakeOffsetY;
+
+    aOffsetX += mShakeOffsetX;
+    aOffsetY += mShakeOffsetY;
     if (IsInPlay() && mApp->IsIZombieLevel()) {
         mBoard->mChallenge->IZombieDrawPlant(g, this);
     } else if (mBodyReanimID != 0) {
@@ -376,7 +379,7 @@ void Plant::Draw(Sexy::Graphics *g) {
             g->SetColor(color);
         }
         if (aImage != nullptr) {
-            TodDrawImageCelF(g, aImage, num, num2, theCelCol, theCelRow);
+            TodDrawImageCelF(g, aImage, aOffsetX, aOffsetY, theCelCol, theCelRow);
         }
         //        if (mSeedType == a::Sprout)
         //        {
@@ -399,7 +402,7 @@ void Plant::Draw(Sexy::Graphics *g) {
             Color color = {255, 255, 255, 196};
             g->SetColor(color);
             if (aImage != nullptr) {
-                TodDrawImageCelF(g, aImage, num, num2, theCelCol, theCelRow);
+                TodDrawImageCelF(g, aImage, aOffsetX, aOffsetY, theCelCol, theCelRow);
             }
             g->SetDrawMode(Graphics::DRAWMODE_NORMAL);
             g->SetColorizeImages(false);
@@ -410,7 +413,7 @@ void Plant::Draw(Sexy::Graphics *g) {
             Color color = {255, 255, 255, theAlpha};
             g->SetColor(color);
             if (aImage != nullptr) {
-                TodDrawImageCelF(g, aImage, num, num2, theCelCol, theCelRow);
+                TodDrawImageCelF(g, aImage, aOffsetX, aOffsetY, theCelCol, theCelRow);
             }
             g->SetDrawMode(Graphics::DRAWMODE_NORMAL);
             g->SetColorizeImages(false);
@@ -689,6 +692,7 @@ int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
                 return 25;
             case SeedType::SEED_MELONPULT:
             case SeedType::SEED_ZOMBIE_FLAG:
+            case SeedType::SEED_ZOMBIE_UNKNOWN:
             case SeedType::SEED_ZOMBIE_BALLOON:
                 return 300;
             case SeedType::SEED_ZOMBIE_TOMBSTONE:
@@ -742,6 +746,7 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_ZOMBIE_POGO:
                 case SeedType::SEED_ZOMBIE_CATAPULT:
                 case SeedType::SEED_ZOMBIE_GARGANTUAR:
+                case SeedType::SEED_ZOMBIE_UNKNOWN:
                     refreshTime = 6000;
                     break;
                 default:

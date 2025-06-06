@@ -341,17 +341,16 @@ void DaveHelp_Delete2(LeaderboardsWidget *leaderboardsWidget) {
     leaderboardsWidget->mZombieTrashBin->Delete();
     leaderboardsWidget->mPlantTrashBin->Delete();
     for (int i = 0; i < 5; ++i) {
-        leaderboardsWidget->mLeaderboardReanimations->backgroundReanim[i]->Delete();
-        operator delete(leaderboardsWidget->mLeaderboardReanimations->backgroundReanim[i]);
+        delete leaderboardsWidget->mLeaderboardReanimations->backgroundReanim[i];
     }
     for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {
-        leaderboardsWidget->mLeaderboardReanimations->achievementReanim[i]->Delete();
-        operator delete(leaderboardsWidget->mLeaderboardReanimations->achievementReanim[i]);
+        delete leaderboardsWidget->mLeaderboardReanimations->achievementReanim[i];
     }
     leaderboardsWidget->mBackButton->~GameButton();
     operator delete(leaderboardsWidget->mButtonListener->vTable);
     operator delete(leaderboardsWidget->mButtonListener);
     operator delete(leaderboardsWidget->mLeaderboardReanimations);
+
     old_DaveHelp_Delete2(leaderboardsWidget);
 }
 

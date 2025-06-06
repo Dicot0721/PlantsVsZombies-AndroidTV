@@ -358,21 +358,20 @@ void DrawSeedPacket(Sexy::Graphics *g,
 
     if (coolDownPercent > 0.0) {
         float coolDownHeight = coolDownPercent * 68.0 + 2.5;
-        Graphics *newGraphics = new Graphics(*g);
+        Graphics aPlantG(*g);
         Color theColor = {64, 64, 64, 255};
-        newGraphics->SetColor(theColor);
-        newGraphics->SetColorizeImages(true);
-        newGraphics->ClipRect(x, y, g->mScaleX * 50.0f, coolDownHeight * g->mScaleY);
+        aPlantG.SetColor(theColor);
+        aPlantG.SetColorizeImages(true);
+        aPlantG.ClipRect(x, y, g->mScaleX * 50.0f, coolDownHeight * g->mScaleY);
         if (isSeedPacketSelected) {
             if (Challenge::IsMPSeedType(seedType)) {
-                TodDrawImageScaledF(newGraphics, *Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr, x, y, g->mScaleX, g->mScaleY);
+                TodDrawImageScaledF(&aPlantG, *Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr, x, y, g->mScaleX, g->mScaleY);
             } else {
-                TodDrawImageCelScaledF(newGraphics, *Sexy_IMAGE_SEEDS_Addr, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
+                TodDrawImageCelScaledF(&aPlantG, *Sexy_IMAGE_SEEDS_Addr, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
             }
         }
         if (isPlant && isSeedPacketSelected)
-            DrawSeedType(newGraphics, x, y, seedType, imitaterType, v28, v29, theDrawScale);
-        newGraphics->~Graphics();
+            DrawSeedType(&aPlantG, x, y, seedType, imitaterType, v28, v29, theDrawScale);
     }
     if (drawCostText) {
         int tmpHolder[1];

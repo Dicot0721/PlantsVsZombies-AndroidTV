@@ -357,7 +357,7 @@ public:
     void Create(LawnApp *theApp);
     void InitLevel();
     void Update();
-    void RemovedFromManager(int *theManager);
+    void RemovedFromManager(Sexy::WidgetManager *theManager);
     int GetNumSeedsInBank(bool thePlayerIndex);
     void RemoveParticleByType(ParticleEffect theEffectType);
     void FadeOutLevel();
@@ -579,7 +579,7 @@ inline void (*old_Board_InitLawnMowers)(Board *board);
 
 inline void (*old_Board_PickZombieWaves)(Board *board);
 
-inline void (*old_Board_RemovedFromManager)(Board *board, int *manager);
+inline void (*old_Board_RemovedFromManager)(Board *board, Sexy::WidgetManager *manager);
 
 inline void (*old_Board_InitLevel)(Board *board);
 

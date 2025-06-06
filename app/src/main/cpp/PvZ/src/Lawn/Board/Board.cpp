@@ -42,10 +42,12 @@ void Board::Create(LawnApp *theApp) {
     old_Board_Board(this, theApp);
 
     if (gBoardMenuButton != nullptr) {
-        gBoardMenuButton->~GameButton();
+        gBoardMenuButton->Destroy();
+        operator delete (gBoardMenuButton);
     }
     if (gBoardStoreButton != nullptr) {
-        gBoardStoreButton->~GameButton();
+        gBoardStoreButton->Destroy();
+        operator delete (gBoardStoreButton);
     }
     int holder[1];
     TodStringTranslate(holder, (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) ? "[MAIN_MENU_BUTTON]" : "[MENU_BUTTON]");
@@ -2985,13 +2987,16 @@ void Board_startLevel(Board *board) {
 }
 
 
-void Board::RemovedFromManager(int *theManager) {
+void Board::RemovedFromManager(WidgetManager *theManager) {
     Sexy_Widget_RemoveWidget(this, gBoardMenuButton);
     Sexy_Widget_RemoveWidget(this, gBoardStoreButton);
-    gBoardMenuButton->~GameButton();
-    gBoardStoreButton->~GameButton();
+    gBoardMenuButton->Destroy();
+//    operator delete (gBoardMenuButton);
+    gBoardStoreButton->Destroy();
+//    operator delete (gBoardStoreButton);
     gBoardMenuButton = nullptr;
     gBoardStoreButton = nullptr;
+
     old_Board_RemovedFromManager(this, theManager);
 }
 

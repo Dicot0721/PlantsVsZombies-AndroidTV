@@ -176,7 +176,7 @@ void MainMenu::Update() {
             gMainMenuAchievementsWidget = nullptr;
             if (gMainMenuAchievementsBack != nullptr) {
                 Sexy_Widget_RemoveWidget(this, (Widget*)gMainMenuAchievementsBack);
-                gMainMenuAchievementsBack->~GameButton();
+                gMainMenuAchievementsBack->Destroy();
                 gMainMenuAchievementsBack = nullptr;
             }
             Sexy::Widget *achievementsButton = Sexy_Widget_FindWidget(this, ACHIEVEMENTS_BUTTON);
@@ -525,7 +525,7 @@ void MainMenu::Delete2() {
     }
 
     if (gMainMenuAchievementsBack != nullptr) {
-        gMainMenuAchievementsBack->~GameButton();
+        gMainMenuAchievementsBack->Destroy();;
         gMainMenuAchievementsBack = nullptr;
     }
 }

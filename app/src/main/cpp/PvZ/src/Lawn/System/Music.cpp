@@ -496,10 +496,6 @@ void Music::MusicUpdate() {
 
 void Music::ResyncChannel(MusicFile theFile1, MusicFile theFile2) {}
 
-Music2::Music2() {
-    Create();
-}
-
 void Music2::Create() {
     // 选择使用哪一版本的音乐。xbox版是xm格式，有鼓点；TV版则是ogg格式，无鼓点。
     if (useXboxMusic) {

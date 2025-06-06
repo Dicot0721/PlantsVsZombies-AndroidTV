@@ -21,8 +21,10 @@ public:
     int unkMems6[13];               // 217 ~ 229
     // 大小230个整数
 
-//    GameButton(int theId, ButtonListener *theListener) { reinterpret_cast<void (*)(GameButton *, int, ButtonListener *)>(GameButton_GameButtonAddr)(this, theId, theListener); }
-    ~GameButton() { reinterpret_cast<void (*)(GameButton *)>(GameButton_DeleteAddr)(this); }
+//    GameButton(int theId, ButtonListener *theListener) { Create(); }
+    ~GameButton() { Destroy(); }
+    void Create(int theId, ButtonListener *theListener) { reinterpret_cast<void (*)(GameButton *, int, ButtonListener *)>(GameButton_GameButtonAddr)(this, theId, theListener); }
+    void Destroy() { reinterpret_cast<void (*)(GameButton *)>(GameButton_DeleteAddr)(this); }
     bool IsMouseOver() { return reinterpret_cast<bool (*)(GameButton *)>(GameButton_IsMouseOverAddr)(this); }
     void Resize(int theX, int theY, int theWidth, int theHeight) { reinterpret_cast<void (*)(GameButton *, int, int, int, int)>(GameButton_ResizeAddr)(this, theX, theY, theWidth, theHeight); }
     void Update() { reinterpret_cast<void (*)(GameButton *)>(GameButton_UpdateAddr)(this); }

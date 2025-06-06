@@ -378,10 +378,8 @@ extern "C" JNIEXPORT void JNICALL Java_com_android_support_Preferences_Changes(J
                 choiceSeedType = (SeedType)(value - 1); // [豌豆射手, 模仿者)
             } else if (value <= 52) {
                 choiceSeedType = (SeedType)(value + 1); // [爆炸坚果, NUM_SEED_TYPES)
-            } else if (value <= 71) {
-                choiceSeedType = (SeedType)(value + 8); // [墓碑, ZombieUnknown)
-            } else if (value <= 77) {
-                choiceSeedType = (SeedType)(value + 9); // [鸭子救生圈僵尸, 气球僵尸]
+            } else if (value <= 76) {
+                choiceSeedType = (SeedType)(value + 8); // [墓碑, 气球僵尸]
             }
             break; // 卡片类型
         case 144:
@@ -545,7 +543,7 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
         "color='green'>卡片类型：_未选择,豌豆射手,向日葵,樱桃炸弹,坚果,土豆地雷,寒冰射手,大嘴花,双重射手,小喷菇,阳光菇,大喷菇,咬咬碑,迷惑菇,胆小菇,冰川菇,末日菇,莲叶,窝瓜,三重射手,缠绕水草,火爆辣椒,"
         "地刺,火炬树桩,高坚果,水兵菇,路灯花,仙人掌,三叶草,双向射手,星星果,南瓜头,磁力菇,卷心菜投手,花盆,玉米投手,咖啡豆,大蒜,叶子保护伞,金盏花,西瓜投手,机枪射手,双胞向日葵,多嘴小蘑菇,猫尾草,冰西瓜,"
         "吸金磁,钢地刺,玉米加农炮,爆炸坚果,巨型坚果,幼苗,反向双重射手,墓碑,普通僵尸,垃圾桶僵尸,路障僵尸,撑杆僵尸,铁桶僵尸,旗帜僵尸,报纸僵尸,铁网门僵尸,橄榄球僵尸,舞者僵尸,雪橇车僵尸,玩偶匣僵尸,"
-        "矿工僵尸,蹦蹦僵尸,蹦极僵尸,梯子僵尸,投石车僵尸,巨人僵尸,鸭子救生圈僵尸,潜水僵尸,海豚骑士僵尸,小鬼僵尸,气球僵尸",
+        "矿工僵尸,蹦蹦僵尸,蹦极僵尸,梯子僵尸,投石车僵尸,巨人僵尸,红眼巨人僵尸,鸭子救生圈僵尸,潜水僵尸,海豚骑士僵尸,小鬼僵尸,气球僵尸",
         "144_CollapseAdd_CheckBox_模仿者植物卡片",
         "145_CollapseAdd_OnceCheckBox_更换卡片",
 

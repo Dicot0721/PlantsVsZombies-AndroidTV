@@ -509,7 +509,7 @@ bool LawnApp::IsLittleTroubleLevel() {
 }
 
 bool LawnApp::IsScaryPotterLevel() {
-    if (mGameMode >= GameMode::GAMEMODE_SCARY_POTTER_1 && mGameMode <= GameMode::GAMEMODE_SCARY_POTTER_9)
+    if (mGameMode >= GameMode::GAMEMODE_SCARY_POTTER_1 && mGameMode <= GameMode::GAMEMODE_SCARY_POTTER_ENDLESS)
         return true;
 
     return IsAdventureMode() && mPlayerInfo->mLevel == 35;

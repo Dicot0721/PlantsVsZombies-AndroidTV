@@ -79,7 +79,7 @@ void HelpTextScreen_RemovedFromManager(Sexy::Widget *helpTextScreen, int *widget
 void HelpTextScreen_Delete2(Sexy::Widget *helpTextScreen) {
     old_HelpTextScreen_Delete2(helpTextScreen);
     if (gHelpTextScreenCloseButton != nullptr) {
-        gHelpTextScreenCloseButton->~GameButton();
+        gHelpTextScreenCloseButton->Destroy();
         gHelpTextScreenCloseButton = nullptr;
     }
 }

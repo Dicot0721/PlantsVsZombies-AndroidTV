@@ -155,7 +155,7 @@ void LawnApp::KillSeedChooserScreen() {
     SeedChooserScreen *seedChooserScreen = mSeedChooserScreen;
     if (seedChooserScreen != nullptr && mGameMode != GameMode::GAMEMODE_MP_VS) {
         Sexy_Widget_RemoveWidget(seedChooserScreen, gSeedChooserScreenMainMenuButton);
-        gSeedChooserScreenMainMenuButton->~GameButton();
+        gSeedChooserScreenMainMenuButton->Destroy();;
         gSeedChooserScreenMainMenuButton = nullptr;
     }
 
