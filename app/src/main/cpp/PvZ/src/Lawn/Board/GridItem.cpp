@@ -2,6 +2,7 @@
 #include "PvZ/Lawn/Board/GridItem.h"
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/ZenGarden.h"
+#include "PvZ/Lawn/Board/SeedPacket.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Board/CursorObject.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"

@@ -30,15 +30,12 @@ public:
         Create();
     }
 
-    void Create() { reinterpret_cast<void (*)(ThisType *)>(Sexy_SexyMatrix3_SexyMatrix3Addr)(this); }
+    void Create() { reinterpret_cast<void (*)(__SexyMatrix3 *)>(Sexy_SexyMatrix3_SexyMatrix3Addr)(this); }
 
 protected:
     __SexyMatrix3()
         requires homura::isDerived<T>
     {}
-
-private:
-    using ThisType = __SexyMatrix3<T>;
 };
 
 class SexyTransform2D : public __SexyMatrix3<homura::DerivedClass> {
@@ -50,7 +47,7 @@ public:
     void RotateRad(float rot) { reinterpret_cast<void (*)(SexyTransform2D *, float)>(Sexy_SexyTransform2D_RotateRadAddr)(this, rot); }
 };
 
-using SexyMatrix3 = __SexyMatrix3<homura::BaseClass>;
+using SexyMatrix3 = __SexyMatrix3<>;
 
 }; // namespace Sexy
 

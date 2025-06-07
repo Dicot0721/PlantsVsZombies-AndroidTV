@@ -88,11 +88,11 @@ public:
     {
         Create();
     }
-    void Create() { reinterpret_cast<void (*)(ThisType *)>(Music_MusicAddr)(this); }
-    void StopAllMusic() { reinterpret_cast<void (*)(ThisType *)>(Music_StopAllMusicAddr)(this); }
-    unsigned long GetMusicOrder(MusicFile theMusicFile) { return reinterpret_cast<unsigned long (*)(ThisType *, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile); }
+    void Create() { reinterpret_cast<void (*)(__Music *)>(Music_MusicAddr)(this); }
+    void StopAllMusic() { reinterpret_cast<void (*)(__Music *)>(Music_StopAllMusicAddr)(this); }
+    unsigned long GetMusicOrder(MusicFile theMusicFile) { return reinterpret_cast<unsigned long (*)(__Music *, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile); }
     void SetupMusicFileForTune(MusicFile theMusicFile, MusicTune theMusicTune) {
-        reinterpret_cast<void (*)(ThisType*, MusicFile, MusicTune)>(Music_SetupMusicFileForTuneAddr)(this, theMusicFile, theMusicTune);
+        reinterpret_cast<void (*)(__Music*, MusicFile, MusicTune)>(Music_SetupMusicFileForTuneAddr)(this, theMusicFile, theMusicTune);
     }
 
     void PlayMusic(MusicTune theMusicTune, int theOffset, int theDrumsOffset);
@@ -111,9 +111,6 @@ protected:
     __Music()
         requires homura::isDerived<T>
     {}
-
-private:
-    using ThisType = __Music<T>;
 };
 
 class Music2 : public __Music<homura::DerivedClass> { // 加载TV版ogg格式音乐时用。无鼓点。

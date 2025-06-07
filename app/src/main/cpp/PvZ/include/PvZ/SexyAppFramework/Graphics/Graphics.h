@@ -1,6 +1,7 @@
 #ifndef PVZ_SEXY_GRAPHICS_H
 #define PVZ_SEXY_GRAPHICS_H
 
+#include "../Misc/SexyMatrix.h"
 #include "../Misc/Common.h"
 #include "../Misc/Rect.h"
 #include "../Misc/TriVertex.h"
@@ -12,7 +13,6 @@
 namespace Sexy {
 
 class Font;
-class SexyMatrix3;
 class Transform;
 class SexyVertex2D;
 

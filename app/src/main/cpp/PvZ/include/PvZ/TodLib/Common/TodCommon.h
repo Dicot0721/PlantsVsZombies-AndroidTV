@@ -5,17 +5,16 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_TODCOMMON_H
 #define PLANTSVSZOMBIES_ANDROIDTV_TODCOMMON_H
 
-#include <stdlib.h>
-
 #include "PvZ/Lawn/Common/LawnCommon.h"
 #include "PvZ/SexyAppFramework/Misc/Common.h"
 #include "PvZ/SexyAppFramework/Misc/ResourceManager.h"
+
+#include <cstdlib>
 
 struct TodAllocator;
 namespace Sexy
 {
 class Graphics;
-class SexyMatrix3;
 class SexyVector2;
 class Image;
 class Color;

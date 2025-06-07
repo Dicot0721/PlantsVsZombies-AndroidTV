@@ -1,6 +1,7 @@
 #include "PvZ/Lawn/Widget/AlmanacDialog.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Plant.h"
+#include "PvZ/Lawn/Board/SeedPacket.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Misc.h"
