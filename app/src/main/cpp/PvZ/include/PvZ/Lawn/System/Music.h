@@ -53,7 +53,7 @@ enum MusicDrumsState {
     MUSIC_DRUMS_FADING = 4,
 };
 
-template <bool IS_AS_BASE = false>
+template <homura::BaseOrDerived T = homura::BaseClass>
 class __Music { // 加载XBOX版xm格式音乐时用。优：音质好、有鼓点。缺：鼓点BUG多，xm格式难以修改
 public:
     int* vTable;                                       // 0
@@ -84,7 +84,7 @@ public:
     // 大小26个整数
 
     __Music()
-        requires(!IS_AS_BASE)
+        requires homura::isBase<T>
     {
         Create();
     }
@@ -109,11 +109,11 @@ public:
 
 protected:
     __Music()
-        requires IS_AS_BASE
+        requires homura::isDerived<T>
     {}
 };
 
-class Music2 : public __Music<true> { // 加载TV版ogg格式音乐时用。无鼓点。
+class Music2 : public __Music<homura::DerivedClass> { // 加载TV版ogg格式音乐时用。无鼓点。
 public:
     // 大小26个整数
 

@@ -12,7 +12,7 @@
 
 namespace Sexy {
 
-template <bool IS_AS_BASE = false>
+template <homura::BaseOrDerived T = homura::BaseClass>
 class __SexyMatrix3 {
 public:
     union {
@@ -25,7 +25,7 @@ public:
     };
 
     __SexyMatrix3()
-        requires(!IS_AS_BASE)
+        requires homura::isBase<T>
     {
         Create();
     }
@@ -34,11 +34,11 @@ public:
 
 protected:
     __SexyMatrix3()
-        requires IS_AS_BASE
+        requires homura::isDerived<T>
     {}
 };
 
-class SexyTransform2D : public __SexyMatrix3<true> {
+class SexyTransform2D : public __SexyMatrix3<homura::DerivedClass> {
 public:
     SexyTransform2D() { Create(); }
     void Create() { reinterpret_cast<void (*)(SexyTransform2D *)>(Sexy_SexyTransform2D_SexyTransform2DAddr)(this); }
