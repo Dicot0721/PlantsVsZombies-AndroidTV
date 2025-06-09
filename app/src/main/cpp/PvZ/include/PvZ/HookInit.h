@@ -71,17 +71,12 @@ inline void InitInGameFunction() {
     //    DrawSeedType = (void (*)(float *, float, float, int, int, float, float,float)) DrawSeedTypeAddr;
     //    MailScreen_KeyDown = (decltype(MailScreen_KeyDown))MailScreen_KeyDownAddr;
     Sexy_GamepadApp_HasGamepad = (decltype(Sexy_GamepadApp_HasGamepad))Sexy_GamepadApp_HasGamepadAddr;
-    Sexy_SexyAppBase_GetImage = (decltype(Sexy_SexyAppBase_GetImage))Sexy_SexyAppBase_GetImageAddr;
     Sexy_Widget_Resize = (decltype(Sexy_Widget_Resize))Sexy_Widget_ResizeAddr;
     Sexy_Widget_Widget = (decltype(Sexy_Widget_Widget))Sexy_Widget_WidgetAddr;
     Sexy_Widget_SetVisible = (decltype(Sexy_Widget_SetVisible))Sexy_Widget_SetVisibleAddr;
     Sexy_WidgetManager_SetFocus = (decltype(Sexy_WidgetManager_SetFocus))Sexy_WidgetManager_SetFocusAddr;
     Sexy_WidgetContainer_SetFocus = (decltype(Sexy_WidgetContainer_SetFocus))Sexy_WidgetContainer_SetFocusAddr;
     Sexy_WidgetManager_GetWidgetAt = (decltype(Sexy_WidgetManager_GetWidgetAt))Sexy_WidgetManager_GetWidgetAtAddr;
-    Sexy_Image_GetWidth = (decltype(Sexy_Image_GetWidth))Sexy_Image_GetWidthAddr;
-    Sexy_Image_GetHeight = (decltype(Sexy_Image_GetHeight))Sexy_Image_GetHeightAddr;
-    Sexy_Image_GetCelHeight = (decltype(Sexy_Image_GetCelHeight))Sexy_Image_GetCelHeightAddr;
-    Sexy_Image_SetWrapMode = (decltype(Sexy_Image_SetWrapMode))Sexy_Image_SetWrapModeAddr;
     Sexy_WidgetContainer_MarkDirty = (decltype(Sexy_WidgetContainer_MarkDirty))Sexy_WidgetContainer_MarkDirtyAddr;
     ImitaterDialog_SeedHitTest = (decltype(ImitaterDialog_SeedHitTest))ImitaterDialog_SeedHitTestAddr;
     SaveGameContext_SyncInt = (decltype(SaveGameContext_SyncInt))SaveGameContext_SyncIntAddr;

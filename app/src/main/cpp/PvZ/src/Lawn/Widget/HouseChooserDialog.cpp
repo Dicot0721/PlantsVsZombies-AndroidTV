@@ -12,8 +12,8 @@ bool HouseChooserDialog_IsHouseAvaliable(HouseType houseType) {
 
 void HouseChooserDialog_MouseDown(HouseChooserDialog *a, int x, int y, int theCount) {
     old_HouseChooserDialog_MouseDown(a, x, y, theCount);
-    int width = Sexy_Image_GetWidth(*Sexy_IMAGE_STORE_BLUEPRINT_CLOWN_Addr);
-    int height = Sexy_Image_GetHeight(*Sexy_IMAGE_STORE_BLUEPRINT_CLOWN_Addr);
+    int width = (*Sexy_IMAGE_STORE_BLUEPRINT_CLOWN_Addr)->GetWidth();
+    int height = (*Sexy_IMAGE_STORE_BLUEPRINT_CLOWN_Addr)->GetHeight();
     int houseIdToSelect = HouseType::BLUEPRINT_INVALID;
     for (int i = 0; i < 5; ++i) {
         Sexy::Rect rect = {75 + 90 * i, 125, width, height};

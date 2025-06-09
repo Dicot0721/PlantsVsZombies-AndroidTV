@@ -956,7 +956,7 @@ void Zombie::DieNoLoot() {
 
 void Zombie::DrawBungeeCord(Sexy::Graphics *g, int theOffsetX, int theOffsetY) {
     // 修复在Boss关的蹦极绳子不绑在Boss手上
-    int aCordCelHeight = Sexy_Image_GetCelHeight(*Sexy_IMAGE_BUNGEECORD_Addr) * mScaleZombie;
+    int aCordCelHeight = (*Sexy_IMAGE_BUNGEECORD_Addr)->GetCelHeight() * mScaleZombie;
     float aPosX = 0.0f;
     float aPosY = 0.0f;
     GetTrackPosition("Zombie_bungi_body", aPosX, aPosY);

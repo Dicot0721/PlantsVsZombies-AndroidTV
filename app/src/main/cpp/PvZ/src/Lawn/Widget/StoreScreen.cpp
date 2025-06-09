@@ -156,12 +156,12 @@ void StoreScreen::MouseDown(int x, int y, int theClickCount) {
         // 翻页过程中无法触控
         return;
     }
-    int mPrevButtonWidth = Sexy_Image_GetWidth(*Sexy_IMAGE_STORE_PREVBUTTON_Addr);
-    int mPrevButtonHeight = Sexy_Image_GetHeight(*Sexy_IMAGE_STORE_PREVBUTTON_Addr);
-    int mNextButtonWidth = Sexy_Image_GetWidth(*Sexy_IMAGE_STORE_NEXTBUTTON_Addr);
-    int mNextButtonHeight = Sexy_Image_GetHeight(*Sexy_IMAGE_STORE_NEXTBUTTON_Addr);
-    int mBackButtonWidth = Sexy_Image_GetWidth(*Sexy_IMAGE_STORE_MAINMENUBUTTON_Addr);
-    int mBackButtonHeight = Sexy_Image_GetHeight(*Sexy_IMAGE_STORE_MAINMENUBUTTON_Addr);
+    int mPrevButtonWidth = (*Sexy_IMAGE_STORE_PREVBUTTON_Addr)->GetWidth();
+    int mPrevButtonHeight = (*Sexy_IMAGE_STORE_PREVBUTTON_Addr)->GetHeight();
+    int mNextButtonWidth = (*Sexy_IMAGE_STORE_NEXTBUTTON_Addr)->GetWidth();
+    int mNextButtonHeight = (*Sexy_IMAGE_STORE_NEXTBUTTON_Addr)->GetHeight();
+    int mBackButtonWidth = (*Sexy_IMAGE_STORE_MAINMENUBUTTON_Addr)->GetWidth();
+    int mBackButtonHeight = (*Sexy_IMAGE_STORE_MAINMENUBUTTON_Addr)->GetHeight();
     Sexy::Rect mPrevButtonRect = {mShakeX + 172, mShakeY + 375, mPrevButtonWidth, mPrevButtonHeight};
     Sexy::Rect mNextButtonRect = {mShakeX + 573, mShakeY + 373, mNextButtonWidth, mNextButtonHeight};
     Sexy::Rect mBackButtonRect = {mShakeX + 305, mShakeY + 510, mBackButtonWidth, mBackButtonHeight};

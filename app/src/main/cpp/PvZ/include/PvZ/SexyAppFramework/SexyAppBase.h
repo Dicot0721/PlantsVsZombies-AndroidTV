@@ -42,6 +42,9 @@ public:
 
     Dialog *GetDialog(Dialogs theDialogId) { return reinterpret_cast<Dialog *(*)(SexyAppBase *, Dialogs)>(Sexy_SexyAppBase_GetDialogAddr)(this, theDialogId); }
     void EraseFile(const std::string& theFileName) { reinterpret_cast<void (*)(SexyAppBase *, const std::string&)>(Sexy_SexyAppBase_EraseFileAddr)(this, theFileName); }
+    Image *GetImage(const std::string &theFileName, bool commitBits = true) {
+        return reinterpret_cast<Image *(*)(SexyAppBase *, const std::string &, bool)>(Sexy_SexyAppBase_GetImageAddr)(this, theFileName, commitBits);
+    }
 
     SexyAppBase() { Create(); }
     void Create();

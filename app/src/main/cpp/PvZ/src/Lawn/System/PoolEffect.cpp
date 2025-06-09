@@ -173,8 +173,8 @@ void PoolEffect_PoolEffectDraw(PoolEffect *poolEffect, Sexy::Graphics *g, bool t
     int v138[6];                  // [esp+70h] [ebp-7290h]
     SexyVertex2D v140[3][150][3]; // [esp+988h] [ebp-6978h] BYREF
 
-    theTriangleCelWidth = Sexy_Image_GetWidth(*Sexy_IMAGE_POOL_Addr) / 15.0;
-    theTriangleCelHeight = Sexy_Image_GetHeight(*Sexy_IMAGE_POOL_Addr) / 5.0;
+    theTriangleCelWidth = (*Sexy_IMAGE_POOL_Addr)->GetCelWidth() / 15.0;
+    theTriangleCelHeight = (*Sexy_IMAGE_POOL_Addr)->GetHeight() / 5.0;
 
     v6 = 0.0;
     float v139[576] = {0.0};

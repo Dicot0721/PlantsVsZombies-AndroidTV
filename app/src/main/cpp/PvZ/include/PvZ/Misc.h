@@ -31,8 +31,6 @@ inline bool (*Sexy_GamepadApp_HasGamepad)(LawnApp *);
 
 inline void (*ShopSeedPacket_Update)(int *seedPacket);
 
-inline Sexy::Image *(*Sexy_SexyAppBase_GetImage)(LawnApp *, int *, int);
-
 inline void (*Sexy_Widget_Resize)(Sexy::Widget *widget, int x, int y, int width, int height);
 
 inline void (*Sexy_Widget_Widget)(Sexy::Widget *widget);
@@ -44,12 +42,6 @@ inline void (*Sexy_WidgetManager_SetFocus)(int *manager, Sexy::Widget *);
 inline void (*Sexy_WidgetContainer_SetFocus)(Sexy::WidgetContainer *, Sexy::Widget *);
 
 inline int *(*Sexy_WidgetManager_GetWidgetAt)(int *manager, int x, int y, int *widgetX, int *widgetY);
-
-inline int (*Sexy_Image_GetWidth)(Sexy::Image *);
-
-inline int (*Sexy_Image_GetHeight)(Sexy::Image *);
-
-inline int (*Sexy_Image_GetCelHeight)(Sexy::Image *);
 
 inline void (*TypingCheck_SetPhrase)(int *a1, int *a2);
 
@@ -128,8 +120,6 @@ inline void (*DrawCheckboxText)(Sexy::Graphics *graphics, int *text1, Sexy::Chec
 inline void (*Sexy_Checkbox_Delete)(Sexy::Checkbox *);
 
 inline void (*CreditScreen_PauseCredits)(Sexy::Widget *);
-
-inline void (*Sexy_Image_SetWrapMode)(Sexy::Image *, int, int);
 
 inline void (*Sexy_WidgetContainer_MarkDirty)(Sexy::WidgetContainer *);
 

@@ -101,7 +101,7 @@ Image *LawnApp::GetImageByFileName(const char *theFileName) {
     // 根据贴图文件路径获得贴图
     int holder[1];
     Sexy_StrFormat(holder, theFileName);
-    Image *theImage = Sexy_SexyAppBase_GetImage(this, holder, 1);
+    Image *theImage = GetImage((string &)holder, true);
     Sexy_String_Delete(holder);
     return theImage;
 }
@@ -274,7 +274,7 @@ void LawnApp::DoConvertImitaterImages() {
         Sexy_StrFormat(holder, "convertImitaterImages/pic%d", i);
         Sexy_StrFormat(holder1, "ImitaterNormalpic%d.png", i);
         Sexy_StrFormat(holder2, "ImitaterLesspic%d.png", i);
-        Image *imageFromFile = Sexy_SexyAppBase_GetImage(this, holder, 1);
+        Image *imageFromFile = GetImage((string &)holder, true);
 
         if (imageFromFile == nullptr) {
             break;

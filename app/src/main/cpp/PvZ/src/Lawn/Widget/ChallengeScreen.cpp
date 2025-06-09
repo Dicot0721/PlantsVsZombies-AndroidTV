@@ -171,7 +171,7 @@ void ChallengeScreen::MouseDown(int x, int y, int theClickCount) {
     }
     gChallengeScreenTouchDownX = x;
     gChallengeScreenTouchDownY = y;
-    gChallengeItemHeight = Sexy_Image_GetHeight(*Sexy_IMAGE_CHALLENGE_NAME_BACK_Addr) + 2; // 2为缝隙大小
+    gChallengeItemHeight = (*Sexy_IMAGE_CHALLENGE_NAME_BACK_Addr)->GetHeight() + 2; // 2为缝隙大小
 
     gChallengeScreenGameIndex = mScreenTopChallengeIndex;
 
