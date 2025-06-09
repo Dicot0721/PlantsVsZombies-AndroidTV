@@ -10,25 +10,6 @@
 namespace homura {
 
 /**
- * @class 作为类型模板参数传递, 代表模板类有自己的构造和析构函数.
- */
-struct BaseClass {};
-
-/**
- * @class 作为类型模板参数传递, 代表模板类没有自己的构造和析构函数.
- */
-struct DerivedClass {};
-
-template <typename T>
-concept BaseOrDerived = std::is_same_v<T, BaseClass> || std::is_same_v<T, DerivedClass>;
-
-template <typename T>
-constexpr bool isBase = std::is_same_v<T, BaseClass>;
-
-template <typename T>
-constexpr bool isDerived = std::is_same_v<T, DerivedClass>;
-
-/**
  * @brief 通过对象地址和非静态成员变量的偏移量, 获取该成员变量的地址.
  *
  * @tparam T 成员变量的类型.

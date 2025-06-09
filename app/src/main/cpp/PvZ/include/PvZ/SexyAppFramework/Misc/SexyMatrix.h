@@ -5,14 +5,13 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_SEXYMATRIX_H
 #define PLANTSVSZOMBIES_ANDROIDTV_SEXYMATRIX_H
 
-#include "Homura/StructWrapper.h"
 #include "PvZ/Symbols.h"
 
 #include "SexyVector.h"
 
 namespace Sexy {
 
-template <homura::BaseOrDerived T = homura::BaseClass>
+template <bool IS_AS_BASE = false>
 class __SexyMatrix3 {
 public:
     union {
@@ -25,7 +24,7 @@ public:
     };
 
     __SexyMatrix3()
-        requires homura::isBase<T>
+        requires(!IS_AS_BASE)
     {
         Create();
     }
@@ -34,11 +33,11 @@ public:
 
 protected:
     __SexyMatrix3()
-        requires homura::isDerived<T>
+        requires IS_AS_BASE
     {}
 };
 
-class SexyTransform2D : public __SexyMatrix3<homura::DerivedClass> {
+class SexyTransform2D : public __SexyMatrix3<true> {
 public:
     SexyTransform2D() { Create(); }
     void Create() { reinterpret_cast<void (*)(SexyTransform2D *)>(Sexy_SexyTransform2D_SexyTransform2DAddr)(this); }
