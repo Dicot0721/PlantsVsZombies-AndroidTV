@@ -71,10 +71,6 @@ inline void InitInGameFunction() {
     ImitaterDialog_SeedHitTest = (decltype(ImitaterDialog_SeedHitTest))ImitaterDialog_SeedHitTestAddr;
     SaveGameContext_SyncInt = (decltype(SaveGameContext_SyncInt))SaveGameContext_SyncIntAddr;
     TypingCheck_SetPhrase = (decltype(TypingCheck_SetPhrase))TypingCheck_SetPhraseAddr;
-    FilterEffectDoWashedOut = (decltype(FilterEffectDoWashedOut))FilterEffectDoWashedOutAddr;
-    FilterEffectDoLessWashedOut = (decltype(FilterEffectDoLessWashedOut))FilterEffectDoLessWashedOutAddr;
-    FilterEffectDoWhite = (decltype(FilterEffectDoWhite))FilterEffectDoWhiteAddr;
-    FilterEffectDoLumSat = (decltype(FilterEffectDoLumSat))FilterEffectDoLumSatAddr;
     HouseChooserDialog_GameButtonDown = (decltype(HouseChooserDialog_GameButtonDown))HouseChooserDialog_GameButtonDownAddr;
     ReanimAtlas_GetEncodedReanimAtlas = (decltype(ReanimAtlas_GetEncodedReanimAtlas))ReanimAtlas_GetEncodedReanimAtlasAddr;
     ReanimatorEnsureDefinitionLoaded = (decltype(ReanimatorEnsureDefinitionLoaded))ReanimatorEnsureDefinitionLoadedAddr;

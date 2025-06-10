@@ -810,9 +810,8 @@ void ZombatarWidget_ButtonDepress(ZombatarWidget *zombatarWidget, int id) {
         if (addonImages.zombatar_portrait != nullptr) {
             reinterpret_cast<MemoryImage *>(addonImages.zombatar_portrait)->Delete();
         }
-//        MemoryImage* aImage = new MemoryImage();
-        MemoryImage *aImage = (MemoryImage*)operator new(sizeof(MemoryImage));
-        aImage->BeBorn();
+
+        MemoryImage* aImage = new MemoryImage();
         aImage->Create(addonZombatarImages.zombatar_background_blank->mWidth, addonZombatarImages.zombatar_background_blank->mHeight);
         aImage->SetImageMode(true, true);
         aImage->mIsVolatile = true;
