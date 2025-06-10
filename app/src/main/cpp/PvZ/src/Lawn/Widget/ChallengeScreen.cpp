@@ -19,7 +19,7 @@ void ChallengeScreen::Create(LawnApp *theApp, ChallengePage thePage) {
 
     for (auto *button : mButtons) {
         // 把按钮全部缩小至长宽为0
-        Sexy_Widget_Resize(button, button->mX, button->mY, 0, 0);
+        button->Resize(button->mX, button->mY, 0, 0);
     }
 
     //    if (thePage == CHALLENGE_PAGE_VS) {
@@ -108,7 +108,7 @@ void ChallengeScreen::AddedToManager(int *theWidgetManager) {
     gChallengeScreenCloseButton = MakeButton(1000, &mButtonListener, this, (SexyString &)holder);
     gChallengeScreenCloseButton->Resize(800, 520, 170, 50);
     Sexy_String_Delete(holder);
-    Sexy_Widget_AddWidget(this, gChallengeScreenCloseButton);
+    AddWidget(gChallengeScreenCloseButton);
 
     return old_ChallengeScreen_AddedToManager(this, theWidgetManager);
 }
@@ -123,7 +123,7 @@ void ChallengeScreen::RemovedFromManager(int *theWidgetManager) {
     old_ChallengeScreen_RemovedFromManager(this, theWidgetManager);
 
     if (gChallengeScreenCloseButton != nullptr) {
-        Sexy_Widget_RemoveWidget(this, gChallengeScreenCloseButton);
+        RemoveWidget(gChallengeScreenCloseButton);
     }
 }
 

@@ -329,10 +329,11 @@ void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, See
     return g->PopState();
 }
 
-void HelpBarWidget_HelpBarWidget(Sexy::Widget *a) {
+void HelpBarWidget_HelpBarWidget(Sexy::Widget *theWidget) {
     // 缩小HelpBar，以防止它挡住触控区域。
-    old_HelpBarWidget_HelpBarWidget(a);
-    Sexy_Widget_Resize(a, 0, 0, 0, 0);
+    old_HelpBarWidget_HelpBarWidget(theWidget);
+
+    theWidget->Resize(0, 0, 0, 0);
 }
 
 void Sexy_ExtractLoadingSoundsResources(int *a, int *theManager) {
@@ -447,22 +448,6 @@ void SaveGameContext_SyncReanimationDef(int *theSaveGameContext, ReanimatorDefin
     LABEL_7:
         SaveGameContext_SyncInt(theSaveGameContext, &reanimationType);
     }
-}
-
-void Sexy_Widget_MarkDirty(Sexy::Widget *widget) {
-    (*((void (**)(Sexy::Widget *))widget->vTable + 25))(widget); // MarkDirty();
-}
-
-void Sexy_Widget_AddWidget(Sexy::Widget *parent, Sexy::Widget *child) {
-    (*((void (**)(Sexy::Widget *, Sexy::Widget *))parent->vTable + 6))(parent, child); // AddWidget();
-}
-
-void Sexy_Widget_RemoveWidget(Sexy::Widget *parent, Sexy::Widget *child) {
-    (*((void (**)(Sexy::Widget *, Sexy::Widget *))parent->vTable + 7))(parent, child); // RemoveWidget();
-}
-
-Sexy::Widget *Sexy_Widget_FindWidget(Sexy::Widget *parent, int id) {
-    return (*((Sexy::Widget * (**)(Sexy::Widget *, int)) parent->vTable + 9))(parent, id); // FindWidget();
 }
 
 void Sexy_MemoryImage_ClearRect(Sexy::Image *a1, Sexy::Rect *a2) {

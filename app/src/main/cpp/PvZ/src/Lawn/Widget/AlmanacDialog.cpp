@@ -55,8 +55,8 @@ void AlmanacDialog::Create(LawnApp *theApp) {
     gAlmanacCloseButton = MakeButton(theCloseId, &this->mButtonListener, this, (SexyString &)holder1);
     gAlmanacCloseButton->Resize(mAlmanacCloseButtonX, mAlmanacCloseButtonY, mAlmanacButtonWidth, mAlmanacButtonHeight);
     Sexy_String_Delete(holder1);
-    Sexy_Widget_AddWidget(this, gAlmanacBackButton);
-    Sexy_Widget_AddWidget(this, gAlmanacCloseButton);
+    AddWidget(gAlmanacBackButton);
+    AddWidget(gAlmanacCloseButton);
 
 
     //   为泳池背景加入PoolEffect。这里挖空背景图，挖出一块透明方形
@@ -156,8 +156,8 @@ void AlmanacDialog::RemovedFromManager(WidgetManager *theWidgetManager) {
     // 记录当前游戏状态
     old_AlmanacDialog_RemovedFromManager(this, theWidgetManager);
 
-    Sexy_Widget_RemoveWidget(this, gAlmanacBackButton);
-    Sexy_Widget_RemoveWidget(this, gAlmanacCloseButton);
+    RemoveWidget(gAlmanacBackButton);
+    RemoveWidget(gAlmanacCloseButton);
 }
 
 void AlmanacDialog::ButtonDepress(int theId) {

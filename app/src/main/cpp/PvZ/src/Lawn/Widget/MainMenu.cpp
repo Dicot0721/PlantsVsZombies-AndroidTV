@@ -137,7 +137,7 @@ void MainMenu::Update() {
                 theNewY = gMainMenuHeight;
             if (theNewY < 720 + gMainMenuHeight - (gAchievementHoleLength + 1) * addonImages.hole->mHeight)
                 theNewY = 720 + gMainMenuHeight - (gAchievementHoleLength + 1) * addonImages.hole->mHeight;
-            Sexy_Widget_Move(gMainMenuAchievementsWidget, gMainMenuAchievementsWidget->mX, theNewY);
+            gMainMenuAchievementsWidget->Move(gMainMenuAchievementsWidget->mX, theNewY);
         }
     }
 
@@ -145,7 +145,7 @@ void MainMenu::Update() {
         gMainMenuAchievementCounter--;
         if (gMainMenuAchievementsWidget != nullptr) {
             int theY = TodAnimateCurve(100, 0, gMainMenuAchievementCounter, 660, -60, TodCurves::CURVE_EASE_IN_OUT);
-            Sexy_Widget_Move(this, mX, -720 + theY);
+            Move(mX, -720 + theY);
         }
         if (gMainMenuAchievementCounter == 0) {
             gAchievementState = SHOWING;
@@ -154,7 +154,7 @@ void MainMenu::Update() {
             gMainMenuAchievementsBack = MakeButton(ACHIEVEMENTS_BACK_BUTTON, &mButtonListener, this, (SexyString &)holder1);
             gMainMenuAchievementsBack->Resize(1000, 564 + 720, 170, 50);
             Sexy_String_Delete(holder1);
-            Sexy_Widget_AddWidget(this, (Widget*)gMainMenuAchievementsBack);
+            AddWidget((Widget*)gMainMenuAchievementsBack);
         }
     }
 
@@ -163,23 +163,23 @@ void MainMenu::Update() {
         if (gMainMenuAchievementsWidget != nullptr) {
             if (gMainMenuAchievementCounter <= 100) {
                 int theY = TodAnimateCurve(100, 0, gMainMenuAchievementCounter, -780, -60, TodCurves::CURVE_EASE_IN_OUT);
-                Sexy_Widget_Move(this, mX, theY);
+                Move(mX, theY);
             } else {
                 int theAchievementsY = TodAnimateCurve(150, 100, gMainMenuAchievementCounter, gMainMenuAchievementsWidgetY, gMainMenuHeight, TodCurves::CURVE_EASE_IN_OUT);
-                Sexy_Widget_Move(gMainMenuAchievementsWidget, gMainMenuAchievementsWidget->mX, theAchievementsY);
+                gMainMenuAchievementsWidget->Move(gMainMenuAchievementsWidget->mX, theAchievementsY);
             }
         }
         if (gMainMenuAchievementCounter == 0) {
             gAchievementState = NOT_SHOWING;
-            Sexy_Widget_RemoveWidget(this, gMainMenuAchievementsWidget);
+           RemoveWidget(gMainMenuAchievementsWidget);
             MaskHelpWidget_Delete(gMainMenuAchievementsWidget);
             gMainMenuAchievementsWidget = nullptr;
             if (gMainMenuAchievementsBack != nullptr) {
-                Sexy_Widget_RemoveWidget(this, (Widget*)gMainMenuAchievementsBack);
+                RemoveWidget((Widget*)gMainMenuAchievementsBack);
                 gMainMenuAchievementsBack->Destroy();
                 gMainMenuAchievementsBack = nullptr;
             }
-            Sexy::Widget *achievementsButton = Sexy_Widget_FindWidget(this, ACHIEVEMENTS_BUTTON);
+            Sexy::Widget *achievementsButton = FindWidget(ACHIEVEMENTS_BUTTON);
             mFocusedChildWidget = achievementsButton;
             if (!mIsFading)
                 mApp->PlayFoley(FoleyType::FOLEY_MENU_CENTRE);
@@ -276,9 +276,9 @@ void MainMenu::ButtonDepress(MainMenuButtonId theSelectedButton) {
                 gMainMenuAchievementsWidget = (AchievementsWidget *)operator new(sizeof(AchievementsWidget));
                 MaskHelpWidget_MaskHelpWidget(gMainMenuAchievementsWidget, mApp);
                 gMainMenuAchievementsWidget->mIsScrolling = false;
-                Sexy_Widget_Resize(gMainMenuAchievementsWidget, 0, gMainMenuHeight, 1280, addonImages.hole->mHeight * (gAchievementHoleLength + 1));
+                gMainMenuAchievementsWidget->Resize(0, gMainMenuHeight, 1280, addonImages.hole->mHeight * (gAchievementHoleLength + 1));
                 gMainMenuAchievementsWidget->mWidgetId = ACHIEVEMENTS_BUTTON;
-                Sexy_Widget_AddWidget(this, gMainMenuAchievementsWidget);
+                AddWidget(gMainMenuAchievementsWidget);
             } else {
                 gAchievementState = SLIDING_OUT;
                 gMainMenuAchievementCounter = gMainMenuAchievementsWidget->mY == gMainMenuHeight ? 100 : 150;
@@ -367,24 +367,24 @@ constexpr int mZombatarButtonX = 2800;
 constexpr int mZombatarButtonY = -20;
 
 void MainMenu::EnableButtons() {
-    Sexy::Widget *achievementsButton = Sexy_Widget_FindWidget(this, ACHIEVEMENTS_BUTTON);
+    Sexy::Widget *achievementsButton = FindWidget(ACHIEVEMENTS_BUTTON);
     ((Sexy::GameButton *)achievementsButton)->SetDisabled(false);
-    Sexy::Widget *leaderboardsButton = Sexy_Widget_FindWidget(this, HOUSE_BUTTON);
-    Sexy_Widget_SetVisible(leaderboardsButton, true);
-    Sexy::Widget *helpButton = Sexy_Widget_FindWidget(this, HELP_AND_OPTIONS_BUTTON);
-    Sexy::Widget *backButton = Sexy_Widget_FindWidget(this, RETURN_TO_ARCADE_BUTTON);
+    Sexy::Widget *leaderboardsButton = FindWidget(HOUSE_BUTTON);
+    leaderboardsButton->SetVisible(true);
+    Sexy::Widget *helpButton = FindWidget(HELP_AND_OPTIONS_BUTTON);
+    Sexy::Widget *backButton = FindWidget(RETURN_TO_ARCADE_BUTTON);
     helpButton->mFocusLinks[3] = backButton;
     backButton->mFocusLinks[2] = helpButton;
-    Sexy::Widget *zombatarButton = Sexy_Widget_FindWidget(this, UNLOCK_BUTTON);
+    Sexy::Widget *zombatarButton = FindWidget(UNLOCK_BUTTON);
     ((Sexy::GameButton *)zombatarButton)->SetDisabled(false);
     ((Sexy::GameButton *)zombatarButton)->mButtonImage = addonImages.SelectorScreen_WoodSign3;
     ((Sexy::GameButton *)zombatarButton)->mDownImage = addonImages.SelectorScreen_WoodSign3_press;
     ((Sexy::GameButton *)zombatarButton)->mOverImage = addonImages.SelectorScreen_WoodSign3_press;
-    zombatarButton->mFocusLinks[0] = Sexy_Widget_FindWidget(this, BACK_POT_BUTTON);
+    zombatarButton->mFocusLinks[0] = FindWidget(BACK_POT_BUTTON);
     zombatarButton->mFocusLinks[1] = zombatarButton->mFocusLinks[0];
     zombatarButton->mFocusLinks[2] = zombatarButton->mFocusLinks[0];
     zombatarButton->mFocusLinks[3] = zombatarButton->mFocusLinks[0];
-    Sexy_Widget_Resize(zombatarButton, addonImages.SelectorScreen_WoodSign3->mWidth / 2, 0, addonImages.SelectorScreen_WoodSign3->mWidth, addonImages.SelectorScreen_WoodSign3->mHeight);
+    zombatarButton->Resize(addonImages.SelectorScreen_WoodSign3->mWidth / 2, 0, addonImages.SelectorScreen_WoodSign3->mWidth, addonImages.SelectorScreen_WoodSign3->mHeight);
     Reanimation *mainMenuReanim = mApp->ReanimationTryToGet(mMainMenuReanimID);
     if (mainMenuReanim == nullptr)
         return;
@@ -509,10 +509,10 @@ void MainMenu::AddedToManager(int *a2) {
 void MainMenu::RemovedFromManager(int *a2) {
     // 记录当前游戏状态
     if (gMainMenuAchievementsWidget != nullptr) {
-        Sexy_Widget_RemoveWidget(this, gMainMenuAchievementsWidget);
+        RemoveWidget(gMainMenuAchievementsWidget);
     }
     if (gMainMenuAchievementsBack != nullptr) {
-        Sexy_Widget_RemoveWidget(this, (Widget*)gMainMenuAchievementsBack);
+        RemoveWidget((Widget*)gMainMenuAchievementsBack);
     }
     old_MainMenu_RemovedFromManager(this, a2);
 }
@@ -579,8 +579,8 @@ void MainMenu::Draw(Sexy::Graphics *g) {
     if (crowReanim != nullptr && (!unkBool5 || mExitCounter <= 65)) {
         crowReanim->Draw(g);
     }
-    Sexy_MenuWidget_Draw(this, g);
-    Sexy_Widget_DeferOverlay(this, 0);
+    MenuWidget::Draw(g);
+    DeferOverlay(0);
     if (!InTransition())
         (*((void (**)(MainMenu *, Sexy::Graphics *))vTable + 129))(this, g);
     SexyTransform2D aSexyTransform2D;
@@ -728,7 +728,7 @@ void MaskHelpWidget_MouseDrag(AchievementsWidget *achievementsWidget, int x, int
     if (gAchievementState != SHOWING)
         return;
     int theNewY = std::clamp(achievementsWidget->mY + (y - achievementsWidget->mMouseDownY), 720 + gMainMenuHeight - (gAchievementHoleLength + 1) * addonImages.hole->mHeight, gMainMenuHeight);
-    Sexy_Widget_Move(achievementsWidget, achievementsWidget->mX, theNewY);
+    achievementsWidget->Move(achievementsWidget->mX, theNewY);
     achievementsWidget->mLastDownY1 = achievementsWidget->mLastDownY;
     achievementsWidget->mLastDownY = y;
     struct timeval tp;
@@ -758,13 +758,13 @@ void MaskHelpWidget_Update(AchievementsWidget *achievementsWidget) {
     // 实现滚动
     if (achievementsWidget->mIsScrolling) {
         int theNewY = std::clamp<int>(achievementsWidget->mY + achievementsWidget->mVelocity, 720 + gMainMenuHeight - (gAchievementHoleLength + 1) * addonImages.hole->mHeight, gMainMenuHeight);
-        Sexy_Widget_Move(achievementsWidget, achievementsWidget->mX, theNewY);
+        achievementsWidget->Move(achievementsWidget->mX, theNewY);
         achievementsWidget->mVelocity *= 0.96;
         if (fabs(achievementsWidget->mVelocity) < 1.0f) {
             achievementsWidget->mIsScrolling = false;
         }
     }
-    Sexy_Widget_MarkDirty(achievementsWidget);
+    achievementsWidget->MarkDirty();
 }
 
 void ZombatarWidget_SetDefault(ZombatarWidget *zombatarWidget) {
@@ -2188,8 +2188,8 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     Sexy_StrFormat(holder, "[CLOSE]");
     Sexy::GameButton *backButton = MakeButton(1000, mZombatarListener, this, (SexyString &)holder);
     Sexy_String_Delete(holder);
-    Sexy_Widget_Resize(backButton, 471, 628, addonZombatarImages.zombatar_mainmenuback_highlight->mWidth, addonZombatarImages.zombatar_mainmenuback_highlight->mHeight);
-    Sexy_Widget_AddWidget(this, backButton);
+    backButton->Resize(471, 628, addonZombatarImages.zombatar_mainmenuback_highlight->mWidth, addonZombatarImages.zombatar_mainmenuback_highlight->mHeight);
+    AddWidget(backButton);
     backButton->mDrawStoneButton = false;
     backButton->mButtonImage = *IMAGE_BLANK;
     backButton->mDownImage = addonZombatarImages.zombatar_mainmenuback_highlight;
@@ -2200,8 +2200,8 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     Sexy_StrFormat(holder1, "[OK]");
     Sexy::GameButton *finishButton = MakeButton(1001, mZombatarListener, nullptr, (SexyString &)holder1);
     Sexy_String_Delete(holder1);
-    Sexy_Widget_Resize(finishButton, 160 + 523, 565, addonZombatarImages.zombatar_finished_button->mWidth, addonZombatarImages.zombatar_finished_button->mHeight);
-    Sexy_Widget_AddWidget(this, finishButton);
+    finishButton->Resize(160 + 523, 565, addonZombatarImages.zombatar_finished_button->mWidth, addonZombatarImages.zombatar_finished_button->mHeight);
+    AddWidget(finishButton);
     finishButton->mDrawStoneButton = false;
     finishButton->mButtonImage = addonZombatarImages.zombatar_finished_button;
     finishButton->mDownImage = addonZombatarImages.zombatar_finished_button_highlight;
@@ -2212,8 +2212,8 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     Sexy_StrFormat(holder2, "[OK]");
     Sexy::GameButton *viewPortraitButton = MakeButton(1002, mZombatarListener, nullptr, (SexyString &)holder2);
     Sexy_String_Delete(holder2);
-    Sexy_Widget_Resize(viewPortraitButton, 160 + 75, 565, addonZombatarImages.zombatar_view_button->mWidth, addonZombatarImages.zombatar_view_button->mHeight);
-    Sexy_Widget_AddWidget(this, (Widget*)viewPortraitButton);
+    viewPortraitButton->Resize(160 + 75, 565, addonZombatarImages.zombatar_view_button->mWidth, addonZombatarImages.zombatar_view_button->mHeight);
+    AddWidget((Widget*)viewPortraitButton);
     viewPortraitButton->mDrawStoneButton = false;
     viewPortraitButton->mButtonImage = addonZombatarImages.zombatar_view_button;
     viewPortraitButton->mDownImage = addonZombatarImages.zombatar_view_button_highlight;
@@ -2224,16 +2224,16 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     Sexy_StrFormat(holder3, "[ZOMBATAR_NEW_BUTTON]");
     Sexy::GameButton *newButton = MakeButton(1003, mZombatarListener, nullptr, (SexyString &)holder3);
     Sexy_String_Delete(holder3);
-    Sexy_Widget_Resize(newButton, 578, 490, 170, 50);
-    Sexy_Widget_AddWidget(this, (Widget*)newButton);
+    newButton->Resize(578, 490, 170, 50);
+    AddWidget((Widget*)newButton);
     mNewButton = newButton;
 
     int holder4[1];
     Sexy_StrFormat(holder4, "[ZOMBATAR_DELETE_BUTTON]");
     Sexy::GameButton *deleteButton = MakeButton(1004, mZombatarListener, nullptr, (SexyString &)holder4);
     Sexy_String_Delete(holder4);
-    Sexy_Widget_Resize(deleteButton, 314, 490, 170, 50);
-    Sexy_Widget_AddWidget(this, (Widget*)deleteButton);
+    deleteButton->Resize(314, 490, 170, 50);
+    AddWidget((Widget*)deleteButton);
     mDeleteButton = deleteButton;
 
     auto *aZombie = new Zombie;
@@ -2271,7 +2271,7 @@ void TestMenuWidget_Update(ZombatarWidget *zombatarWidget) {
     zombatarWidget->mNewButton->mBtnNoDraw = !zombatarWidget->mShowExistingZombatarPortrait;
     zombatarWidget->mDeleteButton->mDisabled = !zombatarWidget->mShowExistingZombatarPortrait;
     zombatarWidget->mDeleteButton->mBtnNoDraw = !zombatarWidget->mShowExistingZombatarPortrait;
-    Sexy_Widget_MarkDirty(zombatarWidget);
+    zombatarWidget->MarkDirty();
 }
 
 void TestMenuWidget_DrawZombieSelection(ZombatarWidget *zombatarWidget, Sexy::Graphics *graphics) {
@@ -3074,11 +3074,11 @@ void TestMenuWidget_Draw(ZombatarWidget *zombatarWidget, Sexy::Graphics *g) {
 
 void TestMenuWidget_RemovedFromManager(ZombatarWidget *zombatarWidget, int *manager) {
     old_TestMenuWidget_RemovedFromManager(zombatarWidget, manager);
-    Sexy_Widget_RemoveWidget(zombatarWidget, (Sexy::Widget*)zombatarWidget->mBackButton);
-    Sexy_Widget_RemoveWidget(zombatarWidget, (Sexy::Widget*)zombatarWidget->mFinishButton);
-    Sexy_Widget_RemoveWidget(zombatarWidget, (Sexy::Widget*)zombatarWidget->mViewPortraitButton);
-    Sexy_Widget_RemoveWidget(zombatarWidget, (Sexy::Widget*)zombatarWidget->mNewButton);
-    Sexy_Widget_RemoveWidget(zombatarWidget, (Sexy::Widget*)zombatarWidget->mDeleteButton);
+    zombatarWidget->RemoveWidget((Sexy::Widget*)zombatarWidget->mBackButton);
+    zombatarWidget->RemoveWidget((Sexy::Widget*)zombatarWidget->mFinishButton);
+    zombatarWidget->RemoveWidget((Sexy::Widget*)zombatarWidget->mViewPortraitButton);
+    zombatarWidget->RemoveWidget((Sexy::Widget*)zombatarWidget->mNewButton);
+    zombatarWidget->RemoveWidget((Sexy::Widget*)zombatarWidget->mDeleteButton);
 }
 
 void TestMenuWidget_Delete2(ZombatarWidget *zombatarWidget) {

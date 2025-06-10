@@ -25,14 +25,14 @@ void MailScreen::Create(LawnApp *theApp) {
     gMailScreenReadButton = MakeButton(1002, &mButtonListener, this, (SexyString &)holder2);
     gMailScreenReadButton->Resize(-150, 450, 170, 80);
     Sexy_String_Delete(holder2);
-    Sexy_Widget_AddWidget(this, (Sexy::Widget*)gMailScreenReadButton);
+    AddWidget((Sexy::Widget*)gMailScreenReadButton);
 
     int holder1[1];
     TodStringTranslate(holder1, "[GO_TO_READ_MAIL]");
     gMailScreenSwitchButton = MakeButton(1001, &mButtonListener, this, (SexyString &)holder1);
     gMailScreenSwitchButton->Resize(-150, 520, 170, 80);
     Sexy_String_Delete(holder1);
-    Sexy_Widget_AddWidget(this, (Sexy::Widget*)gMailScreenSwitchButton);
+    AddWidget((Sexy::Widget*)gMailScreenSwitchButton);
 
 
     int holder[1];
@@ -40,9 +40,9 @@ void MailScreen::Create(LawnApp *theApp) {
     gMailScreenCloseButton = MakeButton(1000, &mButtonListener, this, (SexyString &)holder);
     gMailScreenCloseButton->Resize(800, 520, 170, 80);
     Sexy_String_Delete(holder);
-    Sexy_Widget_AddWidget(this, (Sexy::Widget*)gMailScreenCloseButton);
+    AddWidget((Sexy::Widget*)gMailScreenCloseButton);
 
-    Sexy_Widget_Resize(this, 0, 0, 800, 600);
+    Resize(0, 0, 800, 600);
 }
 
 void MailScreen::AddedToManager(int *theWidgetManager) {
@@ -52,9 +52,9 @@ void MailScreen::AddedToManager(int *theWidgetManager) {
 
 void MailScreen::RemovedFromManager(int *widgetManager) {
     // 修复MailScreen的可触控区域不为全屏
-    Sexy_Widget_RemoveWidget(this, (Sexy::Widget*)gMailScreenCloseButton);
-    Sexy_Widget_RemoveWidget(this, (Sexy::Widget*)gMailScreenReadButton);
-    Sexy_Widget_RemoveWidget(this, (Sexy::Widget*)gMailScreenSwitchButton);
+    RemoveWidget((Sexy::Widget*)gMailScreenCloseButton);
+    RemoveWidget((Sexy::Widget*)gMailScreenReadButton);
+    RemoveWidget((Sexy::Widget*)gMailScreenSwitchButton);
 
     old_MailScreen_RemovedFromManager(this, widgetManager);
 }

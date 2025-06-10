@@ -25,11 +25,11 @@ void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, int *manager)
     g3DAccleratedCheckbox = MakeNewCheckbox(1024, settingsDialog->mCheckboxListener, (Widget*)settingsDialog, lawnApp->Is3DAccelerated());
     gVibrateCheckbox = MakeNewCheckbox(1025, settingsDialog->mCheckboxListener, (Widget*)settingsDialog, !lawnApp->mPlayerInfo->mIsVibrateClosed);
 
-    Sexy_Widget_Resize(g3DAccleratedCheckbox, 80, 260, 300, 50);
-    Sexy_Widget_Resize(gVibrateCheckbox, 80, 320, 300, 50);
+    g3DAccleratedCheckbox->Resize(80, 260, 300, 50);
+    gVibrateCheckbox->Resize(80, 320, 300, 50);
 
-    Sexy_Widget_AddWidget(settingsDialog, g3DAccleratedCheckbox);
-    Sexy_Widget_AddWidget(settingsDialog, gVibrateCheckbox);
+    settingsDialog->AddWidget(g3DAccleratedCheckbox);
+    settingsDialog->AddWidget(gVibrateCheckbox);
 
     mSoundSlider->mFocusLinks[1] = g3DAccleratedCheckbox;
     g3DAccleratedCheckbox->mFocusLinks[1] = gVibrateCheckbox;
@@ -42,8 +42,8 @@ void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, int *manager)
 
 void SettingsDialog_RemovedFromManager(SettingsDialog *settingsDialog, int *manager) {
     old_SettingsDialog_RemovedFromManager(settingsDialog, manager);
-    Sexy_Widget_RemoveWidget(settingsDialog, g3DAccleratedCheckbox);
-    Sexy_Widget_RemoveWidget(settingsDialog, gVibrateCheckbox);
+    settingsDialog->RemoveWidget(g3DAccleratedCheckbox);
+    settingsDialog->RemoveWidget(gVibrateCheckbox);
 }
 
 void SettingsDialog_Delete2(SettingsDialog *settingsDialog) {

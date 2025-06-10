@@ -23,7 +23,7 @@ void HelpTextScreen_Update(Sexy::Widget *helpTextScreen) {
         TodStringTranslate(holder, "[CLOSE]");
         gHelpTextScreenCloseButton = MakeButton(1000, (Sexy::ButtonListener *)helpTextScreen + 64, helpTextScreen, (SexyString &)holder);
         Sexy_String_Delete(holder);
-        Sexy_Widget_AddWidget(helpTextScreen, (Sexy::Widget*)gHelpTextScreenCloseButton);
+        helpTextScreen->AddWidget((Sexy::Widget*)gHelpTextScreenCloseButton);
     }
     gHelpTextScreenCloseButton->Resize(650 - helpTextScreen->mX, 540 - helpTextScreen->mY, 170, 50);
     old_HelpTextScreen_Update(helpTextScreen);
@@ -39,7 +39,7 @@ void HelpTextScreen_HelpTextScreen(Sexy::Widget *helpTextScreen, int *lawnApp, i
     old_HelpTextScreen_HelpTextScreen(helpTextScreen, lawnApp, pageIndex);
     // 这个HelpTextScreen是全屏的，但触控事件并不会分发到此处，而是发给子控件。只有内容外侧的点击事件才能收到。
 
-    Sexy_Widget_Resize(helpTextScreen, helpTextScreen->mX, helpTextScreen->mY, 3000, helpTextScreen->mHeight);
+    helpTextScreen->Resize(helpTextScreen->mX, helpTextScreen->mY, 3000, helpTextScreen->mHeight);
 }
 
 void HelpTextScreen_AddedToManager(Sexy::Widget *helpTextScreen, int *manager) {
@@ -71,7 +71,7 @@ void HelpTextScreen_MouseDown(Sexy::Widget *helpTextScreen, int x, int y, int th
 void HelpTextScreen_RemovedFromManager(Sexy::Widget *helpTextScreen, int *widgetManager) {
     // 修复MailScreen的可触控区域不为全屏
     if (gHelpTextScreenCloseButton != nullptr) {
-        Sexy_Widget_RemoveWidget(helpTextScreen, (Sexy::Widget*)gHelpTextScreenCloseButton);
+        helpTextScreen->RemoveWidget((Sexy::Widget*)gHelpTextScreenCloseButton);
     }
     old_HelpTextScreen_RemovedFromManager(helpTextScreen, widgetManager);
 }

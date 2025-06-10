@@ -141,7 +141,7 @@ void LeaderboardsWidget_ButtonPress(Sexy::ButtonListener *listener, int id, int 
 
 LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     DaveHelp_DaveHelp(this, theApp);
-    Sexy_Widget_Resize(this, -240, -60, 1280, 720);
+    Resize(-240, -60, 1280, 720);
     mLeaderboardReanimations = (LeaderboardReanimations *)operator new(sizeof(LeaderboardReanimations));
     LOG_DEBUG("mLeaderboardReanimations {} ", (void*)mLeaderboardReanimations);
     for (int i = 0; i < 5; ++i) {
@@ -182,14 +182,14 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     mZombieTrashBin = (TrashBin *)operator new(sizeof(TrashBin));
     LOG_DEBUG("mZombieTrashBin {} ", (void*)mZombieTrashBin);
     mZombieTrashBin->Create(TrashBin::ZOMBIE_PILE, theApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ZOMBIES_KILLED] / 125.0f);
-    Sexy_Widget_Move(mZombieTrashBin, zombieSexyTransform2D.m[0][2], zombieSexyTransform2D.m[1][2]);
+    mZombieTrashBin->Move(zombieSexyTransform2D.m[0][2], zombieSexyTransform2D.m[1][2]);
 
     int plantTrackIndex = mLeaderboardReanimations->backgroundReanim[0]->FindTrackIndex("PvZ/plant_tra.h");
     SexyTransform2D plantSexyTransform2D{};
     mLeaderboardReanimations->backgroundReanim[0]->GetTrackMatrix(plantTrackIndex, plantSexyTransform2D);
     mPlantTrashBin = (TrashBin *)operator new(sizeof(TrashBin));
     mPlantTrashBin->Create(TrashBin::PLANT_PILE, theApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED] / 125.0f);
-    Sexy_Widget_Move(mPlantTrashBin, plantSexyTransform2D.m[0][2], plantSexyTransform2D.m[1][2]);
+    mPlantTrashBin->Move(plantSexyTransform2D.m[0][2], plantSexyTransform2D.m[1][2]);
 
     for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {
         mAchievements[i] = theApp->mPlayerInfo->mAchievements[LeaderboardsWidget_GetAchievementIdByReanimationType((ReanimationType)(ReanimationType::REANIM_ACHIEVEMENT_HOME_SECURITY + i))];
@@ -224,8 +224,8 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     Sexy::GameButton *aBackButton = MakeButton(1000, mLeaderboardsListener, this, (SexyString &)holder);
     LOG_DEBUG("aBackButton {} ", (void*)aBackButton);
     Sexy_String_Delete(holder);
-    Sexy_Widget_Resize(aBackButton, 1040, 590, 120, 50);
-    Sexy_Widget_AddWidget(this, (Sexy::Widget*)aBackButton);
+    aBackButton->Resize(1040, 590, 120, 50);
+    AddWidget((Sexy::Widget*)aBackButton);
     mBackButton = aBackButton;
     mFocusedAchievementIndex = 0;
     mHighLightAchievement = false;
@@ -241,7 +241,7 @@ void DaveHelp_Update(LeaderboardsWidget *leaderboardsWidget) {
             continue;
         leaderboardsWidget->mLeaderboardReanimations->achievementReanim[i]->Update();
     }
-    Sexy_Widget_MarkDirty(leaderboardsWidget);
+    leaderboardsWidget->MarkDirty();
 }
 
 void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {

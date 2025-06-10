@@ -61,28 +61,17 @@ inline void InitInGameFunction() {
 
     Sexy_StrFormat = (decltype(Sexy_StrFormat))Sexy_StrFormatAddr;
     TodStringTranslate = (decltype(TodStringTranslate))TodStringTranslateAddr;
-    //    DrawSeedPacket = (void (*)(Sexy::Graphics *, int, int, int, int, float, int, bool, bool, bool,bool)) DrawSeedPacketAddr;
     WaitForSecondPlayerDialog_GameButtonDown = (decltype(WaitForSecondPlayerDialog_GameButtonDown))WaitForSecondPlayerDialog_GameButtonDownAddr;
     HelpTextScreen_KeyDown = (decltype(HelpTextScreen_KeyDown))HelpTextScreen_KeyDownAddr;
     AwardScreen_StartButtonPressed = (decltype(AwardScreen_StartButtonPressed))AwardScreen_StartButtonPressedAddr;
     ShopSeedPacket_Update = (decltype(ShopSeedPacket_Update))ShopSeedPacket_UpdateAddr;
     GetFlashingColor = (decltype(GetFlashingColor))GetFlashingColorAddr;
     LawnPlayerInfo_GetFlag = (decltype(LawnPlayerInfo_GetFlag))LawnPlayerInfo_GetFlagAddr;
-    //    DrawSeedType = (void (*)(float *, float, float, int, int, float, float,float)) DrawSeedTypeAddr;
-    //    MailScreen_KeyDown = (decltype(MailScreen_KeyDown))MailScreen_KeyDownAddr;
     Sexy_GamepadApp_HasGamepad = (decltype(Sexy_GamepadApp_HasGamepad))Sexy_GamepadApp_HasGamepadAddr;
-    Sexy_Widget_Resize = (decltype(Sexy_Widget_Resize))Sexy_Widget_ResizeAddr;
-    Sexy_Widget_Widget = (decltype(Sexy_Widget_Widget))Sexy_Widget_WidgetAddr;
-    Sexy_Widget_SetVisible = (decltype(Sexy_Widget_SetVisible))Sexy_Widget_SetVisibleAddr;
-    Sexy_WidgetManager_SetFocus = (decltype(Sexy_WidgetManager_SetFocus))Sexy_WidgetManager_SetFocusAddr;
-    Sexy_WidgetContainer_SetFocus = (decltype(Sexy_WidgetContainer_SetFocus))Sexy_WidgetContainer_SetFocusAddr;
-    Sexy_WidgetManager_GetWidgetAt = (decltype(Sexy_WidgetManager_GetWidgetAt))Sexy_WidgetManager_GetWidgetAtAddr;
-    Sexy_WidgetContainer_MarkDirty = (decltype(Sexy_WidgetContainer_MarkDirty))Sexy_WidgetContainer_MarkDirtyAddr;
     ImitaterDialog_SeedHitTest = (decltype(ImitaterDialog_SeedHitTest))ImitaterDialog_SeedHitTestAddr;
     SaveGameContext_SyncInt = (decltype(SaveGameContext_SyncInt))SaveGameContext_SyncIntAddr;
     TypingCheck_SetPhrase = (decltype(TypingCheck_SetPhrase))TypingCheck_SetPhraseAddr;
     Sexy_MemoryImage_MemoryImage = (decltype(Sexy_MemoryImage_MemoryImage))Sexy_MemoryImage_MemoryImageAddr;
-    //    Sexy_MemoryImage_ClearRect=(void (*)(Sexy::Image *,Rect*))Sexy_MemoryImage_ClearRectAddr;
     Sexy_MemoryImage_GetBits = (decltype(Sexy_MemoryImage_GetBits))Sexy_MemoryImage_GetBitsAddr;
     Sexy_MemoryImage_Create = (decltype(Sexy_MemoryImage_Create))Sexy_MemoryImage_CreateAddr;
     Sexy_MemoryImage_SetImageMode = (decltype(Sexy_MemoryImage_SetImageMode))Sexy_MemoryImage_SetImageModeAddr;
@@ -106,7 +95,6 @@ inline void InitInGameFunction() {
     TestMenuWidget_TestMenuWidget = (decltype(TestMenuWidget_TestMenuWidget))TestMenuWidget_TestMenuWidgetAddr;
     PoolEffect_BilinearLookupFixedPoint = (decltype(PoolEffect_BilinearLookupFixedPoint))PoolEffect_BilinearLookupFixedPointAddr;
     Sexy_DefaultProfileMgr_GetAnyProfile = (decltype(Sexy_DefaultProfileMgr_GetAnyProfile))Sexy_DefaultProfileMgr_GetAnyProfileAddr;
-    // Sexy_WidgetManager_MouseDown=(int (*)(int *manager, int x, int y, int theClickCount))Sexy_WidgetManager_MouseDownAddr;
 
 
     TodFoley_IsFoleyPlaying = (decltype(TodFoley_IsFoleyPlaying))TodFoley_IsFoleyPlayingAddr;
@@ -122,9 +110,7 @@ inline void InitInGameFunction() {
     MaskHelpWidget_MaskHelpWidget = (decltype(MaskHelpWidget_MaskHelpWidget))MaskHelpWidget_MaskHelpWidgetAddr;
     MaskHelpWidget_Delete = (decltype(MaskHelpWidget_Delete))MaskHelpWidget_DeleteAddr;
     DaveHelp_DaveHelp = (decltype(DaveHelp_DaveHelp))DaveHelp_DaveHelpAddr;
-    //    TrashBin_TrashBin=(void (*)(ZOMBIE_TRASH_BIN *, int , float ))TrashBin_TrashBinAddr;
     ConfirmBackToMainDialog_ConfirmBackToMainDialog = (decltype(ConfirmBackToMainDialog_ConfirmBackToMainDialog))ConfirmBackToMainDialog_ConfirmBackToMainDialogAddr;
-    Sexy_Widget_Move = (decltype(Sexy_Widget_Move))Sexy_Widget_MoveAddr;
     TodParticleSystem_OverrideColor = (decltype(TodParticleSystem_OverrideColor))TodParticleSystem_OverrideColorAddr;
     TodParticleSystem_OverrideImage = (decltype(TodParticleSystem_OverrideImage))TodParticleSystem_OverrideImageAddr;
     TodParticleSystem_Delete2 = (decltype(TodParticleSystem_Delete2))TodParticleSystem_Delete2Addr;
@@ -132,8 +118,6 @@ inline void InitInGameFunction() {
     DrawCheckboxText = (decltype(DrawCheckboxText))DrawCheckboxTextAddr;
     Sexy_Checkbox_Delete = (decltype(Sexy_Checkbox_Delete))Sexy_Checkbox_DeleteAddr;
     CreditScreen_PauseCredits = (decltype(CreditScreen_PauseCredits))CreditScreen_PauseCreditsAddr;
-    Sexy_MenuWidget_Draw = (decltype(Sexy_MenuWidget_Draw))Sexy_MenuWidget_DrawAddr;
-    Sexy_Widget_DeferOverlay = (decltype(Sexy_Widget_DeferOverlay))Sexy_Widget_DeferOverlayAddr;
     Mailbox_GetNumUnseenMessages = (decltype(Mailbox_GetNumUnseenMessages))Mailbox_GetNumUnseenMessagesAddr;
 
     Native_BridgeApp_getJNIEnv = (decltype(Native_BridgeApp_getJNIEnv))Native_BridgeApp_getJNIEnvAddr;

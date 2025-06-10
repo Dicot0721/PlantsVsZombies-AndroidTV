@@ -5,8 +5,9 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_WIDGETANIMATOR_H
 #define PLANTSVSZOMBIES_ANDROIDTV_WIDGETANIMATOR_H
 
+#include "../Widget/Widget.h"
+
 namespace Sexy {
-class Widget;
 
 class WidgetAnimator {
 public:

@@ -19,10 +19,11 @@ public:
     int *mSourceFileName;                 // 67
     int unkInt1;                          // 68
     Image *mImage;                        // 69
-}; // 大小70个整数
+    // 大小70个整数
+
+    void Draw(Graphics *g) { reinterpret_cast<void (*)(MenuWidget *, Graphics *)>(Sexy_MenuWidget_DrawAddr)(this, g); }
+};
 
 }
-
-inline void (*Sexy_MenuWidget_Draw)(Sexy::MenuWidget *, Sexy::Graphics *);
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_MENUWIDGET_H

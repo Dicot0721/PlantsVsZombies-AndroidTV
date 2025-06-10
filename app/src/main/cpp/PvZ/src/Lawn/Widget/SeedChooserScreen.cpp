@@ -146,7 +146,7 @@ void SeedChooserScreen::Create(bool theIsZombieChooser) {
         gSeedChooserScreenMainMenuButton = MakeButton(104, &mButtonListener, this, (SexyString &)holder);
         gSeedChooserScreenMainMenuButton->Resize(mApp->IsCoopMode() ? 345 : 650, -3, 120, 80);
         Sexy_String_Delete(holder);
-        Sexy_Widget_AddWidget(this, gSeedChooserScreenMainMenuButton);
+        AddWidget(gSeedChooserScreenMainMenuButton);
     }
 }
 
@@ -154,7 +154,7 @@ void SeedChooserScreen::Create(bool theIsZombieChooser) {
 void LawnApp::KillSeedChooserScreen() {
     SeedChooserScreen *seedChooserScreen = mSeedChooserScreen;
     if (seedChooserScreen != nullptr && mGameMode != GameMode::GAMEMODE_MP_VS) {
-        Sexy_Widget_RemoveWidget(seedChooserScreen, gSeedChooserScreenMainMenuButton);
+        seedChooserScreen->RemoveWidget(gSeedChooserScreenMainMenuButton);
         gSeedChooserScreenMainMenuButton->Destroy();;
         gSeedChooserScreenMainMenuButton = nullptr;
     }
@@ -165,9 +165,9 @@ void LawnApp::KillSeedChooserScreen() {
 void SeedChooserScreen::RebuildHelpbar() {
     // 拓宽Widget大小
     if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS && !mIsZombieChooser) {
-        Sexy_Widget_Resize(this, mX, mY, 800, 600); // 原本(472,521)，改为(800,600)，不然没办法点击模仿者按钮和底栏三按钮。
+        Resize(mX, mY, 800, 600); // 原本(472,521)，改为(800,600)，不然没办法点击模仿者按钮和底栏三按钮。
     } else {
-        Sexy_Widget_Resize(this, mX, mY, mWidth, 600);
+        Resize(mX, mY, mWidth, 600);
     }
 
     return old_SeedChooserScreen_RebuildHelpbar(this);

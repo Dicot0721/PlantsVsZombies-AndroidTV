@@ -83,8 +83,8 @@ void Board::Create(LawnApp *theApp) {
             gBoardStoreButton->mDisabled = true;
         }
     }
-    Sexy_Widget_AddWidget(this, gBoardMenuButton);
-    Sexy_Widget_AddWidget(this, gBoardStoreButton);
+    AddWidget(gBoardMenuButton);
+    AddWidget(gBoardStoreButton);
     MessageWidget_Delete(mAdvice);
     CustomMessageWidget *theAdvice = (CustomMessageWidget *)operator new(820u);
     MessageWidget_MessageWidget(theAdvice, mApp);
@@ -2988,8 +2988,8 @@ void Board_startLevel(Board *board) {
 
 
 void Board::RemovedFromManager(WidgetManager *theManager) {
-    Sexy_Widget_RemoveWidget(this, gBoardMenuButton);
-    Sexy_Widget_RemoveWidget(this, gBoardStoreButton);
+    RemoveWidget(gBoardMenuButton);
+    RemoveWidget(gBoardStoreButton);
     gBoardMenuButton->Destroy();
 //    operator delete (gBoardMenuButton);
     gBoardStoreButton->Destroy();

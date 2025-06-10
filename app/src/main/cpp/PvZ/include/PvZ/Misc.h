@@ -31,18 +31,6 @@ inline bool (*Sexy_GamepadApp_HasGamepad)(LawnApp *);
 
 inline void (*ShopSeedPacket_Update)(int *seedPacket);
 
-inline void (*Sexy_Widget_Resize)(Sexy::Widget *widget, int x, int y, int width, int height);
-
-inline void (*Sexy_Widget_Widget)(Sexy::Widget *widget);
-
-inline void (*Sexy_Widget_SetVisible)(Sexy::Widget *, bool a2);
-
-inline void (*Sexy_WidgetManager_SetFocus)(int *manager, Sexy::Widget *);
-
-inline void (*Sexy_WidgetContainer_SetFocus)(Sexy::WidgetContainer *, Sexy::Widget *);
-
-inline int *(*Sexy_WidgetManager_GetWidgetAt)(int *manager, int x, int y, int *widgetX, int *widgetY);
-
 inline void (*TypingCheck_SetPhrase)(int *a1, int *a2);
 
 inline void (*Sexy_MemoryImage_MemoryImage)(Sexy::Image *);
@@ -93,8 +81,6 @@ inline void (*TodReplaceString)(int *, int *, const char *, int *);
 
 inline void (*TodReplaceNumberString)(int *, int *, const char *, int);
 
-inline void (*Sexy_Widget_Move)(Sexy::Widget *a, int a2, int a3);
-
 inline void (*MaskHelpWidget_MaskHelpWidget)(AchievementsWidget *, LawnApp *);
 
 inline void (*MaskHelpWidget_Delete)(AchievementsWidget *);
@@ -115,11 +101,7 @@ inline void (*Sexy_Checkbox_Delete)(Sexy::Checkbox *);
 
 inline void (*CreditScreen_PauseCredits)(Sexy::Widget *);
 
-inline void (*Sexy_WidgetContainer_MarkDirty)(Sexy::WidgetContainer *);
-
 inline void (*ReanimatorEnsureDefinitionLoaded)(ReanimationType type, bool b);
-
-inline void (*Sexy_Widget_DeferOverlay)(Sexy::Widget *, int);
 
 inline int (*Mailbox_GetNumUnseenMessages)(int *);
 
@@ -177,14 +159,6 @@ int randomInt(int a, int b);
 void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, SeedType theImitaterType, float xOffset, float yOffset, float scale);
 
 void LawnMower_Update(int *lawnMover);
-
-void Sexy_Widget_MarkDirty(Sexy::Widget *widget);
-
-void Sexy_Widget_AddWidget(Sexy::Widget *parent, Sexy::Widget *child);
-
-void Sexy_Widget_RemoveWidget(Sexy::Widget *parent, Sexy::Widget *child);
-
-Sexy::Widget *Sexy_Widget_FindWidget(Sexy::Widget *parent, int id);
 
 void Sexy_String_Delete(int *holder);
 
