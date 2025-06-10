@@ -5,6 +5,7 @@
 #include "PvZ/Lawn/System/PoolEffect.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
+#include "PvZ/SexyAppFramework/Graphics/MemoryImage.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/SexyAppFramework/Misc/SexyVertex2D.h"
 #include "PvZ/Lawn/LawnApp.h"
@@ -51,7 +52,7 @@ void PoolEffect_UpdateWaterEffect(PoolEffect *poolEffect) {
         if (++i >= 64)
             break;
     }
-    Sexy_MemoryImage_BitsChanged((Image*)poolEffect->mCausticImage);
+    poolEffect->mCausticImage->BitsChanged();
 }
 
 void PoolEffect_PoolEffectDraw(PoolEffect *poolEffect, Sexy::Graphics *g, bool theIsNight) {

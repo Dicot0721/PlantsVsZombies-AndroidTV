@@ -281,11 +281,11 @@ void LawnApp::DoConvertImitaterImages() {
         }
         Image *imageImitater = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_WASHED_OUT);
         Image *imageImitaterLess = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_LESS_WASHED_OUT);
-        Sexy_MemoryImage_WriteToPng(imageImitater, holder1);
-        Sexy_MemoryImage_WriteToPng(imageImitaterLess, holder2);
-        Sexy_MemoryImage_Delete(imageFromFile);
-        Sexy_MemoryImage_Delete(imageImitater);
-        Sexy_MemoryImage_Delete(imageImitaterLess);
+        reinterpret_cast<MemoryImage *>(imageImitater)->WriteToPng(holder1);
+        reinterpret_cast<MemoryImage *>(imageImitaterLess)->WriteToPng(holder2);
+        reinterpret_cast<MemoryImage *>(imageFromFile)->Delete();
+        reinterpret_cast<MemoryImage *>(imageImitater)->Delete();
+        reinterpret_cast<MemoryImage *>(imageImitaterLess)->Delete();
 
         Sexy_String_Delete(holder);
         Sexy_String_Delete(holder1);

@@ -37,19 +37,8 @@ public:
     int mHorizonWrapMode;             // 24
     int mVertWrapMode;                // 25
     int mTag;                         // 26
-    int unkMems3;                     // 27 ，实际上Sexy::Image就到这里，下面是MemoryImage的成员
-    LawnApp *mApp;                    // 28
-    int unkMems4;                     // 29
-    unsigned int *mBits;              // 30
-    int mBitsChangedCount;            // 31
-    int unk1[4];                      // 32 ~ 35
-    bool mUnkModeRelated;             // 144
-    bool mUnkMode1;                   // 145
-    bool mUnkMode2;                   // 146
-    bool mUnkBool;                    // 147
-    bool mVolatile;                   // 148
-    int unk2[20];                     // 38 ~ 57
-    // 大小58个整数
+    int unkMems3;                     // 27
+    // 大小28个整数
 
     int GetWidth();
     int GetHeight();

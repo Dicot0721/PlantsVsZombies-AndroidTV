@@ -63,7 +63,7 @@ void AlmanacDialog::Create(LawnApp *theApp) {
     Sexy::Image *gPlantBackImage = *Sexy_IMAGE_ALMANAC_PLANTBACK_Addr;
     Sexy::Image *gPoolBackImage = *Sexy_IMAGE_ALMANAC_GROUNDNIGHTPOOL_Addr;
     Sexy::Rect blankRect = {mAlmanacPlantRectX + 240, mAlmanacPlantRectY + 60, gPoolBackImage->mWidth, gPoolBackImage->mHeight};
-    Sexy_MemoryImage_ClearRect(gPlantBackImage, &blankRect);
+    reinterpret_cast<MemoryImage *>(gPlantBackImage)->ClearRect(blankRect);
 }
 
 void AlmanacDialog::Destroy() {

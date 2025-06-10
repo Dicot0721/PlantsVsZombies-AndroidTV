@@ -22,10 +22,17 @@ enum FilterEffect {
     NUM_FILTEREFFECT
 };
 
-Sexy::Image *FilterEffectCreateImage(Sexy::Image *image, FilterEffect);
+Sexy::MemoryImage *FilterEffectCreateImage(Sexy::Image *theImage, FilterEffect theFilterEffect);
 
 Sexy::Image *FilterEffectGetImage(Sexy::Image *image, FilterEffect);
 
 FilterEffect GetFilterEffectTypeBySeedType(SeedType mSeedType);
 
+inline void (*FilterEffectDoWashedOut)(Sexy::Image *);
+
+inline void (*FilterEffectDoLessWashedOut)(Sexy::Image *);
+
+inline void (*FilterEffectDoWhite)(Sexy::Image *);
+
+inline void (*FilterEffectDoLumSat)(Sexy::Image *theImage, float aLum, float aSat);
 #endif // PLANTSVSZOMBIES_ANDROIDTV_FILTEREFFECT_H

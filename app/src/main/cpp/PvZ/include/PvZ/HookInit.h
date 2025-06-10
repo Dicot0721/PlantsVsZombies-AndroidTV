@@ -71,14 +71,6 @@ inline void InitInGameFunction() {
     ImitaterDialog_SeedHitTest = (decltype(ImitaterDialog_SeedHitTest))ImitaterDialog_SeedHitTestAddr;
     SaveGameContext_SyncInt = (decltype(SaveGameContext_SyncInt))SaveGameContext_SyncIntAddr;
     TypingCheck_SetPhrase = (decltype(TypingCheck_SetPhrase))TypingCheck_SetPhraseAddr;
-    Sexy_MemoryImage_MemoryImage = (decltype(Sexy_MemoryImage_MemoryImage))Sexy_MemoryImage_MemoryImageAddr;
-    Sexy_MemoryImage_GetBits = (decltype(Sexy_MemoryImage_GetBits))Sexy_MemoryImage_GetBitsAddr;
-    Sexy_MemoryImage_Create = (decltype(Sexy_MemoryImage_Create))Sexy_MemoryImage_CreateAddr;
-    Sexy_MemoryImage_SetImageMode = (decltype(Sexy_MemoryImage_SetImageMode))Sexy_MemoryImage_SetImageModeAddr;
-    Sexy_MemoryImage_Delete = (decltype(Sexy_MemoryImage_Delete))Sexy_MemoryImage_DeleteAddr;
-    Sexy_MemoryImage_WriteToPng = (decltype(Sexy_MemoryImage_WriteToPng))Sexy_MemoryImage_WriteToPngAddr;
-    Sexy_MemoryImage_WriteToJPEG = (decltype(Sexy_MemoryImage_WriteToJPEG))Sexy_MemoryImage_WriteToJPEGAddr;
-    Sexy_MemoryImage_BitsChanged = (decltype(Sexy_MemoryImage_BitsChanged))Sexy_MemoryImage_BitsChangedAddr;
     FilterEffectDoWashedOut = (decltype(FilterEffectDoWashedOut))FilterEffectDoWashedOutAddr;
     FilterEffectDoLessWashedOut = (decltype(FilterEffectDoLessWashedOut))FilterEffectDoLessWashedOutAddr;
     FilterEffectDoWhite = (decltype(FilterEffectDoWhite))FilterEffectDoWhiteAddr;
@@ -530,7 +522,7 @@ inline void InitHookFunction() {
     homura::HookFunction(TestMenuWidget_Delete2Addr, &TestMenuWidget_Delete2, &old_TestMenuWidget_Delete2);
     homura::HookFunction(SaveGameContext_SyncReanimationDefAddr, &SaveGameContext_SyncReanimationDef, nullptr);
     homura::HookFunction(PoolEffect_PoolEffectDrawAddr, &PoolEffect_PoolEffectDraw, nullptr);
-    homura::HookFunction(Sexy_MemoryImage_ClearRectAddr, &Sexy_MemoryImage_ClearRect, nullptr);
+    homura::HookFunction(Sexy_MemoryImage_ClearRectAddr, &Sexy::MemoryImage::ClearRect, nullptr);
 
 
     homura::HookFunction(TitleScreen_DrawAddr, &TitleScreen_Draw, &old_TitleScreen_Draw);
@@ -601,8 +593,8 @@ inline void InitVTableHookFunction() {
     homura::HookVirtualFunc(vTableForGLImageAddr, 37, &Sexy_GLImage_PushTransform, &old_Sexy_GLImage_PushTransform);
     homura::HookVirtualFunc(vTableForGLImageAddr, 38, &Sexy_GLImage_PopTransform, &old_Sexy_GLImage_PopTransform);
 
-    homura::HookVirtualFunc(vTableForMemoryImageAddr, 37, &Sexy_MemoryImage_PushTransform, &old_Sexy_MemoryImage_PushTransform);
-    homura::HookVirtualFunc(vTableForMemoryImageAddr, 38, &Sexy_MemoryImage_PopTransform, &old_Sexy_MemoryImage_PopTransform);
+    homura::HookVirtualFunc(vTableForMemoryImageAddr, 37, &Sexy::MemoryImage::PushTransform, &old_Sexy_MemoryImage_PushTransform);
+    homura::HookVirtualFunc(vTableForMemoryImageAddr, 38, &Sexy::MemoryImage::PopTransform, &old_Sexy_MemoryImage_PopTransform);
 
 
     homura::HookVirtualFunc(vTableForMusic2Addr, 7, &Music2::StopAllMusic, &old_Music2_StopAllMusic);

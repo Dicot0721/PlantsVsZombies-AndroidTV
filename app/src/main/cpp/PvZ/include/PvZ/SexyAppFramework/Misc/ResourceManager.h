@@ -5,9 +5,11 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_RESOURCEMANAGER_H
 #define PLANTSVSZOMBIES_ANDROIDTV_RESOURCEMANAGER_H
 
-#include "Common.h"
 #include "../Graphics/Image.h"
-//#include "../SexyAppBase.h"
+#include "../SexyAppBase.h"
+
+#include "Common.h"
+
 #include <string>
 #include <map>
 

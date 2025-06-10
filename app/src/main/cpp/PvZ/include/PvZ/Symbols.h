@@ -2,7 +2,9 @@
 #define PVZ_SYMBOLS_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "MagicAddr.h"
 
+#include <jni.h>
 #include <dlfcn.h>
 
 namespace Sexy {

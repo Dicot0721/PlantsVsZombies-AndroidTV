@@ -6,6 +6,7 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
+#include "PvZ/SexyAppFramework/Graphics/MemoryImage.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
@@ -807,20 +808,21 @@ void ZombatarWidget_ButtonDepress(ZombatarWidget *zombatarWidget, int id) {
             return;
 
         if (addonImages.zombatar_portrait != nullptr) {
-            Sexy_MemoryImage_Delete(addonImages.zombatar_portrait);
+            reinterpret_cast<MemoryImage *>(addonImages.zombatar_portrait)->Delete();
         }
-        Sexy::Image *image = (Sexy::Image *)operator new(sizeof(Sexy::Image));
-        Sexy_MemoryImage_MemoryImage(image);
-        Sexy_MemoryImage_Create(image, addonZombatarImages.zombatar_background_blank->mWidth, addonZombatarImages.zombatar_background_blank->mHeight);
-        Sexy_MemoryImage_SetImageMode(image, true, true);
-        image->mVolatile = true;
-        Graphics graphics = Graphics(image);
+//        MemoryImage* aImage = new MemoryImage();
+        MemoryImage *aImage = (MemoryImage*)operator new(sizeof(MemoryImage));
+        aImage->BeBorn();
+        aImage->Create(addonZombatarImages.zombatar_background_blank->mWidth, addonZombatarImages.zombatar_background_blank->mHeight);
+        aImage->SetImageMode(true, true);
+        aImage->mIsVolatile = true;
+        Graphics graphics = Graphics(aImage);
         TestMenuWidget_DrawPortrait(gMainMenuZombatarWidget, &graphics, 0, 0);
         int holder[1];
         Sexy_StrFormat(holder, "ZOMBATAR.PNG");
-        Sexy_MemoryImage_WriteToPng(image, holder);
+        aImage->WriteToPng(holder);
         Sexy_String_Delete(holder);
-        addonImages.zombatar_portrait = image;
+        addonImages.zombatar_portrait = aImage;
         gMainMenuZombatarWidget->mShowExistingZombatarPortrait = true;
         gMainMenuZombatarWidget->mShowZombieTypeSelection = false;
 
@@ -864,7 +866,7 @@ void ZombatarWidget_ButtonDepress(ZombatarWidget *zombatarWidget, int id) {
             return;
         gMainMenuZombatarWidget->mShowExistingZombatarPortrait = false;
         if (addonImages.zombatar_portrait != nullptr) {
-            Sexy_MemoryImage_Delete(addonImages.zombatar_portrait);
+            reinterpret_cast<MemoryImage *>(addonImages.zombatar_portrait)->Delete();
             addonImages.zombatar_portrait = nullptr;
             lawnApp->EraseFile("ZOMBATAR.PNG");
         }

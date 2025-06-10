@@ -1,19 +1,15 @@
 #ifndef PVZ_MISC_H
 #define PVZ_MISC_H
 
-#include "PvZ/Lawn/Board/GameObject.h"
 #include "PvZ/Lawn/Board/MessageWidget.h"
-#include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/System/PlayerInfo.h"
 #include "PvZ/Lawn/System/ReanimationLawn.h"
 #include "PvZ/Lawn/Widget/AchievementsWidget.h"
 #include "PvZ/Lawn/Widget/ZombatarWidget.h"
-#include "PvZ/SexyAppFramework/Misc/SexyMatrix.h"
-#include "PvZ/SexyAppFramework/SexyAppBase.h"
 #include "PvZ/SexyAppFramework/Widget/Checkbox.h"
 #include "PvZ/TodLib/Common/TodFoley.h"
-#include "PvZ/TodLib/Common/TodList.h"
-#include "TodLib/Common/TodCommon.h"
+//#include "PvZ/TodLib/Common/TodList.h"
+//#include "TodLib/Common/TodCommon.h"
 
 class TodParticleSystem;
 
@@ -32,30 +28,6 @@ inline bool (*Sexy_GamepadApp_HasGamepad)(LawnApp *);
 inline void (*ShopSeedPacket_Update)(int *seedPacket);
 
 inline void (*TypingCheck_SetPhrase)(int *a1, int *a2);
-
-inline void (*Sexy_MemoryImage_MemoryImage)(Sexy::Image *);
-
-inline unsigned int *(*Sexy_MemoryImage_GetBits)(Sexy::Image *);
-
-inline void (*Sexy_MemoryImage_Create)(Sexy::Image *, int x, int y);
-
-inline void (*Sexy_MemoryImage_SetImageMode)(Sexy::Image *, bool, bool);
-
-inline void (*Sexy_MemoryImage_WriteToPng)(Sexy::Image *, int *);
-
-inline void (*Sexy_MemoryImage_WriteToJPEG)(Sexy::Image *, int *);
-
-inline void (*Sexy_MemoryImage_Delete)(Sexy::Image *);
-
-inline void (*Sexy_MemoryImage_BitsChanged)(Sexy::Image *);
-
-inline void (*FilterEffectDoWashedOut)(Sexy::Image *);
-
-inline void (*FilterEffectDoLessWashedOut)(Sexy::Image *);
-
-inline void (*FilterEffectDoWhite)(Sexy::Image *);
-
-inline void (*FilterEffectDoLumSat)(Sexy::Image *theImage, float aLum, float aSat);
 
 inline int **(*ReanimAtlas_GetEncodedReanimAtlas)(int *, int *);
 
@@ -129,10 +101,6 @@ inline void (*old_Sexy_GLImage_PushTransform)(Sexy::Image *image, int *transform
 
 inline void (*old_Sexy_GLImage_PopTransform)(Sexy::Image *image);
 
-inline void (*old_Sexy_MemoryImage_PushTransform)(Sexy::Image *image, int *transform, bool concatenate);
-
-inline void (*old_Sexy_MemoryImage_PopTransform)(Sexy::Image *image);
-
 inline int (*old_SexyDialog_AddedToManager)(void *instance, void *instance1);
 
 inline int (*old_SexyDialog_RemovedFromManager)(void *instance, void *instance1);
@@ -169,12 +137,6 @@ void Sexy_Image_PopTransform(Sexy::Image *image);
 void Sexy_GLImage_PushTransform(Sexy::Image *image, int *transform, bool concatenate);
 
 void Sexy_GLImage_PopTransform(Sexy::Image *image);
-
-void Sexy_MemoryImage_PushTransform(Sexy::Image *image, int *transform, bool concatenate);
-
-void Sexy_MemoryImage_PopTransform(Sexy::Image *image);
-
-void Sexy_MemoryImage_ClearRect(Sexy::Image *a1, Sexy::Rect *a2);
 
 int SexyDialog_AddedToManager(void *instance, void *instance1);
 

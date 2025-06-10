@@ -91,9 +91,11 @@ public:
     void DrawImageCel(Image *theImageStrip, int theX, int theY, int theCelCol, int theCelRow) {
         reinterpret_cast<void (*)(Graphics *, Image *, int, int, int, int)>(Sexy_Graphics_DrawImageCel2Addr)(this, theImageStrip, theX, theY, theCelCol, theCelRow);
     }
-    void DrawImageMirror(Image* theImage, int theX, int theY, bool mirror) { reinterpret_cast<void (*)(Graphics *, int, int, bool)>(Sexy_Graphics_DrawImageMirrorAddr)(this, theX, theY, mirror); }
+    void DrawImageMirror(Image *theImage, int theX, int theY, bool mirror) {
+        reinterpret_cast<void (*)(Graphics *, Image *, int, int, bool)>(Sexy_Graphics_DrawImageMirrorAddr)(this, theImage, theX, theY, mirror);
+    }
     void DrawImageMirror(Image *theImage, const Rect &theDestRect, const Rect &theSrcRect, bool mirror) {
-        reinterpret_cast<void (*)(Graphics *, const Rect &, const Rect &, bool)>(Sexy_Graphics_DrawImageMirror2Addr)(this, theDestRect, theSrcRect, mirror);
+        reinterpret_cast<void (*)(Graphics *, Image *, const Rect &, const Rect &, bool)>(Sexy_Graphics_DrawImageMirror2Addr)(this, theImage, theDestRect, theSrcRect, mirror);
     }
     void DrawTrianglesTex(Image *theTexture, const SexyVertex2D theVertices[][3], int theNumTriangles) {
         reinterpret_cast<void (*)(Graphics *, Image *, const SexyVertex2D[][3], int)>(Sexy_Graphics_DrawTrianglesTexAddr)(this, theTexture, theVertices, theNumTriangles);

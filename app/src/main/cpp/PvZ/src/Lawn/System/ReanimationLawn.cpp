@@ -7,6 +7,7 @@
 #include "PvZ/Lawn/Board/Zombie.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
+#include "PvZ/SexyAppFramework/Graphics/MemoryImage.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 
 using namespace Sexy;
@@ -90,7 +91,7 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
         return old_ReanimatorCache_MakeCachedZombieFrame(this, theZombieType);
     }
 
-    Sexy_MemoryImage_Delete((Image *)mZombieImages[theZombieType]);
+    mZombieImages[theZombieType]->Delete();
     mZombieImages[theZombieType] = nullptr;
 
     Sexy::MemoryImage *BlankCanvasImage = MakeBlankCanvasImage((theZombieType == ZombieType::ZOMBIE_ZAMBONI ? 512 : 256), 256);

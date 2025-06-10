@@ -63,6 +63,69 @@ inline void TodBltMatrix(
         g, theImage, theTransform, theClipRect, theColor, theDrawMode, theSrcRect);
 }
 
+inline unsigned long AverageNearByPixels(Sexy::MemoryImage *theImage, unsigned long *thePixel, int x, int y) {
+    int aRed = 0;
+    int aGreen = 0;
+    int aBlue = 0;
+    int aBitsCount = 0;
+
+    for (int i = -1; i <= 1; i++)  // 依次循环上方、当前、下方的一行
+    {
+        if (i == 0)  // 排除当前行
+        {
+            continue;
+        }
+
+        for (int j = -1; j <= 1; j++)  // 依次循环左方、当前、右方的一列
+        {
+            if ((x != 0 || j != -1) && (x != theImage->mWidth - 1 || j != 1) && (y != 0 || i != -1) && (y != theImage->mHeight - 1 || i != 1))
+            {
+                unsigned long aPixel = *(thePixel + i * theImage->mWidth + j);
+                if (aPixel & 0xFF000000UL)  // 如果不是透明像素
+                {
+                    aRed += (aPixel >> 16) & 0x000000FFUL;
+                    aGreen += (aPixel >> 8) & 0x000000FFUL;
+                    aBlue += aPixel & 0x000000FFUL;
+                    aBitsCount++;
+                }
+            }
+        }
+    }
+
+    if (aBitsCount == 0)
+        return 0;
+
+    aRed /= aBitsCount;
+    aRed = min(aRed, 255);
+    aGreen /= aBitsCount;
+    aGreen = min(aGreen, 255);
+    aBlue /= aBitsCount;
+    aBlue = min(aBlue, 255);
+    return (aRed << 16) | (aGreen << 8) | (aBlue);
+}
+
+inline void FixPixelsOnAlphaEdgeForBlending(Sexy::Image *theImage) {
+    Sexy::MemoryImage* aImage = (Sexy::MemoryImage*)theImage;
+    unsigned long* aBitsPtr = aImage->mBits;
+    if (aImage->mBits == nullptr)
+        return;
+
+    for (int y = 0; y < theImage->mHeight; y++)
+    {
+        for (int x = 0; x < theImage->mWidth; x++)
+        {
+            if ((*aBitsPtr & 0xFF000000UL) == 0)  // 如果像素的不透明度为 0
+            {
+                *aBitsPtr = AverageNearByPixels(aImage, aBitsPtr, x, y);  // 计算该点周围非透明像素的平均颜色
+            }
+
+            aBitsPtr++;
+        }
+    }
+    //++theImage->mBitsChangedCount;
+    aImage->BitsChanged();
+}
+
 //inline int RandRangeInt(int theMin, int theMax);
 
 //inline float RandRangeFloat(float theMin, float theMax);
@@ -93,6 +156,9 @@ inline void (*TodDrawStringWrapped)(Sexy::Graphics *graphics, int *text, Sexy::R
 
 inline int (*TodDrawStringWrappedHelper)(Sexy::Graphics *pGraphics, int *pInt, Sexy::Rect *pRect, Sexy::Font *pFont, Sexy::Color color, DrawStringJustification justification, bool i1, bool i2);
 
+//inline unsigned long AverageNearByPixels(Sexy::MemoryImage *theImage, unsigned long *thePixel, int x, int y);
+//
+//inline void FixPixelsOnAlphaEdgeForBlending(Sexy::Image *theImage);
 
 inline void SetBit(uint& theNum, int theIdx, bool theValue = true) {
     if (theValue)

@@ -25,7 +25,7 @@ class LawnApp;
 class PoolEffect {
 public:
     CausticEffect *mCausticGrayscaleImage; // 0
-    Sexy::Image *mCausticImage;            // 1
+    Sexy::MemoryImage *mCausticImage;      // 1
     LawnApp *mApp;                         // 2
     int mPoolCounter;                      // 3
 }; // 大小4个整数

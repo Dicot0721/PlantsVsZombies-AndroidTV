@@ -8,10 +8,9 @@
 #include "Graphics/Color.h"
 #include "Misc/Common.h"
 #include "Misc/Rect.h"
-#include "PvZ/Lawn/Common/ConstEnums.h"
-#include "PvZ/MagicAddr.h"
 #include "PvZ/Symbols.h"
 #include "Widget/ButtonListener.h"
+#include "Graphics/MemoryImage.h"
 
 namespace Sexy {
 

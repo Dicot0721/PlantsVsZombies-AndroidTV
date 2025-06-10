@@ -1,10 +1,6 @@
 #ifndef PVZ_ENUMS_H
 #define PVZ_ENUMS_H
 
-#include "PvZ/MagicAddr.h"
-
-#include <jni.h>
-
 enum AdviceType {
     ADVICE_NONE = -1,
     ADVICE_CLICK_ON_SUN = 0,
