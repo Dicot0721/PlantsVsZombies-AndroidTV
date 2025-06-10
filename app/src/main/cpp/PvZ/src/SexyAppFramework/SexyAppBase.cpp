@@ -3,9 +3,12 @@
 //
 
 #include "PvZ/SexyAppFramework/SexyAppBase.h"
+#include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/System/PlayerInfo.h"
 
 using namespace Sexy;
 
+template <>
 void SexyAppBase::Create() {
     old_Sexy_SexyAppBase_SexyAppBase(this);
     //    LOGD("%d",*((uint32_t *)appBase + 464));

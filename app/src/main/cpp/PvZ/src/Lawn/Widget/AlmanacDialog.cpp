@@ -220,7 +220,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
     if (Plant::IsAquatic(mSelectedSeed)) {
         if (Plant::IsNocturnal(mSelectedSeed)) {
             g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDNIGHTPOOL_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY);
-            if (Sexy_SexyAppBase_Is3DAccelerated(mApp)) {
+            if (mApp->Is3DAccelerated()) {
                 g->SetClipRect(475, 0, 397, 500);
                 g->mTransY = g->mTransY - 145.0f;
                 PoolEffect_PoolEffectDraw(mApp->mPoolEffect, g, true);
@@ -229,7 +229,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
             }
         } else {
             g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDPOOL_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY);
-            if (Sexy_SexyAppBase_Is3DAccelerated(mApp)) {
+            if (mApp->Is3DAccelerated()) {
                 g->SetClipRect(475, 0, 397, 500);
                 g->mTransY = g->mTransY - 145.0f;
                 PoolEffect_PoolEffectDraw(mApp->mPoolEffect, g, false);
@@ -282,7 +282,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     if (Plant::IsAquatic(mSelectedSeed)) {
         if (Plant::IsNocturnal(mSelectedSeed)) {
             g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDNIGHTPOOL_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY + 10);
-            if (Sexy_SexyAppBase_Is3DAccelerated(mApp)) {
+            if (mApp->Is3DAccelerated()) {
                 //                Sexy_Graphics_SetClipRect(g, 475, 0, 397, 500);
                 g->mTransY = g->mTransY - 115;
                 PoolEffect_PoolEffectDraw(mApp->mPoolEffect, g, true);
@@ -291,7 +291,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
             }
         } else {
             g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDPOOL_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY + 10);
-            if (Sexy_SexyAppBase_Is3DAccelerated(mApp)) {
+            if (mApp->Is3DAccelerated()) {
                 //                Sexy_Graphics_SetClipRect(g, 475, 0, 397, 500);
                 g->mTransY = g->mTransY - 115;
                 PoolEffect_PoolEffectDraw(mApp->mPoolEffect, g, false);

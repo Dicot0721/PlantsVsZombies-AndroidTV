@@ -17,7 +17,8 @@ namespace Sexy {
 
 class Dialog;
 
-class SexyAppBase {
+template <bool IS_AS_BASE = false>
+class __SexyAppBase {
 public:
     int *vTable;                            // 0
     int unkMem1[164];                       // 1 ~ 164
@@ -40,15 +41,41 @@ public:
     int unkMem8[2];                         // 550 ~ 551
     // 115： 552 , 111： 553
 
-    Dialog *GetDialog(Dialogs theDialogId) { return reinterpret_cast<Dialog *(*)(SexyAppBase *, Dialogs)>(Sexy_SexyAppBase_GetDialogAddr)(this, theDialogId); }
-    void EraseFile(const std::string& theFileName) { reinterpret_cast<void (*)(SexyAppBase *, const std::string&)>(Sexy_SexyAppBase_EraseFileAddr)(this, theFileName); }
+    Dialog *GetDialog(Dialogs theDialogId) { return reinterpret_cast<Dialog *(*)(__SexyAppBase *, Dialogs)>(Sexy_SexyAppBase_GetDialogAddr)(this, theDialogId); }
+    void EraseFile(const std::string& theFileName) { reinterpret_cast<void (*)(__SexyAppBase *, const std::string&)>(Sexy_SexyAppBase_EraseFileAddr)(this, theFileName); }
     Image *GetImage(const std::string &theFileName, bool commitBits = true) {
-        return reinterpret_cast<Image *(*)(SexyAppBase *, const std::string &, bool)>(Sexy_SexyAppBase_GetImageAddr)(this, theFileName, commitBits);
+        return reinterpret_cast<Image *(*)(__SexyAppBase *, const std::string &, bool)>(Sexy_SexyAppBase_GetImageAddr)(this, theFileName, commitBits);
+    }
+    bool RegistryReadString(const std::string &theValueName, std::string *theString) {
+        return reinterpret_cast<bool(*)(__SexyAppBase *, const std::string &, std::string *)>(Sexy_SexyAppBase_RegistryReadStringAddr)(this, theValueName, theString);
+    }
+    Image *CopyImage(Image *theImage) { return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *)>(Sexy_SexyAppBase_CopyImageAddr)(this, theImage); }
+    Image *CopyImage(Image *theImage, const Rect &theRect) { return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *, const Rect &)>(Sexy_SexyAppBase_CopyImage2Addr)(this, theImage, theRect); }
+
+    __SexyAppBase()
+        requires(!IS_AS_BASE)
+    {
+        Create();
     }
 
-    SexyAppBase() { Create(); }
     void Create();
+
+    bool Is3DAccelerated(this const auto& self) {
+        // 修复关闭3D加速后MV错位
+        return self.mNewIs3DAccelerated || self.mCreditScreen != nullptr;
+    }
+    void Set3DAccelerated(this auto& self, bool isAccelerated) {
+        self.mNewIs3DAccelerated = isAccelerated;
+        self.mPlayerInfo->mIs3DAcceleratedClosed = !isAccelerated;
+    }
+
+protected:
+    __SexyAppBase()
+        requires IS_AS_BASE
+    {}
 };
+
+using SexyAppBase = __SexyAppBase<>;
 
 }
 

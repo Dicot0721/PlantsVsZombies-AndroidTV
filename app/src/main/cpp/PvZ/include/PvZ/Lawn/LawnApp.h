@@ -23,7 +23,7 @@ class PlayerInfo;
 class PottedPlant;
 class VSSetupMenu;
 
-class LawnApp : public Sexy::SexyAppBase {
+class LawnApp : public __SexyAppBase<true> {
 public:
     Board *mBoard;                           // 552
     TitleScreen *mTitleScreen;               // 553

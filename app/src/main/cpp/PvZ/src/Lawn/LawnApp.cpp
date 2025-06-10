@@ -101,7 +101,7 @@ Image *LawnApp::GetImageByFileName(const char *theFileName) {
     // 根据贴图文件路径获得贴图
     int holder[1];
     Sexy_StrFormat(holder, theFileName);
-    Image *theImage = GetImage((string &)holder, true);
+    Image *theImage = GetImage(reinterpret_cast<string &>(holder), true);
     Sexy_String_Delete(holder);
     return theImage;
 }
@@ -274,7 +274,7 @@ void LawnApp::DoConvertImitaterImages() {
         Sexy_StrFormat(holder, "convertImitaterImages/pic%d", i);
         Sexy_StrFormat(holder1, "ImitaterNormalpic%d.png", i);
         Sexy_StrFormat(holder2, "ImitaterLesspic%d.png", i);
-        Image *imageFromFile = GetImage((string &)holder, true);
+        Image *imageFromFile = GetImage(reinterpret_cast<string &>(holder), true);
 
         if (imageFromFile == nullptr) {
             break;
@@ -848,8 +848,8 @@ void LawnApp::LoadZombatarResources() {
     int xClip = 130;
     int yClip = 130;
     Sexy::Rect rect = {addonZombatarImages.zombatar_zombie_blank->mWidth - xClip, addonZombatarImages.zombatar_zombie_blank->mHeight - yClip, xClip, yClip};
-    addonZombatarImages.zombatar_zombie_blank_part = Sexy_SexyAppBase_CopyImage2(this, addonZombatarImages.zombatar_zombie_blank, &rect);
-    addonZombatarImages.zombatar_zombie_blank_skin_part = Sexy_SexyAppBase_CopyImage2(this, addonZombatarImages.zombatar_zombie_blank_skin, &rect);
+    addonZombatarImages.zombatar_zombie_blank_part = CopyImage(addonZombatarImages.zombatar_zombie_blank, rect);
+    addonZombatarImages.zombatar_zombie_blank_skin_part = CopyImage(addonZombatarImages.zombatar_zombie_blank_skin, rect);
     addonZombatarImages.zombatar_colors_bg = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_colors_bg");
     addonZombatarImages.zombatar_colorpicker = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_colorpicker");
     addonZombatarImages.zombatar_colorpicker_none = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_colorpicker_none");

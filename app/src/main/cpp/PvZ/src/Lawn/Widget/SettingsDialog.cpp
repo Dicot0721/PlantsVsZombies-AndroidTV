@@ -22,7 +22,7 @@ void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, int *manager)
     Sexy::Widget *mBackButton = settingsDialog->mBackButton;
 
 
-    g3DAccleratedCheckbox = MakeNewCheckbox(1024, settingsDialog->mCheckboxListener, (Widget*)settingsDialog, Sexy_SexyAppBase_Is3DAccelerated(lawnApp));
+    g3DAccleratedCheckbox = MakeNewCheckbox(1024, settingsDialog->mCheckboxListener, (Widget*)settingsDialog, lawnApp->Is3DAccelerated());
     gVibrateCheckbox = MakeNewCheckbox(1025, settingsDialog->mCheckboxListener, (Widget*)settingsDialog, !lawnApp->mPlayerInfo->mIsVibrateClosed);
 
     Sexy_Widget_Resize(g3DAccleratedCheckbox, 80, 260, 300, 50);
@@ -91,7 +91,7 @@ void SettingsDialog_CheckboxChecked(SettingsDialog *settingsDialog, int id, bool
     switch (id) {
         case 1024: {
             LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-            Sexy_SexyAppBase_Set3DAccelerated(lawnApp, isChecked);
+            lawnApp->Set3DAccelerated(isChecked);
         } break;
         case 1025: {
             LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;

@@ -81,9 +81,6 @@ inline void InitInGameFunction() {
     ImitaterDialog_SeedHitTest = (decltype(ImitaterDialog_SeedHitTest))ImitaterDialog_SeedHitTestAddr;
     SaveGameContext_SyncInt = (decltype(SaveGameContext_SyncInt))SaveGameContext_SyncIntAddr;
     TypingCheck_SetPhrase = (decltype(TypingCheck_SetPhrase))TypingCheck_SetPhraseAddr;
-    Sexy_SexyAppBase_RegistryReadString = (decltype(Sexy_SexyAppBase_RegistryReadString))Sexy_SexyAppBase_RegistryReadStringAddr;
-    Sexy_SexyAppBase_CopyImage = (decltype(Sexy_SexyAppBase_CopyImage))Sexy_SexyAppBase_CopyImageAddr;
-    Sexy_SexyAppBase_CopyImage2 = (decltype(Sexy_SexyAppBase_CopyImage2))Sexy_SexyAppBase_CopyImage2Addr;
     Sexy_MemoryImage_MemoryImage = (decltype(Sexy_MemoryImage_MemoryImage))Sexy_MemoryImage_MemoryImageAddr;
     //    Sexy_MemoryImage_ClearRect=(void (*)(Sexy::Image *,Rect*))Sexy_MemoryImage_ClearRectAddr;
     Sexy_MemoryImage_GetBits = (decltype(Sexy_MemoryImage_GetBits))Sexy_MemoryImage_GetBitsAddr;
@@ -104,8 +101,6 @@ inline void InitInGameFunction() {
     AttachParticle = (decltype(AttachParticle))AttachParticleAddr;
     TodLoadResources = (decltype(TodLoadResources))TodLoadResourcesAddr;
     TodParticleSystem_Draw = (decltype(TodParticleSystem_Draw))TodParticleSystem_DrawAddr;
-    //    Sexy_SexyAppBase_Is3DAccelerated = (bool (*)(LawnApp *)) Sexy_SexyAppBase_Is3DAcceleratedAddr;
-    //    Sexy_SexyAppBase_Set3DAccelerated=(void (*)(LawnApp*,bool))Sexy_SexyAppBase_Set3DAcceleratedAddr;
     Sexy_ResourceManager_GetSoundThrow = (decltype(Sexy_ResourceManager_GetSoundThrow))Sexy_ResourceManager_GetSoundThrowAddr;
     ToolTipWidget_SetWarningText = (decltype(ToolTipWidget_SetWarningText))ToolTipWidget_SetWarningTextAddr;
     TestMenuWidget_TestMenuWidget = (decltype(TestMenuWidget_TestMenuWidget))TestMenuWidget_TestMenuWidgetAddr;
@@ -529,7 +524,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Music_MusicUpdateAddr, &Music::MusicUpdate, nullptr);
     homura::HookFunction(Music_UpdateMusicBurstAddr, &Music::UpdateMusicBurst, &old_Music_UpdateMusicBurst);
     homura::HookFunction(Music2_Music2Addr, &Music2::Create, &old_Music2_Music2);
-    
+
     homura::HookFunction(LawnPlayerInfo_AddCoinsAddr, &LawnPlayerInfo_AddCoins, nullptr);
     homura::HookFunction(MaskHelpWidget_UpdateAddr, &MaskHelpWidget_Update, nullptr);
     homura::HookFunction(MaskHelpWidget_DrawAddr, &MaskHelpWidget_Draw, nullptr);
@@ -539,7 +534,7 @@ inline void InitHookFunction() {
     homura::HookFunction(DaveHelp_Delete2Addr, &DaveHelp_Delete2, &old_DaveHelp_Delete2);
     homura::HookFunction(DaveHelp_DealClickAddr, &DaveHelp_DealClick, nullptr);
     homura::HookFunction(TrashBin_TrashBinAddr, &TrashBin::Create, &old_TrashBin_TrashBin);
-    homura::HookFunction(Sexy_SexyAppBase_Is3DAcceleratedAddr, &Sexy_SexyAppBase_Is3DAccelerated, nullptr);
+    homura::HookFunction(Sexy_SexyAppBase_Is3DAcceleratedAddr, &LawnApp::Is3DAccelerated<LawnApp>, nullptr);
     homura::HookFunction(Sexy_SexyAppBase_SexyAppBaseAddr, &Sexy::SexyAppBase::Create, &old_Sexy_SexyAppBase_SexyAppBase);
     homura::HookFunction(SettingsDialog_AddedToManagerAddr, &SettingsDialog_AddedToManager, &old_SettingsDialog_AddedToManager);
     homura::HookFunction(SettingsDialog_RemovedFromManagerAddr, &SettingsDialog_RemovedFromManager, &old_SettingsDialog_RemovedFromManager);

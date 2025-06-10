@@ -45,12 +45,6 @@ inline int *(*Sexy_WidgetManager_GetWidgetAt)(int *manager, int x, int y, int *w
 
 inline void (*TypingCheck_SetPhrase)(int *a1, int *a2);
 
-inline int (*Sexy_SexyAppBase_RegistryReadString)(int *, int *, int *);
-
-inline Sexy::Image *(*Sexy_SexyAppBase_CopyImage)(LawnApp *, Sexy::Image *);
-
-inline Sexy::Image *(*Sexy_SexyAppBase_CopyImage2)(LawnApp *, Sexy::Image *, Sexy::Rect *);
-
 inline void (*Sexy_MemoryImage_MemoryImage)(Sexy::Image *);
 
 inline unsigned int *(*Sexy_MemoryImage_GetBits)(Sexy::Image *);
@@ -207,10 +201,6 @@ void Sexy_MemoryImage_PushTransform(Sexy::Image *image, int *transform, bool con
 void Sexy_MemoryImage_PopTransform(Sexy::Image *image);
 
 void Sexy_MemoryImage_ClearRect(Sexy::Image *a1, Sexy::Rect *a2);
-
-bool Sexy_SexyAppBase_Is3DAccelerated(LawnApp *);
-
-void Sexy_SexyAppBase_Set3DAccelerated(LawnApp *, bool);
 
 int SexyDialog_AddedToManager(void *instance, void *instance1);
 

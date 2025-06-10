@@ -261,10 +261,10 @@ void FixPixelsOnAlphaEdgeForBlending(Sexy::Image *theImage) {
     }
 }
 
-Sexy::Image *FilterEffectCreateImage(Sexy::Image *image, FilterEffect theFilterEffect) {
-    Sexy::Image *memoryImage = Sexy_SexyAppBase_CopyImage((LawnApp *)*gLawnApp_Addr, image);
-    memoryImage->mWidth = image->mWidth;
-    memoryImage->mHeight = image->mHeight;
+Sexy::Image *FilterEffectCreateImage(Sexy::Image *theImage, FilterEffect theFilterEffect) {
+    Sexy::Image *memoryImage = ((LawnApp *)*gLawnApp_Addr)->CopyImage(theImage);
+    memoryImage->mWidth = theImage->mWidth;
+    memoryImage->mHeight = theImage->mHeight;
     FixPixelsOnAlphaEdgeForBlending(memoryImage);
     switch (theFilterEffect) {
         case FilterEffect::FILTEREFFECT_WASHED_OUT:
@@ -282,8 +282,8 @@ Sexy::Image *FilterEffectCreateImage(Sexy::Image *image, FilterEffect theFilterE
     }
     //    ++memoryImage->mBitsChangedCount;
     Sexy_MemoryImage_BitsChanged(memoryImage);
-    memoryImage->mNumCols = image->mNumCols;
-    memoryImage->mNumRows = image->mNumRows;
+    memoryImage->mNumCols = theImage->mNumCols;
+    memoryImage->mNumRows = theImage->mNumRows;
     return memoryImage;
 }
 
@@ -337,16 +337,6 @@ void HelpBarWidget_HelpBarWidget(Sexy::Widget *a) {
 
 void Sexy_ExtractLoadingSoundsResources(int *a, int *theManager) {
     old_Sexy_ExtractLoadingSoundsResources(a, theManager);
-}
-
-bool Sexy_SexyAppBase_Is3DAccelerated(LawnApp *lawnApp) {
-    // 修复关闭3D加速后MV错位
-    return lawnApp->mNewIs3DAccelerated || lawnApp->mCreditScreen != nullptr;
-}
-
-void Sexy_SexyAppBase_Set3DAccelerated(LawnApp *lawnApp, bool isAccelerated) {
-    lawnApp->mNewIs3DAccelerated = isAccelerated;
-    lawnApp->mPlayerInfo->mIs3DAcceleratedClosed = !isAccelerated;
 }
 
 FoleyParams *LookupFoley(FoleyType theFoleyType) {
