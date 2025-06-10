@@ -16,9 +16,13 @@ namespace Sexy
 {
 class Graphics;
 class SexyVector2;
-class Image;
 class Color;
 class Font;
+
+template <bool>
+class __Image;
+
+using Image = __Image<false>;
 };
 
 struct TodWeightedArray

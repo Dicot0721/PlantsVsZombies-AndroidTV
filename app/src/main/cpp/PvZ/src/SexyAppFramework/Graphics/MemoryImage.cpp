@@ -11,16 +11,16 @@ void MemoryImage::ClearRect(const Rect& theRect) {
     int *mBits; // r7
     int v7;     // r0
 
-    mBits = (int *)(*((int (**)(Sexy::Image *))this->vTable + 13))(this);
+    mBits = (int *)(*((int (**)(Sexy::Image *))this->vTable + 13))(reinterpret_cast<Image *>(this));
     mY = theRect.mY;
     if (mY < theRect.mHeight + mY) {
         do {
-            v7 = theRect.mX + (*((int (**)(Sexy::Image *))this->vTable + 6))(this)*mY++;
+            v7 = theRect.mX + (*((int (**)(Sexy::Image *))this->vTable + 6))(reinterpret_cast<Image *>(this))*mY++;
             memset(&mBits[v7], 0, 4 * theRect.mWidth);
         } while (theRect.mHeight + theRect.mY > mY);
     }
 
-    (*((void (**)(Sexy::Image *))this->vTable + 47))(this);
+    (*((void (**)(Sexy::Image *))this->vTable + 47))(reinterpret_cast<Image *>(this));
 }
 
 void MemoryImage::PushTransform(const SexyMatrix3 &theTransform, bool concatenate) {

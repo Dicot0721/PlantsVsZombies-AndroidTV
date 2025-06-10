@@ -815,13 +815,13 @@ void ZombatarWidget_ButtonDepress(ZombatarWidget *zombatarWidget, int id) {
         aImage->Create(addonZombatarImages.zombatar_background_blank->mWidth, addonZombatarImages.zombatar_background_blank->mHeight);
         aImage->SetImageMode(true, true);
         aImage->mIsVolatile = true;
-        Graphics graphics = Graphics(aImage);
+        Graphics graphics = Graphics(reinterpret_cast<Image *>(aImage));
         TestMenuWidget_DrawPortrait(gMainMenuZombatarWidget, &graphics, 0, 0);
         int holder[1];
         Sexy_StrFormat(holder, "ZOMBATAR.PNG");
         aImage->WriteToPng(holder);
         Sexy_String_Delete(holder);
-        addonImages.zombatar_portrait = aImage;
+        addonImages.zombatar_portrait = reinterpret_cast<Image *>(aImage);
         gMainMenuZombatarWidget->mShowExistingZombatarPortrait = true;
         gMainMenuZombatarWidget->mShowZombieTypeSelection = false;
 

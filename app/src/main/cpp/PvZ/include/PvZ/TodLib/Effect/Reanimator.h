@@ -19,9 +19,13 @@ class ReanimatorFrameTime;
 namespace Sexy
 {
 class Font;
-class Image;
 class Graphics;
 class MemoryImage;
+
+template <bool>
+class __Image;
+
+using Image = __Image<false>;
 };
 
 // ######################################################################################################################################################

@@ -13,7 +13,11 @@
 
 namespace Sexy {
 
-class Image;
+template <bool>
+class __Image;
+
+using Image = __Image<false>;
+
 class ButtonListener;
 
 class ButtonWidget : public SelectableWidget {

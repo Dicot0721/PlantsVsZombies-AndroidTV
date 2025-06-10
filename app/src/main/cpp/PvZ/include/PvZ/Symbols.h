@@ -8,7 +8,11 @@
 #include <dlfcn.h>
 
 namespace Sexy {
-class Image;
+template <bool>
+class __Image;
+
+using Image = __Image<false>;
+
 class Font;
 }
 

@@ -35,6 +35,9 @@ public:
 
     void StartMower() { reinterpret_cast<void (*)(LawnMower*)>(LawnMower_StartMowerAddr)(this); }
 
+    void Update();
 };
+
+inline void (*old_LawnMower_Update)(LawnMower *lawnMover);
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_LAWNMOWER_H

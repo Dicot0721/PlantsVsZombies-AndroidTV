@@ -476,7 +476,7 @@ inline void InitHookFunction() {
         WaitForSecondPlayerDialog_WaitForSecondPlayerDialogAddr, (void *)WaitForSecondPlayerDialog_WaitForSecondPlayerDialog, (void **)&old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog);
     //    MSHookFunction(Sexy_WidgetManager_MouseDownAddr, (void *) Sexy_WidgetManager_MouseDown,(void **) &old_Sexy_WidgetManager_MouseDown);
     //    MSHookFunction(Sexy_WidgetManager_AxisMovedAddr, (void *) Sexy_WidgetManager_AxisMoved, nullptr);
-    homura::HookFunction(LawnMower_UpdateAddr, &LawnMower_Update, &old_LawnMower_Update);
+    homura::HookFunction(LawnMower_UpdateAddr, &LawnMower::Update, &old_LawnMower_Update);
     homura::HookFunction(ConfirmBackToMainDialog_ButtonDepressAddr, &ConfirmBackToMainDialog_ButtonDepress, &old_ConfirmBackToMainDialog_ButtonDepress);
     homura::HookFunction(ConfirmBackToMainDialog_AddedToManagerAddr, &ConfirmBackToMainDialog_AddedToManager, &old_ConfirmBackToMainDialog_AddedToManager);
     //    MSHookFunction(FilterEffectDisposeForAppAddr,(void *) FilterEffectDisposeForApp,nullptr);
@@ -583,11 +583,11 @@ inline void InitVTableHookFunction() {
     homura::HookVirtualFunc(vTableForGraphicsAddr, 5, &Sexy::Graphics::PopTransform, &old_Sexy_Graphics_PopTransform);
 
 
-    homura::HookVirtualFunc(vTableForImageAddr, 37, &Sexy_Image_PushTransform, &old_Sexy_Image_PushTransform);
-    homura::HookVirtualFunc(vTableForImageAddr, 38, &Sexy_Image_PopTransform, &old_Sexy_Image_PopTransform);
+    homura::HookVirtualFunc(vTableForImageAddr, 37, &Sexy::Image::PushTransform, &old_Sexy_Image_PushTransform);
+    homura::HookVirtualFunc(vTableForImageAddr, 38, &Sexy::Image::PopTransform, &old_Sexy_Image_PopTransform);
 
-    homura::HookVirtualFunc(vTableForGLImageAddr, 37, &Sexy_GLImage_PushTransform, &old_Sexy_GLImage_PushTransform);
-    homura::HookVirtualFunc(vTableForGLImageAddr, 38, &Sexy_GLImage_PopTransform, &old_Sexy_GLImage_PopTransform);
+    homura::HookVirtualFunc(vTableForGLImageAddr, 37, &Sexy::GLImage::PushTransform, &old_Sexy_GLImage_PushTransform);
+    homura::HookVirtualFunc(vTableForGLImageAddr, 38, &Sexy::GLImage::PopTransform, &old_Sexy_GLImage_PopTransform);
 
     homura::HookVirtualFunc(vTableForMemoryImageAddr, 37, &Sexy::MemoryImage::PushTransform, &old_Sexy_MemoryImage_PushTransform);
     homura::HookVirtualFunc(vTableForMemoryImageAddr, 38, &Sexy::MemoryImage::PopTransform, &old_Sexy_MemoryImage_PopTransform);

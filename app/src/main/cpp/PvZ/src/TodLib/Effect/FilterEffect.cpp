@@ -17,7 +17,7 @@ MemoryImage *FilterEffectCreateImage(Image *theImage, FilterEffect theFilterEffe
     MemoryImage *aImage = (MemoryImage *)reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->CopyImage(theImage);
     aImage->mWidth = theImage->mWidth;
     aImage->mHeight = theImage->mHeight;
-    FixPixelsOnAlphaEdgeForBlending(aImage);
+    FixPixelsOnAlphaEdgeForBlending(reinterpret_cast<Image *>(aImage));
 
     switch (theFilterEffect) {
         case FilterEffect::FILTEREFFECT_WASHED_OUT:
@@ -56,9 +56,9 @@ Image *FilterEffectGetImage(Image *theImage, FilterEffect theFilterEffect) {
     if (it != currentMap.end()) {
         return it->second;
     } else {
-        Sexy::Image *theFilterEffectImage = FilterEffectCreateImage(theImage, theFilterEffect);
-        currentMap.emplace(theImage, theFilterEffectImage);
-        return theFilterEffectImage;
+        Sexy::Image *aFilterEffectImage = reinterpret_cast<Image *>(FilterEffectCreateImage(theImage, theFilterEffect));
+        currentMap.emplace(theImage, aFilterEffectImage);
+        return aFilterEffectImage;
     }
 }
 

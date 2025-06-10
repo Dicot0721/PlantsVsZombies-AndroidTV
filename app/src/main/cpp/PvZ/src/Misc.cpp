@@ -40,22 +40,6 @@ void WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(int *a, int *a2) {
     WaitForSecondPlayerDialog_GameButtonDown(a, 6, 1);
 }
 
-void Sexy_Image_PushTransform(Sexy::Image *image, int *transform, bool concatenate) {
-    old_Sexy_Image_PushTransform(image, transform, concatenate);
-}
-
-void Sexy_Image_PopTransform(Sexy::Image *image) {
-    old_Sexy_Image_PopTransform(image);
-}
-
-void Sexy_GLImage_PushTransform(Sexy::Image *image, int *transform, bool concatenate) {
-    old_Sexy_GLImage_PushTransform(image, transform, concatenate);
-}
-
-void Sexy_GLImage_PopTransform(Sexy::Image *image) {
-    old_Sexy_GLImage_PopTransform(image);
-}
-
 int SexyDialog_AddedToManager(void *instance, void *instance1) {
     // 记录当前游戏状态
     return old_SexyDialog_AddedToManager(instance, instance1);
@@ -64,13 +48,6 @@ int SexyDialog_AddedToManager(void *instance, void *instance1) {
 int SexyDialog_RemovedFromManager(void *instance, void *instance1) {
     // 记录当前游戏状态
     return old_SexyDialog_RemovedFromManager(instance, instance1);
-}
-
-void LawnMower_Update(int *lawnMover) {
-    if (requestPause) {
-        return;
-    }
-    old_LawnMower_Update(lawnMover);
 }
 
 void Sexy_String_Delete(int *holder) {

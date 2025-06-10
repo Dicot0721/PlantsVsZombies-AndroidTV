@@ -93,19 +93,9 @@ inline void (*SaveGameContext_SyncInt)(int *, int *);
 
 inline void (*old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog)(int *a, int *a2);
 
-inline void (*old_Sexy_Image_PushTransform)(Sexy::Image *image, int *transform, bool concatenate);
-
-inline void (*old_Sexy_Image_PopTransform)(Sexy::Image *image);
-
-inline void (*old_Sexy_GLImage_PushTransform)(Sexy::Image *image, int *transform, bool concatenate);
-
-inline void (*old_Sexy_GLImage_PopTransform)(Sexy::Image *image);
-
 inline int (*old_SexyDialog_AddedToManager)(void *instance, void *instance1);
 
 inline int (*old_SexyDialog_RemovedFromManager)(void *instance, void *instance1);
-
-inline void (*old_LawnMower_Update)(int *lawnMover);
 
 inline void (*old_HelpBarWidget_HelpBarWidget)(Sexy::Widget *a);
 
@@ -126,17 +116,7 @@ int randomInt(int a, int b);
 
 void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, SeedType theImitaterType, float xOffset, float yOffset, float scale);
 
-void LawnMower_Update(int *lawnMover);
-
 void Sexy_String_Delete(int *holder);
-
-void Sexy_Image_PushTransform(Sexy::Image *image, int *transform, bool concatenate);
-
-void Sexy_Image_PopTransform(Sexy::Image *image);
-
-void Sexy_GLImage_PushTransform(Sexy::Image *image, int *transform, bool concatenate);
-
-void Sexy_GLImage_PopTransform(Sexy::Image *image);
 
 int SexyDialog_AddedToManager(void *instance, void *instance1);
 

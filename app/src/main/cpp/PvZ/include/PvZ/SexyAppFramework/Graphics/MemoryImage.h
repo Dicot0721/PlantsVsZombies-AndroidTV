@@ -14,7 +14,7 @@ class __SexyMatrix3;
 
 using SexyMatrix3 = __SexyMatrix3<false>;
 
-class MemoryImage : public Image {
+class MemoryImage : public __Image<true> {
 public:
     LawnApp *mApp;                    // 28
     int unkMems4;                     // 29
