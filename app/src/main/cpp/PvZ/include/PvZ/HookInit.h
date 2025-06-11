@@ -100,11 +100,6 @@ inline void InitInGameFunction() {
     Sexy_Checkbox_Delete = (decltype(Sexy_Checkbox_Delete))Sexy_Checkbox_DeleteAddr;
     CreditScreen_PauseCredits = (decltype(CreditScreen_PauseCredits))CreditScreen_PauseCreditsAddr;
     Mailbox_GetNumUnseenMessages = (decltype(Mailbox_GetNumUnseenMessages))Mailbox_GetNumUnseenMessagesAddr;
-
-    Native_BridgeApp_getJNIEnv = (decltype(Native_BridgeApp_getJNIEnv))Native_BridgeApp_getJNIEnvAddr;
-    Native_NativeApp_getActivity = (decltype(Native_NativeApp_getActivity))Native_NativeApp_getActivityAddr;
-    Native_BridgeApp_getSingleton = (decltype(Native_BridgeApp_getSingleton))Native_BridgeApp_getSingletonAddr;
-    Native_NativeApp_getPackageName = (decltype(Native_NativeApp_getPackageName))Native_NativeApp_getPackageNameAddr;
 }
 
 

@@ -27,6 +27,7 @@
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/Lawn/Board/CursorObject.h"
 #include "PvZ/TodLib/Effect/TodParticle.h"
+#include "PvZ/Android/Native/NativeApp.h"
 
 #include <cstddef>
 #include <cstdio>
@@ -3301,9 +3302,9 @@ void Board::ShakeBoard(int theShakeAmountX, int theShakeAmountY) {
         return;
     }
 
-    Native::BridgeApp *bridgeApp = Native_BridgeApp_getSingleton();
-    JNIEnv *env = Native_BridgeApp_getJNIEnv(bridgeApp);
-    jobject activity = Native_NativeApp_getActivity(bridgeApp->mNativeApp);
+    Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
+    JNIEnv *env = bridgeApp->getJNIEnv();
+    jobject activity = bridgeApp->mNativeApp->getActivity();
     jclass cls = env->GetObjectClass(activity);
     jmethodID methodID = env->GetMethodID(cls, "vibrate", "(I)V");
     //    env->CallVoidMethod(activity, methodID, 120);

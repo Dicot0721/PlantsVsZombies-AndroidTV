@@ -12,6 +12,7 @@
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
+#include "PvZ/Android/Native/NativeApp.h"
 
 #include <cstddef>
 
@@ -490,9 +491,9 @@ void Challenge::StartLevel() {
     old_Challenge_StartLevel(this);
 
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON && heavyWeaponAccel) {
-        Native::BridgeApp* bridgeApp = Native_BridgeApp_getSingleton();
-        JNIEnv* env = Native_BridgeApp_getJNIEnv(bridgeApp);
-        jobject activity = Native_NativeApp_getActivity(bridgeApp->mNativeApp);
+        Native::BridgeApp* bridgeApp = Native::BridgeApp::getSingleton();
+        JNIEnv* env = bridgeApp->getJNIEnv();
+        jobject activity = bridgeApp->mNativeApp->getActivity();
         jclass cls = env->GetObjectClass(activity);
         jmethodID methodID = env->GetMethodID(cls, "startOrientationListener", "()V");
         env->CallVoidMethod(activity, methodID);
@@ -504,9 +505,9 @@ void Challenge::Delete() {
     old_Challenge_Delete(this);
 
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON && heavyWeaponAccel) {
-        Native::BridgeApp* bridgeApp = Native_BridgeApp_getSingleton();
-        JNIEnv* env = Native_BridgeApp_getJNIEnv(bridgeApp);
-        jobject activity = Native_NativeApp_getActivity(bridgeApp->mNativeApp);
+        Native::BridgeApp* bridgeApp = Native::BridgeApp::getSingleton();
+        JNIEnv* env = bridgeApp->getJNIEnv();
+        jobject activity = bridgeApp->mNativeApp->getActivity();
         jclass cls = env->GetObjectClass(activity);
         jmethodID methodID = env->GetMethodID(cls, "stopOrientationListener", "()V");
         env->CallVoidMethod(activity, methodID);

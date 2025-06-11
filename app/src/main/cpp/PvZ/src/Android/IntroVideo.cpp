@@ -1,13 +1,13 @@
 #include "PvZ/Android/IntroVideo.h"
 #include "Homura/Logger.h"
 #include "PvZ/Android/OpenSL.h"
-#include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/Android/Native/NativeApp.h"
 
 int AGVideoOpen(const char *videoPath) {
     LOG_DEBUG("videoPath: {}", videoPath);
-    Native::BridgeApp *bridgeApp = Native_BridgeApp_getSingleton();
-    JNIEnv *env = Native_BridgeApp_getJNIEnv(bridgeApp);
-    jobject activity = Native_NativeApp_getActivity(bridgeApp->mNativeApp);
+    Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
+    JNIEnv *env = bridgeApp->getJNIEnv();
+    jobject activity = bridgeApp->mNativeApp->getActivity();
     jclass cls = env->GetObjectClass(activity);
     jmethodID methodID = env->GetMethodID(cls, "videoOpen", "(Ljava/lang/String;)Z");
     jobject videoPathUTF = env->functions->NewStringUTF(env, videoPath);
@@ -21,9 +21,9 @@ int AGVideoOpen(const char *videoPath) {
 
 bool AGVideoIsPlaying() {
     //    LOGD("AGVideoIsPlaying");
-    Native::BridgeApp *bridgeApp = Native_BridgeApp_getSingleton();
-    JNIEnv *env = Native_BridgeApp_getJNIEnv(bridgeApp);
-    jobject activity = Native_NativeApp_getActivity(bridgeApp->mNativeApp);
+    Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
+    JNIEnv *env = bridgeApp->getJNIEnv();
+    jobject activity = bridgeApp->mNativeApp->getActivity();
     jclass cls = env->GetObjectClass(activity);
     jmethodID methodID = env->GetMethodID(cls, "videoIsPlaying", "()Z");
     jboolean result = env->CallBooleanMethod(activity, methodID);
@@ -34,9 +34,9 @@ bool AGVideoIsPlaying() {
 
 bool AGVideoShow(bool show) {
     LOG_DEBUG("AGVideoShow {}", show);
-    Native::BridgeApp *bridgeApp = Native_BridgeApp_getSingleton();
-    JNIEnv *env = Native_BridgeApp_getJNIEnv(bridgeApp);
-    jobject activity = Native_NativeApp_getActivity(bridgeApp->mNativeApp);
+    Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
+    JNIEnv *env = bridgeApp->getJNIEnv();
+    jobject activity = bridgeApp->mNativeApp->getActivity();
     jclass cls = env->GetObjectClass(activity);
     jmethodID methodID = env->GetMethodID(cls, "videoShow", "(Z)V");
     env->CallVoidMethod(activity, methodID, show);
@@ -47,9 +47,9 @@ bool AGVideoShow(bool show) {
 
 bool AGVideoPlay() {
     LOG_DEBUG("AGVideoPlay");
-    Native::BridgeApp *bridgeApp = Native_BridgeApp_getSingleton();
-    JNIEnv *env = Native_BridgeApp_getJNIEnv(bridgeApp);
-    jobject activity = Native_NativeApp_getActivity(bridgeApp->mNativeApp);
+    Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
+    JNIEnv *env = bridgeApp->getJNIEnv();
+    jobject activity = bridgeApp->mNativeApp->getActivity();
     jclass cls = env->GetObjectClass(activity);
     jmethodID methodID = env->GetMethodID(cls, "videoPlay", "()Z");
     jboolean result = env->CallBooleanMethod(activity, methodID);

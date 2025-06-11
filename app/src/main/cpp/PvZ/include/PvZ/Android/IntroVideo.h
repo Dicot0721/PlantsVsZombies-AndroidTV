@@ -5,15 +5,6 @@
 
 #include <jni.h>
 
-inline JNIEnv *(*Native_BridgeApp_getJNIEnv)(Native::BridgeApp *);
-
-inline jobject (*Native_NativeApp_getActivity)(Native::NativeApp *);
-
-inline Native::BridgeApp *(*Native_BridgeApp_getSingleton)();
-
-inline char *(*Native_NativeApp_getPackageName)(Native::NativeApp *);
-
-
 int AGVideoOpen(const char *videoPath);
 
 bool AGVideoIsPlaying();
