@@ -86,8 +86,7 @@ void Board::Create(LawnApp *theApp) {
     AddWidget(gBoardMenuButton);
     AddWidget(gBoardStoreButton);
     mAdvice->Delete();
-    CustomMessageWidget *aAdvice = new CustomMessageWidget(mApp);
-    mAdvice = aAdvice;
+    mAdvice = new CustomMessageWidget(mApp);
 }
 
 void Board::InitLevel() {
@@ -3123,7 +3122,7 @@ bool Board::GrantAchievement(AchievementId theAchievementId, bool theIsShow) {
         StrFormat(holder1, "[%s]", theAchievementName);
         TodReplaceString(holder2, holder, "{achievement}", holder1);
         DisplayAdviceAgain(_S("[ACHIEVEMENT_GRANTED]"), MessageStyle::MESSAGE_STYLE_ACHIEVEMENT, AdviceType::ADVICE_NEED_ACHIVEMENT_EARNED);
-        ((CustomMessageWidget *)mAdvice)->mIcon = GetIconByAchievementId(theAchievementId);
+        mAdvice->mIcon = GetIconByAchievementId(theAchievementId);
         StringDelete(holder);
         StringDelete(holder1);
         StringDelete(holder2);
