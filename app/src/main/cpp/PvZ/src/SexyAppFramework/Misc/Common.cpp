@@ -3,22 +3,11 @@
 //
 
 #include "PvZ/SexyAppFramework/Misc/Common.h"
+#include "PvZ/SexyAppFramework/Misc/PerfTimer.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
-
-#include "PvZ/SexyAppFramework/Misc/PerfTimer.h"
-
-using namespace Sexy;
-
-void Sexy::StrFormat(int *holder, const char *fmt, ...) {
-    va_list args;
-
-    va_start(args, fmt);
-    vformat(holder, fmt, args);
-    va_end(args);
-}
 
 void Sexy::StringDelete(int *holder) {
     auto my_exchange_and_add = [](int *ptr, int value) -> int {
