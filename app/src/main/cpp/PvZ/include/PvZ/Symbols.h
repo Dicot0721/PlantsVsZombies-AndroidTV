@@ -888,6 +888,7 @@ inline void *TodAnimateCurveAddr;
 inline void *TodAnimateCurveFloatAddr;
 inline void *TodAnimateCurveFloatTimeAddr;
 inline void *Sexy_StrFormatAddr;
+inline void *Sexy_vformatAddr;
 inline void *TodStringTranslateAddr;
 inline void *GetRectOverlapAddr;
 inline void *BaseGamepadControls_GetGamepadVelocityAddr;
@@ -2023,6 +2024,7 @@ inline bool GetFunctionAddr() {
     TodAnimateCurveFloatAddr = dlsym(handle, "_Z20TodAnimateCurveFloatiiiff9TodCurves");
     TodAnimateCurveFloatTimeAddr = dlsym(handle, "_Z24TodAnimateCurveFloatTimefffff9TodCurves");
     Sexy_StrFormatAddr = dlsym(handle, "_ZN4Sexy9StrFormatEPKcz");
+    Sexy_vformatAddr = dlsym(handle, "_ZN4Sexy7vformatEPKcSt9__va_list");
     TodStringTranslateAddr = dlsym(handle, "_Z18TodStringTranslatePKc");
     GetRectOverlapAddr = dlsym(handle, "_Z14GetRectOverlapRKN4Sexy5TRectIiEES3_");
     BaseGamepadControls_GetGamepadVelocityAddr = dlsym(handle, "_ZN19BaseGamepadControls18GetGamepadVelocityERfS0_");

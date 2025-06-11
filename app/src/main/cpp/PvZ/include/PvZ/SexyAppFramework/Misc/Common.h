@@ -56,8 +56,15 @@ inline float Rand(float range) {
     return reinterpret_cast<float (*)(float)>(Sexy_RandFloatAddr)(range);
 }
 
+inline void vformat(int *holder, const char *fmt, va_list argPtr) {
+    reinterpret_cast<void (*)(int *, const char *, va_list)>(Sexy_vformatAddr)(holder, fmt, argPtr);
+}
+
 inline void StrFormat(int *holder, const char *fmt, ...) {
-    reinterpret_cast<void (*)(int *, const char *, ...)>(Sexy_StrFormatAddr)(holder, fmt);
+    va_list argList; // [sp+18h] [bp-8h] BYREF
+
+    va_start(argList, fmt);
+    vformat(holder, fmt, argList);
 }
 
 void StringDelete(int *holder);
