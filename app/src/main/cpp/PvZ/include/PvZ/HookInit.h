@@ -58,7 +58,6 @@ inline void InitInGameFunction() {
     TodAnimateCurveFloatTime = (decltype(TodAnimateCurveFloatTime))TodAnimateCurveFloatTimeAddr;
 
 
-//    StrFormat = (decltype(StrFormat))Sexy_StrFormatAddr;
     TodStringTranslate = (decltype(TodStringTranslate))TodStringTranslateAddr;
     WaitForSecondPlayerDialog_GameButtonDown = (decltype(WaitForSecondPlayerDialog_GameButtonDown))WaitForSecondPlayerDialog_GameButtonDownAddr;
     HelpTextScreen_KeyDown = (decltype(HelpTextScreen_KeyDown))HelpTextScreen_KeyDownAddr;

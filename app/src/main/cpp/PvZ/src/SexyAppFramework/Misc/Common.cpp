@@ -10,6 +10,16 @@
 
 #include "PvZ/SexyAppFramework/Misc/PerfTimer.h"
 
+using namespace Sexy;
+
+void Sexy::StrFormat(int *holder, const char *fmt, ...) {
+    va_list args;
+
+    va_start(args, fmt);
+    vformat(holder, fmt, args);
+    va_end(args);
+}
+
 void Sexy::StringDelete(int *holder) {
     auto my_exchange_and_add = [](int *ptr, int value) -> int {
         int original_value = *ptr;

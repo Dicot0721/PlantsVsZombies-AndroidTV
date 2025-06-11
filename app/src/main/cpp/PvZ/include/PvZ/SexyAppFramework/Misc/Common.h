@@ -44,8 +44,6 @@ enum PixelFormat {
     kPixelFormat_RGBA_PVRTC4
 };
 
-//inline void (*StrFormat)(int *holder, const char *theFormat, ...);
-
 namespace Sexy {
 
 inline int Rand(int range) {
@@ -56,16 +54,11 @@ inline float Rand(float range) {
     return reinterpret_cast<float (*)(float)>(Sexy_RandFloatAddr)(range);
 }
 
-inline void vformat(int *holder, const char *fmt, va_list argPtr) {
-    reinterpret_cast<void (*)(int *, const char *, va_list)>(Sexy_vformatAddr)(holder, fmt, argPtr);
+inline void vformat(int *holder, const char *fmt, va_list args) {
+    reinterpret_cast<void (*)(int *, const char *, va_list)>(Sexy_vformatAddr)(holder, fmt, args);
 }
 
-inline void StrFormat(int *holder, const char *fmt, ...) {
-    va_list argList; // [sp+18h] [bp-8h] BYREF
-
-    va_start(argList, fmt);
-    vformat(holder, fmt, argList);
-}
+inline void StrFormat(int *holder, const char *fmt, ...);
 
 void StringDelete(int *holder);
 
