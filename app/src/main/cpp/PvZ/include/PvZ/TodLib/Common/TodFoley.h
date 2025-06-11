@@ -163,6 +163,9 @@ struct FoleyTypeData {
 class TodFoley {
 public:
     FoleyTypeData mTypeData[MAX_FOLEY_TYPES];
+
+    bool IsFoleyPlaying(FoleyType theFoleyType) { return reinterpret_cast<bool (*)(TodFoley *, FoleyType)>(TodFoley_IsFoleyPlayingAddr)(this, theFoleyType); }
+    void StopFoley(FoleyType theFoleyType) { reinterpret_cast<void (*)(TodFoley *, FoleyType)>(TodFoley_StopFoleyAddr)(this, theFoleyType); }
 };
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_TODFOLEY_H

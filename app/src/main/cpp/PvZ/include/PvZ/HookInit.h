@@ -84,8 +84,6 @@ inline void InitInGameFunction() {
     Sexy_DefaultProfileMgr_GetAnyProfile = (decltype(Sexy_DefaultProfileMgr_GetAnyProfile))Sexy_DefaultProfileMgr_GetAnyProfileAddr;
 
 
-    TodFoley_IsFoleyPlaying = (decltype(TodFoley_IsFoleyPlaying))TodFoley_IsFoleyPlayingAddr;
-    TodFoley_StopFoley = (decltype(TodFoley_StopFoley))TodFoley_StopFoleyAddr;
     SoundSystemFindInstance = (decltype(SoundSystemFindInstance))SoundSystemFindInstanceAddr;
     TodStringListLoad = (decltype(TodStringListLoad))TodStringListLoadAddr;
     TodReplaceString = (decltype(TodReplaceString))TodReplaceStringAddr;

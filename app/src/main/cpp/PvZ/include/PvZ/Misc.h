@@ -31,10 +31,6 @@ inline int **(*ReanimAtlas_GetEncodedReanimAtlas)(int *, int *);
 
 inline int *(*Sexy_ResourceManager_GetSoundThrow)(int *, int *);
 
-inline bool (*TodFoley_IsFoleyPlaying)(TodFoley *soundSystem, FoleyType theFoleyType);
-
-inline void (*TodFoley_StopFoley)(TodFoley *soundSystem, FoleyType theFoleyType);
-
 inline FoleyInstance *(*SoundSystemFindInstance)(TodFoley *, FoleyType);
 
 inline int (*Sexy_AudiereSoundManager_LoadSound)(int *mSoundManager, int *theFileName);

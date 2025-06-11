@@ -12,6 +12,7 @@
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
 #include "PvZ/TodLib/Effect/Attachment.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
+#include "PvZ/TodLib/Common/TodFoley.h"
 
 #include <cstddef>
 
@@ -92,15 +93,15 @@ void MainMenu::Update() {
             gFoleyVolumeCounter++;
             FoleyType aType = MainMenu_GetFoleyTypeByScene(mScene);
             FoleyType aNextType = MainMenu_GetFoleyTypeByScene(mSceneNext);
-            if (!TodFoley_IsFoleyPlaying(mApp->mSoundSystem, aNextType)) {
+            if (!mApp->mSoundSystem->IsFoleyPlaying(aNextType)) {
                 mApp->PlayFoley(aNextType);
                 mApp->SetFoleyVolume(aNextType, 0);
             }
             float theVolume = TodAnimateCurveFloat(0, 93, gFoleyVolumeCounter, mApp->mPlayerInfo->mSoundVolume, 0, TodCurves::CURVE_BOUNCE_SLOW_MIDDLE);
             if (gFoleyVolumeCounter >= 46) {
                 mApp->SetFoleyVolume(aNextType, theVolume);
-                if (TodFoley_IsFoleyPlaying(mApp->mSoundSystem, aType)) {
-                    TodFoley_StopFoley(mApp->mSoundSystem, aType);
+                if (mApp->mSoundSystem->IsFoleyPlaying(aType)) {
+                    mApp->mSoundSystem->StopFoley(aType);
                 }
             } else {
                 mApp->SetFoleyVolume(aType, theVolume);
@@ -109,7 +110,7 @@ void MainMenu::Update() {
             gFoleyVolumeCounter = 0;
             FoleyType aType = MainMenu_GetFoleyTypeByScene(mScene);
             if (gAchievementState == NOT_SHOWING) {
-                if (!TodFoley_IsFoleyPlaying(mApp->mSoundSystem, aType) && mExitCounter == 0) {
+                if (!mApp->mSoundSystem->IsFoleyPlaying(aType) && mExitCounter == 0) {
                     //                    mApp->PlayFoley(aType);
                     mApp->SetFoleyVolume(aType, 0);
                 }
@@ -436,9 +437,9 @@ void MainMenu::Exit() {
 }
 
 void MainMenu::OnExit() {
-    TodFoley_StopFoley(mApp->mSoundSystem, FoleyType::FOLEY_MENU_LEFT);
-    TodFoley_StopFoley(mApp->mSoundSystem, FoleyType::FOLEY_MENU_CENTRE);
-    TodFoley_StopFoley(mApp->mSoundSystem, FoleyType::FOLEY_MENU_RIGHT);
+    mApp->mSoundSystem->StopFoley(FoleyType::FOLEY_MENU_LEFT);
+    mApp->mSoundSystem->StopFoley(FoleyType::FOLEY_MENU_CENTRE);
+    mApp->mSoundSystem->StopFoley(FoleyType::FOLEY_MENU_RIGHT);
 
     if (mPressedButtonId == HOUSE_BUTTON) {
         mApp->KillMainMenu();

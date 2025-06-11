@@ -214,9 +214,9 @@ void LawnApp::KillDialog(Dialogs theId) {
 
 void LawnApp::ShowCreditScreen(bool theIsFromMainMenu) {
     // 用于一周目之后点击"制作人员"按钮播放MV
-    TodFoley_StopFoley(mSoundSystem, FoleyType::FOLEY_MENU_LEFT);
-    TodFoley_StopFoley(mSoundSystem, FoleyType::FOLEY_MENU_CENTRE);
-    TodFoley_StopFoley(mSoundSystem, FoleyType::FOLEY_MENU_RIGHT);
+    mSoundSystem->StopFoley(FoleyType::FOLEY_MENU_LEFT);
+    mSoundSystem->StopFoley(FoleyType::FOLEY_MENU_CENTRE);
+    mSoundSystem->StopFoley(FoleyType::FOLEY_MENU_RIGHT);
     if (theIsFromMainMenu && HasFinishedAdventure()) {
         theIsFromMainMenu = false;
         KillMainMenu();
