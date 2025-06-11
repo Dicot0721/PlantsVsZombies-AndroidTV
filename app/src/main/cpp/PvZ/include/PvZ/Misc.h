@@ -15,8 +15,6 @@ class TodParticleSystem;
 
 inline int (*WaitForSecondPlayerDialog_GameButtonDown)(int *a1, int a2, int a3);
 
-inline void (*Sexy_StrFormat)(int *holder, const char *theFormat, ...);
-
 inline void (*TodStringTranslate)(int *holder, const char *theText);
 
 inline int (*LawnPlayerInfo_GetFlag)(PlayerInfo *, int);
@@ -40,12 +38,6 @@ inline void (*TodFoley_StopFoley)(TodFoley *soundSystem, FoleyType theFoleyType)
 inline FoleyInstance *(*SoundSystemFindInstance)(TodFoley *, FoleyType);
 
 inline int (*Sexy_AudiereSoundManager_LoadSound)(int *mSoundManager, int *theFileName);
-
-inline void (*MessageWidget_MessageWidget)(MessageWidget *messageWidget, LawnApp *a2);
-
-inline void (*MessageWidget_Delete)(MessageWidget *messageWidget);
-
-inline Sexy::Font *(*MessageWidget_GetFont)(MessageWidget *messageWidget);
 
 inline void (*TodStringListLoad)(const char *);
 
@@ -103,20 +95,10 @@ inline void (*old_Sexy_ExtractLoadingSoundsResources)(int *a, int *theManager);
 
 inline FoleyParams *(*old_LookupFoley)(FoleyType type);
 
-inline void (*old_MessageWidget_Draw)(CustomMessageWidget *messageWidget, Sexy::Graphics *a2);
-
-inline void (*old_MessageWidget_ClearLabel)(CustomMessageWidget *messageWidget);
-
-inline void (*old_MessageWidget_SetLabel)(CustomMessageWidget *messageWidget, int *label, MessageStyle theStyle);
-
-inline void (*old_MessageWidget_Update)(CustomMessageWidget *messageWidget);
-
 
 int randomInt(int a, int b);
 
 void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, SeedType theImitaterType, float xOffset, float yOffset, float scale);
-
-void Sexy_String_Delete(int *holder);
 
 int SexyDialog_AddedToManager(void *instance, void *instance1);
 
@@ -125,14 +107,6 @@ int SexyDialog_RemovedFromManager(void *instance, void *instance1);
 FoleyParams *LookupFoley(FoleyType theFoleyType);
 
 void CreditScreen_ButtonDepress(Sexy::Widget *creditScreen, int id);
-
-void MessageWidget_ClearLabel(CustomMessageWidget *messageWidget);
-
-void MessageWidget_SetLabel(CustomMessageWidget *messageWidget, int *label, MessageStyle theStyle);
-
-void MessageWidget_Update(CustomMessageWidget *messageWidget);
-
-void MessageWidget_Draw(CustomMessageWidget *messageWidget, Sexy::Graphics *graphics);
 
 void Sexy_ExtractLoadingSoundsResources(int *a, int *theManager);
 

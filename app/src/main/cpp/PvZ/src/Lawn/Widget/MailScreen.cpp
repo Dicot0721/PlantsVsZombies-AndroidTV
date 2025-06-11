@@ -24,14 +24,14 @@ void MailScreen::Create(LawnApp *theApp) {
     TodStringTranslate(holder2, "[MARK_MESSAGE_READ]");
     gMailScreenReadButton = MakeButton(1002, &mButtonListener, this, (SexyString &)holder2);
     gMailScreenReadButton->Resize(-150, 450, 170, 80);
-    Sexy_String_Delete(holder2);
+    StringDelete(holder2);
     AddWidget((Sexy::Widget*)gMailScreenReadButton);
 
     int holder1[1];
     TodStringTranslate(holder1, "[GO_TO_READ_MAIL]");
     gMailScreenSwitchButton = MakeButton(1001, &mButtonListener, this, (SexyString &)holder1);
     gMailScreenSwitchButton->Resize(-150, 520, 170, 80);
-    Sexy_String_Delete(holder1);
+    StringDelete(holder1);
     AddWidget((Sexy::Widget*)gMailScreenSwitchButton);
 
 
@@ -39,7 +39,7 @@ void MailScreen::Create(LawnApp *theApp) {
     TodStringTranslate(holder, "[CLOSE]");
     gMailScreenCloseButton = MakeButton(1000, &mButtonListener, this, (SexyString &)holder);
     gMailScreenCloseButton->Resize(800, 520, 170, 80);
-    Sexy_String_Delete(holder);
+    StringDelete(holder);
     AddWidget((Sexy::Widget*)gMailScreenCloseButton);
 
     Resize(0, 0, 800, 600);
@@ -87,7 +87,7 @@ void MailScreen::ButtonDepress(int theId) {
         int holder[1];
         TodStringTranslate(holder, isAtInBox ? "[GO_TO_READ_MAIL]" : "[GO_TO_INBOX]");
         gMailScreenSwitchButton->SetLabel((SexyString&)holder);
-        Sexy_String_Delete(holder);
+        StringDelete(holder);
     } else
         old_MailScreen_ButtonDepress(this, theId);
 }

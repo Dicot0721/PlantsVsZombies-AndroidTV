@@ -22,7 +22,7 @@ void HelpTextScreen_Update(Sexy::Widget *helpTextScreen) {
         int holder[1];
         TodStringTranslate(holder, "[CLOSE]");
         gHelpTextScreenCloseButton = MakeButton(1000, (Sexy::ButtonListener *)helpTextScreen + 64, helpTextScreen, (SexyString &)holder);
-        Sexy_String_Delete(holder);
+        StringDelete(holder);
         helpTextScreen->AddWidget((Sexy::Widget*)gHelpTextScreenCloseButton);
     }
     gHelpTextScreenCloseButton->Resize(650 - helpTextScreen->mX, 540 - helpTextScreen->mY, 170, 50);

@@ -173,7 +173,7 @@ void SeedBank::Draw(Sexy::Graphics *g) {
         }
         int holder[1];
         Color theColor = {0, 0, 0, 255};
-        Sexy_StrFormat(holder, "%d", theMoney);
+        StrFormat(holder, "%d", theMoney);
         int mOutOfMoneyCounter = mBoard->mOutOfMoneyCounter;
         if (mOutOfMoneyCounter > 0 && mOutOfMoneyCounter % 20 <= 9) {
             theColor.mRed = 255;
@@ -182,13 +182,13 @@ void SeedBank::Draw(Sexy::Graphics *g) {
             theColor.mAlpha = 255;
         }
         TodDrawString(g, holder, mIsZombie ? (408 + mBoard->GetSeedBankExtraWidth()) : 38, 78, *Sexy_FONT_CONTINUUMBOLD14_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
-        Sexy_String_Delete(holder);
+        StringDelete(holder);
 
         if (mApp->IsTwinSunbankMode()) {
             int holder1[1];
-            Sexy_StrFormat(holder1, "%d", mBoard->mSunMoney2 & ~mBoard->mSunMoney2 >> 31);
+            StrFormat(holder1, "%d", mBoard->mSunMoney2 & ~mBoard->mSunMoney2 >> 31);
             TodDrawString(g, holder1, 644, 49, *Sexy_FONT_CONTINUUMBOLD14_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
-            Sexy_String_Delete(holder1);
+            StringDelete(holder1);
         }
     }
     if (mApp->mGameScene != GameScenes::SCENE_PLAYING) {

@@ -61,11 +61,11 @@ void SeedPacket::DrawOverlay(Sexy::Graphics *g) {
         // 如果玩家开启了“显示冷却倒计时”，则绘制倒计时
         int holder[1];
         int coolDownRemaining = mRefreshTime - mRefreshCounter;
-        Sexy_StrFormat(holder, "%1.1f", coolDownRemaining / 100.0f);
+        StrFormat(holder, "%1.1f", coolDownRemaining / 100.0f);
         g->SetColor(GetPlayerIndex() ? yellow : blue);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
         g->DrawString((SexyString&)holder, coolDownRemaining < 1000 ? 10 : 0, 39);
-        Sexy_String_Delete(holder);
+        StringDelete(holder);
         g->SetFont(nullptr);
     }
 }
@@ -405,14 +405,14 @@ void DrawSeedPacket(Sexy::Graphics *g,
         if (board != nullptr && board->PlantUsesAcceleratedPricing(realSeedType)) {
             if (theUseCurrentCost) {
                 int CurrentPlantCost = board->GetCurrentPlantCost(theSeedType, theImitaterType);
-                Sexy_StrFormat(tmpHolder, "%d", CurrentPlantCost);
+                StrFormat(tmpHolder, "%d", CurrentPlantCost);
             } else {
                 int Cost = Plant::GetCost(theSeedType, theImitaterType);
-                Sexy_StrFormat(tmpHolder, "%d+", Cost);
+                StrFormat(tmpHolder, "%d+", Cost);
             }
         } else {
             int Cost = Plant::GetCost(theSeedType, theImitaterType);
-            Sexy_StrFormat(tmpHolder, "%d", Cost);
+            StrFormat(tmpHolder, "%d", Cost);
         }
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         int width = 31 - (*((int (**)(Sexy::Font *, int *))font->vTable + 8))(font, tmpHolder);
@@ -432,7 +432,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
             g->SetLinearBlend(true);
         }
         g->PopState();
-        Sexy_String_Delete(tmpHolder);
+        StringDelete(tmpHolder);
     }
     g->SetColorizeImages(false);
 }

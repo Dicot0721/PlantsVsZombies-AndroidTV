@@ -29,7 +29,7 @@ class LawnApp;
 class CursorObject;
 class CursorPreview;
 class GameButton;
-class MessageWidget;
+class CustomMessageWidget;
 class SeedBank;
 class CutScene;
 class Challenge;
@@ -144,7 +144,7 @@ public:
     PlantRbTree mTangleKelpTree;                // 112 ~ 117
     PlantRbTree mFlowerPotTree;                 // 118 ~ 123
     PlantRbTree mPumpkinTree;                   // 124 ~ 129
-    MessageWidget *mAdvice;                     // 130
+    CustomMessageWidget *mAdvice;               // 130
     SeedBank *mSeedBank1;                       // 131
     SeedBank *mSeedBank2;                       // 132
     int unknownMembers3[7];                     // 133 ~ 139

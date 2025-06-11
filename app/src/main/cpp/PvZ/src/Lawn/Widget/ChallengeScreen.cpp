@@ -95,10 +95,10 @@ void ChallengeScreen::Draw(Sexy::Graphics *graphics) {
     }
 
     int holder[1];
-    Sexy_StrFormat(holder, "%d/%d", mApp->GetNumTrophies(mPageIndex), mTotalTrophiesInPage);
+    StrFormat(holder, "%d/%d", mApp->GetNumTrophies(mPageIndex), mTotalTrophiesInPage);
     Color theColor = {255, 240, 0, 255};
     TodDrawString(graphics, holder, 711, 62, *Sexy_FONT_BRIANNETOD16_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
-    Sexy_String_Delete(holder);
+    StringDelete(holder);
 }
 
 void ChallengeScreen::AddedToManager(int *theWidgetManager) {
@@ -107,7 +107,7 @@ void ChallengeScreen::AddedToManager(int *theWidgetManager) {
     TodStringTranslate(holder, "[CLOSE]");
     gChallengeScreenCloseButton = MakeButton(1000, &mButtonListener, this, (SexyString &)holder);
     gChallengeScreenCloseButton->Resize(800, 520, 170, 50);
-    Sexy_String_Delete(holder);
+    StringDelete(holder);
     AddWidget(gChallengeScreenCloseButton);
 
     return old_ChallengeScreen_AddedToManager(this, theWidgetManager);

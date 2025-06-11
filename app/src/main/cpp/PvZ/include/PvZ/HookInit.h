@@ -50,7 +50,6 @@ inline void InitInGameFunction() {
     TodDrawImageCelScaledF = (decltype(TodDrawImageCelScaledF))TodDrawImageCelScaledFAddr;
     TodDrawImageCenterScaledF = (decltype(TodDrawImageCenterScaledF))TodDrawImageCenterScaledFAddr;
     TodScaleTransformMatrix = (decltype(TodScaleTransformMatrix))TodScaleTransformMatrixAddr;
-    TodDrawStringWrapped = (decltype(TodDrawStringWrapped))TodDrawStringWrappedAddr;
     TodDrawStringWrappedHelper = (decltype(TodDrawStringWrappedHelper))TodDrawStringWrappedHelperAddr;
     TodDrawStringMatrix = (decltype(TodDrawStringMatrix))TodDrawStringMatrixAddr;
     TodDrawString = (decltype(TodDrawString))TodDrawStringAddr;
@@ -59,7 +58,7 @@ inline void InitInGameFunction() {
     TodAnimateCurveFloatTime = (decltype(TodAnimateCurveFloatTime))TodAnimateCurveFloatTimeAddr;
 
 
-    Sexy_StrFormat = (decltype(Sexy_StrFormat))Sexy_StrFormatAddr;
+    StrFormat = (decltype(StrFormat))Sexy_StrFormatAddr;
     TodStringTranslate = (decltype(TodStringTranslate))TodStringTranslateAddr;
     WaitForSecondPlayerDialog_GameButtonDown = (decltype(WaitForSecondPlayerDialog_GameButtonDown))WaitForSecondPlayerDialog_GameButtonDownAddr;
     HelpTextScreen_KeyDown = (decltype(HelpTextScreen_KeyDown))HelpTextScreen_KeyDownAddr;
@@ -92,9 +91,6 @@ inline void InitInGameFunction() {
     TodReplaceString = (decltype(TodReplaceString))TodReplaceStringAddr;
     TodReplaceNumberString = (decltype(TodReplaceNumberString))TodReplaceNumberStringAddr;
     Sexy_AudiereSoundManager_LoadSound = (decltype(Sexy_AudiereSoundManager_LoadSound))Sexy_AudiereSoundManager_LoadSoundAddr;
-    MessageWidget_MessageWidget = (decltype(MessageWidget_MessageWidget))MessageWidget_MessageWidgetAddr;
-    MessageWidget_Delete = (decltype(MessageWidget_Delete))MessageWidget_DeleteAddr;
-    MessageWidget_GetFont = (decltype(MessageWidget_GetFont))MessageWidget_GetFontAddr;
     MaskHelpWidget_MaskHelpWidget = (decltype(MaskHelpWidget_MaskHelpWidget))MaskHelpWidget_MaskHelpWidgetAddr;
     MaskHelpWidget_Delete = (decltype(MaskHelpWidget_Delete))MaskHelpWidget_DeleteAddr;
     DaveHelp_DaveHelp = (decltype(DaveHelp_DaveHelp))DaveHelp_DaveHelpAddr;
@@ -449,10 +445,10 @@ inline void InitHookFunction() {
     homura::HookFunction(LookupFoleyAddr, &LookupFoley, &old_LookupFoley);
 
     //    MSHookFunction(TodDrawStringWrappedHelperAddr, (void *) TodDrawStringWrappedHelper, (void **) &old_TodDrawStringWrappedHelper);
-    homura::HookFunction(MessageWidget_ClearLabelAddr, &MessageWidget_ClearLabel, &old_MessageWidget_ClearLabel);
-    homura::HookFunction(MessageWidget_SetLabelAddr, &MessageWidget_SetLabel, &old_MessageWidget_SetLabel);
-    homura::HookFunction(MessageWidget_UpdateAddr, &MessageWidget_Update, &old_MessageWidget_Update);
-    homura::HookFunction(MessageWidget_DrawAddr, &MessageWidget_Draw, &old_MessageWidget_Draw);
+    homura::HookFunction(MessageWidget_ClearLabelAddr, &CustomMessageWidget::ClearLabel, &old_MessageWidget_ClearLabel);
+    homura::HookFunction(MessageWidget_SetLabelAddr, &CustomMessageWidget::SetLabel, &old_MessageWidget_SetLabel);
+    homura::HookFunction(MessageWidget_UpdateAddr, &CustomMessageWidget::Update, &old_MessageWidget_Update);
+    homura::HookFunction(MessageWidget_DrawAddr, &CustomMessageWidget::Draw, &old_MessageWidget_Draw);
 
     homura::HookFunction(Sexy_ExtractLoadingSoundsResourcesAddr, &Sexy_ExtractLoadingSoundsResources, &old_Sexy_ExtractLoadingSoundsResources);
     //    MSHookFunction(Sexy_ScrollbarWidget_MouseDownAddr, (void *) Sexy_ScrollbarWidget_MouseDown,nullptr);

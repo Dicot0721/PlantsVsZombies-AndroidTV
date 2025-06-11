@@ -9,6 +9,7 @@
 #include "PvZ/Misc.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 
 using namespace Sexy;
 
@@ -223,7 +224,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     TodStringTranslate(holder, "[CLOSE]");
     Sexy::GameButton *aBackButton = MakeButton(1000, mLeaderboardsListener, this, (SexyString &)holder);
     LOG_DEBUG("aBackButton {} ", (void*)aBackButton);
-    Sexy_String_Delete(holder);
+    StringDelete(holder);
     aBackButton->Resize(1040, 590, 120, 50);
     AddWidget((Sexy::Widget*)aBackButton);
     mBackButton = aBackButton;
@@ -270,11 +271,11 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
             int offsetY = gLeaderboardAchievementsPosition[num][1] - 200;
             g->DrawImage(image, offsetX, offsetY);
             int holder[1];
-            Sexy_StrFormat(holder, "[%s]", GetNameByAchievementId(id));
+            StrFormat(holder, "[%s]", GetNameByAchievementId(id));
             Sexy::Rect rect = {offsetX - 42, offsetY + 125, 200, 200};
             Color theColor = {0, 255, 0, 255};
             TodDrawStringWrapped(g, holder, &rect, *Sexy_FONT_HOUSEOFTERROR28_Addr, &theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
-            Sexy_String_Delete(holder);
+            StringDelete(holder);
         } else {
             leaderboardsWidget->mLeaderboardReanimations->achievementReanim[num]->Draw(g);
         }
@@ -289,8 +290,8 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
         Sexy::Rect theRect = {317, 658, 120, 50};
         Sexy::Font *theFont = *Sexy_FONT_CONTINUUMBOLD14_Addr;
         TodDrawStringWrapped(g, holder1, &theRect, theFont, &yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
-        Sexy_String_Delete(holder);
-        Sexy_String_Delete(holder1);
+        StringDelete(holder);
+        StringDelete(holder1);
     }
 
     //    DrawImage(g, addonImages.survival_button, 270, 579);
@@ -300,13 +301,13 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
     int holder4[1];
     Sexy::Rect theRect1 = {240, 70, 800, 70};
     TodStringTranslate(holder2, "[PLAYERS_HOUSE]");
-    Sexy_StrFormat(holder3, "%s", leaderboardsWidget->mApp->mPlayerInfo->mName);
+    StrFormat(holder3, "%s", leaderboardsWidget->mApp->mPlayerInfo->mName);
     TodReplaceString(holder4, holder2, "{PLAYER}", holder3);
     Sexy::Font *theFont1 = *Sexy_FONT_HOUSEOFTERROR28_Addr;
     TodDrawStringWrapped(g, holder4, &theRect1, theFont1, &white, DrawStringJustification::DS_ALIGN_CENTER, false);
-    Sexy_String_Delete(holder2);
-    Sexy_String_Delete(holder3);
-    Sexy_String_Delete(holder4);
+    StringDelete(holder2);
+    StringDelete(holder3);
+    StringDelete(holder4);
 
     //    int plantHeight = plantPileHeight * leaderboardsWidget->mPlantTrashBin->mPileNum;
     //    int zombieHeight = zombiePileHeight * leaderboardsWidget->mZombieTrashBin->mPileNum;
@@ -379,8 +380,8 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
         TodStringTranslate(holder1, "[PLANTS_KILLED]");
         TodReplaceNumberString(holder2, holder1, "{PLANTS}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, (char *)*holder2, "", "[DIALOG_BUTTON_OK]", "", 3);
-        Sexy_String_Delete(holder1);
-        Sexy_String_Delete(holder2);
+        StringDelete(holder1);
+        StringDelete(holder2);
         return;
     }
 
@@ -395,8 +396,8 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
         TodStringTranslate(holder1, "[ZOMBIES_KILLED]");
         TodReplaceNumberString(holder2, holder1, "{ZOMBIES}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ZOMBIES_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, (char *)*holder2, "", "[DIALOG_BUTTON_OK]", "", 3);
-        Sexy_String_Delete(holder1);
-        Sexy_String_Delete(holder2);
+        StringDelete(holder1);
+        StringDelete(holder2);
         return;
     }
 
@@ -487,8 +488,8 @@ void DaveHelp_KeyDown(LeaderboardsWidget *leaderboardsWidget, int keyCode) {
         TodStringTranslate(holder1, "[PLANTS_KILLED]");
         TodReplaceNumberString(holder2, holder1, "{PLANTS}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, (char *)*holder2, "", "[DIALOG_BUTTON_OK]", "", 3);
-        Sexy_String_Delete(holder1);
-        Sexy_String_Delete(holder2);
+        StringDelete(holder1);
+        StringDelete(holder2);
         return;
     }
     if (keyCode == Sexy::KEYCODE_HAMMER) {
@@ -498,8 +499,8 @@ void DaveHelp_KeyDown(LeaderboardsWidget *leaderboardsWidget, int keyCode) {
         TodStringTranslate(holder1, "[ZOMBIES_KILLED]");
         TodReplaceNumberString(holder2, holder1, "{ZOMBIES}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ZOMBIES_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, (char *)*holder2, "", "[DIALOG_BUTTON_OK]", "", 3);
-        Sexy_String_Delete(holder1);
-        Sexy_String_Delete(holder2);
+        StringDelete(holder1);
+        StringDelete(holder2);
         return;
     }
 }

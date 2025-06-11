@@ -339,7 +339,7 @@ void DefinitionGetCompiledFilePathFromXMLFilePath(int *absPath, int *defPathStri
     // 从addonFiles读取新增的reanim文件
     char *text = (char *)*defPathString;
     if (strstr(text, "addonFiles")) {
-        Sexy_StrFormat(absPath, "%s%s", text, ".compiled");
+        StrFormat(absPath, "%s%s", text, ".compiled");
         return;
     }
     return old_DefinitionGetCompiledFilePathFromXMLFilePath(absPath, defPathString);

@@ -429,7 +429,7 @@ void Plant::Draw(Sexy::Graphics *g) {
             && (mSeedType == SeedType::SEED_WALLNUT || mSeedType == SeedType::SEED_TALLNUT || mSeedType == SeedType::SEED_PUMPKINSHELL || mSeedType == SeedType::SEED_GARLIC
                 || mSeedType == SeedType::SEED_SPIKEROCK))) { // 如果玩家开了 植物显血
         int holder[1];
-        Sexy_StrFormat(holder, "%d/%d", mPlantHealth, mPlantMaxHealth);
+        StrFormat(holder, "%d/%d", mPlantHealth, mPlantMaxHealth);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT12_Addr);
         if (mSeedType == SeedType::SEED_PUMPKINSHELL) {
             g->SetColor(yellow);
@@ -447,7 +447,7 @@ void Plant::Draw(Sexy::Graphics *g) {
             g->SetColor(white);
             g->DrawString((SexyString&)holder, 0, 34);
         }
-        Sexy_String_Delete(holder);
+        StringDelete(holder);
         g->SetFont(nullptr);
     }
 }

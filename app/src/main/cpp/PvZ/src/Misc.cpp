@@ -50,19 +50,6 @@ int SexyDialog_RemovedFromManager(void *instance, void *instance1) {
     return old_SexyDialog_RemovedFromManager(instance, instance1);
 }
 
-void Sexy_String_Delete(int *holder) {
-    auto my_exchange_and_add = [](int *ptr, int value) -> int {
-        int original_value = *ptr;
-        *ptr += value;
-        return original_value;
-    };
-
-    int ptr = holder[0] - 12;
-    if (my_exchange_and_add((int *)(holder[0] - 4), -1) <= 0) {
-        operator delete((int *)ptr);
-    }
-}
-
 void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, SeedType theImitaterType, float xOffset, float yOffset, float scale) {
     // 和Plant_DrawSeedType配合使用，用于绘制卡槽内的模仿者SeedPacket变白效果。
     g->PushState();
@@ -102,56 +89,6 @@ FoleyParams *LookupFoley(FoleyType theFoleyType) {
         return &gMenuRightFoley;
     } else
         return old_LookupFoley(theFoleyType);
-}
-
-void MessageWidget_Draw(CustomMessageWidget *messageWidget, Sexy::Graphics *graphics) {
-    // 用于绘制成就图标、在LevelIntro时显示“player的房子”、修复老虎机提示文字位置靠上
-    if (messageWidget->mMessageStyle == MessageStyle::MESSAGE_STYLE_SLOT_MACHINE) {
-        float tmpTransY = graphics->mTransY;
-        graphics->mTransY += 8;
-        old_MessageWidget_Draw(messageWidget, graphics);
-        graphics->mTransY = tmpTransY;
-    } else {
-        old_MessageWidget_Draw(messageWidget, graphics);
-    }
-
-    if (messageWidget->mMessageStyle == MessageStyle::MESSAGE_STYLE_HOUSE_NAME && messageWidget->mReanimType == ReanimationType::REANIM_NONE) {
-        Sexy::Font *theFont = MessageWidget_GetFont(messageWidget);
-        int num2 = 530; // 原版为550，此处改为530！
-        Color theColor = {255, 255, 255, std::clamp(messageWidget->mDuration * 15, 0, 255)};
-        int holder[1];
-        Sexy_StrFormat(holder, messageWidget->mLabel);
-        Sexy::Rect theRect;
-        theRect.mY = num2 - theFont->mAscent;
-        theRect.mHeight = 600;
-        theRect.mWidth = 800;
-        theRect.mX = -messageWidget->mApp->mBoard->mX;
-        TodDrawStringWrapped(graphics, holder, &theRect, theFont, &theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
-        Sexy_String_Delete(holder);
-    }
-    if (messageWidget->mIcon != nullptr) {
-        TodDrawImageCenterScaledF(graphics, messageWidget->mIcon, 100, 470, 0.55f, 0.55f);
-    }
-}
-
-void MessageWidget_ClearLabel(CustomMessageWidget *messageWidget) {
-    // 用于绘制成就图标
-    old_MessageWidget_ClearLabel(messageWidget);
-    messageWidget->mIcon = nullptr;
-}
-
-void MessageWidget_SetLabel(CustomMessageWidget *messageWidget, int *label, MessageStyle theStyle) {
-    // 用于绘制成就图标
-    old_MessageWidget_SetLabel(messageWidget, label, theStyle);
-    messageWidget->mIcon = nullptr;
-}
-
-void MessageWidget_Update(CustomMessageWidget *messageWidget) {
-    // 用于绘制成就图标
-    if (messageWidget->mDuration == 1) {
-        messageWidget->mIcon = nullptr;
-    }
-    old_MessageWidget_Update(messageWidget);
 }
 
 void LawnPlayerInfo_AddCoins(PlayerInfo *playerInfo, int theAmount) {

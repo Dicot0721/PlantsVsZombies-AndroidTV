@@ -352,7 +352,7 @@ void Challenge::LastStandUpdate() {
         int holder[1];
         TodStringTranslate(holder, mSurvivalStage == 0 ? "[START_ONSLAUGHT]" : "[CONTINUE_ONSLAUGHT]");
         gBoardStoreButton->SetLabel((SexyString&)holder);
-        Sexy_String_Delete(holder);
+        StringDelete(holder);
         gBoardStoreButton->Resize(325, 555, 170, 120);
     }
 

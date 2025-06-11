@@ -70,7 +70,7 @@ void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g) {
     g->SetColor(color);
     TodStringTranslate((int*)holder, "[OPTIONS_3D_ACCELERATION]");
     g->DrawString((SexyString&)holder, g3DAccleratedCheckbox->mX + 80, g3DAccleratedCheckbox->mY + 20);
-    Sexy_String_Delete((int*)holder);
+    StringDelete((int *)holder);
 
     Color color1 = {107, 110, 145, 255};
     if (settingsDialog->mFocusedChildWidget == gVibrateCheckbox) {
@@ -84,7 +84,7 @@ void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g) {
     g->SetColor(color1);
     TodStringTranslate((int*)holder1, "[OPTIONS_VIBRATE]");
     g->DrawString((SexyString&)holder1, gVibrateCheckbox->mX + 80, gVibrateCheckbox->mY + 20);
-    Sexy_String_Delete((int*)holder1);
+    StringDelete((int *)holder1);
 }
 
 void SettingsDialog_CheckboxChecked(SettingsDialog *settingsDialog, int id, bool isChecked) {

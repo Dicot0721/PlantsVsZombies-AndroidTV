@@ -100,18 +100,18 @@ void LawnApp::LoadAddonSounds() {
 Image *LawnApp::GetImageByFileName(const char *theFileName) {
     // 根据贴图文件路径获得贴图
     int holder[1];
-    Sexy_StrFormat(holder, theFileName);
+    StrFormat(holder, theFileName);
     Image *theImage = GetImage(reinterpret_cast<string &>(holder), true);
-    Sexy_String_Delete(holder);
+    StringDelete(holder);
     return theImage;
 }
 
 int LawnApp::GetSoundByFileName(const char *theFileName) {
     // 根据音频文件路径获得音频
     int holder[1];
-    Sexy_StrFormat(holder, theFileName);
+    StrFormat(holder, theFileName);
     int theSoundId = Sexy_AudiereSoundManager_LoadSound(mSoundManager, holder);
-    Sexy_String_Delete(holder);
+    StringDelete(holder);
     return theSoundId;
 }
 
@@ -261,9 +261,9 @@ void LawnApp::Init() {
 
 void LawnApp::Load(const char *theGroupName) {
     int holder[1];
-    Sexy_StrFormat(holder, "%s", theGroupName);
+    StrFormat(holder, "%s", theGroupName);
     TodLoadResources(holder);
-    Sexy_String_Delete(holder);
+    StringDelete(holder);
 }
 
 void LawnApp::DoConvertImitaterImages() {
@@ -271,9 +271,9 @@ void LawnApp::DoConvertImitaterImages() {
         int holder[1];
         int holder1[1];
         int holder2[1];
-        Sexy_StrFormat(holder, "convertImitaterImages/pic%d", i);
-        Sexy_StrFormat(holder1, "ImitaterNormalpic%d.png", i);
-        Sexy_StrFormat(holder2, "ImitaterLesspic%d.png", i);
+        StrFormat(holder, "convertImitaterImages/pic%d", i);
+        StrFormat(holder1, "ImitaterNormalpic%d.png", i);
+        StrFormat(holder2, "ImitaterLesspic%d.png", i);
         Image *imageFromFile = GetImage(reinterpret_cast<string &>(holder), true);
 
         if (imageFromFile == nullptr) {
@@ -287,9 +287,9 @@ void LawnApp::DoConvertImitaterImages() {
         reinterpret_cast<MemoryImage *>(imageImitater)->Delete();
         reinterpret_cast<MemoryImage *>(imageImitaterLess)->Delete();
 
-        Sexy_String_Delete(holder);
-        Sexy_String_Delete(holder1);
-        Sexy_String_Delete(holder2);
+        StringDelete(holder);
+        StringDelete(holder1);
+        StringDelete(holder2);
     }
 }
 
@@ -367,10 +367,10 @@ bool LawnApp::GrantAchievement(AchievementId theAchievementId) {
     if (!mPlayerInfo->mAchievements[theAchievementId]) {
         LawnApp_PlaySample(this, addonSounds.achievement);
         //    int holder[1];
-        //    Sexy_StrFormat(holder,"一二三四五六 成就达成！");
+        //    StrFormat(holder,"一二三四五六 成就达成！");
         //    ((CustomMessageWidget*)board->mAdvice)->mIcon = GetIconByAchievementId(theAchievementId);
         //    Board_DisplayAdviceAgain(board, holder, a::MESSAGE_STYLE_ACHIEVEMENT, AdviceType::ADVICE_NEED_ACHIVEMENT_EARNED);
-        //    Sexy_String_Delete(holder);
+        //    StringDelete(holder);
         mPlayerInfo->mAchievements[theAchievementId] = true;
         return true;
     }

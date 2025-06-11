@@ -60,7 +60,7 @@ void Board::Create(LawnApp *theApp) {
     } else if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
         gBoardMenuButton->Resize(650, 550, 170, 120);
     }
-    Sexy_String_Delete(holder);
+    StringDelete(holder);
 
     if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND) {
         int holder1[1];
@@ -69,12 +69,12 @@ void Board::Create(LawnApp *theApp) {
         gBoardStoreButton->Resize(0, 0, 0, 0);
         gBoardStoreButton->mBtnNoDraw = true;
         gBoardStoreButton->mDisabled = true;
-        Sexy_String_Delete(holder1);
+        StringDelete(holder1);
     } else {
         int holder1[1];
         TodStringTranslate(holder1, "[SHOP_BUTTON]");
         gBoardStoreButton = MakeButton(1001, &mButtonListener, this, (SexyString &)holder1);
-        Sexy_String_Delete(holder1);
+        StringDelete(holder1);
         if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
             gBoardStoreButton->Resize(0, 550, 170, 120);
         } else {
@@ -85,11 +85,9 @@ void Board::Create(LawnApp *theApp) {
     }
     AddWidget(gBoardMenuButton);
     AddWidget(gBoardStoreButton);
-    MessageWidget_Delete(mAdvice);
-    CustomMessageWidget *theAdvice = (CustomMessageWidget *)operator new(820u);
-    MessageWidget_MessageWidget(theAdvice, mApp);
-    theAdvice->mIcon = nullptr;
-    mAdvice = theAdvice;
+    mAdvice->Delete();
+    CustomMessageWidget *aAdvice = new CustomMessageWidget(mApp);
+    mAdvice = aAdvice;
 }
 
 void Board::InitLevel() {
@@ -541,9 +539,9 @@ void Board::UpdateZombieSpawning() {
     //            if (IsFlagWave(this, mCurrentWave)) {
     //                Board_ClearAdviceImmediately(this);
     //                int holder[1];
-    //                Sexy_StrFormat(holder,"[ADVICE_HUGE_WAVE]");
+    //                StrFormat(holder,"[ADVICE_HUGE_WAVE]");
     //                Board_DisplayAdviceAgain(this, holder, 15, 42);
-    //                Sexy_String_Delete(holder);
+    //                StringDelete(holder);
     //                mHugeWaveCountDown = 750;
     //                return;
     //            }
@@ -3122,13 +3120,13 @@ bool Board::GrantAchievement(AchievementId theAchievementId, bool theIsShow) {
         int holder1[1];
         int holder2[1];
         TodStringTranslate(holder, "[ACHIEVEMENT_GRANTED]");
-        Sexy_StrFormat(holder1, "[%s]", theAchievementName);
+        StrFormat(holder1, "[%s]", theAchievementName);
         TodReplaceString(holder2, holder, "{achievement}", holder1);
         DisplayAdviceAgain(_S("[ACHIEVEMENT_GRANTED]"), MessageStyle::MESSAGE_STYLE_ACHIEVEMENT, AdviceType::ADVICE_NEED_ACHIVEMENT_EARNED);
         ((CustomMessageWidget *)mAdvice)->mIcon = GetIconByAchievementId(theAchievementId);
-        Sexy_String_Delete(holder);
-        Sexy_String_Delete(holder1);
-        Sexy_String_Delete(holder2);
+        StringDelete(holder);
+        StringDelete(holder1);
+        StringDelete(holder2);
         playerInfo->mAchievements[theAchievementId] = true;
         return true;
     }

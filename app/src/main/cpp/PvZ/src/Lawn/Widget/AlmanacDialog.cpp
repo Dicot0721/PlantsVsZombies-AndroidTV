@@ -9,6 +9,7 @@
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/Lawn/System/PoolEffect.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 
 #include <cstddef>
 
@@ -49,12 +50,12 @@ void AlmanacDialog::Create(LawnApp *theApp) {
     gAlmanacBackButton->Resize(0, 0, 0, 0);
     gAlmanacBackButton->mBtnNoDraw = true;
     gAlmanacBackButton->mDisabled = true;
-    Sexy_String_Delete(holder);
+    StringDelete(holder);
     int holder1[1];
     TodStringTranslate(holder1, "[CLOSE]");
     gAlmanacCloseButton = MakeButton(theCloseId, &this->mButtonListener, this, (SexyString &)holder1);
     gAlmanacCloseButton->Resize(mAlmanacCloseButtonX, mAlmanacCloseButtonY, mAlmanacButtonWidth, mAlmanacButtonHeight);
-    Sexy_String_Delete(holder1);
+    StringDelete(holder1);
     AddWidget(gAlmanacBackButton);
     AddWidget(gAlmanacCloseButton);
 
@@ -181,7 +182,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
     TodStringTranslate(theHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
     Color theHeaderColor = {213, 159, 43, 255};
     TodDrawString(g, theHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, theHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
-    Sexy_String_Delete(theHeaderText);
+    StringDelete(theHeaderText);
     int theAlpha = std::sin((mUpdateCnt % 100) * 0.01 * std::numbers::pi) * 255.0;
     int x, y;
     for (SeedType aSeedType = SeedType::SEED_PEASHOOTER; aSeedType < SeedType::NUM_SEEDS_IN_CHOOSER; aSeedType = (SeedType)(aSeedType + 1)) {
@@ -312,7 +313,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     TodStringTranslate(theHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
     Color theHeaderColor = {213, 159, 43, 255};
     TodDrawString(g, theHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, theHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
-    Sexy_String_Delete(theHeaderText);
+    StringDelete(theHeaderText);
 
     int theAlpha = sin((mUpdateCnt % 100) * 0.01 * std::numbers::pi) * 255.0;
     int x, y;

@@ -145,7 +145,7 @@ void SeedChooserScreen::Create(bool theIsZombieChooser) {
         TodStringTranslate(holder, "[MENU_BUTTON]");
         gSeedChooserScreenMainMenuButton = MakeButton(104, &mButtonListener, this, (SexyString &)holder);
         gSeedChooserScreenMainMenuButton->Resize(mApp->IsCoopMode() ? 345 : 650, -3, 120, 80);
-        Sexy_String_Delete(holder);
+        StringDelete(holder);
         AddWidget(gSeedChooserScreenMainMenuButton);
     }
 }
@@ -334,7 +334,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
             int holder[1];
             TodStringTranslate(holder, "[ZOMBIE_BOSS_WANTS]");
             ToolTipWidget_SetWarningText(mToolTipWidget2, holder);
-            Sexy_String_Delete(holder);
+            StringDelete(holder);
         }
     }
 }
