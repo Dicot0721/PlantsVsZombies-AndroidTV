@@ -3,14 +3,15 @@ project(PvZTV)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 #开启绝大部分警告
 string(APPEND CMAKE_CXX_FLAGS
+#        " -w"
         " -Wall"
         " -Werror=return-type"
         " -Werror=unused-result"
-        " -Wno-missing-field-initializers"
-        " -Wno-unused-private-field"
 )
+
 set(CMAKE_CXX_VISIBILITY_PRESET hidden) # 隐藏非 inline 符号
 set(CMAKE_VISIBILITY_INLINES_HIDDEN ON) # 隐藏 inline 符号
 
