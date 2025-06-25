@@ -3,11 +3,12 @@
 //
 
 #include "PvZ/Lawn/Board/MessageWidget.h"
-#include "PvZ/SexyAppFramework/Graphics/Graphics.h"
-#include "PvZ/SexyAppFramework/Graphics/Font.h"
-#include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Board/Board.h"
+#include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/SexyAppFramework/Graphics/Font.h"
+#include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Misc/Common.h"
+#include "PvZ/STL/string.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
 using namespace Sexy;
@@ -27,15 +28,13 @@ void CustomMessageWidget::Draw(Graphics *g) {
         Font *theFont = GetFont();
         int num2 = 530; // 原版为550，此处改为530！
         Color theColor = {255, 255, 255, std::clamp(mDuration * 15, 0, 255)};
-        int holder[1];
-        StrFormat(holder, mLabel);
+        pvzstl::string str{mLabel};
         Rect theRect;
         theRect.mY = num2 - theFont->mAscent;
         theRect.mHeight = 600;
         theRect.mWidth = 800;
         theRect.mX = -mApp->mBoard->mX;
-        TodDrawStringWrapped(g, holder, &theRect, theFont, &theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
-        StringDelete(holder);
+        TodDrawStringWrapped(g, (int *)(str.c_str()), &theRect, theFont, &theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
     }
 
     if (mIcon != nullptr) {

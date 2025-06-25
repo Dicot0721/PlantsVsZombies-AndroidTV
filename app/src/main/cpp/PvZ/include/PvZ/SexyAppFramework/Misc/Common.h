@@ -58,7 +58,7 @@ inline void vformat(int *holder, const char *fmt, va_list vList) {
     reinterpret_cast<void (*)(int *, const char *, va_list)>(Sexy_vformatAddr)(holder, fmt, vList);
 }
 
-inline void StrFormat(int *holder, const char *fmt, ...) {
+/*[[gnu::format(printf, 2, 3)]]*/ inline void StrFormat(int *holder, const char *fmt, ...) {
     va_list args;
 
     va_start(args, fmt);
