@@ -1,5 +1,5 @@
-#ifndef PVZ_PVZSTL_MEMORY_H
-#define PVZ_PVZSTL_MEMORY_H
+#ifndef PVZ_PVZSTL_CSTDLIB_H
+#define PVZ_PVZSTL_CSTDLIB_H
 
 #include "PvZ/Symbols.h"
 
@@ -17,4 +17,4 @@ inline void free(void *ptr) {
 
 } // namespace pvzstl
 
-#endif // PVZ_PVZSTL_MEMORY_H
+#endif // PVZ_PVZSTL_CSTDLIB_H

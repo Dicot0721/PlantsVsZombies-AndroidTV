@@ -4,48 +4,69 @@
 #include "PvZ/STL/cstdlib.h"
 
 #include <cassert>
-#include <cstdint>
-#include <cstring>
 
 #include <atomic>
+#include <string>
 
 namespace pvzstl {
+
+// clang-format off
+template <typename T>
+concept character = std::disjunction_v<
+    std::is_same<T, char>,
+    std::is_same<T, wchar_t>,
+    std::is_same<T, char8_t>,
+    std::is_same<T, char16_t>,
+    std::is_same<T, char32_t>
+>;
+// clang-format on
+
+template <character CharT>
+class basic_string;
+
+template <character T>
+[[nodiscard]] basic_string<T> basic_string_wrapper(const T *raw_s);
 
 /**
  * @class 字符串
  *
- * 使用写时复制 (COW) 实现的字符串类.
+ * 使用写时复制 (COW) 实现的字符串类模板.
  */
-template <typename CharT>
+template <character CharT>
 class basic_string {
 public:
-    basic_string()
-        : basic_string(&CharT{'\0'}) {}
+    using traits_type = std::char_traits<CharT>;
 
-    basic_string(const CharT *s, bool is_from_other = false) {
-        assert((s != nullptr) && "construction from null");
-        if (is_from_other && (s != nullptr)) {
-            _ptr = reinterpret_cast<impl *>(uintptr_t(s) - 12);
+    using value_type = CharT;
+    using size_type = std::uint32_t;
+    using pointer = value_type *;
+    using const_pointer = const value_type *;
+
+    basic_string() = default;
+
+    basic_string(const value_type *s) {
+        assert((s != nullptr) && "basic_string(const value_type *) detected nullptr");
+
+        std::size_t length = (s != nullptr) ? traits_type::length(s) : 0;
+        std::size_t alloc_size = sizeof(impl) + sizeof(value_type) * (length + 1); // +1 is for '\0'
+
+        _ptr = reinterpret_cast<impl *>(pvzstl::malloc(alloc_size));
+        if (_ptr == nullptr) [[unlikely]] {
             return;
         }
 
-        std::size_t length = (s != nullptr) ? std::strlen(s) : 0;
-        _ptr = reinterpret_cast<impl *>(pvzstl::malloc(sizeof(impl) + length + 1)); // +1 is for '\0'
-        if (_ptr == nullptr) {
-            return;
-        }
-        _ptr->_size = length;
-        _ptr->_capacity = length + 1;
-        _ptr->_ref_count = 0;
+        new (_ptr) impl{.size = length, .capacity = length, .ref_count = 0};
         if (length > 0) {
-            std::memcpy(_ptr->_data, s, length);
+            traits_type::copy(_ptr->data, s, length);
         }
-        _ptr->_data[length] = CharT{'\0'};
+        _ptr->data[length] = static_cast<value_type>(0);
     };
 
     basic_string(const basic_string &other)
         : _ptr(other._ptr) {
-        ++_ptr->_ref_count;
+        if (_ptr != nullptr) {
+            ++_ptr->ref_count;
+        }
     }
 
     basic_string(basic_string &&other) noexcept
@@ -54,59 +75,75 @@ public:
     }
 
     basic_string &operator=(const basic_string &other) {
-        if (this != &other) {
-            reset();
+        if (this != std::addressof(other)) {
+            clear();
             _ptr = other._ptr;
-            ++_ptr->_ref_count;
+            if (_ptr != nullptr) {
+                ++_ptr->ref_count;
+            }
         }
         return *this;
     }
 
     basic_string &operator=(basic_string &&other) noexcept {
-        if (this != &other) {
-            reset();
+        if (this != std::addressof(other)) {
+            clear();
             _ptr = std::exchange(other._ptr, nullptr);
         }
         return *this;
     }
 
-    ~basic_string() noexcept { reset(); }
+    ~basic_string() noexcept { clear(); }
 
-    [[nodiscard]] const CharT *data() const noexcept { return _ptr != nullptr ? _ptr->_data : ""; }
-    [[nodiscard]] CharT *data() noexcept { return static_cast<char *>(_ptr != nullptr ? _ptr->_data : ""); }
+    [[nodiscard]] const value_type *c_str() const noexcept { return _ptr != nullptr ? _ptr->data : default_str().data; }
 
-    [[nodiscard]] const CharT *c_str() const noexcept { return _ptr != nullptr ? _ptr->_data : ""; }
+    [[nodiscard]] bool empty() const noexcept { return _ptr == nullptr || _ptr->size == 0; }
 
-    [[nodiscard]] bool empty() const noexcept { return _ptr == nullptr || _ptr->_size == 0; }
+    [[nodiscard]] size_type size() const noexcept { return _ptr != nullptr ? _ptr->size : 0; }
 
-    [[nodiscard]] std::size_t size() const noexcept { return _ptr != nullptr ? _ptr->_size : 0; }
+    [[nodiscard]] size_type capacity() const noexcept { return _ptr != nullptr ? _ptr->capacity : 0; }
 
-    [[nodiscard]] std::size_t capacity() const noexcept { return _ptr != nullptr ? _ptr->_capacity : 0; }
-
-protected:
-    struct impl {
-        uint32_t _size;                 // 字符串长度
-        uint32_t _capacity;             // 字符串可用空间大小
-        std::atomic_int32_t _ref_count; // 引用计数 (为 0 时销毁对象)
-        CharT _data[];                  // 字符数组 (弹性数组)
-    };
-
-    void reset() noexcept {
+    void clear() noexcept {
         if (_ptr == nullptr) {
             return;
         }
-        if (_ptr->_ref_count > 0) {
-            --_ptr->_ref_count;
-            return;
+        if (_ptr->ref_count > 0) {
+            --_ptr->ref_count;
+        } else {
+            pvzstl::free(_ptr);
         }
-        pvzstl::free(_ptr);
         _ptr = nullptr;
+    }
+
+    template <character T>
+    friend basic_string<T> basic_string_wrapper(const T *raw_s) {
+        assert(raw_s != nullptr);
+        basic_string<T> str;
+        str._ptr = reinterpret_cast<impl *>(uintptr_t(raw_s) - sizeof(impl));
+        return str;
+    }
+
+protected:
+    struct impl {
+        size_type size;                // 字符串长度 (已用空间大小)
+        size_type capacity;            // 字符串容量 (可用空间大小, 不包括终止符)
+        std::atomic_int32_t ref_count; // 引用计数 (小于等于 0 时销毁对象)
+        value_type data[];             // 字符数组 (柔性数组成员)
+    };
+
+    [[nodiscard]] static constexpr const impl &default_str() {
+        alignas(impl) static constexpr std::byte empty_rep_storage[sizeof(impl) + sizeof(value_type)] = {};
+        return *reinterpret_cast<const impl *>(empty_rep_storage);
     }
 
     impl *_ptr = nullptr;
 };
 
 using string = basic_string<char>;
+
+[[nodiscard]] inline string string_wrapper(const char *raw_s) {
+    return basic_string_wrapper<char>(raw_s);
+}
 
 } // namespace pvzstl
 
