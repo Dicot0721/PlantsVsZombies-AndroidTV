@@ -3111,7 +3111,7 @@ const char *GetNameByAchievementId(AchievementId theAchievementId) {
 
 bool Board::GrantAchievement(AchievementId theAchievementId, bool theIsShow) {
     LawnApp *lawnApp = mApp;
-    PlayerInfo *playerInfo = lawnApp->mPlayerInfo;
+    DefaultPlayerInfo *playerInfo = lawnApp->mPlayerInfo;
     if (!playerInfo->mAchievements[theAchievementId]) {
         LawnApp_PlaySample(lawnApp, addonSounds.achievement);
         ClearAdviceImmediately();

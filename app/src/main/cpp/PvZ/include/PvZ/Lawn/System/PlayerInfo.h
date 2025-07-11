@@ -89,7 +89,14 @@ public:
     bool mMailMessageSeen[32];     // 1875 ~ 1906 ，紧密存放，可以存放32x8个bool
     GameStats mGameStats;          // 477 ~ 514
     int unk6;                      // 515
-}; // 大小516个整数
+    // 大小516个整数
+};
+
+// 大小未知，故成员全部放在基类PlayerInfo
+class DefaultPlayerInfo : public PlayerInfo {
+public:
+
+};
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_PLAYERINFO_H

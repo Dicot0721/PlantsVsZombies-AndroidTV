@@ -8,6 +8,7 @@
 #include "PvZ/Misc.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
+#include "PvZ/STL/string.h"
 
 using namespace Sexy;
 
@@ -101,7 +102,9 @@ Image *LawnApp::GetImageByFileName(const char *theFileName) {
     // 根据贴图文件路径获得贴图
     int holder[1];
     StrFormat(holder, theFileName);
+//    pvzstl::string str{theFileName};
     Image *theImage = GetImage(reinterpret_cast<string &>(holder), true);
+//    Image *theImage = GetImage(str.c_str(), true);
     StringDelete(holder);
     return theImage;
 }
@@ -156,7 +159,7 @@ int LawnApp::GamepadToPlayerIndex(unsigned int thePlayerIndex) {
 
     if (thePlayerIndex <= 3 )
     {
-        if ( mPlayerInfo && thePlayerIndex == (*((int (__fastcall **)(PlayerInfo *))mPlayerInfo->vTable + 2))(mPlayerInfo) )
+        if ( mPlayerInfo && thePlayerIndex == (*((int (__fastcall **)(DefaultPlayerInfo *))mPlayerInfo->vTable + 2))(mPlayerInfo) )
             return 0;
 
         if ( mTwoPlayerState != -1 && mTwoPlayerState == thePlayerIndex)

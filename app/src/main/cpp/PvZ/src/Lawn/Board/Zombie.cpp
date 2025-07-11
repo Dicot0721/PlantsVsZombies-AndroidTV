@@ -913,7 +913,7 @@ bool Zombie::IsWalkingBackwards() {
 }
 
 void Zombie::SetZombatarReanim() {
-    PlayerInfo *aPlayerInfo = mApp->mPlayerInfo;
+    DefaultPlayerInfo *aPlayerInfo = mApp->mPlayerInfo;
     if (!aPlayerInfo->mZombatarEnabled)
         return;
     Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);

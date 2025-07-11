@@ -17,7 +17,7 @@ void TrashBin::Create(TrashPileType theTrashPileType, float theHeight) {
     int thePileNum = theHeight / (theTrashPileType == TrashBin::ZOMBIE_PILE ? zombiePileHeight : plantPileHeight) + 1;
     if (thePileNum >= 10)
         thePileNum = 10;
-    PlayerInfo *mPlayerInfo = ((LawnApp *)*gLawnApp_Addr)->mPlayerInfo;
+    DefaultPlayerInfo *mPlayerInfo = ((LawnApp *)*gLawnApp_Addr)->mPlayerInfo;
     int aLevel = mPlayerInfo->mLevel;
     if (LawnPlayerInfo_GetFlag(mPlayerInfo, 1) || LawnPlayerInfo_GetFlag(mPlayerInfo, 0x8000))
         aLevel = 50;

@@ -144,7 +144,6 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     DaveHelp_DaveHelp(this, theApp);
     Resize(-240, -60, 1280, 720);
     mLeaderboardReanimations = (LeaderboardReanimations *)operator new(sizeof(LeaderboardReanimations));
-    LOG_DEBUG("mLeaderboardReanimations {} ", (void*)mLeaderboardReanimations);
     for (int i = 0; i < 5; ++i) {
 //        Reanimation *reanim = (Reanimation *)operator new(sizeof(Reanimation));
 //        Reanimation_Reanimation(reanim);
@@ -164,7 +163,6 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
         }
         reanim->Update(); // 一次Update是必要的，否则绘制出来是Empty
         mLeaderboardReanimations->backgroundReanim[i] = reanim;
-        LOG_DEBUG("reanim {} ", (void*)reanim);
     }
     mLeaderboardReanimations->backgroundReanim[1]->AssignRenderGroupToTrack("survival button 1", 1);                               // 设置无尽模式按钮
     mLeaderboardReanimations->backgroundReanim[1]->SetImageOverride("survival button 1", addonImages.survival_button); // 设置无尽模式按钮
@@ -176,8 +174,6 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     int zombieTrackIndex = mLeaderboardReanimations->backgroundReanim[0]->FindTrackIndex("PvZ/zombie_tra.h");
     LOG_DEBUG("zombieTrackIndex {} ", zombieTrackIndex);
     SexyTransform2D zombieSexyTransform2D{};
-    LOG_DEBUG("zombieSexyTransform2D {} ", (void*)&zombieSexyTransform2D);
-    LOG_DEBUG("backgroundReanim {} ", (void*)mLeaderboardReanimations->backgroundReanim[0]);
     mLeaderboardReanimations->backgroundReanim[0]->GetTrackMatrix(zombieTrackIndex, zombieSexyTransform2D);
     LOG_DEBUG("zombieSexyTransform2D_2 {} ", (void*)&zombieSexyTransform2D);
     mZombieTrashBin = (TrashBin *)operator new(sizeof(TrashBin));
@@ -206,7 +202,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
 
     mLongestRecordPool = theApp->mPlayerInfo->mChallengeRecords[GameMode::GAMEMODE_SURVIVAL_ENDLESS_STAGE_3 - 2];
     //    this_->mLongestRecordPool = theApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ENDLESS_FLAGS];
-    LOG_DEBUG("mLongestRecordPool {} ", (void*)mLongestRecordPool);
+    LOG_DEBUG("mLongestRecordPool {} ", mLongestRecordPool);
 
     auto *mLeaderboardsListener = new Sexy::ButtonListener();
     mButtonListener = mLeaderboardsListener;

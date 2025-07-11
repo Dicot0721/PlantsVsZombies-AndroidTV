@@ -294,7 +294,7 @@ void Music::UpdateMusicBurst() {
         theCounter--;
         if (theCounter == 0) {
             muteMusic = false;
-            PlayerInfo *playerInfo = mApp->mPlayerInfo;
+            DefaultPlayerInfo *playerInfo = mApp->mPlayerInfo;
             float theVolume = playerInfo == nullptr ? 1.0f : playerInfo->mMusicVolume / 0.8f;
             mMusicInterface->SetVolume(theVolume);
         }

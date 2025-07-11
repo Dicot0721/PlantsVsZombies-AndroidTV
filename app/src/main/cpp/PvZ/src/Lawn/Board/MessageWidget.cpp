@@ -28,13 +28,17 @@ void CustomMessageWidget::Draw(Graphics *g) {
         Font *theFont = GetFont();
         int num2 = 530; // 原版为550，此处改为530！
         Color theColor = {255, 255, 255, std::clamp(mDuration * 15, 0, 255)};
-        pvzstl::string str{mLabel};
+        int holder[1];
+        StrFormat(holder, mLabel);
+//        pvzstl::string str{mLabel};
         Rect theRect;
         theRect.mY = num2 - theFont->mAscent;
         theRect.mHeight = 600;
         theRect.mWidth = 800;
         theRect.mX = -mApp->mBoard->mX;
-        TodDrawStringWrapped(g, (int *)(str.c_str()), &theRect, theFont, &theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
+        TodDrawStringWrapped(g, holder, &theRect, theFont, &theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
+        StringDelete(holder);
+//        TodDrawStringWrapped(g, (int *)(str.c_str()), &theRect, theFont, &theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
     }
 
     if (mIcon != nullptr) {

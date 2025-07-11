@@ -102,7 +102,7 @@ void StoreScreen::ButtonDepress(int theId) {
 void StoreScreen::PurchaseItem(StoreItem item) {
     old_StoreScreen_PurchaseItem(this, item);
 
-    PlayerInfo *aPlayerInfo = mApp->mPlayerInfo;
+    DefaultPlayerInfo *aPlayerInfo = mApp->mPlayerInfo;
 
     // 检查植物全收集成就
     for (int i = StoreItem::STORE_ITEM_PLANT_GATLINGPEA; i <= StoreItem::STORE_ITEM_PLANT_IMITATER; ++i) {

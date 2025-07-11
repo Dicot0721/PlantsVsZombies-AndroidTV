@@ -91,7 +91,7 @@ FoleyParams *LookupFoley(FoleyType theFoleyType) {
         return old_LookupFoley(theFoleyType);
 }
 
-void LawnPlayerInfo_AddCoins(PlayerInfo *playerInfo, int theAmount) {
+void LawnPlayerInfo_AddCoins(DefaultPlayerInfo *playerInfo, int theAmount) {
     // 用于 购物愉快 成就
     int theCoins = playerInfo->mCoins + theAmount;
     if (theCoins > 99999) {

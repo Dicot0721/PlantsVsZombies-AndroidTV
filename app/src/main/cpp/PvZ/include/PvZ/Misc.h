@@ -17,7 +17,7 @@ inline int (*WaitForSecondPlayerDialog_GameButtonDown)(int *a1, int a2, int a3);
 
 inline void (*TodStringTranslate)(int *holder, const char *theText);
 
-inline int (*LawnPlayerInfo_GetFlag)(PlayerInfo *, int);
+inline int (*LawnPlayerInfo_GetFlag)(DefaultPlayerInfo *, int);
 
 inline void (*GetFlashingColor)(Sexy::Color *, int, int);
 
@@ -53,7 +53,7 @@ inline void (*TodParticleSystem_Delete2)(TodParticleSystem *);
 
 inline void (*TodParticleSystem_ParticleSystemDie)(TodParticleSystem *);
 
-inline PlayerInfo *(*Sexy_DefaultProfileMgr_GetAnyProfile)(int *);
+inline DefaultPlayerInfo *(*Sexy_DefaultProfileMgr_GetAnyProfile)(int *);
 
 inline void (*DrawCheckboxText)(Sexy::Graphics *graphics, int *text1, Sexy::Checkbox *a3, const char *text2);
 
@@ -110,7 +110,7 @@ void WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(int *a, int *a2);
 
 void HelpBarWidget_HelpBarWidget(Sexy::Widget *a);
 
-void LawnPlayerInfo_AddCoins(PlayerInfo *playerInfo, int theAmount);
+void LawnPlayerInfo_AddCoins(DefaultPlayerInfo *playerInfo, int theAmount);
 
 void SaveGameContext_SyncReanimationDef(int *theSaveGameContext, ReanimatorDefinition **a2);
 

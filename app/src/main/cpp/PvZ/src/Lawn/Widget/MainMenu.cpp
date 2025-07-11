@@ -590,7 +590,7 @@ void MainMenu::Draw(Sexy::Graphics *g) {
     ReanimatorTransform v43;
     int mailAlertTrackIndex = mainMenuReanim->FindTrackIndex("mail alert");
     if (mailAlertTrackIndex > 0 && Mailbox_GetNumUnseenMessages(mApp->mMailBox) > 0) {
-        PlayerInfo *mPlayerInfo = mApp->mPlayerInfo;
+        DefaultPlayerInfo *mPlayerInfo = mApp->mPlayerInfo;
         if (mPlayerInfo->mLevel > 0 || LawnPlayerInfo_GetFlag(mPlayerInfo, 1)) {
             v43 = ReanimatorTransform();
             mainMenuReanim->GetCurrentTransform(mailAlertTrackIndex, &v43);
@@ -827,7 +827,7 @@ void ZombatarWidget_ButtonDepress(ZombatarWidget *zombatarWidget, int id) {
         gMainMenuZombatarWidget->mShowExistingZombatarPortrait = true;
         gMainMenuZombatarWidget->mShowZombieTypeSelection = false;
 
-        PlayerInfo *playerInfo = lawnApp->mPlayerInfo;
+        DefaultPlayerInfo *playerInfo = lawnApp->mPlayerInfo;
         playerInfo->mZombatarHat = gMainMenuZombatarWidget->mSelectedHat;
         playerInfo->mZombatarHatColor = gMainMenuZombatarWidget->mSelectedHatColor;
         playerInfo->mZombatarHair = gMainMenuZombatarWidget->mSelectedHair;

@@ -19,7 +19,7 @@ class PoolEffect;
 class ReanimatorCache;
 class Music2;
 class TodFoley;
-class PlayerInfo;
+class DefaultPlayerInfo;
 class PottedPlant;
 class VSSetupMenu;
 
@@ -56,7 +56,7 @@ public:
     ZenGarden *mZenGarden;                   // 584
     EffectSystem *mEffectSystem;             // 585
     ReanimatorCache *mReanimatorCache;       // 586
-    PlayerInfo *mPlayerInfo;                 // 587
+    DefaultPlayerInfo *mPlayerInfo;          // 587
     int unk6;                                // 588
     int *mLastLevelStats;                    // 589
     bool mCloseRequest;                      // 2360
