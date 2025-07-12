@@ -108,10 +108,9 @@ Image *LawnApp::GetImageByFileName(const char *theFileName) {
 
 int LawnApp::GetSoundByFileName(const char *theFileName) {
     // 根据音频文件路径获得音频
-    int holder[1];
-    StrFormat(holder, theFileName);
-    int theSoundId = Sexy_AudiereSoundManager_LoadSound(mSoundManager, holder);
-    StringDelete(holder);
+    pvzstl::string str{theFileName};
+    char *strData = str.data();
+    int theSoundId = mSoundManager->LoadSound(&strData);
     return theSoundId;
 }
 

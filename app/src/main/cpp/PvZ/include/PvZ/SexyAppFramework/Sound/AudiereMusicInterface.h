@@ -9,7 +9,7 @@
 
 namespace Sexy {
 
-class AudiereMusicInterface {
+class AudiereMusicInterface{
 public:
     void SetVolume(double theVolume) { reinterpret_cast<void (*)(AudiereMusicInterface *, double)>(Sexy_AudiereMusicInterface_SetVolumeAddr)(this, theVolume); }
     void SetSongVolume(int theSongId, double theVolume) { reinterpret_cast<void (*)(AudiereMusicInterface *, int, double)>(Sexy_AudiereMusicInterface_SetSongVolumeAddr)(this, theSongId, theVolume); }

@@ -11,6 +11,7 @@
 #include "PvZ/Symbols.h"
 #include "Widget/ButtonListener.h"
 #include "Graphics/MemoryImage.h"
+#include "Sound/AudiereSoundManager.h"
 #include "PvZ/STL/string.h"
 
 namespace Sexy {
@@ -26,7 +27,7 @@ public:
     int unkMem2[70];                        // 166 ~ 235, musicinterface 193
     bool mLawnMouseMode;                    // 944
     int unkMem3[77];                        // 237 ~ 313
-    int *mSoundManager;                     // 314
+    AudiereSoundManager *mSoundManager;     // 314
     int unkMem4[39];                        // 315 ~ 353
     int mNumLoadingThreadTasks;             // 354
     int mCompletedLoadingThreadTasks;       // 355

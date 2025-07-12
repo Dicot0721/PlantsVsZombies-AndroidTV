@@ -87,7 +87,6 @@ inline void InitInGameFunction() {
     TodStringListLoad = (decltype(TodStringListLoad))TodStringListLoadAddr;
     TodReplaceString = (decltype(TodReplaceString))TodReplaceStringAddr;
     TodReplaceNumberString = (decltype(TodReplaceNumberString))TodReplaceNumberStringAddr;
-    Sexy_AudiereSoundManager_LoadSound = (decltype(Sexy_AudiereSoundManager_LoadSound))Sexy_AudiereSoundManager_LoadSoundAddr;
     MaskHelpWidget_MaskHelpWidget = (decltype(MaskHelpWidget_MaskHelpWidget))MaskHelpWidget_MaskHelpWidgetAddr;
     MaskHelpWidget_Delete = (decltype(MaskHelpWidget_Delete))MaskHelpWidget_DeleteAddr;
     DaveHelp_DaveHelp = (decltype(DaveHelp_DaveHelp))DaveHelp_DaveHelpAddr;

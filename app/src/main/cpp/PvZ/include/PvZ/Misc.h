@@ -33,8 +33,6 @@ inline int *(*Sexy_ResourceManager_GetSoundThrow)(int *, int *);
 
 inline FoleyInstance *(*SoundSystemFindInstance)(TodFoley *, FoleyType);
 
-inline int (*Sexy_AudiereSoundManager_LoadSound)(int *mSoundManager, int *theFileName);
-
 inline void (*TodStringListLoad)(const char *);
 
 inline void (*TodReplaceString)(int *, int *, const char *, int *);
