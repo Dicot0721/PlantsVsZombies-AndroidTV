@@ -100,12 +100,8 @@ void LawnApp::LoadAddonSounds() {
 
 Image *LawnApp::GetImageByFileName(const char *theFileName) {
     // 根据贴图文件路径获得贴图
-    int holder[1];
-    StrFormat(holder, theFileName);
-//    pvzstl::string str{theFileName};
-    Image *theImage = GetImage(reinterpret_cast<string &>(holder), true);
-//    Image *theImage = GetImage(str.c_str(), true);
-    StringDelete(holder);
+    pvzstl::string str{theFileName};
+    Image *theImage = GetImage((char**)(str.c_str()), true);
     return theImage;
 }
 
@@ -269,32 +265,32 @@ void LawnApp::Load(const char *theGroupName) {
     StringDelete(holder);
 }
 
-void LawnApp::DoConvertImitaterImages() {
-    for (int i = 0;; ++i) {
-        int holder[1];
-        int holder1[1];
-        int holder2[1];
-        StrFormat(holder, "convertImitaterImages/pic%d", i);
-        StrFormat(holder1, "ImitaterNormalpic%d.png", i);
-        StrFormat(holder2, "ImitaterLesspic%d.png", i);
-        Image *imageFromFile = GetImage(reinterpret_cast<string &>(holder), true);
-
-        if (imageFromFile == nullptr) {
-            break;
-        }
-        Image *imageImitater = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_WASHED_OUT);
-        Image *imageImitaterLess = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_LESS_WASHED_OUT);
-        reinterpret_cast<MemoryImage *>(imageImitater)->WriteToPng(holder1);
-        reinterpret_cast<MemoryImage *>(imageImitaterLess)->WriteToPng(holder2);
-        reinterpret_cast<MemoryImage *>(imageFromFile)->Delete();
-        reinterpret_cast<MemoryImage *>(imageImitater)->Delete();
-        reinterpret_cast<MemoryImage *>(imageImitaterLess)->Delete();
-
-        StringDelete(holder);
-        StringDelete(holder1);
-        StringDelete(holder2);
-    }
-}
+//void LawnApp::DoConvertImitaterImages() {
+//    for (int i = 0;; ++i) {
+//        int holder[1];
+//        int holder1[1];
+//        int holder2[1];
+//        StrFormat(holder, "convertImitaterImages/pic%d", i);
+//        StrFormat(holder1, "ImitaterNormalpic%d.png", i);
+//        StrFormat(holder2, "ImitaterLesspic%d.png", i);
+//        Image *imageFromFile = GetImage(reinterpret_cast<string &>(holder), true);
+//
+//        if (imageFromFile == nullptr) {
+//            break;
+//        }
+//        Image *imageImitater = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_WASHED_OUT);
+//        Image *imageImitaterLess = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_LESS_WASHED_OUT);
+//        reinterpret_cast<MemoryImage *>(imageImitater)->WriteToPng(holder1);
+//        reinterpret_cast<MemoryImage *>(imageImitaterLess)->WriteToPng(holder2);
+//        reinterpret_cast<MemoryImage *>(imageFromFile)->Delete();
+//        reinterpret_cast<MemoryImage *>(imageImitater)->Delete();
+//        reinterpret_cast<MemoryImage *>(imageImitaterLess)->Delete();
+//
+//        StringDelete(holder);
+//        StringDelete(holder1);
+//        StringDelete(holder2);
+//    }
+//}
 
 void LawnApp::LoadingThreadProc() {
     // 加载新增资源用

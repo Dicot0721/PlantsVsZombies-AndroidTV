@@ -2,6 +2,7 @@
 #define PVZ_PVZSTL_STRING_H
 
 #include "PvZ/STL/cstdlib.h"
+#include "Homura/Logger.h"
 
 #include <cassert>
 
@@ -50,7 +51,7 @@ public:
         std::size_t length = (s != nullptr) ? traits_type::length(s) : 0;
         std::size_t alloc_size = sizeof(impl) + sizeof(value_type) * (length + 1); // +1 is for '\0'
 
-        _ptr = reinterpret_cast<impl *>(pvzstl::malloc(alloc_size));
+        _ptr = reinterpret_cast<impl *>(std::malloc(alloc_size));
         if (_ptr == nullptr) [[unlikely]] {
             return;
         }
@@ -110,7 +111,7 @@ public:
         if (_ptr->ref_count > 0) {
             --_ptr->ref_count;
         } else {
-            pvzstl::free(_ptr);
+            std::free(_ptr);
         }
         _ptr = nullptr;
     }

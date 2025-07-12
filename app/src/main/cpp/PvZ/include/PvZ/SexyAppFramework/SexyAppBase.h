@@ -11,6 +11,7 @@
 #include "PvZ/Symbols.h"
 #include "Widget/ButtonListener.h"
 #include "Graphics/MemoryImage.h"
+#include "PvZ/STL/string.h"
 
 namespace Sexy {
 
@@ -42,8 +43,8 @@ public:
 
     Dialog *GetDialog(Dialogs theDialogId) { return reinterpret_cast<Dialog *(*)(__SexyAppBase *, Dialogs)>(Sexy_SexyAppBase_GetDialogAddr)(this, theDialogId); }
     void EraseFile(const std::string& theFileName) { reinterpret_cast<void (*)(__SexyAppBase *, const std::string&)>(Sexy_SexyAppBase_EraseFileAddr)(this, theFileName); }
-    Image *GetImage(const std::string &theFileName, bool commitBits = true) {
-        return reinterpret_cast<Image *(*)(__SexyAppBase *, const std::string &, bool)>(Sexy_SexyAppBase_GetImageAddr)(this, theFileName, commitBits);
+    Image *GetImage(pvzstl::string::pointer *theFileName, bool commitBits = true) {
+        return reinterpret_cast<Image *(*)(__SexyAppBase *, pvzstl::string::pointer *, bool)>(Sexy_SexyAppBase_GetImageAddr)(this, theFileName, commitBits);
     }
     bool RegistryReadString(const std::string &theValueName, std::string *theString) {
         return reinterpret_cast<bool(*)(__SexyAppBase *, const std::string &, std::string *)>(Sexy_SexyAppBase_RegistryReadStringAddr)(this, theValueName, theString);
