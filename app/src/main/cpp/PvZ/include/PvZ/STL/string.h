@@ -40,76 +40,47 @@ public:
     using pointer = value_type *;
     using const_pointer = const value_type *;
 
-    basic_string() = default;
+    basic_string() {
+        static constexpr value_type empty_s[1] = {0};
+        init(empty_s, 0);
+    }
 
     basic_string(const value_type *s) {
         assert((s != nullptr) && "basic_string(const value_type *) detected nullptr");
-
-        std::size_t length = (s != nullptr) ? traits_type::length(s) : 0;
-        std::size_t alloc_size = sizeof(impl) + sizeof(value_type) * (length + 1); // +1 is for '\0'
-
-        _ptr = new (::operator new(alloc_size)) impl{.size = length, .capacity = length, .ref_count = 0};
-        if (length > 0) {
-            traits_type::copy(_ptr->data, s, length);
-        }
-        _ptr->data[length] = static_cast<value_type>(0);
+        init(s, traits_type::length(s));
     };
 
-    basic_string(const basic_string &other)
-        : _ptr(other._ptr) {
-        if (_ptr != nullptr) {
-            ++_ptr->ref_count;
-        }
-    }
+    basic_string(std::nullptr_t) = delete;
+
+    // 暂时不考虑拷贝
+    basic_string(const basic_string &other) = delete;
+    basic_string &operator=(const basic_string &other) = delete;
 
     basic_string(basic_string &&other) noexcept
         : _ptr(other._ptr) {
         other._ptr = nullptr;
     }
 
-    basic_string &operator=(const basic_string &other) {
-        if (this != std::addressof(other)) {
-            clear();
-            _ptr = other._ptr;
-            if (_ptr != nullptr) {
-                ++_ptr->ref_count;
-            }
-        }
-        return *this;
-    }
-
     basic_string &operator=(basic_string &&other) noexcept {
         if (this != std::addressof(other)) {
-            clear();
+            release();
             _ptr = std::exchange(other._ptr, nullptr);
         }
         return *this;
     }
 
-    ~basic_string() noexcept { clear(); }
+    ~basic_string() noexcept { release(); }
 
-    [[nodiscard]] const value_type *data() const noexcept { return _ptr != nullptr ? _ptr->data : default_str().data; }
-    [[nodiscard]] value_type *data() noexcept { return _ptr != nullptr ? _ptr->data : const_cast<char *>(&default_str().data[0]); }
+    [[nodiscard]] const value_type *data() const noexcept { return _ptr->data; }
+    [[nodiscard]] value_type *data() noexcept { return _ptr->data; }
 
-    [[nodiscard]] const value_type *c_str() const noexcept { return _ptr != nullptr ? _ptr->data : default_str().data; }
+    [[nodiscard]] const value_type *c_str() const noexcept { return data(); }
 
-    [[nodiscard]] bool empty() const noexcept { return _ptr == nullptr || _ptr->size == 0; }
+    [[nodiscard]] bool empty() const noexcept { return _ptr->size == 0; }
 
-    [[nodiscard]] size_type size() const noexcept { return _ptr != nullptr ? _ptr->size : 0; }
+    [[nodiscard]] size_type size() const noexcept { return _ptr->size; }
 
-    [[nodiscard]] size_type capacity() const noexcept { return _ptr != nullptr ? _ptr->capacity : 0; }
-
-    void clear() noexcept {
-        if (_ptr == nullptr) {
-            return;
-        }
-        if (_ptr->ref_count > 0) {
-            --_ptr->ref_count;
-        } else {
-            ::operator delete(_ptr);
-        }
-        _ptr = nullptr;
-    }
+    [[nodiscard]] size_type capacity() const noexcept { return _ptr->capacity; }
 
     template <character T>
     friend basic_string<T> basic_string_wrapper(const T *raw_s) {
@@ -127,13 +98,47 @@ protected:
         value_type data[];             // 字符数组 (柔性数组成员)
     };
 
-    [[nodiscard]] static constexpr const impl &default_str() {
-        alignas(impl) static constexpr std::byte empty_rep_storage[sizeof(impl) + sizeof(value_type)] = {};
-        return *reinterpret_cast<const impl *>(empty_rep_storage);
+    void init(const value_type *s, size_type sz) {
+        std::size_t alloc_size = sizeof(impl) + sizeof(value_type) * (sz + 1); // 暂时不考虑用对齐来提高性能
+        _ptr = new (::operator new(alloc_size)) impl{.size = sz, .capacity = sz, .ref_count = 0};
+        traits_type::copy(_ptr->data, s, sz);
+        _ptr->data[sz] = static_cast<value_type>(0);
+    }
+
+    void release() noexcept {
+        if (_ptr == nullptr) {
+            return;
+        }
+        if (_ptr->ref_count > 0) {
+            --_ptr->ref_count;
+        } else {
+            ::operator delete(_ptr);
+        }
+        _ptr = nullptr;
     }
 
     impl *_ptr = nullptr;
 };
+
+// template <character CharT>
+// basic_string<CharT>::basic_string(const basic_string &other)
+//     : _ptr(other._ptr) {
+//     if (_ptr != nullptr) {
+//         ++_ptr->ref_count;
+//     }
+// }
+
+// template <character CharT>
+// basic_string<CharT> &basic_string<CharT>::operator=(const basic_string &other) {
+//     if (this != std::addressof(other)) {
+//         release();
+//         _ptr = other._ptr;
+//         if (_ptr != nullptr) {
+//             ++_ptr->ref_count;
+//         }
+//     }
+//     return *this;
+// }
 
 using string = basic_string<char>;
 
