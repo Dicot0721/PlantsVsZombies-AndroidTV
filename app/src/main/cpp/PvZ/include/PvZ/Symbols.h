@@ -18,9 +18,6 @@ class Font;
 
 class ReanimatorDefinition;
 
-inline void *mallocAddr;
-inline void *freeAddr;
-
 inline void *Board_UpdateAddr;
 inline void *Board_BoardAddr;
 inline void *Board_InitLevelAddr;
@@ -1178,9 +1175,6 @@ inline bool GetFunctionAddr() {
     if (handle == nullptr) {
         return false;
     }
-
-    mallocAddr = dlsym(handle, "malloc");
-    freeAddr = dlsym(handle, "free");
 
     Board_UpdateAddr = dlsym(handle, "_ZN5Board6UpdateEv");
     Board_BoardAddr = dlsym(handle, "_ZN5BoardC2EP7LawnApp");

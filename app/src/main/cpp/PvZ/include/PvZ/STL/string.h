@@ -1,9 +1,6 @@
 #ifndef PVZ_PVZSTL_STRING_H
 #define PVZ_PVZSTL_STRING_H
 
-#include "PvZ/STL/cstdlib.h"
-#include "Homura/Logger.h"
-
 #include <cassert>
 
 #include <atomic>
@@ -51,12 +48,7 @@ public:
         std::size_t length = (s != nullptr) ? traits_type::length(s) : 0;
         std::size_t alloc_size = sizeof(impl) + sizeof(value_type) * (length + 1); // +1 is for '\0'
 
-        _ptr = reinterpret_cast<impl *>(std::malloc(alloc_size));
-        if (_ptr == nullptr) [[unlikely]] {
-            return;
-        }
-
-        new (_ptr) impl{.size = length, .capacity = length, .ref_count = 0};
+        _ptr = new (::operator new(alloc_size)) impl{.size = length, .capacity = length, .ref_count = 0};
         if (length > 0) {
             traits_type::copy(_ptr->data, s, length);
         }
@@ -96,6 +88,9 @@ public:
 
     ~basic_string() noexcept { clear(); }
 
+    [[nodiscard]] const value_type *data() const noexcept { return _ptr != nullptr ? _ptr->data : default_str().data; }
+    [[nodiscard]] value_type *data() noexcept { return _ptr != nullptr ? _ptr->data : const_cast<char *>(&default_str().data[0]); }
+
     [[nodiscard]] const value_type *c_str() const noexcept { return _ptr != nullptr ? _ptr->data : default_str().data; }
 
     [[nodiscard]] bool empty() const noexcept { return _ptr == nullptr || _ptr->size == 0; }
@@ -111,7 +106,7 @@ public:
         if (_ptr->ref_count > 0) {
             --_ptr->ref_count;
         } else {
-            std::free(_ptr);
+            ::operator delete(_ptr);
         }
         _ptr = nullptr;
     }

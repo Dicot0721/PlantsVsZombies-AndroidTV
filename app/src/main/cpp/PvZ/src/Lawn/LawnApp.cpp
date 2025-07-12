@@ -101,7 +101,8 @@ void LawnApp::LoadAddonSounds() {
 Image *LawnApp::GetImageByFileName(const char *theFileName) {
     // 根据贴图文件路径获得贴图
     pvzstl::string str{theFileName};
-    Image *theImage = GetImage((char**)(str.c_str()), true);
+    char *strData = str.data();
+    Image *theImage = GetImage(&strData, true);
     return theImage;
 }
 
