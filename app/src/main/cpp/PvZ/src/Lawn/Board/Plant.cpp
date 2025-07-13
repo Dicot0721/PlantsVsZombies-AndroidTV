@@ -428,26 +428,25 @@ void Plant::Draw(Sexy::Graphics *g) {
         || (showNutGarlicSpikeHealth
             && (mSeedType == SeedType::SEED_WALLNUT || mSeedType == SeedType::SEED_TALLNUT || mSeedType == SeedType::SEED_PUMPKINSHELL || mSeedType == SeedType::SEED_GARLIC
                 || mSeedType == SeedType::SEED_SPIKEROCK))) { // 如果玩家开了 植物显血
-        int holder[1];
-        StrFormat(holder, "%d/%d", mPlantHealth, mPlantMaxHealth);
+        pvzstl::string str = StrFormat("%d/%d", mPlantHealth, mPlantMaxHealth);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT12_Addr);
         if (mSeedType == SeedType::SEED_PUMPKINSHELL) {
             g->SetColor(yellow);
-            g->DrawString((SexyString&)holder, 0, 52);
+            g->DrawString((SexyString&)str, 0, 52);
         } else if (mSeedType == SeedType::SEED_FLOWERPOT) {
             g->SetColor(brown);
-            g->DrawString((SexyString&)holder, 0, 93);
+            g->DrawString((SexyString&)str, 0, 93);
         } else if (mSeedType == SeedType::SEED_LILYPAD) {
             g->SetColor(green);
-            g->DrawString((SexyString&)holder, 0, 100);
+            g->DrawString((SexyString&)str, 0, 100);
         } else if (mSeedType == SeedType::SEED_COBCANNON) {
             g->SetColor(white);
-            g->DrawString((SexyString&)holder, 40, 34);
+            g->DrawString((SexyString&)str, 40, 34);
         } else {
             g->SetColor(white);
-            g->DrawString((SexyString&)holder, 0, 34);
+            g->DrawString((SexyString&)str, 0, 34);
         }
-        StringDelete(holder);
+//        StringDelete(holder);
         g->SetFont(nullptr);
     }
 }

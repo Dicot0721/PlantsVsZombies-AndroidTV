@@ -21,6 +21,7 @@ class ReanimatorDefinition;
 inline void *Board_UpdateAddr;
 inline void *Board_BoardAddr;
 inline void *Board_InitLevelAddr;
+inline void *Board_StartLevelAddr;
 inline void *Board_RemovedFromManagerAddr;
 inline void *Board_Delete2Addr;
 inline void *Board_GetPlantsOnLawnAddr;
@@ -37,6 +38,7 @@ inline void *Board_RefreshSeedPacketFromCursorAddr;
 inline void *Board_CanUseGameObjectAddr;
 inline void *Board_DrawZenButtonsAddr;
 inline void *Board_DrawShovelAddr;
+inline void *Board_DrawGameObjectsAddr;
 inline void *Board_StageIsNightAddr;
 inline void *Board_StageHasPoolAddr;
 inline void *Board_StageHas6RowsAddr;
@@ -459,6 +461,7 @@ inline void *SeedBank_ContainsPointAddr;
 
 
 inline void *Challenge_UpdateAddr;
+inline void *Challenge_UpdateStormyNightAddr;
 inline void *Challenge_HeavyWeaponFireAddr;
 inline void *Challenge_IZombieDrawPlantAddr;
 inline void *Challenge_CanPlantAtAddr;
@@ -495,6 +498,9 @@ inline void *Challenge_IZombieSetPlantFilterEffectAddr;
 inline void *Challenge_PlantAddedAddr;
 inline void *Challenge_UpdateZombieSpawningAddr;
 inline void *Challenge_HeavyWeaponPacketClickedAddr;
+inline void *Challenge_DrawWeatherAddr;
+inline void *Challenge_DrawRainAddr;
+inline void *Challenge_DrawStormNightAddr;
 
 
 inline void *Plant_UpdateAddr;
@@ -1179,6 +1185,7 @@ inline bool GetFunctionAddr() {
     Board_UpdateAddr = dlsym(handle, "_ZN5Board6UpdateEv");
     Board_BoardAddr = dlsym(handle, "_ZN5BoardC2EP7LawnApp");
     Board_InitLevelAddr = dlsym(handle, "_ZN5Board9InitLevelEv");
+    Board_StartLevelAddr = dlsym(handle, "_ZN5Board10StartLevelEv");
     Board_RemovedFromManagerAddr = dlsym(handle, "_ZN5Board18RemovedFromManagerEPN4Sexy13WidgetManagerE");
     Board_Delete2Addr = dlsym(handle, "_ZN5BoardD2Ev");
     Board_FadeOutLevelAddr = dlsym(handle, "_ZN5Board12FadeOutLevelEv");
@@ -1186,6 +1193,7 @@ inline bool GetFunctionAddr() {
     Board_CanUseGameObjectAddr = dlsym(handle, "_ZN5Board16CanUseGameObjectE14GameObjectType");
     Board_DrawZenButtonsAddr = dlsym(handle, "_ZN5Board14DrawZenButtonsEPN4Sexy8GraphicsE");
     Board_DrawShovelAddr = dlsym(handle, "_ZN5Board10DrawShovelEPN4Sexy8GraphicsE");
+    Board_DrawGameObjectsAddr = dlsym(handle, "_ZN5Board15DrawGameObjectsEPN4Sexy8GraphicsE");
     Board_StageIsNightAddr = dlsym(handle, "_ZN5Board12StageIsNightEv");
     Board_StageHasPoolAddr = dlsym(handle, "_ZN5Board12StageHasPoolEv");
     Board_StageHas6RowsAddr = dlsym(handle, "_ZN5Board13StageHas6RowsEv");
@@ -1618,6 +1626,7 @@ inline bool GetFunctionAddr() {
 
 
     Challenge_UpdateAddr = dlsym(handle, "_ZN9Challenge6UpdateEv");
+    Challenge_UpdateStormyNightAddr = dlsym(handle, "_ZN9Challenge17UpdateStormyNightEv");
     Challenge_HeavyWeaponFireAddr = dlsym(handle, "_ZN9Challenge15HeavyWeaponFireEff");
     Challenge_IZombieDrawPlantAddr = dlsym(handle, "_ZN9Challenge16IZombieDrawPlantEPN4Sexy8GraphicsEP5Plant");
     Challenge_HeavyWeaponUpdateAddr = dlsym(handle, "_ZN9Challenge17HeavyWeaponUpdateEv");
@@ -1654,6 +1663,9 @@ inline bool GetFunctionAddr() {
     Challenge_PlantAddedAddr = dlsym(handle, "_ZN9Challenge10PlantAddedEP5Plant");
     Challenge_UpdateZombieSpawningAddr = dlsym(handle, "_ZN9Challenge20UpdateZombieSpawningEv");
     Challenge_HeavyWeaponPacketClickedAddr = dlsym(handle, "_ZN9Challenge24HeavyWeaponPacketClickedEP10SeedPacket");
+    Challenge_DrawWeatherAddr = dlsym(handle, "_ZN9Challenge11DrawWeatherEPN4Sexy8GraphicsE");
+    Challenge_DrawRainAddr = dlsym(handle, "_ZN9Challenge8DrawRainEPN4Sexy8GraphicsE");
+    Challenge_DrawStormNightAddr = dlsym(handle, "_ZN9Challenge14DrawStormNightEPN4Sexy8GraphicsE");
 
 
     Plant_UpdateAddr = dlsym(handle, "_ZN5Plant6UpdateEv");

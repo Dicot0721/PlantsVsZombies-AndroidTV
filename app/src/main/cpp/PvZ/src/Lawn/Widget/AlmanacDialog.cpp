@@ -261,8 +261,8 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
     TodDrawString(g, (int *)&mNameString, 617, 108, *Sexy_FONT_DWARVENTODCRAFT18_Addr, color, DrawStringJustification::DS_ALIGN_CENTER);
 
     if (mSelectedSeed != SeedType::SEED_IMITATER) {
-        TodDrawStringWrapped(g, (int *)&mCostString, &mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_LEFT, false);
-        TodDrawStringWrapped(g, (int *)&mWaitTimeString, &mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_RIGHT, false);
+        TodDrawStringWrapped(g, mCostString, &mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_LEFT, false);
+        TodDrawStringWrapped(g, mWaitTimeString, &mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_RIGHT, false);
     }
 
     g->PushState();;
@@ -364,8 +364,8 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     TodDrawString(g, (int *)&mNameString, 617, 108, *Sexy_FONT_DWARVENTODCRAFT18_Addr, color, DrawStringJustification::DS_ALIGN_CENTER);
 
     if (mSelectedSeed != SeedType::SEED_IMITATER) {
-        TodDrawStringWrapped(g, (int *)&mCostString, &mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_LEFT, false);
-        TodDrawStringWrapped(g, (int *)&mWaitTimeString, &mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_RIGHT, false);
+        TodDrawStringWrapped(g, mCostString, &mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_LEFT, false);
+        TodDrawStringWrapped(g, mWaitTimeString, &mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_RIGHT, false);
     }
 
     g->PushState();;

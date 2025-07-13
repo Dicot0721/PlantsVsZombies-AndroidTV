@@ -266,12 +266,10 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
             int offsetX = gLeaderboardAchievementsPosition[num][0] + 20;
             int offsetY = gLeaderboardAchievementsPosition[num][1] - 200;
             g->DrawImage(image, offsetX, offsetY);
-            int holder[1];
-            StrFormat(holder, "[%s]", GetNameByAchievementId(id));
+            pvzstl::string str = StrFormat("[%s]", GetNameByAchievementId(id));
             Sexy::Rect rect = {offsetX - 42, offsetY + 125, 200, 200};
             Color theColor = {0, 255, 0, 255};
-            TodDrawStringWrapped(g, holder, &rect, *Sexy_FONT_HOUSEOFTERROR28_Addr, &theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
-            StringDelete(holder);
+            TodDrawStringWrapped(g, str, &rect, *Sexy_FONT_HOUSEOFTERROR28_Addr, &theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
         } else {
             leaderboardsWidget->mLeaderboardReanimations->achievementReanim[num]->Draw(g);
         }
@@ -280,30 +278,35 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
     if (leaderboardsWidget->mApp->HasFinishedAdventure()) {
         leaderboardsWidget->mLeaderboardReanimations->backgroundReanim[1]->DrawRenderGroup(g, 1);
         int holder[1];
-        int holder1[1];
+//        int holder1[1];
+        pvzstl::string str1{};
         TodStringTranslate(holder, "[LEADERBOARD_STREAK]");
-        TodReplaceNumberString(holder1, holder, "{STREAK}", leaderboardsWidget->mLongestRecordPool);
+//        TodReplaceNumberString(holder1, holder, "{STREAK}", leaderboardsWidget->mLongestRecordPool);
+        TodReplaceNumberString((int *)&str1, holder, "{STREAK}", leaderboardsWidget->mLongestRecordPool);
         Sexy::Rect theRect = {317, 658, 120, 50};
         Sexy::Font *theFont = *Sexy_FONT_CONTINUUMBOLD14_Addr;
-        TodDrawStringWrapped(g, holder1, &theRect, theFont, &yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
+        TodDrawStringWrapped(g, str1, &theRect, theFont, &yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
         StringDelete(holder);
-        StringDelete(holder1);
+//        StringDelete(holder1);
     }
 
     //    DrawImage(g, addonImages.survival_button, 270, 579);
 
     int holder2[1];
-    int holder3[1];
-    int holder4[1];
+//    int holder3[1];
+//    int holder4[1];
+    pvzstl::string str4{};
     Sexy::Rect theRect1 = {240, 70, 800, 70};
     TodStringTranslate(holder2, "[PLAYERS_HOUSE]");
-    StrFormat(holder3, "%s", leaderboardsWidget->mApp->mPlayerInfo->mName);
-    TodReplaceString(holder4, holder2, "{PLAYER}", holder3);
+//    StrFormat(holder3, "%s", leaderboardsWidget->mApp->mPlayerInfo->mName);
+    pvzstl::string str3 = StrFormat("%s", leaderboardsWidget->mApp->mPlayerInfo->mName);
+//    TodReplaceString(holder4, holder2, "{PLAYER}", holder3);
+    TodReplaceString((int *)&str4, holder2, "{PLAYER}", (int* )&str3);
     Sexy::Font *theFont1 = *Sexy_FONT_HOUSEOFTERROR28_Addr;
-    TodDrawStringWrapped(g, holder4, &theRect1, theFont1, &white, DrawStringJustification::DS_ALIGN_CENTER, false);
+    TodDrawStringWrapped(g, str4, &theRect1, theFont1, &white, DrawStringJustification::DS_ALIGN_CENTER, false);
     StringDelete(holder2);
-    StringDelete(holder3);
-    StringDelete(holder4);
+//    StringDelete(holder3);
+//    StringDelete(holder4);
 
     //    int plantHeight = plantPileHeight * leaderboardsWidget->mPlantTrashBin->mPileNum;
     //    int zombieHeight = zombiePileHeight * leaderboardsWidget->mZombieTrashBin->mPileNum;

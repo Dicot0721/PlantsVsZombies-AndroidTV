@@ -317,6 +317,20 @@ void Challenge::InitLevel() {
     }
 }
 
+void Challenge::StartLevel() {
+    old_Challenge_StartLevel(this);
+
+    if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON && heavyWeaponAccel) {
+        Native::BridgeApp* bridgeApp = Native::BridgeApp::getSingleton();
+        JNIEnv* env = bridgeApp->getJNIEnv();
+        jobject activity = bridgeApp->mNativeApp->getActivity();
+        jclass cls = env->GetObjectClass(activity);
+        jmethodID methodID = env->GetMethodID(cls, "startOrientationListener", "()V");
+        env->CallVoidMethod(activity, methodID);
+        env->DeleteLocalRef(cls);
+    }
+}
+
 void Challenge::InitZombieWaves() {
     old_Challenge_InitZombieWaves(this);
 
@@ -485,20 +499,6 @@ void Challenge::HeavyWeaponPacketClicked(SeedPacket* theSeedPacket) {
     }
 
     old_Challenge_HeavyWeaponPacketClicked(this, theSeedPacket);
-}
-
-void Challenge::StartLevel() {
-    old_Challenge_StartLevel(this);
-
-    if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON && heavyWeaponAccel) {
-        Native::BridgeApp* bridgeApp = Native::BridgeApp::getSingleton();
-        JNIEnv* env = bridgeApp->getJNIEnv();
-        jobject activity = bridgeApp->mNativeApp->getActivity();
-        jclass cls = env->GetObjectClass(activity);
-        jmethodID methodID = env->GetMethodID(cls, "startOrientationListener", "()V");
-        env->CallVoidMethod(activity, methodID);
-        env->DeleteLocalRef(cls);
-    }
 }
 
 void Challenge::Delete() {

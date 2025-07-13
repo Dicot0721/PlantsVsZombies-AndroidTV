@@ -67,7 +67,7 @@ inline TodAllocator *(*FindGlobalAllocator)(int aSize);
 
 inline void (*AttachParticle)(AttachmentID *, TodParticleSystem *, float, float);
 
-inline void (*TodLoadResources)(int *);
+inline void (*TodLoadResources)(const pvzstl::string &theGroup);
 
 inline void (*TodParticleSystem_Draw)(TodParticleSystem *, Sexy::Graphics *);
 

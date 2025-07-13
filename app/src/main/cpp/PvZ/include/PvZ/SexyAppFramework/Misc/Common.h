@@ -14,6 +14,7 @@
 #include <cstdlib>
 
 #include "PvZ/Symbols.h"
+#include "PvZ/STL/string.h"
 
 typedef std::string SexyString; // 不确定，猜测是std::string
 #define _S(x) x
@@ -54,16 +55,17 @@ inline float Rand(float range) {
     return reinterpret_cast<float (*)(float)>(Sexy_RandFloatAddr)(range);
 }
 
-inline void vformat(int *holder, const char *fmt, va_list vList) {
-    reinterpret_cast<void (*)(int *, const char *, va_list)>(Sexy_vformatAddr)(holder, fmt, vList);
+inline void vformat(pvzstl::string &output, const char *fmt, va_list vList) {
+    reinterpret_cast<void (*)(pvzstl::string &, const char *, va_list)>(Sexy_vformatAddr)(output, fmt, vList);
 }
 
-/*[[gnu::format(printf, 2, 3)]]*/ inline void StrFormat(int *holder, const char *fmt, ...) {
+[[gnu::format(printf, 1, 2)]] inline pvzstl::string StrFormat(const char *fmt, ...) {
+    pvzstl::string output{nullptr};
     va_list args;
-
     va_start(args, fmt);
-    vformat(holder, fmt, args);
+    vformat(output, fmt, args);
     va_end(args);
+    return output;
 }
 
 void StringDelete(int *holder);

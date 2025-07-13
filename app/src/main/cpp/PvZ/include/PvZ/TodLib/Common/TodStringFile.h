@@ -9,8 +9,8 @@
 #include "PvZ/Symbols.h"
 
 inline void
-TodDrawStringWrapped(Sexy::Graphics* g, int* theText, const Sexy::Rect* theRect, Sexy::Font* theFont, const Sexy::Color* theColor, DrawStringJustification theJustification, bool drawString) {
-    reinterpret_cast<void (*)(Sexy::Graphics*, int*, const Sexy::Rect*, Sexy::Font*, const Sexy::Color*, DrawStringJustification, bool)>(TodDrawStringWrappedAddr)(
+TodDrawStringWrapped(Sexy::Graphics* g, const pvzstl::string &theText, const Sexy::Rect* theRect, Sexy::Font* theFont, const Sexy::Color* theColor, DrawStringJustification theJustification, bool drawString) {
+    reinterpret_cast<void (*)(Sexy::Graphics*, const pvzstl::string &, const Sexy::Rect*, Sexy::Font*, const Sexy::Color*, DrawStringJustification, bool)>(TodDrawStringWrappedAddr)(
         g, theText, theRect, theFont, theColor, theJustification, drawString);
 }
 

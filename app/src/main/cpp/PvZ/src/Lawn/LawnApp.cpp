@@ -255,10 +255,9 @@ void LawnApp::Init() {
 }
 
 void LawnApp::Load(const char *theGroupName) {
-    int holder[1];
-    StrFormat(holder, "%s", theGroupName);
-    TodLoadResources(holder);
-    StringDelete(holder);
+    pvzstl::string str = StrFormat("%s", theGroupName);
+    TodLoadResources(str);
+//    StringDelete(holder);
 }
 
 //void LawnApp::DoConvertImitaterImages() {

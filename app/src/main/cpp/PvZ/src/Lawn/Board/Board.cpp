@@ -444,6 +444,10 @@ void Board::DrawZenButtons(Sexy::Graphics *g) {
     return old_Board_DrawZenButtons(this, g);
 }
 
+void Board::DrawGameObjects(Graphics* g) {
+    old_Board_DrawGameObjects(this, g);
+}
+
 void Board::KeyDown(KeyCode theKey) {
     // 用于切换键盘模式，自动开关砸罐子老虎机种子雨关卡内的"自动拾取植物卡片"功能
     if (theKey >= 37 && theKey <= 40) {
@@ -2980,8 +2984,8 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
 }
 
 
-void Board_startLevel(Board *board) {
-    old_Board_startLevel(board);
+void Board::StartLevel() {
+    old_Board_StartLevel(this);
 }
 
 
@@ -3117,15 +3121,14 @@ bool Board::GrantAchievement(AchievementId theAchievementId, bool theIsShow) {
         ClearAdviceImmediately();
         const char *theAchievementName = GetNameByAchievementId(theAchievementId);
         int holder[1];
-        int holder1[1];
         int holder2[1];
         TodStringTranslate(holder, "[ACHIEVEMENT_GRANTED]");
-        StrFormat(holder1, "[%s]", theAchievementName);
-        TodReplaceString(holder2, holder, "{achievement}", holder1);
+        pvzstl::string str1 = StrFormat("[%s]", theAchievementName);
+        TodReplaceString(holder2, holder, "{achievement}", (int *)&str1);
         DisplayAdviceAgain(_S("[ACHIEVEMENT_GRANTED]"), MessageStyle::MESSAGE_STYLE_ACHIEVEMENT, AdviceType::ADVICE_NEED_ACHIVEMENT_EARNED);
         mAdvice->mIcon = GetIconByAchievementId(theAchievementId);
         StringDelete(holder);
-        StringDelete(holder1);
+//        StringDelete(holder1);
         StringDelete(holder2);
         playerInfo->mAchievements[theAchievementId] = true;
         return true;

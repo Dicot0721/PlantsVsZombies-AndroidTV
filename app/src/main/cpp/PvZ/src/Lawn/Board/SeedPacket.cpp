@@ -59,13 +59,12 @@ void SeedPacket::DrawOverlay(Sexy::Graphics *g) {
 
     if (mRefreshing && showCoolDown) {
         // 如果玩家开启了“显示冷却倒计时”，则绘制倒计时
-        int holder[1];
         int coolDownRemaining = mRefreshTime - mRefreshCounter;
-        StrFormat(holder, "%1.1f", coolDownRemaining / 100.0f);
+        pvzstl::string str = StrFormat("%1.1f", coolDownRemaining / 100.0f);
         g->SetColor(GetPlayerIndex() ? yellow : blue);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-        g->DrawString((SexyString&)holder, coolDownRemaining < 1000 ? 10 : 0, 39);
-        StringDelete(holder);
+        g->DrawString((SexyString&)str, coolDownRemaining < 1000 ? 10 : 0, 39);
+//        StringDelete(holder);
         g->SetFont(nullptr);
     }
 }
@@ -400,39 +399,39 @@ void DrawSeedPacket(Sexy::Graphics *g,
             DrawSeedType(&aPlantG, x, y, theSeedType, theImitaterType, v28, v29, theDrawScale);
     }
     if (theDrawCost) {
-        int tmpHolder[1];
+        pvzstl::string str{};
         Board *board = lawnApp->mBoard;
         if (board != nullptr && board->PlantUsesAcceleratedPricing(realSeedType)) {
             if (theUseCurrentCost) {
                 int CurrentPlantCost = board->GetCurrentPlantCost(theSeedType, theImitaterType);
-                StrFormat(tmpHolder, "%d", CurrentPlantCost);
+                str = StrFormat("%d", CurrentPlantCost);
             } else {
                 int Cost = Plant::GetCost(theSeedType, theImitaterType);
-                StrFormat(tmpHolder, "%d+", Cost);
+                str = StrFormat("%d+", Cost);
             }
         } else {
             int Cost = Plant::GetCost(theSeedType, theImitaterType);
-            StrFormat(tmpHolder, "%d", Cost);
+            str = StrFormat("%d", Cost);
         }
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
-        int width = 31 - (*((int (**)(Sexy::Font *, int *))font->vTable + 8))(font, tmpHolder);
+        int width = 31 - (*((int (**)(Sexy::Font *, int *))font->vTable + 8))(font, (int *)&str);
         ;                                                                      // 33  ----- >  31，微调一下文字位置，左移2个像素点
         int height = 48 + (*((int (**)(Sexy::Font *))font->vTable + 2))(font); // 50  ---- >  48, 微调一下文字位置，上移2个像素点
         Color theColor = {0, 0, 0, 255};
         g->PushState();;
         if (g->mScaleX == 1.0 && g->mScaleY == 1.0) {
-            TodDrawString(g, tmpHolder, width + x, height + y, font, theColor, DrawStringJustification::DS_ALIGN_LEFT);
+            TodDrawString(g, (int *)&str, width + x, height + y, font, theColor, DrawStringJustification::DS_ALIGN_LEFT);
         } else {
             SexyMatrix3 aMatrix;
             TodScaleTransformMatrix(aMatrix, x + g->mTransX + width * g->mScaleX, y + g->mTransY + height * g->mScaleY - 1.0, g->mScaleX, g->mScaleY);
             if (g->mScaleX > 1.8) {
                 g->SetLinearBlend(false);
             }
-            TodDrawStringMatrix(g, font, aMatrix, tmpHolder, &theColor);
+            TodDrawStringMatrix(g, font, aMatrix, (int *)&str, &theColor);
             g->SetLinearBlend(true);
         }
         g->PopState();
-        StringDelete(tmpHolder);
+//        StringDelete(tmpHolder);
     }
     g->SetColorizeImages(false);
 }

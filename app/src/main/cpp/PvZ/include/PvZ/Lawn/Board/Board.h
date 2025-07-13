@@ -43,6 +43,26 @@ public:
     GameObjectType mObjectType;
 };
 
+class RenderItem {
+public:
+    RenderObjectType mRenderObjectType;
+    int mZPos;
+    union {
+        GameObject *mGameObject;
+        Plant *mPlant;
+        Zombie *mZombie;
+        Coin *mCoin;
+        Projectile *mProjectile;
+        CursorPreview *mCursorPreview;
+        TodParticleSystem *mParticleSytem;
+        Reanimation *mReanimation;
+        GridItem *mGridItem;
+        LawnMower *mMower;
+        BossPart mBossPart;
+        int mBoardGridY;
+    };
+};
+
 struct ZombiePicker {
     int mZombieCount;
     int mZombiePoints;
@@ -356,6 +376,7 @@ public:
     Board(LawnApp *theApp);
     void Create(LawnApp *theApp);
     void InitLevel();
+    void StartLevel();
     void Update();
     void RemovedFromManager(Sexy::WidgetManager *theManager);
     int GetNumSeedsInBank(bool thePlayerIndex);
@@ -409,6 +430,7 @@ public:
     void UpdateGridItems();
     void ShakeBoard(int theShakeAmountX, int theShakeAmountY);
     void DrawZenButtons(Sexy::Graphics *g);
+    void DrawGameObjects(Sexy::Graphics* g);
     void SpeedUpUpdate();
     void DrawShovelButton(Sexy::Graphics *g, LawnApp *theApp);
     void ShovelDown();
@@ -607,7 +629,7 @@ inline void (*old_Board_UpdateLevelEndSequence)(Board *board);
 
 inline void (*old_Board_UpdateGridItems)(Board *board);
 
-inline void (*old_Board_startLevel)(Board *board);
+inline void (*old_Board_StartLevel)(Board *board);
 
 inline void (*old_Board_DrawUITop)(Board *board, Sexy::Graphics *graphics);
 
@@ -620,6 +642,8 @@ inline void (*old_Board_UpdateFog)(Board *board);
 inline Sexy::Rect (*old_Board_GetShovelButtonRect)(Board *board);
 
 inline void (*old_Board_DrawZenButtons)(Board *board, Sexy::Graphics *a2);
+
+inline void (*old_Board_DrawGameObjects)(Board *, Sexy::Graphics *);
 
 inline int (*old_Board_GetNumSeedsInBank)(Board *, bool);
 

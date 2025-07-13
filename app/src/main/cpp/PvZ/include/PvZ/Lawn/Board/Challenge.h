@@ -82,6 +82,10 @@ public:
     void IZombieScoreBrain(GridItem *theBrain) { reinterpret_cast<void (*)(Challenge *, GridItem *)>(Challenge_IZombieScoreBrainAddr)(this, theBrain); }
     void GraveDangerSpawnGraveAt(int theGridX, int theGridY) { reinterpret_cast<void (*)(Challenge *, int, int)>(Challenge_GraveDangerSpawnGraveAtAddr)(this, theGridX, theGridY); }
     void PlantAdded(Plant *thePlant) { reinterpret_cast<void (*)(Challenge *, Plant *)>(Challenge_PlantAddedAddr)(this, thePlant); }
+    void DrawWeather(Sexy::Graphics *g) { reinterpret_cast<void (*)(Challenge *, Sexy::Graphics *)>(Challenge_DrawWeatherAddr)(this, g); }
+    void DrawRain(Sexy::Graphics *g) { reinterpret_cast<void (*)(Challenge *, Sexy::Graphics *)>(Challenge_DrawRainAddr)(this, g); }
+    void DrawStormNight(Sexy::Graphics *g) { reinterpret_cast<void (*)(Challenge *, Sexy::Graphics *)>(Challenge_DrawStormNightAddr)(this, g); }
+    void UpdateStormyNight() { reinterpret_cast<void (*)(Challenge *)>(Challenge_UpdateStormyNightAddr)(this); }
 
     Challenge();
     void Create();

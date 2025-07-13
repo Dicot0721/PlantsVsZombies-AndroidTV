@@ -171,9 +171,8 @@ void SeedBank::Draw(Sexy::Graphics *g) {
         if (mApp->IsCoopMode() && mBoard->mSeedBank2 == this) {
             theMoney = mBoard->mSunMoney2 & ~mBoard->mSunMoney2 >> 31; // mSunMoney2
         }
-        int holder[1];
         Color theColor = {0, 0, 0, 255};
-        StrFormat(holder, "%d", theMoney);
+        pvzstl::string str = StrFormat("%d", theMoney);
         int mOutOfMoneyCounter = mBoard->mOutOfMoneyCounter;
         if (mOutOfMoneyCounter > 0 && mOutOfMoneyCounter % 20 <= 9) {
             theColor.mRed = 255;
@@ -181,14 +180,13 @@ void SeedBank::Draw(Sexy::Graphics *g) {
             theColor.mBlue = 0;
             theColor.mAlpha = 255;
         }
-        TodDrawString(g, holder, mIsZombie ? (408 + mBoard->GetSeedBankExtraWidth()) : 38, 78, *Sexy_FONT_CONTINUUMBOLD14_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
-        StringDelete(holder);
+        TodDrawString(g, (int *)&str, mIsZombie ? (408 + mBoard->GetSeedBankExtraWidth()) : 38, 78, *Sexy_FONT_CONTINUUMBOLD14_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
+//        StringDelete(holder);
 
         if (mApp->IsTwinSunbankMode()) {
-            int holder1[1];
-            StrFormat(holder1, "%d", mBoard->mSunMoney2 & ~mBoard->mSunMoney2 >> 31);
-            TodDrawString(g, holder1, 644, 49, *Sexy_FONT_CONTINUUMBOLD14_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
-            StringDelete(holder1);
+            pvzstl::string str1 = StrFormat("%d", mBoard->mSunMoney2 & ~mBoard->mSunMoney2 >> 31);
+            TodDrawString(g, (int *)&str1, 644, 49, *Sexy_FONT_CONTINUUMBOLD14_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
+//            StringDelete(holder1);
         }
     }
     if (mApp->mGameScene != GameScenes::SCENE_PLAYING) {

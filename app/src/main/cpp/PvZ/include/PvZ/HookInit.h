@@ -130,6 +130,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Board_UpdateAddr, &Board::Update, &old_Board_Update);
     homura::HookFunction(Board_BoardAddr, &Board::Create, &old_Board_Board);
     homura::HookFunction(Board_InitLevelAddr, &Board::InitLevel, &old_Board_InitLevel);
+    homura::HookFunction(Board_StartLevelAddr, &Board::StartLevel, &old_Board_StartLevel);
     homura::HookFunction(Board_RemovedFromManagerAddr, &Board::RemovedFromManager, &old_Board_RemovedFromManager);
     homura::HookFunction(Board_FadeOutLevelAddr, &Board::FadeOutLevel, &old_Board_FadeOutLevel);
     homura::HookFunction(Board_AddPlantAddr, &Board::AddPlant, &old_Board_AddPlant);
@@ -180,6 +181,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Board_UpdateGridItemsAddr, &Board::UpdateGridItems, &old_Board_UpdateGridItems);
     homura::HookFunction(Board_ShakeBoardAddr, &Board::ShakeBoard, &old_Board_ShakeBoard);
     homura::HookFunction(Board_DrawZenButtonsAddr, &Board::DrawZenButtons, &old_Board_DrawZenButtons);
+    homura::HookFunction(Board_DrawGameObjectsAddr, &Board::DrawGameObjects, &old_Board_DrawGameObjects);
     //    homura::HookFunction(Board_AddProjectileAddr, &Board::AddProjectile, &old_Board_AddProjectile);
     //    homura::HookFunction(Board_PixelToGridXAddr, &Board::PixelToGridX, &old_Board_PixelToGridX);
     //    homura::HookFunction(Board_PixelToGridYAddr, &Board::PixelToGridY, &old_Board_PixelToGridY);

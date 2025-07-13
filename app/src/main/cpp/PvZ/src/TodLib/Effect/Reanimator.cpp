@@ -335,11 +335,10 @@ int Reanimation_GetZombatarEyeWearTrackIndex(Reanimation *zombatarReanim) {
     return -1;
 }
 
-void DefinitionGetCompiledFilePathFromXMLFilePath(int *absPath, int *defPathString) {
+void DefinitionGetCompiledFilePathFromXMLFilePath(pvzstl::string &absPath, const pvzstl::string &defPathString) {
     // 从addonFiles读取新增的reanim文件
-    char *text = (char *)*defPathString;
-    if (strstr(text, "addonFiles")) {
-        StrFormat(absPath, "%s%s", text, ".compiled");
+    if (strstr(defPathString.c_str(), "addonFiles")) {
+        absPath = StrFormat("%s%s", defPathString.c_str(), ".compiled");
         return;
     }
     return old_DefinitionGetCompiledFilePathFromXMLFilePath(absPath, defPathString);

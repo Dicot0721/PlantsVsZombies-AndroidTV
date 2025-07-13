@@ -132,11 +132,10 @@ void StoreScreen::Draw(Sexy::Graphics *a2) {
         return;
 
     mPage == 5 ? 5 : mPage + 1;
-    int holder[1];
-    StrFormat(holder, "%d/%d", mPage, theTotalPages);
+    pvzstl::string str = StrFormat("%d/%d", mPage, theTotalPages);
     Color theColor = {200, 200, 200, 255};
-    TodDrawString(a2, holder, 410, 512, *Sexy_FONT_BRIANNETOD16_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
-    StringDelete(holder);
+    TodDrawString(a2, (int *)&str, 410, 512, *Sexy_FONT_BRIANNETOD16_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
+//    StringDelete(holder);
 }
 
 bool StoreScreen::IsPottedPlant(StoreItem theStoreItem) {

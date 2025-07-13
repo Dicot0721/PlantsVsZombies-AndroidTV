@@ -223,7 +223,7 @@ inline bool (*old_Reanimation_DrawTrack)(Reanimation *reanim, Sexy::Graphics *g,
 
 inline void (*old_ReanimatorLoadDefinitions)(ReanimationParams *theReanimationParamArray, int theReanimationParamArraySize);
 
-inline void (*old_DefinitionGetCompiledFilePathFromXMLFilePath)(int *absPath, int *defPathString);
+inline void (*old_DefinitionGetCompiledFilePathFromXMLFilePath)(pvzstl::string &absPath, const pvzstl::string &defPathString);
 
 
 void Reanimation_SetImageOrigin(Reanimation *, const char *, Sexy::Image *);
@@ -258,7 +258,7 @@ int Reanimation_GetZombatarEyeWearTrackIndex(Reanimation *zombatarReanim);
 
 void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int theReanimationParamArraySize);
 
-void DefinitionGetCompiledFilePathFromXMLFilePath(int *absPath, int *defPathString);
+void DefinitionGetCompiledFilePathFromXMLFilePath(pvzstl::string &absPath, const pvzstl::string &defPathString);
 
 
 #endif // PVZ_LAWN_REANIMATION_H
