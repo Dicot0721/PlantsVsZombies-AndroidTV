@@ -117,9 +117,7 @@ protected:
             return;
         }
         impl *base_ptr = get_base_ptr();
-        if (base_ptr->ref_count > 0) {
-            --base_ptr->ref_count;
-        } else {
+        if (base_ptr->ref_count-- == 0) {
             ::operator delete(base_ptr);
         }
         _data = nullptr;
