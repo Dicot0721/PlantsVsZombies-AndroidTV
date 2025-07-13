@@ -19,16 +19,10 @@ concept character = std::disjunction_v<
 >;
 // clang-format on
 
-template <character CharT>
-class basic_string;
-
-template <character T>
-[[nodiscard]] basic_string<T> basic_string_wrapper(const T *raw_s);
-
 /**
- * @class 字符串
+ * @class 采用写时复制 (COW) 实现的字符串类模板
  *
- * 使用写时复制 (COW) 实现的字符串类模板.
+ * clang 在 C++11 时的 std::string 实现 (简化版).
  */
 template <character CharT>
 class basic_string {
@@ -48,103 +42,93 @@ public:
     basic_string(const value_type *s) {
         assert((s != nullptr) && "basic_string(const value_type *) detected nullptr");
         init(s, traits_type::length(s));
-    };
+    }
 
-    basic_string(std::nullptr_t) = delete;
+    /**
+     * @brief 构造一个未申请内存的 pvzstl::basic_string 对象.
+     *
+     * 仅在有函数需要就地构造 pvzstl::basic_string 时使用.
+     */
+    basic_string(std::nullptr_t) {}
 
-    // 暂时不考虑拷贝
-    basic_string(const basic_string &other) = delete;
-    basic_string &operator=(const basic_string &other) = delete;
+    basic_string(const basic_string &other)
+        : _data(other._data) {
+        if (_data != nullptr) {
+            ++get_base_ptr()->ref_count;
+        }
+    }
 
     basic_string(basic_string &&other) noexcept
-        : _ptr(other._ptr) {
-        other._ptr = nullptr;
+        : _data(other._data) {
+        other._data = nullptr;
+    }
+
+    ~basic_string() { release(); }
+
+    basic_string &operator=(const basic_string &other) {
+        if (this != std::addressof(other)) {
+            release();
+            if ((_data = other._data) != nullptr) {
+                ++get_base_ptr()->ref_count;
+            }
+        }
+        return *this;
     }
 
     basic_string &operator=(basic_string &&other) noexcept {
         if (this != std::addressof(other)) {
             release();
-            _ptr = std::exchange(other._ptr, nullptr);
+            _data = std::exchange(other._data, nullptr);
         }
         return *this;
     }
 
-    ~basic_string() noexcept { release(); }
+    [[nodiscard]] size_type size() const noexcept { return get_base_ptr()->size; }
 
-    [[nodiscard]] const value_type *data() const noexcept { return _ptr->data; }
-    [[nodiscard]] value_type *data() noexcept { return _ptr->data; }
+    [[nodiscard]] size_type capacity() const noexcept { return get_base_ptr()->capacity; }
 
-    [[nodiscard]] const value_type *c_str() const noexcept { return data(); }
+    [[nodiscard]] bool empty() const noexcept { return size() == 0; }
 
-    [[nodiscard]] bool empty() const noexcept { return _ptr->size == 0; }
+    [[nodiscard]] const value_type *c_str() const noexcept { return _data; }
 
-    [[nodiscard]] size_type size() const noexcept { return _ptr->size; }
-
-    [[nodiscard]] size_type capacity() const noexcept { return _ptr->capacity; }
-
-    template <character T>
-    friend basic_string<T> basic_string_wrapper(const T *raw_s) {
-        assert(raw_s != nullptr);
-        basic_string<T> str;
-        str._ptr = reinterpret_cast<impl *>(uintptr_t(raw_s) - sizeof(impl));
-        return str;
-    }
+    [[nodiscard]] bool valid() const noexcept { return _data != nullptr; }
 
 protected:
     struct impl {
-        size_type size;                // 字符串长度 (已用空间大小)
-        size_type capacity;            // 字符串容量 (可用空间大小, 不包括终止符)
-        std::atomic_int32_t ref_count; // 引用计数 (小于等于 0 时销毁对象)
-        value_type data[];             // 字符数组 (柔性数组成员)
+        size_type size;                // 字符数
+        size_type capacity;            // 已分配存储空间中可以容纳的字符数
+        std::atomic_int32_t ref_count; // 引用计数 (小于等于 0 时释放内存)
+        value_type data[];             // 作为字符存储的底层数组 (柔性数组成员)
     };
 
+    const impl *get_base_ptr() const noexcept { return reinterpret_cast<impl *>(uintptr_t(_data) - sizeof(impl)); }
+    impl *get_base_ptr() noexcept { return reinterpret_cast<impl *>(uintptr_t(_data) - sizeof(impl)); }
+
     void init(const value_type *s, size_type sz) {
-        std::size_t alloc_size = sizeof(impl) + sizeof(value_type) * (sz + 1); // 暂时不考虑用对齐来提高性能
-        _ptr = new (::operator new(alloc_size)) impl{.size = sz, .capacity = sz, .ref_count = 0};
-        traits_type::copy(_ptr->data, s, sz);
-        _ptr->data[sz] = static_cast<value_type>(0);
+        std::size_t alloc_size = sizeof(impl) + sizeof(value_type) * (sz + 1);
+        impl *base_ptr = new (::operator new(alloc_size)) impl{.size = sz, .capacity = sz, .ref_count = 0};
+        _data = base_ptr->data;
+        traits_type::copy(_data, s, sz);
+        _data[sz] = value_type(0);
     }
 
     void release() noexcept {
-        if (_ptr == nullptr) {
+        if (_data == nullptr) {
             return;
         }
-        if (_ptr->ref_count > 0) {
-            --_ptr->ref_count;
+        impl *base_ptr = get_base_ptr();
+        if (base_ptr->ref_count > 0) {
+            --base_ptr->ref_count;
         } else {
-            ::operator delete(_ptr);
+            ::operator delete(base_ptr);
         }
-        _ptr = nullptr;
+        _data = nullptr;
     }
 
-    impl *_ptr = nullptr;
+    value_type *_data = nullptr;
 };
 
-// template <character CharT>
-// basic_string<CharT>::basic_string(const basic_string &other)
-//     : _ptr(other._ptr) {
-//     if (_ptr != nullptr) {
-//         ++_ptr->ref_count;
-//     }
-// }
-
-// template <character CharT>
-// basic_string<CharT> &basic_string<CharT>::operator=(const basic_string &other) {
-//     if (this != std::addressof(other)) {
-//         release();
-//         _ptr = other._ptr;
-//         if (_ptr != nullptr) {
-//             ++_ptr->ref_count;
-//         }
-//     }
-//     return *this;
-// }
-
 using string = basic_string<char>;
-
-[[nodiscard]] inline string string_wrapper(const char *raw_s) {
-    return basic_string_wrapper<char>(raw_s);
-}
 
 } // namespace pvzstl
 

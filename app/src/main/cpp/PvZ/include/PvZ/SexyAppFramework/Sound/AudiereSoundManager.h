@@ -12,8 +12,8 @@ namespace Sexy {
 
 class AudiereSoundManager {
 public:
-    int LoadSound(pvzstl::string::pointer *theFileName) {
-        return reinterpret_cast<int (*)(AudiereSoundManager *, pvzstl::string::pointer *)>(Sexy_AudiereSoundManager_LoadSoundAddr)(this, theFileName);
+    int LoadSound(const pvzstl::string &theFileName) {
+        return reinterpret_cast<int (*)(AudiereSoundManager *, const pvzstl::string &)>(Sexy_AudiereSoundManager_LoadSoundAddr)(this, theFileName);
     }
 };
 

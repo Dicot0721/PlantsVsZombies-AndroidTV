@@ -100,16 +100,13 @@ void LawnApp::LoadAddonSounds() {
 
 Image *LawnApp::GetImageByFileName(const char *theFileName) {
     // 根据贴图文件路径获得贴图
-    pvzstl::string str{theFileName};
-    Image *theImage = GetImage(str.c_str(), true);
+    Image *theImage = GetImage(theFileName, true);
     return theImage;
 }
 
 int LawnApp::GetSoundByFileName(const char *theFileName) {
     // 根据音频文件路径获得音频
-    pvzstl::string str{theFileName};
-    char *strData = str.data();
-    int theSoundId = mSoundManager->LoadSound(&strData);
+    int theSoundId = mSoundManager->LoadSound(theFileName);
     return theSoundId;
 }
 
