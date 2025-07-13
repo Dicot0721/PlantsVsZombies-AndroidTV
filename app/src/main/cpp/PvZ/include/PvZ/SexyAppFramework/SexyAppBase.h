@@ -44,8 +44,8 @@ public:
 
     Dialog *GetDialog(Dialogs theDialogId) { return reinterpret_cast<Dialog *(*)(__SexyAppBase *, Dialogs)>(Sexy_SexyAppBase_GetDialogAddr)(this, theDialogId); }
     void EraseFile(const std::string &theFileName) { reinterpret_cast<void (*)(__SexyAppBase *, const std::string &)>(Sexy_SexyAppBase_EraseFileAddr)(this, theFileName); }
-    Image *GetImage(const pvzstl::string::const_pointer &theFileName, bool commitBits = true) {
-        return reinterpret_cast<Image *(*)(__SexyAppBase *, const pvzstl::string::const_pointer &, bool)>(Sexy_SexyAppBase_GetImageAddr)(this, theFileName, commitBits);
+    Image *GetImage(const pvzstl::string &theFileName, bool commitBits = true) {
+        return reinterpret_cast<Image *(*)(__SexyAppBase *, const pvzstl::string &, bool)>(Sexy_SexyAppBase_GetImageAddr)(this, theFileName, commitBits);
     }
     bool RegistryReadString(const std::string &theValueName, std::string *theString) {
         return reinterpret_cast<bool(*)(__SexyAppBase *, const std::string &, std::string *)>(Sexy_SexyAppBase_RegistryReadStringAddr)(this, theValueName, theString);
