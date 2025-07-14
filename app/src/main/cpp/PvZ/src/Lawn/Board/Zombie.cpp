@@ -539,7 +539,6 @@ void Zombie::Draw(Sexy::Graphics *g) {
             g->mTransY = 240.0f;
         }
         g->DrawString((SexyString&)str, 0, drawHeightOffset);
-//        StringDelete(holder);
         g->SetFont(nullptr);
         drawHeightOffset += 20;
     }
@@ -549,7 +548,6 @@ void Zombie::Draw(Sexy::Graphics *g) {
             g->SetColor(yellow);
             g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
             g->DrawString((SexyString&)str, 0, drawHeightOffset);
-//            StringDelete(holder);
             g->SetFont(nullptr);
             drawHeightOffset += 20;
         }
@@ -558,7 +556,6 @@ void Zombie::Draw(Sexy::Graphics *g) {
             g->SetColor(blue);
             g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
             g->DrawString((SexyString&)str, 0, drawHeightOffset);
-//            StringDelete((int *)holder);
             g->SetFont(nullptr);
         }
     }

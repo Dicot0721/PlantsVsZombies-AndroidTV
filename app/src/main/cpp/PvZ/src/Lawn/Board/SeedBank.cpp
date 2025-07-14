@@ -181,12 +181,10 @@ void SeedBank::Draw(Sexy::Graphics *g) {
             theColor.mAlpha = 255;
         }
         TodDrawString(g, (int *)&str, mIsZombie ? (408 + mBoard->GetSeedBankExtraWidth()) : 38, 78, *Sexy_FONT_CONTINUUMBOLD14_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
-//        StringDelete(holder);
 
         if (mApp->IsTwinSunbankMode()) {
             pvzstl::string str1 = StrFormat("%d", mBoard->mSunMoney2 & ~mBoard->mSunMoney2 >> 31);
             TodDrawString(g, (int *)&str1, 644, 49, *Sexy_FONT_CONTINUUMBOLD14_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
-//            StringDelete(holder1);
         }
     }
     if (mApp->mGameScene != GameScenes::SCENE_PLAYING) {

@@ -446,7 +446,6 @@ void Plant::Draw(Sexy::Graphics *g) {
             g->SetColor(white);
             g->DrawString((SexyString&)str, 0, 34);
         }
-//        StringDelete(holder);
         g->SetFont(nullptr);
     }
 }

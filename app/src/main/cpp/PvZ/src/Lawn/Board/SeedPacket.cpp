@@ -64,7 +64,6 @@ void SeedPacket::DrawOverlay(Sexy::Graphics *g) {
         g->SetColor(GetPlayerIndex() ? yellow : blue);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
         g->DrawString((SexyString&)str, coolDownRemaining < 1000 ? 10 : 0, 39);
-//        StringDelete(holder);
         g->SetFont(nullptr);
     }
 }
@@ -431,7 +430,6 @@ void DrawSeedPacket(Sexy::Graphics *g,
             g->SetLinearBlend(true);
         }
         g->PopState();
-//        StringDelete(tmpHolder);
     }
     g->SetColorizeImages(false);
 }

@@ -277,36 +277,25 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
 
     if (leaderboardsWidget->mApp->HasFinishedAdventure()) {
         leaderboardsWidget->mLeaderboardReanimations->backgroundReanim[1]->DrawRenderGroup(g, 1);
-        int holder[1];
-//        int holder1[1];
+        pvzstl::string str{};
         pvzstl::string str1{};
-        TodStringTranslate(holder, "[LEADERBOARD_STREAK]");
-//        TodReplaceNumberString(holder1, holder, "{STREAK}", leaderboardsWidget->mLongestRecordPool);
-        TodReplaceNumberString((int *)&str1, holder, "{STREAK}", leaderboardsWidget->mLongestRecordPool);
+        TodStringTranslate((int *)&str, "[LEADERBOARD_STREAK]");
+        TodReplaceNumberString((int *)&str1, (int *)&str, "{STREAK}", leaderboardsWidget->mLongestRecordPool);
         Sexy::Rect theRect = {317, 658, 120, 50};
         Sexy::Font *theFont = *Sexy_FONT_CONTINUUMBOLD14_Addr;
         TodDrawStringWrapped(g, str1, &theRect, theFont, &yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
-        StringDelete(holder);
-//        StringDelete(holder1);
     }
 
     //    DrawImage(g, addonImages.survival_button, 270, 579);
 
-    int holder2[1];
-//    int holder3[1];
-//    int holder4[1];
+    pvzstl::string  str2{};
     pvzstl::string str4{};
     Sexy::Rect theRect1 = {240, 70, 800, 70};
-    TodStringTranslate(holder2, "[PLAYERS_HOUSE]");
-//    StrFormat(holder3, "%s", leaderboardsWidget->mApp->mPlayerInfo->mName);
+    TodStringTranslate((int *)&str2, "[PLAYERS_HOUSE]");
     pvzstl::string str3 = StrFormat("%s", leaderboardsWidget->mApp->mPlayerInfo->mName);
-//    TodReplaceString(holder4, holder2, "{PLAYER}", holder3);
-    TodReplaceString((int *)&str4, holder2, "{PLAYER}", (int* )&str3);
+    TodReplaceString((int *)&str4, (int *)&str2, "{PLAYER}", (int* )&str3);
     Sexy::Font *theFont1 = *Sexy_FONT_HOUSEOFTERROR28_Addr;
     TodDrawStringWrapped(g, str4, &theRect1, theFont1, &white, DrawStringJustification::DS_ALIGN_CENTER, false);
-    StringDelete(holder2);
-//    StringDelete(holder3);
-//    StringDelete(holder4);
 
     //    int plantHeight = plantPileHeight * leaderboardsWidget->mPlantTrashBin->mPileNum;
     //    int zombieHeight = zombiePileHeight * leaderboardsWidget->mZombieTrashBin->mPileNum;
