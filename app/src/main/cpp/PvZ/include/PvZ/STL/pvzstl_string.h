@@ -188,9 +188,11 @@ basic_string<CharT> &basic_string<CharT>::operator=(const value_type *s) {
     if ((_data == Rep::empty_rep().data) && len == 0) {
         return *this;
     }
-    if (len > capacity() || __ref_count() > 0) {
+    size_type cap = capacity();
+    if (len > cap || __ref_count() > 0) {
+        Rep *p = Rep::create(s, len, std::max(len, cap));
         reset();
-        _data = Rep::create(s, len, len)->data;
+        _data = p->data;
     } else {
         traits_type::copy(_data, s, len);
         _data[len] = value_type{0};
@@ -210,10 +212,12 @@ basic_string<CharT> &basic_string<CharT>::append(const value_type *s, size_type 
     size_type cap = capacity();
     if (new_sz > cap || __ref_count() > 0) {
         Rep *p = Rep::create(_data, old_sz, std::max(new_sz, cap));
+        traits_type::copy(p->data + old_sz, s, n);
         reset();
         _data = p->data;
+    } else {
+        traits_type::copy(_data + old_sz, s, n);
     }
-    traits_type::copy(_data + old_sz, s, n);
     _data[new_sz] = value_type{0};
     get_rep()->size = new_sz;
     return *this;
