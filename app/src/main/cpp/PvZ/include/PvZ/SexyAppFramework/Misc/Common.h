@@ -13,8 +13,8 @@
 #include <algorithm>
 #include <cstdlib>
 
+#include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
-#include "PvZ/STL/string.h"
 
 typedef std::string SexyString; // 不确定，猜测是std::string
 #define _S(x) x
@@ -60,7 +60,7 @@ inline void vformat(pvzstl::string &output, const char *fmt, va_list vList) {
 }
 
 [[gnu::format(printf, 1, 2)]] inline pvzstl::string StrFormat(const char *fmt, ...) {
-    pvzstl::string output{nullptr};
+    pvzstl::string output;
     va_list args;
     va_start(args, fmt);
     vformat(output, fmt, args);

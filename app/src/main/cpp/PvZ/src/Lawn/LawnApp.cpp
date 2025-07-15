@@ -6,9 +6,9 @@
 #include "PvZ/Lawn/Widget/ConfirmBackToMainDialog.h"
 #include "PvZ/Lawn/Widget/MainMenu.h"
 #include "PvZ/Misc.h"
+#include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
-#include "PvZ/STL/string.h"
 
 using namespace Sexy;
 

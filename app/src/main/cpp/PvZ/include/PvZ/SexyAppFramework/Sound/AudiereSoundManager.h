@@ -5,8 +5,8 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_AUDIERESOUNDMANAGER_H
 #define PLANTSVSZOMBIES_ANDROIDTV_AUDIERESOUNDMANAGER_H
 
+#include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
-#include "PvZ/STL/string.h"
 
 namespace Sexy {
 

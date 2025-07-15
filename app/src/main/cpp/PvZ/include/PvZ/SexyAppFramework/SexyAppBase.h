@@ -6,13 +6,13 @@
 #define PLANTSVSZOMBIES_ANDROIDTV_SEXYAPPBASE_H
 
 #include "Graphics/Color.h"
+#include "Graphics/MemoryImage.h"
 #include "Misc/Common.h"
 #include "Misc/Rect.h"
+#include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
-#include "Widget/ButtonListener.h"
-#include "Graphics/MemoryImage.h"
 #include "Sound/AudiereSoundManager.h"
-#include "PvZ/STL/string.h"
+#include "Widget/ButtonListener.h"
 
 namespace Sexy {
 
