@@ -8,10 +8,16 @@
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
 
-inline void
-TodDrawStringWrapped(Sexy::Graphics* g, const pvzstl::string &theText, const Sexy::Rect* theRect, Sexy::Font* theFont, const Sexy::Color* theColor, DrawStringJustification theJustification, bool drawString) {
-    reinterpret_cast<void (*)(Sexy::Graphics*, const pvzstl::string &, const Sexy::Rect*, Sexy::Font*, const Sexy::Color*, DrawStringJustification, bool)>(TodDrawStringWrappedAddr)(
+inline void TodDrawStringWrapped(
+    Sexy::Graphics *g, const pvzstl::string &theText, const Sexy::Rect &theRect, Sexy::Font *theFont, const Sexy::Color &theColor, DrawStringJustification theJustification, bool drawString) {
+    reinterpret_cast<void (*)(Sexy::Graphics *, const pvzstl::string &, const Sexy::Rect &, Sexy::Font *, const Sexy::Color &, DrawStringJustification, bool)>(TodDrawStringWrappedAddr)(
         g, theText, theRect, theFont, theColor, theJustification, drawString);
+}
+
+inline int TodDrawStringWrappedHelper(
+    Sexy::Graphics *g, const pvzstl::string &theText, const Sexy::Rect &theRect, Sexy::Font *theFont, const Sexy::Color &theColor, DrawStringJustification theJustification, bool drawString, bool i2) {
+    return reinterpret_cast<int (*)(Sexy::Graphics *, const pvzstl::string &, const Sexy::Rect &, Sexy::Font *, const Sexy::Color &, DrawStringJustification, bool, bool)>(
+        TodDrawStringWrappedHelperAddr)(g, theText, theRect, theFont, theColor, theJustification, drawString, i2);
 }
 
 //inline int TodDrawStringWrappedHelper(Sexy::Graphics* g,

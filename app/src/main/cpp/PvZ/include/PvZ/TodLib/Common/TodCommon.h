@@ -136,27 +136,49 @@ inline void FixPixelsOnAlphaEdgeForBlending(Sexy::Image *theImage) {
 
 //inline void TodDrawImageCelF(Sexy::Graphics *g, Sexy::Image *theImageStrip, float thePosX, float thePosY, int theCelCol, int theCelRow);
 
-inline int (*TodDrawImageCelCenterScaledF)(Sexy::Graphics *a1, Sexy::Image *a2, float a3, float a4, int a5, float a6, float a7);
+inline void TodDrawImageCelCenterScaledF(Sexy::Graphics *g, Sexy::Image *theImageStrip, float thePosX, float thePosY, int theCelCol, float theScaleX, float theScaleY) {
+    reinterpret_cast<void *(*)(Sexy::Graphics *, Sexy::Image *, float, float, int, float, float)>(TodDrawImageCelCenterScaledFAddr)(
+        g, theImageStrip, thePosX, thePosY, theCelCol, theScaleX, theScaleY);
+}
+inline void TodDrawImageScaledF(Sexy::Graphics *g, Sexy::Image *theImage, float thePosX, float thePosY, float theScaleX, float theScaleY) {
+    reinterpret_cast<void *(*)(Sexy::Graphics *, Sexy::Image *, float, float, float, float)>(TodDrawImageScaledFAddr)(g, theImage, thePosX, thePosY, theScaleX, theScaleY);
+}
 
-inline void (*TodDrawImageScaledF)(Sexy::Graphics *g, Sexy::Image *image, float x, float y, float xScaled, float yScaled);
+inline void TodDrawImageCelScaledF(Sexy::Graphics *g, Sexy::Image *theImageStrip, float thePosX, float thePosY, int theCelCol, int theCelRow, float theScaleX, float theScaleY) {
+    reinterpret_cast<void *(*)(Sexy::Graphics *, Sexy::Image *, float, float, int, int, float, float)>(TodDrawImageCelScaledFAddr)(
+        g, theImageStrip, thePosX, thePosY, theCelCol, theCelRow, theScaleX, theScaleY);
+}
 
-inline void (*TodDrawImageCelScaledF)(Sexy::Graphics *, Sexy::Image *, float, float, int, int, float, float);
+inline void TodDrawImageCenterScaledF(Sexy::Graphics *g, Sexy::Image *theImage, float thePosX, float thePosY, float theScaleX, float theScaleY) {
+    reinterpret_cast<void *(*)(Sexy::Graphics *, Sexy::Image *, float, float, float, float)>(TodDrawImageCenterScaledFAddr)(g, theImage, thePosX, thePosY, theScaleX, theScaleY);
+}
 
-inline void (*TodDrawImageCenterScaledF)(Sexy::Graphics *, Sexy::Image *, float, float, float, float);
+inline void TodScaleTransformMatrix(Sexy::SexyMatrix3& m, float x, float y, float theScaleX, float theScaleY) {
+    reinterpret_cast<void *(*)(Sexy::SexyMatrix3&, float, float, float, float)>(TodScaleTransformMatrixAddr)(m, x, y, theScaleX, theScaleY);
+}
 
-inline void (*TodDrawString)(Sexy::Graphics *, int *, int, int, Sexy::Font *, Sexy::Color color, DrawStringJustification);
+inline void TodDrawString(Sexy::Graphics *g, const pvzstl::string &theText, int thePosX, int thePosY, Sexy::Font *theFont, Sexy::Color &theColor, DrawStringJustification theJustification) {
+    reinterpret_cast<void *(*)(Sexy::Graphics *, const pvzstl::string &, int, int, Sexy::Font *, Sexy::Color, DrawStringJustification)>(TodDrawStringAddr)(
+        g, theText, thePosX, thePosY, theFont, theColor, theJustification);
+}
 
-inline void (*TodScaleTransformMatrix)(Sexy::SexyMatrix3 &, float, float, float, float);
+inline void TodDrawStringMatrix(Sexy::Graphics *g, const Sexy::Font *theFont, const Sexy::SexyMatrix3 &theMatrix, const pvzstl::string &theString, const Sexy::Color &theColor) {
+    reinterpret_cast<void *(*)(Sexy::Graphics *, const Sexy::Font *, const Sexy::SexyMatrix3 &, const pvzstl::string &, const Sexy::Color &)>(TodDrawStringMatrixAddr)(
+        g, theFont, theMatrix, theString, theColor);
+}
 
-inline void (*TodDrawStringMatrix)(Sexy::Graphics *, Sexy::Font *, Sexy::SexyMatrix3 &, int *, Sexy::Color *);
+inline int TodAnimateCurve(int theTimeStart, int theTimeEnd, int theTimeAge, int thePositionStart, int thePositionEnd, TodCurves theCurve) {
+    return reinterpret_cast<int (*)(int, int, int, int, int, TodCurves)>(TodAnimateCurveAddr)(theTimeStart, theTimeEnd, theTimeAge, thePositionStart, thePositionEnd, theCurve);
+}
 
-inline int (*TodAnimateCurve)(int theTimeStart, int theTimeEnd, int theTimeAge, int thePositionStart, int thePositionEnd, TodCurves theCurve);
+inline float TodAnimateCurveFloat(int theTimeStart, int theTimeEnd, int theTimeAge, float thePositionStart, float thePositionEnd, TodCurves theCurve) {
+    return reinterpret_cast<int (*)(int, int, int, float, float, TodCurves)>(TodAnimateCurveFloatAddr)(theTimeStart, theTimeEnd, theTimeAge, thePositionStart, thePositionEnd, theCurve);
+}
 
-inline float (*TodAnimateCurveFloat)(int theTimeStart, int theTimeEnd, int theTimeAge, float thePositionStart, float thePositionEnd, TodCurves theCurve);
+inline float TodAnimateCurveFloatTime(float theTimeStart, float theTimeEnd, float theTimeAge, float thePositionStart, float thePositionEnd, TodCurves theCurve) {
+    return reinterpret_cast<int (*)(float, float, float, float, float, TodCurves)>(TodAnimateCurveFloatTimeAddr)(theTimeStart, theTimeEnd, theTimeAge, thePositionStart, thePositionEnd, theCurve);
+}
 
-inline float (*TodAnimateCurveFloatTime)(float theTimeStart, float theTimeEnd, float theTimeAge, float thePositionStart, float thePositionEnd, TodCurves theCurve);
-
-inline int (*TodDrawStringWrappedHelper)(Sexy::Graphics *pGraphics, int *pInt, Sexy::Rect *pRect, Sexy::Font *pFont, Sexy::Color color, DrawStringJustification justification, bool i1, bool i2);
 
 //inline unsigned long AverageNearByPixels(Sexy::MemoryImage *theImage, unsigned long *thePixel, int x, int y);
 //

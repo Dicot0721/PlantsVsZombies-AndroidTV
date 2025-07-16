@@ -178,11 +178,10 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
 
     // TODO:解决PoolEffect图层问题，和部分植物的介绍文本显示不全问题
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTBACK_Addr, -240, -60);
-    int theHeaderText[1];
-    TodStringTranslate(theHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
-    Color theHeaderColor = {213, 159, 43, 255};
-    TodDrawString(g, theHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, theHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
-    StringDelete(theHeaderText);
+    pvzstl::string aHeaderText{};
+    TodStringTranslate((int *)&aHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
+    Color aHeaderColor = {213, 159, 43, 255};
+    TodDrawString(g, aHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, aHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
     int theAlpha = std::sin((mUpdateCnt % 100) * 0.01 * std::numbers::pi) * 255.0;
     int x, y;
     for (SeedType aSeedType = SeedType::SEED_PEASHOOTER; aSeedType < SeedType::NUM_SEEDS_IN_CHOOSER; aSeedType = (SeedType)(aSeedType + 1)) {
@@ -258,11 +257,11 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTCARD_Addr, 459, 80);
 
     Color color = {213, 159, 43, 255};
-    TodDrawString(g, (int *)&mNameString, 617, 108, *Sexy_FONT_DWARVENTODCRAFT18_Addr, color, DrawStringJustification::DS_ALIGN_CENTER);
+    TodDrawString(g, mNameString, 617, 108, *Sexy_FONT_DWARVENTODCRAFT18_Addr, color, DrawStringJustification::DS_ALIGN_CENTER);
 
     if (mSelectedSeed != SeedType::SEED_IMITATER) {
-        TodDrawStringWrapped(g, mCostString, &mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_LEFT, false);
-        TodDrawStringWrapped(g, mWaitTimeString, &mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_RIGHT, false);
+        TodDrawStringWrapped(g, mCostString, mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_LEFT, false);
+        TodDrawStringWrapped(g, mWaitTimeString, mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_RIGHT, false);
     }
 
     g->PushState();;
@@ -272,7 +271,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
     *(float *)unk2 = -v22;
     g->mTransY = v23;
     Color v39 = {143, 67, 27, 255};
-    TodDrawStringWrappedHelper(g, (int *)&mDescriptionString, &mDescriptionRect, *Sexy_FONT_BRIANNETOD16_Addr, v39, DrawStringJustification::DS_ALIGN_LEFT, true, true);
+    TodDrawStringWrappedHelper(g, mDescriptionString, mDescriptionRect, *Sexy_FONT_BRIANNETOD16_Addr, v39, DrawStringJustification::DS_ALIGN_LEFT, true, true);
     g->PopState();
 }
 
@@ -309,11 +308,10 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     }
 
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTBACK_Addr, -240, -60);
-    int theHeaderText[1];
-    TodStringTranslate(theHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
-    Color theHeaderColor = {213, 159, 43, 255};
-    TodDrawString(g, theHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, theHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
-    StringDelete(theHeaderText);
+    pvzstl::string aHeaderText{};
+    TodStringTranslate((int *)&aHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
+    Color aHeaderColor = {213, 159, 43, 255};
+    TodDrawString(g, aHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, aHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
 
     int theAlpha = sin((mUpdateCnt % 100) * 0.01 * std::numbers::pi) * 255.0;
     int x, y;
@@ -361,11 +359,11 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTCARD_Addr, 459, 80);
 
     Color color = {213, 159, 43, 255};
-    TodDrawString(g, (int *)&mNameString, 617, 108, *Sexy_FONT_DWARVENTODCRAFT18_Addr, color, DrawStringJustification::DS_ALIGN_CENTER);
+    TodDrawString(g, mNameString, 617, 108, *Sexy_FONT_DWARVENTODCRAFT18_Addr, color, DrawStringJustification::DS_ALIGN_CENTER);
 
     if (mSelectedSeed != SeedType::SEED_IMITATER) {
-        TodDrawStringWrapped(g, mCostString, &mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_LEFT, false);
-        TodDrawStringWrapped(g, mWaitTimeString, &mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, &white, DrawStringJustification::DS_ALIGN_RIGHT, false);
+        TodDrawStringWrapped(g, mCostString, mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_LEFT, false);
+        TodDrawStringWrapped(g, mWaitTimeString, mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_RIGHT, false);
     }
 
     g->PushState();;
@@ -375,7 +373,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     *(float *)unk2 = -v22;
     g->mTransY = v23;
     Color v39 = {143, 67, 27, 255};
-    TodDrawStringWrappedHelper(g, (int *)&mDescriptionString, &mDescriptionRect, *Sexy_FONT_BRIANNETOD16_Addr, v39, DrawStringJustification::DS_ALIGN_LEFT, true, true);
+    TodDrawStringWrappedHelper(g, mDescriptionString, mDescriptionRect, *Sexy_FONT_BRIANNETOD16_Addr, v39, DrawStringJustification::DS_ALIGN_LEFT, true, true);
     g->PopState();
 }
 

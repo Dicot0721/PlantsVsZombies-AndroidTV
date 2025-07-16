@@ -269,7 +269,7 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
             pvzstl::string str = StrFormat("[%s]", GetNameByAchievementId(id));
             Sexy::Rect rect = {offsetX - 42, offsetY + 125, 200, 200};
             Color theColor = {0, 255, 0, 255};
-            TodDrawStringWrapped(g, str, &rect, *Sexy_FONT_HOUSEOFTERROR28_Addr, &theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
+            TodDrawStringWrapped(g, str, rect, *Sexy_FONT_HOUSEOFTERROR28_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
         } else {
             leaderboardsWidget->mLeaderboardReanimations->achievementReanim[num]->Draw(g);
         }
@@ -283,7 +283,7 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
         TodReplaceNumberString((int *)&str1, (int *)&str, "{STREAK}", leaderboardsWidget->mLongestRecordPool);
         Sexy::Rect theRect = {317, 658, 120, 50};
         Sexy::Font *theFont = *Sexy_FONT_CONTINUUMBOLD14_Addr;
-        TodDrawStringWrapped(g, str1, &theRect, theFont, &yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
+        TodDrawStringWrapped(g, str1, theRect, theFont, yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
     }
 
     //    DrawImage(g, addonImages.survival_button, 270, 579);
@@ -295,7 +295,7 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
     pvzstl::string str3 = StrFormat("%s", leaderboardsWidget->mApp->mPlayerInfo->mName);
     TodReplaceString((int *)&str4, (int *)&str2, "{PLAYER}", (int* )&str3);
     Sexy::Font *theFont1 = *Sexy_FONT_HOUSEOFTERROR28_Addr;
-    TodDrawStringWrapped(g, str4, &theRect1, theFont1, &white, DrawStringJustification::DS_ALIGN_CENTER, false);
+    TodDrawStringWrapped(g, str4, theRect1, theFont1, white, DrawStringJustification::DS_ALIGN_CENTER, false);
 
     //    int plantHeight = plantPileHeight * leaderboardsWidget->mPlantTrashBin->mPileNum;
     //    int zombieHeight = zombiePileHeight * leaderboardsWidget->mZombieTrashBin->mPileNum;

@@ -45,27 +45,30 @@
 #include "PvZ/Lawn/System/PoolEffect.h"
 
 inline void InitInGameFunction() {
-    TodDrawImageCelCenterScaledF = (decltype(TodDrawImageCelCenterScaledF))TodDrawImageCelCenterScaledFAddr;
-    TodDrawImageScaledF = (decltype(TodDrawImageScaledF))TodDrawImageScaledFAddr;
-    TodDrawImageCelScaledF = (decltype(TodDrawImageCelScaledF))TodDrawImageCelScaledFAddr;
-    TodDrawImageCenterScaledF = (decltype(TodDrawImageCenterScaledF))TodDrawImageCenterScaledFAddr;
-    TodScaleTransformMatrix = (decltype(TodScaleTransformMatrix))TodScaleTransformMatrixAddr;
-    TodDrawStringWrappedHelper = (decltype(TodDrawStringWrappedHelper))TodDrawStringWrappedHelperAddr;
-    TodDrawStringMatrix = (decltype(TodDrawStringMatrix))TodDrawStringMatrixAddr;
-    TodDrawString = (decltype(TodDrawString))TodDrawStringAddr;
-    TodAnimateCurve = (decltype(TodAnimateCurve))TodAnimateCurveAddr;
-    TodAnimateCurveFloat = (decltype(TodAnimateCurveFloat))TodAnimateCurveFloatAddr;
-    TodAnimateCurveFloatTime = (decltype(TodAnimateCurveFloatTime))TodAnimateCurveFloatTimeAddr;
-
-
     TodStringTranslate = (decltype(TodStringTranslate))TodStringTranslateAddr;
+    TodLoadResources = (decltype(TodLoadResources))TodLoadResourcesAddr;
+    TodParticleSystem_Draw = (decltype(TodParticleSystem_Draw))TodParticleSystem_DrawAddr;
+    TodStringListLoad = (decltype(TodStringListLoad))TodStringListLoadAddr;
+    TodReplaceString = (decltype(TodReplaceString))TodReplaceStringAddr;
+    TodReplaceNumberString = (decltype(TodReplaceNumberString))TodReplaceNumberStringAddr;
+    TodParticleSystem_OverrideColor = (decltype(TodParticleSystem_OverrideColor))TodParticleSystem_OverrideColorAddr;
+    TodParticleSystem_OverrideImage = (decltype(TodParticleSystem_OverrideImage))TodParticleSystem_OverrideImageAddr;
+    TodParticleSystem_Delete2 = (decltype(TodParticleSystem_Delete2))TodParticleSystem_Delete2Addr;
+    TodParticleSystem_ParticleSystemDie = (decltype(TodParticleSystem_ParticleSystemDie))TodParticleSystem_ParticleSystemDieAddr;
+
+
+    Sexy_GamepadApp_HasGamepad = (decltype(Sexy_GamepadApp_HasGamepad))Sexy_GamepadApp_HasGamepadAddr;
+    Sexy_ResourceManager_GetSoundThrow = (decltype(Sexy_ResourceManager_GetSoundThrow))Sexy_ResourceManager_GetSoundThrowAddr;
+    Sexy_DefaultProfileMgr_GetAnyProfile = (decltype(Sexy_DefaultProfileMgr_GetAnyProfile))Sexy_DefaultProfileMgr_GetAnyProfileAddr;
+    Sexy_Checkbox_Delete = (decltype(Sexy_Checkbox_Delete))Sexy_Checkbox_DeleteAddr;
+
+
     WaitForSecondPlayerDialog_GameButtonDown = (decltype(WaitForSecondPlayerDialog_GameButtonDown))WaitForSecondPlayerDialog_GameButtonDownAddr;
     HelpTextScreen_KeyDown = (decltype(HelpTextScreen_KeyDown))HelpTextScreen_KeyDownAddr;
     AwardScreen_StartButtonPressed = (decltype(AwardScreen_StartButtonPressed))AwardScreen_StartButtonPressedAddr;
     ShopSeedPacket_Update = (decltype(ShopSeedPacket_Update))ShopSeedPacket_UpdateAddr;
     GetFlashingColor = (decltype(GetFlashingColor))GetFlashingColorAddr;
     LawnPlayerInfo_GetFlag = (decltype(LawnPlayerInfo_GetFlag))LawnPlayerInfo_GetFlagAddr;
-    Sexy_GamepadApp_HasGamepad = (decltype(Sexy_GamepadApp_HasGamepad))Sexy_GamepadApp_HasGamepadAddr;
     ImitaterDialog_SeedHitTest = (decltype(ImitaterDialog_SeedHitTest))ImitaterDialog_SeedHitTestAddr;
     SaveGameContext_SyncInt = (decltype(SaveGameContext_SyncInt))SaveGameContext_SyncIntAddr;
     TypingCheck_SetPhrase = (decltype(TypingCheck_SetPhrase))TypingCheck_SetPhraseAddr;
@@ -74,29 +77,17 @@ inline void InitInGameFunction() {
     ReanimatorEnsureDefinitionLoaded = (decltype(ReanimatorEnsureDefinitionLoaded))ReanimatorEnsureDefinitionLoadedAddr;
     FindGlobalAllocator = (decltype(FindGlobalAllocator))FindGlobalAllocatorAddr;
     AttachParticle = (decltype(AttachParticle))AttachParticleAddr;
-    TodLoadResources = (decltype(TodLoadResources))TodLoadResourcesAddr;
-    TodParticleSystem_Draw = (decltype(TodParticleSystem_Draw))TodParticleSystem_DrawAddr;
-    Sexy_ResourceManager_GetSoundThrow = (decltype(Sexy_ResourceManager_GetSoundThrow))Sexy_ResourceManager_GetSoundThrowAddr;
     ToolTipWidget_SetWarningText = (decltype(ToolTipWidget_SetWarningText))ToolTipWidget_SetWarningTextAddr;
     TestMenuWidget_TestMenuWidget = (decltype(TestMenuWidget_TestMenuWidget))TestMenuWidget_TestMenuWidgetAddr;
     PoolEffect_BilinearLookupFixedPoint = (decltype(PoolEffect_BilinearLookupFixedPoint))PoolEffect_BilinearLookupFixedPointAddr;
-    Sexy_DefaultProfileMgr_GetAnyProfile = (decltype(Sexy_DefaultProfileMgr_GetAnyProfile))Sexy_DefaultProfileMgr_GetAnyProfileAddr;
 
 
     SoundSystemFindInstance = (decltype(SoundSystemFindInstance))SoundSystemFindInstanceAddr;
-    TodStringListLoad = (decltype(TodStringListLoad))TodStringListLoadAddr;
-    TodReplaceString = (decltype(TodReplaceString))TodReplaceStringAddr;
-    TodReplaceNumberString = (decltype(TodReplaceNumberString))TodReplaceNumberStringAddr;
     MaskHelpWidget_MaskHelpWidget = (decltype(MaskHelpWidget_MaskHelpWidget))MaskHelpWidget_MaskHelpWidgetAddr;
     MaskHelpWidget_Delete = (decltype(MaskHelpWidget_Delete))MaskHelpWidget_DeleteAddr;
     DaveHelp_DaveHelp = (decltype(DaveHelp_DaveHelp))DaveHelp_DaveHelpAddr;
     ConfirmBackToMainDialog_ConfirmBackToMainDialog = (decltype(ConfirmBackToMainDialog_ConfirmBackToMainDialog))ConfirmBackToMainDialog_ConfirmBackToMainDialogAddr;
-    TodParticleSystem_OverrideColor = (decltype(TodParticleSystem_OverrideColor))TodParticleSystem_OverrideColorAddr;
-    TodParticleSystem_OverrideImage = (decltype(TodParticleSystem_OverrideImage))TodParticleSystem_OverrideImageAddr;
-    TodParticleSystem_Delete2 = (decltype(TodParticleSystem_Delete2))TodParticleSystem_Delete2Addr;
-    TodParticleSystem_ParticleSystemDie = (decltype(TodParticleSystem_ParticleSystemDie))TodParticleSystem_ParticleSystemDieAddr;
     DrawCheckboxText = (decltype(DrawCheckboxText))DrawCheckboxTextAddr;
-    Sexy_Checkbox_Delete = (decltype(Sexy_Checkbox_Delete))Sexy_Checkbox_DeleteAddr;
     CreditScreen_PauseCredits = (decltype(CreditScreen_PauseCredits))CreditScreen_PauseCreditsAddr;
     Mailbox_GetNumUnseenMessages = (decltype(Mailbox_GetNumUnseenMessages))Mailbox_GetNumUnseenMessagesAddr;
 }
@@ -502,7 +493,7 @@ inline void InitHookFunction() {
     homura::HookFunction(SettingsDialog_DrawAddr, &SettingsDialog_Draw, &old_SettingsDialog_Draw);
     homura::HookFunction(SettingsDialog_Delete2Addr, &SettingsDialog_Delete2, &old_SettingsDialog_Delete2);
     homura::HookFunction(ReanimatorLoadDefinitionsAddr, &ReanimatorLoadDefinitions, &old_ReanimatorLoadDefinitions);
-//    homura::HookFunction(DefinitionGetCompiledFilePathFromXMLFilePathAddr, &DefinitionGetCompiledFilePathFromXMLFilePath, &old_DefinitionGetCompiledFilePathFromXMLFilePath);
+    homura::HookFunction(DefinitionGetCompiledFilePathFromXMLFilePathAddr, &DefinitionGetCompiledFilePathFromXMLFilePath, &old_DefinitionGetCompiledFilePathFromXMLFilePath);
     homura::HookFunction(TestMenuWidget_DeleteAddr, &TestMenuWidget_Delete, &old_TestMenuWidget_Delete);
     homura::HookFunction(TestMenuWidget_Delete2Addr, &TestMenuWidget_Delete2, &old_TestMenuWidget_Delete2);
     homura::HookFunction(SaveGameContext_SyncReanimationDefAddr, &SaveGameContext_SyncReanimationDef, nullptr);

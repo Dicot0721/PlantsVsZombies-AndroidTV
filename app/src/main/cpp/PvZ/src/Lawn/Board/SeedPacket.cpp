@@ -419,14 +419,14 @@ void DrawSeedPacket(Sexy::Graphics *g,
         Color theColor = {0, 0, 0, 255};
         g->PushState();;
         if (g->mScaleX == 1.0 && g->mScaleY == 1.0) {
-            TodDrawString(g, (int *)&str, width + x, height + y, font, theColor, DrawStringJustification::DS_ALIGN_LEFT);
+            TodDrawString(g, str, width + x, height + y, font, theColor, DrawStringJustification::DS_ALIGN_LEFT);
         } else {
             SexyMatrix3 aMatrix;
             TodScaleTransformMatrix(aMatrix, x + g->mTransX + width * g->mScaleX, y + g->mTransY + height * g->mScaleY - 1.0, g->mScaleX, g->mScaleY);
             if (g->mScaleX > 1.8) {
                 g->SetLinearBlend(false);
             }
-            TodDrawStringMatrix(g, font, aMatrix, (int *)&str, &theColor);
+            TodDrawStringMatrix(g, font, aMatrix, str, theColor);
             g->SetLinearBlend(true);
         }
         g->PopState();

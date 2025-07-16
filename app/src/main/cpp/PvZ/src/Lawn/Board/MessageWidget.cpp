@@ -34,7 +34,7 @@ void CustomMessageWidget::Draw(Graphics *g) {
         theRect.mHeight = 600;
         theRect.mWidth = 800;
         theRect.mX = -mApp->mBoard->mX;
-        TodDrawStringWrapped(g, str, &theRect, theFont, &theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
+        TodDrawStringWrapped(g, str, theRect, theFont, theColor, DrawStringJustification::DS_ALIGN_CENTER, false);
     }
 
     if (mIcon != nullptr) {

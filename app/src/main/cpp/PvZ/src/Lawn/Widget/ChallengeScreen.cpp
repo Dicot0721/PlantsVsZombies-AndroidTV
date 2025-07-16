@@ -96,7 +96,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *graphics) {
 
     pvzstl::string str = StrFormat("%d/%d", mApp->GetNumTrophies(mPageIndex), mTotalTrophiesInPage);
     Color theColor = {255, 240, 0, 255};
-    TodDrawString(graphics, (int *)&str, 711, 62, *Sexy_FONT_BRIANNETOD16_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
+    TodDrawString(graphics, str, 711, 62, *Sexy_FONT_BRIANNETOD16_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
 }
 
 void ChallengeScreen::AddedToManager(int *theWidgetManager) {

@@ -15,7 +15,11 @@ class TodParticleSystem;
 
 inline int (*WaitForSecondPlayerDialog_GameButtonDown)(int *a1, int a2, int a3);
 
-inline void (*TodStringTranslate)(int *holder, const char *theText);
+inline void (*TodStringTranslate)(int *theString, const char *theText);
+
+//inline void TodStringTranslate(pvzstl::string theString, const char *theText) {
+//    reinterpret_cast<void(*)(pvzstl::string, const char *)>(TodStringTranslateAddr)(theString, theText);
+//}
 
 inline int (*LawnPlayerInfo_GetFlag)(DefaultPlayerInfo *, int);
 
