@@ -5,14 +5,15 @@
 #include "PvZ/Lawn/Widget/CreditScreen.h"
 #include "PvZ/Misc.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 
 void CreditScreen_CreditScreen(Sexy::Widget *creditScreen, LawnApp *a2, bool a3) {
     old_CreditScreen_CreditScreen(creditScreen, a2, a3);
-    int holder[1];
-    TodStringTranslate(holder, "[MAIN_MENU_BUTTON]");
-    gCreditScreenBackButton = MakeButton(1000, (Sexy::ButtonListener *)creditScreen + 64, creditScreen, (SexyString &)holder);
+
+    pvzstl::string str{};
+    TodStringTranslate(str, "[MAIN_MENU_BUTTON]");
+    gCreditScreenBackButton = MakeButton(1000, (Sexy::ButtonListener *)creditScreen + 64, creditScreen, (SexyString &)str);
     gCreditScreenBackButton->Resize(725, 0, 170, 50);
-    StringDelete(holder);
     creditScreen->AddWidget((Sexy::Widget*)gCreditScreenBackButton);
 }
 

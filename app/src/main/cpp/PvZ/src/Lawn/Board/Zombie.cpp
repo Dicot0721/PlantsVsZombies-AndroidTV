@@ -13,6 +13,7 @@
 #include "PvZ/TodLib/Common/TodCommon.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Effect/Attachment.h"
+#include "PvZ/TodLib/Effect/TodParticle.h"
 
 using namespace Sexy;
 using namespace std;
@@ -1246,8 +1247,8 @@ void Zombie::DropHead(unsigned int theDamageFlags) {
                 float aPosX = mPosX + aSexyTransform2D.m[0][2];
                 float aPosY = mPosY + aSexyTransform2D.m[1][2];
                 TodParticleSystem *todParticleSystem = mApp->AddTodParticle(aPosX, aPosY, mRenderOrder + 1, ParticleEffect::PARTICLE_ZOMBIE_HEAD);
-                TodParticleSystem_OverrideColor(todParticleSystem, nullptr, &reanimatorTrackInstance->mTrackColor);
-                TodParticleSystem_OverrideImage(todParticleSystem, nullptr, reanimatorTrack->mTransforms[0].mImage);
+                todParticleSystem->OverrideColor(nullptr, reanimatorTrackInstance->mTrackColor);
+                todParticleSystem->OverrideImage(nullptr, reanimatorTrack->mTransforms[0].mImage);
             }
             mApp->RemoveReanimation(mBossFireBallReanimID);
             mBossFireBallReanimID = ReanimationID::REANIMATIONID_NULL;

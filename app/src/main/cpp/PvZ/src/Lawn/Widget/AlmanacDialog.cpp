@@ -44,18 +44,18 @@ void AlmanacDialog::Create(LawnApp *theApp) {
     // TODO: 解决部分植物的介绍文本显示不全问题
 
     old_AlmanacDialog_AlmanacDialog(this, theApp);
-    int holder[1];
-    TodStringTranslate(holder, "[ALMANAC_INDEX]");
-    gAlmanacBackButton = MakeButton(theBackId, &this->mButtonListener, this, (SexyString &)holder);
+
+    pvzstl::string str{};
+    TodStringTranslate(str, "[ALMANAC_INDEX]");
+    gAlmanacBackButton = MakeButton(theBackId, &this->mButtonListener, this, (SexyString &)str);
     gAlmanacBackButton->Resize(0, 0, 0, 0);
     gAlmanacBackButton->mBtnNoDraw = true;
     gAlmanacBackButton->mDisabled = true;
-    StringDelete(holder);
-    int holder1[1];
-    TodStringTranslate(holder1, "[CLOSE]");
-    gAlmanacCloseButton = MakeButton(theCloseId, &this->mButtonListener, this, (SexyString &)holder1);
+
+    pvzstl::string str1{};
+    TodStringTranslate(str1, "[CLOSE]");
+    gAlmanacCloseButton = MakeButton(theCloseId, &this->mButtonListener, this, (SexyString &)str1);
     gAlmanacCloseButton->Resize(mAlmanacCloseButtonX, mAlmanacCloseButtonY, mAlmanacButtonWidth, mAlmanacButtonHeight);
-    StringDelete(holder1);
     AddWidget(gAlmanacBackButton);
     AddWidget(gAlmanacCloseButton);
 
@@ -179,7 +179,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
     // TODO:解决PoolEffect图层问题，和部分植物的介绍文本显示不全问题
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTBACK_Addr, -240, -60);
     pvzstl::string aHeaderText{};
-    TodStringTranslate((int *)&aHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
+    TodStringTranslate(aHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
     Color aHeaderColor = {213, 159, 43, 255};
     TodDrawString(g, aHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, aHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
     int theAlpha = std::sin((mUpdateCnt % 100) * 0.01 * std::numbers::pi) * 255.0;
@@ -309,7 +309,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
 
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTBACK_Addr, -240, -60);
     pvzstl::string aHeaderText{};
-    TodStringTranslate((int *)&aHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
+    TodStringTranslate(aHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
     Color aHeaderColor = {213, 159, 43, 255};
     TodDrawString(g, aHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, aHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
 

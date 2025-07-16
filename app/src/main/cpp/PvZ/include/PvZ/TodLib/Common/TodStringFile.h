@@ -20,30 +20,14 @@ inline int TodDrawStringWrappedHelper(
         TodDrawStringWrappedHelperAddr)(g, theText, theRect, theFont, theColor, theJustification, drawString, i2);
 }
 
-//inline int TodDrawStringWrappedHelper(Sexy::Graphics* g,
-//                                      const SexyString& theText,
-//                                      const Sexy::Rect& theRect,
-//                                      Sexy::Font* theFont,
-//                                      const Sexy::Color& theColor,
-//                                      DrawStringJustification theJustification,
-//                                      bool drawString,
-//                                      bool theBool) {
-//    return reinterpret_cast<int (*)(Sexy::Graphics*, const SexyString&, const Sexy::Rect&, Sexy::Font*, const Sexy::Color&, DrawStringJustification, bool, bool)>(TodDrawStringWrappedHelperAddr)(
-//        g, theText, theRect, theFont, theColor, theJustification, drawString, theBool);
-//}
-//
-//inline int TodDrawStringWrappedHelper(Sexy::Graphics* g,
-//                                      int * theText,
-//                                      const Sexy::Rect& theRect,
-//                                      Sexy::Font* theFont,
-//                                      const Sexy::Color& theColor,
-//                                      DrawStringJustification theJustification,
-//                                      bool drawString,
-//                                      bool theBool) {
-//    return reinterpret_cast<int (*)(Sexy::Graphics*, int *, const Sexy::Rect&, Sexy::Font*, const Sexy::Color&, DrawStringJustification, bool, bool)>(TodDrawStringWrappedHelperAddr)(
-//        g, theText, theRect, theFont, theColor, theJustification, drawString, theBool);
-//}
-//
+inline void TodStringTranslate(pvzstl::string &result, const char *theString) {
+    reinterpret_cast<void(*)(pvzstl::string &, const char *)>(TodStringTranslateAddr)(result, theString);
+}
+
+inline void TodStringListLoad(const char *theFileName) {
+    reinterpret_cast<void(*)(const char *)>(TodStringListLoadAddr)(theFileName);
+}
+
 //inline void TodStringListLoad(const char* theFileName) {
 //    reinterpret_cast<void (*)(const char*)>(TodStringListLoadAddr)(theFileName);
 //}

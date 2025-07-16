@@ -10,6 +10,7 @@
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
 #include "PvZ/Android/Native/NativeApp.h"
@@ -364,10 +365,9 @@ void Challenge::LastStandUpdate() {
     if (mBoard->mNextSurvivalStageCounter == 0 && mChallengeState == ChallengeState::STATECHALLENGE_NORMAL && gBoardStoreButton->mBtnNoDraw) {
         gBoardStoreButton->mBtnNoDraw = false;
         gBoardStoreButton->mDisabled = false;
-        int holder[1];
-        TodStringTranslate(holder, mSurvivalStage == 0 ? "[START_ONSLAUGHT]" : "[CONTINUE_ONSLAUGHT]");
-        gBoardStoreButton->SetLabel((SexyString&)holder);
-        StringDelete(holder);
+        pvzstl::string str{};
+        TodStringTranslate(str, mSurvivalStage == 0 ? "[START_ONSLAUGHT]" : "[CONTINUE_ONSLAUGHT]");
+        gBoardStoreButton->SetLabel((SexyString&)str);
         gBoardStoreButton->Resize(325, 555, 170, 120);
     }
 

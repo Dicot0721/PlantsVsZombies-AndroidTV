@@ -15,12 +15,6 @@ class TodParticleSystem;
 
 inline int (*WaitForSecondPlayerDialog_GameButtonDown)(int *a1, int a2, int a3);
 
-inline void (*TodStringTranslate)(int *theString, const char *theText);
-
-//inline void TodStringTranslate(pvzstl::string theString, const char *theText) {
-//    reinterpret_cast<void(*)(pvzstl::string, const char *)>(TodStringTranslateAddr)(theString, theText);
-//}
-
 inline int (*LawnPlayerInfo_GetFlag)(DefaultPlayerInfo *, int);
 
 inline void (*GetFlashingColor)(Sexy::Color *, int, int);
@@ -37,23 +31,9 @@ inline int *(*Sexy_ResourceManager_GetSoundThrow)(int *, int *);
 
 inline FoleyInstance *(*SoundSystemFindInstance)(TodFoley *, FoleyType);
 
-inline void (*TodStringListLoad)(const char *);
-
-inline void (*TodReplaceString)(int *, int *, const char *, int *);
-
-inline void (*TodReplaceNumberString)(int *, int *, const char *, int);
-
 inline void (*MaskHelpWidget_MaskHelpWidget)(AchievementsWidget *, LawnApp *);
 
 inline void (*MaskHelpWidget_Delete)(AchievementsWidget *);
-
-inline void (*TodParticleSystem_OverrideColor)(TodParticleSystem *, char *theEmitterName, Sexy::Color *theColor);
-
-inline void (*TodParticleSystem_OverrideImage)(TodParticleSystem *, char *theEmitterName, Sexy::Image *);
-
-inline void (*TodParticleSystem_Delete2)(TodParticleSystem *);
-
-inline void (*TodParticleSystem_ParticleSystemDie)(TodParticleSystem *);
 
 inline DefaultPlayerInfo *(*Sexy_DefaultProfileMgr_GetAnyProfile)(int *);
 
@@ -70,10 +50,6 @@ inline int (*Mailbox_GetNumUnseenMessages)(int *);
 inline TodAllocator *(*FindGlobalAllocator)(int aSize);
 
 inline void (*AttachParticle)(AttachmentID *, TodParticleSystem *, float, float);
-
-inline void (*TodLoadResources)(const pvzstl::string &theGroup);
-
-inline void (*TodParticleSystem_Draw)(TodParticleSystem *, Sexy::Graphics *);
 
 inline void (*ToolTipWidget_SetWarningText)(int *, int *);
 

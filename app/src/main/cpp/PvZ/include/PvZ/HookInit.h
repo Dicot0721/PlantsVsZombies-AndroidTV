@@ -45,18 +45,6 @@
 #include "PvZ/Lawn/System/PoolEffect.h"
 
 inline void InitInGameFunction() {
-    TodStringTranslate = (decltype(TodStringTranslate))TodStringTranslateAddr;
-    TodLoadResources = (decltype(TodLoadResources))TodLoadResourcesAddr;
-    TodParticleSystem_Draw = (decltype(TodParticleSystem_Draw))TodParticleSystem_DrawAddr;
-    TodStringListLoad = (decltype(TodStringListLoad))TodStringListLoadAddr;
-    TodReplaceString = (decltype(TodReplaceString))TodReplaceStringAddr;
-    TodReplaceNumberString = (decltype(TodReplaceNumberString))TodReplaceNumberStringAddr;
-    TodParticleSystem_OverrideColor = (decltype(TodParticleSystem_OverrideColor))TodParticleSystem_OverrideColorAddr;
-    TodParticleSystem_OverrideImage = (decltype(TodParticleSystem_OverrideImage))TodParticleSystem_OverrideImageAddr;
-    TodParticleSystem_Delete2 = (decltype(TodParticleSystem_Delete2))TodParticleSystem_Delete2Addr;
-    TodParticleSystem_ParticleSystemDie = (decltype(TodParticleSystem_ParticleSystemDie))TodParticleSystem_ParticleSystemDieAddr;
-
-
     Sexy_GamepadApp_HasGamepad = (decltype(Sexy_GamepadApp_HasGamepad))Sexy_GamepadApp_HasGamepadAddr;
     Sexy_ResourceManager_GetSoundThrow = (decltype(Sexy_ResourceManager_GetSoundThrow))Sexy_ResourceManager_GetSoundThrowAddr;
     Sexy_DefaultProfileMgr_GetAnyProfile = (decltype(Sexy_DefaultProfileMgr_GetAnyProfile))Sexy_DefaultProfileMgr_GetAnyProfileAddr;

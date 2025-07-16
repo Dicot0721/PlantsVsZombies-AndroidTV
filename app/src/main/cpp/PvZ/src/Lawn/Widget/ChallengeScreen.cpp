@@ -4,6 +4,7 @@
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 
 using namespace Sexy;
 
@@ -101,11 +102,10 @@ void ChallengeScreen::Draw(Sexy::Graphics *graphics) {
 
 void ChallengeScreen::AddedToManager(int *theWidgetManager) {
     // 记录当前游戏状态
-    int holder[1];
-    TodStringTranslate(holder, "[CLOSE]");
-    gChallengeScreenCloseButton = MakeButton(1000, &mButtonListener, this, (SexyString &)holder);
+    pvzstl::string str{};
+    TodStringTranslate(str, "[CLOSE]");
+    gChallengeScreenCloseButton = MakeButton(1000, &mButtonListener, this, (SexyString &)str);
     gChallengeScreenCloseButton->Resize(800, 520, 170, 50);
-    StringDelete(holder);
     AddWidget(gChallengeScreenCloseButton);
 
     return old_ChallengeScreen_AddedToManager(this, theWidgetManager);

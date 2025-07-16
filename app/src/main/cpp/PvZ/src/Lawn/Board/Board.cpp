@@ -25,6 +25,7 @@
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 #include "PvZ/Lawn/Board/CursorObject.h"
 #include "PvZ/TodLib/Effect/TodParticle.h"
 #include "PvZ/Android/Native/NativeApp.h"
@@ -50,9 +51,9 @@ void Board::Create(LawnApp *theApp) {
         gBoardStoreButton->Destroy();
         operator delete (gBoardStoreButton);
     }
-    int holder[1];
-    TodStringTranslate(holder, (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) ? "[MAIN_MENU_BUTTON]" : "[MENU_BUTTON]");
-    gBoardMenuButton = MakeButton(1000, &mButtonListener, this, (SexyString &)holder);
+    pvzstl::string str{};
+    TodStringTranslate(str, (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) ? "[MAIN_MENU_BUTTON]" : "[MENU_BUTTON]");
+    gBoardMenuButton = MakeButton(1000, &mButtonListener, this, (SexyString &)str);
     gBoardMenuButton->Resize(705, -3, 120, 80);
     gBoardMenuButton->mBtnNoDraw = true;
     gBoardMenuButton->mDisabled = true;
@@ -61,21 +62,18 @@ void Board::Create(LawnApp *theApp) {
     } else if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
         gBoardMenuButton->Resize(650, 550, 170, 120);
     }
-    StringDelete(holder);
 
     if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND) {
-        int holder1[1];
-        TodStringTranslate(holder1, "[START_ONSLAUGHT]");
-        gBoardStoreButton = MakeButton(1001, &mButtonListener, this, (SexyString &)holder1);
+        pvzstl::string str1{};
+        TodStringTranslate(str1, "[START_ONSLAUGHT]");
+        gBoardStoreButton = MakeButton(1001, &mButtonListener, this, (SexyString &)str1);
         gBoardStoreButton->Resize(0, 0, 0, 0);
         gBoardStoreButton->mBtnNoDraw = true;
         gBoardStoreButton->mDisabled = true;
-        StringDelete(holder1);
     } else {
-        int holder1[1];
-        TodStringTranslate(holder1, "[SHOP_BUTTON]");
-        gBoardStoreButton = MakeButton(1001, &mButtonListener, this, (SexyString &)holder1);
-        StringDelete(holder1);
+        pvzstl::string str1{};
+        TodStringTranslate(str1, "[SHOP_BUTTON]");
+        gBoardStoreButton = MakeButton(1001, &mButtonListener, this, (SexyString &)str1);
         if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
             gBoardStoreButton->Resize(0, 550, 170, 120);
         } else {
@@ -3120,16 +3118,13 @@ bool Board::GrantAchievement(AchievementId theAchievementId, bool theIsShow) {
         LawnApp_PlaySample(lawnApp, addonSounds.achievement);
         ClearAdviceImmediately();
         const char *theAchievementName = GetNameByAchievementId(theAchievementId);
-        int holder[1];
-        int holder2[1];
-        TodStringTranslate(holder, "[ACHIEVEMENT_GRANTED]");
+        pvzstl::string str{};
+        pvzstl::string str2{};
+        TodStringTranslate(str, "[ACHIEVEMENT_GRANTED]");
         pvzstl::string str1 = StrFormat("[%s]", theAchievementName);
-        TodReplaceString(holder2, holder, "{achievement}", (int *)&str1);
+        TodReplaceString(str2, str, "{achievement}", str1);
         DisplayAdviceAgain(_S("[ACHIEVEMENT_GRANTED]"), MessageStyle::MESSAGE_STYLE_ACHIEVEMENT, AdviceType::ADVICE_NEED_ACHIVEMENT_EARNED);
         mAdvice->mIcon = GetIconByAchievementId(theAchievementId);
-        StringDelete(holder);
-//        StringDelete(holder1);
-        StringDelete(holder2);
         playerInfo->mAchievements[theAchievementId] = true;
         return true;
     }
@@ -3323,7 +3318,7 @@ void Board::RemoveParticleByType(ParticleEffect theEffectType) {
     TodParticleSystem *aParticle = nullptr;
     while (IterateParticles(aParticle)) {
         if (aParticle->mEffectType == theEffectType) {
-            TodParticleSystem_ParticleSystemDie(aParticle);
+            aParticle->ParticleSystemDie();
         }
     }
 }
@@ -3670,10 +3665,10 @@ void Board::FixReanimErrorAfterLoad() {
     while (IterateParticles(aParticle)) {
         if (aParticle->mEffectType == ParticleEffect::PARTICLE_ZOMBIE_DAISIES || aParticle->mEffectType == ParticleEffect::PARTICLE_ZOMBIE_PINATA) {
             // 设置颜色
-            TodParticleSystem_OverrideColor(aParticle, nullptr, &white);
+            aParticle->OverrideColor(nullptr, white);
         } else if (aParticle->mEffectType == ParticleEffect::PARTICLE_POOL_SPARKLY) {
             // 直接删除泳池闪光特效
-            TodParticleSystem_ParticleSystemDie(aParticle);
+            aParticle->ParticleSystemDie();
             mPoolSparklyParticleID = PARTICLESYSTEMID_NULL;
         }
     }

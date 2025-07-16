@@ -5,6 +5,7 @@
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 
 namespace {
 Sexy::GameButton *gMailScreenCloseButton;
@@ -20,26 +21,23 @@ void MailScreen::Create(LawnApp *theApp) {
     // 修复MailScreen的可触控区域不为全屏。
     old_MailScreen_MailScreen(this, theApp);
 
-    int holder2[1];
-    TodStringTranslate(holder2, "[MARK_MESSAGE_READ]");
-    gMailScreenReadButton = MakeButton(1002, &mButtonListener, this, (SexyString &)holder2);
+    pvzstl::string str2{};
+    TodStringTranslate(str2, "[MARK_MESSAGE_READ]");
+    gMailScreenReadButton = MakeButton(1002, &mButtonListener, this, (SexyString &)str2);
     gMailScreenReadButton->Resize(-150, 450, 170, 80);
-    StringDelete(holder2);
     AddWidget((Sexy::Widget*)gMailScreenReadButton);
 
-    int holder1[1];
-    TodStringTranslate(holder1, "[GO_TO_READ_MAIL]");
-    gMailScreenSwitchButton = MakeButton(1001, &mButtonListener, this, (SexyString &)holder1);
+    pvzstl::string str1{};
+    TodStringTranslate(str1, "[GO_TO_READ_MAIL]");
+    gMailScreenSwitchButton = MakeButton(1001, &mButtonListener, this, (SexyString &)str1);
     gMailScreenSwitchButton->Resize(-150, 520, 170, 80);
-    StringDelete(holder1);
     AddWidget((Sexy::Widget*)gMailScreenSwitchButton);
 
 
-    int holder[1];
-    TodStringTranslate(holder, "[CLOSE]");
-    gMailScreenCloseButton = MakeButton(1000, &mButtonListener, this, (SexyString &)holder);
+    pvzstl::string str{};
+    TodStringTranslate(str, "[CLOSE]");
+    gMailScreenCloseButton = MakeButton(1000, &mButtonListener, this, (SexyString &)str);
     gMailScreenCloseButton->Resize(800, 520, 170, 80);
-    StringDelete(holder);
     AddWidget((Sexy::Widget*)gMailScreenCloseButton);
 
     Resize(0, 0, 800, 600);
@@ -84,10 +82,9 @@ void MailScreen::ButtonDepress(int theId) {
         bool isAtInBox = aRealMailScreen->mPage == 0;
         gMailScreenReadButton->mDisabled = !isAtInBox;
         gMailScreenReadButton->mBtnNoDraw = !isAtInBox;
-        int holder[1];
-        TodStringTranslate(holder, isAtInBox ? "[GO_TO_READ_MAIL]" : "[GO_TO_INBOX]");
-        gMailScreenSwitchButton->SetLabel((SexyString&)holder);
-        StringDelete(holder);
+        pvzstl::string str{};
+        TodStringTranslate(str, isAtInBox ? "[GO_TO_READ_MAIL]" : "[GO_TO_INBOX]");
+        gMailScreenSwitchButton->SetLabel((SexyString&)str);
     } else
         old_MailScreen_ButtonDepress(this, theId);
 }

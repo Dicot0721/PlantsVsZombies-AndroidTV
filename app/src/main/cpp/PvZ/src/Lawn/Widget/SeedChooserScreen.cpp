@@ -8,6 +8,7 @@
 #include "PvZ/Misc.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 
 using namespace Sexy;
 
@@ -141,11 +142,10 @@ void SeedChooserScreen::Create(bool theIsZombieChooser) {
     }
 
     if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS && !mIsZombieChooser) {
-        int holder[1];
-        TodStringTranslate(holder, "[MENU_BUTTON]");
-        gSeedChooserScreenMainMenuButton = MakeButton(104, &mButtonListener, this, (SexyString &)holder);
+        pvzstl::string str{};
+        TodStringTranslate(str, "[MENU_BUTTON]");
+        gSeedChooserScreenMainMenuButton = MakeButton(104, &mButtonListener, this, (SexyString &)str);
         gSeedChooserScreenMainMenuButton->Resize(mApp->IsCoopMode() ? 345 : 650, -3, 120, 80);
-        StringDelete(holder);
         AddWidget(gSeedChooserScreenMainMenuButton);
     }
 }
@@ -331,10 +331,9 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && mIsZombieChooser) {
         SeedType aSeedType = SeedHitTest(mCursorPositionX2, mCursorPositionY2);
         if (mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_TOMBSTONE].mSeedState == ChosenSeedState::SEED_IN_BANK && mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_TOMBSTONE].mCrazyDavePicked) {
-            int holder[1];
-            TodStringTranslate(holder, "[ZOMBIE_BOSS_WANTS]");
-            ToolTipWidget_SetWarningText(mToolTipWidget2, holder);
-            StringDelete(holder);
+            pvzstl::string str{};
+            TodStringTranslate(str, "[ZOMBIE_BOSS_WANTS]");
+            ToolTipWidget_SetWarningText(mToolTipWidget2, (int *)&str);
         }
     }
 }

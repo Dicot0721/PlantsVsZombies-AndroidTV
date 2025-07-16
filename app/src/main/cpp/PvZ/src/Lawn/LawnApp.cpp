@@ -8,6 +8,7 @@
 #include "PvZ/Misc.h"
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 
 using namespace Sexy;

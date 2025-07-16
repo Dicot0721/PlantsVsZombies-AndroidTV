@@ -5,6 +5,7 @@
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 
 namespace {
 constexpr int nextPageButtonX = 836;
@@ -19,10 +20,9 @@ Sexy::GameButton *gHelpTextScreenCloseButton;
 
 void HelpTextScreen_Update(Sexy::Widget *helpTextScreen) {
     if (gHelpTextScreenCloseButton == nullptr) {
-        int holder[1];
-        TodStringTranslate(holder, "[CLOSE]");
-        gHelpTextScreenCloseButton = MakeButton(1000, (Sexy::ButtonListener *)helpTextScreen + 64, helpTextScreen, (SexyString &)holder);
-        StringDelete(holder);
+        pvzstl::string str{};
+        TodStringTranslate(str, "[CLOSE]");
+        gHelpTextScreenCloseButton = MakeButton(1000, (Sexy::ButtonListener *)helpTextScreen + 64, helpTextScreen, (SexyString &)str);
         helpTextScreen->AddWidget((Sexy::Widget*)gHelpTextScreenCloseButton);
     }
     gHelpTextScreenCloseButton->Resize(650 - helpTextScreen->mX, 540 - helpTextScreen->mY, 170, 50);

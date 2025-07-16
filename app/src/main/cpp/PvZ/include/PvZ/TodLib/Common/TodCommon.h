@@ -157,8 +157,8 @@ inline void TodScaleTransformMatrix(Sexy::SexyMatrix3& m, float x, float y, floa
     reinterpret_cast<void *(*)(Sexy::SexyMatrix3&, float, float, float, float)>(TodScaleTransformMatrixAddr)(m, x, y, theScaleX, theScaleY);
 }
 
-inline void TodDrawString(Sexy::Graphics *g, const pvzstl::string &theText, int thePosX, int thePosY, Sexy::Font *theFont, Sexy::Color &theColor, DrawStringJustification theJustification) {
-    reinterpret_cast<void *(*)(Sexy::Graphics *, const pvzstl::string &, int, int, Sexy::Font *, Sexy::Color, DrawStringJustification)>(TodDrawStringAddr)(
+inline void TodDrawString(Sexy::Graphics *g, const pvzstl::string &theText, int thePosX, int thePosY, Sexy::Font *theFont, const Sexy::Color &theColor, DrawStringJustification theJustification) {
+    reinterpret_cast<void *(*)(Sexy::Graphics *, const pvzstl::string &, int, int, Sexy::Font *, const Sexy::Color, DrawStringJustification)>(TodDrawStringAddr)(
         g, theText, thePosX, thePosY, theFont, theColor, theJustification);
 }
 
@@ -172,13 +172,24 @@ inline int TodAnimateCurve(int theTimeStart, int theTimeEnd, int theTimeAge, int
 }
 
 inline float TodAnimateCurveFloat(int theTimeStart, int theTimeEnd, int theTimeAge, float thePositionStart, float thePositionEnd, TodCurves theCurve) {
-    return reinterpret_cast<int (*)(int, int, int, float, float, TodCurves)>(TodAnimateCurveFloatAddr)(theTimeStart, theTimeEnd, theTimeAge, thePositionStart, thePositionEnd, theCurve);
+    return reinterpret_cast<float (*)(int, int, int, float, float, TodCurves)>(TodAnimateCurveFloatAddr)(theTimeStart, theTimeEnd, theTimeAge, thePositionStart, thePositionEnd, theCurve);
 }
 
 inline float TodAnimateCurveFloatTime(float theTimeStart, float theTimeEnd, float theTimeAge, float thePositionStart, float thePositionEnd, TodCurves theCurve) {
-    return reinterpret_cast<int (*)(float, float, float, float, float, TodCurves)>(TodAnimateCurveFloatTimeAddr)(theTimeStart, theTimeEnd, theTimeAge, thePositionStart, thePositionEnd, theCurve);
+    return reinterpret_cast<float (*)(float, float, float, float, float, TodCurves)>(TodAnimateCurveFloatTimeAddr)(theTimeStart, theTimeEnd, theTimeAge, thePositionStart, thePositionEnd, theCurve);
 }
 
+inline void TodLoadResources(const pvzstl::string &theGroup) {
+    reinterpret_cast<void (*)(const pvzstl::string &)>(TodLoadResourcesAddr)(theGroup);
+}
+
+inline void TodReplaceString(const pvzstl::string &result, const pvzstl::string &theText, const char *theStringToFind, const pvzstl::string &theStringToSubstitute) {
+    reinterpret_cast<void (*)(const pvzstl::string &, const pvzstl::string &, const char *, const pvzstl::string &)>(TodReplaceStringAddr)(result, theText, theStringToFind, theStringToSubstitute);
+}
+
+inline void TodReplaceNumberString(const pvzstl::string &result, const pvzstl::string &theText, const char *theStringToFind, int theNumber) {
+    reinterpret_cast<void (*)(const pvzstl::string &, const pvzstl::string &, const char *, int)>(TodReplaceNumberStringAddr)(result, theText, theStringToFind, theNumber);
+}
 
 //inline unsigned long AverageNearByPixels(Sexy::MemoryImage *theImage, unsigned long *thePixel, int x, int y);
 //

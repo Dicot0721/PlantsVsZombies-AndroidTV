@@ -9,6 +9,7 @@
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/SexyAppFramework/Misc/SexyVertex2D.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/TodLib/Effect/TodParticle.h"
 
 using namespace Sexy;
 
@@ -415,9 +416,9 @@ void PoolEffect_PoolEffectDraw(PoolEffect *poolEffect, Sexy::Graphics *g, bool t
                 g->DrawImage(*Sexy_IMAGE_POOL_Addr, 34, 278);
                 g->DrawTrianglesTex(*Sexy_IMAGE_POOL_BASE_Addr, v140[0], 150);
                 g->DrawTrianglesTex(*Sexy_IMAGE_POOL_SHADING_Addr, v140[1], 150);
-                TodParticleSystem *thePoolSparkle = poolEffect->mApp->ParticleTryToGet(poolEffect->mApp->mBoard->mPoolSparklyParticleID);
-                if (thePoolSparkle != nullptr) {
-                    TodParticleSystem_Draw(thePoolSparkle, g);
+                TodParticleSystem *aPoolSparkle = poolEffect->mApp->ParticleTryToGet(poolEffect->mApp->mBoard->mPoolSparklyParticleID);
+                if (aPoolSparkle != nullptr) {
+                    aPoolSparkle->Draw(g);
                 }
             }
             Graphics aPoolG2(*g);
