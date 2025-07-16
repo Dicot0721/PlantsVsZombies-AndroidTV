@@ -21,6 +21,8 @@
 #include <thread>
 #include <vector>
 
+static_assert((sizeof(void *) == sizeof(int32_t)), "Unsupported non-32-bit architecture");
+
 /**
  * @brief Homura 模块的初始化函数.
  *
