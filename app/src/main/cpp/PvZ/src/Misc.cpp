@@ -33,13 +33,6 @@ int randomInt(int a, int b) {
     return distrib(gen);
 }
 
-void WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(int *a, int *a2) {
-    // 自动跳过等待2P对话框
-    old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(a, a2);
-    WaitForSecondPlayerDialog_GameButtonDown(a, 6, 1);
-    WaitForSecondPlayerDialog_GameButtonDown(a, 6, 1);
-}
-
 int SexyDialog_AddedToManager(void *instance, void *instance1) {
     // 记录当前游戏状态
     return old_SexyDialog_AddedToManager(instance, instance1);
@@ -51,7 +44,7 @@ int SexyDialog_RemovedFromManager(void *instance, void *instance1) {
 }
 
 void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, SeedType theImitaterType, float xOffset, float yOffset, float scale) {
-    // 和Plant_DrawSeedType配合使用，用于绘制卡槽内的模仿者SeedPacket变白效果。
+    // 和Plant::DrawSeedType配合使用，用于绘制卡槽内的模仿者SeedPacket变白效果。
     g->PushState();
     g->mScaleX = g->mScaleX * scale;
     g->mScaleY = g->mScaleY * scale;
@@ -89,52 +82,4 @@ FoleyParams *LookupFoley(FoleyType theFoleyType) {
         return &gMenuRightFoley;
     } else
         return old_LookupFoley(theFoleyType);
-}
-
-void LawnPlayerInfo_AddCoins(DefaultPlayerInfo *playerInfo, int theAmount) {
-    // 用于 购物愉快 成就
-    int theCoins = playerInfo->mCoins + theAmount;
-    if (theCoins > 99999) {
-        theCoins = 99999;
-    }
-    if (theCoins <= 0) {
-        theCoins = 0;
-    }
-    playerInfo->mCoins = theCoins;
-    if (theAmount < 0) {
-        playerInfo->mUsedCoins -= theAmount;
-        if (playerInfo->mUsedCoins >= 2500) {
-            LawnApp *gLawnApp = (LawnApp *)*gLawnApp_Addr;
-            gLawnApp->GrantAchievement(AchievementId::ACHIEVEMENT_SHOP);
-        }
-    }
-}
-
-void SaveGameContext_SyncReanimationDef(int *theSaveGameContext, ReanimatorDefinition **a2) {
-    // 解决大头贴动画的读档问题
-    if (*((uint8_t *)theSaveGameContext + 29)) {
-        int reanimationType;
-        SaveGameContext_SyncInt(theSaveGameContext, &reanimationType);
-        if (reanimationType == -1) {
-            *a2 = nullptr;
-        } else if (reanimationType <= ReanimationType::REANIM_ZOMBATAR_HEAD) {
-            ReanimatorEnsureDefinitionLoaded((ReanimationType)reanimationType, true);
-            ReanimatorDefinition *v6 = *gReanimatorDefArray_Addr; // r3
-            *a2 = v6 + reanimationType;
-        } else {
-            *((uint8_t *)theSaveGameContext + 28) = true;
-        }
-    } else {
-        int v3 = 0;
-        int reanimationType = -1;
-        ReanimatorDefinition *v5 = *a2;                       // r1
-        ReanimatorDefinition *v6 = *gReanimatorDefArray_Addr; // r3
-        while (v5 != v6++) {
-            if (++v3 == ReanimationType::REANIM_ZOMBATAR_HEAD + 1)
-                goto LABEL_7;
-        }
-        reanimationType = v3;
-    LABEL_7:
-        SaveGameContext_SyncInt(theSaveGameContext, &reanimationType);
-    }
 }

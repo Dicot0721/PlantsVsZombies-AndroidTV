@@ -4,24 +4,27 @@
 #include "LawnDialog.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 
-inline SeedType (*ImitaterDialog_SeedHitTest)(LawnDialog *, int, int);
+class ImitaterDialog : public LawnDialog {
+public:
+    SeedType SeedHitTest(int x, int y) { return reinterpret_cast<SeedType (*)(ImitaterDialog *, int, int)>(ImitaterDialog_SeedHitTestAddr)(this, x, y); }
+
+    void MouseDown(int x, int y, int theCount);
+};
 
 
-inline void (*old_ImitaterDialog_ImitaterDialog)(LawnDialog *instance, int a2);
+inline void (*old_ImitaterDialog_ImitaterDialog)(ImitaterDialog *instance, int a2);
 
-inline void (*old_ImitaterDialog_ShowToolTip)(LawnDialog *instance);
+inline void (*old_ImitaterDialog_ShowToolTip)(ImitaterDialog *instance);
 
-inline bool (*old_ImitaterDialog_KeyDown)(LawnDialog *a, int a2);
+inline bool (*old_ImitaterDialog_KeyDown)(ImitaterDialog *a, int a2);
 
-inline void (*old_ImitaterDialog_MouseDown)(LawnDialog *a, int x, int y, int theCount);
+inline void (*old_ImitaterDialog_MouseDown)(ImitaterDialog *a, int x, int y, int theCount);
 
 
-void ImitaterDialog_ImitaterDialog(LawnDialog *instance, int playerIndex);
+void ImitaterDialog_ImitaterDialog(ImitaterDialog *instance, int playerIndex);
 
-void ImitaterDialog_ShowToolTip(LawnDialog *instance);
+void ImitaterDialog_ShowToolTip(ImitaterDialog *instance);
 
-bool ImitaterDialog_KeyDown(LawnDialog *a, int a2);
-
-void ImitaterDialog_MouseDown(LawnDialog *a, int x, int y, int theCount);
+bool ImitaterDialog_KeyDown(ImitaterDialog *a, int a2);
 
 #endif // PVZ_LAWN_IMITATER_DIALOG_H

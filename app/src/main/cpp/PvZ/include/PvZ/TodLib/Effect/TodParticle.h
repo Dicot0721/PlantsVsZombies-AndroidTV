@@ -64,7 +64,7 @@ public:
     void Delete() { reinterpret_cast<void (*)(TodParticleSystem *)>(TodParticleSystem_Delete2Addr)(this); }
     void ParticleSystemDie() { reinterpret_cast<void (*)(TodParticleSystem *)>(TodParticleSystem_ParticleSystemDieAddr)(this); }
 
-    ~TodParticleSystem() { this->Delete(); }
+    ~TodParticleSystem() { Delete(); }
 };
 
 

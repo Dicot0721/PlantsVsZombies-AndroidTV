@@ -43,15 +43,10 @@
 #include "PvZ/SexyAppFramework/Widget/ButtonWidget.h"
 #include "PvZ/Lawn/Widget/CreditScreen.h"
 #include "PvZ/Lawn/System/PoolEffect.h"
+#include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
+#include "PvZ/Lawn/System/SaveGame.h"
 
 inline void InitInGameFunction() {
-    WaitForSecondPlayerDialog_GameButtonDown = (decltype(WaitForSecondPlayerDialog_GameButtonDown))WaitForSecondPlayerDialog_GameButtonDownAddr;
-    HelpTextScreen_KeyDown = (decltype(HelpTextScreen_KeyDown))HelpTextScreen_KeyDownAddr;
-    AwardScreen_StartButtonPressed = (decltype(AwardScreen_StartButtonPressed))AwardScreen_StartButtonPressedAddr;
-    ShopSeedPacket_Update = (decltype(ShopSeedPacket_Update))ShopSeedPacket_UpdateAddr;
-    LawnPlayerInfo_GetFlag = (decltype(LawnPlayerInfo_GetFlag))LawnPlayerInfo_GetFlagAddr;
-    ImitaterDialog_SeedHitTest = (decltype(ImitaterDialog_SeedHitTest))ImitaterDialog_SeedHitTestAddr;
-    SaveGameContext_SyncInt = (decltype(SaveGameContext_SyncInt))SaveGameContext_SyncIntAddr;
     TypingCheck_SetPhrase = (decltype(TypingCheck_SetPhrase))TypingCheck_SetPhraseAddr;
     HouseChooserDialog_GameButtonDown = (decltype(HouseChooserDialog_GameButtonDown))HouseChooserDialog_GameButtonDownAddr;
     ReanimAtlas_GetEncodedReanimAtlas = (decltype(ReanimAtlas_GetEncodedReanimAtlas))ReanimAtlas_GetEncodedReanimAtlasAddr;
@@ -358,8 +353,8 @@ inline void InitHookFunction() {
     homura::HookFunction(SeedBank_MoveAddr, &SeedBank::Move, nullptr);
 
 
-    homura::HookFunction(AwardScreen_MouseDownAddr, &AwardScreen_MouseDown, &old_AwardScreen_MouseDown);
-    homura::HookFunction(AwardScreen_MouseUpAddr, &AwardScreen_MouseUp, &old_AwardScreen_MouseUp);
+    homura::HookFunction(AwardScreen_MouseDownAddr, &AwardScreen::MouseDown, &old_AwardScreen_MouseDown);
+    homura::HookFunction(AwardScreen_MouseUpAddr, &AwardScreen::MouseUp, &old_AwardScreen_MouseUp);
 
 
     homura::HookFunction(VSSetupMenu_UpdateAddr, &VSSetupMenu::Update, &old_VSSetupMenu_Update);
@@ -373,7 +368,7 @@ inline void InitHookFunction() {
 
 
     homura::HookFunction(ImitaterDialog_ImitaterDialogAddr, &ImitaterDialog_ImitaterDialog, &old_ImitaterDialog_ImitaterDialog);
-    homura::HookFunction(ImitaterDialog_MouseDownAddr, &ImitaterDialog_MouseDown, &old_ImitaterDialog_MouseDown);
+    homura::HookFunction(ImitaterDialog_MouseDownAddr, &ImitaterDialog::MouseDown, &old_ImitaterDialog_MouseDown);
     //    MSHookFunction(ImitaterDialog_OnKeyDownAddr, (void *) ImitaterDialog_OnKeyDown,(void **) &old_ImitaterDialog_OnKeyDown);
     homura::HookFunction(ImitaterDialog_KeyDownAddr, &ImitaterDialog_KeyDown, &old_ImitaterDialog_KeyDown);
     homura::HookFunction(ImitaterDialog_ShowToolTipAddr, &ImitaterDialog_ShowToolTip, &old_ImitaterDialog_ShowToolTip);
@@ -426,8 +421,7 @@ inline void InitHookFunction() {
     homura::HookFunction(HelpOptionsDialog_HelpOptionsDialogAddr, &HelpOptionsDialog_HelpOptionsDialog, &old_HelpOptionsDialog_HelpOptionsDialog);
     homura::HookFunction(HelpOptionsDialog_ResizeAddr, &HelpOptionsDialog_Resize, &old_HelpOptionsDialog_Resize);
 
-    MSHookFunction(
-        WaitForSecondPlayerDialog_WaitForSecondPlayerDialogAddr, (void *)WaitForSecondPlayerDialog_WaitForSecondPlayerDialog, (void **)&old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog);
+    homura::HookFunction(WaitForSecondPlayerDialog_WaitForSecondPlayerDialogAddr, &WaitForSecondPlayerDialog::Create, &old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog);
     //    MSHookFunction(Sexy_WidgetManager_MouseDownAddr, (void *) Sexy_WidgetManager_MouseDown,(void **) &old_Sexy_WidgetManager_MouseDown);
     //    MSHookFunction(Sexy_WidgetManager_AxisMovedAddr, (void *) Sexy_WidgetManager_AxisMoved, nullptr);
     homura::HookFunction(LawnMower_UpdateAddr, &LawnMower::Update, &old_LawnMower_Update);
@@ -451,7 +445,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Music_UpdateMusicBurstAddr, &Music::UpdateMusicBurst, &old_Music_UpdateMusicBurst);
     homura::HookFunction(Music2_Music2Addr, &Music2::Create, &old_Music2_Music2);
 
-    homura::HookFunction(LawnPlayerInfo_AddCoinsAddr, &LawnPlayerInfo_AddCoins, nullptr);
+    homura::HookFunction(LawnPlayerInfo_AddCoinsAddr, &LawnPlayerInfo::AddCoins, nullptr);
     homura::HookFunction(MaskHelpWidget_UpdateAddr, &MaskHelpWidget_Update, nullptr);
     homura::HookFunction(MaskHelpWidget_DrawAddr, &MaskHelpWidget_Draw, nullptr);
     //    MSHookFunction(DaveHelp_DaveHelpAddr, (void *) DaveHelp_DaveHelp, (void **) &old_DaveHelp_DaveHelp);
@@ -470,7 +464,7 @@ inline void InitHookFunction() {
     homura::HookFunction(DefinitionGetCompiledFilePathFromXMLFilePathAddr, &DefinitionGetCompiledFilePathFromXMLFilePath, &old_DefinitionGetCompiledFilePathFromXMLFilePath);
     homura::HookFunction(TestMenuWidget_DeleteAddr, &TestMenuWidget_Delete, &old_TestMenuWidget_Delete);
     homura::HookFunction(TestMenuWidget_Delete2Addr, &TestMenuWidget_Delete2, &old_TestMenuWidget_Delete2);
-    homura::HookFunction(SaveGameContext_SyncReanimationDefAddr, &SaveGameContext_SyncReanimationDef, nullptr);
+    homura::HookFunction(SaveGameContext_SyncReanimationDefAddr, &SaveGameContext::SyncReanimationDef, nullptr);
     homura::HookFunction(PoolEffect_PoolEffectDrawAddr, &PoolEffect_PoolEffectDraw, nullptr);
     homura::HookFunction(Sexy_MemoryImage_ClearRectAddr, &Sexy::MemoryImage::ClearRect, nullptr);
 
@@ -517,7 +511,7 @@ inline void InitVTableHookFunction() {
 
 
     homura::HookVirtualFunc(vTableForHelpTextScreenAddr, 38, &HelpTextScreen_Draw, &old_HelpTextScreen_Draw);
-    homura::HookVirtualFunc(vTableForHelpTextScreenAddr, 78, &HelpTextScreen_MouseDown, &old_HelpTextScreen_MouseDown);
+    homura::HookVirtualFunc(vTableForHelpTextScreenAddr, 78, &HelpTextScreen::MouseDown, &old_HelpTextScreen_MouseDown);
     //    VTableHookFunction(vTableForHelpTextScreenAddr, 81, (void *) HelpTextScreen_MouseUp,(void **) &old_HelpTextScreen_MouseUp);
     //    VTableHookFunction(vTableForHelpTextScreenAddr, 83, (void *) HelpTextScreen_MouseDrag,(void **) &old_HelpTextScreen_MouseDrag);
     homura::HookVirtualFunc(vTableForHelpTextScreenAddr, 136, &HelpTextScreen_ButtonDepress, &old_HelpTextScreen_ButtonDepress);

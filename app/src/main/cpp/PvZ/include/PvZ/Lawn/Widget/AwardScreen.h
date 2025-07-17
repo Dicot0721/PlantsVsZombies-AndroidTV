@@ -1,14 +1,26 @@
 #ifndef PVZ_LAWN_AWARD_SCREEN_H
 #define PVZ_LAWN_AWARD_SCREEN_H
 
-inline void (*AwardScreen_StartButtonPressed)(int *);
+#include "PvZ/Symbols.h"
 
-inline void (*old_AwardScreen_MouseDown)(int *awardScreen, int x, int y, int theClickCount);
+class AwardScreen : public Sexy::Widget {
+public:
+    int unkInt64;                      // 64
+    Sexy::GameButton* mStartButton;    // 65
+    Sexy::GameButton* mMenuButton;     // 66
+    LawnApp *mApp;                     // 67
+    int	mFadeInCounter;                // 68
+    AwardType mAwardType;              // 69
 
-inline void (*old_AwardScreen_MouseUp)(int *awardScreen, int x, int y, int theClickCount);
+    void StartButtonPressed() { reinterpret_cast<void (*)(AwardScreen *)>(AwardScreen_StartButtonPressedAddr)(this); }
 
-void AwardScreen_MouseDown(int *awardScreen, int x, int y, int theClickCount);
+    void MouseDown(int x, int y, int theClickCount);
+    void MouseUp(int x, int y, int theClickCount);
+};
 
-void AwardScreen_MouseUp(int *awardScreen, int x, int y, int theClickCount);
+
+inline void (*old_AwardScreen_MouseDown)(AwardScreen *awardScreen, int x, int y, int theClickCount);
+
+inline void (*old_AwardScreen_MouseUp)(AwardScreen *awardScreen, int x, int y, int theClickCount);
 
 #endif // PVZ_LAWN_AWARD_SCREEN_H

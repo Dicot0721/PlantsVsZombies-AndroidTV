@@ -18,7 +18,7 @@ Sexy::GameButton *gHelpTextScreenCloseButton;
 } // namespace
 
 
-void HelpTextScreen_Update(Sexy::Widget *helpTextScreen) {
+void HelpTextScreen_Update(HelpTextScreen *helpTextScreen) {
     if (gHelpTextScreenCloseButton == nullptr) {
         pvzstl::string str{};
         TodStringTranslate(str, "[CLOSE]");
@@ -29,25 +29,25 @@ void HelpTextScreen_Update(Sexy::Widget *helpTextScreen) {
     old_HelpTextScreen_Update(helpTextScreen);
 }
 
-void HelpTextScreen_Draw(Sexy::Widget *helpTextScreen, Sexy::Graphics *g) {
+void HelpTextScreen_Draw(HelpTextScreen *helpTextScreen, Sexy::Graphics *g) {
     old_HelpTextScreen_Draw(helpTextScreen, g);
     g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, nextPageButtonX, nextPageButtonY);
     g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, prevPageButtonX, prevPageButtonY, true);
 }
 
-void HelpTextScreen_HelpTextScreen(Sexy::Widget *helpTextScreen, int *lawnApp, int pageIndex) {
+void HelpTextScreen_HelpTextScreen(HelpTextScreen *helpTextScreen, int *lawnApp, int pageIndex) {
     old_HelpTextScreen_HelpTextScreen(helpTextScreen, lawnApp, pageIndex);
     // 这个HelpTextScreen是全屏的，但触控事件并不会分发到此处，而是发给子控件。只有内容外侧的点击事件才能收到。
 
     helpTextScreen->Resize(helpTextScreen->mX, helpTextScreen->mY, 3000, helpTextScreen->mHeight);
 }
 
-void HelpTextScreen_AddedToManager(Sexy::Widget *helpTextScreen, int *manager) {
+void HelpTextScreen_AddedToManager(HelpTextScreen *helpTextScreen, int *manager) {
     // 创建按钮
     old_HelpTextScreen_AddedToManager(helpTextScreen, manager);
 }
 
-void HelpTextScreen_MouseDown(Sexy::Widget *helpTextScreen, int x, int y, int theClickCount) {
+void HelpTextScreen::MouseDown(int x, int y, int theClickCount) {
     //    LOGD("D%d %d", x, y);
     //    prevPageButtonX = x;
     //    prevPageButtonY = y;
@@ -57,18 +57,18 @@ void HelpTextScreen_MouseDown(Sexy::Widget *helpTextScreen, int x, int y, int th
 
     Sexy::Rect nextPageRect = {nextPageButtonX, nextPageButtonY, imageWidth, imageHeight};
     if (TRect_Contains(&nextPageRect, x, y)) {
-        HelpTextScreen_KeyDown(helpTextScreen, 39);
+        KeyDown(KeyCode::KEYCODE_RIGHT);
         return;
     }
 
     Sexy::Rect prevPageRect = {prevPageButtonX, prevPageButtonY, imageWidth, imageHeight};
     if (TRect_Contains(&prevPageRect, x, y)) {
-        HelpTextScreen_KeyDown(helpTextScreen, 37);
+        KeyDown(KeyCode::KEYCODE_LEFT);
         return;
     }
 }
 
-void HelpTextScreen_RemovedFromManager(Sexy::Widget *helpTextScreen, int *widgetManager) {
+void HelpTextScreen_RemovedFromManager(HelpTextScreen *helpTextScreen, int *widgetManager) {
     // 修复MailScreen的可触控区域不为全屏
     if (gHelpTextScreenCloseButton != nullptr) {
         helpTextScreen->RemoveWidget((Sexy::Widget*)gHelpTextScreenCloseButton);
@@ -76,7 +76,7 @@ void HelpTextScreen_RemovedFromManager(Sexy::Widget *helpTextScreen, int *widget
     old_HelpTextScreen_RemovedFromManager(helpTextScreen, widgetManager);
 }
 
-void HelpTextScreen_Delete2(Sexy::Widget *helpTextScreen) {
+void HelpTextScreen_Delete2(HelpTextScreen *helpTextScreen) {
     old_HelpTextScreen_Delete2(helpTextScreen);
     if (gHelpTextScreenCloseButton != nullptr) {
         gHelpTextScreenCloseButton->Destroy();
@@ -84,7 +84,7 @@ void HelpTextScreen_Delete2(Sexy::Widget *helpTextScreen) {
     }
 }
 
-void HelpTextScreen_ButtonDepress(Sexy::Widget *helpTextScreen, int id) {
+void HelpTextScreen_ButtonDepress(HelpTextScreen *helpTextScreen, int id) {
     if (id == 1000) {
         LawnApp *gLawnApp = (LawnApp *)*gLawnApp_Addr;
         gLawnApp->KillHelpTextScreen();

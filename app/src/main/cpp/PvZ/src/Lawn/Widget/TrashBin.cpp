@@ -19,7 +19,8 @@ void TrashBin::Create(TrashPileType theTrashPileType, float theHeight) {
         thePileNum = 10;
     DefaultPlayerInfo *mPlayerInfo = ((LawnApp *)*gLawnApp_Addr)->mPlayerInfo;
     int aLevel = mPlayerInfo->mLevel;
-    if (LawnPlayerInfo_GetFlag(mPlayerInfo, 1) || LawnPlayerInfo_GetFlag(mPlayerInfo, 0x8000))
+    LawnPlayerInfo *aPlayerInfo = reinterpret_cast<LawnPlayerInfo *>(mPlayerInfo);
+    if (aPlayerInfo->GetFlag(1) || aPlayerInfo->GetFlag(0x8000))
         aLevel = 50;
     mPileNum = 0;
     for (int i = 0; i < thePileNum; ++i) {

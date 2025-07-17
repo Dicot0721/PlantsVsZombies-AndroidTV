@@ -6,19 +6,19 @@
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 
-void ImitaterDialog_ImitaterDialog(LawnDialog *instance, int playerIndex) {
+void ImitaterDialog_ImitaterDialog(ImitaterDialog *instance, int playerIndex) {
     // 记录当前游戏状态
     return old_ImitaterDialog_ImitaterDialog(instance, playerIndex);
 }
 
-void ImitaterDialog_ShowToolTip(LawnDialog *instance) {
+void ImitaterDialog_ShowToolTip(ImitaterDialog *instance) {
     // 在触控模式下不显示ToolTip
     if (!keyboardMode)
         return;
     return old_ImitaterDialog_ShowToolTip(instance);
 }
 
-bool ImitaterDialog_KeyDown(LawnDialog *a, int a2) {
+bool ImitaterDialog_KeyDown(ImitaterDialog *a, int a2) {
     // 修复不选择模仿者卡片并退出时的闪退
     if (a2 == Sexy::KEYCODE_ESCAPE || a2 == Sexy::KEYCODE_ESCAPE2) {
         LawnApp *lawnApp = a->mApp;
@@ -31,12 +31,12 @@ bool ImitaterDialog_KeyDown(LawnDialog *a, int a2) {
     return old_ImitaterDialog_KeyDown(a, a2);
 }
 
-void ImitaterDialog_MouseDown(LawnDialog *a, int x, int y, int theCount) {
-    SeedType seedType = ImitaterDialog_SeedHitTest(a, x, y);
+void ImitaterDialog::MouseDown(int x, int y, int theCount) {
+    SeedType seedType = SeedHitTest(x, y);
     if (seedType == SeedType::SEED_NONE) {
         return;
     }
-    LawnApp *lawnApp = a->mApp;
+    LawnApp *lawnApp = mApp;
     SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
 
     if (!seedChooserScreen->SeedNotAllowedToPick(seedType)) {
@@ -49,8 +49,8 @@ void ImitaterDialog_MouseDown(LawnDialog *a, int x, int y, int theCount) {
         seedChooserScreen->ClickedSeedInChooser(chosenSeed, m1PChoosingSeeds ? 0 : 1);
         seedChooserScreen->UpdateImitaterButton();
         //        (*(void (**)(int, int)) (*(uint32_t *) a[184] + 428))(a[184], a[179]);
-        seedChooserScreen->RemoveWidget(a);
-        (*(void (**)(LawnApp *, Sexy::Widget *))(*(uint32_t *)lawnApp + 188))(lawnApp, a);
+        seedChooserScreen->RemoveWidget(this);
+        (*(void (**)(LawnApp *, Sexy::Widget *))(*(uint32_t *)lawnApp + 188))(lawnApp, this);
         seedChooserScreen->mImitaterDialogOpened = 0;
     }
 }

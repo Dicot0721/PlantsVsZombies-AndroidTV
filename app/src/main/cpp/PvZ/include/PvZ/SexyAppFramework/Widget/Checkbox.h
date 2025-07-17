@@ -28,7 +28,7 @@ public:
 
     void Delete() { reinterpret_cast<void (*)(Checkbox *)>(Sexy_Checkbox_DeleteAddr)(this); }
 
-    ~Checkbox() { this->Delete(); }
+    ~Checkbox() { Delete(); }
 };
 
 }

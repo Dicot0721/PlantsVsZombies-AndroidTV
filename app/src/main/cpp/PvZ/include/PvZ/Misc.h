@@ -13,11 +13,6 @@
 
 class TodParticleSystem;
 
-inline int (*WaitForSecondPlayerDialog_GameButtonDown)(int *a1, int a2, int a3);
-
-inline int (*LawnPlayerInfo_GetFlag)(DefaultPlayerInfo *, int);
-
-inline void (*ShopSeedPacket_Update)(int *seedPacket);
 
 inline void (*TypingCheck_SetPhrase)(int *a1, int *a2);
 
@@ -39,9 +34,6 @@ inline void (*ToolTipWidget_SetWarningText)(int *, int *);
 
 inline void (*TestMenuWidget_TestMenuWidget)(ZombatarWidget *);
 
-inline void (*SaveGameContext_SyncInt)(int *, int *);
-
-inline void (*old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog)(int *a, int *a2);
 
 inline int (*old_SexyDialog_AddedToManager)(void *instance, void *instance1);
 
@@ -71,10 +63,6 @@ void Sexy_ExtractLoadingSoundsResources(int *a, int *theManager);
 void WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(int *a, int *a2);
 
 void HelpBarWidget_HelpBarWidget(Sexy::Widget *a);
-
-void LawnPlayerInfo_AddCoins(DefaultPlayerInfo *playerInfo, int theAmount);
-
-void SaveGameContext_SyncReanimationDef(int *theSaveGameContext, ReanimatorDefinition **a2);
 
 
 #endif // PVZ_MISC_H

@@ -238,11 +238,12 @@ void MainMenu::ButtonDepress(MainMenuButtonId theSelectedButton) {
     }
 
     // 为1.1.1添加触控或确认进入对战结盟模式，并检测是否解锁对战结盟
+    LawnPlayerInfo *aPlayerInfo = reinterpret_cast<LawnPlayerInfo *>(mApp->mPlayerInfo);
     switch (theSelectedButton) {
         case ADVENTURE_BUTTON:
         case START_ADVENTURE_BUTTON:
             StartAdventureMode();
-            if (LawnPlayerInfo_GetFlag(mApp->mPlayerInfo, 4096) && mApp->mPlayerInfo->mLevel == 35) {
+            if (aPlayerInfo->GetFlag(4096) && mApp->mPlayerInfo->mLevel == 35) {
                 mPressedButtonId = STORE_BUTTON;
                 unkBool3 = true;
                 (*(void (**)(MainMenu *))(*(uint32_t *)this + 496))(this);
@@ -590,7 +591,8 @@ void MainMenu::Draw(Sexy::Graphics *g) {
     int mailAlertTrackIndex = mainMenuReanim->FindTrackIndex("mail alert");
     if (mailAlertTrackIndex > 0 && Mailbox_GetNumUnseenMessages(mApp->mMailBox) > 0) {
         DefaultPlayerInfo *mPlayerInfo = mApp->mPlayerInfo;
-        if (mPlayerInfo->mLevel > 0 || LawnPlayerInfo_GetFlag(mPlayerInfo, 1)) {
+        LawnPlayerInfo *aPlayerInfo = reinterpret_cast<LawnPlayerInfo *>(mPlayerInfo);
+        if (mPlayerInfo->mLevel > 0 || aPlayerInfo->GetFlag(1)) {
             v43 = ReanimatorTransform();
             mainMenuReanim->GetCurrentTransform(mailAlertTrackIndex, &v43);
             Sexy::Image *mailAlertImage = v43.mImage;
