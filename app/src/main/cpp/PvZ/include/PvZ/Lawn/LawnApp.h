@@ -4,6 +4,7 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/Widget/AchievementsWidget.h"
 #include "PvZ/SexyAppFramework/SexyAppBase.h"
+#include "PvZ/SexyAppFramework/Misc/ProfileMgr.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodFoley.h"
 #include "PvZ/TodLib/Effect/EffectSystem.h"
@@ -70,7 +71,7 @@ public:
     int *mCrazyDaveMessageText;              // 598
     int mAppRandSeed;                        // 599;
     int unk7;                                // 600
-    int *mProfileMgr;                        // 601
+    DefaultProfileMgr *mProfileMgr;          // 601
     int unk8[35];                            // 602 ~ 636
     Sexy::Image *mQRCodeImage;               // 637
     int unk8_1[7];                           // 638 ~ 644

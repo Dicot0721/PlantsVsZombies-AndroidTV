@@ -363,19 +363,16 @@ void Plant::Draw(Sexy::Graphics *g) {
         if ((IsPartOfUpgradableTo(seedType) && mBoard->CanPlantAt(mPlantCol, mRow, seedType) == PlantingReason::PLANTING_OK)
             || (IsPartOfUpgradableTo(seedType2) && mBoard->CanPlantAt(mPlantCol, mRow, seedType2) == PlantingReason::PLANTING_OK)) {
             g->SetColorizeImages(true);
-            Color color;
-            GetFlashingColor(&color, mBoard->mMainCounter, 90);
+            Color color = GetFlashingColor(mBoard->mMainCounter, 90);
             g->SetColor(color);
         } else if ((seedType == SeedType::SEED_COBCANNON && mBoard->CanPlantAt(mPlantCol - 1, mRow, seedType) == PlantingReason::PLANTING_OK)
                    || (seedType2 == SeedType::SEED_COBCANNON && mBoard->CanPlantAt(mPlantCol - 1, mRow, seedType2) == PlantingReason::PLANTING_OK)) {
             g->SetColorizeImages(true);
-            Color color;
-            GetFlashingColor(&color, mBoard->mMainCounter, 90);
+            Color color = GetFlashingColor(mBoard->mMainCounter, 90);
             g->SetColor(color);
         } else if (mBoard != nullptr && mBoard->mTutorialState == TutorialState::TUTORIAL_SHOVEL_DIG) {
             g->SetColorizeImages(true);
-            Color color;
-            GetFlashingColor(&color, mBoard->mMainCounter, 90);
+            Color color = GetFlashingColor(mBoard->mMainCounter, 90);
             g->SetColor(color);
         }
         if (aImage != nullptr) {

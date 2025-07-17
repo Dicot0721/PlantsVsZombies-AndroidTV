@@ -5,6 +5,8 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_CHECKBOX_H
 #define PLANTSVSZOMBIES_ANDROIDTV_CHECKBOX_H
 
+#include "PvZ/Symbols.h"
+
 #include "Widget.h"
 
 namespace Sexy {
@@ -22,7 +24,12 @@ public:
     Color mOutlineColor;    // 85 ~ 88
     Color mBkgColor;        // 89 ~ 92
     Color mCheckColor;      // 93 ~ 96
-}; // 大小97个整数
+    // 大小97个整数
+
+    void Delete() { reinterpret_cast<void (*)(Checkbox *)>(Sexy_Checkbox_DeleteAddr)(this); }
+
+    ~Checkbox() { this->Delete(); }
+};
 
 }
 

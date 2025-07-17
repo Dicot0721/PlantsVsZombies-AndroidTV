@@ -23,6 +23,7 @@
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
+#include "PvZ/SexyAppFramework/GamepadApp.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
@@ -1344,15 +1345,16 @@ bool Board::NeedSaveGame() {
     return old_Board_NeedSaveGame(this);
 }
 
-void Board_DrawHammerButton(Board *board, Sexy::Graphics *g, LawnApp *lawnApp) {
+void Board::DrawHammerButton(Sexy::Graphics *g, LawnApp *theApp) {
     if (!keyboardMode)
         return;
     float tmp = g->mTransY;
-    Rect rect = board->GetButterButtonRect();
+    Rect rect = GetButterButtonRect();
     g->DrawImage(*Sexy_IMAGE_SHOVELBANK_Addr, rect.mX, rect.mY);
     g->DrawImage(*Sexy_IMAGE_HAMMER_ICON_Addr, rect.mX - 7, rect.mY - 3);
 
-    if (Sexy_GamepadApp_HasGamepad(lawnApp) || (lawnApp->mGamePad1IsOn && lawnApp->mGamePad2IsOn)) {
+    GamepadApp* aGamepadApp = reinterpret_cast<GamepadApp *>(theApp);
+    if (aGamepadApp->HasGamepad() || (theApp->mGamePad1IsOn && theApp->mGamePad2IsOn)) {
         g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS_Addr, rect.mX + 36, rect.mY + 40, 2);
     } else {
         g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS2_Addr, rect.mX + 36, rect.mY + 40, 2);
@@ -1361,7 +1363,7 @@ void Board_DrawHammerButton(Board *board, Sexy::Graphics *g, LawnApp *lawnApp) {
     g->mTransY = tmp;
 }
 
-void Board_DrawButterButton(Board *board, Sexy::Graphics *g, LawnApp *theApp) {
+void Board::DrawButterButton(Sexy::Graphics *g, LawnApp *theApp) {
     if (!theApp->IsCoopMode()) {
         if (!theApp->IsAdventureMode())
             return;
@@ -1369,11 +1371,10 @@ void Board_DrawButterButton(Board *board, Sexy::Graphics *g, LawnApp *theApp) {
             return;
     }
     float tmp = g->mTransY;
-    Rect rect = board->GetButterButtonRect();
+    Rect rect = GetButterButtonRect();
     g->DrawImage(*Sexy_IMAGE_SHOVELBANK_Addr, rect.mX, rect.mY);
-    if (board->mChallenge->mChallengeState == ChallengeState::STATECHALLENGE_SHOVEL_FLASHING) {
-        Color color;
-        GetFlashingColor(&color, board->mMainCounter, 75);
+    if (mChallenge->mChallengeState == ChallengeState::STATECHALLENGE_SHOVEL_FLASHING) {
+        Color color = GetFlashingColor(mMainCounter, 75);
         g->SetColorizeImages(true);
         g->SetColor(color);
     }
@@ -1407,8 +1408,7 @@ void Board::DrawShovelButton(Sexy::Graphics *g, LawnApp *theApp) {
     g->DrawImage(*Sexy_IMAGE_SHOVELBANK_Addr, rect.mX, rect.mY);
 
     if (mChallenge->mChallengeState == ChallengeState::STATECHALLENGE_SHOVEL_FLASHING) {
-        Color color;
-        GetFlashingColor(&color, mMainCounter, 75);
+        Color color = GetFlashingColor(mMainCounter, 75);
         g->SetColorizeImages(true);
         g->SetColor(color);
     }
@@ -1431,7 +1431,8 @@ void Board::DrawShovelButton(Sexy::Graphics *g, LawnApp *theApp) {
         if (theApp->IsCoopMode()) {
             g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS_Addr, rect.mX + 40, rect.mY + 40, 1);
         } else {
-            if (Sexy_GamepadApp_HasGamepad(theApp) || (theApp->mGamePad1IsOn && theApp->mGamePad2IsOn)) {
+            GamepadApp* aGamepadApp = reinterpret_cast<GamepadApp *>(theApp);
+            if (aGamepadApp->HasGamepad() || (theApp->mGamePad1IsOn && theApp->mGamePad2IsOn)) {
                 g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS_Addr, rect.mX + 50, rect.mY + 40, 1);
             } else {
                 g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS2_Addr, rect.mX + 50, rect.mY + 40, 1);
@@ -1454,11 +1455,11 @@ void Board::DrawShovel(Sexy::Graphics *g) {
     }
 
     if (mShowHammer) { // 绘制锤子按钮
-        Board_DrawHammerButton(this, g, mApp);
+        DrawHammerButton(g, mApp);
     }
 
     if (mShowButter) { // 绘制黄油按钮
-        Board_DrawButterButton(this, g, mApp);
+        DrawButterButton(g, mApp);
     }
 
     if (mShowShovel) { // 绘制铲子按钮

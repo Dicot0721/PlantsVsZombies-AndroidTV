@@ -36,7 +36,12 @@ inline AttachEffect *AttachReanim(AttachmentID &theAttachmentID, Reanimation *th
 inline void AttachmentDraw(AttachmentID& theAttachmentID, Graphics* g, bool theParentHidden) {
     reinterpret_cast<void (*)(AttachmentID &, Graphics*, bool)>(AttachmentDrawAddr)(theAttachmentID, g, theParentHidden);
 }
+
 inline void AttachmentDie(AttachmentID& theAttachmentID) { reinterpret_cast<void (*)(AttachmentID&)>(AttachmentDieAddr)(theAttachmentID); }
+
+inline void AttachParticle(AttachmentID &theAttachmentID, TodParticleSystem *theParticleSystem, float theOffsetX, float theOffsetY) {
+    reinterpret_cast<void (*)(AttachmentID &, TodParticleSystem *, float, float)>(AttachParticleAddr)(theAttachmentID, theParticleSystem, theOffsetX, theOffsetY);
+}
 
 class AttachmentHolder {};
 

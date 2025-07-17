@@ -248,8 +248,8 @@ void LawnApp::Init() {
     // 试图修复默认加载名为player用户的问题。
 
     old_LawnApp_Init(this);
-    if (mPlayerInfo == nullptr && mProfileMgr[7] > 0) {
-        mPlayerInfo = Sexy_DefaultProfileMgr_GetAnyProfile(mProfileMgr);
+    if (mPlayerInfo == nullptr && mProfileMgr->mNumProfiles > 0) {
+        mPlayerInfo = mProfileMgr->GetAnyProfile();
     }
 
     mNewIs3DAccelerated = mPlayerInfo == nullptr || !mPlayerInfo->mIs3DAcceleratedClosed;

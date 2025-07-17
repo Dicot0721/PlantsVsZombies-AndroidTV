@@ -130,12 +130,6 @@ inline void FixPixelsOnAlphaEdgeForBlending(Sexy::Image *theImage) {
     aImage->BitsChanged();
 }
 
-//inline int RandRangeInt(int theMin, int theMax);
-
-//inline float RandRangeFloat(float theMin, float theMax);
-
-//inline void TodDrawImageCelF(Sexy::Graphics *g, Sexy::Image *theImageStrip, float thePosX, float thePosY, int theCelCol, int theCelRow);
-
 inline void TodDrawImageCelCenterScaledF(Sexy::Graphics *g, Sexy::Image *theImageStrip, float thePosX, float thePosY, int theCelCol, float theScaleX, float theScaleY) {
     reinterpret_cast<void *(*)(Sexy::Graphics *, Sexy::Image *, float, float, int, float, float)>(TodDrawImageCelCenterScaledFAddr)(
         g, theImageStrip, thePosX, thePosY, theCelCol, theScaleX, theScaleY);
@@ -191,6 +185,10 @@ inline void TodReplaceNumberString(const pvzstl::string &result, const pvzstl::s
     reinterpret_cast<void (*)(const pvzstl::string &, const pvzstl::string &, const char *, int)>(TodReplaceNumberStringAddr)(result, theText, theStringToFind, theNumber);
 }
 
+inline TodAllocator *FindGlobalAllocator(int theSize) {
+    return reinterpret_cast<TodAllocator *(*)(int)>(FindGlobalAllocatorAddr)(theSize);
+}
+
 //inline unsigned long AverageNearByPixels(Sexy::MemoryImage *theImage, unsigned long *thePixel, int x, int y);
 //
 //inline void FixPixelsOnAlphaEdgeForBlending(Sexy::Image *theImage);
@@ -203,6 +201,18 @@ inline void SetBit(uint& theNum, int theIdx, bool theValue = true) {
 }
 inline bool TestBit(uint theNum, int theIdx) {
     return theNum & (1 << theIdx);
+}
+
+inline int ClampInt(int theNum, int theMin, int theMax) {
+    return theNum <= theMin ? theMin : theNum >= theMax ? theMax : theNum;
+}
+
+inline Sexy::Color GetFlashingColor(int theCounter, int theFlashTime)
+{
+    int aTimeAge = theCounter % theFlashTime;
+    int aTimeInf = theFlashTime / 2;
+    int aGrayness = ClampInt(55 + 200 * abs(aTimeInf - aTimeAge)/ aTimeInf, 0, 255);
+    return Sexy::Color(aGrayness, aGrayness, aGrayness, 255);
 }
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_TODCOMMON_H

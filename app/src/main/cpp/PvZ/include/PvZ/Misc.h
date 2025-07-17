@@ -17,39 +17,23 @@ inline int (*WaitForSecondPlayerDialog_GameButtonDown)(int *a1, int a2, int a3);
 
 inline int (*LawnPlayerInfo_GetFlag)(DefaultPlayerInfo *, int);
 
-inline void (*GetFlashingColor)(Sexy::Color *, int, int);
-
-inline bool (*Sexy_GamepadApp_HasGamepad)(LawnApp *);
-
 inline void (*ShopSeedPacket_Update)(int *seedPacket);
 
 inline void (*TypingCheck_SetPhrase)(int *a1, int *a2);
 
 inline int **(*ReanimAtlas_GetEncodedReanimAtlas)(int *, int *);
 
-inline int *(*Sexy_ResourceManager_GetSoundThrow)(int *, int *);
-
-inline FoleyInstance *(*SoundSystemFindInstance)(TodFoley *, FoleyType);
-
 inline void (*MaskHelpWidget_MaskHelpWidget)(AchievementsWidget *, LawnApp *);
 
 inline void (*MaskHelpWidget_Delete)(AchievementsWidget *);
 
-inline DefaultPlayerInfo *(*Sexy_DefaultProfileMgr_GetAnyProfile)(int *);
-
-inline void (*DrawCheckboxText)(Sexy::Graphics *graphics, int *text1, Sexy::Checkbox *a3, const char *text2);
-
-inline void (*Sexy_Checkbox_Delete)(Sexy::Checkbox *);
+inline void DrawCheckboxText(Sexy::Graphics *g, const pvzstl::string &theText1, Sexy::Checkbox *theCheckBox, const char *theText2) {
+    reinterpret_cast<void (*)(Sexy::Graphics *, const pvzstl::string &, Sexy::Checkbox *, const char *)>(DrawCheckboxTextAddr)(g, theText1, theCheckBox, theText2);
+}
 
 inline void (*CreditScreen_PauseCredits)(Sexy::Widget *);
 
-inline void (*ReanimatorEnsureDefinitionLoaded)(ReanimationType type, bool b);
-
 inline int (*Mailbox_GetNumUnseenMessages)(int *);
-
-inline TodAllocator *(*FindGlobalAllocator)(int aSize);
-
-inline void (*AttachParticle)(AttachmentID *, TodParticleSystem *, float, float);
 
 inline void (*ToolTipWidget_SetWarningText)(int *, int *);
 

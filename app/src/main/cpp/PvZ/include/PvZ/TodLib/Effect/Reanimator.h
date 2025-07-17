@@ -66,6 +66,45 @@ public:
     int mReanimParamFlags;
 };
 
+inline void ReanimatorEnsureDefinitionLoaded(ReanimationType theReanimType, bool theIsPreloading) {
+    reinterpret_cast<void (*)(ReanimationType, bool)>(ReanimatorEnsureDefinitionLoadedAddr)(theReanimType, theIsPreloading);
+}
+
+// ######################################################################################################################################################
+// ############################################################## 以下正式开始动画相关声明 ##############################################################
+// ######################################################################################################################################################
+
+enum {
+    RENDER_GROUP_HIDDEN = -1,
+    RENDER_GROUP_NORMAL = 0,
+};
+
+class ReanimationHolder {
+public:
+//    struct ReanimationLists {
+//    public:
+//        Reanimation list[1024];
+//    }; // 225280个整数
+public:
+    DataArray<Reanimation> mReanimations;  // 0
+    int unk1;                              // 1
+    int mReanimationNum;                   // 2
+    int unk2[3];                           // 3 ~ 5
+    char *mName;                           // 6
+};
+
+// ====================================================================================================
+// ★ 【动画器时间】
+// ----------------------------------------------------------------------------------------------------
+// 用于描述动画当前正在播放的时间位置。
+// ====================================================================================================
+class ReanimatorFrameTime {
+public:
+    float mFraction;         // 0
+    int mAnimFrameBeforeInt; // 1
+    int mAnimFrameAfterInt;  // 2
+};
+
 class ReanimatorTransform {
 public:
     float mTransX;        // 0
@@ -102,15 +141,6 @@ public:
     bool mIgnoreColorOverride;           // 98
     bool mIgnoreExtraAdditiveColor;      // 99
 }; // 大小25个整数
-
-// ######################################################################################################################################################
-// ############################################################## 以下正式开始动画相关声明 ##############################################################
-// ######################################################################################################################################################
-
-enum {
-    RENDER_GROUP_HIDDEN = -1,
-    RENDER_GROUP_NORMAL = 0,
-};
 
 class Reanimation {
 public:
@@ -191,31 +221,6 @@ public:
     ReanimatorTrackInstance* GetTrackInstanceByName(const char* theTrackName);
 };
 
-class ReanimationHolder {
-public:
-    struct ReanimationLists {
-    public:
-        Reanimation list[1024];
-    }; // 225280个整数
-public:
-    ReanimationLists *mReanimations; // 0
-    int unk1;                        // 1
-    int mReanimationNum;             // 2
-    int unk2[3];                     // 3 ~ 5
-    char *mName;                     // 6
-};
-
-// ====================================================================================================
-// ★ 【动画器时间】
-// ----------------------------------------------------------------------------------------------------
-// 用于描述动画当前正在播放的时间位置。
-// ====================================================================================================
-class ReanimatorFrameTime {
-public:
-    float mFraction;         // 0
-    int mAnimFrameBeforeInt; // 1
-    int mAnimFrameAfterInt;  // 2
-};
 /***************************************************************************************************************/
 
 

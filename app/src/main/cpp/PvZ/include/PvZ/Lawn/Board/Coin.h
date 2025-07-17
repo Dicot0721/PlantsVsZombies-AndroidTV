@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/Lawn/System/PlayerInfo.h"
 
 class Coin : public GameObject {
 public:
@@ -28,7 +29,7 @@ public:
     AttachmentID mAttachmentID[3]; // 31 ~ 33
     float mCollectionDistance;     // 34
     SeedType mUsableSeedType;      // 35
-    int *mPottedPlantSpec;         // 36
+    PottedPlant mPottedPlantSpec;  // 36
     int unknownMember[4];          // 37 ~ 40
     bool mNeedsBouncyArrow;        // 164
     bool mHasBouncyArrow;          // 165

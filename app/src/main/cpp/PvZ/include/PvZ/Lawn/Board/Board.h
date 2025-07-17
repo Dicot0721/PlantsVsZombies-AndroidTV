@@ -463,6 +463,8 @@ public:
     float GetPosYBasedOnRow(float thePosX, int theRow);
     Zombie *GetBossZombie();
     GamepadControls *GetGamepadControlsByPlayerIndex(int thePlayerIndex);
+    void DrawHammerButton(Sexy::Graphics *g, LawnApp *theApp);
+    void DrawButterButton(Sexy::Graphics *g, LawnApp *theApp);
 
 
     void MouseMove(int x, int y);
@@ -675,10 +677,6 @@ bool Board_StageIsNight(Board *board);
 bool Board_StageHasRoof(Board *board);
 
 bool Board_StageHas6Rows(Board *board);
-
-void Board_DrawHammerButton(Board *board, Sexy::Graphics *g, LawnApp *lawnApp);
-
-void Board_DrawButterButton(Board *board, Sexy::Graphics *g, LawnApp *theApp);
 
 void Board_DrawStartButton(Board *board, Sexy::Graphics *graphics, LawnApp *lawnApp);
 

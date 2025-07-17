@@ -168,4 +168,8 @@ public:
     void StopFoley(FoleyType theFoleyType) { reinterpret_cast<void (*)(TodFoley *, FoleyType)>(TodFoley_StopFoleyAddr)(this, theFoleyType); }
 };
 
+inline FoleyInstance *SoundSystemFindInstance(TodFoley *theSoundSystem, FoleyType theFoleyType) {
+    return reinterpret_cast<FoleyInstance *(*)(TodFoley *, FoleyType)>(SoundSystemFindInstanceAddr)(theSoundSystem, theFoleyType);
+}
+
 #endif // PLANTSVSZOMBIES_ANDROIDTV_TODFOLEY_H

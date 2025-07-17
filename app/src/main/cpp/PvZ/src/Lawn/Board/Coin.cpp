@@ -7,6 +7,7 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
+#include "PvZ/TodLib/Effect/Attachment.h"
 
 #include <cmath>
 
@@ -145,7 +146,7 @@ void Coin::UpdateFallForAward() {
                 aParticleOffsetY -= 20.0;
                 int aRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_UI_TOP, mRow, mHasBouncyArrow);
                 TodParticleSystem *aParticle = mApp->AddTodParticle(mPosX, mPosY, aRenderOrder, ParticleEffect::PARTICLE_TROPHY_SPARKLE);
-                AttachParticle(mAttachmentID + 2, aParticle, 0, 0.0);
+                AttachParticle(*(mAttachmentID + 2), aParticle, 0, 0.0);
             } else if (mType == CoinType::COIN_AWARD_MONEY_BAG || mType == CoinType::COIN_AWARD_BAG_DIAMOND) {
                 aParticleOffsetY -= 2.0;
                 aParticleOffsetX += 2.0;
@@ -169,7 +170,7 @@ void Coin::UpdateFallForAward() {
             }
 
             TodParticleSystem *aParticle = mApp->AddTodParticle(mPosX + aParticleOffsetX, mPosY + aParticleOffsetY, 0, aEffect);
-            AttachParticle(mAttachmentID, aParticle, aParticleOffsetX, aParticleOffsetY);
+            AttachParticle(*mAttachmentID, aParticle, aParticleOffsetX, aParticleOffsetY);
             mHasBouncyArrow = true;
         }
 

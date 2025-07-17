@@ -256,8 +256,7 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
             auto id = AchievementId(LeaderboardsWidget_GetAchievementIdByReanimationType(ReanimationType(num + ReanimationType::REANIM_ACHIEVEMENT_HOME_SECURITY))
                                     + AchievementId::ACHIEVEMENT_HOME_SECURITY);
             Sexy::Image *image = GetIconByAchievementId(id);
-            Color color;
-            GetFlashingColor(&color, leaderboardsWidget->mApp->mAppCounter, 120);
+            Color color = GetFlashingColor(leaderboardsWidget->mApp->mAppCounter, 120);
             g->SetColorizeImages(true);
             g->SetColor(color);
             leaderboardsWidget->mLeaderboardReanimations->achievementReanim[num]->Draw(g);
