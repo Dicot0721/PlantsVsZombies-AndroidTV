@@ -195,21 +195,6 @@ protected:
     struct __rep {
         static constexpr size_type max_size = 0x3FFF'FFFC;
 
-        size_type size;                // 字符数
-        size_type capacity;            // 已分配存储空间中可以容纳的字符数
-        std::atomic_int32_t ref_count; // 引用计数 (小于等于 0 时释放内存)
-        value_type data[];             // 作为字符存储的底层数组 (柔性数组成员)
-
-        [[nodiscard, gnu::always_inline]] static __rep &empty_rep() noexcept {
-#ifdef PVZ_VERSION
-            static constexpr uintptr_t offset = (sizeof(value_type) == sizeof(int8_t)) ? /* char */ 0x71BB54 : /* wchar_t */ 0x69E45C;
-            return *reinterpret_cast<__rep *>(gLibBaseOffset + offset);
-#else
-            alignas(__rep) static std::byte empty_rep_storage[sizeof(__rep) + sizeof(value_type)] = {};
-            return *reinterpret_cast<__rep *>(empty_rep_storage);
-#endif
-        }
-
         [[nodiscard]] static __rep *create(const value_type *s, size_type sz, size_type cap) {
             assert((s != nullptr || sz == 0) && (sz <= cap) && (cap < max_size));
             std::size_t alloc_sz = sizeof(__rep) + sizeof(value_type) * (cap + 1);
@@ -227,6 +212,21 @@ protected:
                 ::operator delete(p);
             }
         }
+
+        [[nodiscard, gnu::always_inline]] static __rep &empty_rep() noexcept {
+#ifdef PVZ_VERSION
+            static constexpr uintptr_t offset = (sizeof(value_type) == sizeof(int8_t)) ? /* char */ 0x71BB54 : /* wchar_t */ 0x69E45C;
+            return *reinterpret_cast<__rep *>(gLibBaseOffset + offset);
+#else
+            alignas(__rep) static std::byte empty_rep_storage[sizeof(__rep) + sizeof(value_type)] = {};
+            return *reinterpret_cast<__rep *>(empty_rep_storage);
+#endif
+        }
+
+        size_type size;                // 字符数
+        size_type capacity;            // 已分配存储空间中可以容纳的字符数
+        std::atomic_int32_t ref_count; // 引用计数 (小于等于 0 时释放内存)
+        value_type data[];             // 作为字符存储的底层数组 (柔性数组成员)
     };
 
     [[nodiscard, gnu::always_inline]] __rep *__get_rep() const noexcept { return reinterpret_cast<__rep *>(__data_) - 1; }
