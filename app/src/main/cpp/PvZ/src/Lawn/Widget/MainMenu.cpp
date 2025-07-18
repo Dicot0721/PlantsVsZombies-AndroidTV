@@ -1,4 +1,5 @@
 #include "PvZ/Lawn/Widget/MainMenu.h"
+#include "PvZ/Lawn/Widget/TestMenuWidget.h"
 #include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
@@ -2163,7 +2164,7 @@ bool ZombatarWidget_AccessoryIsColorized(int tab, int accessory) {
 }
 
 ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
-    TestMenuWidget_TestMenuWidget(this);
+    reinterpret_cast<TestMenuWidget *>(this)->Create();
     theApp->LoadZombatarResources();
     theApp->Load("DelayLoad_Almanac");
     mApp = theApp;
@@ -2216,7 +2217,7 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     mNewButton = newButton;
 
     pvzstl::string str4{"[ZOMBATAR_DELETE_BUTTON]"};
-    Sexy::GameButton *deleteButton = MakeButton(1004, mZombatarListener, nullptr, (SexyString &)str3);
+    Sexy::GameButton *deleteButton = MakeButton(1004, mZombatarListener, nullptr, (SexyString &)str4);
     deleteButton->Resize(314, 490, 170, 50);
     AddWidget((Widget*)deleteButton);
     mDeleteButton = deleteButton;

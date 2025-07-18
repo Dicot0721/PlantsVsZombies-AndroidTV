@@ -11,8 +11,6 @@
 //#include "PvZ/TodLib/Common/TodList.h"
 //#include "TodLib/Common/TodCommon.h"
 
-inline int **(*ReanimAtlas_GetEncodedReanimAtlas)(int *, int *);
-
 inline void (*MaskHelpWidget_MaskHelpWidget)(AchievementsWidget *, LawnApp *);
 
 inline void (*MaskHelpWidget_Delete)(AchievementsWidget *);
@@ -24,10 +22,6 @@ inline void DrawCheckboxText(Sexy::Graphics *g, const pvzstl::string &theText1, 
 inline void (*CreditScreen_PauseCredits)(Sexy::Widget *);
 
 inline int (*Mailbox_GetNumUnseenMessages)(int *);
-
-inline void (*ToolTipWidget_SetWarningText)(int *, int *);
-
-inline void (*TestMenuWidget_TestMenuWidget)(ZombatarWidget *);
 
 
 inline int (*old_SexyDialog_AddedToManager)(void *instance, void *instance1);

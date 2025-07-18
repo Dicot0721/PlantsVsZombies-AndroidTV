@@ -47,9 +47,6 @@
 #include "PvZ/Lawn/System/SaveGame.h"
 
 inline void InitInGameFunction() {
-    ToolTipWidget_SetWarningText = (decltype(ToolTipWidget_SetWarningText))ToolTipWidget_SetWarningTextAddr;
-    TestMenuWidget_TestMenuWidget = (decltype(TestMenuWidget_TestMenuWidget))TestMenuWidget_TestMenuWidgetAddr;
-    PoolEffect_BilinearLookupFixedPoint = (decltype(PoolEffect_BilinearLookupFixedPoint))PoolEffect_BilinearLookupFixedPointAddr;
     MaskHelpWidget_MaskHelpWidget = (decltype(MaskHelpWidget_MaskHelpWidget))MaskHelpWidget_MaskHelpWidgetAddr;
     MaskHelpWidget_Delete = (decltype(MaskHelpWidget_Delete))MaskHelpWidget_DeleteAddr;
     DaveHelp_DaveHelp = (decltype(DaveHelp_DaveHelp))DaveHelp_DaveHelpAddr;
@@ -462,7 +459,7 @@ inline void InitHookFunction() {
     homura::HookFunction(TestMenuWidget_DeleteAddr, &TestMenuWidget_Delete, &old_TestMenuWidget_Delete);
     homura::HookFunction(TestMenuWidget_Delete2Addr, &TestMenuWidget_Delete2, &old_TestMenuWidget_Delete2);
     homura::HookFunction(SaveGameContext_SyncReanimationDefAddr, &SaveGameContext::SyncReanimationDef, nullptr);
-    homura::HookFunction(PoolEffect_PoolEffectDrawAddr, &PoolEffect_PoolEffectDraw, nullptr);
+    homura::HookFunction(PoolEffect_PoolEffectDrawAddr, &PoolEffect::PoolEffectDraw, nullptr);
     homura::HookFunction(Sexy_MemoryImage_ClearRectAddr, &Sexy::MemoryImage::ClearRect, nullptr);
 
 

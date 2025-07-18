@@ -28,10 +28,15 @@ public:
     Sexy::MemoryImage *mCausticImage;      // 1
     LawnApp *mApp;                         // 2
     int mPoolCounter;                      // 3
-}; // 大小4个整数
+    // 大小4个整数
 
-inline unsigned int (*PoolEffect_BilinearLookupFixedPoint)(PoolEffect *, unsigned int, unsigned int);
+    unsigned int BilinearLookupFixedPoint(unsigned int u, unsigned int v) {
+        return reinterpret_cast<unsigned int (*)(PoolEffect *, unsigned int, unsigned int)>(PoolEffect_BilinearLookupFixedPointAddr)(this, u, v);
+    }
 
-void PoolEffect_PoolEffectDraw(PoolEffect *poolEffect, Sexy::Graphics *g, bool theIsNight);
+    void UpdateWaterEffect();
+    void PoolEffectDraw(Sexy::Graphics *g, bool theIsNight);
+};
+
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_POOLEFFECT_H

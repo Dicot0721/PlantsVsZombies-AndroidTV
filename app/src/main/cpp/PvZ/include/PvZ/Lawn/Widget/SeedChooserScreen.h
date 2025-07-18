@@ -1,6 +1,7 @@
 #ifndef PVZ_LAWN_SEED_CHOOSER_SCREEN_H
 #define PVZ_LAWN_SEED_CHOOSER_SCREEN_H
 
+#include "PvZ/Lawn/Board/ToolTipWidget.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
@@ -67,8 +68,8 @@ public:
     int mSeedsInBothBank;                 // 935
     int mSeedsIn1PBank;                   // 936
     int unkMem2;                          // 937
-    int *mToolTipWidget1;                 // 938
-    int *mToolTipWidget2;                 // 939
+    ToolTipWidget *mToolTip1;             // 938
+    ToolTipWidget *mToolTip2;             // 939
     int mToolTipWidgetState1;             // 940
     int mToolTipWidgetState2;             // 941
     int mCursorPositionX1;                // 942

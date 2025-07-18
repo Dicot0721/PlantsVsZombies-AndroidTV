@@ -13,7 +13,7 @@
 
 using namespace Sexy;
 
-void PoolEffect_UpdateWaterEffect(PoolEffect *poolEffect) {
+void PoolEffect::UpdateWaterEffect() {
     int v2;            // eax
     unsigned int v4;   // ecx
     int v5;            // ebp
@@ -36,10 +36,10 @@ void PoolEffect_UpdateWaterEffect(PoolEffect *poolEffect) {
         v6 = v2 << 9;
         v = v4;
         for (y = v6;; v6 = y) {
-            v7 = (unsigned int *)((char *)poolEffect->mCausticImage->mBits + v6);
-            v8 = poolEffect->mPoolCounter << 16;
-            v15 = (unsigned char)PoolEffect_BilinearLookupFixedPoint(poolEffect, v5 - (((unsigned short)poolEffect->mPoolCounter + 1) << 16) / 6, v13 + v8 / 8);
-            v9 = ((unsigned char)PoolEffect_BilinearLookupFixedPoint(poolEffect, v5 + v8 / 10, v) + v15) / 2;
+            v7 = (unsigned int *)((char *)mCausticImage->mBits + v6);
+            v8 = mPoolCounter << 16;
+            v15 = (unsigned char)BilinearLookupFixedPoint(v5 - (((unsigned short)mPoolCounter + 1) << 16) / 6, v13 + v8 / 8);
+            v9 = ((unsigned char)BilinearLookupFixedPoint(v5 + v8 / 10, v) + v15) / 2;
             if ((unsigned char)v9 < 0xA0u)
                 v10 = (unsigned char)v9 < 0x80u ? 0 : 5 * (v9 + 0x80);
             else
@@ -53,10 +53,10 @@ void PoolEffect_UpdateWaterEffect(PoolEffect *poolEffect) {
         if (++i >= 64)
             break;
     }
-    poolEffect->mCausticImage->BitsChanged();
+    mCausticImage->BitsChanged();
 }
 
-void PoolEffect_PoolEffectDraw(PoolEffect *poolEffect, Sexy::Graphics *g, bool theIsNight) {
+void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
     float v6;                     // st7
     float v7;                     // st6
     float v8;                     // st5
@@ -217,7 +217,7 @@ void PoolEffect_PoolEffectDraw(PoolEffect *poolEffect, Sexy::Graphics *g, bool t
                 v27 = v36;
             } else {
                 v23 = v10;
-                v24 = poolEffect->mPoolCounter * v10;
+                v24 = mPoolCounter * v10;
                 v101 = v24 / 800.0;
                 v133 = v101;
                 v117 = v24 / 150.0;
@@ -397,13 +397,13 @@ void PoolEffect_PoolEffectDraw(PoolEffect *poolEffect, Sexy::Graphics *g, bool t
         g->DrawTrianglesTex(*Sexy_IMAGE_POOL_BASE_Addr, v140[0], 150);
         g->DrawTrianglesTex(*Sexy_IMAGE_POOL_SHADING_Addr, v140[1], 150);
     }
-    PoolEffect_UpdateWaterEffect(poolEffect);
+    UpdateWaterEffect();
     Graphics aPoolG(*g);
     aPoolG.SetWrapMode(0, 0);
-    aPoolG.DrawTrianglesTex((Image*)poolEffect->mCausticImage, v140[2], 150);
+    aPoolG.DrawTrianglesTex((Image*)mCausticImage, v140[2], 150);
     aPoolG.SetWrapMode(1, 1);
 
-    if (poolEffect->mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_POOL_PARTY && poolEffect->mApp->mBoard != nullptr) {
+    if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_POOL_PARTY && mApp->mBoard != nullptr) {
         float theTmpTransY = g->mTransY;
         int thePoolOffsetY[2] = {164, -175};
         for (int i = 0; i < 2; ++i) {
@@ -416,14 +416,14 @@ void PoolEffect_PoolEffectDraw(PoolEffect *poolEffect, Sexy::Graphics *g, bool t
                 g->DrawImage(*Sexy_IMAGE_POOL_Addr, 34, 278);
                 g->DrawTrianglesTex(*Sexy_IMAGE_POOL_BASE_Addr, v140[0], 150);
                 g->DrawTrianglesTex(*Sexy_IMAGE_POOL_SHADING_Addr, v140[1], 150);
-                TodParticleSystem *aPoolSparkle = poolEffect->mApp->ParticleTryToGet(poolEffect->mApp->mBoard->mPoolSparklyParticleID);
+                TodParticleSystem *aPoolSparkle = mApp->ParticleTryToGet(mApp->mBoard->mPoolSparklyParticleID);
                 if (aPoolSparkle != nullptr) {
                     aPoolSparkle->Draw(g);
                 }
             }
             Graphics aPoolG2(*g);
             aPoolG2.SetWrapMode(0, 0);
-            aPoolG2.DrawTrianglesTex((Image*)poolEffect->mCausticImage, v140[2], 150);
+            aPoolG2.DrawTrianglesTex((Image*)mCausticImage, v140[2], 150);
             aPoolG2.SetWrapMode(1, 1);
             g->mTransY = theTmpTransY;
         }

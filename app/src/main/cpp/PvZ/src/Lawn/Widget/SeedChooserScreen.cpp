@@ -331,7 +331,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
         SeedType aSeedType = SeedHitTest(mCursorPositionX2, mCursorPositionY2);
         if (mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_TOMBSTONE].mSeedState == ChosenSeedState::SEED_IN_BANK && mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_TOMBSTONE].mCrazyDavePicked) {
             pvzstl::string str = TodStringTranslate("[ZOMBIE_BOSS_WANTS]");
-            ToolTipWidget_SetWarningText(mToolTipWidget2, (int *)&str);
+            mToolTip2->SetWarningText(str);
         }
     }
 }

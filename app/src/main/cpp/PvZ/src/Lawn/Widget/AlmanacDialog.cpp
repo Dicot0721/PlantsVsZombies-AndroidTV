@@ -220,7 +220,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
             if (mApp->Is3DAccelerated()) {
                 g->SetClipRect(475, 0, 397, 500);
                 g->mTransY = g->mTransY - 145.0f;
-                PoolEffect_PoolEffectDraw(mApp->mPoolEffect, g, true);
+                mApp->mPoolEffect->PoolEffectDraw(g, true);
                 g->mTransY = g->mTransY + 145.0f;
                 g->ClearClipRect();
             }
@@ -229,7 +229,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
             if (mApp->Is3DAccelerated()) {
                 g->SetClipRect(475, 0, 397, 500);
                 g->mTransY = g->mTransY - 145.0f;
-                PoolEffect_PoolEffectDraw(mApp->mPoolEffect, g, false);
+                mApp->mPoolEffect->PoolEffectDraw(g, false);
                 g->mTransY = g->mTransY + 145.0f;
                 g->ClearClipRect();
             }
@@ -282,7 +282,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
             if (mApp->Is3DAccelerated()) {
                 //                Sexy_Graphics_SetClipRect(g, 475, 0, 397, 500);
                 g->mTransY = g->mTransY - 115;
-                PoolEffect_PoolEffectDraw(mApp->mPoolEffect, g, true);
+                mApp->mPoolEffect->PoolEffectDraw(g, true);
                 g->mTransY = g->mTransY + 115;
                 //                Sexy_Graphics_ClearClipRect(g);
             }
@@ -291,7 +291,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
             if (mApp->Is3DAccelerated()) {
                 //                Sexy_Graphics_SetClipRect(g, 475, 0, 397, 500);
                 g->mTransY = g->mTransY - 115;
-                PoolEffect_PoolEffectDraw(mApp->mPoolEffect, g, false);
+                mApp->mPoolEffect->PoolEffectDraw(g, false);
                 g->mTransY = g->mTransY + 115;
                 //                Sexy_Graphics_ClearClipRect(g);
             }
