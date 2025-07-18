@@ -20,8 +20,7 @@ Sexy::GameButton *gHelpTextScreenCloseButton;
 
 void HelpTextScreen_Update(HelpTextScreen *helpTextScreen) {
     if (gHelpTextScreenCloseButton == nullptr) {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[CLOSE]");
+        pvzstl::string str = TodStringTranslate("[CLOSE]");
         gHelpTextScreenCloseButton = MakeButton(1000, (Sexy::ButtonListener *)helpTextScreen + 64, helpTextScreen, (SexyString &)str);
         helpTextScreen->AddWidget((Sexy::Widget*)gHelpTextScreenCloseButton);
     }

@@ -52,8 +52,7 @@ void Board::Create(LawnApp *theApp) {
         gBoardStoreButton->Destroy();
         operator delete (gBoardStoreButton);
     }
-    pvzstl::string str{};
-    TodStringTranslate(str, (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) ? "[MAIN_MENU_BUTTON]" : "[MENU_BUTTON]");
+    pvzstl::string str = TodStringTranslate((theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) ? "[MAIN_MENU_BUTTON]" : "[MENU_BUTTON]");
     gBoardMenuButton = MakeButton(1000, &mButtonListener, this, (SexyString &)str);
     gBoardMenuButton->Resize(705, -3, 120, 80);
     gBoardMenuButton->mBtnNoDraw = true;
@@ -65,15 +64,13 @@ void Board::Create(LawnApp *theApp) {
     }
 
     if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND) {
-        pvzstl::string str1{};
-        TodStringTranslate(str1, "[START_ONSLAUGHT]");
+        pvzstl::string str1 = TodStringTranslate("[START_ONSLAUGHT]");
         gBoardStoreButton = MakeButton(1001, &mButtonListener, this, (SexyString &)str1);
         gBoardStoreButton->Resize(0, 0, 0, 0);
         gBoardStoreButton->mBtnNoDraw = true;
         gBoardStoreButton->mDisabled = true;
     } else {
-        pvzstl::string str1{};
-        TodStringTranslate(str1, "[SHOP_BUTTON]");
+        pvzstl::string str1 = TodStringTranslate("[SHOP_BUTTON]");
         gBoardStoreButton = MakeButton(1001, &mButtonListener, this, (SexyString &)str1);
         if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
             gBoardStoreButton->Resize(0, 550, 170, 120);
@@ -3119,10 +3116,9 @@ bool Board::GrantAchievement(AchievementId theAchievementId, bool theIsShow) {
         LawnApp_PlaySample(lawnApp, addonSounds.achievement);
         ClearAdviceImmediately();
         const char *theAchievementName = GetNameByAchievementId(theAchievementId);
-        pvzstl::string str{};
-        pvzstl::string str2{};
-        TodStringTranslate(str, "[ACHIEVEMENT_GRANTED]");
+        pvzstl::string str = TodStringTranslate("[ACHIEVEMENT_GRANTED]");
         pvzstl::string str1 = StrFormat("[%s]", theAchievementName);
+        pvzstl::string str2;
         TodReplaceString(str2, str, "{achievement}", str1);
         DisplayAdviceAgain(_S("[ACHIEVEMENT_GRANTED]"), MessageStyle::MESSAGE_STYLE_ACHIEVEMENT, AdviceType::ADVICE_NEED_ACHIVEMENT_EARNED);
         mAdvice->mIcon = GetIconByAchievementId(theAchievementId);

@@ -21,21 +21,18 @@ void MailScreen::Create(LawnApp *theApp) {
     // 修复MailScreen的可触控区域不为全屏。
     old_MailScreen_MailScreen(this, theApp);
 
-    pvzstl::string str2{};
-    TodStringTranslate(str2, "[MARK_MESSAGE_READ]");
+    pvzstl::string str2 = TodStringTranslate("[MARK_MESSAGE_READ]");
     gMailScreenReadButton = MakeButton(1002, &mButtonListener, this, (SexyString &)str2);
     gMailScreenReadButton->Resize(-150, 450, 170, 80);
     AddWidget((Sexy::Widget*)gMailScreenReadButton);
 
-    pvzstl::string str1{};
-    TodStringTranslate(str1, "[GO_TO_READ_MAIL]");
+    pvzstl::string str1 = TodStringTranslate("[GO_TO_READ_MAIL]");
     gMailScreenSwitchButton = MakeButton(1001, &mButtonListener, this, (SexyString &)str1);
     gMailScreenSwitchButton->Resize(-150, 520, 170, 80);
     AddWidget((Sexy::Widget*)gMailScreenSwitchButton);
 
 
-    pvzstl::string str{};
-    TodStringTranslate(str, "[CLOSE]");
+    pvzstl::string str = TodStringTranslate("[CLOSE]");
     gMailScreenCloseButton = MakeButton(1000, &mButtonListener, this, (SexyString &)str);
     gMailScreenCloseButton->Resize(800, 520, 170, 80);
     AddWidget((Sexy::Widget*)gMailScreenCloseButton);
@@ -82,8 +79,7 @@ void MailScreen::ButtonDepress(int theId) {
         bool isAtInBox = aRealMailScreen->mPage == 0;
         gMailScreenReadButton->mDisabled = !isAtInBox;
         gMailScreenReadButton->mBtnNoDraw = !isAtInBox;
-        pvzstl::string str{};
-        TodStringTranslate(str, isAtInBox ? "[GO_TO_READ_MAIL]" : "[GO_TO_INBOX]");
+        pvzstl::string str = TodStringTranslate(isAtInBox ? "[GO_TO_READ_MAIL]" : "[GO_TO_INBOX]");
         gMailScreenSwitchButton->SetLabel((SexyString&)str);
     } else
         old_MailScreen_ButtonDepress(this, theId);

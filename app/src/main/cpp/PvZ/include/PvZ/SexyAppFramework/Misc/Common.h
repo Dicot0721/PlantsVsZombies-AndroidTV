@@ -68,8 +68,7 @@ inline void vformat(pvzstl::string &output, const char *fmt, va_list vList) {
     return output;
 }
 
-void StringDelete(int *holder);
 
-}
+} // namespace Sexy
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_COMMON_H

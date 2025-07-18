@@ -216,8 +216,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     mVTable->ButtonMouseMove = (void *)Sexy_ButtonListener_ButtonMouseMove;
     mVTable->ButtonMouseLeave = (void *)Sexy_ButtonListener_ButtonMouseLeave;
     mVTable->ButtonDownTick = (void *)Sexy_ButtonListener_ButtonDownTick;
-    pvzstl::string str{};
-    TodStringTranslate(str, "[CLOSE]");
+    pvzstl::string str = TodStringTranslate("[CLOSE]");
     Sexy::GameButton *aBackButton = MakeButton(1000, mLeaderboardsListener, this, (SexyString &)str);
     LOG_DEBUG("aBackButton {} ", (void*)aBackButton);
     aBackButton->Resize(1040, 590, 120, 50);
@@ -275,9 +274,8 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
 
     if (leaderboardsWidget->mApp->HasFinishedAdventure()) {
         leaderboardsWidget->mLeaderboardReanimations->backgroundReanim[1]->DrawRenderGroup(g, 1);
-        pvzstl::string str{};
-        pvzstl::string str1{};
-        TodStringTranslate(str, "[LEADERBOARD_STREAK]");
+        pvzstl::string str = TodStringTranslate("[LEADERBOARD_STREAK]");
+        pvzstl::string str1;
         TodReplaceNumberString(str1, str, "{STREAK}", leaderboardsWidget->mLongestRecordPool);
         Sexy::Rect theRect = {317, 658, 120, 50};
         Sexy::Font *theFont = *Sexy_FONT_CONTINUUMBOLD14_Addr;
@@ -286,10 +284,9 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
 
     //    DrawImage(g, addonImages.survival_button, 270, 579);
 
-    pvzstl::string  str2{};
-    pvzstl::string str4{};
+    pvzstl::string  str2 = TodStringTranslate("[PLAYERS_HOUSE]");
+    pvzstl::string str4;
     Sexy::Rect theRect1 = {240, 70, 800, 70};
-    TodStringTranslate(str2, "[PLAYERS_HOUSE]");
     pvzstl::string str3 = StrFormat("%s", leaderboardsWidget->mApp->mPlayerInfo->mName);
     TodReplaceString(str4, str2, "{PLAYER}", str3);
     Sexy::Font *theFont1 = *Sexy_FONT_HOUSEOFTERROR28_Addr;
@@ -361,9 +358,8 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
 
     if (TRect_Contains(&plantTrashBinRect, x, y)) {
         LawnApp_PlaySample(leaderboardsWidget->mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
-        pvzstl::string str1{};
-        pvzstl::string str2{};
-        TodStringTranslate(str1, "[PLANTS_KILLED]");
+        pvzstl::string str1 = TodStringTranslate("[PLANTS_KILLED]");
+        pvzstl::string str2;
         TodReplaceNumberString(str2, str1, "{PLANTS}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, (char *)&str2, "", "[DIALOG_BUTTON_OK]", "", 3);
         return;
@@ -375,9 +371,8 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
 
     if (TRect_Contains(&zombieTrashBinRect, x, y)) {
         LawnApp_PlaySample(leaderboardsWidget->mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
-        pvzstl::string str1{};
-        pvzstl::string str2{};
-        TodStringTranslate(str1, "[ZOMBIES_KILLED]");
+        pvzstl::string str1 = TodStringTranslate("[ZOMBIES_KILLED]");
+        pvzstl::string str2;
         TodReplaceNumberString(str2, str1, "{ZOMBIES}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ZOMBIES_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, (char *)&str2, "", "[DIALOG_BUTTON_OK]", "", 3);
         return;
@@ -465,18 +460,16 @@ void DaveHelp_KeyDown(LeaderboardsWidget *leaderboardsWidget, int keyCode) {
     }
     if (keyCode == Sexy::KEYCODE_SHOVEL) {
         LawnApp_PlaySample(leaderboardsWidget->mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
-        pvzstl::string str1{};
-        pvzstl::string str2{};
-        TodStringTranslate(str1, "[PLANTS_KILLED]");
+        pvzstl::string str1 = TodStringTranslate("[PLANTS_KILLED]");
+        pvzstl::string str2;
         TodReplaceNumberString(str2, str1, "{PLANTS}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, (char *)&str2, "", "[DIALOG_BUTTON_OK]", "", 3);
         return;
     }
     if (keyCode == Sexy::KEYCODE_HAMMER) {
         LawnApp_PlaySample(leaderboardsWidget->mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
-        pvzstl::string str1{};
-        pvzstl::string str2{};
-        TodStringTranslate(str1, "[ZOMBIES_KILLED]");
+        pvzstl::string str1 = TodStringTranslate("[ZOMBIES_KILLED]");
+        pvzstl::string str2;
         TodReplaceNumberString(str2, str1, "{ZOMBIES}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ZOMBIES_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, (char *)&str2, "", "[DIALOG_BUTTON_OK]", "", 3);
         return;

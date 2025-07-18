@@ -45,15 +45,13 @@ void AlmanacDialog::Create(LawnApp *theApp) {
 
     old_AlmanacDialog_AlmanacDialog(this, theApp);
 
-    pvzstl::string str{};
-    TodStringTranslate(str, "[ALMANAC_INDEX]");
+    pvzstl::string str = TodStringTranslate("[ALMANAC_INDEX]");
     gAlmanacBackButton = MakeButton(theBackId, &this->mButtonListener, this, (SexyString &)str);
     gAlmanacBackButton->Resize(0, 0, 0, 0);
     gAlmanacBackButton->mBtnNoDraw = true;
     gAlmanacBackButton->mDisabled = true;
 
-    pvzstl::string str1{};
-    TodStringTranslate(str1, "[CLOSE]");
+    pvzstl::string str1 = TodStringTranslate("[CLOSE]");
     gAlmanacCloseButton = MakeButton(theCloseId, &this->mButtonListener, this, (SexyString &)str1);
     gAlmanacCloseButton->Resize(mAlmanacCloseButtonX, mAlmanacCloseButtonY, mAlmanacButtonWidth, mAlmanacButtonHeight);
     AddWidget(gAlmanacBackButton);
@@ -178,8 +176,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
 
     // TODO:解决PoolEffect图层问题，和部分植物的介绍文本显示不全问题
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTBACK_Addr, -240, -60);
-    pvzstl::string aHeaderText{};
-    TodStringTranslate(aHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
+    pvzstl::string aHeaderText = TodStringTranslate("[SUBURBAN_ALMANAC_PLANTS]");
     Color aHeaderColor = {213, 159, 43, 255};
     TodDrawString(g, aHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, aHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
     int theAlpha = std::sin((mUpdateCnt % 100) * 0.01 * std::numbers::pi) * 255.0;
@@ -308,8 +305,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     }
 
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTBACK_Addr, -240, -60);
-    pvzstl::string aHeaderText{};
-    TodStringTranslate(aHeaderText, "[SUBURBAN_ALMANAC_PLANTS]");
+    pvzstl::string aHeaderText = TodStringTranslate("[SUBURBAN_ALMANAC_PLANTS]");
     Color aHeaderColor = {213, 159, 43, 255};
     TodDrawString(g, aHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, aHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
 

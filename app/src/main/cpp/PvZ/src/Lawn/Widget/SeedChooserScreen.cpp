@@ -142,8 +142,7 @@ void SeedChooserScreen::Create(bool theIsZombieChooser) {
     }
 
     if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS && !mIsZombieChooser) {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[MENU_BUTTON]");
+        pvzstl::string str = TodStringTranslate("[MENU_BUTTON]");
         gSeedChooserScreenMainMenuButton = MakeButton(104, &mButtonListener, this, (SexyString &)str);
         gSeedChooserScreenMainMenuButton->Resize(mApp->IsCoopMode() ? 345 : 650, -3, 120, 80);
         AddWidget(gSeedChooserScreenMainMenuButton);
@@ -331,8 +330,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && mIsZombieChooser) {
         SeedType aSeedType = SeedHitTest(mCursorPositionX2, mCursorPositionY2);
         if (mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_TOMBSTONE].mSeedState == ChosenSeedState::SEED_IN_BANK && mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_TOMBSTONE].mCrazyDavePicked) {
-            pvzstl::string str{};
-            TodStringTranslate(str, "[ZOMBIE_BOSS_WANTS]");
+            pvzstl::string str = TodStringTranslate("[ZOMBIE_BOSS_WANTS]");
             ToolTipWidget_SetWarningText(mToolTipWidget2, (int *)&str);
         }
     }

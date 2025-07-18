@@ -66,10 +66,9 @@ void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g) {
         color.mBlue = 0;
         color.mAlpha = 255;
     }
-    pvzstl::string str{};
+    pvzstl::string str = TodStringTranslate("[OPTIONS_3D_ACCELERATION]");
     g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
     g->SetColor(color);
-    TodStringTranslate(str, "[OPTIONS_3D_ACCELERATION]");
     g->DrawString((SexyString&)str, g3DAccleratedCheckbox->mX + 80, g3DAccleratedCheckbox->mY + 20);
 
     Color color1 = {107, 110, 145, 255};
@@ -79,10 +78,9 @@ void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g) {
         color1.mBlue = 0;
         color1.mAlpha = 255;
     }
-    pvzstl::string str1{};
+    pvzstl::string str1 = TodStringTranslate("[OPTIONS_VIBRATE]");
     g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
     g->SetColor(color1);
-    TodStringTranslate(str1, "[OPTIONS_VIBRATE]");
     g->DrawString((SexyString&)str1, gVibrateCheckbox->mX + 80, gVibrateCheckbox->mY + 20);
 }
 

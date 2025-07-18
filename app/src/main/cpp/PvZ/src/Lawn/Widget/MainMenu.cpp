@@ -152,8 +152,7 @@ void MainMenu::Update() {
         }
         if (gMainMenuAchievementCounter == 0) {
             gAchievementState = SHOWING;
-            pvzstl::string str1{};
-            TodStringTranslate(str1, "[CLOSE]");
+            pvzstl::string str1 = TodStringTranslate("[CLOSE]");
             gMainMenuAchievementsBack = MakeButton(ACHIEVEMENTS_BACK_BUTTON, &mButtonListener, this, (SexyString &)str1);
             gMainMenuAchievementsBack->Resize(1000, 564 + 720, 170, 50);
             AddWidget((Widget*)gMainMenuAchievementsBack);
@@ -2282,8 +2281,7 @@ void TestMenuWidget_DrawSkin(ZombatarWidget *zombatarWidget, Sexy::Graphics *gra
         Sexy_Graphics_DrawImageColorized(graphics, addonZombatarImages.zombatar_colorpicker, &color, theX, theY);
     }
 
-    pvzstl::string str{};
-    TodStringTranslate(str, "[ZOMBATAR_START_TEXT]");
+    pvzstl::string str = TodStringTranslate("[ZOMBATAR_START_TEXT]");
     Sexy::Rect rect = {160 + 295, 211, 250, 100};
     Sexy::Font *font = *Sexy_FONT_DWARVENTODCRAFT18_Addr;
     TodDrawStringWrapped(graphics, str, rect, font, yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
@@ -2328,8 +2326,7 @@ void TestMenuWidget_DrawHair(ZombatarWidget *zombatarWidget, Sexy::Graphics *g) 
     Sexy_Graphics_DrawImageColorized(g, addonZombatarImages.zombatar_accessory_bg_none, &theAlphaColor, theX, theY);
 
     if (zombatarWidget->mSelectedHair == 255) {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2344,8 +2341,7 @@ void TestMenuWidget_DrawHair(ZombatarWidget *zombatarWidget, Sexy::Graphics *g) 
             Sexy_Graphics_DrawImageColorized(g, i == 17 ? addonZombatarImages.zombatar_colorpicker_none : addonZombatarImages.zombatar_colorpicker, &color, theX, theY);
         }
     } else {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_NOT_APPLICABLE]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_NOT_APPLICABLE]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2434,8 +2430,7 @@ void TestMenuWidget_DrawFHair(ZombatarWidget *zombatarWidget, Sexy::Graphics *g)
     }
 
     if (zombatarWidget->mSelectedFHair == 255) {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2450,8 +2445,7 @@ void TestMenuWidget_DrawFHair(ZombatarWidget *zombatarWidget, Sexy::Graphics *g)
             Sexy_Graphics_DrawImageColorized(g, i == 17 ? addonZombatarImages.zombatar_colorpicker_none : addonZombatarImages.zombatar_colorpicker, &color, theX, theY);
         }
     } else {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_NOT_APPLICABLE]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_NOT_APPLICABLE]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2495,8 +2489,7 @@ void TestMenuWidget_DrawTidBit(ZombatarWidget *zombatarWidget, Sexy::Graphics *g
     Sexy_Graphics_DrawImageColorized(g, addonZombatarImages.zombatar_accessory_bg_none, &theAlphaColor, theX, theY);
 
     if (zombatarWidget->mSelectedTidBit == 255) {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2511,8 +2504,7 @@ void TestMenuWidget_DrawTidBit(ZombatarWidget *zombatarWidget, Sexy::Graphics *g
             Sexy_Graphics_DrawImageColorized(g, i == 17 ? addonZombatarImages.zombatar_colorpicker_none : addonZombatarImages.zombatar_colorpicker, &color, theX, theY);
         }
     } else {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_NOT_APPLICABLE]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_NOT_APPLICABLE]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2554,8 +2546,7 @@ void TestMenuWidget_DrawEyeWear(ZombatarWidget *zombatarWidget, Sexy::Graphics *
     Sexy_Graphics_DrawImageColorized(g, addonZombatarImages.zombatar_accessory_bg_none, &theAlphaColor, theX, theY);
 
     if (zombatarWidget->mSelectedEyeWear == 255) {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2570,8 +2561,7 @@ void TestMenuWidget_DrawEyeWear(ZombatarWidget *zombatarWidget, Sexy::Graphics *
             Sexy_Graphics_DrawImageColorized(g, i == 17 ? addonZombatarImages.zombatar_colorpicker_none : addonZombatarImages.zombatar_colorpicker, &color, theX, theY);
         }
     } else {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_NOT_APPLICABLE]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_NOT_APPLICABLE]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2627,14 +2617,12 @@ void TestMenuWidget_DrawCloth(ZombatarWidget *zombatarWidget, Sexy::Graphics *g)
     Sexy_Graphics_DrawImageColorized(g, addonZombatarImages.zombatar_accessory_bg_none, &theAlphaColor, theX, theY);
 
     if (zombatarWidget->mSelectedCloth == 255) {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
     } else {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_NOT_APPLICABLE]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_NOT_APPLICABLE]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2669,8 +2657,7 @@ void TestMenuWidget_DrawAccessory(ZombatarWidget *zombatarWidget, Sexy::Graphics
     Sexy_Graphics_DrawImageColorized(g, addonZombatarImages.zombatar_accessory_bg_none, &theAlphaColor, theX, theY);
 
     if (zombatarWidget->mSelectedAccessory == 255) {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2685,8 +2672,7 @@ void TestMenuWidget_DrawAccessory(ZombatarWidget *zombatarWidget, Sexy::Graphics
             Sexy_Graphics_DrawImageColorized(g, i == 17 ? addonZombatarImages.zombatar_colorpicker_none : addonZombatarImages.zombatar_colorpicker, &color, theX, theY);
         }
     } else {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_NOT_APPLICABLE]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_NOT_APPLICABLE]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2730,8 +2716,7 @@ void TestMenuWidget_DrawHat(ZombatarWidget *zombatarWidget, Sexy::Graphics *g) {
     Sexy_Graphics_DrawImageColorized(g, addonZombatarImages.zombatar_accessory_bg_none, &theAlphaColor, theX, theY);
 
     if (zombatarWidget->mSelectedHat == 255) {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_ITEM_NOT_CHOSEN]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2746,8 +2731,7 @@ void TestMenuWidget_DrawHat(ZombatarWidget *zombatarWidget, Sexy::Graphics *g) {
             Sexy_Graphics_DrawImageColorized(g, i == 17 ? addonZombatarImages.zombatar_colorpicker_none : addonZombatarImages.zombatar_colorpicker, &color, theX, theY);
         }
     } else {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_NOT_APPLICABLE]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_NOT_APPLICABLE]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2811,8 +2795,7 @@ void TestMenuWidget_DrawBackground(ZombatarWidget *zombatarWidget, Sexy::Graphic
             Sexy_Graphics_DrawImageColorized(g, i == 17 ? addonZombatarImages.zombatar_colorpicker_none : addonZombatarImages.zombatar_colorpicker, &color, theX, theY);
         }
     } else {
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_COLOR_NOT_APPLICABLE]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_COLOR_NOT_APPLICABLE]");
         Sexy::Rect rect = {160 + 288, 445, 250, 100};
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
         TodDrawStringWrapped(g, str, rect, font, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -2988,8 +2971,7 @@ void TestMenuWidget_Draw(ZombatarWidget *zombatarWidget, Sexy::Graphics *g) {
 
     if (zombatarWidget->mShowExistingZombatarPortrait && addonImages.zombatar_portrait != nullptr) {
         g->DrawImage(addonImages.zombatar_portrait, 160 + 260, 210);
-        pvzstl::string str{};
-        TodStringTranslate(str, "[ZOMBATAR_VIEW_PORTRAIT]");
+        pvzstl::string str = TodStringTranslate("[ZOMBATAR_VIEW_PORTRAIT]");
         Sexy::Rect rect = {160 + 178, 450, 400, 100};
         TodDrawStringWrapped(g, str, rect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_CENTER, false);
     } else if (zombatarWidget->mShowZombieTypeSelection) {
