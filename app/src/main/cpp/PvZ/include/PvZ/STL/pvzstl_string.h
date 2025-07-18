@@ -27,7 +27,7 @@ template <character CharT>
 template <character CharT>
 [[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, const CharT *rhs);
 
-template <typename CharT, typename Tp>
+template <typename Tp, typename CharT>
 concept __can_be_converted_to_string_view = std::is_convertible_v<const Tp &, std::basic_string_view<CharT>> && !std::is_convertible_v<const Tp &, const CharT *>;
 
 /**
@@ -45,7 +45,7 @@ public:
 
     using __self_view = std::basic_string_view<value_type>;
 
-    static constexpr size_type npos = -1;
+    static constexpr size_type npos = static_cast<size_type>(-1);
 
     basic_string() = default;
 
@@ -117,6 +117,8 @@ public:
 
     [[nodiscard, gnu::always_inline]] size_type capacity() const noexcept { return __get_rep()->capacity; }
 
+    void clear() noexcept;
+
     [[nodiscard, gnu::always_inline]] bool empty() const noexcept { return size() == 0; }
 
     [[nodiscard, gnu::always_inline]] const value_type &operator[](size_type pos) const noexcept {
@@ -155,9 +157,8 @@ public:
 
     [[nodiscard]] size_type find(const basic_string &str, size_type pos = 0) const noexcept { return find(__self_view{str}, pos); }
 
-    template <typename Tp>
-    [[nodiscard]] size_type find(const Tp &t, size_type pos = 0) const noexcept
-        requires __can_be_converted_to_string_view<value_type, Tp>;
+    template <__can_be_converted_to_string_view<value_type> Tp>
+    [[nodiscard]] size_type find(const Tp &t, size_type pos = 0) const noexcept;
 
     [[nodiscard]] size_type find(const value_type *s, size_type pos, size_type n) const noexcept { return find(__self_view{s, n}, pos); }
 
@@ -260,7 +261,7 @@ template <character CharT>
 basic_string<CharT> &basic_string<CharT>::operator=(const value_type *s) {
     assert((s != nullptr) && "basic_string::assign received nullptr");
     size_type len = traits_type::length(s);
-    if ((__data_ == __rep::empty_rep().data) && len == 0) {
+    if (empty() && len == 0) {
         return *this;
     }
     size_type cap = capacity();
@@ -274,6 +275,19 @@ basic_string<CharT> &basic_string<CharT>::operator=(const value_type *s) {
         __get_rep()->size = len;
     }
     return *this;
+}
+
+template <character CharT>
+void basic_string<CharT>::clear() noexcept {
+    if (empty()) {
+        return;
+    }
+    if (__ref_count() > 0) {
+        __reset();
+        return;
+    }
+    __data_[0] = value_type{0};
+    __get_rep()->size = 0;
 }
 
 template <character CharT>
@@ -307,12 +321,10 @@ template <character CharT>
 }
 
 template <character CharT>
-template <typename Tp>
-[[nodiscard]] auto basic_string<CharT>::find(const Tp &t, size_type pos) const noexcept -> size_type
-    requires __can_be_converted_to_string_view<value_type, Tp>
-{
+template <__can_be_converted_to_string_view<CharT> Tp>
+[[nodiscard]] auto basic_string<CharT>::find(const Tp &t, size_type pos) const noexcept -> size_type {
     auto xpos = __self_view{__data_, size()}.find(__self_view{t}, pos);
-    if constexpr (std::is_same_v<size_type, typename __self_view::size_type>) {
+    if constexpr (std::is_same_v<size_type, decltype(xpos)>) {
         return xpos;
     } else {
         return (xpos == __self_view::npos) ? npos : static_cast<size_type>(xpos);
