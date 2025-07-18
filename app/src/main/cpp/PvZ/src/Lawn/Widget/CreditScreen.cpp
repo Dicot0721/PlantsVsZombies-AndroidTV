@@ -29,9 +29,9 @@ void CreditScreen_Delete2(Sexy::Widget *creditScreen) {
     gCreditScreenBackButton = nullptr;
 }
 
-void CreditScreen_ButtonDepress(Sexy::Widget *creditScreen, int id) {
-    if (id == 1000) {
+void CreditScreen::ButtonDepress(int theId) {
+    if (theId == 1000) {
         LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-        CreditScreen_PauseCredits(lawnApp->mCreditScreen);
+        lawnApp->mCreditScreen->PauseCredits();
     }
 }

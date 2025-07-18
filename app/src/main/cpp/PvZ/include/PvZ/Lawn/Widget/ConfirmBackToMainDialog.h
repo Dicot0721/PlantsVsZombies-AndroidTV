@@ -7,9 +7,12 @@
 class ConfirmBackToMainDialog : public LawnDialog {
 public:
     Sexy::GameButton *mRestartButton; // 191
-}; // 115: 192, 111: 194
+    // 115: 192, 111: 194
 
-inline void (*ConfirmBackToMainDialog_ConfirmBackToMainDialog)(ConfirmBackToMainDialog *, bool);
+    void Create(bool theBool) { reinterpret_cast<void (*)(ConfirmBackToMainDialog *, bool)>(ConfirmBackToMainDialog_ConfirmBackToMainDialogAddr)(this, theBool); }
+
+    ConfirmBackToMainDialog(bool theBool) { Create(theBool); }
+};
 
 
 inline void (*old_ConfirmBackToMainDialog_MouseDrag)(ConfirmBackToMainDialog *confirmBackToMainDialog, int x, int y);

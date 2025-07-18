@@ -13,6 +13,7 @@
 #include "PvZ/TodLib/Effect/Attachment.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 #include "PvZ/TodLib/Common/TodFoley.h"
+#include "PvZ/Lawn/Widget/MailScreen.h"
 
 #include <cstddef>
 
@@ -588,7 +589,7 @@ void MainMenu::Draw(Sexy::Graphics *g) {
     SexyTransform2D aSexyTransform2D;
     ReanimatorTransform v43;
     int mailAlertTrackIndex = mainMenuReanim->FindTrackIndex("mail alert");
-    if (mailAlertTrackIndex > 0 && Mailbox_GetNumUnseenMessages(mApp->mMailBox) > 0) {
+    if (mailAlertTrackIndex > 0 && mApp->mMailBox->GetNumUnseenMessages() > 0) {
         DefaultPlayerInfo *mPlayerInfo = mApp->mPlayerInfo;
         LawnPlayerInfo *aPlayerInfo = reinterpret_cast<LawnPlayerInfo *>(mPlayerInfo);
         if (mPlayerInfo->mLevel > 0 || aPlayerInfo->GetFlag(1)) {

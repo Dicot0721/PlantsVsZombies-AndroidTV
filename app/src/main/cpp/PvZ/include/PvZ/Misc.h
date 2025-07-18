@@ -15,10 +15,6 @@ inline void DrawCheckboxText(Sexy::Graphics *g, const pvzstl::string &theText1, 
     reinterpret_cast<void (*)(Sexy::Graphics *, const pvzstl::string &, Sexy::Checkbox *, const char *)>(DrawCheckboxTextAddr)(g, theText1, theCheckBox, theText2);
 }
 
-inline void (*CreditScreen_PauseCredits)(Sexy::Widget *);
-
-inline int (*Mailbox_GetNumUnseenMessages)(int *);
-
 
 inline int (*old_SexyDialog_AddedToManager)(void *instance, void *instance1);
 
@@ -40,8 +36,6 @@ int SexyDialog_AddedToManager(void *instance, void *instance1);
 int SexyDialog_RemovedFromManager(void *instance, void *instance1);
 
 FoleyParams *LookupFoley(FoleyType theFoleyType);
-
-void CreditScreen_ButtonDepress(Sexy::Widget *creditScreen, int id);
 
 void Sexy_ExtractLoadingSoundsResources(int *a, int *theManager);
 

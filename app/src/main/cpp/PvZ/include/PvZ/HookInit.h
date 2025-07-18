@@ -46,12 +46,6 @@
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/Lawn/System/SaveGame.h"
 
-inline void InitInGameFunction() {
-    ConfirmBackToMainDialog_ConfirmBackToMainDialog = (decltype(ConfirmBackToMainDialog_ConfirmBackToMainDialog))ConfirmBackToMainDialog_ConfirmBackToMainDialogAddr;
-    CreditScreen_PauseCredits = (decltype(CreditScreen_PauseCredits))CreditScreen_PauseCreditsAddr;
-    Mailbox_GetNumUnseenMessages = (decltype(Mailbox_GetNumUnseenMessages))Mailbox_GetNumUnseenMessagesAddr;
-}
-
 
 inline void InitHookFunction() {
     homura::HookFunction(LawnApp_LawnAppAddr, &LawnApp::Create, &old_LawnApp_LawnApp);
@@ -567,7 +561,7 @@ inline void InitVTableHookFunction() {
 
     homura::HookVirtualFunc(vTableForSettingsDialogAddr, 153, &SettingsDialog_CheckboxChecked, nullptr);
 
-    homura::HookVirtualFunc(vTableForCreditScreenAddr, 133, &CreditScreen_ButtonDepress, nullptr);
+    homura::HookVirtualFunc(vTableForCreditScreenAddr, 133, &CreditScreen::ButtonDepress, nullptr);
 
     homura::HookVirtualFunc(vTableForMainMenuAddr, 139, &MainMenu::ButtonPress, nullptr);
 }
@@ -599,7 +593,6 @@ inline void InitIntroVideo() {
 
 
 inline void CallHook() {
-    InitInGameFunction();
     InitHookFunction();
     InitVTableHookFunction();
     //    InitIntroVideo();

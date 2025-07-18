@@ -46,8 +46,12 @@ public:
     double mScrollPositionY1;             // 90 ~ 91
     double mScrollPositionY2;             // 92 ~ 93
     bool mIsFromMainMenu;                 // 376,即94
+    // 大小95个整数
 
-}; // 大小95个整数
+    void PauseCredits() { reinterpret_cast<void (*)(CreditScreen *)>(CreditScreen_PauseCreditsAddr)(this); }
+
+    void ButtonDepress(int theId);
+};
 
 static Sexy::GameButton *gCreditScreenBackButton;
 

@@ -27,6 +27,11 @@ public:
     void ButtonDepress(int theId);
 };
 
+class MailBox {
+public:
+    int GetNumUnseenMessages() { return reinterpret_cast<int (*)(MailBox *)>(Mailbox_GetNumUnseenMessagesAddr)(this); }
+};
+
 // inline void (*MailScreen_KeyDown)(MailScreen *mailScreen, int keyCode, int, int);
 
 

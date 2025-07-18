@@ -23,6 +23,7 @@ class TodFoley;
 class DefaultPlayerInfo;
 class PottedPlant;
 class VSSetupMenu;
+class MailBox;
 
 class LawnApp : public __SexyAppBase<true> {
 public:
@@ -103,7 +104,7 @@ public:
     int unk11;                               // 670
     int mTwoPlayerState;                     // 671
     int unk12[3];                            // 672 ~ 674
-    int *mMailBox;                           // 675
+    MailBox *mMailBox;                       // 675
     int unk13[26];                           // 676 ~ 701
     int *mHelpBarWidget;                     // 702
     int unk14;                               // 703

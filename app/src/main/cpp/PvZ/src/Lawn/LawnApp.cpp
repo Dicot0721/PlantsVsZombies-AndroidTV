@@ -123,10 +123,9 @@ void LawnApp::DoConfirmBackToMain(bool theIsSave) {
         DoNewOptions(false, 0);
         return;
     }
-    auto *dialog = (ConfirmBackToMainDialog *)operator new(sizeof(ConfirmBackToMainDialog));
-    ConfirmBackToMainDialog_ConfirmBackToMainDialog(dialog, theIsSave);
-    (*(void (**)(LawnApp *, int, Sexy::Widget *))(*(uint32_t *)this + 416))(this, Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN, dialog);
-    (*(void (**)(uint32_t, Sexy::Widget *))(**((uint32_t **)this + 165) + 48))(*((uint32_t *)this + 165), dialog);
+    auto *aBackDialog = new ConfirmBackToMainDialog(theIsSave);
+    (*(void (**)(LawnApp *, int, Sexy::Widget *))(*(uint32_t *)this + 416))(this, Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN, aBackDialog);
+    (*(void (**)(uint32_t, Sexy::Widget *))(**((uint32_t **)this + 165) + 48))(*((uint32_t *)this + 165), aBackDialog);
 }
 
 void LawnApp::DoBackToMain() {
