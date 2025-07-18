@@ -47,9 +47,6 @@
 #include "PvZ/Lawn/System/SaveGame.h"
 
 inline void InitInGameFunction() {
-    TypingCheck_SetPhrase = (decltype(TypingCheck_SetPhrase))TypingCheck_SetPhraseAddr;
-    HouseChooserDialog_GameButtonDown = (decltype(HouseChooserDialog_GameButtonDown))HouseChooserDialog_GameButtonDownAddr;
-    ReanimAtlas_GetEncodedReanimAtlas = (decltype(ReanimAtlas_GetEncodedReanimAtlas))ReanimAtlas_GetEncodedReanimAtlasAddr;
     ToolTipWidget_SetWarningText = (decltype(ToolTipWidget_SetWarningText))ToolTipWidget_SetWarningTextAddr;
     TestMenuWidget_TestMenuWidget = (decltype(TestMenuWidget_TestMenuWidget))TestMenuWidget_TestMenuWidgetAddr;
     PoolEffect_BilinearLookupFixedPoint = (decltype(PoolEffect_BilinearLookupFixedPoint))PoolEffect_BilinearLookupFixedPointAddr;
@@ -518,8 +515,8 @@ inline void InitVTableHookFunction() {
 
     homura::HookVirtualFunc(vTableForAlmanacDialogAddr, 83, &AlmanacDialog::MouseDrag, &old_AlmanacDialog_MouseDrag);
 
-    homura::HookVirtualFunc(vTableForHouseChooserDialogAddr, 73, &HouseChooserDialog_KeyDown, &old_HouseChooserDialog_KeyDown);
-    homura::HookVirtualFunc(vTableForHouseChooserDialogAddr, 78, &HouseChooserDialog_MouseDown, &old_HouseChooserDialog_MouseDown);
+    homura::HookVirtualFunc(vTableForHouseChooserDialogAddr, 73, &HouseChooserDialog::KeyDown, &old_HouseChooserDialog_KeyDown);
+    homura::HookVirtualFunc(vTableForHouseChooserDialogAddr, 78, &HouseChooserDialog::MouseDown, &old_HouseChooserDialog_MouseDown);
 
     homura::HookVirtualFunc(vTableForSeedPacketAddr, 4, &SeedPacket::BeginDraw, &old_SeedPacket_BeginDraw);
     homura::HookVirtualFunc(vTableForSeedPacketAddr, 5, &SeedPacket::EndDraw, &old_SeedPacket_EndDraw);

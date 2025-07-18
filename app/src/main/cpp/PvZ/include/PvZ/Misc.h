@@ -11,11 +11,6 @@
 //#include "PvZ/TodLib/Common/TodList.h"
 //#include "TodLib/Common/TodCommon.h"
 
-class TodParticleSystem;
-
-
-inline void (*TypingCheck_SetPhrase)(int *a1, int *a2);
-
 inline int **(*ReanimAtlas_GetEncodedReanimAtlas)(int *, int *);
 
 inline void (*MaskHelpWidget_MaskHelpWidget)(AchievementsWidget *, LawnApp *);

@@ -3,6 +3,8 @@
 
 #include "LawnDialog.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/Lawn/GamepadControls.h"
+#include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 
 enum HouseType {
     BLUEPRINT_INVALID = -1,
@@ -17,20 +19,21 @@ class HouseChooserDialog : public LawnDialog {
 public:
     HouseType mSelectedHouseType;            // 191
     int unk[2];                              // 192 ~ 193
-}; // 115: 194, 111: 196
+    // 115: 194, 111: 196
 
-inline void (*HouseChooserDialog_GameButtonDown)(HouseChooserDialog *, int code, int a3, bool a4);
+    void GameButtonDown(ButtonCode theButton, int thePlayerIndex, bool a4) {
+        reinterpret_cast<void (*)(HouseChooserDialog *, ButtonCode, int, bool)>(HouseChooserDialog_GameButtonDownAddr)(this, theButton, thePlayerIndex, a4);
+    }
+
+    static bool IsHouseAvaliable(HouseType houseType);
+
+    void MouseDown(int x, int y, int theClickCount);
+    void KeyDown(Sexy::KeyCode theKey);
+};
 
 
-inline void (*old_HouseChooserDialog_MouseDown)(HouseChooserDialog *a, int x, int y, int theCount);
+inline void (*old_HouseChooserDialog_MouseDown)(HouseChooserDialog *a, int x, int y, int theClickCount);
 
-inline void (*old_HouseChooserDialog_KeyDown)(HouseChooserDialog *a, int x);
-
-
-bool HouseChooserDialog_IsHouseAvaliable(HouseType houseType);
-
-void HouseChooserDialog_MouseDown(HouseChooserDialog *a, int x, int y, int theCount);
-
-void HouseChooserDialog_KeyDown(HouseChooserDialog *a, int keyCode);
+inline void (*old_HouseChooserDialog_KeyDown)(HouseChooserDialog *a, Sexy::KeyCode theKey);
 
 #endif // PVZ_LAWN_HOUSE_CHOOSER_DIALOG_H
