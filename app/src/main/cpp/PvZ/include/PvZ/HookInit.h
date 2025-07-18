@@ -47,9 +47,6 @@
 #include "PvZ/Lawn/System/SaveGame.h"
 
 inline void InitInGameFunction() {
-    MaskHelpWidget_MaskHelpWidget = (decltype(MaskHelpWidget_MaskHelpWidget))MaskHelpWidget_MaskHelpWidgetAddr;
-    MaskHelpWidget_Delete = (decltype(MaskHelpWidget_Delete))MaskHelpWidget_DeleteAddr;
-    DaveHelp_DaveHelp = (decltype(DaveHelp_DaveHelp))DaveHelp_DaveHelpAddr;
     ConfirmBackToMainDialog_ConfirmBackToMainDialog = (decltype(ConfirmBackToMainDialog_ConfirmBackToMainDialog))ConfirmBackToMainDialog_ConfirmBackToMainDialogAddr;
     CreditScreen_PauseCredits = (decltype(CreditScreen_PauseCredits))CreditScreen_PauseCreditsAddr;
     Mailbox_GetNumUnseenMessages = (decltype(Mailbox_GetNumUnseenMessages))Mailbox_GetNumUnseenMessagesAddr;

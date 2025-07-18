@@ -11,10 +11,6 @@
 //#include "PvZ/TodLib/Common/TodList.h"
 //#include "TodLib/Common/TodCommon.h"
 
-inline void (*MaskHelpWidget_MaskHelpWidget)(AchievementsWidget *, LawnApp *);
-
-inline void (*MaskHelpWidget_Delete)(AchievementsWidget *);
-
 inline void DrawCheckboxText(Sexy::Graphics *g, const pvzstl::string &theText1, Sexy::Checkbox *theCheckBox, const char *theText2) {
     reinterpret_cast<void (*)(Sexy::Graphics *, const pvzstl::string &, Sexy::Checkbox *, const char *)>(DrawCheckboxTextAddr)(g, theText1, theCheckBox, theText2);
 }

@@ -61,5 +61,11 @@ public:
 
 }; // 我想用ZombatarWidget取代TestMenuWidget。;
 
+class TestMenuWidget : public Sexy::MenuWidget {
+public:
+    void Create() { reinterpret_cast<void (*)(TestMenuWidget *)>(TestMenuWidget_TestMenuWidgetAddr)(this); }
+
+    TestMenuWidget() { Create(); }
+};
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_ZOMBATARWIDGET_H

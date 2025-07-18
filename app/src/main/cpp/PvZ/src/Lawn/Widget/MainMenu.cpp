@@ -1,5 +1,4 @@
 #include "PvZ/Lawn/Widget/MainMenu.h"
-#include "PvZ/Lawn/Widget/TestMenuWidget.h"
 #include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
@@ -174,7 +173,7 @@ void MainMenu::Update() {
         if (gMainMenuAchievementCounter == 0) {
             gAchievementState = NOT_SHOWING;
            RemoveWidget(gMainMenuAchievementsWidget);
-            MaskHelpWidget_Delete(gMainMenuAchievementsWidget);
+           reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->Delete();
             gMainMenuAchievementsWidget = nullptr;
             if (gMainMenuAchievementsBack != nullptr) {
                 RemoveWidget((Widget*)gMainMenuAchievementsBack);
@@ -277,7 +276,7 @@ void MainMenu::ButtonDepress(MainMenuButtonId theSelectedButton) {
                 gAchievementState = SLIDING_IN;
                 gMainMenuAchievementCounter = 100;
                 gMainMenuAchievementsWidget = (AchievementsWidget *)operator new(sizeof(AchievementsWidget));
-                MaskHelpWidget_MaskHelpWidget(gMainMenuAchievementsWidget, mApp);
+                reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->Create(mApp);
                 gMainMenuAchievementsWidget->mIsScrolling = false;
                 gMainMenuAchievementsWidget->Resize(0, gMainMenuHeight, 1280, addonImages.hole->mHeight * (gAchievementHoleLength + 1));
                 gMainMenuAchievementsWidget->mWidgetId = ACHIEVEMENTS_BUTTON;
@@ -523,7 +522,7 @@ void MainMenu::RemovedFromManager(int *a2) {
 void MainMenu::Delete2() {
     old_MainMenu_Delete2(this);
     if (gMainMenuAchievementsWidget != nullptr) {
-        MaskHelpWidget_Delete(gMainMenuAchievementsWidget);
+        reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->Delete();
         gMainMenuAchievementsWidget = nullptr;
     }
 

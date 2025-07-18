@@ -110,8 +110,8 @@ public:
     int *mLogComposer;                       // 704
     int *MLogManager;                        // 705
     int mLaunchTime;                         // 706
-    int *mDaveHelp;                          // 707
-    int *mMaskHelpWidget;                    // 708
+    DaveHelp *mDaveHelp;                     // 707
+    MaskHelpWidget *mMaskHelpWidget;         // 708
 
     Reanimation *ReanimationGet(ReanimationID theReanimationID) { return reinterpret_cast<Reanimation *(*)(LawnApp *, ReanimationID)>(LawnApp_ReanimationGetAddr)(this, theReanimationID); }
     Reanimation *ReanimationTryToGet(ReanimationID theReanimationID) { return reinterpret_cast<Reanimation *(*)(LawnApp *, ReanimationID)>(LawnApp_ReanimationTryToGetAddr)(this, theReanimationID); }

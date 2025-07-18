@@ -38,5 +38,13 @@ public:
     bool mIsScrolling;
 }; // 我想用AchievementsWidget取代MaskHelpWidget。MaskHelpWidget的大小是66个整数。
 
+class MaskHelpWidget : public Sexy::Widget {
+public:
+    void Create(LawnApp *theApp) { reinterpret_cast<void (*)(MaskHelpWidget *, LawnApp *)>(MaskHelpWidget_MaskHelpWidgetAddr)(this, theApp); }
+    void Delete() { reinterpret_cast<void (*)(MaskHelpWidget *)>(MaskHelpWidget_DeleteAddr)(this); }
+
+    MaskHelpWidget(LawnApp *theApp) { Create(theApp); }
+    ~MaskHelpWidget() { Delete(); }
+};
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_ACHIEVEMENTSWIDGET_H

@@ -56,6 +56,14 @@ public:
     LeaderboardsWidget(LawnApp *theApp);
 }; // 我想用LeaderboardsWidget取代DaveHelp。
 
+class DaveHelp : public Sexy::Widget {
+public:
+    void Create(LawnApp *theApp) { reinterpret_cast<void (*)(DaveHelp *, LawnApp *)>(DaveHelp_DaveHelpAddr)(this, theApp); }
+
+    DaveHelp(LawnApp *theApp) { Create(theApp); }
+};
+
+
 inline void (*old_DaveHelp_Delete2)(LeaderboardsWidget *leaderboardsWidget);
 
 void DaveHelp_Delete2(LeaderboardsWidget *leaderboardsWidget);
@@ -74,5 +82,4 @@ void DaveHelp_MouseDrag(LeaderboardsWidget *leaderboardsWidget, int x, int y);
 
 void DaveHelp_KeyDown(LeaderboardsWidget *leaderboardsWidget, int keyCode);
 
-inline void (*DaveHelp_DaveHelp)(LeaderboardsWidget *leaderboardsWidget, LawnApp *lawnApp);
 #endif // PLANTSVSZOMBIES_ANDROIDTV_LEADERBOARDSWIDGET_H

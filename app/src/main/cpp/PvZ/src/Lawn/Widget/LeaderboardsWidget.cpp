@@ -141,7 +141,7 @@ void LeaderboardsWidget_ButtonDepress(Sexy::ButtonListener *listener, int id) {
 void LeaderboardsWidget_ButtonPress(Sexy::ButtonListener *listener, int id, int theCount) {}
 
 LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
-    DaveHelp_DaveHelp(this, theApp);
+    reinterpret_cast<DaveHelp *>(this)->Create(theApp);
     Resize(-240, -60, 1280, 720);
     mLeaderboardReanimations = (LeaderboardReanimations *)operator new(sizeof(LeaderboardReanimations));
     for (int i = 0; i < 5; ++i) {
