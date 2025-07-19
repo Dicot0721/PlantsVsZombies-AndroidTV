@@ -47,7 +47,8 @@ public:
 
     static constexpr size_type npos = static_cast<size_type>(-1);
 
-    basic_string() = default;
+    basic_string()
+        : __data_{__rep::empty_rep().data} {}
 
     basic_string(const basic_string &other)
         : __data_{other.__data_} {
@@ -234,7 +235,7 @@ protected:
 
     void __reset() noexcept;
 
-    mutable value_type *__data_ = __rep::empty_rep().data;
+    mutable value_type *__data_;
 };
 
 template <character CharT>
@@ -296,19 +297,19 @@ basic_string<CharT> &basic_string<CharT>::append(const value_type *s, size_type 
     if (n == 0) {
         return *this;
     }
-    size_type old_sz = size();
-    size_type new_sz = old_sz + n;
+    size_type oldsz = size();
+    size_type newsz = oldsz + n;
     size_type cap = capacity();
-    if (new_sz > cap || __ref_count() > 0) {
-        __rep *p = __rep::create(__data_, old_sz, std::max(new_sz, cap));
-        traits_type::copy(p->data + old_sz, s, n);
+    if (newsz > cap || __ref_count() > 0) {
+        __rep *p = __rep::create(__data_, oldsz, std::max(newsz, cap));
+        traits_type::copy(p->data + oldsz, s, n);
         __reset();
         __data_ = p->data;
     } else {
-        traits_type::copy(__data_ + old_sz, s, n);
+        traits_type::copy(__data_ + oldsz, s, n);
     }
-    __data_[new_sz] = value_type{0};
-    __get_rep()->size = new_sz;
+    __data_[newsz] = value_type{0};
+    __get_rep()->size = newsz;
     return *this;
 }
 
@@ -323,8 +324,9 @@ template <character CharT>
 template <character CharT>
 template <__can_be_converted_to_string_view<CharT> Tp>
 [[nodiscard]] auto basic_string<CharT>::find(const Tp &t, size_type pos) const noexcept -> size_type {
-    auto xpos = __self_view{__data_, size()}.find(__self_view{t}, pos);
-    if constexpr (std::is_same_v<size_type, decltype(xpos)>) {
+    using SelfViewSizeType = typename __self_view::size_type;
+    SelfViewSizeType xpos = __self_view{__data_, size()}.find(__self_view{t}, pos);
+    if constexpr (std::is_same_v<SelfViewSizeType, size_type>) {
         return xpos;
     } else {
         return (xpos == __self_view::npos) ? npos : static_cast<size_type>(xpos);
@@ -361,56 +363,56 @@ template <character CharT>
 
 template <character CharT>
 [[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, const basic_string<CharT> &rhs) {
-    using Traits = std::char_traits<CharT>;
     using String = basic_string<CharT>;
+    using Traits = typename String::traits_type;
     using SizeType = typename String::size_type;
 
     SizeType lhs_sz = lhs.size();
     SizeType rhs_sz = rhs.size();
-    SizeType sz = lhs_sz + rhs_sz;
-    String ret;
+    SizeType len = lhs_sz + rhs_sz;
+    String r;
 
-    ret.__data_ = String::__rep::create(lhs.c_str(), lhs_sz, sz)->data;
-    Traits::copy(ret.__data_ + lhs_sz, rhs.c_str(), rhs_sz);
-    ret.__data_[sz] = CharT{0};
-    ret.__get_rep()->size = sz;
-    return ret;
+    r.__data_ = String::__rep::create(lhs.c_str(), lhs_sz, len)->data;
+    Traits::copy(r.__data_ + lhs_sz, rhs.c_str(), rhs_sz);
+    r.__data_[len] = CharT{0};
+    r.__get_rep()->size = len;
+    return r;
 }
 
 template <character CharT>
 [[nodiscard]] basic_string<CharT> operator+(const CharT *lhs, const basic_string<CharT> &rhs) {
-    using Traits = std::char_traits<CharT>;
     using String = basic_string<CharT>;
+    using Traits = typename String::traits_type;
     using SizeType = typename String::size_type;
 
     SizeType lhs_sz = Traits::length(lhs);
     SizeType rhs_sz = rhs.size();
-    SizeType sz = lhs_sz + rhs_sz;
-    String ret;
+    SizeType len = lhs_sz + rhs_sz;
+    String r;
 
-    ret.__data_ = String::__rep::create(lhs, lhs_sz, sz)->data;
-    Traits::copy(ret.__data_ + lhs_sz, rhs.c_str(), rhs_sz);
-    ret.__data_[sz] = CharT{0};
-    ret.__get_rep()->size = sz;
-    return ret;
+    r.__data_ = String::__rep::create(lhs, lhs_sz, len)->data;
+    Traits::copy(r.__data_ + lhs_sz, rhs.c_str(), rhs_sz);
+    r.__data_[len] = CharT{0};
+    r.__get_rep()->size = len;
+    return r;
 }
 
 template <character CharT>
 [[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, const CharT *rhs) {
-    using Traits = std::char_traits<CharT>;
     using String = basic_string<CharT>;
+    using Traits = typename String::traits_type;
     using SizeType = typename String::size_type;
 
     SizeType lhs_sz = lhs.size();
     SizeType rhs_sz = Traits::length(rhs);
-    SizeType sz = lhs_sz + rhs_sz;
-    String ret;
+    SizeType len = lhs_sz + rhs_sz;
+    String r;
 
-    ret.__data_ = String::__rep::create(lhs.c_str(), lhs_sz, sz)->data;
-    Traits::copy(ret.__data_ + lhs_sz, rhs, rhs_sz);
-    ret.__data_[sz] = CharT{0};
-    ret.__get_rep()->size = sz;
-    return ret;
+    r.__data_ = String::__rep::create(lhs.c_str(), lhs_sz, len)->data;
+    Traits::copy(r.__data_ + lhs_sz, rhs, rhs_sz);
+    r.__data_[len] = CharT{0};
+    r.__get_rep()->size = len;
+    return r;
 }
 
 template <character CharT>
