@@ -173,21 +173,27 @@ void Plant::SpikeRockTakeDamage() {
 void Plant::UpdateReanimColor() {
     // 修复玩家选中但不拿起(gameState为1就是选中但不拿起，为7就是选中且拿起)某个紫卡植物时，相应的可升级绿卡植物也会闪烁的BUG。
     if (mBoard == nullptr) {
-        return old_Plant_UpdateReanimColor(this);
+        old_Plant_UpdateReanimColor(this);
+        return;
     }
+    SeedType aSeedType = mSeedType;
     if (!Plant::IsUpgrade(mSeedType)) {
-        return old_Plant_UpdateReanimColor(this);
+        old_Plant_UpdateReanimColor(this);
+        return;
     }
     if (mSeedType == SeedType::SEED_EXPLODE_O_NUT) {
-        return old_Plant_UpdateReanimColor(this);
+        old_Plant_UpdateReanimColor(this);
+        return;
     }
     GamepadControls *gamePad = mBoard->mGamepadControls1;
     if (gamePad->mGamepadState != 7) {
         mSeedType = SeedType::SEED_PEASHOOTER;
         old_Plant_UpdateReanimColor(this);
+        mSeedType = aSeedType;
         return;
     }
-    return old_Plant_UpdateReanimColor(this);
+
+    old_Plant_UpdateReanimColor(this);
 }
 
 bool Plant::IsOnBoard() {
