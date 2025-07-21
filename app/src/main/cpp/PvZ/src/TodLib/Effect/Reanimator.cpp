@@ -289,8 +289,8 @@ void Reanimation_GetZombatarTrackIndex(Reanimation *zombatarReanim, int *indexAr
     }
 }
 
-int Reanimation_GetZombatarHatTrackIndex(Reanimation *zombatarReanim) {
-    ReanimatorDefinition *mDefinition = zombatarReanim->mDefinition;
+int Reanimation::GetZombatarHatTrackIndex() {
+    ReanimatorDefinition *mDefinition = mDefinition;
     int mTrackCount = mDefinition->mTrackCount;
     if (mTrackCount <= 0) {
         return -1;
@@ -304,7 +304,7 @@ int Reanimation_GetZombatarHatTrackIndex(Reanimation *zombatarReanim) {
         const char *mName = (mTracks + j)->mName;
         //        LOGD("%s,%d",mName,std::regex_match(mName, pattern));
         if (std::regex_match(mName, pattern)) {
-            ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + j;
+            ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + j;
             if (reanimatorTrackInstance->mRenderGroup != -1) {
                 return j;
             }
@@ -313,8 +313,8 @@ int Reanimation_GetZombatarHatTrackIndex(Reanimation *zombatarReanim) {
     return -1;
 }
 
-int Reanimation_GetZombatarEyeWearTrackIndex(Reanimation *zombatarReanim) {
-    ReanimatorDefinition *mDefinition = zombatarReanim->mDefinition;
+int Reanimation::GetZombatarEyeWearTrackIndex() {
+    ReanimatorDefinition *mDefinition = mDefinition;
     int mTrackCount = mDefinition->mTrackCount;
     if (mTrackCount <= 0) {
         return -1;
@@ -326,7 +326,7 @@ int Reanimation_GetZombatarEyeWearTrackIndex(Reanimation *zombatarReanim) {
         const char *mName = (mTracks + j)->mName;
         //        LOGD("%s,%d",mName,std::regex_match(mName, pattern));
         if (std::regex_match(mName, pattern)) {
-            ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + j;
+            ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + j;
             if (reanimatorTrackInstance->mRenderGroup != -1) {
                 return j;
             }

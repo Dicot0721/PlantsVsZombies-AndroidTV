@@ -41,16 +41,16 @@ Sexy::Image *TrashBin::GetZombieTrashPiece(int theLevel) {
     int v6; // r3
 
     v3 = RandRangeInt(0, 100);
-    v4 = *((uint32_t *)this + 85);
+    v4 = mPileNum;
     if (v4 >= 3)
         v5 = 3;
     else
-        v5 = *((uint32_t *)this + 85);
+        v5 = mPileNum;
     if (v3 >= *((uint32_t *)this + v5 + 79) && v3 <= *((uint32_t *)this + v5 + 82)) {
         while (1) {
             v3 = RandRangeInt(0, 100);
-            v4 = *((uint32_t *)this + 85);
-            v6 = v4 >= 3 ? 3 : *((uint32_t *)this + 85);
+            v4 = mPileNum;
+            v6 = v4 >= 3 ? 3 : mPileNum;
             if (*((uint32_t *)this + v6 + 79) > v3)
                 break;
             if (*((uint32_t *)this + v6 + 82) < v3) {

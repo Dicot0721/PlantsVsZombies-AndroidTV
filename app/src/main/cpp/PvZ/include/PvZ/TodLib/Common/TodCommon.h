@@ -177,12 +177,16 @@ inline void TodLoadResources(const pvzstl::string &theGroup) {
     reinterpret_cast<void (*)(const pvzstl::string &)>(TodLoadResourcesAddr)(theGroup);
 }
 
-inline void TodReplaceString(const pvzstl::string &result, const pvzstl::string &theText, const char *theStringToFind, const pvzstl::string &theStringToSubstitute) {
-    reinterpret_cast<void (*)(const pvzstl::string &, const pvzstl::string &, const char *, const pvzstl::string &)>(TodReplaceStringAddr)(result, theText, theStringToFind, theStringToSubstitute);
+inline pvzstl::string TodReplaceString(const pvzstl::string &theText, const char *theStringToFind, const pvzstl::string &theStringToSubstitute) {
+    pvzstl::string str;
+    reinterpret_cast<void (*)(pvzstl::string &, const pvzstl::string &, const char *, const pvzstl::string &)>(TodReplaceStringAddr)(str, theText, theStringToFind, theStringToSubstitute);
+    return str;
 }
 
-inline void TodReplaceNumberString(const pvzstl::string &result, const pvzstl::string &theText, const char *theStringToFind, int theNumber) {
-    reinterpret_cast<void (*)(const pvzstl::string &, const pvzstl::string &, const char *, int)>(TodReplaceNumberStringAddr)(result, theText, theStringToFind, theNumber);
+inline pvzstl::string TodReplaceNumberString(const pvzstl::string &theText, const char *theStringToFind, int theNumber) {
+    pvzstl::string str;
+    reinterpret_cast<void (*)(pvzstl::string &, const pvzstl::string &, const char *, int)>(TodReplaceNumberStringAddr)(str, theText, theStringToFind, theNumber);
+    return str;
 }
 
 inline TodAllocator *FindGlobalAllocator(int theSize) {

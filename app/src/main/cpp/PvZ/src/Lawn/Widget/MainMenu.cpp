@@ -690,8 +690,8 @@ void MaskHelpWidget_Draw(AchievementsWidget *achievementsWidget, Sexy::Graphics 
         Sexy::Rect rect = {460, theAchievementY + 60, 540, 0};
         TodDrawString(g, str, 460, theAchievementY + 40, *Sexy_FONT_HOUSEOFTERROR28_Addr, theColor, DrawStringJustification::DS_ALIGN_LEFT);
         if (i == AchievementId::ACHIEVEMENT_SHOP) {
-            pvzstl::string str2{};
-            TodReplaceNumberString(str, str1, "{coin}", achievementsWidget->mApp->mPlayerInfo->mUsedCoins * 10);
+            pvzstl::string str2;
+            str = TodReplaceNumberString(str1, "{coin}", achievementsWidget->mApp->mPlayerInfo->mUsedCoins * 10);
             TodDrawStringWrapped(g, str2, rect, *Sexy_FONT_HOUSEOFTERROR20_Addr, theColor1, DrawStringJustification::DS_ALIGN_LEFT, false);
         } else {
             TodDrawStringWrapped(g, str1, rect, *Sexy_FONT_HOUSEOFTERROR20_Addr, theColor1, DrawStringJustification::DS_ALIGN_LEFT, false);

@@ -210,8 +210,8 @@ public:
         reinterpret_cast<void (*)(const ReanimatorTransform&, Sexy::SexyMatrix3&)>(Reanimation_MatrixFromTransformAddr)(theTransform, theMatrix);
     }
     void GetFrameTime(ReanimatorFrameTime *theFrameTime) { reinterpret_cast<void (*)(Reanimation *, ReanimatorFrameTime *)>(Reanimation_GetFrameTimeAddr)(this, theFrameTime); }
-    void GetTrackMatrix(int theTrackIndex, Sexy::SexyTransform2D& theMatrix) {
-        reinterpret_cast<void (*)(Reanimation *, int, Sexy::SexyTransform2D&)>(Reanimation_GetTrackMatrixAddr)(this, theTrackIndex, theMatrix);
+    void GetTrackMatrix(int theTrackIndex, Sexy::SexyTransform2D &theMatrix) {
+        reinterpret_cast<void (*)(Reanimation *, int, Sexy::SexyTransform2D &)>(Reanimation_GetTrackMatrixAddr)(this, theTrackIndex, theMatrix);
     }
 
     void Draw(Sexy::Graphics *g);
@@ -219,6 +219,8 @@ public:
     bool ShouldTriggerTimedEvent(float theEventTime);
     void AssignRenderGroupToTrack(const char *theTrackName, int theRenderGroup);
     ReanimatorTrackInstance* GetTrackInstanceByName(const char* theTrackName);
+    int GetZombatarHatTrackIndex();
+    int GetZombatarEyeWearTrackIndex();
 };
 
 /***************************************************************************************************************/
@@ -256,10 +258,6 @@ void Reanimation_SetZombatarEyeWear(Reanimation *zombatarReanim, unsigned char e
 void Reanimation_SetZombatarTidBits(Reanimation *zombatarReanim, unsigned char tidBits, unsigned char tidBitsColor);
 
 void Reanimation_GetZombatarTrackIndex(Reanimation *zombatarReanim, int *indexArray);
-
-int Reanimation_GetZombatarHatTrackIndex(Reanimation *zombatarReanim);
-
-int Reanimation_GetZombatarEyeWearTrackIndex(Reanimation *zombatarReanim);
 
 void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int theReanimationParamArraySize);
 

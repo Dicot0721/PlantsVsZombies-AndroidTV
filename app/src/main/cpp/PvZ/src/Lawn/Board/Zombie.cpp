@@ -1233,17 +1233,18 @@ void Zombie::DropHead(unsigned int theDamageFlags) {
     // 负责 大头贴掉头
     // TODO: 大头贴僵尸掉头时掉饰品(掉 hat 和 eyeWear)
     old_Zombie_DropHead(this, theDamageFlags);
+
     if (IsZombatarZombie(mZombieType)) {
-        Reanimation *reanimation = mApp->ReanimationTryToGet(mBossFireBallReanimID);
-        if (reanimation != nullptr) {
-            int index[2] = {Reanimation_GetZombatarHatTrackIndex(reanimation), Reanimation_GetZombatarEyeWearTrackIndex(reanimation)};
+        Reanimation *aHeadReanim = mApp->ReanimationTryToGet(mBossFireBallReanimID);
+        if (aHeadReanim != nullptr) {
+            int index[2] = {aHeadReanim->GetZombatarHatTrackIndex(), aHeadReanim->GetZombatarEyeWearTrackIndex()};
             for (int i = 0; i < 2; ++i) {
                 if (index[i] == -1)
                     continue;
-                ReanimatorTrackInstance *reanimatorTrackInstance = reanimation->mTrackInstances + index[i];
-                ReanimatorTrack *reanimatorTrack = reanimation->mDefinition->mTracks + index[i];
+                ReanimatorTrackInstance *reanimatorTrackInstance = aHeadReanim->mTrackInstances + index[i];
+                ReanimatorTrack *reanimatorTrack = aHeadReanim->mDefinition->mTracks + index[i];
                 SexyTransform2D aSexyTransform2D;
-                reanimation->GetTrackMatrix(index[i], aSexyTransform2D);
+                aHeadReanim->GetTrackMatrix(index[i], aSexyTransform2D);
                 float aPosX = mPosX + aSexyTransform2D.m[0][2];
                 float aPosY = mPosY + aSexyTransform2D.m[1][2];
                 TodParticleSystem *todParticleSystem = mApp->AddTodParticle(aPosX, aPosY, mRenderOrder + 1, ParticleEffect::PARTICLE_ZOMBIE_HEAD);

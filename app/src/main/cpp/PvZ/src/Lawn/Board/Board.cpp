@@ -3118,8 +3118,7 @@ bool Board::GrantAchievement(AchievementId theAchievementId, bool theIsShow) {
         const char *theAchievementName = GetNameByAchievementId(theAchievementId);
         pvzstl::string str = TodStringTranslate("[ACHIEVEMENT_GRANTED]");
         pvzstl::string str1 = StrFormat("[%s]", theAchievementName);
-        pvzstl::string str2;
-        TodReplaceString(str2, str, "{achievement}", str1);
+        pvzstl::string str2 = TodReplaceString(str, "{achievement}", str1);
         DisplayAdviceAgain(_S("[ACHIEVEMENT_GRANTED]"), MessageStyle::MESSAGE_STYLE_ACHIEVEMENT, AdviceType::ADVICE_NEED_ACHIVEMENT_EARNED);
         mAdvice->mIcon = GetIconByAchievementId(theAchievementId);
         playerInfo->mAchievements[theAchievementId] = true;

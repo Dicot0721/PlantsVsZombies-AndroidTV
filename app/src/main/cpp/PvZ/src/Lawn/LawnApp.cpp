@@ -406,9 +406,7 @@ void LawnApp::SetFoleyVolume(FoleyType theFoleyType, double theVolume) {
 }
 
 void LawnApp::ShowLeaderboards() {
-    gMainMenuLeaderboardsWidget = (LeaderboardsWidget *)operator new(sizeof(LeaderboardsWidget));
-    LeaderboardsWidget(this);
-//    gMainMenuLeaderboardsWidget = new LeaderboardsWidget(this);
+    gMainMenuLeaderboardsWidget = new LeaderboardsWidget(this);
     (*(void (**)(int *, Sexy::Widget *))(*mWidgetManager + 24))(mWidgetManager, gMainMenuLeaderboardsWidget); // AddWidget()
     (*(void (**)(int *, Sexy::Widget *))(*mWidgetManager + 48))(mWidgetManager, gMainMenuLeaderboardsWidget); // SetFocusedWidget()
 }
