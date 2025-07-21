@@ -217,6 +217,7 @@ protected:
 
         [[nodiscard, gnu::always_inline]] static __rep &empty_rep() noexcept {
 #ifdef PVZ_VERSION
+            assert(gLibBaseOffset != 0);
             static constexpr uintptr_t offset = (sizeof(value_type) == sizeof(int8_t)) ? /* char */ 0x71BB54 : /* wchar_t */ 0x69E45C;
             return *reinterpret_cast<__rep *>(gLibBaseOffset + offset);
 #else
