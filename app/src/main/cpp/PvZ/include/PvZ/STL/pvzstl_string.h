@@ -15,20 +15,20 @@
 
 namespace pvzstl {
 
-template <character CharT>
+template <__character CharT>
 class basic_string;
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, const basic_string<CharT> &rhs);
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] basic_string<CharT> operator+(const CharT *lhs, const basic_string<CharT> &rhs);
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, const CharT *rhs);
 
 template <typename Tp, typename CharT>
-concept __can_be_converted_to_string_view = std::is_convertible_v<const Tp &, std::basic_string_view<CharT>> && !std::is_convertible_v<const Tp &, const CharT *>;
+concept __convertible_to_string_view = std::is_convertible_v<const Tp &, std::basic_string_view<CharT>> && !std::is_convertible_v<const Tp &, const CharT *>;
 
 /**
  * @class 采用写时复制 (COW) 实现的字符串类模板
@@ -36,7 +36,7 @@ concept __can_be_converted_to_string_view = std::is_convertible_v<const Tp &, st
  * g++ 在版本 5 前 std::string 的实现 (简化版).<br />
  * 可参考文章: <a href="https://chengxumiaodaren.com/docs/open-source/cpp-string/">C++ string源码剖析：深入理解COW机制</a>.
  */
-template <character CharT>
+template <__character CharT>
 class basic_string {
 public:
     using traits_type = std::char_traits<CharT>;
@@ -158,7 +158,7 @@ public:
 
     [[nodiscard]] size_type find(const basic_string &str, size_type pos = 0) const noexcept { return find(__self_view{str}, pos); }
 
-    template <__can_be_converted_to_string_view<value_type> Tp>
+    template <__convertible_to_string_view<value_type> Tp>
     [[nodiscard]] size_type find(const Tp &t, size_type pos = 0) const noexcept;
 
     [[nodiscard]] size_type find(const value_type *s, size_type pos, size_type n) const noexcept { return find(__self_view{s, n}, pos); }
@@ -238,7 +238,7 @@ protected:
     mutable value_type *__data_;
 };
 
-template <character CharT>
+template <__character CharT>
 basic_string<CharT> &basic_string<CharT>::operator=(const basic_string &other) {
     if ((this != std::addressof(other)) && (__data_ != other.__data_)) {
         __reset();
@@ -249,7 +249,7 @@ basic_string<CharT> &basic_string<CharT>::operator=(const basic_string &other) {
     return *this;
 }
 
-template <character CharT>
+template <__character CharT>
 basic_string<CharT> &basic_string<CharT>::operator=(basic_string &&other) noexcept {
     if (this != std::addressof(other)) {
         __reset();
@@ -258,7 +258,7 @@ basic_string<CharT> &basic_string<CharT>::operator=(basic_string &&other) noexce
     return *this;
 }
 
-template <character CharT>
+template <__character CharT>
 basic_string<CharT> &basic_string<CharT>::operator=(const value_type *s) {
     assert((s != nullptr) && "basic_string::assign received nullptr");
     size_type len = traits_type::length(s);
@@ -278,7 +278,7 @@ basic_string<CharT> &basic_string<CharT>::operator=(const value_type *s) {
     return *this;
 }
 
-template <character CharT>
+template <__character CharT>
 void basic_string<CharT>::clear() noexcept {
     if (empty()) {
         return;
@@ -291,7 +291,7 @@ void basic_string<CharT>::clear() noexcept {
     __get_rep()->size = 0;
 }
 
-template <character CharT>
+template <__character CharT>
 basic_string<CharT> &basic_string<CharT>::append(const value_type *s, size_type n) {
     assert((s != nullptr || n == 0) && "basic_string::append received nullptr");
     if (n == 0) {
@@ -313,7 +313,7 @@ basic_string<CharT> &basic_string<CharT>::append(const value_type *s, size_type 
     return *this;
 }
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] auto basic_string<CharT>::at(size_type n) const -> const value_type & {
     if (n >= size()) {
         __throw_out_of_range();
@@ -321,8 +321,8 @@ template <character CharT>
     return (*this)[n];
 }
 
-template <character CharT>
-template <__can_be_converted_to_string_view<CharT> Tp>
+template <__character CharT>
+template <__convertible_to_string_view<CharT> Tp>
 [[nodiscard]] auto basic_string<CharT>::find(const Tp &t, size_type pos) const noexcept -> size_type {
     using SelfViewSizeType = typename __self_view::size_type;
     SelfViewSizeType xpos = __self_view{__data_, size()}.find(__self_view{t}, pos);
@@ -333,7 +333,7 @@ template <__can_be_converted_to_string_view<CharT> Tp>
     }
 }
 
-template <character CharT>
+template <__character CharT>
 void basic_string<CharT>::__reset() noexcept {
     if (__rep *p = __get_rep(); p != &__rep::empty_rep()) {
         __rep::destroy(p);
@@ -341,27 +341,27 @@ void basic_string<CharT>::__reset() noexcept {
     }
 }
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] bool operator==(const basic_string<CharT> &lhs, const basic_string<CharT> &rhs) noexcept {
     return std::basic_string_view<CharT>{lhs} == std::basic_string_view<CharT>{rhs};
 }
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] bool operator==(const basic_string<CharT> &lhs, const CharT *rhs) noexcept {
     return std::basic_string_view<CharT>{lhs} == std::basic_string_view<CharT>{rhs};
 }
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] auto operator<=>(const basic_string<CharT> &lhs, const basic_string<CharT> &rhs) noexcept {
     return std::basic_string_view<CharT>{lhs} <=> std::basic_string_view<CharT>{rhs};
 }
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] auto operator<=>(const basic_string<CharT> &lhs, const CharT *rhs) noexcept {
     return std::basic_string_view<CharT>{lhs} <=> std::basic_string_view<CharT>{rhs};
 }
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, const basic_string<CharT> &rhs) {
     using String = basic_string<CharT>;
     using Traits = typename String::traits_type;
@@ -379,7 +379,7 @@ template <character CharT>
     return r;
 }
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] basic_string<CharT> operator+(const CharT *lhs, const basic_string<CharT> &rhs) {
     using String = basic_string<CharT>;
     using Traits = typename String::traits_type;
@@ -397,7 +397,7 @@ template <character CharT>
     return r;
 }
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, const CharT *rhs) {
     using String = basic_string<CharT>;
     using Traits = typename String::traits_type;
@@ -415,17 +415,17 @@ template <character CharT>
     return r;
 }
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] basic_string<CharT> operator+(basic_string<CharT> &&lhs, const basic_string<CharT> &rhs) {
     return std::move(lhs.append(rhs));
 }
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] basic_string<CharT> operator+(basic_string<CharT> &&lhs, basic_string<CharT> &&rhs) {
     return std::move(lhs.append(rhs));
 }
 
-template <character CharT>
+template <__character CharT>
 [[nodiscard]] basic_string<CharT> operator+(basic_string<CharT> &&lhs, const CharT *rhs) {
     return std::move(lhs.append(rhs));
 }

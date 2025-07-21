@@ -7,7 +7,7 @@ namespace pvzstl {
 
 // clang-format off
 template <typename T>
-concept character = std::disjunction_v<
+concept __character = std::disjunction_v<
     std::is_same<T, char>,
     std::is_same<T, wchar_t>,
     std::is_same<T, char8_t>,
