@@ -81,7 +81,7 @@ public:
             __throw_out_of_range();
         }
         size_type len = std::min(n, str_sz - pos);
-        __data_ = __rep::create(str.__data_ + pos, len, len)->data;
+        __data_ = __rep::create(str.c_str() + pos, len, len)->data;
     }
 
     basic_string(const basic_string &str, size_type pos) {
@@ -90,12 +90,12 @@ public:
             __throw_out_of_range();
         }
         size_type len = str_sz - pos;
-        __data_ = __rep::create(str.__data_ + pos, len, len)->data;
+        __data_ = __rep::create(str.c_str() + pos, len, len)->data;
     }
 
     ~basic_string() { __reset(); }
 
-    /* implicit */ operator __self_view() const noexcept { return __self_view{__data_, size()}; }
+    /* implicit */ operator __self_view() const noexcept { return __self_view{c_str(), size()}; }
 
     basic_string &operator=(const basic_string &other);
     basic_string &operator=(basic_string &&other) noexcept;
@@ -124,7 +124,7 @@ public:
 
     [[nodiscard, gnu::always_inline]] const value_type &operator[](size_type pos) const noexcept {
         assert((pos <= size()) && "string index out of bounds");
-        return *(__data_ + pos);
+        return *(c_str() + pos);
     }
 
     [[nodiscard]] const value_type &at(size_type n) const;
@@ -133,7 +133,7 @@ public:
 
     basic_string &operator+=(const value_type *s) { return append(s); }
 
-    basic_string &append(const basic_string &str) { return append(str.__data_, str.size()); }
+    basic_string &append(const basic_string &str) { return append(str.c_str(), str.size()); }
 
     basic_string &append(const value_type *s, size_type n);
 
@@ -144,12 +144,12 @@ public:
 
     [[nodiscard, gnu::always_inline]] const value_type &front() const noexcept {
         assert(!empty() && "basic_string::front(): string is empty");
-        return *__data_;
+        return *c_str();
     }
 
     [[nodiscard, gnu::always_inline]] const value_type &back() const noexcept {
         assert(!empty() && "basic_string::back(): string is empty");
-        return *(__data_ + size() - 1);
+        return *(c_str() + size() - 1);
     }
 
     [[nodiscard]] basic_string substr(size_type pos = 0, size_type n = npos) const { return basic_string{*this, pos, n}; }
@@ -167,23 +167,23 @@ public:
 
     [[nodiscard]] size_type find(value_type c, size_type pos = 0) const noexcept { return find(__self_view{&c, 1}, pos); }
 
-    [[nodiscard]] bool starts_with(__self_view sv) const noexcept { return __self_view{__data_, size()}.starts_with(sv); }
+    [[nodiscard]] bool starts_with(__self_view sv) const noexcept { return __self_view{c_str(), size()}.starts_with(sv); }
 
     [[nodiscard]] bool starts_with(value_type c) const noexcept { return !empty() && (front() == c); }
 
     [[nodiscard]] bool starts_with(const value_type *s) const noexcept { return starts_with(__self_view{s}); }
 
-    [[nodiscard]] bool ends_with(__self_view sv) const noexcept { return __self_view{__data_, size()}.ends_with(sv); }
+    [[nodiscard]] bool ends_with(__self_view sv) const noexcept { return __self_view{c_str(), size()}.ends_with(sv); }
 
     [[nodiscard]] bool ends_with(value_type c) const noexcept { return !empty() && (back() == c); }
 
     [[nodiscard]] bool ends_with(const value_type *s) const noexcept { return ends_with(__self_view{s}); }
 
-    [[nodiscard]] bool contains(__self_view sv) const noexcept { return __self_view{__data_, size()}.contains(sv); }
+    [[nodiscard]] bool contains(__self_view sv) const noexcept { return __self_view{c_str(), size()}.contains(sv); }
 
-    [[nodiscard]] bool contains(value_type c) const noexcept { return __self_view{__data_, size()}.contains(c); }
+    [[nodiscard]] bool contains(value_type c) const noexcept { return __self_view{c_str(), size()}.contains(c); }
 
-    [[nodiscard]] bool contains(const value_type *s) const { return __self_view{__data_, size()}.contains(s); }
+    [[nodiscard]] bool contains(const value_type *s) const { return __self_view{c_str(), size()}.contains(s); }
 
     [[nodiscard, gnu::always_inline]] std::int32_t __ref_count() const noexcept { return __get_rep()->ref_count; }
 
@@ -301,7 +301,7 @@ basic_string<CharT> &basic_string<CharT>::append(const value_type *s, size_type 
     size_type newsz = oldsz + n;
     size_type cap = capacity();
     if (newsz > cap || __ref_count() > 0) {
-        __rep *p = __rep::create(__data_, oldsz, std::max(newsz, cap));
+        __rep *p = __rep::create(c_str(), oldsz, std::max(newsz, cap));
         traits_type::copy(p->data + oldsz, s, n);
         __reset();
         __data_ = p->data;
@@ -325,7 +325,7 @@ template <__character CharT>
 template <__convertible_to_string_view<CharT> Tp>
 [[nodiscard]] auto basic_string<CharT>::find(const Tp &t, size_type pos) const noexcept -> size_type {
     using SelfViewSizeType = typename __self_view::size_type;
-    SelfViewSizeType xpos = __self_view{__data_, size()}.find(__self_view{t}, pos);
+    SelfViewSizeType xpos = __self_view{c_str(), size()}.find(__self_view{t}, pos);
     if constexpr (std::is_same_v<SelfViewSizeType, size_type>) {
         return xpos;
     } else {
