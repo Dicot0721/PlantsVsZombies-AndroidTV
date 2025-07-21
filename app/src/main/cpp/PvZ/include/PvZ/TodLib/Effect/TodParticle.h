@@ -56,7 +56,7 @@ public:
 
     void Draw(Sexy::Graphics *g) { reinterpret_cast<void (*)(TodParticleSystem *, Sexy::Graphics *)>(TodParticleSystem_DrawAddr)(this, g); }
     void OverrideColor(const char *theEmitterName, const Sexy::Color &theColor) {
-        reinterpret_cast<void (*)(TodParticleSystem *, const char *, const Sexy::Color)>(TodParticleSystem_OverrideColorAddr)(this, theEmitterName, theColor);
+        reinterpret_cast<void (*)(TodParticleSystem *, const char *, const Sexy::Color &)>(TodParticleSystem_OverrideColorAddr)(this, theEmitterName, theColor);
     }
     void OverrideImage(const char *theEmitterName, Sexy::Image *theImage) {
         reinterpret_cast<void (*)(TodParticleSystem *, const char *, Sexy::Image *)>(TodParticleSystem_OverrideImageAddr)(this, theEmitterName, theImage);

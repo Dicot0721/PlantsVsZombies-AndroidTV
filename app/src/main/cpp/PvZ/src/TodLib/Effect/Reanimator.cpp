@@ -290,7 +290,6 @@ void Reanimation_GetZombatarTrackIndex(Reanimation *zombatarReanim, int *indexAr
 }
 
 int Reanimation::GetZombatarHatTrackIndex() {
-    ReanimatorDefinition *mDefinition = mDefinition;
     int mTrackCount = mDefinition->mTrackCount;
     if (mTrackCount <= 0) {
         return -1;
@@ -314,7 +313,6 @@ int Reanimation::GetZombatarHatTrackIndex() {
 }
 
 int Reanimation::GetZombatarEyeWearTrackIndex() {
-    ReanimatorDefinition *mDefinition = mDefinition;
     int mTrackCount = mDefinition->mTrackCount;
     if (mTrackCount <= 0) {
         return -1;
