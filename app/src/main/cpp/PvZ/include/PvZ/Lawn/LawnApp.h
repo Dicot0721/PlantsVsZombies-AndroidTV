@@ -222,6 +222,16 @@ public:
     void SetHouseReanim(Reanimation *theHouseAnim);
     void LoadZombatarResources();
     PottedPlant *GetPottedPlantByIndex(int thePottedPlantIndex);
+
+    bool Is3DAccelerated() {
+        // 修复关闭3D加速后MV错位
+        return mNewIs3DAccelerated || (mCreditScreen != nullptr);
+    }
+
+    void Set3DAccelerated(bool isAccelerated) {
+        mNewIs3DAccelerated = isAccelerated;
+        mPlayerInfo->mIs3DAcceleratedClosed = !isAccelerated;
+    }
 };
 
 /***************************************************************************************************************/

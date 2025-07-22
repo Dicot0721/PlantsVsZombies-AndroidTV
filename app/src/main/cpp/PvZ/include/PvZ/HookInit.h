@@ -440,7 +440,7 @@ inline void InitHookFunction() {
     homura::HookFunction(DaveHelp_Delete2Addr, &DaveHelp_Delete2, &old_DaveHelp_Delete2);
     homura::HookFunction(DaveHelp_DealClickAddr, &DaveHelp_DealClick, nullptr);
     homura::HookFunction(TrashBin_TrashBinAddr, &TrashBin::Create, &old_TrashBin_TrashBin);
-    homura::HookFunction(Sexy_SexyAppBase_Is3DAcceleratedAddr, &LawnApp::Is3DAccelerated<LawnApp>, nullptr);
+    homura::HookFunction(Sexy_SexyAppBase_Is3DAcceleratedAddr, &LawnApp::Is3DAccelerated, nullptr);
     homura::HookFunction(Sexy_SexyAppBase_SexyAppBaseAddr, &Sexy::SexyAppBase::Create, &old_Sexy_SexyAppBase_SexyAppBase);
     homura::HookFunction(SettingsDialog_AddedToManagerAddr, &SettingsDialog_AddedToManager, &old_SettingsDialog_AddedToManager);
     homura::HookFunction(SettingsDialog_RemovedFromManagerAddr, &SettingsDialog_RemovedFromManager, &old_SettingsDialog_RemovedFromManager);

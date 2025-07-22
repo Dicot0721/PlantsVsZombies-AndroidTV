@@ -56,15 +56,6 @@ public:
     ~__SexyAppBase() = default;
 
     void Create();
-
-    bool Is3DAccelerated(this const auto& self) {
-        // 修复关闭3D加速后MV错位
-        return self.mNewIs3DAccelerated || self.mCreditScreen != nullptr;
-    }
-    void Set3DAccelerated(this auto& self, bool isAccelerated) {
-        self.mNewIs3DAccelerated = isAccelerated;
-        self.mPlayerInfo->mIs3DAcceleratedClosed = !isAccelerated;
-    }
 };
 
 class SexyAppBase : public __SexyAppBase {
