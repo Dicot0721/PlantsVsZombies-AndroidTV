@@ -9,12 +9,9 @@
 
 namespace Sexy {
 
-template <bool>
-class __SexyMatrix3;
+class SexyMatrix3;
 
-using SexyMatrix3 = __SexyMatrix3<false>;
-
-class MemoryImage : public __Image<true> {
+class MemoryImage : public __Image {
 public:
     LawnApp *mApp;                    // 28
     int unkMems4;                     // 29

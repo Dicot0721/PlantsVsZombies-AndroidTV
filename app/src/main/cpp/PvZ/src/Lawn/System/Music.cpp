@@ -12,20 +12,16 @@
 #define HIWORD(a) ((a) >> 16)
 #define LOWORD(a) ((a) & 0xFFFF)
 
-
-template <>
-void Music::StartGameMusic(bool theStart) {
+void __Music::StartGameMusic(bool theStart) {
     old_Music_StartGameMusic(this, theStart);
 }
-
 
 namespace {
 bool muteMusic;
 int theCounter;
 } // namespace
 
-template <>
-void Music::SetupMusicFileForTune1(MusicFile theMusicFile, MusicTune theMusicTune) {
+void __Music::SetupMusicFileForTune1(MusicFile theMusicFile, MusicTune theMusicTune) {
     int v7;  // r7
     int v9;  // r9
     int v10; // r8
@@ -146,8 +142,7 @@ void Music::SetupMusicFileForTune1(MusicFile theMusicFile, MusicTune theMusicTun
     } while (v10 >= v11);
 }
 
-template <>
-void Music::PlayFromOffset(MusicFile theMusicFile, int theOffset, double theVolume) {
+void __Music::PlayFromOffset(MusicFile theMusicFile, int theOffset, double theVolume) {
     mMusicInterface->StopMusic(theMusicFile);
     SetupMusicFileForTune(theMusicFile, mCurMusicTune);
     mMusicInterface->PlayMusic(theMusicFile, theOffset, theMusicFile == MusicFile::MUSIC_FILE_CREDITS_ZOMBIES_ON_YOUR_LAWN);
@@ -162,8 +157,7 @@ void Music::PlayFromOffset(MusicFile theMusicFile, int theOffset, double theVolu
     }
 }
 
-template <>
-void Music::PlayMusic(MusicTune theMusicTune, int theOffset, int theDrumsOffset) {
+void __Music::PlayMusic(MusicTune theMusicTune, int theOffset, int theDrumsOffset) {
     if (mMusicDisabled)
         return;
     mLastMusicTune = theMusicTune;
@@ -287,8 +281,7 @@ void Music::PlayMusic(MusicTune theMusicTune, int theOffset, int theDrumsOffset)
     }
 }
 
-template <>
-void Music::UpdateMusicBurst() {
+void __Music::UpdateMusicBurst() {
     // 加90ms静音，用于去除莫名其妙的开头鼓点声
     if (muteMusic) {
         theCounter--;
@@ -302,8 +295,7 @@ void Music::UpdateMusicBurst() {
     UpdateMusicBurst2();
 }
 
-template <>
-void Music::UpdateMusicBurst2() {
+void __Music::UpdateMusicBurst2() {
     int MusicOrder;                                    // ebx
     double v7;                                         // st7
     double v9;                                         // st6
@@ -471,16 +463,14 @@ void Music::UpdateMusicBurst2() {
     }
 }
 
-template <>
-void Music::StartBurst() {
+void __Music::StartBurst() {
     if (mMusicBurstState == MusicBurstState::MUSIC_BURST_OFF) {
         mMusicBurstState = MusicBurstState::MUSIC_BURST_STARTING;
         mBurstStateCounter = 400;
     }
 }
 
-template <>
-void Music::MusicUpdate() {
+void __Music::MusicUpdate() {
     if (mFadeOutCounter <= 0) {
         if (mNormalVolume != mPauseVolume) {
             mNormalVolume = mPauseVolume;
@@ -502,26 +492,23 @@ void Music::MusicUpdate() {
     }
 }
 
-template <>
-void Music::ResyncChannel(MusicFile theFile1, MusicFile theFile2) {}
+void __Music::ResyncChannel(MusicFile theFile1, MusicFile theFile2) {}
 
-void Music2::Create() {
-    // 选择使用哪一版本的音乐。xbox版是xm格式，有鼓点；TV版则是ogg格式，无鼓点。
-    if (useXboxMusic) {
-        __Music::Create();
-        return;
-    }
-
-    old_Music2_Music2(this);
-}
-
-template <>
-void Music::MusicResync() {
+void __Music::MusicResync() {
     if (mCurMusicFileMain != MusicFile::MUSIC_FILE_NONE) {
         if (mCurMusicFileDrums != MusicFile::MUSIC_FILE_NONE)
             ResyncChannel(mCurMusicFileMain, mCurMusicFileDrums);
         if (mCurMusicFileHihats != MusicFile::MUSIC_FILE_NONE)
             ResyncChannel(mCurMusicFileMain, mCurMusicFileHihats);
+    }
+}
+
+void Music2::Create() {
+    // 选择使用哪一版本的音乐。xbox版是xm格式，有鼓点；TV版则是ogg格式，无鼓点。
+    if (useXboxMusic) {
+        __Music::Create();
+    } else {
+        old_Music2_Music2(this);
     }
 }
 

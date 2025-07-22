@@ -8,11 +8,7 @@
 #include <dlfcn.h>
 
 namespace Sexy {
-template <bool>
-class __Image;
-
-using Image = __Image<false>;
-
+class Image;
 class Font;
 } // namespace Sexy
 
@@ -813,7 +809,8 @@ inline void *Sexy_MemoryImage_WriteToPngAddr;
 inline void *Sexy_MemoryImage_WriteToJPEGAddr;
 inline void *Sexy_MemoryImage_BitsChangedAddr;
 inline void *Sexy_Widget_ResizeAddr;
-inline void *Sexy_Widget_WidgetAddr;
+inline void *Sexy_Widget___ConstructorAddr;
+inline void *Sexy_Widget___DestructorAddr;
 inline void *Sexy_Widget_SetVisibleAddr;
 inline void *Sexy_Widget_MoveAddr;
 inline void *Sexy_WidgetContainer_SetFocusAddr;
@@ -1969,7 +1966,8 @@ inline bool GetFunctionAddr() {
     Sexy_MemoryImage_WriteToJPEGAddr = dlsym(handle, "_ZN4Sexy11MemoryImage11WriteToJPEGESs");
     Sexy_MemoryImage_BitsChangedAddr = dlsym(handle, "_ZN4Sexy11MemoryImage11BitsChangedEv");
     Sexy_Widget_ResizeAddr = dlsym(handle, "_ZN4Sexy6Widget6ResizeEiiii");
-    Sexy_Widget_WidgetAddr = dlsym(handle, "_ZN4Sexy6WidgetC2Ev");
+    Sexy_Widget___ConstructorAddr = dlsym(handle, "_ZN4Sexy6WidgetC2Ev");
+    Sexy_Widget___DestructorAddr = dlsym(handle, "_ZN4Sexy6WidgetD2Ev");
     Sexy_Widget_SetVisibleAddr = dlsym(handle, "_ZN4Sexy6Widget10SetVisibleEb");
     Sexy_Widget_MoveAddr = dlsym(handle, "_ZN4Sexy6Widget4MoveEii");
     Sexy_WidgetManager_GetWidgetAtAddr = dlsym(handle, "_ZN4Sexy13WidgetManager11GetWidgetAtEiiPiS1_");

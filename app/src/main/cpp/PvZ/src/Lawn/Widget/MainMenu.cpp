@@ -596,8 +596,7 @@ void MainMenu::Draw(Sexy::Graphics *g) {
             v43 = ReanimatorTransform();
             mainMenuReanim->GetCurrentTransform(mailAlertTrackIndex, &v43);
             Sexy::Image *mailAlertImage = v43.mImage;
-            aSexyTransform2D.Create();
-            Reanimation::MatrixFromTransform(v43, (SexyMatrix3 &)aSexyTransform2D);
+            Reanimation::MatrixFromTransform(v43, aSexyTransform2D);
             aSexyTransform2D.Translate(mCameraPositionX, mCameraPositionY);
             int v14 = mailAlertImage->mWidth;
             int v15 = v14 + 3;
@@ -612,22 +611,22 @@ void MainMenu::Draw(Sexy::Graphics *g) {
             unkMems3[3] = v18;
             TodAnimateCurveFloat(0, 100, v18, 0.75, 0.8, TodCurves::CURVE_SIN_WAVE);
             Sexy::Rect v38 = {0, 0, mailAlertImage->mWidth, mailAlertImage->mHeight};
-            g->DrawImageMatrix(mailAlertImage, (SexyMatrix3 &)aSexyTransform2D, v38, 0.0, 0.0, 1);
+            g->DrawImageMatrix(mailAlertImage, aSexyTransform2D, v38, 0.0, 0.0, 1);
         }
     }
     int moreTrackIndex = mainMenuReanim->FindTrackIndex("more");
     v43 = ReanimatorTransform();
     mainMenuReanim->GetCurrentTransform(moreTrackIndex, &v43);
-    aSexyTransform2D.Create();
-    Reanimation::MatrixFromTransform(v43, (SexyMatrix3 &)aSexyTransform2D);
+    new (&aSexyTransform2D) SexyTransform2D{};
+    Reanimation::MatrixFromTransform(v43, aSexyTransform2D);
     aSexyTransform2D.Translate(mCameraPositionX, mCameraPositionY);
     aSexyTransform2D.Translate(120.0, 200.0);
 
     Sexy::Rect v37 = {0, 0, m2DMarkImage->mWidth, m2DMarkImage->mHeight};
-    g->DrawImageMatrix(m2DMarkImage, (SexyMatrix3 &)aSexyTransform2D, v37, 0.0, 0.0, 1);
+    g->DrawImageMatrix(m2DMarkImage, aSexyTransform2D, v37, 0.0, 0.0, 1);
     Sexy::Rect v38 = {15, 15, 90, 90};
     aSexyTransform2D.Translate(-4.0, -16.0);
-    g->DrawImageMatrix(mApp->mQRCodeImage, (SexyMatrix3 &)aSexyTransform2D, v38, 0.0, 0.0, 1);
+    g->DrawImageMatrix(mApp->mQRCodeImage, aSexyTransform2D, v38, 0.0, 0.0, 1);
 }
 
 void MainMenu::DrawOverlay(Sexy::Graphics *g) {

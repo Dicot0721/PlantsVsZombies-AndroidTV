@@ -12,21 +12,17 @@
 #include <cstdlib>
 
 struct TodAllocator;
+
 namespace Sexy
 {
 class Graphics;
 class SexyVector2;
 class Color;
 class Font;
+class Image;
+}
 
-template <bool>
-class __Image;
-
-using Image = __Image<false>;
-};
-
-struct TodWeightedArray
-{
+struct TodWeightedArray {
     int mItem;
     int mWeight;
 };

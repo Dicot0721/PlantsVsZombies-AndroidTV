@@ -5,9 +5,6 @@
 #include "PvZ/Symbols.h"
 
 class LawnApp;
-namespace Sexy {
-
-}
 
 enum MusicTune {
     MUSIC_TUNE_NONE = -1,
@@ -52,7 +49,6 @@ enum MusicDrumsState {
     MUSIC_DRUMS_FADING = 4,
 };
 
-template <bool IS_AS_BASE = false>
 class __Music { // 加载XBOX版xm格式音乐时用。优：音质好、有鼓点。缺：鼓点BUG多，xm格式难以修改
 public:
     int* vTable;                                       // 0
@@ -82,12 +78,11 @@ public:
     float mNormalVolume;                               // 25
     // 大小26个整数
 
-    __Music()
-        requires(!IS_AS_BASE)
-    {
-        Create();
-    }
+    __Music() = default;
+    ~__Music() = default;
+
     void Create() { reinterpret_cast<void (*)(__Music *)>(Music_MusicAddr)(this); }
+
     void StopAllMusic() { reinterpret_cast<void (*)(__Music *)>(Music_StopAllMusicAddr)(this); }
     unsigned long GetMusicOrder(MusicFile theMusicFile) { return reinterpret_cast<unsigned long (*)(__Music *, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile); }
     void SetupMusicFileForTune(MusicFile theMusicFile, MusicTune theMusicTune) {
@@ -105,38 +100,28 @@ public:
     void ResyncChannel(MusicFile theFile1, MusicFile theFile2);
     void SetupMusicFileForTune1(MusicFile theMusicFile, MusicTune theMusicTune);
     void StartGameMusic(bool theStart);
-
-protected:
-    __Music()
-        requires IS_AS_BASE
-    {}
 };
 
-class Music2 : public __Music<true> { // 加载TV版ogg格式音乐时用。无鼓点。
+class Music : public __Music {};
+
+class Music2 : public __Music { // 加载TV版ogg格式音乐时用。无鼓点。
 public:
     // 大小26个整数
-
     Music2() { Create(); }
     ~Music2() { Destroy(); }
+
     void Create();
     void Destroy() { reinterpret_cast<void (*)(Music2 *)>(Music2_DeleteAddr)(this); };
+
     void StopAllMusic();
     void StartGameMusic(bool theStart);
     void GameMusicPause(bool thePause);
     void FadeOut(int theFadeOutDuration);
 };
 
-template <>
-void __Music<>::UpdateMusicBurst2();
+inline void (*old_Music_StartGameMusic)(__Music* music, bool a2);
 
-template <>
-void __Music<>::MusicResync();
-
-using Music = __Music<>;
-
-inline void (*old_Music_StartGameMusic)(Music* music, bool a2);
-
-inline void (*old_Music_UpdateMusicBurst)(Music* music);
+inline void (*old_Music_UpdateMusicBurst)(__Music* music);
 
 inline void (*old_Music2_Music2)(Music2* music);
 
@@ -147,7 +132,5 @@ inline void (*old_Music2_StartGameMusic)(Music2* music, bool start);
 inline void (*old_Music2_GameMusicPause)(Music2* music, bool pause);
 
 inline void (*old_Music2_FadeOut)(Music2* music, int aFadeOutDuration);
-
-
 
 #endif // PVZ_LAWN_MUSIC_H

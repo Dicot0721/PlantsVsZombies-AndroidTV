@@ -15,12 +15,8 @@ class LawnApp;
 
 namespace Sexy {
 
-template <bool>
-class __SexyMatrix3;
+class SexyMatrix3;
 
-using SexyMatrix3 = __SexyMatrix3<false>;
-
-template <bool IS_AS_BASE = false>
 class __Image {
 public:
     int *vTable;           // 0
@@ -46,13 +42,8 @@ public:
     int unkMems3;          // 27
     // 大小28个整数
 
-//    __Image()
-//        requires(!IS_AS_BASE)
-//    {
-//        Create();
-//    }
-//
-//    void Create() {}
+    __Image() = default;
+    ~__Image() = default;
 
     int GetWidth();
     int GetHeight();
@@ -60,26 +51,25 @@ public:
     int GetCelHeight(); // like above but for vertical strips
     void PushTransform(const SexyMatrix3 &theTransform, bool concatenate);
     void PopTransform();
-
-protected:
-    __Image()
-        requires IS_AS_BASE
-    {}
 };
 
-class GLImage : public __Image<true> {
+class Image : public __Image {
+public:
+    Image() = delete;
+    ~Image() = delete;
+};
+
+class GLImage : public __Image {
 public:
     void PushTransform(const SexyMatrix3 &theTransform, bool concatenate);
     void PopTransform();
 };
 
-using Image = __Image<>;
-
 } // namespace Sexy
 
-inline void (*old_Sexy_Image_PushTransform)(Sexy::Image *image, const Sexy::SexyMatrix3 &theTransform, bool concatenate);
+inline void (*old_Sexy_Image_PushTransform)(Sexy::__Image *image, const Sexy::SexyMatrix3 &theTransform, bool concatenate);
 
-inline void (*old_Sexy_Image_PopTransform)(Sexy::Image *image);
+inline void (*old_Sexy_Image_PopTransform)(Sexy::__Image *image);
 
 inline void (*old_Sexy_GLImage_PushTransform)(Sexy::GLImage *image, const Sexy::SexyMatrix3 &theTransform, bool concatenate);
 

@@ -8,8 +8,7 @@
 
 using namespace Sexy;
 
-template <>
-void SexyAppBase::Create() {
+void __SexyAppBase::Create() {
     old_Sexy_SexyAppBase_SexyAppBase(this);
     //    LOGD("%d",*((uint32_t *)appBase + 464));
     //    *((uint32_t *)appBase + 464) = 0; ;

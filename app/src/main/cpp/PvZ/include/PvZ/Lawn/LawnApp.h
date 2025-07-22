@@ -25,7 +25,7 @@ class PottedPlant;
 class VSSetupMenu;
 class MailBox;
 
-class LawnApp : public __SexyAppBase<true> {
+class LawnApp : public __SexyAppBase {
 public:
     Board *mBoard;                           // 552
     TitleScreen *mTitleScreen;               // 553

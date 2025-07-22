@@ -8,13 +8,8 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Symbols.h"
 
-namespace Sexy
-{
-template <bool>
-class __Image;
-
-using Image = __Image<false>;
-
+namespace Sexy {
+class Image;
 class MemoryImage;
 }
 

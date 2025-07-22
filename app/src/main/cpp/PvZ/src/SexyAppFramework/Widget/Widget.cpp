@@ -6,22 +6,18 @@
 
 using namespace Sexy;
 
-template<>
-void Widget::MarkDirty() {
-    (*((void (**)(Sexy::Widget *))this->vTable + 25))(this); // MarkDirty();
+void __Widget::MarkDirty() {
+    (*((void (**)(__Widget *))this->vTable + 25))(this); // MarkDirty();
 }
 
-template<>
-void Widget::AddWidget(Sexy::Widget *child) {
-    (*((void (**)(Sexy::Widget *, Sexy::Widget *))this->vTable + 6))(this, child); // AddWidget();
+void __Widget::AddWidget(Widget *child) {
+    (*((void (**)(__Widget *, Widget *))this->vTable + 6))(this, child); // AddWidget();
 }
 
-template<>
-void Widget::RemoveWidget(Sexy::Widget *child) {
-    (*((void (**)(Sexy::Widget *, Sexy::Widget *))this->vTable + 7))(this, child); // RemoveWidget();
+void __Widget::RemoveWidget(Widget *child) {
+    (*((void (**)(__Widget *, Widget *))this->vTable + 7))(this, child); // RemoveWidget();
 }
 
-template<>
-Widget *Widget::FindWidget(int theId) {
-    return (*((Sexy::Widget * (**)(Sexy::Widget *, int)) this->vTable + 9))(this, theId); // FindWidget();
+Widget *__Widget::FindWidget(int theId) {
+    return (*((Widget * (**)(__Widget *, int)) this->vTable + 9))(this, theId); // FindWidget();
 }

@@ -21,11 +21,7 @@ namespace Sexy
 class Font;
 class Graphics;
 class MemoryImage;
-
-template <bool>
-class __Image;
-
-using Image = __Image<false>;
+class Image;
 };
 
 // ######################################################################################################################################################

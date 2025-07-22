@@ -12,12 +12,7 @@
 #include "SelectableWidget.h"
 
 namespace Sexy {
-
-template <bool>
-class __Image;
-
-using Image = __Image<false>;
-
+class Image;
 class ButtonListener;
 
 class ButtonWidget : public SelectableWidget {

@@ -18,7 +18,6 @@ namespace Sexy {
 
 class Dialog;
 
-template <bool IS_AS_BASE = false>
 class __SexyAppBase {
 public:
     int *vTable;                            // 0
@@ -53,11 +52,8 @@ public:
     Image *CopyImage(Image *theImage) { return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *)>(Sexy_SexyAppBase_CopyImageAddr)(this, theImage); }
     Image *CopyImage(Image *theImage, const Rect &theRect) { return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *, const Rect &)>(Sexy_SexyAppBase_CopyImage2Addr)(this, theImage, theRect); }
 
-    __SexyAppBase()
-        requires(!IS_AS_BASE)
-    {
-        Create();
-    }
+    __SexyAppBase() = default;
+    ~__SexyAppBase() = default;
 
     void Create();
 
@@ -69,17 +65,19 @@ public:
         self.mNewIs3DAccelerated = isAccelerated;
         self.mPlayerInfo->mIs3DAcceleratedClosed = !isAccelerated;
     }
-
-protected:
-    __SexyAppBase()
-        requires IS_AS_BASE
-    {}
 };
 
-using SexyAppBase = __SexyAppBase<>;
+class SexyAppBase : public __SexyAppBase {
+public:
+    SexyAppBase() {
+        Create();
+    }
 
-}
+    ~SexyAppBase() = delete;
+};
 
-inline void (*old_Sexy_SexyAppBase_SexyAppBase)(Sexy::SexyAppBase *appBase);
+} // namespace Sexy
+
+inline void (*old_Sexy_SexyAppBase_SexyAppBase)(Sexy::__SexyAppBase *appBase);
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_SEXYAPPBASE_H

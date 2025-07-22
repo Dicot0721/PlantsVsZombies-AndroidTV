@@ -13,13 +13,8 @@ namespace Sexy {
 
 class Graphics;
 class WidgetManager;
+class Widget;
 
-template <bool>
-class __Widget;
-
-using Widget = __Widget<false>;
-
-template <bool IS_AS_BASE = false>
 class __WidgetContainer {
 public:
     int *vTable;                      // 0
@@ -44,37 +39,20 @@ public:
     int mWidgetId;                    // 28
     // 大小未知，目前认为是29个整数。反正Widget是64个整数，足够了。
 
-    __WidgetContainer()
-        requires(!IS_AS_BASE)
-    {
-        Create();
-    }
+    __WidgetContainer() = default;
+    ~__WidgetContainer() = default;
 
-    ~__WidgetContainer()
-        requires(!IS_AS_BASE)
-    {
-        Destroy();
-    }
-
-    void Create() {  }
-    void Destroy() {  }
-
-    void SetFocus(Widget *aWidget) { reinterpret_cast<void (*)(__WidgetContainer*, Widget*)>(Sexy_WidgetContainer_SetFocusAddr)(this, aWidget); }
+    void SetFocus(Widget *theWidget) { reinterpret_cast<void (*)(__WidgetContainer*, Widget*)>(Sexy_WidgetContainer_SetFocusAddr)(this, theWidget); }
     void MarkDirty() { reinterpret_cast<void (*)(__WidgetContainer*)>(Sexy_WidgetContainer_MarkDirtyAddr)(this); }
-
-protected:
-    __WidgetContainer()
-        requires IS_AS_BASE
-    {}
-
-    ~__WidgetContainer()
-        requires IS_AS_BASE
-    {}
 };
 
-using WidgetContainer = __WidgetContainer<>;
+class WidgetContainer : public __WidgetContainer {
+public:
+    WidgetContainer() = delete;
+    ~WidgetContainer() = delete;
+};
 
-}
+} // namespace Sexy
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_WIDGETCONTAINER_H

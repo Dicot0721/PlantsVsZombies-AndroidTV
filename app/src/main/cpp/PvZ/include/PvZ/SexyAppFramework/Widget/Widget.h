@@ -15,10 +15,9 @@
 
 namespace Sexy {
 
-//class WidgetManager;
+class Widget;
 
-template <bool IS_IN_DERIVED = false>
-class __Widget : public __WidgetContainer<true> {
+class __Widget : public __WidgetContainer {
 public:
     bool mVisible;                 // 116
     bool mMouseVisible;            // 117
@@ -39,12 +38,11 @@ public:
     int *mAnimatorForState[4];     // 60 ~ 63
     // 大小64个整数！
 
-    __Widget()
-        requires(!IS_IN_DERIVED)
-    {
-        Create();
-    }
-    void Create() { reinterpret_cast<void (*)(__Widget *)>(Sexy_Widget_WidgetAddr)(this); }
+    __Widget() = default;
+    ~__Widget() = default;
+
+    void __Constructor() { reinterpret_cast<void (*)(__Widget *)>(Sexy_Widget___ConstructorAddr)(this); }
+    void __Destructor() { reinterpret_cast<void (*)(__Widget *)>(Sexy_Widget___DestructorAddr)(this); }
 
     void Resize(int theX, int theY, int theWidth, int theHeight) { reinterpret_cast<void (*)(__Widget *, int, int, int, int)>(Sexy_Widget_ResizeAddr)(this, theX, theY, theWidth, theHeight); }
     void SetVisible(bool isVisible) { reinterpret_cast<void (*)(__Widget *, bool)>(Sexy_Widget_SetVisibleAddr)(this, isVisible); }
@@ -52,17 +50,16 @@ public:
     void DeferOverlay(int thePriority = 0) { reinterpret_cast<void (*)(__Widget *, int)>(Sexy_Widget_DeferOverlayAddr)(this, thePriority); }
 
     void MarkDirty();
-    void AddWidget(__Widget *theWidget);
-    void RemoveWidget(__Widget *theWidget);
-    __Widget *FindWidget(int theId);
-
-protected:
-    __Widget()
-        requires IS_IN_DERIVED
-    {}
+    void AddWidget(Widget *theWidget);
+    void RemoveWidget(Widget *theWidget);
+    Widget *FindWidget(int theId);
 };
 
-using Widget = __Widget<>;
+class Widget : public __Widget {
+public:
+    Widget() { __Widget::__Constructor(); }
+    ~Widget() { __Widget::__Destructor(); }
+};
 
 } // namespace Sexy
 

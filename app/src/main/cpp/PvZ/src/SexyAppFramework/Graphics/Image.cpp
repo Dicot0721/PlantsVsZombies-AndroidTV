@@ -6,37 +6,31 @@
 
 using namespace Sexy;
 
-template<>
-int Image::GetWidth()
+int __Image::GetWidth()
 {
     return mWidth;
 }
 
-template<>
-int	Image::GetHeight()
+int	__Image::GetHeight()
 {
     return mHeight;
 }
 
-template<>
-int Image::GetCelHeight()
+int __Image::GetCelHeight()
 {
     return mHeight / mNumRows;
 }
 
-template<>
-int Image::GetCelWidth()
+int __Image::GetCelWidth()
 {
     return mWidth / mNumCols;
 }
 
-template<>
-void Image::PushTransform(const SexyMatrix3 &theTransform, bool concatenate) {
+void __Image::PushTransform(const SexyMatrix3 &theTransform, bool concatenate) {
     old_Sexy_Image_PushTransform(this, theTransform, concatenate);
 }
 
-template<>
-void Image::PopTransform() {
+void __Image::PopTransform() {
     old_Sexy_Image_PopTransform(this);
 }
 
