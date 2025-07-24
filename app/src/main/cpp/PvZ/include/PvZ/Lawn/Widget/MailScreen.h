@@ -15,16 +15,20 @@ public:
     void KeyDown(int theKey, int a2, int a3) { reinterpret_cast<void (*)(MailScreen *, int, int, int)>(MailScreen_KeyDownAddr)(this, theKey, a2, a3); }
 
     MailScreen(LawnApp *theApp);
-    void Create(LawnApp *theApp);
     void AddedToManager(int *theWidgetManager);
     void RemovedFromManager(int *widgetManager);
-    void Delete2();
 
     void MouseDown(int x, int y, int theClickCount);
     void MouseUp(int x, int y);
     void MouseDrag(int x, int y);
     void ButtonPress(int theId);
     void ButtonDepress(int theId);
+
+protected:
+    friend void InitHookFunction();
+
+    void __Constructor(LawnApp *theApp);
+    void __Destructor2();
 };
 
 class MailBox {

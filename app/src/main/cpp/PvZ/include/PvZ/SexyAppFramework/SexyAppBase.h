@@ -14,6 +14,8 @@
 #include "Sound/AudiereSoundManager.h"
 #include "Widget/ButtonListener.h"
 
+void InitHookFunction();
+
 namespace Sexy {
 
 class Dialog;
@@ -47,7 +49,7 @@ public:
         return reinterpret_cast<Image *(*)(__SexyAppBase *, const pvzstl::string &, bool)>(Sexy_SexyAppBase_GetImageAddr)(this, theFileName, commitBits);
     }
     bool RegistryReadString(const std::string &theValueName, std::string *theString) {
-        return reinterpret_cast<bool(*)(__SexyAppBase *, const std::string &, std::string *)>(Sexy_SexyAppBase_RegistryReadStringAddr)(this, theValueName, theString);
+        return reinterpret_cast<bool (*)(__SexyAppBase *, const std::string &, std::string *)>(Sexy_SexyAppBase_RegistryReadStringAddr)(this, theValueName, theString);
     }
     Image *CopyImage(Image *theImage) { return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *)>(Sexy_SexyAppBase_CopyImageAddr)(this, theImage); }
     Image *CopyImage(Image *theImage, const Rect &theRect) { return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *, const Rect &)>(Sexy_SexyAppBase_CopyImage2Addr)(this, theImage, theRect); }
@@ -55,14 +57,15 @@ public:
     __SexyAppBase() = default;
     ~__SexyAppBase() = default;
 
-    void Create();
+protected:
+    friend void ::InitHookFunction();
+
+    void __Constructor();
 };
 
 class SexyAppBase : public __SexyAppBase {
 public:
-    SexyAppBase() {
-        Create();
-    }
+    SexyAppBase() { __Constructor(); }
 
     ~SexyAppBase() = delete;
 };

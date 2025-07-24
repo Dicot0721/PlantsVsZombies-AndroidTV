@@ -238,7 +238,7 @@ void LawnApp_PlaySample(LawnApp *lawnApp, int soundAddr) {
     (*(void (**)(LawnApp *, int, int))(*(uint32_t *)lawnApp + LAWNAPP_PLAYSAMPLE_OFFSET))(lawnApp, soundAddr, 1);
 }
 
-void LawnApp::Create() {
+void LawnApp::__Constructor() {
     old_LawnApp_LawnApp(this);
     mLawnMouseMode = true; // 开启触控
 }

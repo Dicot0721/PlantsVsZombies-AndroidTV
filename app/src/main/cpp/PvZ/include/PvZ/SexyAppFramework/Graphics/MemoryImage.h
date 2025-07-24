@@ -26,10 +26,9 @@ public:
     int unk2[20];                     // 38 ~ 57
     // 大小58个整数
 
-    MemoryImage() { BeBorn(); }
-    ~MemoryImage() { Delete(); }
-    void BeBorn() { reinterpret_cast<void (*)(MemoryImage *)>(Sexy_MemoryImage_MemoryImageAddr)(this); }
-    void Delete() { reinterpret_cast<void (*)(MemoryImage *)>(Sexy_MemoryImage_DeleteAddr)(this); }
+    MemoryImage() { __Constructor(); }
+    ~MemoryImage() { __Destructor(); }
+
     ulong *GetBits() { return reinterpret_cast<ulong *(*)(MemoryImage *)>(Sexy_MemoryImage_GetBitsAddr)(this); }
     void Create(int theWidth, int theHeight) { reinterpret_cast<void (*)(MemoryImage *, int, int)>(Sexy_MemoryImage_CreateAddr)(this, theWidth, theHeight); }
     void SetImageMode(bool hasTrans, bool hasAlpha) { reinterpret_cast<void (*)(MemoryImage *, bool, bool)>(Sexy_MemoryImage_SetImageModeAddr)(this, hasTrans, hasAlpha); }
@@ -40,6 +39,10 @@ public:
     void ClearRect(const Rect& theRect);
     void PushTransform(const SexyMatrix3 &theTransform, bool concatenate);
     void PopTransform();
+
+protected:
+    void __Constructor() { reinterpret_cast<void (*)(MemoryImage *)>(Sexy_MemoryImage_MemoryImageAddr)(this); }
+    void __Destructor() { reinterpret_cast<void (*)(MemoryImage *)>(Sexy_MemoryImage_DeleteAddr)(this); }
 };
 
 }

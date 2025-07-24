@@ -16,10 +16,10 @@
 #include "PvZ/TodLib/Effect/Attachment.h"
 
 GamepadControls::GamepadControls(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2) {
-    Create(theBoard, thePlayerIndex1, thePlayerIndex2);
+    __Constructor(theBoard, thePlayerIndex1, thePlayerIndex2);
 }
 
-void GamepadControls::Create(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2) {
+void GamepadControls::__Constructor(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2) {
     old_GamepadControls_GamepadControls(this, theBoard, thePlayerIndex1, thePlayerIndex2);
 
     if (isKeyboardTwoPlayerMode)

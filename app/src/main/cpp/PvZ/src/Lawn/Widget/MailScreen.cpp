@@ -14,10 +14,10 @@ Sexy::GameButton *gMailScreenSwitchButton;
 } // namespace
 
 MailScreen::MailScreen(LawnApp *theApp) {
-    Create(theApp);
+    __Constructor(theApp);
 }
 
-void MailScreen::Create(LawnApp *theApp) {
+void MailScreen::__Constructor(LawnApp *theApp) {
     // 修复MailScreen的可触控区域不为全屏。
     old_MailScreen_MailScreen(this, theApp);
 
@@ -54,14 +54,14 @@ void MailScreen::RemovedFromManager(int *widgetManager) {
     old_MailScreen_RemovedFromManager(this, widgetManager);
 }
 
-void MailScreen::Delete2() {
+void MailScreen::__Destructor2() {
     old_MailScreen_Delete2(this);
 
-    gMailScreenCloseButton->Destroy();
+    gMailScreenCloseButton->~GameButton();
     gMailScreenCloseButton = nullptr;
-    gMailScreenReadButton->Destroy();
+    gMailScreenReadButton->~GameButton();
     gMailScreenReadButton = nullptr;
-    gMailScreenSwitchButton->Destroy();;
+    gMailScreenSwitchButton->~GameButton();
     gMailScreenSwitchButton = nullptr;
 }
 

@@ -374,7 +374,6 @@ public:
     void ResetLawnMowers() { reinterpret_cast<void (*)(Board *)>(Board_ResetLawnMowersAddr)(this); }
 
     Board(LawnApp *theApp);
-    void Create(LawnApp *theApp);
     void InitLevel();
     void StartLevel();
     void Update();
@@ -466,7 +465,6 @@ public:
     void DrawHammerButton(Sexy::Graphics *g, LawnApp *theApp);
     void DrawButterButton(Sexy::Graphics *g, LawnApp *theApp);
 
-
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);
     void MouseDownSecond(int x, int y, int theClickCount);
@@ -476,6 +474,11 @@ public:
     void MouseDragSecond(int x, int y);
     void ButtonDepress(int theId);
     void KeyDown(Sexy::KeyCode theKey);
+
+protected:
+    friend void InitHookFunction();
+
+    void __Constructor(LawnApp *theApp);
 };
 
 int GetRectOverlap(const Sexy::Rect &rect1, const Sexy::Rect &rect2);

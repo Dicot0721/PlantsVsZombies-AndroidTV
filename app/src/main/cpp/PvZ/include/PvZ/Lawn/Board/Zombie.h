@@ -184,13 +184,12 @@ public:
     }
     void UpdateAnimSpeed() { reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateAnimSpeedAddr)(this); }
     void HitIceTrap() { reinterpret_cast<void (*)(Zombie *)>(Zombie_HitIceTrapAddr)(this); }
-    void Create() { reinterpret_cast<void (*)(Zombie *)>(Zombie_ZombieAddr)(this); };
     void UpdateZombiePosition() { reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateZombiePositionAddr)(this); };
     void LoadReanim(ReanimationType theReanimationType) { reinterpret_cast<void (*)(Zombie *, ReanimationType)>(Zombie_LoadReanimAddr)(this, theReanimationType); }
     void LoadPlainZombieReanim() { reinterpret_cast<void (*)(Zombie *)>(Zombie_LoadPlainZombieReanimAddr)(this); }
     void AttachShield() { reinterpret_cast<void (*)(Zombie *)>(Zombie_AttachShieldAddr)(this); }
 
-    Zombie() { Create(); }
+    Zombie() { __Constructor(); }
     void ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Zombie *theParentZombie, int theFromWave, bool theIsVisible);
     void Draw(Sexy::Graphics *g);
     void DieNoLoot();
@@ -252,6 +251,8 @@ public:
     bool IsFireResistant();
     void PickRandomSpeed();
 
+protected:
+    void __Constructor() { reinterpret_cast<void (*)(Zombie *)>(Zombie_ZombieAddr)(this); };
 };
 
 class ZombieDefinition {
@@ -262,7 +263,7 @@ public:
     int mStartingLevel;
     int mFirstAllowedWave;
     int mPickWeight;
-    const SexyChar *mZombieName;
+    const char *mZombieName;
 };
 extern ZombieDefinition gZombieDefs[NUM_ZOMBIE_TYPES];
 

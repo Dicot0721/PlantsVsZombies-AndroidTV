@@ -58,9 +58,10 @@ public:
 
 class DaveHelp : public Sexy::Widget {
 public:
-    void Create(LawnApp *theApp) { reinterpret_cast<void (*)(DaveHelp *, LawnApp *)>(DaveHelp_DaveHelpAddr)(this, theApp); }
+    DaveHelp(LawnApp *theApp) { __Constructor(theApp); }
 
-    DaveHelp(LawnApp *theApp) { Create(theApp); }
+protected:
+    void __Constructor(LawnApp *theApp) { reinterpret_cast<void (*)(DaveHelp *, LawnApp *)>(DaveHelp_DaveHelpAddr)(this, theApp); }
 };
 
 

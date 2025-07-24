@@ -166,8 +166,7 @@ public:
     void KillHelpTextScreen() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillHelpTextScreenAddr)(this); }
     void NextTestDialog() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_NextTestDialogAddr)(this); }
 
-    LawnApp() { Create(); };
-    void Create();
+    LawnApp() { __Constructor(); };
     void Init();
     bool IsNight();
     inline bool	IsIceDemo() { return false; }
@@ -232,6 +231,11 @@ public:
         mNewIs3DAccelerated = isAccelerated;
         mPlayerInfo->mIs3DAcceleratedClosed = !isAccelerated;
     }
+
+protected:
+    friend void InitHookFunction();
+
+    void __Constructor();
 };
 
 /***************************************************************************************************************/

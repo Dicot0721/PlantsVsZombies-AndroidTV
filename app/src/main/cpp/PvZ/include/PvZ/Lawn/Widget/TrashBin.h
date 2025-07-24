@@ -23,13 +23,18 @@ public:
     int mPileNum;                 // 85
     // 大小86个整数
 
-    void Delete() { reinterpret_cast<void (*)(TrashBin *)>(TrashBin_DeleteAddr)(this); }
-
     TrashBin(TrashPileType theTrashPileType, float theHeight);
-    void Create(TrashPileType theTrashPileType, float theHeight);
+
     void Draw(Sexy::Graphics *g);
     Sexy::Image *GetZombieTrashPiece(int theLevel);
     Sexy::Image *GetPlantTrashPiece(int theLevel);
+
+protected:
+    friend void InitHookFunction();
+
+    void __Constructor(TrashPileType theTrashPileType, float theHeight);
+
+    void __Destructor() { reinterpret_cast<void (*)(TrashBin *)>(TrashBin_DeleteAddr)(this); }
 };
 
 inline void (*old_TrashBin_TrashBin)(TrashBin *trashBin, TrashBin::TrashPileType theTrashPileType, float height);

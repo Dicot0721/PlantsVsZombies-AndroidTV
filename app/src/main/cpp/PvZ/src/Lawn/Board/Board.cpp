@@ -38,20 +38,15 @@ using namespace Sexy;
 using namespace std;
 
 Board::Board(LawnApp *theApp) {
-    Create(theApp);
+    __Constructor(theApp);
 }
 
-void Board::Create(LawnApp *theApp) {
+void Board::__Constructor(LawnApp *theApp) {
     old_Board_Board(this, theApp);
 
-    if (gBoardMenuButton != nullptr) {
-        gBoardMenuButton->Destroy();
-        operator delete (gBoardMenuButton);
-    }
-    if (gBoardStoreButton != nullptr) {
-        gBoardStoreButton->Destroy();
-        operator delete (gBoardStoreButton);
-    }
+    delete gBoardMenuButton;
+    delete gBoardStoreButton;
+
     pvzstl::string str = TodStringTranslate((theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) ? "[MAIN_MENU_BUTTON]" : "[MENU_BUTTON]");
     gBoardMenuButton = MakeButton(1000, &mButtonListener, this, (SexyString &)str);
     gBoardMenuButton->Resize(705, -3, 120, 80);
@@ -82,7 +77,7 @@ void Board::Create(LawnApp *theApp) {
     }
     AddWidget(gBoardMenuButton);
     AddWidget(gBoardStoreButton);
-    mAdvice->Delete();
+    mAdvice->~CustomMessageWidget();
     mAdvice = new CustomMessageWidget(mApp);
 }
 
@@ -2988,9 +2983,9 @@ void Board::StartLevel() {
 void Board::RemovedFromManager(WidgetManager *theManager) {
     RemoveWidget(gBoardMenuButton);
     RemoveWidget(gBoardStoreButton);
-    gBoardMenuButton->Destroy();
+    gBoardMenuButton->~GameButton();
 //    operator delete (gBoardMenuButton);
-    gBoardStoreButton->Destroy();
+    gBoardStoreButton->~GameButton();
 //    operator delete (gBoardStoreButton);
     gBoardMenuButton = nullptr;
     gBoardStoreButton = nullptr;

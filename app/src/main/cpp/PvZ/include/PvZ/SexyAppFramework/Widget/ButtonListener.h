@@ -9,8 +9,8 @@
 namespace Sexy {
 
 struct ButtonListenerVTable {
-    void *Delete;
-    void *Delete2;
+    void *__Destructor;
+    void *__Destructor2;
     void *ButtonPress;
     void *ButtonPress2;
     void *ButtonDepress;

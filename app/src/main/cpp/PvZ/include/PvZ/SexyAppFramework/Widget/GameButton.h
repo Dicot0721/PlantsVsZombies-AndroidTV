@@ -22,9 +22,7 @@ public:
     // 大小230个整数
 
 //    GameButton(int theId, ButtonListener *theListener) { Create(); }
-    ~GameButton() { Destroy(); }
-    void Create(int theId, ButtonListener *theListener) { reinterpret_cast<void (*)(GameButton *, int, ButtonListener *)>(GameButton_GameButtonAddr)(this, theId, theListener); }
-    void Destroy() { reinterpret_cast<void (*)(GameButton *)>(GameButton_DeleteAddr)(this); }
+    ~GameButton() { __Destructor(); }
     bool IsMouseOver() { return reinterpret_cast<bool (*)(GameButton *)>(GameButton_IsMouseOverAddr)(this); }
     void Resize(int theX, int theY, int theWidth, int theHeight) { reinterpret_cast<void (*)(GameButton *, int, int, int, int)>(GameButton_ResizeAddr)(this, theX, theY, theWidth, theHeight); }
     void Update() { reinterpret_cast<void (*)(GameButton *)>(GameButton_UpdateAddr)(this); }
@@ -32,6 +30,10 @@ public:
     void SetDisabled(bool theDisabled) { reinterpret_cast<void (*)(GameButton *, bool)>(GameButton_SetDisabledAddr)(this, theDisabled); }
     void Draw(Graphics *g) { reinterpret_cast<void (*)(GameButton *, Graphics *)>(GameButton_DrawAddr)(this, g); }
     void OnPressed() { reinterpret_cast<void (*)(GameButton *)>(GameButton_OnPressedAddr)(this); }
+
+protected:
+    void __Constructor(int theId, ButtonListener *theListener) { reinterpret_cast<void (*)(GameButton *, int, ButtonListener *)>(GameButton_GameButtonAddr)(this, theId, theListener); }
+    void __Destructor() { reinterpret_cast<void (*)(GameButton *)>(GameButton_DeleteAddr)(this); }
 };
 
 inline GameButton *MakeButton(int theId, ButtonListener *theListener, Widget *theParent, const SexyString &theText) {

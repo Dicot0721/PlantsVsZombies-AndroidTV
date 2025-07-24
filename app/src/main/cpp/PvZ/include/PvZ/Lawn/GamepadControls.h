@@ -79,7 +79,7 @@ public:
     // 锤子 50 1112
 
     GamepadControls(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2);
-    void Create(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2);
+    void __Constructor(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2);
     void ButtonDownFireCobcannonTest();
     void Draw(Sexy::Graphics *g);
     void Update(float a2);

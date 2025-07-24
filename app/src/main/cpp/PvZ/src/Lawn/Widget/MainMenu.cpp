@@ -174,11 +174,11 @@ void MainMenu::Update() {
         if (gMainMenuAchievementCounter == 0) {
             gAchievementState = NOT_SHOWING;
            RemoveWidget(gMainMenuAchievementsWidget);
-           reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->Delete();
+           reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->~MaskHelpWidget();
             gMainMenuAchievementsWidget = nullptr;
             if (gMainMenuAchievementsBack != nullptr) {
                 RemoveWidget((Widget*)gMainMenuAchievementsBack);
-                gMainMenuAchievementsBack->Destroy();
+                gMainMenuAchievementsBack->~GameButton();
                 gMainMenuAchievementsBack = nullptr;
             }
             Sexy::Widget *achievementsButton = FindWidget(ACHIEVEMENTS_BUTTON);
@@ -277,7 +277,7 @@ void MainMenu::ButtonDepress(MainMenuButtonId theSelectedButton) {
                 gAchievementState = SLIDING_IN;
                 gMainMenuAchievementCounter = 100;
                 gMainMenuAchievementsWidget = (AchievementsWidget *)operator new(sizeof(AchievementsWidget));
-                reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->Create(mApp);
+                new (gMainMenuAchievementsWidget) MaskHelpWidget{mApp};
                 gMainMenuAchievementsWidget->mIsScrolling = false;
                 gMainMenuAchievementsWidget->Resize(0, gMainMenuHeight, 1280, addonImages.hole->mHeight * (gAchievementHoleLength + 1));
                 gMainMenuAchievementsWidget->mWidgetId = ACHIEVEMENTS_BUTTON;
@@ -472,7 +472,7 @@ void MainMenu::SyncButtons() {
     EnableButtons();
 }
 
-void MainMenu::Create(LawnApp *theApp) {
+void MainMenu::__Constructor(LawnApp *theApp) {
     old_MainMenu_MainMenu(this, theApp);
 }
 
@@ -520,15 +520,15 @@ void MainMenu::RemovedFromManager(int *a2) {
     old_MainMenu_RemovedFromManager(this, a2);
 }
 
-void MainMenu::Delete2() {
+void MainMenu::__Destructor2() {
     old_MainMenu_Delete2(this);
     if (gMainMenuAchievementsWidget != nullptr) {
-        reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->Delete();
+        reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->~MaskHelpWidget();
         gMainMenuAchievementsWidget = nullptr;
     }
 
     if (gMainMenuAchievementsBack != nullptr) {
-        gMainMenuAchievementsBack->Destroy();;
+        gMainMenuAchievementsBack->~GameButton();;
         gMainMenuAchievementsBack = nullptr;
     }
 }
@@ -803,7 +803,7 @@ void ZombatarWidget_ButtonDepress(ZombatarWidget *zombatarWidget, int id) {
             return;
 
         if (addonImages.zombatar_portrait != nullptr) {
-            reinterpret_cast<MemoryImage *>(addonImages.zombatar_portrait)->Delete();
+            reinterpret_cast<MemoryImage *>(addonImages.zombatar_portrait)->~MemoryImage();
         }
 
         MemoryImage* aImage = new MemoryImage();
@@ -859,7 +859,7 @@ void ZombatarWidget_ButtonDepress(ZombatarWidget *zombatarWidget, int id) {
             return;
         gMainMenuZombatarWidget->mShowExistingZombatarPortrait = false;
         if (addonImages.zombatar_portrait != nullptr) {
-            reinterpret_cast<MemoryImage *>(addonImages.zombatar_portrait)->Delete();
+            reinterpret_cast<MemoryImage *>(addonImages.zombatar_portrait)->~MemoryImage();
             addonImages.zombatar_portrait = nullptr;
             lawnApp->EraseFile("ZOMBATAR.PNG");
         }
@@ -2163,7 +2163,7 @@ bool ZombatarWidget_AccessoryIsColorized(int tab, int accessory) {
 }
 
 ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
-    reinterpret_cast<TestMenuWidget *>(this)->Create();
+    new (this) TestMenuWidget{};
     theApp->LoadZombatarResources();
     theApp->Load("DelayLoad_Almanac");
     mApp = theApp;

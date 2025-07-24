@@ -14,10 +14,10 @@
 using namespace Sexy;
 
 SeedBank::SeedBank(bool thePlayerIndex) {
-    Create(thePlayerIndex);
+    __Constructor(thePlayerIndex);
 }
 
-void SeedBank::Create(bool thePlayerIndex) {
+void SeedBank::__Constructor(bool thePlayerIndex) {
     old_SeedBank_SeedBank(this, thePlayerIndex);
 }
 

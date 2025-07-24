@@ -22,11 +22,11 @@ SeedChooserTouchState gSeedChooserTouchState = SeedChooserTouchState::SEEDCHOOSE
 
 
 SeedChooserScreen::SeedChooserScreen(bool theIsZombieChooser) {
-    Create(theIsZombieChooser);
+    __Constructor(theIsZombieChooser);
 }
 
 
-void SeedChooserScreen::Create(bool theIsZombieChooser) {
+void SeedChooserScreen::__Constructor(bool theIsZombieChooser) {
     // 记录当前游戏状态，同时修复在没解锁商店图鉴时依然显示相应按钮的问题、对战选种子界面的按钮问题；
     // 还添加了生存模式保留上次选卡，添加坚果艺术关卡默认选择坚果，添加向日葵艺术关卡默认选择坚果、杨桃、萝卜伞
     mApp = (LawnApp *)*Sexy_gSexyAppBase_Addr;
@@ -154,7 +154,7 @@ void LawnApp::KillSeedChooserScreen() {
     SeedChooserScreen *seedChooserScreen = mSeedChooserScreen;
     if (seedChooserScreen != nullptr && mGameMode != GameMode::GAMEMODE_MP_VS) {
         seedChooserScreen->RemoveWidget(gSeedChooserScreenMainMenuButton);
-        gSeedChooserScreenMainMenuButton->Destroy();;
+        gSeedChooserScreenMainMenuButton->~GameButton();;
         gSeedChooserScreenMainMenuButton = nullptr;
     }
 

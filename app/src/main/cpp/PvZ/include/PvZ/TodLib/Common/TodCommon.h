@@ -7,6 +7,7 @@
 
 #include "PvZ/Lawn/Common/LawnCommon.h"
 #include "PvZ/SexyAppFramework/Misc/Common.h"
+#include "PvZ/SexyAppFramework/Graphics/MemoryImage.h"
 #include "PvZ/SexyAppFramework/Misc/ResourceManager.h"
 
 #include <cstdlib>

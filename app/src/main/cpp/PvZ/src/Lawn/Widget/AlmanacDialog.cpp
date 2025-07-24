@@ -40,7 +40,7 @@ Sexy::GameButton *gAlmanacCloseButton;
 
 } // namespace
 
-void AlmanacDialog::Create(LawnApp *theApp) {
+void AlmanacDialog::__Constructor(LawnApp *theApp) {
     // TODO: 解决部分植物的介绍文本显示不全问题
 
     old_AlmanacDialog_AlmanacDialog(this, theApp);
@@ -65,11 +65,11 @@ void AlmanacDialog::Create(LawnApp *theApp) {
     reinterpret_cast<MemoryImage *>(gPlantBackImage)->ClearRect(blankRect);
 }
 
-void AlmanacDialog::Destroy() {
+void AlmanacDialog::__Destructor() {
     old_AlmanacDialog_Delete2(this);
 
-    gAlmanacBackButton->Destroy();
-    gAlmanacCloseButton->Destroy();
+    gAlmanacBackButton->~GameButton();
+    gAlmanacCloseButton->~GameButton();
     gAlmanacBackButton = nullptr;
     gAlmanacCloseButton = nullptr;
 }

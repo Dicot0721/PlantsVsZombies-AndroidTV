@@ -503,10 +503,10 @@ void __Music::MusicResync() {
     }
 }
 
-void Music2::Create() {
+void Music2::__Constructor() {
     // 选择使用哪一版本的音乐。xbox版是xm格式，有鼓点；TV版则是ogg格式，无鼓点。
     if (useXboxMusic) {
-        __Music::Create();
+        __Music::__Constructor();
     } else {
         old_Music2_Music2(this);
     }

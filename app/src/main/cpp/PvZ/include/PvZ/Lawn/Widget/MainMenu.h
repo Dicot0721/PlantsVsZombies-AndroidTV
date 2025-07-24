@@ -86,8 +86,7 @@ public:
     void SetScene(MainMenuScene theScene) { reinterpret_cast<void (*)(MainMenu *, MainMenuScene)>(MainMenu_SetSceneAddr)(this, theScene); };
     void StartAdventureMode() { reinterpret_cast<void (*)(MainMenu *)>(MainMenu_StartAdventureModeAddr)(this); };
 
-    MainMenu(LawnApp *theApp) { Create(theApp); }
-    void Create(LawnApp *theApp);
+    MainMenu(LawnApp *theApp) { __Constructor(theApp); }
     void KeyDown(Sexy::KeyCode theKeyCode);
     void ButtonDepress(MainMenuButtonId theSelectedButton);
     void Update();
@@ -103,11 +102,16 @@ public:
     void RemovedFromManager(int *a2);
     void DrawOverlay(Sexy::Graphics *g);
     void DrawFade(Sexy::Graphics *g);
-    void Delete2();
     void Draw(Sexy::Graphics *g);
     void ButtonPress(MainMenuButtonId theSelectedButton);
     void UpdateHouseReanim();
     void EnableButtons();
+
+protected:
+    friend void InitHookFunction();
+
+    void __Constructor(LawnApp *theApp);
+    void __Destructor2();
 };
 
 

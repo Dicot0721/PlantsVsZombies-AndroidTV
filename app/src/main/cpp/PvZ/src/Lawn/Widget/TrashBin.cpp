@@ -8,10 +8,10 @@
 #include "PvZ/Lawn/LawnApp.h"
 
 TrashBin::TrashBin(TrashPileType theTrashPileType, float theHeight) {
-    Create(theTrashPileType, theHeight);
+    __Constructor(theTrashPileType, theHeight);
 }
 
-void TrashBin::Create(TrashPileType theTrashPileType, float theHeight) {
+void TrashBin::__Constructor(TrashPileType theTrashPileType, float theHeight) {
     old_TrashBin_TrashBin(this, theTrashPileType, theHeight);
 
     int thePileNum = theHeight / (theTrashPileType == TrashBin::ZOMBIE_PILE ? zombiePileHeight : plantPileHeight) + 1;

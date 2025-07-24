@@ -11,6 +11,7 @@
 class Board;
 class LawnApp;
 class SeedBank;
+
 namespace Sexy {
 class GameButton;
 }
@@ -113,7 +114,6 @@ public:
     void LandFlyingSeed(ChosenSeed &theChosenSeed) { reinterpret_cast<void (*)(SeedChooserScreen *, ChosenSeed &)>(SeedChooserScreen_LandFlyingSeedAddr)(this, theChosenSeed); }
 
     SeedChooserScreen(bool theIsZombieChooser);
-    void Create(bool theIsZombieChooser);
     void EnableStartButton(int theIsEnabled);
     void RebuildHelpbar();
     SeedType GetZombieSeedType(SeedType theSeedType);
@@ -136,6 +136,11 @@ public:
     void MouseUp(int x, int y);
     void MouseDrag(int x, int y);
     void ButtonPress(int theId);
+
+protected:
+    friend void InitHookFunction();
+
+    void __Constructor(bool theIsZombieChooser);
 };
 
 /***************************************************************************************************************/

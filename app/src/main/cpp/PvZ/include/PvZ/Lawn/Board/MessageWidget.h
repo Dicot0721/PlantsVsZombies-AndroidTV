@@ -37,11 +37,13 @@ public:
     MessageStyle mMessageStyleNext;                  // 203
     // 大小204个整数
 
-    MessageWidget(LawnApp *theApp) { Create(theApp); }
-    ~MessageWidget() { Delete(); }
-    void Create(LawnApp *theApp) { reinterpret_cast<void (*)(MessageWidget *, LawnApp *)>(MessageWidget_MessageWidgetAddr)(this, theApp); }
-    void Delete() { reinterpret_cast<void (*)(MessageWidget *)>(MessageWidget_DeleteAddr)(this); }
+    MessageWidget(LawnApp *theApp) { __Constructor(theApp); }
+    ~MessageWidget() { __Destructor(); }
     Sexy::Font *GetFont() { return reinterpret_cast<Sexy::Font *(*)(MessageWidget *)>(MessageWidget_GetFontAddr)(this); }
+
+protected:
+    void __Constructor(LawnApp *theApp) { reinterpret_cast<void (*)(MessageWidget *, LawnApp *)>(MessageWidget_MessageWidgetAddr)(this, theApp); }
+    void __Destructor() { reinterpret_cast<void (*)(MessageWidget *)>(MessageWidget_DeleteAddr)(this); }
 };
 
 class CustomMessageWidget : public MessageWidget {
@@ -52,6 +54,9 @@ public:
     CustomMessageWidget(LawnApp *theApp)
         : MessageWidget(theApp)
         , mIcon(nullptr) {}
+
+    ~CustomMessageWidget() = default;
+
     void ClearLabel();
     void SetLabel(const SexyString &theLabel, MessageStyle theStyle);
     void Update();

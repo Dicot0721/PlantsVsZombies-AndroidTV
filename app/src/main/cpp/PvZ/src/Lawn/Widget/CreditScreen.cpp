@@ -25,7 +25,7 @@ void CreditScreen_RemovedFromManager(Sexy::Widget *creditScreen, int a2) {
 void CreditScreen_Delete2(Sexy::Widget *creditScreen) {
     old_CreditScreen_Delete2(creditScreen);
 
-    gCreditScreenBackButton->Destroy();
+    gCreditScreenBackButton->~GameButton();
     gCreditScreenBackButton = nullptr;
 }
 

@@ -5,18 +5,11 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_RESOURCEMANAGER_H
 #define PLANTSVSZOMBIES_ANDROIDTV_RESOURCEMANAGER_H
 
-#include "../Graphics/Image.h"
-#include "../SexyAppBase.h"
-
-#include "Common.h"
-
-#include <string>
-#include <map>
+#include "PvZ/STL/pvzstl_string.h"
 
 namespace Sexy {
 
-class ResourceManager
-{
+class ResourceManager {
 protected:
     enum ResType {
         ResType_Image,
@@ -25,16 +18,16 @@ protected:
         ResType_Music,
         ResType_Reanim,
         ResType_Particle,
-        ResType_Trail
+        ResType_Trail,
     };
 
     struct BaseRes {
-        int *vTable;            // 0
-        ResType mType;          // 1
-        int *mResourceRef;      // 2
-        int unk[8];             // 3 ~ 10
-        char *mPath;            // 11
-        int unk2[13];           // 12 ~ 24
+        int *vTable;       // 0
+        ResType mType;     // 1
+        int *mResourceRef; // 2
+        int unk[8];        // 3 ~ 10
+        char *mPath;       // 11
+        int unk2[13];      // 12 ~ 24
     }; // 大小25个整数
 
     struct SoundRes : public BaseRes {
@@ -50,6 +43,6 @@ public:
     }
 };
 
-}
+} // namespace Sexy
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_RESOURCEMANAGER_H

@@ -52,8 +52,6 @@ public:
     void SetupZombie() { reinterpret_cast<void (*)(AlmanacDialog *)>(AlmanacDialog_SetupZombieAddr)(this); }
     void GetSeedPosition(SeedType theSeedType, int& x, int& y) { reinterpret_cast<void (*)(AlmanacDialog *, SeedType, int &, int &)>(AlmanacDialog_GetSeedPositionAddr)(this, theSeedType, x, y); }
 
-    void Create(LawnApp *theApp);
-    void Destroy();
     void SetPage(AlmanacPage thePage);
     void RemovedFromManager(Sexy::WidgetManager *theWidgetManager);
     void ButtonDepress(int theId);
@@ -64,6 +62,12 @@ public:
     void MouseDown(int x, int y, int theClickCount);
     void MouseDrag(int x, int y);
     void MouseUp(int x, int y, int theClickCount);
+
+protected:
+    friend void InitHookFunction();
+
+    void __Constructor(LawnApp *theApp);
+    void __Destructor();
 };
 
 

@@ -26,9 +26,10 @@ public:
     Color mCheckColor;      // 93 ~ 96
     // 大小97个整数
 
-    void Delete() { reinterpret_cast<void (*)(Checkbox *)>(Sexy_Checkbox_DeleteAddr)(this); }
+    ~Checkbox() { __Destructor(); }
 
-    ~Checkbox() { Delete(); }
+protected:
+    void __Destructor() { reinterpret_cast<void (*)(Checkbox *)>(Sexy_Checkbox_DeleteAddr)(this); }
 };
 
 }

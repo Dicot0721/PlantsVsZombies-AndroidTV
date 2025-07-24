@@ -91,7 +91,7 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
         return old_ReanimatorCache_MakeCachedZombieFrame(this, theZombieType);
     }
 
-    mZombieImages[theZombieType]->Delete();
+    mZombieImages[theZombieType]->~MemoryImage();
     mZombieImages[theZombieType] = nullptr;
 
     Sexy::MemoryImage *BlankCanvasImage = MakeBlankCanvasImage((theZombieType == ZombieType::ZOMBIE_ZAMBONI ? 512 : 256), 256);

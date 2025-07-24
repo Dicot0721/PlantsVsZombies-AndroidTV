@@ -45,12 +45,10 @@ public:
     void KeyDown(Sexy::KeyCode theKey) { reinterpret_cast<void (*)(ChallengeScreen *, Sexy::KeyCode)>(ChallengeScreen_KeyDownAddr)(this, theKey); }
 
     ChallengeScreen(LawnApp *theApp, ChallengePage thePage);
-    void Create(LawnApp *theApp, ChallengePage thePage);
     void Draw(Sexy::Graphics *graphics);
     void AddedToManager(int *theWidgetManager);
     void Update();
     void RemovedFromManager(int *theWidgetManager);
-    void Delete2();
     void ButtonPress(int theButtonId);
     void ButtonDepress(int theId);
     void UpdateButtons();
@@ -58,6 +56,12 @@ public:
     void MouseDown(int x, int y, int theClickCount);
     void MouseUp(int x, int y);
     void MouseDrag(int x, int y);
+
+protected:
+    friend void InitHookFunction();
+
+    void __Constructor(LawnApp *theApp, ChallengePage thePage);
+    void __Destructor2();
 };
 
 class ChallengeDefinition {

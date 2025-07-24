@@ -11,10 +11,10 @@ using namespace Sexy;
 static Sexy::GameButton *gChallengeScreenCloseButton;
 
 ChallengeScreen::ChallengeScreen(LawnApp *theApp, ChallengePage thePage) {
-    Create(theApp, thePage);
+    __Constructor(theApp, thePage);
 }
 
-void ChallengeScreen::Create(LawnApp *theApp, ChallengePage thePage) {
+void ChallengeScreen::__Constructor(LawnApp *theApp, ChallengePage thePage) {
     // 去除按钮对触控的遮挡
     old_ChallengeScreen_ChallengeScreen(this, theApp, thePage);
 
@@ -124,12 +124,12 @@ void ChallengeScreen::RemovedFromManager(int *theWidgetManager) {
     }
 }
 
-void ChallengeScreen::Delete2() {
+void ChallengeScreen::__Destructor2() {
     // 删除按钮
     old_ChallengeScreen_Delete2(this);
 
     if (gChallengeScreenCloseButton != nullptr) {
-        gChallengeScreenCloseButton->Destroy();
+        gChallengeScreenCloseButton->~GameButton();
         gChallengeScreenCloseButton = nullptr;
     }
 }

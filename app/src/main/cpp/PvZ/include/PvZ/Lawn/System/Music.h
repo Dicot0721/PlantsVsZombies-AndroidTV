@@ -81,8 +81,6 @@ public:
     __Music() = default;
     ~__Music() = default;
 
-    void Create() { reinterpret_cast<void (*)(__Music *)>(Music_MusicAddr)(this); }
-
     void StopAllMusic() { reinterpret_cast<void (*)(__Music *)>(Music_StopAllMusicAddr)(this); }
     unsigned long GetMusicOrder(MusicFile theMusicFile) { return reinterpret_cast<unsigned long (*)(__Music *, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile); }
     void SetupMusicFileForTune(MusicFile theMusicFile, MusicTune theMusicTune) {
@@ -100,6 +98,9 @@ public:
     void ResyncChannel(MusicFile theFile1, MusicFile theFile2);
     void SetupMusicFileForTune1(MusicFile theMusicFile, MusicTune theMusicTune);
     void StartGameMusic(bool theStart);
+
+protected:
+    void __Constructor() { reinterpret_cast<void (*)(__Music *)>(Music_MusicAddr)(this); }
 };
 
 class Music : public __Music {};
@@ -107,16 +108,19 @@ class Music : public __Music {};
 class Music2 : public __Music { // 加载TV版ogg格式音乐时用。无鼓点。
 public:
     // 大小26个整数
-    Music2() { Create(); }
-    ~Music2() { Destroy(); }
-
-    void Create();
-    void Destroy() { reinterpret_cast<void (*)(Music2 *)>(Music2_DeleteAddr)(this); };
+    Music2() { __Constructor(); }
+    ~Music2() { __Destructor(); }
 
     void StopAllMusic();
     void StartGameMusic(bool theStart);
     void GameMusicPause(bool thePause);
     void FadeOut(int theFadeOutDuration);
+
+protected:
+    friend void InitHookFunction();
+
+    void __Constructor();
+    void __Destructor() { reinterpret_cast<void (*)(Music2 *)>(Music2_DeleteAddr)(this); };
 };
 
 inline void (*old_Music_StartGameMusic)(__Music* music, bool a2);

@@ -4,7 +4,7 @@
 
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 
-void WaitForSecondPlayerDialog::Create(int *a2) {
+void WaitForSecondPlayerDialog::__Constructor(int *a2) {
     // 自动跳过等待2P对话框
     old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(this, a2);
 

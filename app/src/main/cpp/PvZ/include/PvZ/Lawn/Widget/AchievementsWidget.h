@@ -40,11 +40,12 @@ public:
 
 class MaskHelpWidget : public Sexy::Widget {
 public:
-    void Create(LawnApp *theApp) { reinterpret_cast<void (*)(MaskHelpWidget *, LawnApp *)>(MaskHelpWidget_MaskHelpWidgetAddr)(this, theApp); }
-    void Delete() { reinterpret_cast<void (*)(MaskHelpWidget *)>(MaskHelpWidget_DeleteAddr)(this); }
+    MaskHelpWidget(LawnApp *theApp) { __Constructor(theApp); }
+    ~MaskHelpWidget() { __Destructor(); }
 
-    MaskHelpWidget(LawnApp *theApp) { Create(theApp); }
-    ~MaskHelpWidget() { Delete(); }
+protected:
+    void __Constructor(LawnApp *theApp) { reinterpret_cast<void (*)(MaskHelpWidget *, LawnApp *)>(MaskHelpWidget_MaskHelpWidgetAddr)(this, theApp); }
+    void __Destructor() { reinterpret_cast<void (*)(MaskHelpWidget *)>(MaskHelpWidget_DeleteAddr)(this); }
 };
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_ACHIEVEMENTSWIDGET_H

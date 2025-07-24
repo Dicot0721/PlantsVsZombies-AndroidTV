@@ -88,7 +88,6 @@ public:
     void UpdateStormyNight() { reinterpret_cast<void (*)(Challenge *)>(Challenge_UpdateStormyNightAddr)(this); }
 
     Challenge();
-    void Create();
     void Update();
     void HeavyWeaponFire(float a2, float a3);
     void IZombieDrawPlant(Sexy::Graphics *g, Plant *thePlant);
@@ -109,7 +108,6 @@ public:
     static ZombieType IZombieSeedTypeToZombieType(SeedType theSeedType);
     void IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int theGridY);
     void StartLevel();
-    void Delete();
     void ScaryPotterOpenPot(GridItem *theScaryPot);
     GridItem *IZombieGetBrainTarget(Zombie *theZombie);
     void IZombieSquishBrain(GridItem *theBrain);
@@ -118,6 +116,12 @@ public:
     void InitZombieWavesFromList(ZombieType *theZombieList, int theListLength);
     void IZombieSetupPlant(Plant *thePlant);
     void HeavyWeaponReanimUpdate();
+
+protected:
+    friend void InitHookFunction();
+
+    void __Constructor();
+    void __Destructor();
 };
 
 /***************************************************************************************************************/

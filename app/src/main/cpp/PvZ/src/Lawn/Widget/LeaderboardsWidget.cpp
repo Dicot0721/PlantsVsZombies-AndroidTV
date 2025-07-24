@@ -141,7 +141,7 @@ void LeaderboardsWidget_ButtonDepress(Sexy::ButtonListener *listener, int id) {
 void LeaderboardsWidget_ButtonPress(Sexy::ButtonListener *listener, int id, int theCount) {}
 
 LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
-    reinterpret_cast<DaveHelp *>(this)->Create(theApp);
+    new (this) DaveHelp{theApp};
     Resize(-240, -60, 1280, 720);
     mLeaderboardReanimations = (LeaderboardReanimations *)operator new(sizeof(LeaderboardReanimations));
     for (int i = 0; i < 5; ++i) {
@@ -199,20 +199,22 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     //    this_->mLongestRecordPool = theApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ENDLESS_FLAGS];
     LOG_DEBUG("mLongestRecordPool {} ", mLongestRecordPool);
 
-    auto *mLeaderboardsListener = new Sexy::ButtonListener();
-    mButtonListener = mLeaderboardsListener;
-    LOG_DEBUG("mButtonListener {} ", (void*)mButtonListener);
-    auto *mVTable = (Sexy::ButtonListenerVTable *)operator new(sizeof(Sexy::ButtonListenerVTable));
-    mLeaderboardsListener->vTable = mVTable;
-    //    mVTable->ButtonPress = (void *) LeaderboardsWidget_ButtonPress;
-    mVTable->ButtonPress2 = (void *)LeaderboardsWidget_ButtonPress;
-    mVTable->ButtonDepress = (void *)LeaderboardsWidget_ButtonDepress;
-    mVTable->ButtonMouseEnter = (void *)Sexy_ButtonListener_ButtonMouseEnter;
-    mVTable->ButtonMouseMove = (void *)Sexy_ButtonListener_ButtonMouseMove;
-    mVTable->ButtonMouseLeave = (void *)Sexy_ButtonListener_ButtonMouseLeave;
-    mVTable->ButtonDownTick = (void *)Sexy_ButtonListener_ButtonDownTick;
+    // clang-format off
+    mButtonListener = new Sexy::ButtonListener{
+        .vTable = new Sexy::ButtonListenerVTable{
+            // .ButtonPress = (void *)LeaderboardsWidget_ButtonPress;
+            .ButtonPress2 = (void *)LeaderboardsWidget_ButtonPress,
+            .ButtonDepress = (void *)LeaderboardsWidget_ButtonDepress,
+            .ButtonDownTick = (void *)Sexy_ButtonListener_ButtonDownTick,
+            .ButtonMouseEnter = (void *)Sexy_ButtonListener_ButtonMouseEnter,
+            .ButtonMouseLeave = (void *)Sexy_ButtonListener_ButtonMouseLeave,
+            .ButtonMouseMove = (void *)Sexy_ButtonListener_ButtonMouseMove,
+        }
+    };
+    // clang-format on
+
     pvzstl::string str = TodStringTranslate("[CLOSE]");
-    Sexy::GameButton *aBackButton = MakeButton(1000, mLeaderboardsListener, this, (SexyString &)str);
+    Sexy::GameButton *aBackButton = MakeButton(1000, mButtonListener, this, (SexyString &)str);
     LOG_DEBUG("aBackButton {} ", (void*)aBackButton);
     aBackButton->Resize(1040, 590, 120, 50);
     AddWidget((Sexy::Widget*)aBackButton);
@@ -313,8 +315,8 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
 }
 
 void DaveHelp_Delete2(LeaderboardsWidget *leaderboardsWidget) {
-    leaderboardsWidget->mZombieTrashBin->Delete();
-    leaderboardsWidget->mPlantTrashBin->Delete();
+    leaderboardsWidget->mZombieTrashBin->~TrashBin();
+    leaderboardsWidget->mPlantTrashBin->~TrashBin();
     for (int i = 0; i < 5; ++i) {
         delete leaderboardsWidget->mLeaderboardReanimations->backgroundReanim[i];
     }

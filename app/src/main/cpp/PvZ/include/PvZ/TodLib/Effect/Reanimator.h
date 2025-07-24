@@ -171,10 +171,8 @@ public:
     int mReanimationID;                         // 54
     // 大小55个整数
 
-    Reanimation() { Create(); }
-    void Create() { reinterpret_cast<void (*)(Reanimation *)>(Reanimation_ReanimationAddr)(this); }
-    ~Reanimation() { Destroy(); }
-    void Destroy() { reinterpret_cast<void (*)(Reanimation *)>(Reanimation_Delete2Addr)(this); }
+    Reanimation() { __Constructor(); }
+    ~Reanimation() { __Destructor(); }
     void SetPosition(float theX, float theY) { reinterpret_cast<void (*)(Reanimation *, float, float)>(Reanimation_SetPositionAddr)(this, theX, theY); }
     void OverrideScale(float theScaleX, float theScaleY) { reinterpret_cast<void (*)(Reanimation *, float theX, float theY)>(Reanimation_OverrideScaleAddr)(this, theScaleX, theScaleY); }
     void DrawRenderGroup(Sexy::Graphics *g, int theRenderGroup) { reinterpret_cast<void (*)(Reanimation *, Sexy::Graphics *, int)>(Reanimation_DrawRenderGroupAddr)(this, g, theRenderGroup); }
@@ -217,6 +215,10 @@ public:
     ReanimatorTrackInstance* GetTrackInstanceByName(const char* theTrackName);
     int GetZombatarHatTrackIndex();
     int GetZombatarEyeWearTrackIndex();
+
+protected:
+    void __Constructor() { reinterpret_cast<void (*)(Reanimation *)>(Reanimation_ReanimationAddr)(this); }
+    void __Destructor() { reinterpret_cast<void (*)(Reanimation *)>(Reanimation_Delete2Addr)(this); }
 };
 
 /***************************************************************************************************************/

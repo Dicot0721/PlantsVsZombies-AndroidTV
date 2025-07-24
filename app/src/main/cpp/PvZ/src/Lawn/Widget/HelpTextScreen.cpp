@@ -78,7 +78,7 @@ void HelpTextScreen_RemovedFromManager(HelpTextScreen *helpTextScreen, int *widg
 void HelpTextScreen_Delete2(HelpTextScreen *helpTextScreen) {
     old_HelpTextScreen_Delete2(helpTextScreen);
     if (gHelpTextScreenCloseButton != nullptr) {
-        gHelpTextScreenCloseButton->Destroy();
+        gHelpTextScreenCloseButton->~GameButton();
         gHelpTextScreenCloseButton = nullptr;
     }
 }

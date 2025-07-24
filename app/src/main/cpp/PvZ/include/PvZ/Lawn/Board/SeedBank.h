@@ -27,7 +27,6 @@ public:
     int GetNumSeedsOnConveyorBelt() { return reinterpret_cast<int (*)(SeedBank *)>(SeedBank_GetNumSeedsOnConveyorBeltAddr)(this); }
 
     SeedBank(bool thePlayerIndex);
-    void Create(bool thePlayerIndex);
     void Draw(Sexy::Graphics *g);
     bool MouseHitTest(int x, int y, HitResult *theHitResult);
     void UpdateWidth();
@@ -35,6 +34,9 @@ public:
     bool ContainsPoint(int x, int y);
     bool BeginDraw(Sexy::Graphics *g);
     void EndDraw(Sexy::Graphics *g);
+
+protected:
+    void __Constructor(bool thePlayerIndex);
 };
 
 /***************************************************************************************************************/
