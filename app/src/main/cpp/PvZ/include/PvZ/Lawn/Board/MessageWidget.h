@@ -58,7 +58,7 @@ public:
     ~CustomMessageWidget() = default;
 
     void ClearLabel();
-    void SetLabel(const SexyString &theLabel, MessageStyle theStyle);
+    void SetLabel(const pvzstl::string &theLabel, MessageStyle theStyle);
     void Update();
     void Draw(Sexy::Graphics *g);
 };
@@ -67,7 +67,7 @@ inline void (*old_MessageWidget_Draw)(CustomMessageWidget *messageWidget, Sexy::
 
 inline void (*old_MessageWidget_ClearLabel)(CustomMessageWidget *messageWidget);
 
-inline void (*old_MessageWidget_SetLabel)(CustomMessageWidget *messageWidget, const SexyString &theLabel, MessageStyle theStyle);
+inline void (*old_MessageWidget_SetLabel)(CustomMessageWidget *messageWidget, const pvzstl::string &theLabel, MessageStyle theStyle);
 
 inline void (*old_MessageWidget_Update)(CustomMessageWidget *messageWidget);
 

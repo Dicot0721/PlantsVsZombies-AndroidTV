@@ -26,7 +26,7 @@ public:
     bool IsMouseOver() { return reinterpret_cast<bool (*)(GameButton *)>(GameButton_IsMouseOverAddr)(this); }
     void Resize(int theX, int theY, int theWidth, int theHeight) { reinterpret_cast<void (*)(GameButton *, int, int, int, int)>(GameButton_ResizeAddr)(this, theX, theY, theWidth, theHeight); }
     void Update() { reinterpret_cast<void (*)(GameButton *)>(GameButton_UpdateAddr)(this); }
-    void SetLabel(const SexyString &theLabel) { reinterpret_cast<void (*)(GameButton *, const SexyString&)>(GameButton_SetLabelAddr)(this, theLabel); }
+    void SetLabel(const pvzstl::string &theLabel) { reinterpret_cast<void (*)(GameButton *, const pvzstl::string&)>(GameButton_SetLabelAddr)(this, theLabel); }
     void SetDisabled(bool theDisabled) { reinterpret_cast<void (*)(GameButton *, bool)>(GameButton_SetDisabledAddr)(this, theDisabled); }
     void Draw(Graphics *g) { reinterpret_cast<void (*)(GameButton *, Graphics *)>(GameButton_DrawAddr)(this, g); }
     void OnPressed() { reinterpret_cast<void (*)(GameButton *)>(GameButton_OnPressedAddr)(this); }
@@ -36,8 +36,8 @@ protected:
     void __Destructor() { reinterpret_cast<void (*)(GameButton *)>(GameButton_DeleteAddr)(this); }
 };
 
-inline GameButton *MakeButton(int theId, ButtonListener *theListener, Widget *theParent, const SexyString &theText) {
-    return reinterpret_cast<GameButton *(*)(int, ButtonListener *, Widget *, const SexyString &)>(MakeButtonAddr)(theId, theListener, theParent, theText);
+inline GameButton *MakeButton(int theId, ButtonListener *theListener, Widget *theParent, const pvzstl::string &theText) {
+    return reinterpret_cast<GameButton *(*)(int, ButtonListener *, Widget *, const pvzstl::string &)>(MakeButtonAddr)(theId, theListener, theParent, theText);
 }
 
 

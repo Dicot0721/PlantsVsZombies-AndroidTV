@@ -130,13 +130,13 @@ public:
     bool IsFirstTimeAdventureMode() { return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_IsFirstTimeAdventureModeAddr)(this); }
     // 阻塞式函数，能创建并立即展示一个带按钮的对话框。按钮个数由最后一个参数决定。其返回值就是用户按下的按钮ID，一般情况下只可能为1000或1001。
     int LawnMessageBox(Dialogs theDialogId, // 用于标识本对话框的ID，以便于用KillDialog(theDialogId)关闭此对话框。一般用不到，所以随便填个数字就可以。
-                       const SexyChar *theHeaderName,
-                       const SexyChar *theLinesName,
-                       const SexyChar *theButton1Name,
-                       const SexyChar *theButton2Name,
+                       const char *theHeaderName,
+                       const char *theLinesName,
+                       const char *theButton1Name,
+                       const char *theButton2Name,
                        int theButtonMode) // 取值为0，1，2，3。其中0就是无按钮；1和2会展示两个按钮，其ID分别为1000和1001；3只会展示一个按钮，其ID为1000。
     {
-        return reinterpret_cast<int (*)(LawnApp *, Dialogs, const SexyChar *, const SexyChar *, const SexyChar *, const SexyChar *, int)>(LawnApp_LawnMessageBoxAddr)(
+        return reinterpret_cast<int (*)(LawnApp *, Dialogs, const char *, const char *, const char *, const char *, int)>(LawnApp_LawnMessageBoxAddr)(
             this, theDialogId, theHeaderName, theLinesName, theButton1Name, theButton2Name, theButtonMode);
     }
     TodParticleSystem *AddTodParticle(float theX, float theY, int theRenderOrder, ParticleEffect theEffect) {

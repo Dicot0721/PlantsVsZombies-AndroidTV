@@ -11,7 +11,7 @@ void CreditScreen_CreditScreen(Sexy::Widget *creditScreen, LawnApp *a2, bool a3)
     old_CreditScreen_CreditScreen(creditScreen, a2, a3);
 
     pvzstl::string str = TodStringTranslate("[MAIN_MENU_BUTTON]");
-    gCreditScreenBackButton = MakeButton(1000, (Sexy::ButtonListener *)creditScreen + 64, creditScreen, (SexyString &)str);
+    gCreditScreenBackButton = MakeButton(1000, (Sexy::ButtonListener *)creditScreen + 64, creditScreen, str);
     gCreditScreenBackButton->Resize(725, 0, 170, 50);
     creditScreen->AddWidget((Sexy::Widget*)gCreditScreenBackButton);
 }

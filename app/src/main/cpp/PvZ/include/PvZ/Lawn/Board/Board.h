@@ -326,8 +326,8 @@ public:
         return reinterpret_cast<Zombie *(*)(Board *, int, int, int)>(Board_ZombieHitTestAddr)(this, theMouseX, theMouseY, thePlayerIndex);
     }
     void ClearAdviceImmediately() { reinterpret_cast<void (*)(Board *)>(Board_ClearAdviceImmediatelyAddr)(this); }
-    void DisplayAdviceAgain(const SexyString &theAdvice, MessageStyle theMessageStyle, AdviceType theHelpIndex) {
-        reinterpret_cast<void (*)(Board *, const SexyString &, MessageStyle, AdviceType)>(Board_DisplayAdviceAgainAddr)(this, theAdvice, theMessageStyle, theHelpIndex);
+    void DisplayAdviceAgain(const pvzstl::string &theAdvice, MessageStyle theMessageStyle, AdviceType theHelpIndex) {
+        reinterpret_cast<void (*)(Board *, const pvzstl::string &, MessageStyle, AdviceType)>(Board_DisplayAdviceAgainAddr)(this, theAdvice, theMessageStyle, theHelpIndex);
     }
     Plant *NewPlant(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int thePlayerIndex) {
         return reinterpret_cast<Plant *(*)(Board *, int, int, SeedType, SeedType, int)>(Board_NewPlantAddr)(this, theGridX, theGridY, theSeedType, theImitaterType, thePlayerIndex);

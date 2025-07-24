@@ -16,11 +16,6 @@
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
 
-typedef std::string SexyString; // 不确定，猜测是std::string
-#define _S(x) x
-
-typedef SexyString::value_type SexyChar;
-
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned int uint;

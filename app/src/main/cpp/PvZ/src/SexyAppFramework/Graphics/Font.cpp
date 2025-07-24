@@ -7,4 +7,4 @@
 
 using namespace Sexy;
 
-//void Font::DrawString(Graphics* g, int theX, int theY, const SexyString& theString, const Color& theColor, const Rect& theClipRect) {}
+//void Font::DrawString(Graphics* g, int theX, int theY, const pvzstl::string& theString, const Color& theColor, const Rect& theClipRect) {}

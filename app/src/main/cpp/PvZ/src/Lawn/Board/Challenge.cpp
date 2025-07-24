@@ -372,7 +372,7 @@ void Challenge::LastStandUpdate() {
         gBoardStoreButton->mBtnNoDraw = false;
         gBoardStoreButton->mDisabled = false;
         pvzstl::string str = TodStringTranslate(mSurvivalStage == 0 ? "[START_ONSLAUGHT]" : "[CONTINUE_ONSLAUGHT]");
-        gBoardStoreButton->SetLabel((SexyString&)str);
+        gBoardStoreButton->SetLabel(str);
         gBoardStoreButton->Resize(325, 555, 170, 120);
     }
 

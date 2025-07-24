@@ -74,8 +74,8 @@ public:
     void FillRect(const Rect &theRect) { reinterpret_cast<void (*)(Graphics *, const Rect &)>(Sexy_Graphics_FillRectAddr)(this, theRect); }
     void DrawRect(const Rect &theRect) { reinterpret_cast<void (*)(Graphics *, const Rect &)>(Sexy_Graphics_DrawRectAddr)(this, theRect); }
     void ClearRect(int theX, int theY, int theWidth, int theHeight) { reinterpret_cast<void (*)(Graphics *, int, int, int, int)>(Sexy_Graphics_ClearRectAddr)(this, theX, theY, theWidth, theHeight); }
-    void DrawString(const SexyString &theString, int theX, int theY) { // SexyString类型尚不明确
-        reinterpret_cast<void (*)(Graphics *, const SexyString &, int, int)>(Sexy_Graphics_DrawStringAddr)(this, theString, theX, theY);
+    void DrawString(const pvzstl::string &theString, int theX, int theY) { // SexyString类型尚不明确
+        reinterpret_cast<void (*)(Graphics *, const pvzstl::string &, int, int)>(Sexy_Graphics_DrawStringAddr)(this, theString, theX, theY);
     }
     void DrawImage(Image *theImage, int theX, int theY) { reinterpret_cast<void (*)(Graphics *, Image *, int, int)>(Sexy_Graphics_DrawImageAddr)(this, theImage, theX, theY); }
     void DrawImage(Image *theImage, int theX, int theY, const Rect &theSrcRect) {

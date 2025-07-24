@@ -46,13 +46,13 @@ void AlmanacDialog::__Constructor(LawnApp *theApp) {
     old_AlmanacDialog_AlmanacDialog(this, theApp);
 
     pvzstl::string str = TodStringTranslate("[ALMANAC_INDEX]");
-    gAlmanacBackButton = MakeButton(theBackId, &this->mButtonListener, this, (SexyString &)str);
+    gAlmanacBackButton = MakeButton(theBackId, &this->mButtonListener, this, str);
     gAlmanacBackButton->Resize(0, 0, 0, 0);
     gAlmanacBackButton->mBtnNoDraw = true;
     gAlmanacBackButton->mDisabled = true;
 
     pvzstl::string str1 = TodStringTranslate("[CLOSE]");
-    gAlmanacCloseButton = MakeButton(theCloseId, &this->mButtonListener, this, (SexyString &)str1);
+    gAlmanacCloseButton = MakeButton(theCloseId, &this->mButtonListener, this, str1);
     gAlmanacCloseButton->Resize(mAlmanacCloseButtonX, mAlmanacCloseButtonY, mAlmanacButtonWidth, mAlmanacButtonHeight);
     AddWidget(gAlmanacBackButton);
     AddWidget(gAlmanacCloseButton);

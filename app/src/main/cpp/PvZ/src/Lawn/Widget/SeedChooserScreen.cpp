@@ -143,7 +143,7 @@ void SeedChooserScreen::__Constructor(bool theIsZombieChooser) {
 
     if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS && !mIsZombieChooser) {
         pvzstl::string str = TodStringTranslate("[MENU_BUTTON]");
-        gSeedChooserScreenMainMenuButton = MakeButton(104, &mButtonListener, this, (SexyString &)str);
+        gSeedChooserScreenMainMenuButton = MakeButton(104, &mButtonListener, this, str);
         gSeedChooserScreenMainMenuButton->Resize(mApp->IsCoopMode() ? 345 : 650, -3, 120, 80);
         AddWidget(gSeedChooserScreenMainMenuButton);
     }

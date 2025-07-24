@@ -49,7 +49,7 @@ void CustomMessageWidget::ClearLabel() {
     mIcon = nullptr;
 }
 
-void CustomMessageWidget::SetLabel(const SexyString &theLabel, MessageStyle theStyle) {
+void CustomMessageWidget::SetLabel(const pvzstl::string &theLabel, MessageStyle theStyle) {
     // 用于绘制成就图标
     old_MessageWidget_SetLabel(this, theLabel, theStyle);
 

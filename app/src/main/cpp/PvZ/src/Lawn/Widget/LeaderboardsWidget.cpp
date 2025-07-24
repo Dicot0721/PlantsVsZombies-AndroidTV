@@ -214,7 +214,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     // clang-format on
 
     pvzstl::string str = TodStringTranslate("[CLOSE]");
-    Sexy::GameButton *aBackButton = MakeButton(1000, mButtonListener, this, (SexyString &)str);
+    Sexy::GameButton *aBackButton = MakeButton(1000, mButtonListener, this, str);
     LOG_DEBUG("aBackButton {} ", (void*)aBackButton);
     aBackButton->Resize(1040, 590, 120, 50);
     AddWidget((Sexy::Widget*)aBackButton);

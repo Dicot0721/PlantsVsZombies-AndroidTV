@@ -63,7 +63,7 @@ void SeedPacket::DrawOverlay(Sexy::Graphics *g) {
         pvzstl::string str = StrFormat("%1.1f", coolDownRemaining / 100.0f);
         g->SetColor(GetPlayerIndex() ? yellow : blue);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-        g->DrawString((SexyString&)str, coolDownRemaining < 1000 ? 10 : 0, 39);
+        g->DrawString(str, coolDownRemaining < 1000 ? 10 : 0, 39);
         g->SetFont(nullptr);
     }
 }
