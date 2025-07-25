@@ -63,10 +63,14 @@ public:
 
 class TestMenuWidget : public Sexy::MenuWidget {
 public:
-    TestMenuWidget() { __Constructor(); }
+    TestMenuWidget() {
+        __Constructor();
+    }
 
 protected:
-    void __Constructor() { reinterpret_cast<void (*)(TestMenuWidget *)>(TestMenuWidget_TestMenuWidgetAddr)(this); }
+    void __Constructor() {
+        reinterpret_cast<void (*)(TestMenuWidget *)>(TestMenuWidget_TestMenuWidgetAddr)(this);
+    }
 };
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_ZOMBATARWIDGET_H

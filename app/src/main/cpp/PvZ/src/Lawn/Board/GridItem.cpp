@@ -1,17 +1,17 @@
-#include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/GridItem.h"
+#include "PvZ/GlobalVariable.h"
+#include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Challenge.h"
-#include "PvZ/Lawn/Board/ZenGarden.h"
-#include "PvZ/Lawn/Board/SeedPacket.h"
-#include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Board/CursorObject.h"
-#include "PvZ/TodLib/Effect/Reanimator.h"
+#include "PvZ/Lawn/Board/SeedPacket.h"
+#include "PvZ/Lawn/Board/ZenGarden.h"
 #include "PvZ/Lawn/GamepadControls.h"
-#include "PvZ/SexyAppFramework/Graphics/Graphics.h"
+#include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
-#include "PvZ/GlobalVariable.h"
+#include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/TodLib/Effect/Reanimator.h"
 
 #include <numbers>
 
@@ -29,7 +29,7 @@ void GridItem::DrawScaryPot(Sexy::Graphics* g) {
     if (mTransparentCounter > 0) { // 如果罐子要被照透(透明度不为0)
         g->DrawImageCel(*Sexy_IMAGE_SCARY_POT_Addr, aXPos, aYPos, aImageCol, 0);
 
-        Graphics *aInsideGraphics = new Graphics(*g);
+        Graphics* aInsideGraphics = new Graphics(*g);
         if (mScaryPotType == ScaryPotType::SCARYPOT_SEED) {
             aInsideGraphics->mScaleX = 0.7f;
             aInsideGraphics->mScaleY = 0.7f;
@@ -55,7 +55,7 @@ void GridItem::DrawScaryPot(Sexy::Graphics* g) {
             Reanimation aReanim{};
             aReanim.ReanimationInitializeType(0.0, 0.0, ReanimationType::REANIM_SUN);
             aReanim.OverrideScale(0.5f, 0.5f);
-            aReanim.Update();                                                  // 一次Update是必要的，否则绘制出来是Empty
+            aReanim.Update();                                                              // 一次Update是必要的，否则绘制出来是Empty
             aReanim.mFrameStart = (mBoard->mMainCounter / 10) % (aReanim.mFrameCount - 1); // 这行代码可让阳光动起来
 
             for (int i = 0; i < aSuns; i++) {
@@ -102,7 +102,7 @@ void GridItem::DrawScaryPot(Sexy::Graphics* g) {
         g->SetDrawMode(Graphics::DRAWMODE_NORMAL);
     }
 
-    return  g->SetColorizeImages(false);
+    return g->SetColorizeImages(false);
 }
 
 void GridItem::Update() {

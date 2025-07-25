@@ -6,23 +6,19 @@
 
 using namespace Sexy;
 
-int __Image::GetWidth()
-{
+int __Image::GetWidth() {
     return mWidth;
 }
 
-int	__Image::GetHeight()
-{
+int __Image::GetHeight() {
     return mHeight;
 }
 
-int __Image::GetCelHeight()
-{
+int __Image::GetCelHeight() {
     return mHeight / mNumRows;
 }
 
-int __Image::GetCelWidth()
-{
+int __Image::GetCelWidth() {
     return mWidth / mNumCols;
 }
 

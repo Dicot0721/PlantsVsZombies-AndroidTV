@@ -17,8 +17,8 @@ enum HouseType {
 
 class HouseChooserDialog : public LawnDialog {
 public:
-    HouseType mSelectedHouseType;            // 191
-    int unk[2];                              // 192 ~ 193
+    HouseType mSelectedHouseType; // 191
+    int unk[2];                   // 192 ~ 193
     // 115: 194, 111: 196
 
     void GameButtonDown(ButtonCode theButton, int thePlayerIndex, bool a4) {

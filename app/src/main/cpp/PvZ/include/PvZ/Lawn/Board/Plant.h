@@ -186,14 +186,24 @@ public:
     int mPlantIndexInList;                     // 87
     // 大小88个整数
 
-    void UpdateAbilities() { reinterpret_cast<void (*)(Plant *)>(Plant_UpdateAbilitiesAddr)(this); }
-    void Animate() { reinterpret_cast<void (*)(Plant *)>(Plant_AnimateAddr)(this); }
-    void UpdateReanim() { reinterpret_cast<void (*)(Plant *)>(Plant_UpdateReanimAddr)(this); };
+    void UpdateAbilities() {
+        reinterpret_cast<void (*)(Plant *)>(Plant_UpdateAbilitiesAddr)(this);
+    }
+    void Animate() {
+        reinterpret_cast<void (*)(Plant *)>(Plant_AnimateAddr)(this);
+    }
+    void UpdateReanim() {
+        reinterpret_cast<void (*)(Plant *)>(Plant_UpdateReanimAddr)(this);
+    };
     void DrawShadow(Sexy::Graphics *g, float theOffsetX, float theOffsetY) {
         reinterpret_cast<void (*)(Plant *, Sexy::Graphics *, float, float)>(Plant_DrawShadowAddr)(this, g, theOffsetX, theOffsetY);
     }
-    bool IsPartOfUpgradableTo(SeedType theUpgradedType) { return reinterpret_cast<bool (*)(Plant *, SeedType)>(Plant_IsPartOfUpgradableToAddr)(this, theUpgradedType); }
-    void DrawMagnetItems(Sexy::Graphics *g) { reinterpret_cast<void (*)(Plant *, Sexy::Graphics *)>(Plant_DrawMagnetItemsAddr)(this, g); }
+    bool IsPartOfUpgradableTo(SeedType theUpgradedType) {
+        return reinterpret_cast<bool (*)(Plant *, SeedType)>(Plant_IsPartOfUpgradableToAddr)(this, theUpgradedType);
+    }
+    void DrawMagnetItems(Sexy::Graphics *g) {
+        reinterpret_cast<void (*)(Plant *, Sexy::Graphics *)>(Plant_DrawMagnetItemsAddr)(this, g);
+    }
 
     void PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int a6);
     void Update();
@@ -242,7 +252,7 @@ public:
     int mRefreshTime;                 //+0x14
     PlantSubClass mSubClass;          //+0x18
     int mLaunchRate;                  //+0x1C
-    const char *mPlantName;       //+0x20
+    const char *mPlantName;           //+0x20
 };
 extern PlantDefinition gPlantDefs[SeedType::NUM_SEED_TYPES];
 

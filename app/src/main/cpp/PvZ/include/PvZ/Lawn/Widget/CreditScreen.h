@@ -7,7 +7,7 @@
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
-//#include "../../SexyAppFramework/PerfTimer.h"
+// #include "../../SexyAppFramework/PerfTimer.h"
 #include "PvZ/SexyAppFramework/Misc/PerfTimer.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
@@ -48,7 +48,9 @@ public:
     bool mIsFromMainMenu;                 // 376,即94
     // 大小95个整数
 
-    void PauseCredits() { reinterpret_cast<void (*)(CreditScreen *)>(CreditScreen_PauseCreditsAddr)(this); }
+    void PauseCredits() {
+        reinterpret_cast<void (*)(CreditScreen *)>(CreditScreen_PauseCreditsAddr)(this);
+    }
 
     void ButtonDepress(int theId);
 };

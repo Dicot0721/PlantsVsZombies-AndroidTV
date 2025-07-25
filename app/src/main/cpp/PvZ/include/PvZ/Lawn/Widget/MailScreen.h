@@ -12,7 +12,9 @@ public:
     int unk2[12]; // 195 ~ 206
     // 115: 207, 111: 209
 
-    void KeyDown(int theKey, int a2, int a3) { reinterpret_cast<void (*)(MailScreen *, int, int, int)>(MailScreen_KeyDownAddr)(this, theKey, a2, a3); }
+    void KeyDown(int theKey, int a2, int a3) {
+        reinterpret_cast<void (*)(MailScreen *, int, int, int)>(MailScreen_KeyDownAddr)(this, theKey, a2, a3);
+    }
 
     MailScreen(LawnApp *theApp);
     void AddedToManager(int *theWidgetManager);
@@ -33,7 +35,9 @@ protected:
 
 class MailBox {
 public:
-    int GetNumUnseenMessages() { return reinterpret_cast<int (*)(MailBox *)>(Mailbox_GetNumUnseenMessagesAddr)(this); }
+    int GetNumUnseenMessages() {
+        return reinterpret_cast<int (*)(MailBox *)>(Mailbox_GetNumUnseenMessagesAddr)(this);
+    }
 };
 
 // inline void (*MailScreen_KeyDown)(MailScreen *mailScreen, int keyCode, int, int);

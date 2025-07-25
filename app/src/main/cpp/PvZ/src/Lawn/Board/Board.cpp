@@ -2,9 +2,11 @@
 #include "Homura/Formation.h"
 #include "Homura/Logger.h"
 #include "PvZ/Android/IntroVideo.h"
+#include "PvZ/Android/Native/NativeApp.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/Coin.h"
+#include "PvZ/Lawn/Board/CursorObject.h"
 #include "PvZ/Lawn/Board/CutScene.h"
 #include "PvZ/Lawn/Board/GridItem.h"
 #include "PvZ/Lawn/Board/Plant.h"
@@ -21,15 +23,13 @@
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
 #include "PvZ/Lawn/Widget/SeedChooserScreen.h"
 #include "PvZ/Misc.h"
+#include "PvZ/SexyAppFramework/GamepadApp.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
-#include "PvZ/SexyAppFramework/GamepadApp.h"
 #include "PvZ/Symbols.h"
-#include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
-#include "PvZ/Lawn/Board/CursorObject.h"
+#include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Effect/TodParticle.h"
-#include "PvZ/Android/Native/NativeApp.h"
 
 #include <cstddef>
 #include <cstdio>
@@ -47,7 +47,8 @@ void Board::__Constructor(LawnApp *theApp) {
     delete gBoardMenuButton;
     delete gBoardStoreButton;
 
-    pvzstl::string str = TodStringTranslate((theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) ? "[MAIN_MENU_BUTTON]" : "[MENU_BUTTON]");
+    pvzstl::string str =
+        TodStringTranslate((theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) ? "[MAIN_MENU_BUTTON]" : "[MENU_BUTTON]");
     gBoardMenuButton = MakeButton(1000, &mButtonListener, this, str);
     gBoardMenuButton->Resize(705, -3, 120, 80);
     gBoardMenuButton->mBtnNoDraw = true;
@@ -83,8 +84,7 @@ void Board::__Constructor(LawnApp *theApp) {
 
 void Board::InitLevel() {
     old_Board_InitLevel(this);
-    mNewWallNutAndSunFlowerAndChomperOnly =
-        !(mApp->IsScaryPotterLevel() || mApp->IsIZombieLevel() || mApp->IsWhackAZombieLevel() || HasConveyorBeltSeedBank(0) || mApp->IsChallengeWithoutSeedBank());
+    mNewWallNutAndSunFlowerAndChomperOnly = !(mApp->IsScaryPotterLevel() || mApp->IsIZombieLevel() || mApp->IsWhackAZombieLevel() || HasConveyorBeltSeedBank(0) || mApp->IsChallengeWithoutSeedBank());
     mNewPeaShooterCount = 0;
 }
 
@@ -305,14 +305,11 @@ void Board::ZombiesWon(Zombie *theZombie) {
     return old_BoardZombiesWon(this, theZombie);
 }
 
-int Board::CountPlantByType(SeedType theSeedType)
-{
+int Board::CountPlantByType(SeedType theSeedType) {
     int aCount = 0;
-    Plant* aPlant = nullptr;
-    while (IteratePlants(aPlant))
-    {
-        if (aPlant->mSeedType == theSeedType)
-        {
+    Plant *aPlant = nullptr;
+    while (IteratePlants(aPlant)) {
+        if (aPlant->mSeedType == theSeedType) {
             aCount++;
         }
     }
@@ -435,7 +432,7 @@ void Board::DrawZenButtons(Sexy::Graphics *g) {
     return old_Board_DrawZenButtons(this, g);
 }
 
-void Board::DrawGameObjects(Graphics* g) {
+void Board::DrawGameObjects(Graphics *g) {
     old_Board_DrawGameObjects(this, g);
 }
 
@@ -1345,7 +1342,7 @@ void Board::DrawHammerButton(Sexy::Graphics *g, LawnApp *theApp) {
     g->DrawImage(*Sexy_IMAGE_SHOVELBANK_Addr, rect.mX, rect.mY);
     g->DrawImage(*Sexy_IMAGE_HAMMER_ICON_Addr, rect.mX - 7, rect.mY - 3);
 
-    GamepadApp* aGamepadApp = reinterpret_cast<GamepadApp *>(theApp);
+    GamepadApp *aGamepadApp = reinterpret_cast<GamepadApp *>(theApp);
     if (aGamepadApp->HasGamepad() || (theApp->mGamePad1IsOn && theApp->mGamePad2IsOn)) {
         g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS_Addr, rect.mX + 36, rect.mY + 40, 2);
     } else {
@@ -1423,7 +1420,7 @@ void Board::DrawShovelButton(Sexy::Graphics *g, LawnApp *theApp) {
         if (theApp->IsCoopMode()) {
             g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS_Addr, rect.mX + 40, rect.mY + 40, 1);
         } else {
-            GamepadApp* aGamepadApp = reinterpret_cast<GamepadApp *>(theApp);
+            GamepadApp *aGamepadApp = reinterpret_cast<GamepadApp *>(theApp);
             if (aGamepadApp->HasGamepad() || (theApp->mGamePad1IsOn && theApp->mGamePad2IsOn)) {
                 g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS_Addr, rect.mX + 50, rect.mY + 40, 1);
             } else {
@@ -1570,11 +1567,9 @@ void ZombiePickerInit(ZombiePicker *theZombiePicker) {
     memset(theZombiePicker->mAllWavesZombieTypeCount, 0, sizeof(theZombiePicker->mAllWavesZombieTypeCount));
 }
 
-void Board::PutZombieInWave(ZombieType theZombieType, int theWaveNumber, ZombiePicker* theZombiePicker)
-{
+void Board::PutZombieInWave(ZombieType theZombieType, int theWaveNumber, ZombiePicker *theZombiePicker) {
     mZombiesInWave[theWaveNumber][theZombiePicker->mZombieCount++] = theZombieType;
-    if (theZombiePicker->mZombieCount < MAX_ZOMBIES_IN_WAVE)
-    {
+    if (theZombiePicker->mZombieCount < MAX_ZOMBIES_IN_WAVE) {
         mZombiesInWave[theWaveNumber][theZombiePicker->mZombieCount] = ZombieType::ZOMBIE_INVALID;
     }
     theZombiePicker->mZombiePoints -= GetZombieDefinition(theZombieType).mZombieValue;
@@ -2082,7 +2077,8 @@ void Board::MouseDown(int x, int y, int theClickCount) {
 
     int seekBankPosition = mGamepadControls1->mSelectedSeedIndex;
     if (gPlayerIndex == TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
-        if (mGameState == 7 || isCobCannonSelected || requestDrawShovelInCursor || (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN && mTouchState != TouchState::TOUCHSTATE_USEFUL_SEED_PACKET)) {
+        if (mGameState == 7 || isCobCannonSelected || requestDrawShovelInCursor
+            || (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN && mTouchState != TouchState::TOUCHSTATE_USEFUL_SEED_PACKET)) {
             mTouchState = TouchState::TOUCHSTATE_PICKING_SOMETHING;
             mSendKeyWhenTouchUp = true;
         }
@@ -2984,9 +2980,9 @@ void Board::RemovedFromManager(WidgetManager *theManager) {
     RemoveWidget(gBoardMenuButton);
     RemoveWidget(gBoardStoreButton);
     gBoardMenuButton->~GameButton();
-//    operator delete (gBoardMenuButton);
+    //    operator delete (gBoardMenuButton);
     gBoardStoreButton->~GameButton();
-//    operator delete (gBoardStoreButton);
+    //    operator delete (gBoardStoreButton);
     gBoardMenuButton = nullptr;
     gBoardStoreButton = nullptr;
 
@@ -3205,12 +3201,12 @@ int Board::GetSeedBankExtraWidth() {
 }
 
 Rect Board::GetShovelButtonRect() {
-//    Rect aRect(GetSeedBankExtraWidth() + 456, 0, Sexy::IMAGE_SHOVELBANK->GetWidth(), Sexy::IMAGE_SEEDBANK->GetHeight());
-//    if (mApp->IsSlotMachineLevel() || mApp->IsSquirrelLevel())
-//    {
-//        aRect.mX = 600;
-//    }
-//    return aRect;
+    //    Rect aRect(GetSeedBankExtraWidth() + 456, 0, Sexy::IMAGE_SHOVELBANK->GetWidth(), Sexy::IMAGE_SEEDBANK->GetHeight());
+    //    if (mApp->IsSlotMachineLevel() || mApp->IsSquirrelLevel())
+    //    {
+    //        aRect.mX = 600;
+    //    }
+    //    return aRect;
 
     return old_Board_GetShovelButtonRect(this);
 }
@@ -3324,7 +3320,7 @@ GridItem *Board::GetGridItemAt(GridItemType theGridItemType, int theGridX, int t
     return nullptr;
 }
 
-GridItem* Board::GetLadderAt(int theGridX, int theGridY) {
+GridItem *Board::GetLadderAt(int theGridX, int theGridY) {
     return GetGridItemAt(GridItemType::GRIDITEM_LADDER, theGridX, theGridY);
 }
 
@@ -3438,7 +3434,7 @@ int Board::MakeRenderOrder(RenderLayer theRenderLayer, int theRow, int theLayerO
     return theRow * (int)RenderLayer::RENDER_LAYER_ROW_OFFSET + theRenderLayer + theLayerOffset;
 }
 
-void FixBoardAfterLoad(Board* theBoard) {
+void FixBoardAfterLoad(Board *theBoard) {
     // 修复读档后的各种问题
     old_FixBoardAfterLoad(theBoard);
     theBoard->FixReanimErrorAfterLoad();
@@ -3671,22 +3667,19 @@ void Board::FixReanimErrorAfterLoad() {
     }
 }
 
-bool Board::PlantUsesAcceleratedPricing(SeedType theSeedType)
-{
+bool Board::PlantUsesAcceleratedPricing(SeedType theSeedType) {
     return Plant::IsUpgrade(theSeedType) && mApp->IsSurvivalEndless(mApp->mGameMode);
 }
 
 bool Board::IsPlantInCursor() {
-    return
-        mCursorObject1->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_BANK ||
-        mCursorObject1->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN ||
-        mCursorObject1->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_GLOVE ||
-        mCursorObject1->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_DUPLICATOR ||
-        mCursorObject1->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_WHEEL_BARROW;
+    return mCursorObject1->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_BANK || mCursorObject1->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN
+        || mCursorObject1->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_GLOVE || mCursorObject1->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_DUPLICATOR
+        || mCursorObject1->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_WHEEL_BARROW;
 }
 
 void Board::RemoveAllPlants() {
-    for ( Plant *aPlant = nullptr; IteratePlants(aPlant); aPlant->Die() );
+    for (Plant *aPlant = nullptr; IteratePlants(aPlant); aPlant->Die())
+        ;
 }
 
 void Board::RemoveAllZombies() {
@@ -3718,12 +3711,10 @@ bool Board::IsPoolSquare(int theGridX, int theGridY) {
 
 int Board::TotalZombiesHealthInWave(int theWaveIndex) {
     int aTotalHealth = 0;
-    Zombie* aZombie = nullptr;
-    while (IterateZombies(aZombie))
-    {
-        if (aZombie->mFromWave == theWaveIndex && !aZombie->mMindControlled && !aZombie->IsDeadOrDying() &&
-            aZombie->mZombieType != ZombieType::ZOMBIE_BUNGEE && aZombie->mRelatedZombieID == ZombieID::ZOMBIEID_NULL)
-        {
+    Zombie *aZombie = nullptr;
+    while (IterateZombies(aZombie)) {
+        if (aZombie->mFromWave == theWaveIndex && !aZombie->mMindControlled && !aZombie->IsDeadOrDying() && aZombie->mZombieType != ZombieType::ZOMBIE_BUNGEE
+            && aZombie->mRelatedZombieID == ZombieID::ZOMBIEID_NULL) {
             aTotalHealth += aZombie->mBodyHealth + aZombie->mHelmHealth + aZombie->mShieldHealth * 0.2f + aZombie->mFlyingHealth;
         }
     }
@@ -3731,26 +3722,19 @@ int Board::TotalZombiesHealthInWave(int theWaveIndex) {
 }
 
 void Board::KillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags) {
-    Zombie* aZombie = nullptr;
-    while (IterateZombies(aZombie))
-    {
-        if (aZombie->EffectedByDamage(theDamageRangeFlags))
-        {
+    Zombie *aZombie = nullptr;
+    while (IterateZombies(aZombie)) {
+        if (aZombie->EffectedByDamage(theDamageRangeFlags)) {
             Rect aZombieRect = aZombie->GetZombieRect();
             int aRowDist = aZombie->mRow - theRow;
-            if (aZombie->mZombieType == ZombieType::ZOMBIE_BOSS)
-            {
+            if (aZombie->mZombieType == ZombieType::ZOMBIE_BOSS) {
                 aRowDist = 0;
             }
 
-            if (aRowDist <= theRowRange && aRowDist >= -theRowRange && GetCircleRectOverlap(theX, theY, theRadius, aZombieRect))
-            {
-                if (theBurn)
-                {
+            if (aRowDist <= theRowRange && aRowDist >= -theRowRange && GetCircleRectOverlap(theX, theY, theRadius, aZombieRect)) {
+                if (theBurn) {
                     aZombie->ApplyBurn();
-                }
-                else
-                {
+                } else {
                     aZombie->TakeDamage(1800, 18U);
                 }
             }
@@ -3759,13 +3743,10 @@ void Board::KillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius
 
     int aGridX = PixelToGridXKeepOnBoard(theX, theY);
     int aGridY = PixelToGridYKeepOnBoard(theX, theY);
-    GridItem* aGridItem = nullptr;
-    while (IterateGridItems(aGridItem))
-    {
-        if (aGridItem->mGridItemType == GridItemType::GRIDITEM_LADDER)
-        {
-            if (GridInRange(aGridItem->mGridX, aGridItem->mGridY, aGridX, aGridY, theRowRange, theRowRange))
-            {
+    GridItem *aGridItem = nullptr;
+    while (IterateGridItems(aGridItem)) {
+        if (aGridItem->mGridItemType == GridItemType::GRIDITEM_LADDER) {
+            if (GridInRange(aGridItem->mGridX, aGridItem->mGridY, aGridX, aGridY, theRowRange, theRowRange)) {
                 aGridItem->GridItemDie();
             }
         }
@@ -3773,11 +3754,9 @@ void Board::KillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius
 }
 
 void Board::RemoveCutsceneZombies() {
-    Zombie* aZombie = nullptr;
-    while (IterateZombies(aZombie))
-    {
-        if (aZombie->mFromWave == Zombie::ZOMBIE_WAVE_CUTSCENE)
-        {
+    Zombie *aZombie = nullptr;
+    while (IterateZombies(aZombie)) {
+        if (aZombie->mFromWave == Zombie::ZOMBIE_WAVE_CUTSCENE) {
             aZombie->DieNoLoot();
         }
     }
@@ -3785,11 +3764,9 @@ void Board::RemoveCutsceneZombies() {
 
 int Board::CountZombiesOnScreen() {
     int aCount = 0;
-    Zombie* aZombie = nullptr;
-    while (IterateZombies(aZombie))
-    {
-        if (aZombie->mHasHead && !aZombie->IsDeadOrDying() && !aZombie->mMindControlled && aZombie->IsOnBoard())
-        {
+    Zombie *aZombie = nullptr;
+    while (IterateZombies(aZombie)) {
+        if (aZombie->mHasHead && !aZombie->IsDeadOrDying() && !aZombie->mMindControlled && aZombie->IsOnBoard()) {
             aCount++;
         }
     }
@@ -3797,11 +3774,9 @@ int Board::CountZombiesOnScreen() {
 }
 
 float Board::GetPosYBasedOnRow(float thePosX, int theRow) {
-    if (StageHasRoof())
-    {
+    if (StageHasRoof()) {
         float aSlopeOffset = 0.0f;
-        if (thePosX < 440.0f)
-        {
+        if (thePosX < 440.0f) {
             aSlopeOffset = (440.0f - thePosX) * 0.25f;
         }
 
@@ -3811,12 +3786,10 @@ float Board::GetPosYBasedOnRow(float thePosX, int theRow) {
     return GridToPixelY(0, theRow);
 }
 
-Zombie* Board::GetBossZombie() {
-    Zombie* aZombie = nullptr;
-    while (IterateZombies(aZombie))
-    {
-        if (aZombie->mZombieType == ZombieType::ZOMBIE_BOSS)
-        {
+Zombie *Board::GetBossZombie() {
+    Zombie *aZombie = nullptr;
+    while (IterateZombies(aZombie)) {
+        if (aZombie->mZombieType == ZombieType::ZOMBIE_BOSS) {
             return aZombie;
         }
     }
@@ -3825,10 +3798,9 @@ Zombie* Board::GetBossZombie() {
 
 GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
     GamepadControls *mGamepadControls1 = this->mGamepadControls1;
-    if ( mGamepadControls1->mPlayerIndex1 != thePlayerIndex)
-    {
+    if (mGamepadControls1->mPlayerIndex1 != thePlayerIndex) {
         mGamepadControls1 = this->mGamepadControls2;
-        if ( mGamepadControls1->mPlayerIndex1 != thePlayerIndex)
+        if (mGamepadControls1->mPlayerIndex1 != thePlayerIndex)
             return nullptr;
     }
 

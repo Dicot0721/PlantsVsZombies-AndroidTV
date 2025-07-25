@@ -14,7 +14,7 @@ static SpecialGridPlacement gMushroomGridPlacement[] = {{110, 441, 0, 0}, {237, 
 
 static SpecialGridPlacement gAquariumGridPlacement[] = {{113, 185, 0, 0}, {306, 120, 1, 0}, {356, 270, 2, 0}, {622, 120, 3, 0}, {669, 270, 4, 0}, {122, 355, 5, 0}, {365, 458, 6, 0}, {504, 417, 7, 0}};
 
-void ZenGarden::DrawBackdrop(Graphics *g) {
+void ZenGarden::DrawBackdrop(Graphics* g) {
     old_ZenGarden_DrawBackdrop(this, g);
 }
 

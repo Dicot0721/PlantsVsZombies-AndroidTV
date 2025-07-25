@@ -17,11 +17,15 @@ public:
     int *mVtable;
     NativeApp *mNativeApp;
 
-    JNIEnv *getJNIEnv() { return reinterpret_cast<JNIEnv *(*)(BridgeApp *)>(Native_BridgeApp_getJNIEnvAddr)(this); }
-    static BridgeApp *getSingleton() { return reinterpret_cast<BridgeApp *(*)()>(Native_BridgeApp_getSingletonAddr)(); }
+    JNIEnv *getJNIEnv() {
+        return reinterpret_cast<JNIEnv *(*)(BridgeApp *)>(Native_BridgeApp_getJNIEnvAddr)(this);
+    }
+    static BridgeApp *getSingleton() {
+        return reinterpret_cast<BridgeApp *(*)()>(Native_BridgeApp_getSingletonAddr)();
+    }
 };
 
-}
+} // namespace Native
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_BRIDGEAPP_H

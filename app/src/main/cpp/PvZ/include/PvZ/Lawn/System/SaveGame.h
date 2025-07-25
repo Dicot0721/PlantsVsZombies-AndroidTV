@@ -9,9 +9,11 @@
 
 class SaveGameContext {
 public:
-    void SyncInt(int &theInt) { reinterpret_cast<void (*)(SaveGameContext *, int &)>(SaveGameContext_SyncIntAddr)(this, theInt); }
+    void SyncInt(int &theInt) {
+        reinterpret_cast<void (*)(SaveGameContext *, int &)>(SaveGameContext_SyncIntAddr)(this, theInt);
+    }
 
-    void SyncReanimationDef(ReanimatorDefinition*& theDefinition);
+    void SyncReanimationDef(ReanimatorDefinition *&theDefinition);
 };
 
 

@@ -11,11 +11,10 @@
 constexpr const int CAUSTIC_IMAGE_WIDTH = 128;
 constexpr const int CAUSTIC_IMAGE_HEIGHT = 64;
 
-namespace Sexy
-{
+namespace Sexy {
 class MemoryImage;
 class Graphics;
-};
+}; // namespace Sexy
 
 struct CausticEffect {
     bool mTextureAlpha[256][256];

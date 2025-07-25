@@ -13,13 +13,13 @@ namespace Sexy {
 
 class DialogButton : public ButtonWidget {
 public:
-    Image *mImage;                   // 204
-    int mTranslateX, mTranslateY;    // 205 ~ 206
-    int mTextOffsetX, mTextOffsetY;  // 207 ~ 208
-    LawnApp *mApp;                   // 209
+    Image *mImage;                  // 204
+    int mTranslateX, mTranslateY;   // 205 ~ 206
+    int mTextOffsetX, mTextOffsetY; // 207 ~ 208
+    LawnApp *mApp;                  // 209
 }; // 大小210个整数
 
-}
+} // namespace Sexy
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_DIALOGBUTTON_H

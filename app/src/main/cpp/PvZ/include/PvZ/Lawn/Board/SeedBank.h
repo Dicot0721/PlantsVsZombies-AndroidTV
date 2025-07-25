@@ -24,7 +24,9 @@ public:
     int unknownMembers[100];            // 355 ~ 454
     // 大小455个整数
 
-    int GetNumSeedsOnConveyorBelt() { return reinterpret_cast<int (*)(SeedBank *)>(SeedBank_GetNumSeedsOnConveyorBeltAddr)(this); }
+    int GetNumSeedsOnConveyorBelt() {
+        return reinterpret_cast<int (*)(SeedBank *)>(SeedBank_GetNumSeedsOnConveyorBeltAddr)(this);
+    }
 
     SeedBank(bool thePlayerIndex);
     void Draw(Sexy::Graphics *g);
@@ -51,7 +53,6 @@ inline void (*old_SeedBank_UpdateWidth)(SeedBank *seedBank);
 inline bool (*old_SeedBank_BeginDraw)(SeedBank *seedBank, Sexy::Graphics *graphics);
 
 inline void (*old_SeedBank_EndDraw)(SeedBank *seedBank, Sexy::Graphics *graphics);
-
 
 
 #endif // PVZ_LAWN_SEED_BANK_H

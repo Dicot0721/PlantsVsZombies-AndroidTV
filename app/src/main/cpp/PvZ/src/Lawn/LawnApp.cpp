@@ -149,12 +149,11 @@ int LawnApp::GamepadToPlayerIndex(unsigned int thePlayerIndex) {
         return !m1PChoosingSeeds;
     }
 
-    if (thePlayerIndex <= 3 )
-    {
-        if ( mPlayerInfo && thePlayerIndex == (*((int (__fastcall **)(DefaultPlayerInfo *))mPlayerInfo->vTable + 2))(mPlayerInfo) )
+    if (thePlayerIndex <= 3) {
+        if (mPlayerInfo && thePlayerIndex == (*((int(__fastcall **)(DefaultPlayerInfo *))mPlayerInfo->vTable + 2))(mPlayerInfo))
             return 0;
 
-        if ( mTwoPlayerState != -1 && mTwoPlayerState == thePlayerIndex)
+        if (mTwoPlayerState != -1 && mTwoPlayerState == thePlayerIndex)
             return 1;
     }
     return -1;
@@ -184,12 +183,12 @@ void LawnApp::UpdateApp() {
 }
 
 void LawnApp::ShowAwardScreen(AwardType theAwardType) {
-    //记录当前游戏状态
+    // 记录当前游戏状态
     return old_LawnApp_ShowAwardScreen(this, theAwardType);
 }
 
 void LawnApp::KillAwardScreen() {
-    //记录当前游戏状态
+    // 记录当前游戏状态
     return old_LawnApp_KillAwardScreen(this);
 }
 
@@ -259,32 +258,32 @@ void LawnApp::Load(const char *theGroupName) {
     TodLoadResources(str);
 }
 
-//void LawnApp::DoConvertImitaterImages() {
-//    for (int i = 0;; ++i) {
-//        int holder[1];
-//        int holder1[1];
-//        int holder2[1];
-//        StrFormat(holder, "convertImitaterImages/pic%d", i);
-//        StrFormat(holder1, "ImitaterNormalpic%d.png", i);
-//        StrFormat(holder2, "ImitaterLesspic%d.png", i);
-//        Image *imageFromFile = GetImage(reinterpret_cast<string &>(holder), true);
+// void LawnApp::DoConvertImitaterImages() {
+//     for (int i = 0;; ++i) {
+//         int holder[1];
+//         int holder1[1];
+//         int holder2[1];
+//         StrFormat(holder, "convertImitaterImages/pic%d", i);
+//         StrFormat(holder1, "ImitaterNormalpic%d.png", i);
+//         StrFormat(holder2, "ImitaterLesspic%d.png", i);
+//         Image *imageFromFile = GetImage(reinterpret_cast<string &>(holder), true);
 //
-//        if (imageFromFile == nullptr) {
-//            break;
-//        }
-//        Image *imageImitater = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_WASHED_OUT);
-//        Image *imageImitaterLess = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_LESS_WASHED_OUT);
-//        reinterpret_cast<MemoryImage *>(imageImitater)->WriteToPng(holder1);
-//        reinterpret_cast<MemoryImage *>(imageImitaterLess)->WriteToPng(holder2);
-//        reinterpret_cast<MemoryImage *>(imageFromFile)->Delete();
-//        reinterpret_cast<MemoryImage *>(imageImitater)->Delete();
-//        reinterpret_cast<MemoryImage *>(imageImitaterLess)->Delete();
+//         if (imageFromFile == nullptr) {
+//             break;
+//         }
+//         Image *imageImitater = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_WASHED_OUT);
+//         Image *imageImitaterLess = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_LESS_WASHED_OUT);
+//         reinterpret_cast<MemoryImage *>(imageImitater)->WriteToPng(holder1);
+//         reinterpret_cast<MemoryImage *>(imageImitaterLess)->WriteToPng(holder2);
+//         reinterpret_cast<MemoryImage *>(imageFromFile)->Delete();
+//         reinterpret_cast<MemoryImage *>(imageImitater)->Delete();
+//         reinterpret_cast<MemoryImage *>(imageImitaterLess)->Delete();
 //
-//        StringDelete(holder);
-//        StringDelete(holder1);
-//        StringDelete(holder2);
-//    }
-//}
+//         StringDelete(holder);
+//         StringDelete(holder1);
+//         StringDelete(holder2);
+//     }
+// }
 
 void LawnApp::LoadingThreadProc() {
     // 加载新增资源用
@@ -416,7 +415,7 @@ void LawnApp::KillLeaderboards() {
         return;
 
     (*(void (**)(int *, Sexy::Widget *))(*mWidgetManager + 28))(mWidgetManager, gMainMenuLeaderboardsWidget); // RemoveWidget()
-    (*((void (**)(LawnApp *, Sexy::Widget *))vTable + 47))(this, gMainMenuLeaderboardsWidget);                      // MSGBOX()
+    (*((void (**)(LawnApp *, Sexy::Widget *))vTable + 47))(this, gMainMenuLeaderboardsWidget);                // MSGBOX()
     gMainMenuLeaderboardsWidget = nullptr;
 }
 
@@ -432,7 +431,7 @@ void LawnApp::KillZombatarScreen() {
         return;
 
     (*(void (**)(int *, Sexy::Widget *))(*mWidgetManager + 28))(mWidgetManager, gMainMenuZombatarWidget); // RemoveWidget()
-    (*((void (**)(LawnApp *, Sexy::Widget *))vTable + 47))(this, gMainMenuZombatarWidget);                      // MSGBOX()
+    (*((void (**)(LawnApp *, Sexy::Widget *))vTable + 47))(this, gMainMenuZombatarWidget);                // MSGBOX()
     gMainMenuZombatarWidget = nullptr;
 }
 
@@ -506,8 +505,7 @@ bool LawnApp::IsScaryPotterLevel() {
     return IsAdventureMode() && mPlayerInfo->mLevel == 35;
 }
 
-bool LawnApp::IsSlotMachineLevel()
-{
+bool LawnApp::IsSlotMachineLevel() {
     return (mBoard && mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE);
 }
 
@@ -515,19 +513,15 @@ bool LawnApp::IsArtChallenge() {
     if (mBoard == nullptr)
         return false;
 
-    return
-        mGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_WALLNUT ||
-        mGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_SUNFLOWER ||
-        mGameMode == GameMode::GAMEMODE_CHALLENGE_SEEING_STARS;
+    return mGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_WALLNUT || mGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_SUNFLOWER
+        || mGameMode == GameMode::GAMEMODE_CHALLENGE_SEEING_STARS;
 }
 
-bool LawnApp::IsSquirrelLevel()
-{
+bool LawnApp::IsSquirrelLevel() {
     return mBoard && mGameMode == GameMode::GAMEMODE_CHALLENGE_SQUIRREL;
 }
 
-bool LawnApp::IsSurvivalEndless(GameMode theGameMode)
-{
+bool LawnApp::IsSurvivalEndless(GameMode theGameMode) {
     int aLevel = theGameMode - GameMode::GAMEMODE_SURVIVAL_ENDLESS_STAGE_1;
     return aLevel >= 0 && aLevel <= 4;
 }
@@ -560,7 +554,7 @@ bool LawnApp::IsFinalBossLevel() {
     return IsAdventureMode() && mPlayerInfo->mLevel == 50;
 }
 
-PottedPlant* LawnApp::GetPottedPlantByIndex(int thePottedPlantIndex) {
+PottedPlant *LawnApp::GetPottedPlantByIndex(int thePottedPlantIndex) {
     return &mPlayerInfo->mPottedPlants[thePottedPlantIndex];
 }
 

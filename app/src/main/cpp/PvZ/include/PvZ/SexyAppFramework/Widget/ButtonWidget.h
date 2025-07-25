@@ -8,7 +8,7 @@
 #include "PvZ/SexyAppFramework/Misc/TextLayout.h"
 #include "PvZ/Symbols.h"
 
-//#include "ButtonListener.h"
+// #include "ButtonListener.h"
 #include "SelectableWidget.h"
 
 namespace Sexy {
@@ -47,7 +47,7 @@ public:
     }
 };
 
-}
+} // namespace Sexy
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_BUTTONWIDGET_H

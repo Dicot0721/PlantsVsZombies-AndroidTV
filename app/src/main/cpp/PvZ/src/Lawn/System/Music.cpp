@@ -3,11 +3,11 @@
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/System/PlayerInfo.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
+#include "PvZ/SexyAppFramework/Sound/AudiereMusicInterface.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodCommon.h"
-#include "PvZ/Lawn/System/PlayerInfo.h"
-#include "PvZ/SexyAppFramework/Sound/AudiereMusicInterface.h"
 
 #define HIWORD(a) ((a) >> 16)
 #define LOWORD(a) ((a) & 0xFFFF)
@@ -296,22 +296,22 @@ void __Music::UpdateMusicBurst() {
 }
 
 void __Music::UpdateMusicBurst2() {
-    int MusicOrder;                                    // ebx
-    double v7;                                         // st7
-    double v9;                                         // st6
-    int v11;                                           // eax
-    unsigned int v14;                                  // eax
-    MusicTune v15;                                     // ebx
-    int v16;                                           // edi
-    int aQueuedDrumTrackPackedOrder_low;               // ecx
-    int v18;                                           // eax
-    float aPositionStart;                              // [esp+4h] [ebp-2Ch]
-    float aPositionEnd;                                // [esp+8h] [ebp-28h]
-    float aFadeTrackVolume;                            // [esp+1Ch] [ebp-14h]
-    float aMainTrackVolume;                            // [esp+20h] [ebp-10h]
-    float aDrumsJumpOrder;                             // [esp+24h] [ebp-Ch]
-    unsigned int aPackedOrderMain;                     // [esp+28h] [ebp-8h]
-    unsigned short v29;                                // [esp+2Ch] [ebp-4h]
+    int MusicOrder;                      // ebx
+    double v7;                           // st7
+    double v9;                           // st6
+    int v11;                             // eax
+    unsigned int v14;                    // eax
+    MusicTune v15;                       // ebx
+    int v16;                             // edi
+    int aQueuedDrumTrackPackedOrder_low; // ecx
+    int v18;                             // eax
+    float aPositionStart;                // [esp+4h] [ebp-2Ch]
+    float aPositionEnd;                  // [esp+8h] [ebp-28h]
+    float aFadeTrackVolume;              // [esp+1Ch] [ebp-14h]
+    float aMainTrackVolume;              // [esp+20h] [ebp-10h]
+    float aDrumsJumpOrder;               // [esp+24h] [ebp-Ch]
+    unsigned int aPackedOrderMain;       // [esp+28h] [ebp-8h]
+    unsigned short v29;                  // [esp+2Ch] [ebp-4h]
 
     if (mApp->mBoard == nullptr || mApp->mGameMode == GameMode::GAMEMODE_INTRO) {
         return;

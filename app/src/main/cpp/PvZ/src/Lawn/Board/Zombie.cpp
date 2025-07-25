@@ -11,8 +11,8 @@
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodCommon.h"
-#include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Effect/Attachment.h"
+#include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Effect/TodParticle.h"
 
 using namespace Sexy;
@@ -577,7 +577,7 @@ void Zombie::DrawBossPart(Sexy::Graphics *g, int theBossPart) {
             g->mTransX = 800.0f;
             g->mTransY = 200.0f;
             g->DrawString(str, 0, 0);
-//            StringDelete((int *)holder);
+            //            StringDelete((int *)holder);
             g->mTransX = tmpTransX;
             g->mTransY = tmpTransY;
             g->SetFont(nullptr);
@@ -1438,7 +1438,7 @@ void Zombie::SetupLostArmReanim() {
                 reanimation->SetImageOverride("Zombie_disco_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_DISCO_OUTERARM_UPPER2_Addr);
                 break;
             case ZombieType::ZOMBIE_BACKUP_DANCER:
-                reanimation->SetImageOverride( "Zombie_disco_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_BACKUP_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_disco_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_BACKUP_OUTERARM_UPPER2_Addr);
                 break;
             case ZombieType::ZOMBIE_LADDER:
                 reanimation->SetImageOverride("Zombie_ladder_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_LADDER_OUTERARM_UPPER2_Addr);
@@ -1490,4 +1490,3 @@ void Zombie::PickRandomSpeed() {
 
     UpdateAnimSpeed();
 }
-

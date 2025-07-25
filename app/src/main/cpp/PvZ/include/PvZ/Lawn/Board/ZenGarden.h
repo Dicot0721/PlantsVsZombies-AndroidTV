@@ -23,9 +23,15 @@ public:
     Board *mBoard;          //+0x4
     GardenType mGardenType; //+0x8
 
-    bool IsStinkyHighOnChocolate() { return reinterpret_cast<bool (*)(ZenGarden *)>(ZenGarden_IsStinkyHighOnChocolateAddr)(this); }
-    void OpenStore() { reinterpret_cast<void (*)(ZenGarden *)>(ZenGarden_OpenStoreAddr)(this); }
-    PottedPlant *GetPottedPlantInWheelbarrow() { return reinterpret_cast<PottedPlant * (*)(ZenGarden *)>(ZenGarden_GetPottedPlantInWheelbarrowAddr)(this); }
+    bool IsStinkyHighOnChocolate() {
+        return reinterpret_cast<bool (*)(ZenGarden *)>(ZenGarden_IsStinkyHighOnChocolateAddr)(this);
+    }
+    void OpenStore() {
+        reinterpret_cast<void (*)(ZenGarden *)>(ZenGarden_OpenStoreAddr)(this);
+    }
+    PottedPlant *GetPottedPlantInWheelbarrow() {
+        return reinterpret_cast<PottedPlant *(*)(ZenGarden *)>(ZenGarden_GetPottedPlantInWheelbarrowAddr)(this);
+    }
     void DrawPottedPlant(Sexy::Graphics *g, float x, float y, PottedPlant *thePottedPlant, float theScale, bool theDrawPot) {
         reinterpret_cast<void (*)(ZenGarden *, Sexy::Graphics *, float, float, PottedPlant *, float, bool)>(ZenGarden_DrawPottedPlantAddr)(this, g, x, y, thePottedPlant, theScale, theDrawPot);
     }
@@ -39,7 +45,6 @@ public:
 
 
 inline void (*old_ZenGarden_DrawBackdrop)(ZenGarden *zenGarden, Sexy::Graphics *graphics);
-
 
 
 #endif // PVZ_LAWN_ZEN_GARDEN_H

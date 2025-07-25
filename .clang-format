@@ -32,7 +32,7 @@ AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
 
 # 允许短的函数放在同一行: None, InlineOnly (定义在类中), Empty (空函数), Inline (定义在类中, 空函数), All
-AllowShortFunctionsOnASingleLine: Inline
+AllowShortFunctionsOnASingleLine: Empty
 
 # 允许短的 if 语句保持在同一行
 AllowShortIfStatementsOnASingleLine: false

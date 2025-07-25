@@ -8,8 +8,7 @@
 #include "PvZ/Symbols.h"
 
 class ReanimatorDefinition;
-namespace Sexy
-{
+namespace Sexy {
 class MemoryImage;
 }; // namespace Sexy
 

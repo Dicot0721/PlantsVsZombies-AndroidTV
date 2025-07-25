@@ -41,8 +41,12 @@ public:
     void SetUnlockChallengeIndex(ChallengePage thePage, bool theIsIZombie = false) {
         reinterpret_cast<void (*)(ChallengeScreen *, ChallengePage, bool)>(ChallengeScreen_SetUnlockChallengeIndexAddr)(this, thePage, theIsIZombie);
     }
-    void SetScrollTarget(int theIndex) { reinterpret_cast<void (*)(ChallengeScreen *, int)>(ChallengeScreen_SetScrollTargetAddr)(this, theIndex); }
-    void KeyDown(Sexy::KeyCode theKey) { reinterpret_cast<void (*)(ChallengeScreen *, Sexy::KeyCode)>(ChallengeScreen_KeyDownAddr)(this, theKey); }
+    void SetScrollTarget(int theIndex) {
+        reinterpret_cast<void (*)(ChallengeScreen *, int)>(ChallengeScreen_SetScrollTargetAddr)(this, theIndex);
+    }
+    void KeyDown(Sexy::KeyCode theKey) {
+        reinterpret_cast<void (*)(ChallengeScreen *, Sexy::KeyCode)>(ChallengeScreen_KeyDownAddr)(this, theKey);
+    }
 
     ChallengeScreen(LawnApp *theApp, ChallengePage thePage);
     void Draw(Sexy::Graphics *graphics);

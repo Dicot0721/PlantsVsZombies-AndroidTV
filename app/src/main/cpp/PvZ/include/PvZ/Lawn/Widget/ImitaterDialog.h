@@ -6,7 +6,9 @@
 
 class ImitaterDialog : public LawnDialog {
 public:
-    SeedType SeedHitTest(int x, int y) { return reinterpret_cast<SeedType (*)(ImitaterDialog *, int, int)>(ImitaterDialog_SeedHitTestAddr)(this, x, y); }
+    SeedType SeedHitTest(int x, int y) {
+        return reinterpret_cast<SeedType (*)(ImitaterDialog *, int, int)>(ImitaterDialog_SeedHitTestAddr)(this, x, y);
+    }
 
     void MouseDown(int x, int y, int theCount);
 };

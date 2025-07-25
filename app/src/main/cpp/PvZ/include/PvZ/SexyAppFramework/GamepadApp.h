@@ -13,10 +13,10 @@ namespace Sexy {
 class GamepadApp : public SexyAppBase {
 public:
     bool HasGamepad() {
-        return reinterpret_cast<bool(*)(GamepadApp *)>(Sexy_GamepadApp_HasGamepadAddr)(this);
+        return reinterpret_cast<bool (*)(GamepadApp *)>(Sexy_GamepadApp_HasGamepadAddr)(this);
     }
 };
 
-}
+} // namespace Sexy
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_GAMEPADAPP_H

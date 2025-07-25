@@ -8,8 +8,8 @@
 
 namespace Sexy {
 class WidgetManager;
-//class CustomScrollbarWidget;
-}
+// class CustomScrollbarWidget;
+} // namespace Sexy
 
 class Plant;
 class Zombie;
@@ -45,12 +45,24 @@ public:
     int unk4[11];                                   // 231 ~ 233
     // 115: 234, 111: 236
 
-    void KeyDown(Sexy::KeyCode theKey) { reinterpret_cast<void (*)(AlmanacDialog *, Sexy::KeyCode)>(AlmanacDialog_KeyDownAddr)(this, theKey); }
-    SeedType SeedHitTest(int x, int y) { return reinterpret_cast<SeedType (*)(AlmanacDialog *, int, int)>(AlmanacDialog_SeedHitTestAddr)(this, x, y); }
-    ZombieType ZombieHitTest(int x, int y) { return reinterpret_cast<ZombieType (*)(AlmanacDialog *, int, int)>(AlmanacDialog_ZombieHitTestAddr)(this, x, y); }
-    void SetupPlant() { reinterpret_cast<void (*)(AlmanacDialog *)>(AlmanacDialog_SetupPlantAddr)(this); }
-    void SetupZombie() { reinterpret_cast<void (*)(AlmanacDialog *)>(AlmanacDialog_SetupZombieAddr)(this); }
-    void GetSeedPosition(SeedType theSeedType, int& x, int& y) { reinterpret_cast<void (*)(AlmanacDialog *, SeedType, int &, int &)>(AlmanacDialog_GetSeedPositionAddr)(this, theSeedType, x, y); }
+    void KeyDown(Sexy::KeyCode theKey) {
+        reinterpret_cast<void (*)(AlmanacDialog *, Sexy::KeyCode)>(AlmanacDialog_KeyDownAddr)(this, theKey);
+    }
+    SeedType SeedHitTest(int x, int y) {
+        return reinterpret_cast<SeedType (*)(AlmanacDialog *, int, int)>(AlmanacDialog_SeedHitTestAddr)(this, x, y);
+    }
+    ZombieType ZombieHitTest(int x, int y) {
+        return reinterpret_cast<ZombieType (*)(AlmanacDialog *, int, int)>(AlmanacDialog_ZombieHitTestAddr)(this, x, y);
+    }
+    void SetupPlant() {
+        reinterpret_cast<void (*)(AlmanacDialog *)>(AlmanacDialog_SetupPlantAddr)(this);
+    }
+    void SetupZombie() {
+        reinterpret_cast<void (*)(AlmanacDialog *)>(AlmanacDialog_SetupZombieAddr)(this);
+    }
+    void GetSeedPosition(SeedType theSeedType, int &x, int &y) {
+        reinterpret_cast<void (*)(AlmanacDialog *, SeedType, int &, int &)>(AlmanacDialog_GetSeedPositionAddr)(this, theSeedType, x, y);
+    }
 
     void SetPage(AlmanacPage thePage);
     void RemovedFromManager(Sexy::WidgetManager *theWidgetManager);

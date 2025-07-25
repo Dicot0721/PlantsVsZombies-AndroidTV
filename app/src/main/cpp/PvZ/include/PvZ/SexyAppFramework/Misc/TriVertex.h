@@ -9,10 +9,10 @@ namespace Sexy {
 
 class TriVertex {
 public:
-    float x,y,u,v;
+    float x, y, u, v;
     unsigned int color;
 };
 
-}
+} // namespace Sexy
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_TRIVERTEX_H

@@ -95,16 +95,16 @@ public:
 // 大小未知，故成员全部放在基类PlayerInfo
 class DefaultPlayerInfo : public PlayerInfo {
 public:
-
 };
 
-class LawnPlayerInfo : public PlayerInfo{
+class LawnPlayerInfo : public PlayerInfo {
 public:
-    int GetFlag(int theFlag) { return reinterpret_cast<int (*)(LawnPlayerInfo *, int)>(LawnPlayerInfo_GetFlagAddr)(this, theFlag); }
+    int GetFlag(int theFlag) {
+        return reinterpret_cast<int (*)(LawnPlayerInfo *, int)>(LawnPlayerInfo_GetFlagAddr)(this, theFlag);
+    }
 
     void AddCoins(int theAmount);
 };
-
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_PLAYERINFO_H

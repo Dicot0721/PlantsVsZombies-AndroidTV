@@ -9,10 +9,14 @@ public:
     Sexy::GameButton *mRestartButton; // 191
     // 115: 192, 111: 194
 
-    ConfirmBackToMainDialog(bool theBool) { __Constructor(theBool); }
+    ConfirmBackToMainDialog(bool theBool) {
+        __Constructor(theBool);
+    }
 
 protected:
-    void __Constructor(bool theBool) { reinterpret_cast<void (*)(ConfirmBackToMainDialog *, bool)>(ConfirmBackToMainDialog_ConfirmBackToMainDialogAddr)(this, theBool); }
+    void __Constructor(bool theBool) {
+        reinterpret_cast<void (*)(ConfirmBackToMainDialog *, bool)>(ConfirmBackToMainDialog_ConfirmBackToMainDialogAddr)(this, theBool);
+    }
 };
 
 

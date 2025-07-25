@@ -6,8 +6,8 @@
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Misc.h"
-#include "PvZ/Symbols.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
+#include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
 using namespace Sexy;
@@ -154,7 +154,8 @@ void LawnApp::KillSeedChooserScreen() {
     SeedChooserScreen *seedChooserScreen = mSeedChooserScreen;
     if (seedChooserScreen != nullptr && mGameMode != GameMode::GAMEMODE_MP_VS) {
         seedChooserScreen->RemoveWidget(gSeedChooserScreenMainMenuButton);
-        gSeedChooserScreenMainMenuButton->~GameButton();;
+        gSeedChooserScreenMainMenuButton->~GameButton();
+        ;
         gSeedChooserScreenMainMenuButton = nullptr;
     }
 

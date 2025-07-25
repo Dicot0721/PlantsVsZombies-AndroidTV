@@ -6,15 +6,14 @@
 #define PLANTSVSZOMBIES_ANDROIDTV_REANIMATONLAWN_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
-#include "PvZ/TodLib/Common/TodList.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/TodLib/Common/TodList.h"
 
-namespace Sexy
-{
+namespace Sexy {
 class Graphics;
 class MemoryImage;
-};
-//using namespace Sexy;
+}; // namespace Sexy
+// using namespace Sexy;
 
 class LawnApp;
 class ReanimCacheImageVariation {
@@ -46,12 +45,12 @@ public:
             this, g, thePosX, thePosY, theReanimationType, theTrackName, theDrawVariation);
     }
 
-    void GetPlantImageSize(SeedType theSeedType, int& theOffsetX, int& theOffsetY, int& theWidth, int& theHeight);
+    void GetPlantImageSize(SeedType theSeedType, int &theOffsetX, int &theOffsetY, int &theWidth, int &theHeight);
     void UpdateReanimationForVariation(Reanimation *theReanim, DrawVariation theDrawVariation);
     void LoadCachedImages();
     Sexy::MemoryImage *MakeCachedZombieFrame(ZombieType theZombieType);
-    void DrawCachedPlant(Sexy::Graphics* g, float thePosX, float thePosY, SeedType theSeedType, DrawVariation theDrawVariation);
-    void DrawCachedZombie(Sexy::Graphics* g, float thePosX, float thePosY, ZombieType theZombieType);
+    void DrawCachedPlant(Sexy::Graphics *g, float thePosX, float thePosY, SeedType theSeedType, DrawVariation theDrawVariation);
+    void DrawCachedZombie(Sexy::Graphics *g, float thePosX, float thePosY, ZombieType theZombieType);
 };
 
 inline void (*old_ReanimatorCache_LoadCachedImages)(ReanimatorCache *a1);

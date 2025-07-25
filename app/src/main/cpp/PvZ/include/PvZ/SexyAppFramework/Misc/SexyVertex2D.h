@@ -19,6 +19,6 @@ public:
     float v;
 };
 
-}
+} // namespace Sexy
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_SEXYVERTEX2D_H

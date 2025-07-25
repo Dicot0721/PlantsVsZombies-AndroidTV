@@ -3,31 +3,31 @@
 
 #include "BaseGamepadControls.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
-//#include "PvZ/TodLib/Effect/FilterEffect.h"
+// #include "PvZ/TodLib/Effect/FilterEffect.h"
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 
 // buttonCode 是按键键值，对应关系如下：
 enum ButtonCode {
-    BUTTONCODE_LUP = 0,      // 左摇杆上 0
-    BUTTONCODE_LDOWN = 1,    // 左摇杆下 1
-    BUTTONCODE_LLEFT = 2,    // 左摇杆左 2
-    BUTTONCODE_LRIGHT = 3,   // 左摇杆右 3
-    BUTTONCODE_UNKNOWN = 4,  // 未知键 4
-    BUTTONCODE_PAUSE = 5,    // 暂停键 5
-    BUTTONCODE_A = 6,        // A 6
-    BUTTONCODE_B = 7,        // B 7
-    BUTTONCODE_X = 8,        // X 8
-    BUTTONCODE_Y = 9,        // Y 9
-    BUTTONCODE_L1 = 10,      // L1 10
-    BUTTONCODE_R1 = 11,      // R1 11
-    BUTTONCODE_L2 = 12,      // L2 12
-    BUTTONCODE_R2 = 13,      // R2 13
-    BUTTONCODE_TL = 14,      // TL 14
-    BUTTONCODE_TR = 15,      // TR 15
-    BUTTONCODE_UP = 16,      // 上 16
-    BUTTONCODE_DOWN = 17,    // 下 17
-    BUTTONCODE_LEFT = 18,    // 左 18
-    BUTTONCODE_RIGHT = 19    // 右 19
+    BUTTONCODE_LUP = 0,     // 左摇杆上 0
+    BUTTONCODE_LDOWN = 1,   // 左摇杆下 1
+    BUTTONCODE_LLEFT = 2,   // 左摇杆左 2
+    BUTTONCODE_LRIGHT = 3,  // 左摇杆右 3
+    BUTTONCODE_UNKNOWN = 4, // 未知键 4
+    BUTTONCODE_PAUSE = 5,   // 暂停键 5
+    BUTTONCODE_A = 6,       // A 6
+    BUTTONCODE_B = 7,       // B 7
+    BUTTONCODE_X = 8,       // X 8
+    BUTTONCODE_Y = 9,       // Y 9
+    BUTTONCODE_L1 = 10,     // L1 10
+    BUTTONCODE_R1 = 11,     // R1 11
+    BUTTONCODE_L2 = 12,     // L2 12
+    BUTTONCODE_R2 = 13,     // R2 13
+    BUTTONCODE_TL = 14,     // TL 14
+    BUTTONCODE_TR = 15,     // TR 15
+    BUTTONCODE_UP = 16,     // 上 16
+    BUTTONCODE_DOWN = 17,   // 下 17
+    BUTTONCODE_LEFT = 18,   // 左 18
+    BUTTONCODE_RIGHT = 19   // 右 19
 };
 
 class Zombie;
@@ -59,7 +59,9 @@ public:
     int unk4[3];                       // 63 ~ 65
     // 大小66个整数
 
-    SeedBank *GetSeedBank() { return reinterpret_cast<SeedBank *(*)(GamepadControls *)>(GamepadControls_GetSeedBankAddr)(this); }
+    SeedBank *GetSeedBank() {
+        return reinterpret_cast<SeedBank *(*)(GamepadControls *)>(GamepadControls_GetSeedBankAddr)(this);
+    }
     void OnButtonDown(ButtonCode theButton, int theGamepadIndex, unsigned int a4) {
         reinterpret_cast<void (*)(GamepadControls *, ButtonCode, int, unsigned int)>(GamepadControls_OnButtonDownAddr)(this, theButton, theGamepadIndex, a4);
     }
@@ -68,7 +70,9 @@ public:
     }
     // theGamepadIndex 根据手柄决定是0还是1
     // a4 恒定为0
-    void OnKeyDown(Sexy::KeyCode theKey, unsigned int a3) { reinterpret_cast<void (*)(GamepadControls *, int, unsigned int)>(GamepadControls_OnKeyDownAddr)(this, theKey, a3); }
+    void OnKeyDown(Sexy::KeyCode theKey, unsigned int a3) {
+        reinterpret_cast<void (*)(GamepadControls *, int, unsigned int)>(GamepadControls_OnKeyDownAddr)(this, theKey, a3);
+    }
     // 确定 13 1096
     // 返回 27 1096
     // 左 37 1096
@@ -112,7 +116,7 @@ inline void (*old_GamepadControls_DrawPreview)(GamepadControls *gamePad, Sexy::G
 
 inline void (*old_ZenGardenControls_Update)(ZenGardenControls *a1, float a2);
 
-//FilterEffect GetFilterEffectTypeBySeedType(SeedType mSeedType);
+// FilterEffect GetFilterEffectTypeBySeedType(SeedType mSeedType);
 
 void GamepadControls_pickUpCobCannon(int, int);
 

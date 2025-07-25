@@ -49,19 +49,27 @@ public:
     int mParticleId;                         // 14
     // 大小15个整数
 
-    void Draw(Sexy::Graphics *g) { reinterpret_cast<void (*)(TodParticleSystem *, Sexy::Graphics *)>(TodParticleSystem_DrawAddr)(this, g); }
+    void Draw(Sexy::Graphics *g) {
+        reinterpret_cast<void (*)(TodParticleSystem *, Sexy::Graphics *)>(TodParticleSystem_DrawAddr)(this, g);
+    }
     void OverrideColor(const char *theEmitterName, const Sexy::Color &theColor) {
         reinterpret_cast<void (*)(TodParticleSystem *, const char *, const Sexy::Color &)>(TodParticleSystem_OverrideColorAddr)(this, theEmitterName, theColor);
     }
     void OverrideImage(const char *theEmitterName, Sexy::Image *theImage) {
         reinterpret_cast<void (*)(TodParticleSystem *, const char *, Sexy::Image *)>(TodParticleSystem_OverrideImageAddr)(this, theEmitterName, theImage);
     }
-    void ParticleSystemDie() { reinterpret_cast<void (*)(TodParticleSystem *)>(TodParticleSystem_ParticleSystemDieAddr)(this); }
+    void ParticleSystemDie() {
+        reinterpret_cast<void (*)(TodParticleSystem *)>(TodParticleSystem_ParticleSystemDieAddr)(this);
+    }
 
-    ~TodParticleSystem() { __Destructor(); }
+    ~TodParticleSystem() {
+        __Destructor();
+    }
 
 protected:
-    void __Destructor() { reinterpret_cast<void (*)(TodParticleSystem *)>(TodParticleSystem_Delete2Addr)(this); }
+    void __Destructor() {
+        reinterpret_cast<void (*)(TodParticleSystem *)>(TodParticleSystem_Delete2Addr)(this);
+    }
 };
 
 

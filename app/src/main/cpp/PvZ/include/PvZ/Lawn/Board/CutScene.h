@@ -23,7 +23,7 @@ public:
     int mLawnMowerTime;                      // 9
     int mCrazyDaveDialogStart;               // 10
     bool mSeedChoosing;                      // 44
-    ReanimationID mZombiesWonReanimID;        // 12
+    ReanimationID mZombiesWonReanimID;       // 12
     bool mPreloaded;                         // 52
     bool mPlacedZombies;                     // 53
     bool mPlacedLawnItems;                   // 54
@@ -37,12 +37,22 @@ public:
 
     void ShowShovel();
     void Update();
-    bool IsSurvivalRepick() { return reinterpret_cast<bool (*)(CutScene *)>(CutScene_IsSurvivalRepickAddr)(this); }
-    void OnKeyDown(Sexy::KeyCode theKey, unsigned int a3) { reinterpret_cast<bool (*)(CutScene *, Sexy::KeyCode, unsigned int)>(CutScene_OnKeyDownAddr)(this, theKey, a3); }
-    bool IsBeforePreloading() { return reinterpret_cast<bool (*)(CutScene *)>(CutScene_IsBeforePreloadingAddr)(this); }
-    bool ShouldRunUpsellBoard() { return reinterpret_cast<bool (*)(CutScene *)>(CutScene_ShouldRunUpsellBoardAddr)(this); }
+    bool IsSurvivalRepick() {
+        return reinterpret_cast<bool (*)(CutScene *)>(CutScene_IsSurvivalRepickAddr)(this);
+    }
+    void OnKeyDown(Sexy::KeyCode theKey, unsigned int a3) {
+        reinterpret_cast<bool (*)(CutScene *, Sexy::KeyCode, unsigned int)>(CutScene_OnKeyDownAddr)(this, theKey, a3);
+    }
+    bool IsBeforePreloading() {
+        return reinterpret_cast<bool (*)(CutScene *)>(CutScene_IsBeforePreloadingAddr)(this);
+    }
+    bool ShouldRunUpsellBoard() {
+        return reinterpret_cast<bool (*)(CutScene *)>(CutScene_ShouldRunUpsellBoardAddr)(this);
+    }
 
-    void MouseDown(int x, int y) { reinterpret_cast<bool (*)(CutScene *)>(CutScene_MouseDownAddr)(this); }
+    void MouseDown(int x, int y) {
+        reinterpret_cast<bool (*)(CutScene *)>(CutScene_MouseDownAddr)(this);
+    }
 };
 
 

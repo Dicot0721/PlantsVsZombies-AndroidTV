@@ -8,8 +8,8 @@
 #include "PvZ/Misc.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodCommon.h"
-#include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Effect/Attachment.h"
+#include "PvZ/TodLib/Effect/Reanimator.h"
 
 #include "Homura/Logger.h"
 
@@ -179,8 +179,7 @@ void Projectile::ConvertToFireball(int theGridX) {
     float aOffsetX = -25.0f;
     float aOffsetY = -25.0f;
     Reanimation* aFirePeaReanim = mApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_FIRE_PEA);
-    if (mMotionType == ProjectileMotion::MOTION_BACKWARDS)
-    {
+    if (mMotionType == ProjectileMotion::MOTION_BACKWARDS) {
         aFirePeaReanim->OverrideScale(-1.0f, 1.0f);
         aOffsetX += 80.0f;
     }
@@ -492,18 +491,18 @@ ProjectileDefinition& Projectile::GetProjectileDef() {
     return aProjectileDef;
 }
 
-void Projectile::Draw(Graphics *g) {
-        old_Projectile_Draw(this, g);
+void Projectile::Draw(Graphics* g) {
+    old_Projectile_Draw(this, g);
 
-//    const ProjectileDefinition& aProjectileDef = GetProjectileDef();
-//
-//    Image* aImage;
-//    float aScale = 1.0f;
-//    if (mProjectileType == ProjectileType::)
-//    {
-//        aImage = ;
-//    }
-//
+    //    const ProjectileDefinition& aProjectileDef = GetProjectileDef();
+    //
+    //    Image* aImage;
+    //    float aScale = 1.0f;
+    //    if (mProjectileType == ProjectileType::)
+    //    {
+    //        aImage = ;
+    //    }
+    //
     //    bool aMirror = false;
     //    if (mMotionType == ProjectileMotion::MOTION_BEE_BACKWARDS)
     //    {

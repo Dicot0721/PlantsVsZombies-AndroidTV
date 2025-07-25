@@ -77,15 +77,33 @@ public:
     bool MouseDown(int x, int y, int theClickCount, HitResult *theHitResult, int thePlayerIndex) {
         return reinterpret_cast<bool (*)(Challenge *, int, int, int, HitResult *, int)>(Challenge_MouseDownAddr)(this, x, y, theClickCount, theHitResult, thePlayerIndex);
     }
-    void TreeOfWisdomOpenStore() { reinterpret_cast<void (*)(Challenge *)>(Challenge_TreeOfWisdomOpenStoreAddr)(this); }
-    bool IsMPSuddenDeath() { return reinterpret_cast<bool (*)(Challenge *)>(Challenge_IsMPSuddenDeathAddr)(this); };
-    void IZombieScoreBrain(GridItem *theBrain) { reinterpret_cast<void (*)(Challenge *, GridItem *)>(Challenge_IZombieScoreBrainAddr)(this, theBrain); }
-    void GraveDangerSpawnGraveAt(int theGridX, int theGridY) { reinterpret_cast<void (*)(Challenge *, int, int)>(Challenge_GraveDangerSpawnGraveAtAddr)(this, theGridX, theGridY); }
-    void PlantAdded(Plant *thePlant) { reinterpret_cast<void (*)(Challenge *, Plant *)>(Challenge_PlantAddedAddr)(this, thePlant); }
-    void DrawWeather(Sexy::Graphics *g) { reinterpret_cast<void (*)(Challenge *, Sexy::Graphics *)>(Challenge_DrawWeatherAddr)(this, g); }
-    void DrawRain(Sexy::Graphics *g) { reinterpret_cast<void (*)(Challenge *, Sexy::Graphics *)>(Challenge_DrawRainAddr)(this, g); }
-    void DrawStormNight(Sexy::Graphics *g) { reinterpret_cast<void (*)(Challenge *, Sexy::Graphics *)>(Challenge_DrawStormNightAddr)(this, g); }
-    void UpdateStormyNight() { reinterpret_cast<void (*)(Challenge *)>(Challenge_UpdateStormyNightAddr)(this); }
+    void TreeOfWisdomOpenStore() {
+        reinterpret_cast<void (*)(Challenge *)>(Challenge_TreeOfWisdomOpenStoreAddr)(this);
+    }
+    bool IsMPSuddenDeath() {
+        return reinterpret_cast<bool (*)(Challenge *)>(Challenge_IsMPSuddenDeathAddr)(this);
+    };
+    void IZombieScoreBrain(GridItem *theBrain) {
+        reinterpret_cast<void (*)(Challenge *, GridItem *)>(Challenge_IZombieScoreBrainAddr)(this, theBrain);
+    }
+    void GraveDangerSpawnGraveAt(int theGridX, int theGridY) {
+        reinterpret_cast<void (*)(Challenge *, int, int)>(Challenge_GraveDangerSpawnGraveAtAddr)(this, theGridX, theGridY);
+    }
+    void PlantAdded(Plant *thePlant) {
+        reinterpret_cast<void (*)(Challenge *, Plant *)>(Challenge_PlantAddedAddr)(this, thePlant);
+    }
+    void DrawWeather(Sexy::Graphics *g) {
+        reinterpret_cast<void (*)(Challenge *, Sexy::Graphics *)>(Challenge_DrawWeatherAddr)(this, g);
+    }
+    void DrawRain(Sexy::Graphics *g) {
+        reinterpret_cast<void (*)(Challenge *, Sexy::Graphics *)>(Challenge_DrawRainAddr)(this, g);
+    }
+    void DrawStormNight(Sexy::Graphics *g) {
+        reinterpret_cast<void (*)(Challenge *, Sexy::Graphics *)>(Challenge_DrawStormNightAddr)(this, g);
+    }
+    void UpdateStormyNight() {
+        reinterpret_cast<void (*)(Challenge *)>(Challenge_UpdateStormyNightAddr)(this);
+    }
 
     Challenge();
     void Update();

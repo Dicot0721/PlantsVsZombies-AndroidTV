@@ -1,7 +1,7 @@
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
-#include "PvZ/TodLib/Common/TodCommon.h"
 #include "PvZ/SexyAppFramework/Misc/SexyVertex2D.h"
+#include "PvZ/TodLib/Common/TodCommon.h"
 
 using namespace Sexy;
 
@@ -44,64 +44,52 @@ void Sexy_Graphics_DrawImageColorizedScaled(Sexy::Graphics *g, Sexy::Image *imag
     g->SetColorizeImages(false);
 }
 
-Sexy::Font* Graphics::GetFont()
-{
+Sexy::Font *Graphics::GetFont() {
     return mFont;
 }
 
-void Graphics::SetFont(Sexy::Font* theFont)
-{
+void Graphics::SetFont(Sexy::Font *theFont) {
     mFont = theFont;
 }
 
-void Graphics::SetColor(const Color& theColor)
-{
+void Graphics::SetColor(const Color &theColor) {
     mColor = theColor;
 }
 
-const Color& Graphics::GetColor()
-{
+const Color &Graphics::GetColor() {
     return mColor;
 }
 
-void Graphics::SetDrawMode(DrawMode theDrawMode)
-{
+void Graphics::SetDrawMode(DrawMode theDrawMode) {
     mDrawMode = theDrawMode;
 }
 
-int Graphics::GetDrawMode()
-{
+int Graphics::GetDrawMode() {
     return mDrawMode;
 }
 
-void Graphics::SetColorizeImages(bool colorizeImages)
-{
+void Graphics::SetColorizeImages(bool colorizeImages) {
     mColorizeImages = colorizeImages;
 }
 
-bool Graphics::GetColorizeImages()
-{
+bool Graphics::GetColorizeImages() {
     return mColorizeImages;
 }
 
-void Graphics::SetLinearBlend(bool linear)
-{
+void Graphics::SetLinearBlend(bool linear) {
     mLinearBlend = linear;
 }
 
-bool Graphics::GetLinearBlend()
-{
+bool Graphics::GetLinearBlend() {
     return mLinearBlend;
 }
 
-void Graphics::Translate(int theTransX, int theTransY)
-{
+void Graphics::Translate(int theTransX, int theTransY) {
     mTransX += theTransX;
     mTransY += theTransY;
 }
 
-void Graphics::SetScale(float theScaleX, float theScaleY, float theOrigX, float theOrigY)
-{
+void Graphics::SetScale(float theScaleX, float theScaleY, float theOrigX, float theOrigY) {
     mScaleX = theScaleX;
     mScaleY = theScaleY;
     mScaleOrigX = theOrigX + mTransX;

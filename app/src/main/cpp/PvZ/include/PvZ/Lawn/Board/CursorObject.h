@@ -26,8 +26,12 @@ public:
     int mReanimCursorID;       // 22
     // 大小23个整数
 
-    void Draw(Sexy::Graphics *g) { reinterpret_cast<void (*)(CursorObject *, Sexy::Graphics *)>(CursorObject_DrawAddr)(this, g); }
-    void Update() { reinterpret_cast<void (*)(CursorObject *)>(CursorObject_UpdateAddr)(this); }
+    void Draw(Sexy::Graphics *g) {
+        reinterpret_cast<void (*)(CursorObject *, Sexy::Graphics *)>(CursorObject_DrawAddr)(this, g);
+    }
+    void Update() {
+        reinterpret_cast<void (*)(CursorObject *)>(CursorObject_UpdateAddr)(this);
+    }
 
     bool BeginDraw(Sexy::Graphics *g);
     void EndDraw(Sexy::Graphics *g);
@@ -40,7 +44,9 @@ public:
     int playerIndex; // 15
     // 大小16个整数
 
-    void Update() { reinterpret_cast<void (*)(CursorPreview *)>(CursorPreview_UpdateAddr)(this); }
+    void Update() {
+        reinterpret_cast<void (*)(CursorPreview *)>(CursorPreview_UpdateAddr)(this);
+    }
 };
 
 inline bool (*old_CursorObject_BeginDraw)(CursorObject *cursorObject, Sexy::Graphics *graphics);

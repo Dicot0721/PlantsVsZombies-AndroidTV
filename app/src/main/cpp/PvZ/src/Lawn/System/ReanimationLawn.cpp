@@ -26,24 +26,19 @@ void ReanimatorCache::UpdateReanimationForVariation(Reanimation *theReanim, Draw
     //    Reanimation_SetAnimRate(theReanim, tmp);
 }
 
-void ReanimatorCache::GetPlantImageSize(SeedType theSeedType, int& theOffsetX, int& theOffsetY, int& theWidth, int& theHeight) {
+void ReanimatorCache::GetPlantImageSize(SeedType theSeedType, int &theOffsetX, int &theOffsetY, int &theWidth, int &theHeight) {
     theOffsetX = -20;
     theOffsetY = -20;
     theWidth = 120;
     theHeight = 120;
 
-    if (theSeedType == SeedType::SEED_TALLNUT)
-    {
+    if (theSeedType == SeedType::SEED_TALLNUT) {
         theOffsetY = -40;
         theHeight += 40;
-    }
-    else if (theSeedType == SeedType::SEED_MELONPULT || theSeedType == SeedType::SEED_WINTERMELON)
-    {
+    } else if (theSeedType == SeedType::SEED_MELONPULT || theSeedType == SeedType::SEED_WINTERMELON) {
         theOffsetX = -40;
         theWidth += 40;
-    }
-    else if (theSeedType == SeedType::SEED_COBCANNON)
-    {
+    } else if (theSeedType == SeedType::SEED_COBCANNON) {
         theWidth += 80;
     }
 }
@@ -77,8 +72,7 @@ void ReanimatorCache::DrawCachedPlant(Graphics *graphics, float thePosX, float t
     }
 }
 
-void ReanimatorCache::DrawCachedZombie(Graphics* g, float thePosX, float thePosY, ZombieType theZombieType)
-{
+void ReanimatorCache::DrawCachedZombie(Graphics *g, float thePosX, float thePosY, ZombieType theZombieType) {
     if (mZombieImages[(int)theZombieType] == nullptr)
         mZombieImages[(int)theZombieType] = MakeCachedZombieFrame(theZombieType);
     TodDrawImageScaledF(g, (Image *)mZombieImages[(int)theZombieType], thePosX, thePosY, g->mScaleX, g->mScaleY);

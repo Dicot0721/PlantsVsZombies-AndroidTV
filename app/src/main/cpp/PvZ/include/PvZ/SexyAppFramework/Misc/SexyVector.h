@@ -19,12 +19,24 @@ public:
         : x(theX)
         , y(theY) {}
 
-    float Dot(const SexyVector2 &v) const { return x * v.x + y * v.y; }
-    SexyVector2 operator+(const SexyVector2 &v) const { return SexyVector2(x + v.x, y + v.y); }
-    SexyVector2 operator-(const SexyVector2 &v) const { return SexyVector2(x - v.x, y - v.y); }
-    SexyVector2 operator-() const { return SexyVector2(-x, -y); }
-    SexyVector2 operator*(float t) const { return SexyVector2(t * x, t * y); }
-    SexyVector2 operator/(float t) const { return SexyVector2(x / t, y / t); }
+    float Dot(const SexyVector2 &v) const {
+        return x * v.x + y * v.y;
+    }
+    SexyVector2 operator+(const SexyVector2 &v) const {
+        return SexyVector2(x + v.x, y + v.y);
+    }
+    SexyVector2 operator-(const SexyVector2 &v) const {
+        return SexyVector2(x - v.x, y - v.y);
+    }
+    SexyVector2 operator-() const {
+        return SexyVector2(-x, -y);
+    }
+    SexyVector2 operator*(float t) const {
+        return SexyVector2(t * x, t * y);
+    }
+    SexyVector2 operator/(float t) const {
+        return SexyVector2(x / t, y / t);
+    }
     void operator+=(const SexyVector2 &v) {
         x += v.x;
         y += v.y;
@@ -42,11 +54,19 @@ public:
         y /= t;
     }
 
-    bool operator==(const SexyVector2 &v) { return x == v.x && y == v.y; }
-    bool operator!=(const SexyVector2 &v) { return x != v.x || y != v.y; }
+    bool operator==(const SexyVector2 &v) {
+        return x == v.x && y == v.y;
+    }
+    bool operator!=(const SexyVector2 &v) {
+        return x != v.x || y != v.y;
+    }
 
-    float Magnitude() const { return sqrtf(x * x + y * y); }
-    float MagnitudeSquared() const { return x * x + y * y; }
+    float Magnitude() const {
+        return sqrtf(x * x + y * y);
+    }
+    float MagnitudeSquared() const {
+        return x * x + y * y;
+    }
 };
 
 } // namespace Sexy

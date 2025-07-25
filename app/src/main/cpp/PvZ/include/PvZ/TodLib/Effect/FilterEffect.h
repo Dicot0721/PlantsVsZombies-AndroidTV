@@ -11,16 +11,9 @@
 namespace Sexy {
 class Image;
 class MemoryImage;
-}
+} // namespace Sexy
 
-enum FilterEffect {
-    FILTEREFFECT_NONE = -1,
-    FILTEREFFECT_WASHED_OUT = 0,
-    FILTEREFFECT_LESS_WASHED_OUT = 1,
-    FILTEREFFECT_WHITE = 2,
-    FILTEREFFECT_CUSTOM = 3,
-    NUM_FILTEREFFECT
-};
+enum FilterEffect { FILTEREFFECT_NONE = -1, FILTEREFFECT_WASHED_OUT = 0, FILTEREFFECT_LESS_WASHED_OUT = 1, FILTEREFFECT_WHITE = 2, FILTEREFFECT_CUSTOM = 3, NUM_FILTEREFFECT };
 
 Sexy::MemoryImage *FilterEffectCreateImage(Sexy::Image *theImage, FilterEffect theFilterEffect);
 

@@ -4,8 +4,8 @@
 #include "PvZ/Lawn/Board/ToolTipWidget.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/GamepadControls.h"
-#include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
+#include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
 
 class Board;
@@ -16,14 +16,7 @@ namespace Sexy {
 class GameButton;
 }
 
-enum SeedChooserTouchState {
-    ViewLawnButton,
-    SeedChooser,
-    StoreButton,
-    StartButton,
-    AlmanacButton,
-    SEEDCHOOSER_TOUCHSTATE_NONE
-};
+enum SeedChooserTouchState { ViewLawnButton, SeedChooser, StoreButton, StartButton, AlmanacButton, SEEDCHOOSER_TOUCHSTATE_NONE };
 
 class ChosenSeed {
 public:
@@ -96,22 +89,36 @@ public:
     int unkMems3[4];                      // 962 ~ 965
     // 大小966个整数
 
-    void CloseSeedChooser() { reinterpret_cast<void (*)(SeedChooserScreen *)>(SeedChooserScreen_CloseSeedChooserAddr)(this); }
+    void CloseSeedChooser() {
+        reinterpret_cast<void (*)(SeedChooserScreen *)>(SeedChooserScreen_CloseSeedChooserAddr)(this);
+    }
     SeedType FindSeedInBank(int theIndexInBank, int thePlayerIndex) {
         return reinterpret_cast<SeedType (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_FindSeedInBankAddr)(this, theIndexInBank, thePlayerIndex);
     }
     bool HasPacket(SeedType theSeedType, bool theIsZombieChooser) {
         return reinterpret_cast<bool (*)(SeedChooserScreen *, SeedType, bool)>(SeedChooserScreen_HasPacketAddr)(this, theSeedType, theIsZombieChooser);
     }
-    bool Has7Rows() { return reinterpret_cast<bool (*)(SeedChooserScreen *)>(SeedChooserScreen_Has7RowsAddr)(this); }
-    bool CancelLawnView() { return reinterpret_cast<bool (*)(SeedChooserScreen *)>(SeedChooserScreen_CancelLawnViewAddr)(this); }
-    void GetNextSeedInDir(int theNumSeed, int thePlayerIndex) { reinterpret_cast<void (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_GetNextSeedInDirAddr)(this, theNumSeed, thePlayerIndex); }
+    bool Has7Rows() {
+        return reinterpret_cast<bool (*)(SeedChooserScreen *)>(SeedChooserScreen_Has7RowsAddr)(this);
+    }
+    bool CancelLawnView() {
+        return reinterpret_cast<bool (*)(SeedChooserScreen *)>(SeedChooserScreen_CancelLawnViewAddr)(this);
+    }
+    void GetNextSeedInDir(int theNumSeed, int thePlayerIndex) {
+        reinterpret_cast<void (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_GetNextSeedInDirAddr)(this, theNumSeed, thePlayerIndex);
+    }
     void GetSeedPositionInChooser(SeedType theSeedType, int &x, int &y) {
         reinterpret_cast<void (*)(SeedChooserScreen *, SeedType, int &, int &)>(SeedChooserScreen_GetSeedPositionInChooserAddr)(this, theSeedType, x, y);
     }
-    void UpdateImitaterButton() { reinterpret_cast<void (*)(SeedChooserScreen *)>(SeedChooserScreen_UpdateImitaterButtonAddr)(this); }
-    SeedType SeedHitTest(int x, int y) { return reinterpret_cast<SeedType (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_SeedHitTestAddr)(this, x, y); }
-    void LandFlyingSeed(ChosenSeed &theChosenSeed) { reinterpret_cast<void (*)(SeedChooserScreen *, ChosenSeed &)>(SeedChooserScreen_LandFlyingSeedAddr)(this, theChosenSeed); }
+    void UpdateImitaterButton() {
+        reinterpret_cast<void (*)(SeedChooserScreen *)>(SeedChooserScreen_UpdateImitaterButtonAddr)(this);
+    }
+    SeedType SeedHitTest(int x, int y) {
+        return reinterpret_cast<SeedType (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_SeedHitTestAddr)(this, x, y);
+    }
+    void LandFlyingSeed(ChosenSeed &theChosenSeed) {
+        reinterpret_cast<void (*)(SeedChooserScreen *, ChosenSeed &)>(SeedChooserScreen_LandFlyingSeedAddr)(this, theChosenSeed);
+    }
 
     SeedChooserScreen(bool theIsZombieChooser);
     void EnableStartButton(int theIsEnabled);
@@ -125,7 +132,8 @@ public:
     bool SeedNotAllowedToPick(SeedType theSeedType);
     void ClickedSeedInBank(ChosenSeed *theChosenSeed, unsigned int thePlayerIndex);
     void GameButtonDown(ButtonCode theButton, unsigned int thePlayerIndex);
-    void DrawPacket(Sexy::Graphics *g, int x, int y, SeedType theSeedType, SeedType theImitaterType, float thePercentDark, int theGrayness, Sexy::Color *theColor, bool theDrawCost, bool theUseCurrentCost);
+    void
+    DrawPacket(Sexy::Graphics *g, int x, int y, SeedType theSeedType, SeedType theImitaterType, float thePercentDark, int theGrayness, Sexy::Color *theColor, bool theDrawCost, bool theUseCurrentCost);
     void ButtonDepress(int theId);
     void GetSeedPositionInBank(int theIndex, int *x, int *y, int thePlayerIndex);
     void ShowToolTip(unsigned int thePlayerIndex);

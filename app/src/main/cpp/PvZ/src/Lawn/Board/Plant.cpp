@@ -625,22 +625,22 @@ GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
 }
 
 void Plant::Die() {
-//    //某植物死亡触发辣椒效果（以双发为例）
-//    if (mSeedType == SeedType::SEED_REPEATER) {
-//        // 方法一：直接调用辣椒DoSpecial相关函数
-//        mApp->PlayFoley(FoleyType::FOLEY_JALAPENO_IGNITE); // 播放音效
-//        mApp->PlayFoley(FoleyType::FOLEY_JUICY);
-//
-//        mBoard->DoFwoosh(mRow); // 生成火焰动画
-//        mBoard->ShakeBoard(3, -4); // 屏幕震动
-//
-//        BurnRow(mRow); // 点燃本行的僵尸，移除梯子、冰球
-//        mBoard->mIceTimer[mRow] = 20; // 移除冰道
-///*******************************************************************************************************************************************/
-//        // 方法二：召唤辣椒并瞬爆
-//        Plant *aPlant = mBoard->AddPlant(mPlantCol, mRow, SeedType::SEED_JALAPENO, SeedType::SEED_NONE, 0, true); // 生成辣椒
-//        aPlant->mDoSpecialCountdown = 1; // 辣椒爆炸倒计时
-//    }
+    //    //某植物死亡触发辣椒效果（以双发为例）
+    //    if (mSeedType == SeedType::SEED_REPEATER) {
+    //        // 方法一：直接调用辣椒DoSpecial相关函数
+    //        mApp->PlayFoley(FoleyType::FOLEY_JALAPENO_IGNITE); // 播放音效
+    //        mApp->PlayFoley(FoleyType::FOLEY_JUICY);
+    //
+    //        mBoard->DoFwoosh(mRow); // 生成火焰动画
+    //        mBoard->ShakeBoard(3, -4); // 屏幕震动
+    //
+    //        BurnRow(mRow); // 点燃本行的僵尸，移除梯子、冰球
+    //        mBoard->mIceTimer[mRow] = 20; // 移除冰道
+    ///*******************************************************************************************************************************************/
+    //        // 方法二：召唤辣椒并瞬爆
+    //        Plant *aPlant = mBoard->AddPlant(mPlantCol, mRow, SeedType::SEED_JALAPENO, SeedType::SEED_NONE, 0, true); // 生成辣椒
+    //        aPlant->mDoSpecialCountdown = 1; // 辣椒爆炸倒计时
+    //    }
 
     old_Plant_Die(this);
 }
@@ -934,32 +934,26 @@ bool Plant::DrawMagnetItemsOnTop() {
     return false;
 }
 
-void Plant::BurnRow(int theRow)
-{
+void Plant::BurnRow(int theRow) {
     int aDamageRangeFlags = GetDamageRangeFlags(PlantWeapon::WEAPON_PRIMARY);
 
-    Zombie* aZombie = nullptr;
-    while (mBoard->IterateZombies(aZombie))
-    {
-        if ((aZombie->mZombieType == ZombieType::ZOMBIE_BOSS || aZombie->mRow == theRow) && aZombie->EffectedByDamage(aDamageRangeFlags))
-        {
+    Zombie *aZombie = nullptr;
+    while (mBoard->IterateZombies(aZombie)) {
+        if ((aZombie->mZombieType == ZombieType::ZOMBIE_BOSS || aZombie->mRow == theRow) && aZombie->EffectedByDamage(aDamageRangeFlags)) {
             aZombie->RemoveColdEffects();
             aZombie->ApplyBurn();
         }
     }
 
-    GridItem* aGridItem = nullptr;
-    while (mBoard->IterateGridItems(aGridItem))
-    {
-        if (aGridItem->mGridY == theRow && aGridItem->mGridItemType == GridItemType::GRIDITEM_LADDER)
-        {
+    GridItem *aGridItem = nullptr;
+    while (mBoard->IterateGridItems(aGridItem)) {
+        if (aGridItem->mGridY == theRow && aGridItem->mGridItemType == GridItemType::GRIDITEM_LADDER) {
             aGridItem->GridItemDie();
         }
     }
 
-    Zombie* aBossZombie = mBoard->GetBossZombie();
-    if (aBossZombie && aBossZombie->mFireballRow == theRow)
-    {
+    Zombie *aBossZombie = mBoard->GetBossZombie();
+    if (aBossZombie && aBossZombie->mFireballRow == theRow) {
         // 注：原版中将 Zombie::BossDestroyIceballInRow(int) 函数改为了 Zombie::BossDestroyIceball()，冰球是否位于目标行的判断则移动至此处进行
         aBossZombie->BossDestroyIceballInRow(theRow);
     }

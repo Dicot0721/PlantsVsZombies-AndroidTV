@@ -14,7 +14,9 @@ public:
         reinterpret_cast<void (*)(WaitForSecondPlayerDialog *, ButtonCode, unsigned int)>(WaitForSecondPlayerDialog_GameButtonDownAddr)(this, theButton, thePlayerIndex);
     }
 
-    WaitForSecondPlayerDialog(int* a2) { __Constructor(a2); }
+    WaitForSecondPlayerDialog(int *a2) {
+        __Constructor(a2);
+    }
 
 protected:
     friend void InitHookFunction();

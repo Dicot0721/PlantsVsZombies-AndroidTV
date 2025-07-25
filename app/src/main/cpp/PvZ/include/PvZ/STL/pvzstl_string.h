@@ -93,9 +93,13 @@ public:
         __data_ = __rep::create(str.c_str() + pos, len, len)->data;
     }
 
-    ~basic_string() { __reset(); }
+    ~basic_string() {
+        __reset();
+    }
 
-    /* implicit */ operator __self_view() const noexcept { return __self_view{c_str(), size()}; }
+    /* implicit */ operator __self_view() const noexcept {
+        return __self_view{c_str(), size()};
+    }
 
     basic_string &operator=(const basic_string &other);
     basic_string &operator=(basic_string &&other) noexcept;
@@ -112,15 +116,23 @@ public:
         return *new (this) basic_string{std::forward<Args>(args)...};
     }
 
-    [[nodiscard, gnu::always_inline]] size_type size() const noexcept { return __get_rep()->size; }
+    [[nodiscard, gnu::always_inline]] size_type size() const noexcept {
+        return __get_rep()->size;
+    }
 
-    [[nodiscard, gnu::always_inline]] size_type max_size() const noexcept { return __rep::max_size; }
+    [[nodiscard, gnu::always_inline]] size_type max_size() const noexcept {
+        return __rep::max_size;
+    }
 
-    [[nodiscard, gnu::always_inline]] size_type capacity() const noexcept { return __get_rep()->capacity; }
+    [[nodiscard, gnu::always_inline]] size_type capacity() const noexcept {
+        return __get_rep()->capacity;
+    }
 
     void clear() noexcept;
 
-    [[nodiscard, gnu::always_inline]] bool empty() const noexcept { return size() == 0; }
+    [[nodiscard, gnu::always_inline]] bool empty() const noexcept {
+        return size() == 0;
+    }
 
     [[nodiscard, gnu::always_inline]] const value_type &operator[](size_type pos) const noexcept {
         assert((pos <= size()) && "string index out of bounds");
@@ -129,11 +141,17 @@ public:
 
     [[nodiscard]] const value_type &at(size_type n) const;
 
-    basic_string &operator+=(const basic_string &str) { return append(str); }
+    basic_string &operator+=(const basic_string &str) {
+        return append(str);
+    }
 
-    basic_string &operator+=(const value_type *s) { return append(s); }
+    basic_string &operator+=(const value_type *s) {
+        return append(s);
+    }
 
-    basic_string &append(const basic_string &str) { return append(str.c_str(), str.size()); }
+    basic_string &append(const basic_string &str) {
+        return append(str.c_str(), str.size());
+    }
 
     basic_string &append(const value_type *s, size_type n);
 
@@ -152,42 +170,76 @@ public:
         return *(c_str() + size() - 1);
     }
 
-    [[nodiscard]] basic_string substr(size_type pos = 0, size_type n = npos) const { return basic_string{*this, pos, n}; }
+    [[nodiscard]] basic_string substr(size_type pos = 0, size_type n = npos) const {
+        return basic_string{*this, pos, n};
+    }
 
-    [[nodiscard, gnu::always_inline]] const value_type *c_str() const noexcept { return __data_; }
+    [[nodiscard, gnu::always_inline]] const value_type *c_str() const noexcept {
+        return __data_;
+    }
 
-    [[nodiscard]] size_type find(const basic_string &str, size_type pos = 0) const noexcept { return find(__self_view{str}, pos); }
+    [[nodiscard]] size_type find(const basic_string &str, size_type pos = 0) const noexcept {
+        return find(__self_view{str}, pos);
+    }
 
     template <__convertible_to_string_view<value_type> Tp>
     [[nodiscard]] size_type find(const Tp &t, size_type pos = 0) const noexcept;
 
-    [[nodiscard]] size_type find(const value_type *s, size_type pos, size_type n) const noexcept { return find(__self_view{s, n}, pos); }
+    [[nodiscard]] size_type find(const value_type *s, size_type pos, size_type n) const noexcept {
+        return find(__self_view{s, n}, pos);
+    }
 
-    [[nodiscard]] size_type find(const value_type *s, size_type pos = 0) const noexcept { return find(__self_view{s}, pos); }
+    [[nodiscard]] size_type find(const value_type *s, size_type pos = 0) const noexcept {
+        return find(__self_view{s}, pos);
+    }
 
-    [[nodiscard]] size_type find(value_type c, size_type pos = 0) const noexcept { return find(__self_view{&c, 1}, pos); }
+    [[nodiscard]] size_type find(value_type c, size_type pos = 0) const noexcept {
+        return find(__self_view{&c, 1}, pos);
+    }
 
-    [[nodiscard]] bool starts_with(__self_view sv) const noexcept { return __self_view{c_str(), size()}.starts_with(sv); }
+    [[nodiscard]] bool starts_with(__self_view sv) const noexcept {
+        return __self_view{c_str(), size()}.starts_with(sv);
+    }
 
-    [[nodiscard]] bool starts_with(value_type c) const noexcept { return !empty() && (front() == c); }
+    [[nodiscard]] bool starts_with(value_type c) const noexcept {
+        return !empty() && (front() == c);
+    }
 
-    [[nodiscard]] bool starts_with(const value_type *s) const noexcept { return starts_with(__self_view{s}); }
+    [[nodiscard]] bool starts_with(const value_type *s) const noexcept {
+        return starts_with(__self_view{s});
+    }
 
-    [[nodiscard]] bool ends_with(__self_view sv) const noexcept { return __self_view{c_str(), size()}.ends_with(sv); }
+    [[nodiscard]] bool ends_with(__self_view sv) const noexcept {
+        return __self_view{c_str(), size()}.ends_with(sv);
+    }
 
-    [[nodiscard]] bool ends_with(value_type c) const noexcept { return !empty() && (back() == c); }
+    [[nodiscard]] bool ends_with(value_type c) const noexcept {
+        return !empty() && (back() == c);
+    }
 
-    [[nodiscard]] bool ends_with(const value_type *s) const noexcept { return ends_with(__self_view{s}); }
+    [[nodiscard]] bool ends_with(const value_type *s) const noexcept {
+        return ends_with(__self_view{s});
+    }
 
-    [[nodiscard]] bool contains(__self_view sv) const noexcept { return __self_view{c_str(), size()}.contains(sv); }
+    [[nodiscard]] bool contains(__self_view sv) const noexcept {
+        return __self_view{c_str(), size()}.contains(sv);
+    }
 
-    [[nodiscard]] bool contains(value_type c) const noexcept { return __self_view{c_str(), size()}.contains(c); }
+    [[nodiscard]] bool contains(value_type c) const noexcept {
+        return __self_view{c_str(), size()}.contains(c);
+    }
 
-    [[nodiscard]] bool contains(const value_type *s) const { return __self_view{c_str(), size()}.contains(s); }
+    [[nodiscard]] bool contains(const value_type *s) const {
+        return __self_view{c_str(), size()}.contains(s);
+    }
 
-    [[nodiscard, gnu::always_inline]] std::int32_t __ref_count() const noexcept { return __get_rep()->ref_count; }
+    [[nodiscard, gnu::always_inline]] std::int32_t __ref_count() const noexcept {
+        return __get_rep()->ref_count;
+    }
 
-    [[noreturn, gnu::always_inline]] void __throw_out_of_range() const { throw std::out_of_range{"basic_string"}; }
+    [[noreturn, gnu::always_inline]] void __throw_out_of_range() const {
+        throw std::out_of_range{"basic_string"};
+    }
 
 protected:
     friend basic_string operator+ <>(const basic_string &, const basic_string &);
@@ -232,7 +284,9 @@ protected:
         value_type data[];             // 作为字符存储的底层数组 (柔性数组成员)
     };
 
-    [[nodiscard, gnu::always_inline]] __rep *__get_rep() const noexcept { return reinterpret_cast<__rep *>(__data_) - 1; }
+    [[nodiscard, gnu::always_inline]] __rep *__get_rep() const noexcept {
+        return reinterpret_cast<__rep *>(__data_) - 1;
+    }
 
     void __reset() noexcept;
 

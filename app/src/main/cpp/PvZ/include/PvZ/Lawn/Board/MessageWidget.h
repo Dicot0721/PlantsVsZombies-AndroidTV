@@ -14,36 +14,45 @@ constexpr int MAX_REANIM_LINES = 5;
 
 class LawnApp;
 class Reanimation;
-namespace Sexy
-{
+namespace Sexy {
 class Font;
 class Graphics;
-}
+} // namespace Sexy
 
 class MessageWidget {
 public:
-    int *vTable;                                     // 0
-    int unk[3];                                      // 1 ~ 3
-    LawnApp *mApp;                                   // 4
-    char mLabel[128];                                // 5 ~ 36
-    int mDisplayTime;                                // 37
-    int mDuration;                                   // 38
-    MessageStyle mMessageStyle;                      // 39
-    Reanimation *mTextReanimID[MAX_MESSAGE_LENGTH];  // 40 ~ 167
-    ReanimationType mReanimType;                     // 168
-    int mSlideOffTime;                               // 169
-    float unkFloatWithInitValue1;                    // 170
-    char mLabelNext[MAX_MESSAGE_LENGTH];             // 171 ~ 202
-    MessageStyle mMessageStyleNext;                  // 203
+    int *vTable;                                    // 0
+    int unk[3];                                     // 1 ~ 3
+    LawnApp *mApp;                                  // 4
+    char mLabel[128];                               // 5 ~ 36
+    int mDisplayTime;                               // 37
+    int mDuration;                                  // 38
+    MessageStyle mMessageStyle;                     // 39
+    Reanimation *mTextReanimID[MAX_MESSAGE_LENGTH]; // 40 ~ 167
+    ReanimationType mReanimType;                    // 168
+    int mSlideOffTime;                              // 169
+    float unkFloatWithInitValue1;                   // 170
+    char mLabelNext[MAX_MESSAGE_LENGTH];            // 171 ~ 202
+    MessageStyle mMessageStyleNext;                 // 203
     // 大小204个整数
 
-    MessageWidget(LawnApp *theApp) { __Constructor(theApp); }
-    ~MessageWidget() { __Destructor(); }
-    Sexy::Font *GetFont() { return reinterpret_cast<Sexy::Font *(*)(MessageWidget *)>(MessageWidget_GetFontAddr)(this); }
+    MessageWidget(LawnApp *theApp) {
+        __Constructor(theApp);
+    }
+    ~MessageWidget() {
+        __Destructor();
+    }
+    Sexy::Font *GetFont() {
+        return reinterpret_cast<Sexy::Font *(*)(MessageWidget *)>(MessageWidget_GetFontAddr)(this);
+    }
 
 protected:
-    void __Constructor(LawnApp *theApp) { reinterpret_cast<void (*)(MessageWidget *, LawnApp *)>(MessageWidget_MessageWidgetAddr)(this, theApp); }
-    void __Destructor() { reinterpret_cast<void (*)(MessageWidget *)>(MessageWidget_DeleteAddr)(this); }
+    void __Constructor(LawnApp *theApp) {
+        reinterpret_cast<void (*)(MessageWidget *, LawnApp *)>(MessageWidget_MessageWidgetAddr)(this, theApp);
+    }
+    void __Destructor() {
+        reinterpret_cast<void (*)(MessageWidget *)>(MessageWidget_DeleteAddr)(this);
+    }
 };
 
 class CustomMessageWidget : public MessageWidget {

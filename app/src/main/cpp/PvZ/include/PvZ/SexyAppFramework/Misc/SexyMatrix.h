@@ -27,11 +27,19 @@ public:
 
 class SexyTransform2D : public SexyMatrix3 {
 public:
-    SexyTransform2D() { reinterpret_cast<void (*)(SexyTransform2D *)>(Sexy_SexyTransform2D_SexyTransform2DAddr)(this); }
+    SexyTransform2D() {
+        reinterpret_cast<void (*)(SexyTransform2D *)>(Sexy_SexyTransform2D_SexyTransform2DAddr)(this);
+    }
 
-    void Scale(float sx, float sy) { reinterpret_cast<void (*)(SexyTransform2D *, float, float)>(Sexy_SexyTransform2D_ScaleAddr)(this, sx, sy); }
-    void Translate(float tx, float ty) { reinterpret_cast<void (*)(SexyTransform2D *, float, float)>(Sexy_SexyTransform2D_TranslateAddr)(this, tx, ty); }
-    void RotateRad(float rot) { reinterpret_cast<void (*)(SexyTransform2D *, float)>(Sexy_SexyTransform2D_RotateRadAddr)(this, rot); }
+    void Scale(float sx, float sy) {
+        reinterpret_cast<void (*)(SexyTransform2D *, float, float)>(Sexy_SexyTransform2D_ScaleAddr)(this, sx, sy);
+    }
+    void Translate(float tx, float ty) {
+        reinterpret_cast<void (*)(SexyTransform2D *, float, float)>(Sexy_SexyTransform2D_TranslateAddr)(this, tx, ty);
+    }
+    void RotateRad(float rot) {
+        reinterpret_cast<void (*)(SexyTransform2D *, float)>(Sexy_SexyTransform2D_RotateRadAddr)(this, rot);
+    }
 };
 
 } // namespace Sexy

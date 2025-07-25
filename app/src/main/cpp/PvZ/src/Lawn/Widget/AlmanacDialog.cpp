@@ -4,11 +4,11 @@
 #include "PvZ/Lawn/Board/SeedPacket.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/System/PoolEffect.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
 #include "PvZ/Symbols.h"
-#include "PvZ/Lawn/System/PoolEffect.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
 #include <cstddef>
@@ -244,7 +244,8 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
 
 
     if (mPlant != nullptr) {
-        g->PushState();;
+        g->PushState();
+        ;
         g->mTransX = g->mTransX + mPlant->mX;
         g->mTransY = g->mTransY + mPlant->mY;
         mPlant->Draw(g);
@@ -261,7 +262,8 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
         TodDrawStringWrapped(g, mWaitTimeString, mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_RIGHT, false);
     }
 
-    g->PushState();;
+    g->PushState();
+    ;
     g->ClipRect(mDescriptionRect.mX, mDescriptionRect.mY - 14, mDescriptionRect.mWidth, mDescriptionRect.mHeight + 8);
     float v22 = mScrollTextView->mValue * 0.01 * mDescriptionRect.mY;
     float v23 = g->mTransY + 2.0 - v22;
@@ -345,7 +347,8 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     }
 
     if (mPlant != nullptr) {
-        g->PushState();;
+        g->PushState();
+        ;
         g->mTransX = g->mTransX + mPlant->mX;
         g->mTransY = g->mTransY + mPlant->mY;
         mPlant->Draw(g);
@@ -362,7 +365,8 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
         TodDrawStringWrapped(g, mWaitTimeString, mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_RIGHT, false);
     }
 
-    g->PushState();;
+    g->PushState();
+    ;
     g->ClipRect(mDescriptionRect.mX, mDescriptionRect.mY - 14, mDescriptionRect.mWidth, mDescriptionRect.mHeight + 8);
     float v22 = mScrollTextView->mValue * 0.01 * mDescriptionRect.mY;
     float v23 = g->mTransY + 2.0 - v22;

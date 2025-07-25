@@ -1,9 +1,9 @@
 #ifndef PVZ_SEXY_GRAPHICS_H
 #define PVZ_SEXY_GRAPHICS_H
 
-#include "../Misc/SexyMatrix.h"
 #include "../Misc/Common.h"
 #include "../Misc/Rect.h"
+#include "../Misc/SexyMatrix.h"
 #include "../Misc/TriVertex.h"
 #include "PvZ/Symbols.h"
 
@@ -18,13 +18,15 @@ class SexyVertex2D;
 
 class GLGraphics {
 public:
-    int mHorizonWrapMode;             // 5
-    int mVertWrapMode;                // 6
+    int mHorizonWrapMode; // 5
+    int mVertWrapMode;    // 6
 };
 
 class GraphicsState {
 public:
-    void CopyStateFrom(const GraphicsState* theState) { reinterpret_cast<void (*)(GraphicsState *, const GraphicsState*)>(Sexy_GraphicsState_CopyStateFromAddr)(this, theState); }
+    void CopyStateFrom(const GraphicsState *theState) {
+        reinterpret_cast<void (*)(GraphicsState *, const GraphicsState *)>(Sexy_GraphicsState_CopyStateFromAddr)(this, theState);
+    }
 };
 
 class Graphics : public GraphicsState {
@@ -61,27 +63,57 @@ public:
     int unk3[6];                  // 30 ~ 35
     // 大小36个整数
 
-    Graphics(const Graphics& theGraphics) { CreateGraphics(theGraphics); }
-    Graphics(Image* theDestImage = NULL) { CreateImage(theDestImage); }
-    void CreateGraphics(const Graphics& theGraphics) { reinterpret_cast<void (*)(Graphics *, const Graphics&)>(Sexy_Graphics_GraphicsAddr)(this, theGraphics); }
-    void CreateImage(Image* theDestImage = NULL) { reinterpret_cast<void (*)(Graphics *, Image*)>(Sexy_Graphics_Graphics2Addr)(this, theDestImage); }
-    ~Graphics() { reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_DeleteAddr)(this); }
-    void PushState() { reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_PushStateAddr)(this); }
-    void PopState() { reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_PopStateAddr)(this); }
-    void ClipRect(int theX, int theY, int theWidth, int theHeight) { reinterpret_cast<void (*)(Graphics *, int, int, int, int)>(Sexy_Graphics_ClipRectAddr)(this, theX, theY, theWidth, theHeight); }
-    void SetClipRect(int theX, int theY, int theWidth, int theHeight) { reinterpret_cast<void (*)(Graphics *, int, int, int, int)>(Sexy_Graphics_SetClipRectAddr)(this, theX, theY, theWidth, theHeight); }
-    void ClearClipRect() { reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_ClearClipRectAddr)(this); }
-    void FillRect(const Rect &theRect) { reinterpret_cast<void (*)(Graphics *, const Rect &)>(Sexy_Graphics_FillRectAddr)(this, theRect); }
-    void DrawRect(const Rect &theRect) { reinterpret_cast<void (*)(Graphics *, const Rect &)>(Sexy_Graphics_DrawRectAddr)(this, theRect); }
-    void ClearRect(int theX, int theY, int theWidth, int theHeight) { reinterpret_cast<void (*)(Graphics *, int, int, int, int)>(Sexy_Graphics_ClearRectAddr)(this, theX, theY, theWidth, theHeight); }
+    Graphics(const Graphics &theGraphics) {
+        CreateGraphics(theGraphics);
+    }
+    Graphics(Image *theDestImage = NULL) {
+        CreateImage(theDestImage);
+    }
+    void CreateGraphics(const Graphics &theGraphics) {
+        reinterpret_cast<void (*)(Graphics *, const Graphics &)>(Sexy_Graphics_GraphicsAddr)(this, theGraphics);
+    }
+    void CreateImage(Image *theDestImage = NULL) {
+        reinterpret_cast<void (*)(Graphics *, Image *)>(Sexy_Graphics_Graphics2Addr)(this, theDestImage);
+    }
+    ~Graphics() {
+        reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_DeleteAddr)(this);
+    }
+    void PushState() {
+        reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_PushStateAddr)(this);
+    }
+    void PopState() {
+        reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_PopStateAddr)(this);
+    }
+    void ClipRect(int theX, int theY, int theWidth, int theHeight) {
+        reinterpret_cast<void (*)(Graphics *, int, int, int, int)>(Sexy_Graphics_ClipRectAddr)(this, theX, theY, theWidth, theHeight);
+    }
+    void SetClipRect(int theX, int theY, int theWidth, int theHeight) {
+        reinterpret_cast<void (*)(Graphics *, int, int, int, int)>(Sexy_Graphics_SetClipRectAddr)(this, theX, theY, theWidth, theHeight);
+    }
+    void ClearClipRect() {
+        reinterpret_cast<void (*)(Graphics *)>(Sexy_Graphics_ClearClipRectAddr)(this);
+    }
+    void FillRect(const Rect &theRect) {
+        reinterpret_cast<void (*)(Graphics *, const Rect &)>(Sexy_Graphics_FillRectAddr)(this, theRect);
+    }
+    void DrawRect(const Rect &theRect) {
+        reinterpret_cast<void (*)(Graphics *, const Rect &)>(Sexy_Graphics_DrawRectAddr)(this, theRect);
+    }
+    void ClearRect(int theX, int theY, int theWidth, int theHeight) {
+        reinterpret_cast<void (*)(Graphics *, int, int, int, int)>(Sexy_Graphics_ClearRectAddr)(this, theX, theY, theWidth, theHeight);
+    }
     void DrawString(const pvzstl::string &theString, int theX, int theY) { // SexyString类型尚不明确
         reinterpret_cast<void (*)(Graphics *, const pvzstl::string &, int, int)>(Sexy_Graphics_DrawStringAddr)(this, theString, theX, theY);
     }
-    void DrawImage(Image *theImage, int theX, int theY) { reinterpret_cast<void (*)(Graphics *, Image *, int, int)>(Sexy_Graphics_DrawImageAddr)(this, theImage, theX, theY); }
+    void DrawImage(Image *theImage, int theX, int theY) {
+        reinterpret_cast<void (*)(Graphics *, Image *, int, int)>(Sexy_Graphics_DrawImageAddr)(this, theImage, theX, theY);
+    }
     void DrawImage(Image *theImage, int theX, int theY, const Rect &theSrcRect) {
         reinterpret_cast<void (*)(Graphics *, Image *, int, int, const Rect &)>(Sexy_Graphics_DrawImage2Addr)(this, theImage, theX, theY, theSrcRect);
     }
-    void DrawImageF(Image *theImage, float theX, float theY) { reinterpret_cast<void (*)(Graphics *, Image *, float, float)>(Sexy_Graphics_DrawImageFAddr)(this, theImage, theX, theY); }
+    void DrawImageF(Image *theImage, float theX, float theY) {
+        reinterpret_cast<void (*)(Graphics *, Image *, float, float)>(Sexy_Graphics_DrawImageFAddr)(this, theImage, theX, theY);
+    }
     void DrawImageF(Image *theImage, float theX, float theY, const Rect &theSrcRect) {
         reinterpret_cast<void (*)(Graphics *, Image *, float, float)>(Sexy_Graphics_DrawImageF2Addr)(this, theImage, theX, theY);
     }
@@ -103,7 +135,9 @@ public:
     void DrawImageMatrix(Image *theImage, const SexyMatrix3 &theMatrix, const Rect &theSrcRect, float x, float y, bool theBool) {
         reinterpret_cast<void (*)(Graphics *, Image *, const SexyMatrix3 &, const Rect &, float, float, bool)>(Sexy_Graphics_DrawImageMatrixAddr)(this, theImage, theMatrix, theSrcRect, x, y, theBool);
     }
-    void SetWrapMode(int theHorizonWrapMode, int theVertWrapMode) { reinterpret_cast<void (*)(Graphics *, int, int)>(Sexy_GLGraphics_SetWrapModeAddr)(this, theHorizonWrapMode, theVertWrapMode); }
+    void SetWrapMode(int theHorizonWrapMode, int theVertWrapMode) {
+        reinterpret_cast<void (*)(Graphics *, int, int)>(Sexy_GLGraphics_SetWrapModeAddr)(this, theHorizonWrapMode, theVertWrapMode);
+    }
 
 
     void SetFont(Font *theFont);
@@ -121,7 +155,6 @@ public:
     void PushTransform(int *theTransform, bool concatenate);
     void PopTransform();
     void DrawTrianglesTex2(Image *theTexture, TriVertex theVertices[][3], int theNumTriangles);
-
 };
 
 } // namespace Sexy

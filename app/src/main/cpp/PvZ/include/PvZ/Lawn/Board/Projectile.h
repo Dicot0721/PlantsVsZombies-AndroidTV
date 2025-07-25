@@ -51,10 +51,18 @@ public:
     int unkInt;                     // 40
     // 大小41个整数
 
-    void Die() { reinterpret_cast<void (*)(Projectile *)>(Projectile_DieAddr)(this); }
-    GridItem *FindCollisionTargetGridItem() { return reinterpret_cast<GridItem *(*)(Projectile *)>(Projectile_FindCollisionTargetGridItemAddr)(this); }
-    void DoImpactGridItem(GridItem *theGridItem) { return reinterpret_cast<void (*)(Projectile *, GridItem *)>(Projectile_DoImpactGridItemAddr)(this, theGridItem); }
-    void DoSplashDamage(Zombie *theZombie, GridItem *theGridItem) { reinterpret_cast<void (*)(Projectile *, Zombie *, GridItem *)>(Projectile_DoSplashDamageAddr)(this, theZombie, theGridItem); }
+    void Die() {
+        reinterpret_cast<void (*)(Projectile *)>(Projectile_DieAddr)(this);
+    }
+    GridItem *FindCollisionTargetGridItem() {
+        return reinterpret_cast<GridItem *(*)(Projectile *)>(Projectile_FindCollisionTargetGridItemAddr)(this);
+    }
+    void DoImpactGridItem(GridItem *theGridItem) {
+        return reinterpret_cast<void (*)(Projectile *, GridItem *)>(Projectile_DoImpactGridItemAddr)(this, theGridItem);
+    }
+    void DoSplashDamage(Zombie *theZombie, GridItem *theGridItem) {
+        reinterpret_cast<void (*)(Projectile *, Zombie *, GridItem *)>(Projectile_DoSplashDamageAddr)(this, theZombie, theGridItem);
+    }
 
     int ProjectileInitialize(int theX, int theY, int theRenderOrder, int theRow, ProjectileType theProjectileType);
     void ConvertToFireball(int theGridX);

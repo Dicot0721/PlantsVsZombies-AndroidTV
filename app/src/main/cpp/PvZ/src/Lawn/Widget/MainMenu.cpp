@@ -4,16 +4,16 @@
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Zombie.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/MailScreen.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Graphics/MemoryImage.h"
-#include "PvZ/Symbols.h"
-#include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/SexyAppFramework/Widget/GameButton.h"
-#include "PvZ/TodLib/Effect/Attachment.h"
-#include "PvZ/TodLib/Common/TodStringFile.h"
+#include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodFoley.h"
-#include "PvZ/Lawn/Widget/MailScreen.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
+#include "PvZ/TodLib/Effect/Attachment.h"
+#include "PvZ/TodLib/Effect/Reanimator.h"
 
 #include <cstddef>
 
@@ -156,7 +156,7 @@ void MainMenu::Update() {
             pvzstl::string str1 = TodStringTranslate("[CLOSE]");
             gMainMenuAchievementsBack = MakeButton(ACHIEVEMENTS_BACK_BUTTON, &mButtonListener, this, str1);
             gMainMenuAchievementsBack->Resize(1000, 564 + 720, 170, 50);
-            AddWidget((Widget*)gMainMenuAchievementsBack);
+            AddWidget((Widget *)gMainMenuAchievementsBack);
         }
     }
 
@@ -173,11 +173,11 @@ void MainMenu::Update() {
         }
         if (gMainMenuAchievementCounter == 0) {
             gAchievementState = NOT_SHOWING;
-           RemoveWidget(gMainMenuAchievementsWidget);
-           reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->~MaskHelpWidget();
+            RemoveWidget(gMainMenuAchievementsWidget);
+            reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->~MaskHelpWidget();
             gMainMenuAchievementsWidget = nullptr;
             if (gMainMenuAchievementsBack != nullptr) {
-                RemoveWidget((Widget*)gMainMenuAchievementsBack);
+                RemoveWidget((Widget *)gMainMenuAchievementsBack);
                 gMainMenuAchievementsBack->~GameButton();
                 gMainMenuAchievementsBack = nullptr;
             }
@@ -515,7 +515,7 @@ void MainMenu::RemovedFromManager(int *a2) {
         RemoveWidget(gMainMenuAchievementsWidget);
     }
     if (gMainMenuAchievementsBack != nullptr) {
-        RemoveWidget((Widget*)gMainMenuAchievementsBack);
+        RemoveWidget((Widget *)gMainMenuAchievementsBack);
     }
     old_MainMenu_RemovedFromManager(this, a2);
 }
@@ -528,7 +528,8 @@ void MainMenu::__Destructor2() {
     }
 
     if (gMainMenuAchievementsBack != nullptr) {
-        gMainMenuAchievementsBack->~GameButton();;
+        gMainMenuAchievementsBack->~GameButton();
+        ;
         gMainMenuAchievementsBack = nullptr;
     }
 }
@@ -798,7 +799,8 @@ void ZombatarWidget_ButtonDepress(ZombatarWidget *zombatarWidget, int id) {
 
     if (id == 1001) {
         LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-        if (lawnApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[ZOMBATAR_FINISHED_WARNING_HEADER]", "[ZOMBATAR_FINISHED_WARNING_TEXT]", "[ZOMBATAR_FINISHED_BUTTON_TEXT]", "[ZOMBATAR_BACK_BUTTON_TEXT]", 1)
+        if (lawnApp->LawnMessageBox(
+                Dialogs::DIALOG_MESSAGE, "[ZOMBATAR_FINISHED_WARNING_HEADER]", "[ZOMBATAR_FINISHED_WARNING_TEXT]", "[ZOMBATAR_FINISHED_BUTTON_TEXT]", "[ZOMBATAR_BACK_BUTTON_TEXT]", 1)
             == 1001)
             return;
 
@@ -806,7 +808,7 @@ void ZombatarWidget_ButtonDepress(ZombatarWidget *zombatarWidget, int id) {
             reinterpret_cast<MemoryImage *>(addonImages.zombatar_portrait)->~MemoryImage();
         }
 
-        MemoryImage* aImage = new MemoryImage();
+        MemoryImage *aImage = new MemoryImage();
         aImage->Create(addonZombatarImages.zombatar_background_blank->mWidth, addonZombatarImages.zombatar_background_blank->mHeight);
         aImage->SetImageMode(true, true);
         aImage->mIsVolatile = true;
@@ -814,7 +816,7 @@ void ZombatarWidget_ButtonDepress(ZombatarWidget *zombatarWidget, int id) {
         TestMenuWidget_DrawPortrait(gMainMenuZombatarWidget, &graphics, 0, 0);
         pvzstl::string str{"ZOMBATAR.PNG"};
         aImage->WriteToPng((int *)&str);
-//        StringDelete(holder);
+        //        StringDelete(holder);
         addonImages.zombatar_portrait = reinterpret_cast<Image *>(aImage);
         gMainMenuZombatarWidget->mShowExistingZombatarPortrait = true;
         gMainMenuZombatarWidget->mShowZombieTypeSelection = false;
@@ -2202,7 +2204,7 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     pvzstl::string str2{"[OK]"};
     Sexy::GameButton *viewPortraitButton = MakeButton(1002, mZombatarListener, nullptr, str2);
     viewPortraitButton->Resize(160 + 75, 565, addonZombatarImages.zombatar_view_button->mWidth, addonZombatarImages.zombatar_view_button->mHeight);
-    AddWidget((Widget*)viewPortraitButton);
+    AddWidget((Widget *)viewPortraitButton);
     viewPortraitButton->mDrawStoneButton = false;
     viewPortraitButton->mButtonImage = addonZombatarImages.zombatar_view_button;
     viewPortraitButton->mDownImage = addonZombatarImages.zombatar_view_button_highlight;
@@ -2212,13 +2214,13 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     pvzstl::string str3{"[ZOMBATAR_NEW_BUTTON]"};
     Sexy::GameButton *newButton = MakeButton(1003, mZombatarListener, nullptr, str3);
     newButton->Resize(578, 490, 170, 50);
-    AddWidget((Widget*)newButton);
+    AddWidget((Widget *)newButton);
     mNewButton = newButton;
 
     pvzstl::string str4{"[ZOMBATAR_DELETE_BUTTON]"};
     Sexy::GameButton *deleteButton = MakeButton(1004, mZombatarListener, nullptr, str4);
     deleteButton->Resize(314, 490, 170, 50);
-    AddWidget((Widget*)deleteButton);
+    AddWidget((Widget *)deleteButton);
     mDeleteButton = deleteButton;
 
     auto *aZombie = new Zombie;
@@ -2589,25 +2591,13 @@ void TestMenuWidget_DrawCloth(ZombatarWidget *zombatarWidget, Sexy::Graphics *g)
         if (zombatarWidget->mSelectedCloth == i) {
             g->DrawImage(addonZombatarImages.zombatar_accessory_bg_highlight, theX, theY);
             Sexy_Graphics_DrawImageColorizedScaled(
-                g,
-                                                   addonZombatarImages.zombatar_zombie_blank_skin_part,
-                                                   &gZombatarSkinColor[zombatarWidget->mSelectedSkinColor],
-                                                   theX + 12 + widthOffset,
-                                                   theY + 12 + heightOffset,
-                                                   ratio,
-                                                   ratio);
+                g, addonZombatarImages.zombatar_zombie_blank_skin_part, &gZombatarSkinColor[zombatarWidget->mSelectedSkinColor], theX + 12 + widthOffset, theY + 12 + heightOffset, ratio, ratio);
             TodDrawImageScaledF(g, image, theX + 12 + widthOffset, theY + 12 + heightOffset, ratio, ratio);
             TodDrawImageScaledF(g, image1, theX + 12 + ratio * offsetX, theY + 12 + ratio * offsetY, ratio, ratio);
         } else {
             Sexy_Graphics_DrawImageColorized(g, addonZombatarImages.zombatar_accessory_bg, &theAlphaColor, theX, theY);
             Sexy_Graphics_DrawImageColorizedScaled(
-                g,
-                                                   addonZombatarImages.zombatar_zombie_blank_skin_part,
-                                                   &gZombatarSkinColor[zombatarWidget->mSelectedSkinColor],
-                                                   theX + 12 + widthOffset,
-                                                   theY + 12 + heightOffset,
-                                                   ratio,
-                                                   ratio);
+                g, addonZombatarImages.zombatar_zombie_blank_skin_part, &gZombatarSkinColor[zombatarWidget->mSelectedSkinColor], theX + 12 + widthOffset, theY + 12 + heightOffset, ratio, ratio);
             TodDrawImageScaledF(g, image, theX + 12 + widthOffset, theY + 12 + heightOffset, ratio, ratio);
             Sexy_Graphics_DrawImageColorizedScaled(g, image1, &theAlphaColor2, theX + 12 + ratio * offsetX, theY + 12 + ratio * offsetY, ratio, ratio);
         }
@@ -2803,7 +2793,7 @@ void TestMenuWidget_DrawBackground(ZombatarWidget *zombatarWidget, Sexy::Graphic
 
     pvzstl::string str = StrFormat("PAGE %d/%d", zombatarWidget->mSelectedBackgroundPage + 1, 5);
     TodDrawString(g, str, 160 + 410, 525, *Sexy_FONT_BRIANNETOD16_Addr, black, DrawStringJustification::DS_ALIGN_CENTER);
-//    StringDelete(holder);
+    //    StringDelete(holder);
 }
 
 void TestMenuWidget_DrawPortrait(ZombatarWidget *zombatarWidget, Sexy::Graphics *g, int x, int y) {
@@ -3022,11 +3012,11 @@ void TestMenuWidget_Draw(ZombatarWidget *zombatarWidget, Sexy::Graphics *g) {
 
 void TestMenuWidget_RemovedFromManager(ZombatarWidget *zombatarWidget, int *manager) {
     old_TestMenuWidget_RemovedFromManager(zombatarWidget, manager);
-    zombatarWidget->RemoveWidget((Sexy::Widget*)zombatarWidget->mBackButton);
-    zombatarWidget->RemoveWidget((Sexy::Widget*)zombatarWidget->mFinishButton);
-    zombatarWidget->RemoveWidget((Sexy::Widget*)zombatarWidget->mViewPortraitButton);
-    zombatarWidget->RemoveWidget((Sexy::Widget*)zombatarWidget->mNewButton);
-    zombatarWidget->RemoveWidget((Sexy::Widget*)zombatarWidget->mDeleteButton);
+    zombatarWidget->RemoveWidget((Sexy::Widget *)zombatarWidget->mBackButton);
+    zombatarWidget->RemoveWidget((Sexy::Widget *)zombatarWidget->mFinishButton);
+    zombatarWidget->RemoveWidget((Sexy::Widget *)zombatarWidget->mViewPortraitButton);
+    zombatarWidget->RemoveWidget((Sexy::Widget *)zombatarWidget->mNewButton);
+    zombatarWidget->RemoveWidget((Sexy::Widget *)zombatarWidget->mDeleteButton);
 }
 
 void TestMenuWidget_Delete2(ZombatarWidget *zombatarWidget) {

@@ -3,12 +3,12 @@
 //
 
 #include "PvZ/Lawn/System/PoolEffect.h"
+#include "PvZ/Lawn/Board/Board.h"
+#include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Graphics/MemoryImage.h"
-#include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/SexyAppFramework/Misc/SexyVertex2D.h"
-#include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/TodLib/Effect/TodParticle.h"
 
 using namespace Sexy;
@@ -400,7 +400,7 @@ void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
     UpdateWaterEffect();
     Graphics aPoolG(*g);
     aPoolG.SetWrapMode(0, 0);
-    aPoolG.DrawTrianglesTex((Image*)mCausticImage, v140[2], 150);
+    aPoolG.DrawTrianglesTex((Image *)mCausticImage, v140[2], 150);
     aPoolG.SetWrapMode(1, 1);
 
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_POOL_PARTY && mApp->mBoard != nullptr) {
@@ -423,7 +423,7 @@ void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
             }
             Graphics aPoolG2(*g);
             aPoolG2.SetWrapMode(0, 0);
-            aPoolG2.DrawTrianglesTex((Image*)mCausticImage, v140[2], 150);
+            aPoolG2.DrawTrianglesTex((Image *)mCausticImage, v140[2], 150);
             aPoolG2.SetWrapMode(1, 1);
             g->mTransY = theTmpTransY;
         }

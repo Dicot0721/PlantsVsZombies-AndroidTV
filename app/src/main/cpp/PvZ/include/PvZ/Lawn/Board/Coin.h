@@ -3,8 +3,8 @@
 
 #include "GameObject.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
-#include "PvZ/Symbols.h"
 #include "PvZ/Lawn/System/PlayerInfo.h"
+#include "PvZ/Symbols.h"
 
 class Coin : public GameObject {
 public:
@@ -46,16 +46,36 @@ public:
     int unkInt;                    // 50
     // 大小51个整数
 
-    void MouseDown(int x, int y, int theClickCount) { reinterpret_cast<void (*)(Coin *, int, int, int)>(Coin_MouseDownAddr)(this, x, y, theClickCount); }
-    void Collect(int thePlayerIndex) { reinterpret_cast<void (*)(Coin *, int)>(Coin_CollectAddr)(this, thePlayerIndex); }
-    void Die() { reinterpret_cast<void (*)(Coin *)>(Coin_DieAddr)(this); }
-    bool IsLevelAward() { return reinterpret_cast<bool (*)(Coin *)>(Coin_IsLevelAwardAddr)(this); }
-    bool IsPresentWithAdvice() { return reinterpret_cast<bool (*)(Coin *)>(Coin_IsPresentWithAdviceAddr)(this); }
-    bool IsMoney() { return reinterpret_cast<bool (*)(Coin *)>(Coin_IsMoneyAddr)(this); }
-    void PlayGroundSound() { reinterpret_cast<void (*)(Coin *)>(Coin_PlayGroundSoundAddr)(this); }
-    int GetDisappearTime() { return reinterpret_cast<int (*)(Coin *)>(Coin_GetDisappearTimeAddr)(this); }
-    void StartFade() { reinterpret_cast<void (*)(Coin *)>(Coin_StartFadeAddr)(this); }
-    float GetSunScale() { return reinterpret_cast<float (*)(Coin *)>(Coin_GetSunScaleAddr)(this); }
+    void MouseDown(int x, int y, int theClickCount) {
+        reinterpret_cast<void (*)(Coin *, int, int, int)>(Coin_MouseDownAddr)(this, x, y, theClickCount);
+    }
+    void Collect(int thePlayerIndex) {
+        reinterpret_cast<void (*)(Coin *, int)>(Coin_CollectAddr)(this, thePlayerIndex);
+    }
+    void Die() {
+        reinterpret_cast<void (*)(Coin *)>(Coin_DieAddr)(this);
+    }
+    bool IsLevelAward() {
+        return reinterpret_cast<bool (*)(Coin *)>(Coin_IsLevelAwardAddr)(this);
+    }
+    bool IsPresentWithAdvice() {
+        return reinterpret_cast<bool (*)(Coin *)>(Coin_IsPresentWithAdviceAddr)(this);
+    }
+    bool IsMoney() {
+        return reinterpret_cast<bool (*)(Coin *)>(Coin_IsMoneyAddr)(this);
+    }
+    void PlayGroundSound() {
+        reinterpret_cast<void (*)(Coin *)>(Coin_PlayGroundSoundAddr)(this);
+    }
+    int GetDisappearTime() {
+        return reinterpret_cast<int (*)(Coin *)>(Coin_GetDisappearTimeAddr)(this);
+    }
+    void StartFade() {
+        reinterpret_cast<void (*)(Coin *)>(Coin_StartFadeAddr)(this);
+    }
+    float GetSunScale() {
+        return reinterpret_cast<float (*)(Coin *)>(Coin_GetSunScaleAddr)(this);
+    }
 
     void GamepadCursorOver(int thePlayerIndex);
     void Update();

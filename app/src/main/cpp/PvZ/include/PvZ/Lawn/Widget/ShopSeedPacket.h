@@ -9,7 +9,9 @@
 
 class ShopSeedPacket {
 public:
-    void Update() { reinterpret_cast<void (*)(ShopSeedPacket *)>(ShopSeedPacket_UpdateAddr)(this); }
+    void Update() {
+        reinterpret_cast<void (*)(ShopSeedPacket *)>(ShopSeedPacket_UpdateAddr)(this);
+    }
 };
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_SHOPSEEDPACKET_H

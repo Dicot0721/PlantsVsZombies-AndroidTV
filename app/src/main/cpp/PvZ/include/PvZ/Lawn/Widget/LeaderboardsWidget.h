@@ -25,14 +25,14 @@ struct GameStats {
         STINKY_CHOCOLATES = 7,
     };
 
-    HouseType mHouseType;            // 0
-    int unk;                         // 1
-    int mMiscStats[9];               // 2 ~ 10
-    char mFavoritePlants[49];        // 44 ~ 92
-    char mFavoriteZombies[47];       // 93 ~ 139
-    float mSurvivalCompletion;       // 35
-    float mMiniGameCompletion;       // 36
-    float mPuzzleCompletion;         // 37
+    HouseType mHouseType;      // 0
+    int unk;                   // 1
+    int mMiscStats[9];         // 2 ~ 10
+    char mFavoritePlants[49];  // 44 ~ 92
+    char mFavoriteZombies[47]; // 93 ~ 139
+    float mSurvivalCompletion; // 35
+    float mMiniGameCompletion; // 36
+    float mPuzzleCompletion;   // 37
 }; // 大小38个整数
 
 struct LeaderboardReanimations {
@@ -58,10 +58,14 @@ public:
 
 class DaveHelp : public Sexy::Widget {
 public:
-    DaveHelp(LawnApp *theApp) { __Constructor(theApp); }
+    DaveHelp(LawnApp *theApp) {
+        __Constructor(theApp);
+    }
 
 protected:
-    void __Constructor(LawnApp *theApp) { reinterpret_cast<void (*)(DaveHelp *, LawnApp *)>(DaveHelp_DaveHelpAddr)(this, theApp); }
+    void __Constructor(LawnApp *theApp) {
+        reinterpret_cast<void (*)(DaveHelp *, LawnApp *)>(DaveHelp_DaveHelpAddr)(this, theApp);
+    }
 };
 
 

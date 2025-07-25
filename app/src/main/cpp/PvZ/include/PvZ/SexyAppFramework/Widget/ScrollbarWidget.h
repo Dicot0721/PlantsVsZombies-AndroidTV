@@ -38,10 +38,12 @@ public:
     Image *mPagingImage;    // 89
     // 大小90个整数
 
-    void SetMaxValue(double theValue) { reinterpret_cast<void (*)(Sexy::ScrollbarWidget *, double)>(Sexy_ScrollbarWidget_SetMaxValueAddr)(this, theValue); }
+    void SetMaxValue(double theValue) {
+        reinterpret_cast<void (*)(Sexy::ScrollbarWidget *, double)>(Sexy_ScrollbarWidget_SetMaxValueAddr)(this, theValue);
+    }
 };
 
-}
+} // namespace Sexy
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_SCROLLBARWIDGET_H

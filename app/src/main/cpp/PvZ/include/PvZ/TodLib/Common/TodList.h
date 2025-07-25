@@ -25,7 +25,8 @@ public:
     TodListNode<T>* mPrev;
 };
 
-template <typename T> class TodList {
+template <typename T>
+class TodList {
 public:
     TodListNode<T>* mHead;
     TodListNode<T>* mTail;

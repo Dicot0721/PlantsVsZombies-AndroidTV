@@ -5,18 +5,18 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_ATTACHMENT_H
 #define PLANTSVSZOMBIES_ANDROIDTV_ATTACHMENT_H
 
-#include "PvZ/TodLib/Common/DataArray.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Misc/SexyMatrix.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/TodLib/Common/DataArray.h"
 
 class AttachEffect {
 public:
-    ReanimationID mEffectID;      // 0
-    EffectType mEffectType;       // 1
-    Sexy::SexyTransform2D mOffset;// 2 ~ 10
-    bool mDontDrawIfParentHidden; // 44
-    bool mDontPropogateColor;     // 45
+    ReanimationID mEffectID;       // 0
+    EffectType mEffectType;        // 1
+    Sexy::SexyTransform2D mOffset; // 2 ~ 10
+    bool mDontDrawIfParentHidden;  // 44
+    bool mDontPropogateColor;      // 45
 }; // 大小12个整数
 
 class Attachment {
@@ -33,11 +33,13 @@ public:
 inline AttachEffect *AttachReanim(AttachmentID &theAttachmentID, Reanimation *theReanimation, float theOffsetX, float theOffsetY) {
     return reinterpret_cast<AttachEffect *(*)(AttachmentID &, Reanimation *, float, float)>(AttachReanimAddr)(theAttachmentID, theReanimation, theOffsetX, theOffsetY);
 }
-inline void AttachmentDraw(AttachmentID& theAttachmentID, Graphics* g, bool theParentHidden) {
-    reinterpret_cast<void (*)(AttachmentID &, Graphics*, bool)>(AttachmentDrawAddr)(theAttachmentID, g, theParentHidden);
+inline void AttachmentDraw(AttachmentID &theAttachmentID, Graphics *g, bool theParentHidden) {
+    reinterpret_cast<void (*)(AttachmentID &, Graphics *, bool)>(AttachmentDrawAddr)(theAttachmentID, g, theParentHidden);
 }
 
-inline void AttachmentDie(AttachmentID& theAttachmentID) { reinterpret_cast<void (*)(AttachmentID&)>(AttachmentDieAddr)(theAttachmentID); }
+inline void AttachmentDie(AttachmentID &theAttachmentID) {
+    reinterpret_cast<void (*)(AttachmentID &)>(AttachmentDieAddr)(theAttachmentID);
+}
 
 inline void AttachParticle(AttachmentID &theAttachmentID, TodParticleSystem *theParticleSystem, float theOffsetX, float theOffsetY) {
     reinterpret_cast<void (*)(AttachmentID &, TodParticleSystem *, float, float)>(AttachParticleAddr)(theAttachmentID, theParticleSystem, theOffsetX, theOffsetY);

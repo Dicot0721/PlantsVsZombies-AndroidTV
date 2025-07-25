@@ -30,11 +30,21 @@ public:
     bool mSelectedBy1P;              // 113
     // 大小29个整数
 
-    void DrawBackground(Sexy::Graphics *g) { reinterpret_cast<void (*)(SeedPacket *, Sexy::Graphics *)>(SeedPacket_DrawBackgroundAddr)(this, g); }
-    bool CanPickUp() { return reinterpret_cast<bool (*)(SeedPacket *)>(SeedPacket_CanPickUpAddr)(this); }
-    bool MouseHitTest(int x, int y, HitResult *theHitResult ) { return reinterpret_cast<bool (*)(SeedPacket *, int, int, HitResult *)>(SeedPacket_MouseHitTestAddr)(this, x, y, theHitResult); }
-    bool GetPlayerIndex() { return reinterpret_cast<bool (*)(SeedPacket *)>(SeedPacket_GetPlayerIndexAddr)(this); }
-    void DrawMiddle(Sexy::Graphics *g) { reinterpret_cast<void (*)(SeedPacket *, Sexy::Graphics *)>(SeedPacket_DrawMiddleAddr)(this, g); }
+    void DrawBackground(Sexy::Graphics *g) {
+        reinterpret_cast<void (*)(SeedPacket *, Sexy::Graphics *)>(SeedPacket_DrawBackgroundAddr)(this, g);
+    }
+    bool CanPickUp() {
+        return reinterpret_cast<bool (*)(SeedPacket *)>(SeedPacket_CanPickUpAddr)(this);
+    }
+    bool MouseHitTest(int x, int y, HitResult *theHitResult) {
+        return reinterpret_cast<bool (*)(SeedPacket *, int, int, HitResult *)>(SeedPacket_MouseHitTestAddr)(this, x, y, theHitResult);
+    }
+    bool GetPlayerIndex() {
+        return reinterpret_cast<bool (*)(SeedPacket *)>(SeedPacket_GetPlayerIndexAddr)(this);
+    }
+    void DrawMiddle(Sexy::Graphics *g) {
+        reinterpret_cast<void (*)(SeedPacket *, Sexy::Graphics *)>(SeedPacket_DrawMiddleAddr)(this, g);
+    }
 
     void Update();
     void UpdateSelected();

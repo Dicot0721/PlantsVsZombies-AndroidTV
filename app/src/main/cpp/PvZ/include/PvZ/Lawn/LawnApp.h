@@ -3,8 +3,8 @@
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/Widget/AchievementsWidget.h"
-#include "PvZ/SexyAppFramework/SexyAppBase.h"
 #include "PvZ/SexyAppFramework/Misc/ProfileMgr.h"
+#include "PvZ/SexyAppFramework/SexyAppBase.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodFoley.h"
 #include "PvZ/TodLib/Effect/EffectSystem.h"
@@ -114,20 +114,48 @@ public:
     DaveHelp *mDaveHelp;                     // 707
     MaskHelpWidget *mMaskHelpWidget;         // 708
 
-    Reanimation *ReanimationGet(ReanimationID theReanimationID) { return reinterpret_cast<Reanimation *(*)(LawnApp *, ReanimationID)>(LawnApp_ReanimationGetAddr)(this, theReanimationID); }
-    Reanimation *ReanimationTryToGet(ReanimationID theReanimationID) { return reinterpret_cast<Reanimation *(*)(LawnApp *, ReanimationID)>(LawnApp_ReanimationTryToGetAddr)(this, theReanimationID); }
-    void ClearSecondPlayer() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ClearSecondPlayerAddr)(this); }
-    bool CanShowStore() { return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_CanShowStoreAddr)(this); }
-    bool CanShowAlmanac() { return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_CanShowAlmanacAddr)(this); }
-    void KillNewOptionsDialog() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillNewOptionsDialogAddr)(this); }
-    void KillMainMenu() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillMainMenuAddr)(this); }
-    void KillChallengeScreen() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillChallengeScreenAddr)(this); }
-    void PreNewGame(GameMode theGameMode, bool theLookForSavedGame) { reinterpret_cast<void (*)(LawnApp *, GameMode, bool)>(LawnApp_PreNewGameAddr)(this, theGameMode, theLookForSavedGame); }
-    void PlayFoleyPitch(FoleyType theFoleyType, float thePitch) { reinterpret_cast<void (*)(LawnApp *, FoleyType, float)>(LawnApp_PreNewGameAddr)(this, theFoleyType, thePitch); }
-    void DoCheatDialog() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_DoCheatDialogAddr)(this); }
-    void DoCheatCodeDialog() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_DoCheatCodeDialogAddr)(this); }
-    void DoUserDialog() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_DoUserDialogAddr)(this); }
-    bool IsFirstTimeAdventureMode() { return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_IsFirstTimeAdventureModeAddr)(this); }
+    Reanimation *ReanimationGet(ReanimationID theReanimationID) {
+        return reinterpret_cast<Reanimation *(*)(LawnApp *, ReanimationID)>(LawnApp_ReanimationGetAddr)(this, theReanimationID);
+    }
+    Reanimation *ReanimationTryToGet(ReanimationID theReanimationID) {
+        return reinterpret_cast<Reanimation *(*)(LawnApp *, ReanimationID)>(LawnApp_ReanimationTryToGetAddr)(this, theReanimationID);
+    }
+    void ClearSecondPlayer() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ClearSecondPlayerAddr)(this);
+    }
+    bool CanShowStore() {
+        return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_CanShowStoreAddr)(this);
+    }
+    bool CanShowAlmanac() {
+        return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_CanShowAlmanacAddr)(this);
+    }
+    void KillNewOptionsDialog() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillNewOptionsDialogAddr)(this);
+    }
+    void KillMainMenu() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillMainMenuAddr)(this);
+    }
+    void KillChallengeScreen() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillChallengeScreenAddr)(this);
+    }
+    void PreNewGame(GameMode theGameMode, bool theLookForSavedGame) {
+        reinterpret_cast<void (*)(LawnApp *, GameMode, bool)>(LawnApp_PreNewGameAddr)(this, theGameMode, theLookForSavedGame);
+    }
+    void PlayFoleyPitch(FoleyType theFoleyType, float thePitch) {
+        reinterpret_cast<void (*)(LawnApp *, FoleyType, float)>(LawnApp_PreNewGameAddr)(this, theFoleyType, thePitch);
+    }
+    void DoCheatDialog() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_DoCheatDialogAddr)(this);
+    }
+    void DoCheatCodeDialog() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_DoCheatCodeDialogAddr)(this);
+    }
+    void DoUserDialog() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_DoUserDialogAddr)(this);
+    }
+    bool IsFirstTimeAdventureMode() {
+        return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_IsFirstTimeAdventureModeAddr)(this);
+    }
     // 阻塞式函数，能创建并立即展示一个带按钮的对话框。按钮个数由最后一个参数决定。其返回值就是用户按下的按钮ID，一般情况下只可能为1000或1001。
     int LawnMessageBox(Dialogs theDialogId, // 用于标识本对话框的ID，以便于用KillDialog(theDialogId)关闭此对话框。一般用不到，所以随便填个数字就可以。
                        const char *theHeaderName,
@@ -142,34 +170,72 @@ public:
     TodParticleSystem *AddTodParticle(float theX, float theY, int theRenderOrder, ParticleEffect theEffect) {
         return reinterpret_cast<TodParticleSystem *(*)(LawnApp *, float, float, int, ParticleEffect)>(LawnApp_AddTodParticleAddr)(this, theX, theY, theRenderOrder, theEffect);
     }
-    ParticleSystemID ParticleGetID(TodParticleSystem *theParticle) { return reinterpret_cast<ParticleSystemID (*)(LawnApp *, TodParticleSystem *)>(LawnApp_ParticleGetIDAddr)(this, theParticle); }
+    ParticleSystemID ParticleGetID(TodParticleSystem *theParticle) {
+        return reinterpret_cast<ParticleSystemID (*)(LawnApp *, TodParticleSystem *)>(LawnApp_ParticleGetIDAddr)(this, theParticle);
+    }
     Reanimation *AddReanimation(float theX, float theY, int theRenderOrder, ReanimationType theReanimationType) {
         return reinterpret_cast<Reanimation *(*)(LawnApp *, float, float, int, ReanimationType)>(LawnApp_AddReanimationAddr)(this, theX, theY, theRenderOrder, theReanimationType);
     }
-    bool IsSurvivalMode() { return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_IsSurvivalModeAddr)(this); }
-    bool HasFinishedAdventure() { return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_HasFinishedAdventureAddr)(this); }
-    void KillVSResultsScreen() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillVSResultsScreenAddr)(this); }
-    void HideHelpBarWidget() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_HideHelpBarWidgetAddr)(this); }
-    void ShowHelpTextScreen(int a) { reinterpret_cast<void (*)(LawnApp *, int)>(LawnApp_ShowHelpTextScreenAddr)(this, a); }
-    void ShowChallengeScreen(ChallengePage thePage) { reinterpret_cast<void (*)(LawnApp *, ChallengePage)>(LawnApp_ShowHelpTextScreenAddr)(this, thePage); }
-    void CrazyDaveStopTalking() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_CrazyDaveStopTalkingAddr)(this); }
-    void DoRetryAchievementsDialog() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_DoRetryAchievementsDialogAddr)(this); }
-    bool EarnedGoldTrophy() { return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_EarnedGoldTrophyAddr)(this); }
-    void RemoveReanimation(ReanimationID theReanimationID) { reinterpret_cast<void (*)(LawnApp *, ReanimationID)>(LawnApp_RemoveReanimationAddr)(this, theReanimationID); }
-    ReanimationID ReanimationGetID(Reanimation *theReanimation) { return reinterpret_cast<ReanimationID (*)(LawnApp *, Reanimation *)>(LawnApp_ReanimationGetIDAddr)(this, theReanimation); }
-    void KillAlmanacDialog() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillAlmanacDialogAddr)(this); }
-    int GetNumTrophies(ChallengePage thePage) { return reinterpret_cast<int (*)(LawnApp *, ChallengePage)>(LawnApp_GetNumTrophiesAddr)(this, thePage); }
-    void ShowMainMenuScreen() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ShowMainMenuScreenAddr)(this); }
+    bool IsSurvivalMode() {
+        return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_IsSurvivalModeAddr)(this);
+    }
+    bool HasFinishedAdventure() {
+        return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_HasFinishedAdventureAddr)(this);
+    }
+    void KillVSResultsScreen() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillVSResultsScreenAddr)(this);
+    }
+    void HideHelpBarWidget() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_HideHelpBarWidgetAddr)(this);
+    }
+    void ShowHelpTextScreen(int a) {
+        reinterpret_cast<void (*)(LawnApp *, int)>(LawnApp_ShowHelpTextScreenAddr)(this, a);
+    }
+    void ShowChallengeScreen(ChallengePage thePage) {
+        reinterpret_cast<void (*)(LawnApp *, ChallengePage)>(LawnApp_ShowHelpTextScreenAddr)(this, thePage);
+    }
+    void CrazyDaveStopTalking() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_CrazyDaveStopTalkingAddr)(this);
+    }
+    void DoRetryAchievementsDialog() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_DoRetryAchievementsDialogAddr)(this);
+    }
+    bool EarnedGoldTrophy() {
+        return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_EarnedGoldTrophyAddr)(this);
+    }
+    void RemoveReanimation(ReanimationID theReanimationID) {
+        reinterpret_cast<void (*)(LawnApp *, ReanimationID)>(LawnApp_RemoveReanimationAddr)(this, theReanimationID);
+    }
+    ReanimationID ReanimationGetID(Reanimation *theReanimation) {
+        return reinterpret_cast<ReanimationID (*)(LawnApp *, Reanimation *)>(LawnApp_ReanimationGetIDAddr)(this, theReanimation);
+    }
+    void KillAlmanacDialog() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillAlmanacDialogAddr)(this);
+    }
+    int GetNumTrophies(ChallengePage thePage) {
+        return reinterpret_cast<int (*)(LawnApp *, ChallengePage)>(LawnApp_GetNumTrophiesAddr)(this, thePage);
+    }
+    void ShowMainMenuScreen() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ShowMainMenuScreenAddr)(this);
+    }
     TodParticleSystem *ParticleTryToGet(ParticleSystemID theParticleID) {
         return reinterpret_cast<TodParticleSystem *(*)(LawnApp *, ParticleSystemID)>(LawnApp_ParticleTryToGetAddr)(this, theParticleID);
     }
-    void KillHelpTextScreen() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillHelpTextScreenAddr)(this); }
-    void NextTestDialog() { reinterpret_cast<void (*)(LawnApp *)>(LawnApp_NextTestDialogAddr)(this); }
+    void KillHelpTextScreen() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillHelpTextScreenAddr)(this);
+    }
+    void NextTestDialog() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_NextTestDialogAddr)(this);
+    }
 
-    LawnApp() { __Constructor(); };
+    LawnApp() {
+        __Constructor();
+    };
     void Init();
     bool IsNight();
-    inline bool	IsIceDemo() { return false; }
+    inline bool IsIceDemo() {
+        return false;
+    }
     void HardwareInit();
     void DoBackToMain();
     bool CanShopLevel();
@@ -190,8 +256,12 @@ public:
     void KillSeedChooserScreen();
     bool IsIZombieLevel();
     bool IsWallnutBowlingLevel();
-    void PlayFoley(FoleyType theFoleyType) { reinterpret_cast<void (*)(LawnApp *, FoleyType)>(LawnApp_PlayFoleyAddr)(this, theFoleyType); }
-    void PlaySample(int theSoundNum) { reinterpret_cast<void (*)(LawnApp *, int)>(LawnApp_PlaySampleAddr)(this, theSoundNum); }
+    void PlayFoley(FoleyType theFoleyType) {
+        reinterpret_cast<void (*)(LawnApp *, FoleyType)>(LawnApp_PlayFoleyAddr)(this, theFoleyType);
+    }
+    void PlaySample(int theSoundNum) {
+        reinterpret_cast<void (*)(LawnApp *, int)>(LawnApp_PlaySampleAddr)(this, theSoundNum);
+    }
     bool IsAdventureMode();
     bool IsPuzzleMode();
     bool IsLittleTroubleLevel();

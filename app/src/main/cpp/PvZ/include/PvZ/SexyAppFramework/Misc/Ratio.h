@@ -9,12 +9,12 @@
 
 namespace Sexy {
 
-struct Ratio
-{
-    void Set(int theNumerator, int theDenominator) { reinterpret_cast<void (*)(Ratio *, int, int)>(Sexy_Ratio_SetAddr)(this, theNumerator, theDenominator); }
-
+struct Ratio {
+    void Set(int theNumerator, int theDenominator) {
+        reinterpret_cast<void (*)(Ratio *, int, int)>(Sexy_Ratio_SetAddr)(this, theNumerator, theDenominator);
+    }
 };
 
-}
+} // namespace Sexy
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_RATIO_H

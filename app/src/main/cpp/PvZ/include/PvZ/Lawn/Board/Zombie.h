@@ -83,113 +83,153 @@ public:
         ZOMBIE_WAVE_WINNER = -4,
     };
 
-    ZombieType mZombieType;                          // 13
-    ZombiePhase mZombiePhase;                        // 14
-    float mPosX;                                     // 15
-    float mPosY;                                     // 16
-    float mVelX;                                     // 17
-    int mAnimCounter;                                // 18
-    int mGroanCounter;                               // 19
-    int mAnimTicksPerFrame;                          // 20
-    int mAnimFrames;                                 // 21
-    int mFrame;                                      // 22
-    int mPrevFrame;                                  // 23
-    bool mVariant;                                   // 96
-    bool mIsEating;                                  // 97
-    int mJustGotShotCounter;                         // 25
-    int mShieldJustGotShotCounter;                   // 26
-    int mShieldRecoilCounter;                        // 27
-    int mZombieAge;                                  // 28
-    ZombieHeight mZombieHeight;                      // 29
-    int mPhaseCounter;                               // 30
-    int mFromWave;                                   // 31
-    bool mDroppedLoot;                               // 128
-    int mZombieFade;                                 // 33
-    bool mFlatTires;                                 // 136
-    int mUseLadderCol;                               // 35
-    int mTargetCol;                                  // 36
-    float mAltitude;                                 // 37
-    bool mHitUmbrella;                               // 152
-    Sexy::Rect mZombieRect;                          // 39 ~ 42
-    Sexy::Rect mZombieAttackRect;                    // 43 ~ 46
-    int mChilledCounter;                             // 47
-    int mButteredCounter;                            // 48
-    int mIceTrapCounter;                             // 49
-    bool mMindControlled;                            // 200
-    bool mBlowingAway;                               // 201
-    bool mHasHead;                                   // 202
-    bool mHasArm;                                    // 203
-    bool mHasObject;                                 // 204
-    bool mInPool;                                    // 205
-    bool mOnHighGround;                              // 206
-    bool mYuckyFace;                                 // 207
-    int mYuckyFaceCounter;                           // 52
-    HelmType mHelmType;                              // 53
-    int mBodyHealth;                                 // 54
-    int mBodyMaxHealth;                              // 55
-    int mHelmHealth;                                 // 56
-    int mHelmMaxHealth;                              // 57
-    ShieldType mShieldType;                          // 58
-    int mShieldHealth;                               // 59
-    int mShieldMaxHealth;                            // 60
-    int mFlyingHealth;                               // 61
-    int mFlyingMaxHealth;                            // 62
-    bool mDead;                                      // 252
+    ZombieType mZombieType;                           // 13
+    ZombiePhase mZombiePhase;                         // 14
+    float mPosX;                                      // 15
+    float mPosY;                                      // 16
+    float mVelX;                                      // 17
+    int mAnimCounter;                                 // 18
+    int mGroanCounter;                                // 19
+    int mAnimTicksPerFrame;                           // 20
+    int mAnimFrames;                                  // 21
+    int mFrame;                                       // 22
+    int mPrevFrame;                                   // 23
+    bool mVariant;                                    // 96
+    bool mIsEating;                                   // 97
+    int mJustGotShotCounter;                          // 25
+    int mShieldJustGotShotCounter;                    // 26
+    int mShieldRecoilCounter;                         // 27
+    int mZombieAge;                                   // 28
+    ZombieHeight mZombieHeight;                       // 29
+    int mPhaseCounter;                                // 30
+    int mFromWave;                                    // 31
+    bool mDroppedLoot;                                // 128
+    int mZombieFade;                                  // 33
+    bool mFlatTires;                                  // 136
+    int mUseLadderCol;                                // 35
+    int mTargetCol;                                   // 36
+    float mAltitude;                                  // 37
+    bool mHitUmbrella;                                // 152
+    Sexy::Rect mZombieRect;                           // 39 ~ 42
+    Sexy::Rect mZombieAttackRect;                     // 43 ~ 46
+    int mChilledCounter;                              // 47
+    int mButteredCounter;                             // 48
+    int mIceTrapCounter;                              // 49
+    bool mMindControlled;                             // 200
+    bool mBlowingAway;                                // 201
+    bool mHasHead;                                    // 202
+    bool mHasArm;                                     // 203
+    bool mHasObject;                                  // 204
+    bool mInPool;                                     // 205
+    bool mOnHighGround;                               // 206
+    bool mYuckyFace;                                  // 207
+    int mYuckyFaceCounter;                            // 52
+    HelmType mHelmType;                               // 53
+    int mBodyHealth;                                  // 54
+    int mBodyMaxHealth;                               // 55
+    int mHelmHealth;                                  // 56
+    int mHelmMaxHealth;                               // 57
+    ShieldType mShieldType;                           // 58
+    int mShieldHealth;                                // 59
+    int mShieldMaxHealth;                             // 60
+    int mFlyingHealth;                                // 61
+    int mFlyingMaxHealth;                             // 62
+    bool mDead;                                       // 252
     ZombieID mRelatedZombieID;                        // 64
     ZombieID mFollowerZombieID[MAX_ZOMBIE_FOLLOWERS]; // 65 ~ 68
-    bool mPlayingSong;                               // 276
-    int mParticleOffsetX;                            // 70
-    int mParticleOffsetY;                            // 71
-    int *mAttachmentID;                              // 72
-    int mSummonCounter;                              // 73
-    ReanimationID mBodyReanimID;                     // 74
-    float mScaleZombie;                              // 75
-    float mVelZ;                                     // 76
-    float mOrginalAnimRate;                          // 77
-    Plant *mTargetPlantID;                           // 78
-    int mBossMode;                                   // 79
-    int mTargetRow;                                  // 80
-    int mBossBungeeCounter;                          // 81
-    int mBossStompCounter;                           // 82
-    int mBossHeadCounter;                            // 83
-    ReanimationID mBossFireBallReanimID;             // 84
-    ReanimationID mSpecialHeadReanimID;              // 85
-    int mFireballRow;                                // 86
-    bool mIsFireBall;                                // 348
-    int mMoweredReanimID;                            // 88
-    int mLastPortalX;                                // 89
-    bool mBloated;                                   // 360
-    int unkMems[6];                                  // 91 ~ 96
-    int mZombieID;                                   // 97
+    bool mPlayingSong;                                // 276
+    int mParticleOffsetX;                             // 70
+    int mParticleOffsetY;                             // 71
+    int *mAttachmentID;                               // 72
+    int mSummonCounter;                               // 73
+    ReanimationID mBodyReanimID;                      // 74
+    float mScaleZombie;                               // 75
+    float mVelZ;                                      // 76
+    float mOrginalAnimRate;                           // 77
+    Plant *mTargetPlantID;                            // 78
+    int mBossMode;                                    // 79
+    int mTargetRow;                                   // 80
+    int mBossBungeeCounter;                           // 81
+    int mBossStompCounter;                            // 82
+    int mBossHeadCounter;                             // 83
+    ReanimationID mBossFireBallReanimID;              // 84
+    ReanimationID mSpecialHeadReanimID;               // 85
+    int mFireballRow;                                 // 86
+    bool mIsFireBall;                                 // 348
+    int mMoweredReanimID;                             // 88
+    int mLastPortalX;                                 // 89
+    bool mBloated;                                    // 360
+    int unkMems[6];                                   // 91 ~ 96
+    int mZombieID;                                    // 97
     // 大小98个整数
 
-    void RemoveColdEffects() { reinterpret_cast<void (*)(Zombie *)>(Zombie_RemoveColdEffectsAddr)(this); }
-    void ApplyButter() { reinterpret_cast<void (*)(Zombie *)>(Zombie_ApplyButterAddr)(this); }
-    void ApplyBurn() { reinterpret_cast<void (*)(Zombie *)>(Zombie_ApplyBurnAddr)(this); }
+    void RemoveColdEffects() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_RemoveColdEffectsAddr)(this);
+    }
+    void ApplyButter() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_ApplyButterAddr)(this);
+    }
+    void ApplyBurn() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_ApplyBurnAddr)(this);
+    }
     TodParticleSystem *AddAttachedParticle(int thePosX, int thePosY, ParticleEffect theEffect) {
         return reinterpret_cast<TodParticleSystem *(*)(Zombie *, int, int, ParticleEffect)>(Zombie_AddAttachedParticleAddr)(this, thePosX, thePosY, theEffect);
     }
-    void StartEating() { reinterpret_cast<void (*)(Zombie *)>(Zombie_StartEatingAddr)(this); }
-    void DropArm(unsigned int theDamageFlags) { reinterpret_cast<void (*)(Zombie *, unsigned int)>(Zombie_DropArmAddr)(this, theDamageFlags); }
-    static void SetupReanimLayers(Reanimation *aReanim, ZombieType theZombieType) { reinterpret_cast<void (*)(Reanimation *, ZombieType)>(Zombie_SetupReanimLayersAddr)(aReanim, theZombieType); }
-    static void SetupShieldReanims(ZombieType theZombieType, Reanimation *aReanim) { reinterpret_cast<void (*)(ZombieType, Reanimation *)>(Zombie_SetupShieldReanimsAddr)(theZombieType, aReanim); }
-    void UpdatePlaying() { reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdatePlayingAddr)(this); }
-    int TakeHelmDamage(int theDamage, unsigned int theDamageFlags) { return reinterpret_cast<int (*)(Zombie *, int, unsigned int)>(Zombie_TakeHelmDamageAddr)(this, theDamage, theDamageFlags); }
-    int TakeFlyingDamage(int theDamage, unsigned int theDamageFlags) { return reinterpret_cast<int (*)(Zombie *, int, unsigned int)>(Zombie_TakeFlyingDamageAddr)(this, theDamage, theDamageFlags); }
-    int TakeShieldDamage(int theDamage, unsigned int theDamageFlags) { return reinterpret_cast<int (*)(Zombie *, int, unsigned int)>(Zombie_TakeShieldDamageAddr)(this, theDamage, theDamageFlags); }
-    void TakeBodyDamage(int theDamage, unsigned int theDamageFlags) { reinterpret_cast<void (*)(Zombie *, int, unsigned int)>(Zombie_TakeBodyDamageAddr)(this, theDamage, theDamageFlags); }
-    void UpdateDamageStates(unsigned int theDamageFlags) { reinterpret_cast<void (*)(Zombie *, unsigned int)>(Zombie_UpdateDamageStatesAddr)(this, theDamageFlags); }
+    void StartEating() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_StartEatingAddr)(this);
+    }
+    void DropArm(unsigned int theDamageFlags) {
+        reinterpret_cast<void (*)(Zombie *, unsigned int)>(Zombie_DropArmAddr)(this, theDamageFlags);
+    }
+    static void SetupReanimLayers(Reanimation *aReanim, ZombieType theZombieType) {
+        reinterpret_cast<void (*)(Reanimation *, ZombieType)>(Zombie_SetupReanimLayersAddr)(aReanim, theZombieType);
+    }
+    static void SetupShieldReanims(ZombieType theZombieType, Reanimation *aReanim) {
+        reinterpret_cast<void (*)(ZombieType, Reanimation *)>(Zombie_SetupShieldReanimsAddr)(theZombieType, aReanim);
+    }
+    void UpdatePlaying() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdatePlayingAddr)(this);
+    }
+    int TakeHelmDamage(int theDamage, unsigned int theDamageFlags) {
+        return reinterpret_cast<int (*)(Zombie *, int, unsigned int)>(Zombie_TakeHelmDamageAddr)(this, theDamage, theDamageFlags);
+    }
+    int TakeFlyingDamage(int theDamage, unsigned int theDamageFlags) {
+        return reinterpret_cast<int (*)(Zombie *, int, unsigned int)>(Zombie_TakeFlyingDamageAddr)(this, theDamage, theDamageFlags);
+    }
+    int TakeShieldDamage(int theDamage, unsigned int theDamageFlags) {
+        return reinterpret_cast<int (*)(Zombie *, int, unsigned int)>(Zombie_TakeShieldDamageAddr)(this, theDamage, theDamageFlags);
+    }
+    void TakeBodyDamage(int theDamage, unsigned int theDamageFlags) {
+        reinterpret_cast<void (*)(Zombie *, int, unsigned int)>(Zombie_TakeBodyDamageAddr)(this, theDamage, theDamageFlags);
+    }
+    void UpdateDamageStates(unsigned int theDamageFlags) {
+        reinterpret_cast<void (*)(Zombie *, unsigned int)>(Zombie_UpdateDamageStatesAddr)(this, theDamageFlags);
+    }
     void GetTrackPosition(const char *theTrackName, float &thePosX, float &thePosY) {
         reinterpret_cast<void (*)(Zombie *, const char *, float &, float &)>(Zombie_GetTrackPositionAddr)(this, theTrackName, thePosX, thePosY);
     }
-    void UpdateAnimSpeed() { reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateAnimSpeedAddr)(this); }
-    void HitIceTrap() { reinterpret_cast<void (*)(Zombie *)>(Zombie_HitIceTrapAddr)(this); }
-    void UpdateZombiePosition() { reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateZombiePositionAddr)(this); };
-    void LoadReanim(ReanimationType theReanimationType) { reinterpret_cast<void (*)(Zombie *, ReanimationType)>(Zombie_LoadReanimAddr)(this, theReanimationType); }
-    void LoadPlainZombieReanim() { reinterpret_cast<void (*)(Zombie *)>(Zombie_LoadPlainZombieReanimAddr)(this); }
-    void AttachShield() { reinterpret_cast<void (*)(Zombie *)>(Zombie_AttachShieldAddr)(this); }
+    void UpdateAnimSpeed() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateAnimSpeedAddr)(this);
+    }
+    void HitIceTrap() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_HitIceTrapAddr)(this);
+    }
+    void UpdateZombiePosition() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateZombiePositionAddr)(this);
+    };
+    void LoadReanim(ReanimationType theReanimationType) {
+        reinterpret_cast<void (*)(Zombie *, ReanimationType)>(Zombie_LoadReanimAddr)(this, theReanimationType);
+    }
+    void LoadPlainZombieReanim() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_LoadPlainZombieReanimAddr)(this);
+    }
+    void AttachShield() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_AttachShieldAddr)(this);
+    }
 
-    Zombie() { __Constructor(); }
+    Zombie() {
+        __Constructor();
+    }
     void ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Zombie *theParentZombie, int theFromWave, bool theIsVisible);
     void Draw(Sexy::Graphics *g);
     void DieNoLoot();
@@ -252,7 +292,9 @@ public:
     void PickRandomSpeed();
 
 protected:
-    void __Constructor() { reinterpret_cast<void (*)(Zombie *)>(Zombie_ZombieAddr)(this); };
+    void __Constructor() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_ZombieAddr)(this);
+    };
 };
 
 class ZombieDefinition {
@@ -282,7 +324,7 @@ inline ZombieDefinition gZombieTrashBinDef = {ZombieType::ZOMBIE_TRASH_BIN, Rean
 
 inline void (*old_Zombie_Update)(Zombie *a1);
 
-inline void (*old_Zombie_UpdateActions)(Zombie*);
+inline void (*old_Zombie_UpdateActions)(Zombie *);
 
 inline void (*old_Zombie_Draw)(Zombie *zombie, Sexy::Graphics *graphics);
 

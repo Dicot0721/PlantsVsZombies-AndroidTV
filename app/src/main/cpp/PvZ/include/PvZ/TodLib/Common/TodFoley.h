@@ -14,13 +14,12 @@ constexpr int MAX_FOLEY_INSTANCES = 8;
 // ############################################################# 以下为拟音音效定义相关内容 #############################################################
 // ######################################################################################################################################################
 
-enum FoleyFlags
-{
-    FOLEYFLAGS_LOOP,                // 循环播放
-    FOLEYFLAGS_ONE_AT_A_TIME,       // 禁止叠加播放：指定该种类的音效同时至多存在 1 个实例，重复播放时仅增加引用计数并刷新开始时间
-    FOLEYFLAGS_MUTE_ON_PAUSE,       // 暂停时静默
-    FOLEYFLAGS_USES_MUSIC_VOLUME,   // 使用音乐音量，指定该种类的音效使用与背景音乐相同的音量
-    FOLEYFLAGS_DONT_REPEAT          // 禁止变式重复，指定该种类的音效每次实际播放的变式不得与上一次相同
+enum FoleyFlags {
+    FOLEYFLAGS_LOOP,              // 循环播放
+    FOLEYFLAGS_ONE_AT_A_TIME,     // 禁止叠加播放：指定该种类的音效同时至多存在 1 个实例，重复播放时仅增加引用计数并刷新开始时间
+    FOLEYFLAGS_MUTE_ON_PAUSE,     // 暂停时静默
+    FOLEYFLAGS_USES_MUSIC_VOLUME, // 使用音乐音量，指定该种类的音效使用与背景音乐相同的音量
+    FOLEYFLAGS_DONT_REPEAT        // 禁止变式重复，指定该种类的音效每次实际播放的变式不得与上一次相同
 };
 
 enum FoleyType {
@@ -164,8 +163,12 @@ class TodFoley {
 public:
     FoleyTypeData mTypeData[MAX_FOLEY_TYPES];
 
-    bool IsFoleyPlaying(FoleyType theFoleyType) { return reinterpret_cast<bool (*)(TodFoley *, FoleyType)>(TodFoley_IsFoleyPlayingAddr)(this, theFoleyType); }
-    void StopFoley(FoleyType theFoleyType) { reinterpret_cast<void (*)(TodFoley *, FoleyType)>(TodFoley_StopFoleyAddr)(this, theFoleyType); }
+    bool IsFoleyPlaying(FoleyType theFoleyType) {
+        return reinterpret_cast<bool (*)(TodFoley *, FoleyType)>(TodFoley_IsFoleyPlayingAddr)(this, theFoleyType);
+    }
+    void StopFoley(FoleyType theFoleyType) {
+        reinterpret_cast<void (*)(TodFoley *, FoleyType)>(TodFoley_StopFoleyAddr)(this, theFoleyType);
+    }
 };
 
 inline FoleyInstance *SoundSystemFindInstance(TodFoley *theSoundSystem, FoleyType theFoleyType) {

@@ -18,6 +18,6 @@ public:
     }
 };
 
-}
+} // namespace Sexy
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_FLAGS_H

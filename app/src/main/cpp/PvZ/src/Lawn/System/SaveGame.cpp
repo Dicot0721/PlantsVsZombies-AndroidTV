@@ -5,7 +5,7 @@
 #include "PvZ/Lawn/System/SaveGame.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 
-void SaveGameContext::SyncReanimationDef(ReanimatorDefinition*& theDefinition) {
+void SaveGameContext::SyncReanimationDef(ReanimatorDefinition *&theDefinition) {
     // 解决大头贴动画的读档问题
     if (*((uint8_t *)this + 29)) {
         int reanimationType;

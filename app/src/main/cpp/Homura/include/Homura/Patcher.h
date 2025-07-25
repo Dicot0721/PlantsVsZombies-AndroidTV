@@ -44,7 +44,9 @@ public:
 
     static void UpdateBaseAddrMap(const std::string &libName, uintptr_t baseAddr);
 
-    [[nodiscard]] bool HasModified() const noexcept { return _hasModified; }
+    [[nodiscard]] bool HasModified() const noexcept {
+        return _hasModified;
+    }
 
     void Modify();
 

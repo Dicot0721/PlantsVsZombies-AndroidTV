@@ -1,7 +1,7 @@
 #include "PvZ/Lawn/Board/SeedPacket.h"
 #include "PvZ/GlobalVariable.h"
-#include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/Board.h"
+#include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
@@ -417,7 +417,8 @@ void DrawSeedPacket(Sexy::Graphics *g,
         ;                                                                      // 33  ----- >  31，微调一下文字位置，左移2个像素点
         int height = 48 + (*((int (**)(Sexy::Font *))font->vTable + 2))(font); // 50  ---- >  48, 微调一下文字位置，上移2个像素点
         Color theColor = {0, 0, 0, 255};
-        g->PushState();;
+        g->PushState();
+        ;
         if (g->mScaleX == 1.0 && g->mScaleY == 1.0) {
             TodDrawString(g, str, width + x, height + y, font, theColor, DrawStringJustification::DS_ALIGN_LEFT);
         } else {

@@ -6,10 +6,10 @@
 #include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
-#include "PvZ/Misc.h"
-#include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Misc.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
+#include "PvZ/TodLib/Effect/Reanimator.h"
 
 using namespace Sexy;
 
@@ -145,8 +145,8 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     Resize(-240, -60, 1280, 720);
     mLeaderboardReanimations = (LeaderboardReanimations *)operator new(sizeof(LeaderboardReanimations));
     for (int i = 0; i < 5; ++i) {
-//        Reanimation *reanim = (Reanimation *)operator new(sizeof(Reanimation));
-//        Reanimation_Reanimation(reanim);
+        //        Reanimation *reanim = (Reanimation *)operator new(sizeof(Reanimation));
+        //        Reanimation_Reanimation(reanim);
         Reanimation *reanim = new Reanimation;
         reanim->ReanimationInitializeType(0.0, 0.0, (ReanimationType)(ReanimationType::REANIM_LEADERBOARDS_HOUSE + i));
         reanim->SetAnimRate(0.0f);
@@ -164,10 +164,10 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
         reanim->Update(); // 一次Update是必要的，否则绘制出来是Empty
         mLeaderboardReanimations->backgroundReanim[i] = reanim;
     }
-    mLeaderboardReanimations->backgroundReanim[1]->AssignRenderGroupToTrack("survival button 1", 1);                               // 设置无尽模式按钮
+    mLeaderboardReanimations->backgroundReanim[1]->AssignRenderGroupToTrack("survival button 1", 1);                   // 设置无尽模式按钮
     mLeaderboardReanimations->backgroundReanim[1]->SetImageOverride("survival button 1", addonImages.survival_button); // 设置无尽模式按钮
-    Reanimation_HideTrack(mLeaderboardReanimations->backgroundReanim[1], "house 1", true);                                         // 隐藏默认房屋
-    Reanimation_HideTrack(mLeaderboardReanimations->backgroundReanim[1], "house achievements 1", true);                            // 隐藏默认房屋
+    Reanimation_HideTrack(mLeaderboardReanimations->backgroundReanim[1], "house 1", true);                             // 隐藏默认房屋
+    Reanimation_HideTrack(mLeaderboardReanimations->backgroundReanim[1], "house achievements 1", true);                // 隐藏默认房屋
     //    Reanimation_HideTrack(this_->mLeaderboardReanimations->backgroundReanim[1],"house 2",true); // 隐藏默认房屋
     //    Reanimation_HideTrack(this_->mLeaderboardReanimations->backgroundReanim[1],"house achievements 2",true); // 隐藏默认房屋
 
@@ -185,8 +185,8 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
 
     for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {
         mAchievements[i] = theApp->mPlayerInfo->mAchievements[LeaderboardsWidget_GetAchievementIdByReanimationType((ReanimationType)(ReanimationType::REANIM_ACHIEVEMENT_HOME_SECURITY + i))];
-//        Reanimation *reanim = (Reanimation *)operator new(sizeof(Reanimation));
-//        Reanimation_Reanimation(reanim);
+        //        Reanimation *reanim = (Reanimation *)operator new(sizeof(Reanimation));
+        //        Reanimation_Reanimation(reanim);
         Reanimation *reanim = new Reanimation;
         reanim->ReanimationInitializeType(0.0, 0.0, (ReanimationType)(ReanimationType::REANIM_ACHIEVEMENT_HOME_SECURITY + i));
         reanim->SetPosition(gLeaderboardAchievementsPosition[i][0], gLeaderboardAchievementsPosition[i][1]);
@@ -215,9 +215,9 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
 
     pvzstl::string str = TodStringTranslate("[CLOSE]");
     Sexy::GameButton *aBackButton = MakeButton(1000, mButtonListener, this, str);
-    LOG_DEBUG("aBackButton {} ", (void*)aBackButton);
+    LOG_DEBUG("aBackButton {} ", (void *)aBackButton);
     aBackButton->Resize(1040, 590, 120, 50);
-    AddWidget((Sexy::Widget*)aBackButton);
+    AddWidget((Sexy::Widget *)aBackButton);
     mBackButton = aBackButton;
     mFocusedAchievementIndex = 0;
     mHighLightAchievement = false;
@@ -280,7 +280,7 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
 
     //    DrawImage(g, addonImages.survival_button, 270, 579);
 
-    pvzstl::string  str2 = TodStringTranslate("[PLAYERS_HOUSE]");
+    pvzstl::string str2 = TodStringTranslate("[PLAYERS_HOUSE]");
     Sexy::Rect theRect1 = {240, 70, 800, 70};
     pvzstl::string str3 = StrFormat("%s", leaderboardsWidget->mApp->mPlayerInfo->mName);
     pvzstl::string str4 = TodReplaceString(str2, "{PLAYER}", str3);

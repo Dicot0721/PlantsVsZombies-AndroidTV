@@ -2,12 +2,12 @@
 #define PVZ_LAWN_BOARD_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
-#include "PvZ/TodLib/Common/DataArray.h"
+#include "PvZ/Lawn/Widget/AchievementsWidget.h"
+#include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
-#include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
-#include "PvZ/Lawn/Widget/AchievementsWidget.h"
+#include "PvZ/TodLib/Common/DataArray.h"
 
 #include "Coin.h"
 #include "GridItem.h"
@@ -108,11 +108,7 @@ enum TouchState {
     TOUCHSTATE_VALID_COBCONON_SECOND = 15,
 };
 
-enum TouchPlayerIndex {
-    TOUCHPLAYER_NONE = -1,
-    TOUCHPLAYER_PLAYER1 = 0,
-    TOUCHPLAYER_PLAYER2 = 1
-};
+enum TouchPlayerIndex { TOUCHPLAYER_NONE = -1, TOUCHPLAYER_PLAYER1 = 0, TOUCHPLAYER_PLAYER2 = 1 };
 
 class Board : public Sexy::Widget {
 public:
@@ -296,82 +292,168 @@ public:
     Projectile *AddProjectile(int theX, int theY, int theRenderOrder, int theRow, ProjectileType theProjectileType) {
         return reinterpret_cast<Projectile *(*)(Board *, int, int, int, int, ProjectileType)>(Board_AddProjectileAddr)(this, theX, theY, theRenderOrder, theRow, theProjectileType);
     }
-    int PixelToGridX(int theX, int theY) { return reinterpret_cast<int (*)(Board *, int, int)>(Board_PixelToGridXAddr)(this, theX, theY); }
-    int PixelToGridY(int theX, int theY) { return reinterpret_cast<int (*)(Board *, int, int)>(Board_PixelToGridYAddr)(this, theX, theY); }
+    int PixelToGridX(int theX, int theY) {
+        return reinterpret_cast<int (*)(Board *, int, int)>(Board_PixelToGridXAddr)(this, theX, theY);
+    }
+    int PixelToGridY(int theX, int theY) {
+        return reinterpret_cast<int (*)(Board *, int, int)>(Board_PixelToGridYAddr)(this, theX, theY);
+    }
     GridItem *GetLadderAt(int theGridX, int theGridY);
     GridItem *GetScaryPotAt(int theGridX, int theGridY);
     GridItem *GetGridItemAt(GridItemType theGridItemType, int theGridX, int theGridY);
-    void Move(int theX, int theY) { reinterpret_cast<void (*)(Board *, int, int)>(Board_MoveAddr)(this, theX, theY); } // 整体移动整个草坪，包括种子栏和铲子按钮等等。
-    void DoFwoosh(int theRow) { reinterpret_cast<void (*)(Board *, int)>(Board_DoFwooshAddr)(this, theRow); }
-    bool IteratePlants(Plant *&thePlant) { return reinterpret_cast<bool (*)(Board *, Plant *&)>(Board_IteratePlantsAddr)(this, thePlant); }
-    bool IterateZombies(Zombie *&theZombie) { return reinterpret_cast<bool (*)(Board *, Zombie *&)>(Board_IterateZombiesAddr)(this, theZombie); }
-    bool IterateProjectiles(Projectile *&theProjectile) { return reinterpret_cast<bool (*)(Board *, Projectile *&)>(Board_IterateProjectilesAddr)(this, theProjectile); }
-    bool IterateCoins(Coin *&theCoin) { return reinterpret_cast<bool (*)(Board *, Coin *&)>(Board_IterateCoinsAddr)(this, theCoin); }
-    bool IterateLawnMowers(LawnMower *&theLawnMower) { return reinterpret_cast<bool (*)(Board *, LawnMower *&)>(Board_IterateLawnMowersAddr)(this, theLawnMower); }
-    bool IterateParticles(TodParticleSystem *& theParticle){ return reinterpret_cast<bool (*)(Board *, TodParticleSystem *&)>(Board_IterateParticlesAddr)(this, theParticle); }
-    bool IterateGridItems(GridItem *&theGridItem) { return reinterpret_cast<bool (*)(Board *, GridItem *&)>(Board_IterateGridItemsAddr)(this, theGridItem); }
+    void Move(int theX, int theY) {
+        reinterpret_cast<void (*)(Board *, int, int)>(Board_MoveAddr)(this, theX, theY);
+    } // 整体移动整个草坪，包括种子栏和铲子按钮等等。
+    void DoFwoosh(int theRow) {
+        reinterpret_cast<void (*)(Board *, int)>(Board_DoFwooshAddr)(this, theRow);
+    }
+    bool IteratePlants(Plant *&thePlant) {
+        return reinterpret_cast<bool (*)(Board *, Plant *&)>(Board_IteratePlantsAddr)(this, thePlant);
+    }
+    bool IterateZombies(Zombie *&theZombie) {
+        return reinterpret_cast<bool (*)(Board *, Zombie *&)>(Board_IterateZombiesAddr)(this, theZombie);
+    }
+    bool IterateProjectiles(Projectile *&theProjectile) {
+        return reinterpret_cast<bool (*)(Board *, Projectile *&)>(Board_IterateProjectilesAddr)(this, theProjectile);
+    }
+    bool IterateCoins(Coin *&theCoin) {
+        return reinterpret_cast<bool (*)(Board *, Coin *&)>(Board_IterateCoinsAddr)(this, theCoin);
+    }
+    bool IterateLawnMowers(LawnMower *&theLawnMower) {
+        return reinterpret_cast<bool (*)(Board *, LawnMower *&)>(Board_IterateLawnMowersAddr)(this, theLawnMower);
+    }
+    bool IterateParticles(TodParticleSystem *&theParticle) {
+        return reinterpret_cast<bool (*)(Board *, TodParticleSystem *&)>(Board_IterateParticlesAddr)(this, theParticle);
+    }
+    bool IterateGridItems(GridItem *&theGridItem) {
+        return reinterpret_cast<bool (*)(Board *, GridItem *&)>(Board_IterateGridItemsAddr)(this, theGridItem);
+    }
     Plant *GetTopPlantAt(int theGridX, int theGridY, PlantPriority thePriority) {
         return reinterpret_cast<Plant *(*)(Board *, int, int, PlantPriority)>(Board_GetTopPlantAtAddr)(this, theGridX, theGridY, thePriority);
     }
-    bool ProgressMeterHasFlags() { return reinterpret_cast<bool (*)(Board *)>(Board_ProgressMeterHasFlagsAddr)(this); }
-    bool IsSurvivalStageWithRepick() { return reinterpret_cast<bool (*)(Board *)>(Board_IsSurvivalStageWithRepickAddr)(this); }
-    void PickUpTool(GameObjectType theObjectType, int thePlayerIndex) { reinterpret_cast<void (*)(Board *, GameObjectType, int)>(Board_PickUpToolAddr)(this, theObjectType, thePlayerIndex); }
+    bool ProgressMeterHasFlags() {
+        return reinterpret_cast<bool (*)(Board *)>(Board_ProgressMeterHasFlagsAddr)(this);
+    }
+    bool IsSurvivalStageWithRepick() {
+        return reinterpret_cast<bool (*)(Board *)>(Board_IsSurvivalStageWithRepickAddr)(this);
+    }
+    void PickUpTool(GameObjectType theObjectType, int thePlayerIndex) {
+        reinterpret_cast<void (*)(Board *, GameObjectType, int)>(Board_PickUpToolAddr)(this, theObjectType, thePlayerIndex);
+    }
     int GameAxisMove(int theButton, int thePlayerIndex, int theIsLongPress) {
         return reinterpret_cast<int (*)(Board *, int, int, int)>(Board_GameAxisMoveAddr)(this, theButton, thePlayerIndex, theIsLongPress);
     }
-    int InitCoverLayer() { return reinterpret_cast<int (*)(Board *)>(Board_InitCoverLayerAddr)(this); }
-    void LoadBackgroundImages() { reinterpret_cast<void (*)(Board *)>(Board_LoadBackgroundImagesAddr)(this); }
-    bool HasConveyorBeltSeedBank(int thePlayerIndex) { return reinterpret_cast<bool (*)(Board *, int)>(Board_HasConveyorBeltSeedBankAddr)(this, thePlayerIndex); }
+    int InitCoverLayer() {
+        return reinterpret_cast<int (*)(Board *)>(Board_InitCoverLayerAddr)(this);
+    }
+    void LoadBackgroundImages() {
+        reinterpret_cast<void (*)(Board *)>(Board_LoadBackgroundImagesAddr)(this);
+    }
+    bool HasConveyorBeltSeedBank(int thePlayerIndex) {
+        return reinterpret_cast<bool (*)(Board *, int)>(Board_HasConveyorBeltSeedBankAddr)(this, thePlayerIndex);
+    }
     Zombie *ZombieHitTest(int theMouseX, int theMouseY, int thePlayerIndex) {
         return reinterpret_cast<Zombie *(*)(Board *, int, int, int)>(Board_ZombieHitTestAddr)(this, theMouseX, theMouseY, thePlayerIndex);
     }
-    void ClearAdviceImmediately() { reinterpret_cast<void (*)(Board *)>(Board_ClearAdviceImmediatelyAddr)(this); }
+    void ClearAdviceImmediately() {
+        reinterpret_cast<void (*)(Board *)>(Board_ClearAdviceImmediatelyAddr)(this);
+    }
     void DisplayAdviceAgain(const pvzstl::string &theAdvice, MessageStyle theMessageStyle, AdviceType theHelpIndex) {
         reinterpret_cast<void (*)(Board *, const pvzstl::string &, MessageStyle, AdviceType)>(Board_DisplayAdviceAgainAddr)(this, theAdvice, theMessageStyle, theHelpIndex);
     }
     Plant *NewPlant(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int thePlayerIndex) {
         return reinterpret_cast<Plant *(*)(Board *, int, int, SeedType, SeedType, int)>(Board_NewPlantAddr)(this, theGridX, theGridY, theSeedType, theImitaterType, thePlayerIndex);
     }
-    bool CanUseGameObject(GameObjectType theGameObject) { return reinterpret_cast<int (*)(Board *, GameObjectType)>(Board_CanUseGameObjectAddr)(this, theGameObject); }
-    Plant *ToolHitTest(int theX, int theY) { return reinterpret_cast<Plant *(*)(Board *, int, int)>(Board_ToolHitTestAddr)(this, theX, theY); }
-    void RefreshSeedPacketFromCursor(int thePlayerIndex) { reinterpret_cast<void (*)(Board *, int)>(Board_RefreshSeedPacketFromCursorAddr)(this, thePlayerIndex); }
+    bool CanUseGameObject(GameObjectType theGameObject) {
+        return reinterpret_cast<int (*)(Board *, GameObjectType)>(Board_CanUseGameObjectAddr)(this, theGameObject);
+    }
+    Plant *ToolHitTest(int theX, int theY) {
+        return reinterpret_cast<Plant *(*)(Board *, int, int)>(Board_ToolHitTestAddr)(this, theX, theY);
+    }
+    void RefreshSeedPacketFromCursor(int thePlayerIndex) {
+        reinterpret_cast<void (*)(Board *, int)>(Board_RefreshSeedPacketFromCursorAddr)(this, thePlayerIndex);
+    }
     Plant *GetPlantsOnLawn(int theGridX, int theGridY, PlantsOnLawn *thePlantOnLawn) { // 检查加农炮用
         return reinterpret_cast<Plant *(*)(Board *, int, int, PlantsOnLawn *)>(Board_GetPlantsOnLawnAddr)(this, theGridX, theGridY, thePlantOnLawn);
     }
-    GridItem *AddALadder(int theGridX, int theGridY) { return reinterpret_cast<GridItem *(*)(Board *, int, int)>(Board_AddALadderAddr)(this, theGridX, theGridY); }
-    void ClearCursor(int thePlayerIndex) { reinterpret_cast<void (*)(Board *, int)>(Board_ClearCursorAddr)(this, thePlayerIndex); }
+    GridItem *AddALadder(int theGridX, int theGridY) {
+        return reinterpret_cast<GridItem *(*)(Board *, int, int)>(Board_AddALadderAddr)(this, theGridX, theGridY);
+    }
+    void ClearCursor(int thePlayerIndex) {
+        reinterpret_cast<void (*)(Board *, int)>(Board_ClearCursorAddr)(this, thePlayerIndex);
+    }
     void MouseDownWithTool(int x, int y, int theClickCount, CursorType theCursorType, int thePlayerIndex) {
         reinterpret_cast<void (*)(Board *, int, int, int, CursorType, int)>(Board_MouseDownWithToolAddr)(this, x, y, theClickCount, theCursorType, thePlayerIndex);
     }
-    void SetTutorialState(TutorialState theTutorialState) { reinterpret_cast<void (*)(Board *, TutorialState)>(Board_SetTutorialStateAddr)(this, theTutorialState); }
-    Sexy::Rect GetButterButtonRect() { return reinterpret_cast<Sexy::Rect (*)(Board *)>(Board_GetButterButtonRectAddr)(this); }
-    Zombie *ZombieTryToGet(ZombieID theZombieID) { return reinterpret_cast<Zombie *(*)(Board *, ZombieID)>(Board_ZombieTryToGetAddr)(this, theZombieID); }
-    void MouseDownWithPlant(int x, int y, int theClickCount) { reinterpret_cast<void (*)(Board *, int, int, int)>(Board_MouseDownWithPlantAddr)(this, x, y, theClickCount); }
-    bool CanInteractWithBoardButtons() { return reinterpret_cast<bool (*)(Board *)>(Board_CanInteractWithBoardButtonsAddr)(this); }
+    void SetTutorialState(TutorialState theTutorialState) {
+        reinterpret_cast<void (*)(Board *, TutorialState)>(Board_SetTutorialStateAddr)(this, theTutorialState);
+    }
+    Sexy::Rect GetButterButtonRect() {
+        return reinterpret_cast<Sexy::Rect (*)(Board *)>(Board_GetButterButtonRectAddr)(this);
+    }
+    Zombie *ZombieTryToGet(ZombieID theZombieID) {
+        return reinterpret_cast<Zombie *(*)(Board *, ZombieID)>(Board_ZombieTryToGetAddr)(this, theZombieID);
+    }
+    void MouseDownWithPlant(int x, int y, int theClickCount) {
+        reinterpret_cast<void (*)(Board *, int, int, int)>(Board_MouseDownWithPlantAddr)(this, x, y, theClickCount);
+    }
+    bool CanInteractWithBoardButtons() {
+        return reinterpret_cast<bool (*)(Board *)>(Board_CanInteractWithBoardButtonsAddr)(this);
+    }
     int GetSeedPacketPositionX(int theIndex, int theUnkInt, bool theUnkBool) {
         return reinterpret_cast<int (*)(Board *, int, int, bool)>(Board_GetSeedPacketPositionXAddr)(this, theIndex, theUnkInt, theUnkBool);
     }
     Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion) {
         return reinterpret_cast<Coin *(*)(Board *, int, int, CoinType, CoinMotion)>(Board_AddCoinAddr)(this, theX, theY, theCoinType, theCoinMotion);
     }
-    bool CanTakeSunMoney(int theAmount, int thePlayerIndex) { return reinterpret_cast<bool (*)(Board *, int, int)>(Board_CanTakeSunMoneyAddr)(this, theAmount, thePlayerIndex); }
-    Sexy::Rect GetZenButtonRect(GameObjectType theObjectType) { return reinterpret_cast<Sexy::Rect (*)(Board *, GameObjectType)>(Board_GetZenButtonRectAddr)(this, theObjectType); }
-    int PickRowForNewZombie(ZombieType theZombieType) { return reinterpret_cast<int (*)(Board *, ZombieType)>(Board_PickRowForNewZombieAddr)(this, theZombieType); }
-    ZombieType GetIntroducedZombieType() { return reinterpret_cast<ZombieType (*)(Board *)>(Board_GetIntroducedZombieTypeAddr)(this); }
+    bool CanTakeSunMoney(int theAmount, int thePlayerIndex) {
+        return reinterpret_cast<bool (*)(Board *, int, int)>(Board_CanTakeSunMoneyAddr)(this, theAmount, thePlayerIndex);
+    }
+    Sexy::Rect GetZenButtonRect(GameObjectType theObjectType) {
+        return reinterpret_cast<Sexy::Rect (*)(Board *, GameObjectType)>(Board_GetZenButtonRectAddr)(this, theObjectType);
+    }
+    int PickRowForNewZombie(ZombieType theZombieType) {
+        return reinterpret_cast<int (*)(Board *, ZombieType)>(Board_PickRowForNewZombieAddr)(this, theZombieType);
+    }
+    ZombieType GetIntroducedZombieType() {
+        return reinterpret_cast<ZombieType (*)(Board *)>(Board_GetIntroducedZombieTypeAddr)(this);
+    }
     ZombieType PickZombieType(int theZombiePoints, int theWaveIndex, ZombiePicker *theZombiePicker) {
         return reinterpret_cast<ZombieType (*)(Board *, int, int, ZombiePicker *)>(Board_PickZombieTypeAddr)(this, theZombiePoints, theWaveIndex, theZombiePicker);
     }
-    bool HasLevelAwardDropped() { return reinterpret_cast<bool (*)(Board *)>(Board_HasLevelAwardDroppedAddr)(this); }
-    void SpawnZombiesFromGraves() { reinterpret_cast<void (*)(Board *)>(Board_SpawnZombiesFromGravesAddr)(this); }
-    void ClearAdvice(AdviceType theHelpIndex) { reinterpret_cast<void (*)(Board *)>(Board_ClearAdviceAddr)(this); }
-    void NextWaveComing() { reinterpret_cast<void (*)(Board *)>(Board_NextWaveComingAddr)(this); }
-    int GridCellWidth(int theGridX, int theGridY) { return reinterpret_cast<int (*)(Board *, int, int)>(Board_GridCellWidthAddr)(this, theGridX, theGridY); }
-    int GridCellHeight(int theGridX, int theGridY) { return reinterpret_cast<int (*)(Board *, int, int)>(Board_GridCellHeightAddr)(this, theGridX, theGridY); }
-    SeedType GetSeedTypeInCursor(int thePlayerIndex) { return reinterpret_cast<SeedType (*)(Board *, int)>(Board_GetSeedTypeInCursorAddr)(this, thePlayerIndex); }
-    void TryToSaveGame() { reinterpret_cast<void (*)(Board *)>(Board_TryToSaveGameAddr)(this); }
-    bool CanTakeDeathMoney(int theAmount) { return reinterpret_cast<bool (*)(Board *, int)>(Board_CanTakeDeathMoneyAddr)(this, theAmount); }
-    void RemoveAllMowers() { reinterpret_cast<void (*)(Board *)>(Board_RemoveAllMowersAddr)(this); }
-    void ResetLawnMowers() { reinterpret_cast<void (*)(Board *)>(Board_ResetLawnMowersAddr)(this); }
+    bool HasLevelAwardDropped() {
+        return reinterpret_cast<bool (*)(Board *)>(Board_HasLevelAwardDroppedAddr)(this);
+    }
+    void SpawnZombiesFromGraves() {
+        reinterpret_cast<void (*)(Board *)>(Board_SpawnZombiesFromGravesAddr)(this);
+    }
+    void ClearAdvice(AdviceType theHelpIndex) {
+        reinterpret_cast<void (*)(Board *)>(Board_ClearAdviceAddr)(this);
+    }
+    void NextWaveComing() {
+        reinterpret_cast<void (*)(Board *)>(Board_NextWaveComingAddr)(this);
+    }
+    int GridCellWidth(int theGridX, int theGridY) {
+        return reinterpret_cast<int (*)(Board *, int, int)>(Board_GridCellWidthAddr)(this, theGridX, theGridY);
+    }
+    int GridCellHeight(int theGridX, int theGridY) {
+        return reinterpret_cast<int (*)(Board *, int, int)>(Board_GridCellHeightAddr)(this, theGridX, theGridY);
+    }
+    SeedType GetSeedTypeInCursor(int thePlayerIndex) {
+        return reinterpret_cast<SeedType (*)(Board *, int)>(Board_GetSeedTypeInCursorAddr)(this, thePlayerIndex);
+    }
+    void TryToSaveGame() {
+        reinterpret_cast<void (*)(Board *)>(Board_TryToSaveGameAddr)(this);
+    }
+    bool CanTakeDeathMoney(int theAmount) {
+        return reinterpret_cast<bool (*)(Board *, int)>(Board_CanTakeDeathMoneyAddr)(this, theAmount);
+    }
+    void RemoveAllMowers() {
+        reinterpret_cast<void (*)(Board *)>(Board_RemoveAllMowersAddr)(this);
+    }
+    void ResetLawnMowers() {
+        reinterpret_cast<void (*)(Board *)>(Board_ResetLawnMowersAddr)(this);
+    }
 
     Board(LawnApp *theApp);
     void InitLevel();
@@ -429,7 +511,7 @@ public:
     void UpdateGridItems();
     void ShakeBoard(int theShakeAmountX, int theShakeAmountY);
     void DrawZenButtons(Sexy::Graphics *g);
-    void DrawGameObjects(Sexy::Graphics* g);
+    void DrawGameObjects(Sexy::Graphics *g);
     void SpeedUpUpdate();
     void DrawShovelButton(Sexy::Graphics *g, LawnApp *theApp);
     void ShovelDown();
@@ -454,7 +536,7 @@ public:
     void RemoveAllZombies();
     bool IsValidCobCannonSpotHelper(int theGridX, int theGridY);
     bool IsPoolSquare(int theGridX, int theGridY);
-    void PutZombieInWave(ZombieType theZombieType, int theWaveNumber, ZombiePicker* theZombiePicker);
+    void PutZombieInWave(ZombieType theZombieType, int theWaveNumber, ZombiePicker *theZombiePicker);
     int TotalZombiesHealthInWave(int theWaveIndex);
     void KillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags);
     void RemoveCutsceneZombies();

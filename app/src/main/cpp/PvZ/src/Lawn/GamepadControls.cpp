@@ -2,6 +2,7 @@
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Challenge.h"
+#include "PvZ/Lawn/Board/CursorObject.h"
 #include "PvZ/Lawn/Board/Plant.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/Board/ZenGarden.h"
@@ -11,9 +12,8 @@
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
-#include "PvZ/TodLib/Effect/Reanimator.h"
-#include "PvZ/Lawn/Board/CursorObject.h"
 #include "PvZ/TodLib/Effect/Attachment.h"
+#include "PvZ/TodLib/Effect/Reanimator.h"
 
 GamepadControls::GamepadControls(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2) {
     __Constructor(theBoard, thePlayerIndex1, thePlayerIndex2);
@@ -200,7 +200,8 @@ void GamepadControls::Update(float a2) {
     //    Reanimation *mCursorReanim = ReanimationTryToGet(gamepadControls->mGameObject.aApp, gamepadControls->mCursorReanimID);
     //    LOGD("%d",mCursorReanim);
     //    if (mCursorReanim != nullptr) {
-    //        if ((gamepadControls->mPlayerIndex2 == 0 &&(mIsZombie == TouchPlayerIndex::TOUCHPLAYER_PLAYER1 || gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER1)) || (gamepadControls->mPlayerIndex2 == 1
+    //        if ((gamepadControls->mPlayerIndex2 == 0 &&(mIsZombie == TouchPlayerIndex::TOUCHPLAYER_PLAYER1 || gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER1)) ||
+    //        (gamepadControls->mPlayerIndex2 == 1
     //        &&(mIsZombie == TouchPlayerIndex::TOUCHPLAYER_PLAYER2 || gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER2))) {
     //            if (!Reanimation_IsAnimPlaying(mCursorReanim, "anim_depressed"))
     //                Reanimation_PlayReanim(mCursorReanim, "anim_depressed", a::REANIM_LOOP, 0,12.0);
@@ -218,7 +219,7 @@ void GamepadControls::Update(float a2) {
 void GamepadControls::ButtonDownFireCobcannonTest() {
     // 解除加农炮选取半秒后才能发射的限制
     mBoard->mCobCannonCursorDelayCounter = 0;
-    
+
     return old_GamepadControls_ButtonDownFireCobcannonTest(this);
 }
 
@@ -564,7 +565,7 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
     if (aApp->IsWhackAZombieLevel() || aApp->IsScaryPotterLevel()) {
         if (mGamepadState == 7) {
             SeedBank *seedBank = GetSeedBank();
-            SeedPacket *seedPacket = &seedBank->mSeedPackets[ mSelectedSeedIndex];
+            SeedPacket *seedPacket = &seedBank->mSeedPackets[mSelectedSeedIndex];
             mSelectedSeedType = seedPacket->mPacketType == SeedType::SEED_IMITATER ? seedPacket->mImitaterType : seedPacket->mPacketType;
             old_GamepadControls_DrawPreview(this, g);
             return;

@@ -4,9 +4,11 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 
-class HelpTextScreen :public Sexy::Widget {
+class HelpTextScreen : public Sexy::Widget {
 public:
-    void KeyDown(Sexy::KeyCode theKey) { reinterpret_cast<void (*)(HelpTextScreen *, Sexy::KeyCode)>(HelpTextScreen_KeyDownAddr)(this, theKey); }
+    void KeyDown(Sexy::KeyCode theKey) {
+        reinterpret_cast<void (*)(HelpTextScreen *, Sexy::KeyCode)>(HelpTextScreen_KeyDownAddr)(this, theKey);
+    }
 
     void MouseDown(int x, int y, int theClickCount);
 };

@@ -24,7 +24,9 @@ public:
     int mNumProfiles;       // 7
     int mNextProfileUseSeq; // 9
 
-    DefaultPlayerInfo *GetAnyProfile() { return reinterpret_cast<DefaultPlayerInfo *(*)(DefaultProfileMgr *)>(Sexy_DefaultProfileMgr_GetAnyProfileAddr)(this); }
+    DefaultPlayerInfo *GetAnyProfile() {
+        return reinterpret_cast<DefaultPlayerInfo *(*)(DefaultProfileMgr *)>(Sexy_DefaultProfileMgr_GetAnyProfileAddr)(this);
+    }
 };
 
 } // namespace Sexy

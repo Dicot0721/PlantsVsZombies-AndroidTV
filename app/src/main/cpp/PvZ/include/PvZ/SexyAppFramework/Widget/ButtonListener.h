@@ -25,7 +25,7 @@ public:
     ButtonListenerVTable *vTable;
 };
 
-}
+} // namespace Sexy
 
 inline void Sexy_ButtonListener_ButtonMouseEnter(Sexy::ButtonListener *listener, int id) {}
 
@@ -34,7 +34,6 @@ inline void Sexy_ButtonListener_ButtonMouseMove(Sexy::ButtonListener *listener, 
 inline void Sexy_ButtonListener_ButtonMouseLeave(Sexy::ButtonListener *listener, int id) {}
 
 inline void Sexy_ButtonListener_ButtonDownTick(Sexy::ButtonListener *listener, int id) {}
-
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_BUTTONLISTENER_H

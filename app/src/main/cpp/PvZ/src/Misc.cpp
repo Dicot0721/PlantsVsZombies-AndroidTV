@@ -6,12 +6,12 @@
 #include "PvZ/Lawn/Board/Zombie.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/PoolEffect.h"
+#include "PvZ/SexyAppFramework/Graphics/Font.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Graphics/MemoryImage.h"
 #include "PvZ/SexyAppFramework/Widget/CustomScrollbarWidget.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
-#include "PvZ/SexyAppFramework/Graphics/Font.h"
 
 #include <cassert>
 

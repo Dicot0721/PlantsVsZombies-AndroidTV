@@ -6,7 +6,7 @@
 
 using namespace Sexy;
 
-void MemoryImage::ClearRect(const Rect& theRect) {
+void MemoryImage::ClearRect(const Rect &theRect) {
     int mY;     // r4
     int *mBits; // r7
     int v7;     // r0
@@ -15,7 +15,7 @@ void MemoryImage::ClearRect(const Rect& theRect) {
     mY = theRect.mY;
     if (mY < theRect.mHeight + mY) {
         do {
-            v7 = theRect.mX + (*((int (**)(Sexy::Image *))this->vTable + 6))(reinterpret_cast<Image *>(this))*mY++;
+            v7 = theRect.mX + (*((int (**)(Sexy::Image *))this->vTable + 6))(reinterpret_cast<Image *>(this)) * mY++;
             memset(&mBits[v7], 0, 4 * theRect.mWidth);
         } while (theRect.mHeight + theRect.mY > mY);
     }

@@ -10,7 +10,9 @@
 
 class ToolTipWidget {
 public:
-    void SetWarningText(const pvzstl::string &theWarningText) { reinterpret_cast<void (*)(ToolTipWidget *, const pvzstl::string &)>(ToolTipWidget_SetWarningTextAddr)(this, theWarningText); }
+    void SetWarningText(const pvzstl::string &theWarningText) {
+        reinterpret_cast<void (*)(ToolTipWidget *, const pvzstl::string &)>(ToolTipWidget_SetWarningTextAddr)(this, theWarningText);
+    }
 };
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_TOOLTIPWIDGET_H

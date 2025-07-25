@@ -16,7 +16,7 @@ public:
     void RemoveScrollButtons();
 };
 
-}
+} // namespace Sexy
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_CUSTOMSCROLLBARWIDGET_H

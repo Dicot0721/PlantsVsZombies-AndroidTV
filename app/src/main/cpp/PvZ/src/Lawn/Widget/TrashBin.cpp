@@ -4,8 +4,8 @@
 
 #include "PvZ/Lawn/Widget/TrashBin.h"
 #include "PvZ/GlobalVariable.h"
-#include "PvZ/Misc.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Misc.h"
 
 TrashBin::TrashBin(TrashPileType theTrashPileType, float theHeight) {
     __Constructor(theTrashPileType, theHeight);

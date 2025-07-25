@@ -44,7 +44,9 @@ public:
     int unkMems[14];                         // 62 ~ 75
     // 大小76个整数
 
-    void GridItemDie() { reinterpret_cast<void (*)(GridItem *)>(GridItem_GridItemDieAddr)(this); }
+    void GridItemDie() {
+        reinterpret_cast<void (*)(GridItem *)>(GridItem_GridItemDieAddr)(this);
+    }
 
     void DrawScaryPot(Sexy::Graphics *g);
     void Update();

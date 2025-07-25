@@ -2,24 +2,14 @@
 #define PVZ_LAWN_STORE_SCREEN_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
-#include "PvZ/Symbols.h"
 #include "PvZ/SexyAppFramework/Widget/Dialog.h"
+#include "PvZ/Symbols.h"
 
-enum StoreScreenTouchState {
-    Prev,
-    Next,
-    Back,
-    None
-};
+enum StoreScreenTouchState { Prev, Next, Back, None };
 
 class StoreScreen : public Sexy::Dialog {
 private:
-    enum
-    {
-        StoreScreen_Back = 100,
-        StoreScreen_Prev = 101,
-        StoreScreen_Next = 102
-    };
+    enum { StoreScreen_Back = 100, StoreScreen_Prev = 101, StoreScreen_Next = 102 };
 
 public:
     LawnApp *mApp;                    // 184
@@ -38,19 +28,37 @@ public:
     bool mBubbleClickToContinue;      // 756
 
 
-    int SetSelectedSlot(int theIndex) { return reinterpret_cast<int (*)(StoreScreen*, int)>(StoreScreen_SetSelectedSlotAddr)(this, theIndex); }
-    void EnableButtons(bool theEnable) { reinterpret_cast<void (*)(StoreScreen*, bool)>(StoreScreen_EnableButtonsAddr)(this, theEnable); }
-    bool IsPageShown(StorePages thePage) { return reinterpret_cast<bool (*)(StoreScreen*, StorePages)>(StoreScreen_IsPageShownAddr)(this, thePage); }
-    void AdvanceCrazyDaveDialog()  { reinterpret_cast<void (*)(StoreScreen*)>(StoreScreen_AdvanceCrazyDaveDialogAddr)(this); }
-    bool CanInteractWithButtons() { return reinterpret_cast<bool (*)(StoreScreen*)>(StoreScreen_CanInteractWithButtonsAddr)(this); }
-    StoreItem GetStoreItemType(int theSpotIndex) { return reinterpret_cast<StoreItem (*)(StoreScreen*, int)>(StoreScreen_GetStoreItemTypeAddr)(this, theSpotIndex); }
+    int SetSelectedSlot(int theIndex) {
+        return reinterpret_cast<int (*)(StoreScreen *, int)>(StoreScreen_SetSelectedSlotAddr)(this, theIndex);
+    }
+    void EnableButtons(bool theEnable) {
+        reinterpret_cast<void (*)(StoreScreen *, bool)>(StoreScreen_EnableButtonsAddr)(this, theEnable);
+    }
+    bool IsPageShown(StorePages thePage) {
+        return reinterpret_cast<bool (*)(StoreScreen *, StorePages)>(StoreScreen_IsPageShownAddr)(this, thePage);
+    }
+    void AdvanceCrazyDaveDialog() {
+        reinterpret_cast<void (*)(StoreScreen *)>(StoreScreen_AdvanceCrazyDaveDialogAddr)(this);
+    }
+    bool CanInteractWithButtons() {
+        return reinterpret_cast<bool (*)(StoreScreen *)>(StoreScreen_CanInteractWithButtonsAddr)(this);
+    }
+    StoreItem GetStoreItemType(int theSpotIndex) {
+        return reinterpret_cast<StoreItem (*)(StoreScreen *, int)>(StoreScreen_GetStoreItemTypeAddr)(this, theSpotIndex);
+    }
     void GetStoreItemInfo(int theSpotIndex, StoreItem theStoreItem, Sexy::Image *theImage, int &theX, int &theY, int &theCount) {
         reinterpret_cast<void (*)(StoreScreen *, int, StoreItem, Sexy::Image *, int &, int &, int &)>(StoreScreen_GetStoreItemInfoAddr)(
             this, theSpotIndex, theStoreItem, theImage, theX, theY, theCount);
     }
-    bool IsItemSoldOut(StoreItem theStoreItem) { return reinterpret_cast<bool (*)(StoreScreen*, StoreItem)>(StoreScreen_IsItemSoldOutAddr)(this, theStoreItem); }
-    bool IsItemUnavailable(StoreItem theStoreItem) { return reinterpret_cast<bool (*)(StoreScreen*, StoreItem)>(StoreScreen_IsItemUnavailableAddr)(this, theStoreItem); }
-    bool IsComingSoon(StoreItem theStoreItem) { return reinterpret_cast<bool (*)(StoreScreen*, StoreItem)>(StoreScreen_IsComingSoonAddr)(this, theStoreItem); }
+    bool IsItemSoldOut(StoreItem theStoreItem) {
+        return reinterpret_cast<bool (*)(StoreScreen *, StoreItem)>(StoreScreen_IsItemSoldOutAddr)(this, theStoreItem);
+    }
+    bool IsItemUnavailable(StoreItem theStoreItem) {
+        return reinterpret_cast<bool (*)(StoreScreen *, StoreItem)>(StoreScreen_IsItemUnavailableAddr)(this, theStoreItem);
+    }
+    bool IsComingSoon(StoreItem theStoreItem) {
+        return reinterpret_cast<bool (*)(StoreScreen *, StoreItem)>(StoreScreen_IsComingSoonAddr)(this, theStoreItem);
+    }
 
 
     void AddedToManager(int a2);

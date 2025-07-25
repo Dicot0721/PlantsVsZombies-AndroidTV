@@ -15,7 +15,7 @@ public:
     float unkMems[4]; // 68 ~ 71
 }; // 大小72个整数
 
-}
+} // namespace Sexy
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_SELECTABLEWIDGET_H

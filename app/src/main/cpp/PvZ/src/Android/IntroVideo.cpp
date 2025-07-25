@@ -1,7 +1,7 @@
 #include "PvZ/Android/IntroVideo.h"
 #include "Homura/Logger.h"
-#include "PvZ/Android/OpenSL.h"
 #include "PvZ/Android/Native/NativeApp.h"
+#include "PvZ/Android/OpenSL.h"
 
 int AGVideoOpen(const char *videoPath) {
     LOG_DEBUG("videoPath: {}", videoPath);

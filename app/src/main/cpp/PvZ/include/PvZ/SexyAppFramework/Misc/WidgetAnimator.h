@@ -18,6 +18,6 @@ public:
     bool mHideOnCompletion; // 20
 };
 
-}
+} // namespace Sexy
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_WIDGETANIMATOR_H

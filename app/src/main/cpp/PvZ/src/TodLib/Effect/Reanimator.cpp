@@ -360,12 +360,10 @@ void Reanimation::AssignRenderGroupToTrack(const char *theTrackName, int theRend
         }
 }
 
-void Reanimation::Draw(Graphics* g)
-{
+void Reanimation::Draw(Graphics *g) {
     DrawRenderGroup(g, RENDER_GROUP_NORMAL);
 }
 
-ReanimatorTrackInstance* Reanimation::GetTrackInstanceByName(const char* theTrackName)
-{
+ReanimatorTrackInstance *Reanimation::GetTrackInstanceByName(const char *theTrackName) {
     return &mTrackInstances[FindTrackIndex(theTrackName)];
 }

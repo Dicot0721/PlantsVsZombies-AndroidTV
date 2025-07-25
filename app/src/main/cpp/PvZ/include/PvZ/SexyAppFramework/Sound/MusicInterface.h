@@ -13,8 +13,7 @@ class MusicInterface : public AudiereMusicInterface {
 public:
 };
 
-}
-
+} // namespace Sexy
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_MUSICINTERFACE_H

@@ -14,6 +14,6 @@ protected:
     int unk[5];
 };
 
-}
+} // namespace Sexy
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_PERFTIMER_H

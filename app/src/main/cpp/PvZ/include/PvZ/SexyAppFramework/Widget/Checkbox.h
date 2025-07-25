@@ -26,13 +26,17 @@ public:
     Color mCheckColor;      // 93 ~ 96
     // 大小97个整数
 
-    ~Checkbox() { __Destructor(); }
+    ~Checkbox() {
+        __Destructor();
+    }
 
 protected:
-    void __Destructor() { reinterpret_cast<void (*)(Checkbox *)>(Sexy_Checkbox_DeleteAddr)(this); }
+    void __Destructor() {
+        reinterpret_cast<void (*)(Checkbox *)>(Sexy_Checkbox_DeleteAddr)(this);
+    }
 };
 
-}
+} // namespace Sexy
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_CHECKBOX_H

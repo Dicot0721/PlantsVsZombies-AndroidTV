@@ -35,11 +35,7 @@ enum MainMenuButtonId {
 };
 
 class MainMenu : public Sexy::MenuWidget {
-    enum MainMenuScene {
-        MENUSCENE_MORE_WAYS,
-        MENUSCENE_MAIN,
-        MENUSCENE_EXTRA
-    };
+    enum MainMenuScene { MENUSCENE_MORE_WAYS, MENUSCENE_MAIN, MENUSCENE_EXTRA };
 
 public:
     ReanimationID mMainMenuReanimID;      // 70 , PSV 59
@@ -82,11 +78,19 @@ public:
     Sexy::Image *m2DMarkImage;            // 107
     // 大小108个整数
 public:
-    bool InTransition() { return reinterpret_cast<bool (*)(MainMenu *)>(MainMenu_InTransitionAddr)(this); };
-    void SetScene(MainMenuScene theScene) { reinterpret_cast<void (*)(MainMenu *, MainMenuScene)>(MainMenu_SetSceneAddr)(this, theScene); };
-    void StartAdventureMode() { reinterpret_cast<void (*)(MainMenu *)>(MainMenu_StartAdventureModeAddr)(this); };
+    bool InTransition() {
+        return reinterpret_cast<bool (*)(MainMenu *)>(MainMenu_InTransitionAddr)(this);
+    };
+    void SetScene(MainMenuScene theScene) {
+        reinterpret_cast<void (*)(MainMenu *, MainMenuScene)>(MainMenu_SetSceneAddr)(this, theScene);
+    };
+    void StartAdventureMode() {
+        reinterpret_cast<void (*)(MainMenu *)>(MainMenu_StartAdventureModeAddr)(this);
+    };
 
-    MainMenu(LawnApp *theApp) { __Constructor(theApp); }
+    MainMenu(LawnApp *theApp) {
+        __Constructor(theApp);
+    }
     void KeyDown(Sexy::KeyCode theKeyCode);
     void ButtonDepress(MainMenuButtonId theSelectedButton);
     void Update();

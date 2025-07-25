@@ -1,11 +1,11 @@
 #ifndef PVZ_SYMBOLS_H
 #define PVZ_SYMBOLS_H
 
-#include "PvZ/Lawn/Common/ConstEnums.h"
 #include "MagicAddr.h"
+#include "PvZ/Lawn/Common/ConstEnums.h"
 
-#include <jni.h>
 #include <dlfcn.h>
+#include <jni.h>
 
 namespace Sexy {
 class Image;
@@ -1042,7 +1042,7 @@ inline Sexy::Image **Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_BODY1_2_Addr;
 inline Sexy::Image **Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_BODY1_3_Addr;
 inline Sexy::Image **Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_OUTERARM_LOWER2_Addr;
 inline Sexy::Image **Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_FOOT2_Addr;
-//inline Sexy::Image **Sexy_IMAGE_BLANK_Addr;
+// inline Sexy::Image **Sexy_IMAGE_BLANK_Addr;
 namespace Sexy {
 inline Image **IMAGE_BLANK;
 }
@@ -2197,7 +2197,7 @@ inline bool GetFunctionAddr() {
     Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_BODY1_3_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy38IMAGE_REANIM_ZOMBIE_GARGANTUAR_BODY1_3E");
     Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_OUTERARM_LOWER2_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy46IMAGE_REANIM_ZOMBIE_GARGANTUAR_OUTERARM_LOWER2E");
     Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_FOOT2_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy36IMAGE_REANIM_ZOMBIE_GARGANTUAR_FOOT2E");
-//    Sexy_IMAGE_BLANK_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy11IMAGE_BLANKE");
+    //    Sexy_IMAGE_BLANK_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy11IMAGE_BLANKE");
     Sexy::IMAGE_BLANK = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy11IMAGE_BLANKE"));
     Sexy_IMAGE_SEEDPACKETFLASH_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy21IMAGE_SEEDPACKETFLASHE");
     Sexy_IMAGE_ALMANAC_GROUNDDAY_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy23IMAGE_ALMANAC_GROUNDDAYE");

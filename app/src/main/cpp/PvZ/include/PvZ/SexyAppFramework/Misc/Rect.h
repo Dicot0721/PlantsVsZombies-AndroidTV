@@ -27,7 +27,7 @@ public:
         , mWidth(theWidth)
         , mHeight(theHeight) {}
 
-    TRect(const TRect<_T> &theTRect)
+    TRect(const TRect<_T>& theTRect)
         : mX(theTRect.mX)
         , mY(theTRect.mY)
         , mWidth(theTRect.mWidth)
@@ -39,28 +39,22 @@ public:
         , mWidth(0)
         , mHeight(0) {}
 
-    bool					Intersects(const TRect<_T>& theTRect) const
-    {
-        return !((theTRect.mX + theTRect.mWidth <= mX) ||
-                 (theTRect.mY + theTRect.mHeight <= mY) ||
-                 (theTRect.mX >= mX + mWidth) ||
-                 (theTRect.mY >= mY + mHeight));
+    bool Intersects(const TRect<_T>& theTRect) const {
+        return !((theTRect.mX + theTRect.mWidth <= mX) || (theTRect.mY + theTRect.mHeight <= mY) || (theTRect.mX >= mX + mWidth) || (theTRect.mY >= mY + mHeight));
     }
 
-    TRect<_T>				Intersection(const TRect<_T>& theTRect)	const
-    {
+    TRect<_T> Intersection(const TRect<_T>& theTRect) const {
         _T x1 = max(mX, theTRect.mX);
         _T x2 = min(mX + mWidth, theTRect.mX + theTRect.mWidth);
         _T y1 = max(mY, theTRect.mY);
         _T y2 = min(mY + mHeight, theTRect.mY + theTRect.mHeight);
         if (((x2 - x1) < 0) || ((y2 - y1) < 0))
-            return TRect<_T>(0,0,0,0);
+            return TRect<_T>(0, 0, 0, 0);
         else
             return TRect<_T>(x1, y1, x2 - x1, y2 - y1);
     }
 
-    TRect<_T>				Union(const TRect<_T>& theTRect)
-    {
+    TRect<_T> Union(const TRect<_T>& theTRect) {
         _T x1 = min(mX, theTRect.mX);
         _T x2 = max(mX + mWidth, theTRect.mX + theTRect.mWidth);
         _T y1 = min(mY, theTRect.mY);
@@ -68,50 +62,42 @@ public:
         return TRect<_T>(x1, y1, x2 - x1, y2 - y1);
     }
 
-    bool					Contains(_T theX, _T theY) const
-    {
-        return ((theX >= mX) && (theX < mX + mWidth) &&
-                (theY >= mY) && (theY < mY + mHeight));
+    bool Contains(_T theX, _T theY) const {
+        return ((theX >= mX) && (theX < mX + mWidth) && (theY >= mY) && (theY < mY + mHeight));
     }
 
-    bool					Contains(const TPoint<_T>& thePoint) const
-        {
-            return ((thePoint.mX >= mX) && (thePoint.mX < mX + mWidth) &&
-                    (thePoint.mY >= mY) && (thePoint.mY < mY + mHeight));
-        }
+    bool Contains(const TPoint<_T>& thePoint) const {
+        return ((thePoint.mX >= mX) && (thePoint.mX < mX + mWidth) && (thePoint.mY >= mY) && (thePoint.mY < mY + mHeight));
+    }
 
-        void					Offset(_T theX, _T theY)
-        {
-            mX += theX;
-            mY += theY;
-        }
+    void Offset(_T theX, _T theY) {
+        mX += theX;
+        mY += theY;
+    }
 
-        void					Offset(const TPoint<_T>& thePoint)
-        {
-            mX += thePoint.mX;
-            mY += thePoint.mY;
-        }
+    void Offset(const TPoint<_T>& thePoint) {
+        mX += thePoint.mX;
+        mY += thePoint.mY;
+    }
 
-        TRect					Inflate(_T theX, _T theY)
-        {
-            mX -= theX;
-            mWidth += theX*2;
-            mY -= theY;
-            mHeight += theY*2;
+    TRect Inflate(_T theX, _T theY) {
+        mX -= theX;
+        mWidth += theX * 2;
+        mY -= theY;
+        mHeight += theY * 2;
 
-            return *this;
-        }
+        return *this;
+    }
 
-        bool operator==(const TRect<_T>& theRect) const
-        {
-            return (mX == theRect.mX) && (mY == theRect.mY) && (mWidth == theRect.mWidth) && (mHeight == theRect.mHeight);
-        }
+    bool operator==(const TRect<_T>& theRect) const {
+        return (mX == theRect.mX) && (mY == theRect.mY) && (mWidth == theRect.mWidth) && (mHeight == theRect.mHeight);
+    }
 
-//        RECT					ToRECT() const
-//        {
-//            RECT aRect = {mX, mY, mX + mWidth, mY + mHeight};
-//            return aRect;
-//        }
+    //        RECT					ToRECT() const
+    //        {
+    //            RECT aRect = {mX, mY, mX + mWidth, mY + mHeight};
+    //            return aRect;
+    //        }
 };
 
 typedef TRect<int> Rect;

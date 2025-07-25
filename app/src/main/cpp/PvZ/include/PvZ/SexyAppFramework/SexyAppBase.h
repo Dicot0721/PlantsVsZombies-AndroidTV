@@ -43,16 +43,24 @@ public:
     int unkMem8[2];                         // 550 ~ 551
     // 115： 552 , 111： 553
 
-    Dialog *GetDialog(Dialogs theDialogId) { return reinterpret_cast<Dialog *(*)(__SexyAppBase *, Dialogs)>(Sexy_SexyAppBase_GetDialogAddr)(this, theDialogId); }
-    void EraseFile(const std::string &theFileName) { reinterpret_cast<void (*)(__SexyAppBase *, const std::string &)>(Sexy_SexyAppBase_EraseFileAddr)(this, theFileName); }
+    Dialog *GetDialog(Dialogs theDialogId) {
+        return reinterpret_cast<Dialog *(*)(__SexyAppBase *, Dialogs)>(Sexy_SexyAppBase_GetDialogAddr)(this, theDialogId);
+    }
+    void EraseFile(const std::string &theFileName) {
+        reinterpret_cast<void (*)(__SexyAppBase *, const std::string &)>(Sexy_SexyAppBase_EraseFileAddr)(this, theFileName);
+    }
     Image *GetImage(const pvzstl::string &theFileName, bool commitBits = true) {
         return reinterpret_cast<Image *(*)(__SexyAppBase *, const pvzstl::string &, bool)>(Sexy_SexyAppBase_GetImageAddr)(this, theFileName, commitBits);
     }
     bool RegistryReadString(const std::string &theValueName, std::string *theString) {
         return reinterpret_cast<bool (*)(__SexyAppBase *, const std::string &, std::string *)>(Sexy_SexyAppBase_RegistryReadStringAddr)(this, theValueName, theString);
     }
-    Image *CopyImage(Image *theImage) { return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *)>(Sexy_SexyAppBase_CopyImageAddr)(this, theImage); }
-    Image *CopyImage(Image *theImage, const Rect &theRect) { return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *, const Rect &)>(Sexy_SexyAppBase_CopyImage2Addr)(this, theImage, theRect); }
+    Image *CopyImage(Image *theImage) {
+        return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *)>(Sexy_SexyAppBase_CopyImageAddr)(this, theImage);
+    }
+    Image *CopyImage(Image *theImage, const Rect &theRect) {
+        return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *, const Rect &)>(Sexy_SexyAppBase_CopyImage2Addr)(this, theImage, theRect);
+    }
 
     __SexyAppBase() = default;
     ~__SexyAppBase() = default;
@@ -65,7 +73,9 @@ protected:
 
 class SexyAppBase : public __SexyAppBase {
 public:
-    SexyAppBase() { __Constructor(); }
+    SexyAppBase() {
+        __Constructor();
+    }
 
     ~SexyAppBase() = delete;
 };

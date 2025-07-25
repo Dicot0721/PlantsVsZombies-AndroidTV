@@ -5,13 +5,13 @@
 #ifndef PLANTSVSZOMBIES_ANDROIDTV_COMMON_H
 #define PLANTSVSZOMBIES_ANDROIDTV_COMMON_H
 
-#include <string>
-#include <vector>
-#include <set>
-#include <map>
-#include <list>
 #include <algorithm>
 #include <cstdlib>
+#include <list>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
 
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"

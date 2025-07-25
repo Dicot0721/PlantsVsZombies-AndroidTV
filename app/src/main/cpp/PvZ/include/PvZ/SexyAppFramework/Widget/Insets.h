@@ -6,23 +6,21 @@
 #define PLANTSVSZOMBIES_ANDROIDTV_INSETS_H
 
 
-namespace Sexy
-{
+namespace Sexy {
 
-class Insets
-{
+class Insets {
 public:
-    int						mLeft;
-    int						mTop;
-    int						mRight;
-    int						mBottom;
+    int mLeft;
+    int mTop;
+    int mRight;
+    int mBottom;
 
-//    Insets();
-//    Insets(int theLeft, int theTop, int theRight, int theBottom);
-//    Insets(const Insets& theInsets);
+    //    Insets();
+    //    Insets(int theLeft, int theTop, int theRight, int theBottom);
+    //    Insets(const Insets& theInsets);
 };
 
-}
+} // namespace Sexy
 
 
 #endif // PLANTSVSZOMBIES_ANDROIDTV_INSETS_H
