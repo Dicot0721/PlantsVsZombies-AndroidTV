@@ -64,7 +64,7 @@ uintptr_t Patcher::GetBaseAddress(const std::string &libName, bool isUseMap) {
         }
     }
 
-    constexpr char mapsPath[] = "/proc/self/maps";
+    static constexpr char mapsPath[] = "/proc/self/maps";
     std::ifstream mapsFile{mapsPath};
     if (!mapsFile.is_open()) {
         LOG_ERROR("Failed to open [{}].", mapsPath);

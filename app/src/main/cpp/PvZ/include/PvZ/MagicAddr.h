@@ -11,23 +11,23 @@
 constexpr int SexyAppBaseSize = 553;
 constexpr int SexyAppBasePartSize = 527;
 constexpr int LAWNAPP_PLAYSAMPLE_OFFSET = 680;
-constexpr int BOARD_UPDATE_ADDR_RELATIVE = 0x1669E4;
-constexpr int ZOMBIE_ISTANGLEKELPTARGET_ADDR_RELATIVE = 0x1AA288;
-constexpr int ZOMBIE_ISTANGLEKELPTARGET2_ADDR_RELATIVE = 0x1ACCE8;
-constexpr int J_AUDIOWRITE_ADDR_RELATIVE = 0x524E28;
+constexpr uintptr_t BOARD_UPDATE_ADDR_RELATIVE = 0x1669E4;
+constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET_ADDR_RELATIVE = 0x1AA288;
+constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET2_ADDR_RELATIVE = 0x1ACCE8;
+constexpr uintptr_t J_AUDIOWRITE_ADDR_RELATIVE = 0x524E28;
 #elif PVZ_VERSION == 115
 constexpr int SexyAppBaseSize = 552;
 constexpr int SexyAppBasePartSize = 526;
 constexpr int LAWNAPP_PLAYSAMPLE_OFFSET = 676;
-constexpr int BOARD_UPDATE_ADDR_RELATIVE = 0x164A88;
-constexpr int ZOMBIE_ISTANGLEKELPTARGET_ADDR_RELATIVE = 0x1AAD98;  // 符号重复，无法dlsym获取地址，只好常量封装
-constexpr int ZOMBIE_ISTANGLEKELPTARGET2_ADDR_RELATIVE = 0x1A8338; // 符号重复，无法dlsym获取地址，只好常量封装
-constexpr int J_AUDIOWRITE_ADDR_RELATIVE = 0x12E6C4;
-constexpr int AGVideoOpenOffset = 0x69394C;
-constexpr int AGVideoShowOffset = 0x69393C;
-constexpr int AGVideoEnableOffset = 0x693940;
-constexpr int AGVideoIsPlayingOffset = 0x693944;
-constexpr int AGVideoPlayOffset = 0x693950;
+constexpr uintptr_t BOARD_UPDATE_ADDR_RELATIVE = 0x164A88;
+constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET_ADDR_RELATIVE = 0x1AAD98;  // 符号重复，无法dlsym获取地址，只好常量封装
+constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET2_ADDR_RELATIVE = 0x1A8338; // 符号重复，无法dlsym获取地址，只好常量封装
+constexpr uintptr_t J_AUDIOWRITE_ADDR_RELATIVE = 0x12E6C4;
+constexpr uintptr_t AGVideoOpenOffset = 0x69394C;
+constexpr uintptr_t AGVideoShowOffset = 0x69393C;
+constexpr uintptr_t AGVideoEnableOffset = 0x693940;
+constexpr uintptr_t AGVideoIsPlayingOffset = 0x693944;
+constexpr uintptr_t AGVideoPlayOffset = 0x693950;
 #endif // PVZ_VERSION
 
 inline bool enableNewOptionsDialog = false;
@@ -40,7 +40,7 @@ inline homura::Patcher autoPickupSeedPacketDisable; // 禁止光标自动拾取�
 } // namespace game_patches
 
 inline void ApplyPatches() {
-    constexpr char libGameMain[] = "libGameMain.so";
+    static constexpr char libGameMain[] = "libGameMain.so";
 
 #if PVZ_VERSION == 111
     game_patches::whackAZombieNormalSpeed = homura::Patcher::CreateWithStr(libGameMain, 0x183448, true, "4F F0 01 00");

@@ -31,7 +31,7 @@ static_assert((sizeof(void *) == sizeof(int32_t)), "Unsupported non-32-bit archi
 [[gnu::constructor]] void lib_main() {
 
     // Target lib here
-    constexpr char targetLibName[] = "libGameMain.so";
+    static constexpr char targetLibName[] = "libGameMain.so";
 
     // 获取符号地址
     GetFunctionAddr();

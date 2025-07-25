@@ -2,10 +2,11 @@ plugins {
     id "com.android.application"
 }
 
-// 签名配置需读取位于项目根目录的 keystore.properties 文件
-//def keystorePropertiesFile = rootProject.file("keystore.properties")
-//def keystoreProperties = new Properties()
-//keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
 android {
     namespace = "com.trans.pvztv"
@@ -25,14 +26,15 @@ android {
         }
     }
 
-//    signingConfigs {
-//        release {
-//            keyAlias = keystoreProperties["keyAlias"]
-//            keyPassword = keystoreProperties["keyPassword"]
-//            storeFile = file(keystoreProperties["storeFile"])
-//            storePassword = keystoreProperties["storePassword"]
-//        }
-//    }
+    signingConfigs {
+        // 本文件已被 git 跟踪, 不要在此处修改签名配置, 需要自定义签名配置请参考 README.md
+        release {
+            keyAlias = keystoreProperties.getProperty("keyAlias", "key0")
+            keyPassword = keystoreProperties.getProperty("keyPassword", "wewewe")
+            storeFile = file(keystoreProperties.getProperty("storeFile", "D:/key.keystore"))
+            storePassword = keystoreProperties.getProperty("storePassword", "wewewe")
+        }
+    }
 
     buildTypes {
         debug {
@@ -54,7 +56,7 @@ android {
     productFlavors {
         create("v111") {
             dimension = "version"
-            applicationId = "com.trans.pvz"
+            applicationIdSuffix = ".v111"
             versionName = "1.1.1"
             externalNativeBuild {
                 cmake {
@@ -65,7 +67,7 @@ android {
 
         create("v115") {
             dimension = "version"
-            applicationId = "com.trans.pvztv"
+            applicationIdSuffix = ".v115"
             versionName = "1.1.5"
             externalNativeBuild {
                 cmake {

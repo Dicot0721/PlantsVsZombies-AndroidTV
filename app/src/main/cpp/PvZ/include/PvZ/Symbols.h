@@ -1174,7 +1174,7 @@ inline uintptr_t gLibBaseOffset = 0;
 
 
 inline bool GetFunctionAddr() {
-    constexpr char libGameMain[] = "libGameMain.so";
+    static constexpr char libGameMain[] = "libGameMain.so";
     void *handle = dlopen(libGameMain, RTLD_NOLOAD);
     if (handle == nullptr) {
         return false;
