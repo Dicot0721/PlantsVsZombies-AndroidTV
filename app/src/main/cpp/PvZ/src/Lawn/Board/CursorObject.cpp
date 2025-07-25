@@ -1,7 +1,3 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
 #include "PvZ/Lawn/Board/CursorObject.h"
 
 bool CursorObject::BeginDraw(Sexy::Graphics *g) {

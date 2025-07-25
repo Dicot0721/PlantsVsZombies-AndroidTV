@@ -1,8 +1,3 @@
-
-//
-// Created by 28636 on 2025/5/26.
-//
-
 #include "PvZ/Lawn/System/ReanimationLawn.h"
 #include "PvZ/Lawn/Board/Zombie.h"
 #include "PvZ/Misc.h"

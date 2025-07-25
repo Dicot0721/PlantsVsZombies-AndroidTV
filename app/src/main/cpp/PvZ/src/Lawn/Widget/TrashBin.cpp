@@ -1,7 +1,3 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
 #include "PvZ/Lawn/Widget/TrashBin.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/LawnApp.h"

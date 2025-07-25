@@ -1,14 +1,8 @@
-//
-// Created by 28636 on 2025/5/24.
-//
-
 #include "PvZ/Lawn/Board/LawnMower.h"
 #include "PvZ/GlobalVariable.h"
 
 void LawnMower::Update() {
-    if (requestPause) {
-        return;
+    if (!requestPause) {
+        old_LawnMower_Update(this);
     }
-
-    old_LawnMower_Update(this);
 }

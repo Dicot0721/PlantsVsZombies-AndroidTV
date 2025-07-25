@@ -1,7 +1,3 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
 #include "PvZ/Lawn/Board/MessageWidget.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/LawnApp.h"

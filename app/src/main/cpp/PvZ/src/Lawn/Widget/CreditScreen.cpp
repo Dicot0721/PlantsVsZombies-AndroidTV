@@ -1,7 +1,3 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
 #include "PvZ/Lawn/Widget/CreditScreen.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Misc.h"

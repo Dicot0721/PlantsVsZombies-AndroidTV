@@ -15,20 +15,22 @@
 
 using namespace Sexy;
 
-ProjectileDefinition gProjectileDefinition[] = {{ProjectileType::PROJECTILE_PEA, 0, 20},
-                                                {ProjectileType::PROJECTILE_SNOWPEA, 0, 20},
-                                                {ProjectileType::PROJECTILE_CABBAGE, 0, 40},
-                                                {ProjectileType::PROJECTILE_MELON, 0, 80},
-                                                {ProjectileType::PROJECTILE_PUFF, 0, 20},
-                                                {ProjectileType::PROJECTILE_WINTERMELON, 0, 80},
-                                                {ProjectileType::PROJECTILE_FIREBALL, 0, 40},
-                                                {ProjectileType::PROJECTILE_STAR, 0, 20},
-                                                {ProjectileType::PROJECTILE_SPIKE, 0, 20},
-                                                {ProjectileType::PROJECTILE_BASKETBALL, 0, 75},
-                                                {ProjectileType::PROJECTILE_KERNEL, 0, 20},
-                                                {ProjectileType::PROJECTILE_COBBIG, 0, 300},
-                                                {ProjectileType::PROJECTILE_BUTTER, 0, 40},
-                                                {ProjectileType::PROJECTILE_ZOMBIE_PEA, 0, 20}};
+ProjectileDefinition gProjectileDefinition[] = {
+    {ProjectileType::PROJECTILE_PEA, 0, 20},
+    {ProjectileType::PROJECTILE_SNOWPEA, 0, 20},
+    {ProjectileType::PROJECTILE_CABBAGE, 0, 40},
+    {ProjectileType::PROJECTILE_MELON, 0, 80},
+    {ProjectileType::PROJECTILE_PUFF, 0, 20},
+    {ProjectileType::PROJECTILE_WINTERMELON, 0, 80},
+    {ProjectileType::PROJECTILE_FIREBALL, 0, 40},
+    {ProjectileType::PROJECTILE_STAR, 0, 20},
+    {ProjectileType::PROJECTILE_SPIKE, 0, 20},
+    {ProjectileType::PROJECTILE_BASKETBALL, 0, 75},
+    {ProjectileType::PROJECTILE_KERNEL, 0, 20},
+    {ProjectileType::PROJECTILE_COBBIG, 0, 300},
+    {ProjectileType::PROJECTILE_BUTTER, 0, 40},
+    {ProjectileType::PROJECTILE_ZOMBIE_PEA, 0, 20},
+};
 
 int Projectile::ProjectileInitialize(int theX, int theY, int theRenderOrder, int theRow, ProjectileType theProjectileType) {
     //    projectile->mNewProjectileLastX = theX;

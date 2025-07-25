@@ -1,14 +1,8 @@
-//
-// Created by 28636 on 2025/5/27.
-//
-
 #include "PvZ/SexyAppFramework/SexyAppBase.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/PlayerInfo.h"
 
-using namespace Sexy;
-
-void __SexyAppBase::__Constructor() {
+void Sexy::__SexyAppBase::__Constructor() {
     old_Sexy_SexyAppBase_SexyAppBase(this);
     //    LOGD("%d",*((uint32_t *)appBase + 464));
     //    *((uint32_t *)appBase + 464) = 0; ;

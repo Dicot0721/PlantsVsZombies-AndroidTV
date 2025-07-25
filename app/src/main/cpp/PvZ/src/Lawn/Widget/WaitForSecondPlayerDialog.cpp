@@ -1,7 +1,3 @@
-//
-// Created by 28636 on 2025/7/17.
-//
-
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 
 void WaitForSecondPlayerDialog::__Constructor(int *a2) {
