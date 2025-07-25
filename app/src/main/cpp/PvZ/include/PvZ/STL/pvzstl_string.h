@@ -270,8 +270,9 @@ protected:
         [[nodiscard, gnu::always_inline]] static __rep &empty_rep() noexcept {
 #ifdef PVZ_VERSION
             assert(gLibBaseOffset != 0);
-            static constexpr uintptr_t offset = (sizeof(value_type) == sizeof(int8_t)) ? /* char */ 0x71BB54 : /* wchar_t */ 0x69E45C;
-            return *reinterpret_cast<__rep *>(gLibBaseOffset + offset);
+            static constexpr uintptr_t offset = (sizeof(value_type) == sizeof(int8_t)) ? /* string */ 0x71BB54 : /* wstring */ 0x69E45C;
+            static uintptr_t empty_rep_storage_addr = gLibBaseOffset + offset;
+            return *reinterpret_cast<__rep *>(empty_rep_storage_addr);
 #else
             alignas(__rep) static std::byte empty_rep_storage[sizeof(__rep) + sizeof(value_type)] = {};
             return *reinterpret_cast<__rep *>(empty_rep_storage);
