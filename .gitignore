@@ -1,19 +1,34 @@
-# IDE
-.idea/
-.vs/
-.vscode/
-
-bin/
-build/
-
-.cxx/
-.gradle/
-
-# 资源文件
-app/src/main/assets/
-
 # macOS
 .DS_Store
 
-keystore.properties
+# IntelliJ
+*.iml
+.idea/
+
+# Gradle files
+build/
+.gradle/
+
+# CXX compile cache
+.cxx/
+
+# Generated files
+bin/
+
+# Android Studio captures folder
+captures/
+
+# Android Studio Navigation editor temp files
+.navigation/
+
+# External native build folder generated in Android Studio 2.2 and later
+.externalNativeBuild
+
+# Local configuration file (sdk path, etc)
 local.properties
+
+# 签名配置
+keystore.properties
+
+# 资源文件
+app/src/main/assets/
