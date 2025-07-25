@@ -1,19 +1,12 @@
-//
-// Created by 28636 on 2025/6/4.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_MUSICINTERFACE_H
-#define PLANTSVSZOMBIES_ANDROIDTV_MUSICINTERFACE_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_SOUND_MUSIC_INTERFACE_H
+#define PVZ_SEXYAPPFRAMEWORK_SOUND_MUSIC_INTERFACE_H
 
 #include "AudiereMusicInterface.h"
 
 namespace Sexy {
 
-class MusicInterface : public AudiereMusicInterface {
-public:
-};
+class MusicInterface : public AudiereMusicInterface {};
 
 } // namespace Sexy
 
-
-#endif // PLANTSVSZOMBIES_ANDROIDTV_MUSICINTERFACE_H
+#endif // PVZ_SEXYAPPFRAMEWORK_SOUND_MUSIC_INTERFACE_H

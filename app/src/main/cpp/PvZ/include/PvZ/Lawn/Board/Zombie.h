@@ -1,5 +1,5 @@
-#ifndef PVZ_TV_1_1_5_ZOMBIE_H
-#define PVZ_TV_1_1_5_ZOMBIE_H
+#ifndef PVZ_LAWN_BOARD_ZOMBIE_H
+#define PVZ_LAWN_BOARD_ZOMBIE_H
 
 #include "GameObject.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -373,4 +373,5 @@ inline int (*old_Zombie_GetBobsledPosition)(Zombie *);
 inline void (*old_Zombie_SquishAllInSquare)(Zombie *, int theX, int theY, ZombieAttackType theAttackType);
 
 inline void (*old_Zombie_StopEating)(Zombie *);
-#endif // PVZ_TV_1_1_5_ZOMBIE_H
+
+#endif // PVZ_LAWN_BOARD_ZOMBIE_H

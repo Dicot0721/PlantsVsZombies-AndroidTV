@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_VS_SETUP_MENU_H
-#define PVZ_LAWN_VS_SETUP_MENU_H
+#ifndef PVZ_LAWN_WIDGET_VS_SETUP_MENU_H
+#define PVZ_LAWN_WIDGET_VS_SETUP_MENU_H
 
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
@@ -63,4 +63,4 @@ inline void (*old_VSSetupMenu_Update)(VSSetupMenu *a);
 inline void (*old_VSSetupMenu_KeyDown)(VSSetupMenu *a, Sexy::KeyCode a2);
 
 
-#endif // PVZ_LAWN_VS_SETUP_MENU_H
+#endif // PVZ_LAWN_WIDGET_VS_SETUP_MENU_H

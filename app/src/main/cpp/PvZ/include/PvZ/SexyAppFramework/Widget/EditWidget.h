@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/6/3.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_EDITWIDGET_H
-#define PLANTSVSZOMBIES_ANDROIDTV_EDITWIDGET_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_EDIT_WIDGET_H
+#define PVZ_SEXYAPPFRAMEWORK_WIDGET_EDIT_WIDGET_H
 
 #include "Widget.h"
 
@@ -12,8 +8,8 @@ namespace Sexy {
 class Font;
 class EditListener;
 
-class EditWidget : public Widget {};
+class EditWidget : public __Widget {};
 
 } // namespace Sexy
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_EDITWIDGET_H
+#endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_EDIT_WIDGET_H

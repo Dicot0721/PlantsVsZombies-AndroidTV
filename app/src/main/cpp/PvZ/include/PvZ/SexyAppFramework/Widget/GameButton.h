@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_GAMEBUTTON_H
-#define PLANTSVSZOMBIES_ANDROIDTV_GAMEBUTTON_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_GAME_BUTTON_H
+#define PVZ_SEXYAPPFRAMEWORK_WIDGET_GAME_BUTTON_H
 
 #include "PvZ/Symbols.h"
 
@@ -56,12 +52,12 @@ protected:
     }
 };
 
-inline GameButton *MakeButton(int theId, ButtonListener *theListener, Widget *theParent, const pvzstl::string &theText) {
-    return reinterpret_cast<GameButton *(*)(int, ButtonListener *, Widget *, const pvzstl::string &)>(MakeButtonAddr)(theId, theListener, theParent, theText);
+inline GameButton *MakeButton(int theId, ButtonListener *theListener, __Widget *theParent, const pvzstl::string &theText) {
+    return reinterpret_cast<GameButton *(*)(int, ButtonListener *, __Widget *, const pvzstl::string &)>(MakeButtonAddr)(theId, theListener, theParent, theText);
 }
 
 
 } // namespace Sexy
 
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_GAMEBUTTON_H
+#endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_GAME_BUTTON_H

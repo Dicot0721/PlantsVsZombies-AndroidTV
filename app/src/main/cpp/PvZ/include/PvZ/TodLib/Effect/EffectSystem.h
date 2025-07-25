@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_EFFECTSYSTEM_H
-#define PLANTSVSZOMBIES_ANDROIDTV_EFFECTSYSTEM_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_EFFECT_EFFECT_SYSTEM_H
+#define PVZ_SEXYAPPFRAMEWORK_EFFECT_EFFECT_SYSTEM_H
 
 #include "../Common/DataArray.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -42,6 +38,7 @@ class TodParticleHolder;
 class TrailHolder;
 class ReanimationHolder;
 class AttachmentHolder;
+
 class EffectSystem {
 public:
     TodParticleHolder *mParticleHolder;
@@ -50,4 +47,4 @@ public:
     AttachmentHolder *mAttachmentHolder;
 };
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_EFFECTSYSTEM_H
+#endif // PVZ_SEXYAPPFRAMEWORK_EFFECT_EFFECT_SYSTEM_H

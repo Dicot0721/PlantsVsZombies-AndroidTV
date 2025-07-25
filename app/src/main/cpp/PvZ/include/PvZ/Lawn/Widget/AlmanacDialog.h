@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_ALMANAC_DIALOG_H
-#define PVZ_LAWN_ALMANAC_DIALOG_H
+#ifndef PVZ_LAWN_WIDGET_ALMANAC_DIALOG_H
+#define PVZ_LAWN_WIDGET_ALMANAC_DIALOG_H
 
 #include "PvZ/SexyAppFramework/Widget/CustomScrollbarWidget.h"
 #include "PvZ/Symbols.h"
@@ -97,4 +97,4 @@ inline void (*old_AlmanacDialog_DrawPlants)(AlmanacDialog *almanacDialog, Sexy::
 
 inline void (*old_AlmanacDialog_SetupLayoutPlants)(AlmanacDialog *almanacDialog, Sexy::Graphics *graphics);
 
-#endif // PVZ_LAWN_ALMANAC_DIALOG_H
+#endif // PVZ_LAWN_WIDGET_ALMANAC_DIALOG_H

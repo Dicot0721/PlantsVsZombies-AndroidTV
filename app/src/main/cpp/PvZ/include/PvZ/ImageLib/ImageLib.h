@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/27.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_IMAGELIB_H
-#define PLANTSVSZOMBIES_ANDROIDTV_IMAGELIB_H
+#ifndef PVZ_IMAGELIB_IMAGE_LIB_H
+#define PVZ_IMAGELIB_IMAGE_LIB_H
 
 #include <string>
 
@@ -25,4 +21,4 @@ public:
 } // namespace ImageLib
 
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_IMAGELIB_H
+#endif // PVZ_IMAGELIB_IMAGE_LIB_H

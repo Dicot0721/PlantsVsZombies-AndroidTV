@@ -360,7 +360,7 @@ void Reanimation::AssignRenderGroupToTrack(const char *theTrackName, int theRend
         }
 }
 
-void Reanimation::Draw(Graphics *g) {
+void Reanimation::Draw(Sexy::Graphics *g) {
     DrawRenderGroup(g, RENDER_GROUP_NORMAL);
 }
 

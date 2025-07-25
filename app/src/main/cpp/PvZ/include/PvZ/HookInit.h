@@ -392,7 +392,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Sexy_ExtractLoadingSoundsResourcesAddr, &Sexy_ExtractLoadingSoundsResources, &old_Sexy_ExtractLoadingSoundsResources);
     //    MSHookFunction(Sexy_ScrollbarWidget_MouseDownAddr, (void *) Sexy_ScrollbarWidget_MouseDown,nullptr);
 
-    homura::HookFunction(CustomScrollbarWidget_RemoveScrollButtonsAddr, &CustomScrollbarWidget::RemoveScrollButtons, nullptr);
+    homura::HookFunction(CustomScrollbarWidget_RemoveScrollButtonsAddr, &Sexy::CustomScrollbarWidget::RemoveScrollButtons, nullptr);
 
     homura::HookFunction(CreditScreen_CreditScreenAddr, &CreditScreen_CreditScreen, &old_CreditScreen_CreditScreen);
     homura::HookFunction(CreditScreen_RemovedFromManagerAddr, &CreditScreen_RemovedFromManager, &old_CreditScreen_RemovedFromManager);

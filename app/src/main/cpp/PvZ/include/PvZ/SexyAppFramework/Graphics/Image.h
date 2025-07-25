@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_IMAGE_H
-#define PLANTSVSZOMBIES_ANDROIDTV_IMAGE_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_GRAPHICS_IMAGE_H
+#define PVZ_SEXYAPPFRAMEWORK_GRAPHICS_IMAGE_H
 
 #include "../Misc/Common.h"
 #include "../Misc/Point.h"
@@ -75,4 +71,4 @@ inline void (*old_Sexy_GLImage_PushTransform)(Sexy::GLImage *image, const Sexy::
 
 inline void (*old_Sexy_GLImage_PopTransform)(Sexy::GLImage *image);
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_IMAGE_H
+#endif // PVZ_SEXYAPPFRAMEWORK_GRAPHICS_IMAGE_H

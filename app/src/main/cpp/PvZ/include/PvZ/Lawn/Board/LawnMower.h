@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/24.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_LAWNMOWER_H
-#define PLANTSVSZOMBIES_ANDROIDTV_LAWNMOWER_H
+#ifndef PVZ_LAWN_BOARD_LAWN_MOWER_H
+#define PVZ_LAWN_BOARD_LAWN_MOWER_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Symbols.h"
@@ -41,4 +37,4 @@ public:
 
 inline void (*old_LawnMower_Update)(LawnMower* lawnMover);
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_LAWNMOWER_H
+#endif // PVZ_LAWN_BOARD_LAWN_MOWER_H

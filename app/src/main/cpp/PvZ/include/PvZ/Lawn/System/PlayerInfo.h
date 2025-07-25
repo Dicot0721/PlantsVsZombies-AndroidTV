@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/27.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_PLAYERINFO_H
-#define PLANTSVSZOMBIES_ANDROIDTV_PLAYERINFO_H
+#ifndef PVZ_LAWN_SYSTEM_PLAYER_INFO_H
+#define PVZ_LAWN_SYSTEM_PLAYER_INFO_H
 
 #include "../Common/ConstEnums.h"
 #include "PvZ/Lawn/Widget/LeaderboardsWidget.h"
@@ -106,5 +102,4 @@ public:
     void AddCoins(int theAmount);
 };
 
-
-#endif // PLANTSVSZOMBIES_ANDROIDTV_PLAYERINFO_H
+#endif // PVZ_LAWN_SYSTEM_PLAYER_INFO_H

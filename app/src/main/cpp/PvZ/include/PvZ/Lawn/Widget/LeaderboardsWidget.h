@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_LEADERBOARDSWIDGET_H
-#define PLANTSVSZOMBIES_ANDROIDTV_LEADERBOARDSWIDGET_H
+#ifndef PVZ_LAWN_WIDGET_LEADERBOARDS_WIDGET_H
+#define PVZ_LAWN_WIDGET_LEADERBOARDS_WIDGET_H
 
 #include "HouseChooserDialog.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
@@ -87,4 +83,4 @@ void DaveHelp_MouseDrag(LeaderboardsWidget *leaderboardsWidget, int x, int y);
 
 void DaveHelp_KeyDown(LeaderboardsWidget *leaderboardsWidget, int keyCode);
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_LEADERBOARDSWIDGET_H
+#endif // PVZ_LAWN_WIDGET_LEADERBOARDS_WIDGET_H

@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_GRID_ITEM_H
-#define PVZ_LAWN_GRID_ITEM_H
+#ifndef PVZ_LAWN_BOARD_GRID_ITEM_H
+#define PVZ_LAWN_BOARD_GRID_ITEM_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -66,4 +66,4 @@ inline void (*old_GridItem_UpdateScaryPot)(GridItem *scaryPot);
 
 inline void (*old_GridItem_DrawStinky)(GridItem *mStinky, Sexy::Graphics *graphics);
 
-#endif // PVZ_LAWN_GRID_ITEM_H
+#endif // PVZ_LAWN_BOARD_GRID_ITEM_H

@@ -3024,14 +3024,14 @@ void TestMenuWidget_Delete2(ZombatarWidget *zombatarWidget) {
     zombatarWidget->mPreviewZombie->DieNoLoot();
     (*((void (**)(Zombie *))zombatarWidget->mPreviewZombie->vTable + 1))(zombatarWidget->mPreviewZombie); // Delete();
 
-    (*((void (**)(Sexy::Widget *, Sexy::Widget *))zombatarWidget->vTable + 7))(zombatarWidget, zombatarWidget->mBackButton);
+    (*((void (**)(Sexy::__Widget *, Sexy::__Widget *))zombatarWidget->vTable + 7))(zombatarWidget, zombatarWidget->mBackButton);
     zombatarWidget->mBackButton->mDrawStoneButton = true;
     zombatarWidget->mBackButton->mButtonImage = nullptr;
     zombatarWidget->mBackButton->mDownImage = nullptr;
     zombatarWidget->mBackButton->mOverImage = nullptr;
     // GameButton_Delete(zombatarWidget->mBackButton);
 
-    (*((void (**)(Sexy::Widget *, Sexy::Widget *))zombatarWidget->vTable + 7))(zombatarWidget, zombatarWidget->mFinishButton);
+    (*((void (**)(Sexy::__Widget *, Sexy::__Widget *))zombatarWidget->vTable + 7))(zombatarWidget, zombatarWidget->mFinishButton);
     zombatarWidget->mFinishButton->mDrawStoneButton = true;
     zombatarWidget->mFinishButton->mButtonImage = nullptr;
     zombatarWidget->mFinishButton->mDownImage = nullptr;
@@ -3039,7 +3039,7 @@ void TestMenuWidget_Delete2(ZombatarWidget *zombatarWidget) {
     // GameButton_Delete(zombatarWidget->mFinishButton);
 
 
-    (*((void (**)(Sexy::Widget *, Sexy::Widget *))zombatarWidget->vTable + 7))(zombatarWidget, zombatarWidget->mViewPortraitButton);
+    (*((void (**)(Sexy::__Widget *, Sexy::__Widget *))zombatarWidget->vTable + 7))(zombatarWidget, zombatarWidget->mViewPortraitButton);
     zombatarWidget->mViewPortraitButton->mDrawStoneButton = true;
     zombatarWidget->mViewPortraitButton->mButtonImage = nullptr;
     zombatarWidget->mViewPortraitButton->mDownImage = nullptr;

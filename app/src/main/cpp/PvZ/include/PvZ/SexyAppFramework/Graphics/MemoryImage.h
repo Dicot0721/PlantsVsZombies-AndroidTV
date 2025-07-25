@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_MEMORYIMAGE_H
-#define PLANTSVSZOMBIES_ANDROIDTV_MEMORYIMAGE_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_GRAPHICS_MEMORY_IMAGE_H
+#define PVZ_SEXYAPPFRAMEWORK_GRAPHICS_MEMORY_IMAGE_H
 
 #include "Image.h"
 
@@ -72,4 +68,4 @@ inline void (*old_Sexy_MemoryImage_PushTransform)(Sexy::MemoryImage *image, cons
 inline void (*old_Sexy_MemoryImage_PopTransform)(Sexy::MemoryImage *image);
 
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_MEMORYIMAGE_H
+#endif // PVZ_SEXYAPPFRAMEWORK_GRAPHICS_MEMORY_IMAGE_H

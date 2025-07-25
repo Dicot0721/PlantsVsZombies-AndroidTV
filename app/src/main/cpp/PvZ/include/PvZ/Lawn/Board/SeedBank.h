@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_SEED_BANK_H
-#define PVZ_LAWN_SEED_BANK_H
+#ifndef PVZ_LAWN_BOARD_SEED_BANK_H
+#define PVZ_LAWN_BOARD_SEED_BANK_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Symbols.h"
@@ -55,4 +55,4 @@ inline bool (*old_SeedBank_BeginDraw)(SeedBank *seedBank, Sexy::Graphics *graphi
 inline void (*old_SeedBank_EndDraw)(SeedBank *seedBank, Sexy::Graphics *graphics);
 
 
-#endif // PVZ_LAWN_SEED_BANK_H
+#endif // PVZ_LAWN_BOARD_SEED_BANK_H

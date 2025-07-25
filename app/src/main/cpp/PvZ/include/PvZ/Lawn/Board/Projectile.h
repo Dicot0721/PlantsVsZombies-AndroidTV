@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_PROJECTILE_H
-#define PVZ_LAWN_PROJECTILE_H
+#ifndef PVZ_LAWN_BOARD_PROJECTILE_H
+#define PVZ_LAWN_BOARD_PROJECTILE_H
 
 #include "GameObject.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -111,4 +111,4 @@ inline void (*old_Projectile_DoImpact)(Projectile *a1, Zombie *a2);
 
 inline void (*old_Projectile_Draw)(Projectile *, Sexy::Graphics *);
 
-#endif // PVZ_LAWN_PROJECTILE_H
+#endif // PVZ_LAWN_BOARD_PROJECTILE_H

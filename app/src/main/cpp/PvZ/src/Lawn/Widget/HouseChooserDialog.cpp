@@ -35,7 +35,7 @@ void HouseChooserDialog::MouseDown(int x, int y, int theClickCount) {
     }
 }
 
-void HouseChooserDialog::KeyDown(KeyCode keyCode) {
+void HouseChooserDialog::KeyDown(Sexy::KeyCode keyCode) {
     old_HouseChooserDialog_KeyDown(this, keyCode);
 
     switch (keyCode) {

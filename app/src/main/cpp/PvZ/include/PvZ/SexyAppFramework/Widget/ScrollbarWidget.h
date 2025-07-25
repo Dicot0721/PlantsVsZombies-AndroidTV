@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_SCROLLBARWIDGET_H
-#define PLANTSVSZOMBIES_ANDROIDTV_SCROLLBARWIDGET_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_SCROLLBAR_WIDGET_H
+#define PVZ_SEXYAPPFRAMEWORK_WIDGET_SCROLLBAR_WIDGET_H
 
 #include "PvZ/Symbols.h"
 
@@ -11,7 +7,7 @@
 
 namespace Sexy {
 
-class ScrollbarWidget : public Widget {
+class ScrollbarWidget : public __Widget {
 public:
     int unkMem;             // 64
     Widget *mUpButton;      // 65
@@ -45,5 +41,4 @@ public:
 
 } // namespace Sexy
 
-
-#endif // PLANTSVSZOMBIES_ANDROIDTV_SCROLLBARWIDGET_H
+#endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_SCROLLBAR_WIDGET_H

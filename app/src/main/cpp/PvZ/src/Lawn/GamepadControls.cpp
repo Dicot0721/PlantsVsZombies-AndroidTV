@@ -15,6 +15,8 @@
 #include "PvZ/TodLib/Effect/Attachment.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 
+using namespace Sexy;
+
 GamepadControls::GamepadControls(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2) {
     __Constructor(theBoard, thePlayerIndex1, thePlayerIndex2);
 }

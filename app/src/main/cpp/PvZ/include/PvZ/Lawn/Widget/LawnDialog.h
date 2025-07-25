@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_LAWNDIALOG_H
-#define PLANTSVSZOMBIES_ANDROIDTV_LAWNDIALOG_H
+#ifndef PVZ_LAWN_WIDGET_LAWN_DIALOG_H
+#define PVZ_LAWN_WIDGET_LAWN_DIALOG_H
 
 #include "PvZ/SexyAppFramework/Widget/Dialog.h"
 // #include "PvZ/SexyAppFramework/Widget/GameButton.h"
@@ -15,7 +11,7 @@ class GameButton;
 class LawnDialog : public Sexy::Dialog {
 public:
     LawnApp *mApp; // 184
-#ifdef VERSION_111
+#if PVZ_VERSION == 111
     int mIsZombie;
 #endif
     int mButtonDelay;                 // 185
@@ -26,10 +22,9 @@ public:
     bool mTallBottom;                 // 760
     bool mVerticalCenterText;         // 761
     bool unkBool;                     // 762
-#ifdef VERSION_111
+#if PVZ_VERSION == 111
     int unk2;
 #endif
 }; // 115: 191, 111: 193
 
-
-#endif // PLANTSVSZOMBIES_ANDROIDTV_LAWNDIALOG_H
+#endif // PVZ_LAWN_WIDGET_LAWN_DIALOG_H

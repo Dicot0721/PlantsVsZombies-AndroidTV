@@ -1,9 +1,9 @@
+#ifndef PVZ_MAGIC_ADDR_H
+#define PVZ_MAGIC_ADDR_H
+
 /**
  * @file 此文件记录着所有 v1.1.1 和 v1.1.5 中不同的内容.
  */
-
-#ifndef PVZ_MAGIC_ADDR_H
-#define PVZ_MAGIC_ADDR_H
 
 #include "Homura/Patcher.h"
 

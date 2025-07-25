@@ -1,5 +1,5 @@
-#ifndef PVZ_SEXY_GRAPHICS_H
-#define PVZ_SEXY_GRAPHICS_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_GRAPHICS_GRAPHICS_H
+#define PVZ_SEXYAPPFRAMEWORK_GRAPHICS_GRAPHICS_H
 
 #include "../Misc/Common.h"
 #include "../Misc/Rect.h"
@@ -168,4 +168,4 @@ void Sexy_Graphics_DrawImageColorized(Sexy::Graphics *graphics, Sexy::Image *ima
 
 void Sexy_Graphics_DrawImageColorizedScaled(Sexy::Graphics *graphics, Sexy::Image *image, Sexy::Color *color, float x, float y, float xScaled, float yScaled);
 
-#endif // PVZ_SEXY_GRAPHICS_H
+#endif // PVZ_SEXYAPPFRAMEWORK_GRAPHICS_GRAPHICS_H

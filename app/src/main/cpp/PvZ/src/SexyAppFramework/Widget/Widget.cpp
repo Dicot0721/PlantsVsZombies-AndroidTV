@@ -10,12 +10,12 @@ void __Widget::MarkDirty() {
     (*((void (**)(__Widget *))this->vTable + 25))(this); // MarkDirty();
 }
 
-void __Widget::AddWidget(Widget *child) {
-    (*((void (**)(__Widget *, Widget *))this->vTable + 6))(this, child); // AddWidget();
+void __Widget::AddWidget(__Widget *child) {
+    (*((void (**)(__Widget *, __Widget *))this->vTable + 6))(this, child); // AddWidget();
 }
 
-void __Widget::RemoveWidget(Widget *child) {
-    (*((void (**)(__Widget *, Widget *))this->vTable + 7))(this, child); // RemoveWidget();
+void __Widget::RemoveWidget(__Widget *child) {
+    (*((void (**)(__Widget *, __Widget *))this->vTable + 7))(this, child); // RemoveWidget();
 }
 
 Widget *__Widget::FindWidget(int theId) {

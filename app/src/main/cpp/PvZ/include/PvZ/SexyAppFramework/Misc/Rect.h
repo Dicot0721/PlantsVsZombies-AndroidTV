@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_RECT_H
-#define PLANTSVSZOMBIES_ANDROIDTV_RECT_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_MISC_RECT_H
+#define PVZ_SEXYAPPFRAMEWORK_MISC_RECT_H
 
 #include "Common.h"
 #include "Point.h"
@@ -100,9 +96,9 @@ public:
     //        }
 };
 
-typedef TRect<int> Rect;
-typedef TRect<double> FRect;
+using Rect = Sexy::TRect<int>;
+using FRect = Sexy::TRect<double>;
+
 } // namespace Sexy
 
-
-#endif // PLANTSVSZOMBIES_ANDROIDTV_RECT_H
+#endif // PVZ_SEXYAPPFRAMEWORK_MISC_RECT_H

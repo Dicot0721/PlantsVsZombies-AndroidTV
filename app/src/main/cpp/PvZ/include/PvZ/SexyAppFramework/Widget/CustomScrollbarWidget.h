@@ -1,13 +1,10 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_CUSTOMSCROLLBARWIDGET_H
-#define PLANTSVSZOMBIES_ANDROIDTV_CUSTOMSCROLLBARWIDGET_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_CUSTOM_SCROLLBAR_WIDGET_H
+#define PVZ_SEXYAPPFRAMEWORK_WIDGET_CUSTOM_SCROLLBAR_WIDGET_H
 
 #include "ScrollbarWidget.h"
 
 namespace Sexy {
+
 // 没有新增任何成员，6，这个类不知道什么意义
 class CustomScrollbarWidget : public ScrollbarWidget {
 public:
@@ -18,5 +15,4 @@ public:
 
 } // namespace Sexy
 
-
-#endif // PLANTSVSZOMBIES_ANDROIDTV_CUSTOMSCROLLBARWIDGET_H
+#endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_CUSTOM_SCROLLBAR_WIDGET_H

@@ -1,16 +1,12 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_MENUWIDGET_H
-#define PLANTSVSZOMBIES_ANDROIDTV_MENUWIDGET_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_MENU_WIDGET_H
+#define PVZ_SEXYAPPFRAMEWORK_WIDGET_MENU_WIDGET_H
 
 #include "ButtonListener.h"
 #include "Widget.h"
 
 namespace Sexy {
 
-class MenuWidget : public Widget {
+class MenuWidget : public __Widget {
 public:
     ButtonListener mButtonListener; // 64
     bool mIsFading;                 // 260
@@ -28,4 +24,4 @@ public:
 
 } // namespace Sexy
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_MENUWIDGET_H
+#endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_MENU_WIDGET_H

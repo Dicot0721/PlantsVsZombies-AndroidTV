@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_BOARD_H
-#define PVZ_LAWN_BOARD_H
+#ifndef PVZ_LAWN_BOARD_BOARD_H
+#define PVZ_LAWN_BOARD_BOARD_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/Widget/AchievementsWidget.h"
@@ -767,4 +767,4 @@ void Board_DrawStartButton(Board *board, Sexy::Graphics *graphics, LawnApp *lawn
 
 void Board_UpdateButtons(Board *board);
 
-#endif // PVZ_LAWN_BOARD_H
+#endif // PVZ_LAWN_BOARD_BOARD_H

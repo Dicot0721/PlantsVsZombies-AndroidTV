@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_MUSIC_H
-#define PVZ_LAWN_MUSIC_H
+#ifndef PVZ_LAWN_SYSTEM_MUSIC_H
+#define PVZ_LAWN_SYSTEM_MUSIC_H
 
 #include "PvZ/SexyAppFramework/Sound/MusicInterface.h"
 #include "PvZ/Symbols.h"
@@ -149,4 +149,4 @@ inline void (*old_Music2_GameMusicPause)(Music2* music, bool pause);
 
 inline void (*old_Music2_FadeOut)(Music2* music, int aFadeOutDuration);
 
-#endif // PVZ_LAWN_MUSIC_H
+#endif // PVZ_LAWN_SYSTEM_MUSIC_H

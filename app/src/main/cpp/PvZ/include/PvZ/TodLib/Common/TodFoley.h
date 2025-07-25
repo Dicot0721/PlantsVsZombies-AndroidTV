@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/27.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_TODFOLEY_H
-#define PLANTSVSZOMBIES_ANDROIDTV_TODFOLEY_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_FOLEY_H
+#define PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_FOLEY_H
 
 #include "PvZ/Lawn/Common/Resources.h"
 
@@ -175,4 +171,4 @@ inline FoleyInstance *SoundSystemFindInstance(TodFoley *theSoundSystem, FoleyTyp
     return reinterpret_cast<FoleyInstance *(*)(TodFoley *, FoleyType)>(SoundSystemFindInstanceAddr)(theSoundSystem, theFoleyType);
 }
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_TODFOLEY_H
+#endif // PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_FOLEY_H

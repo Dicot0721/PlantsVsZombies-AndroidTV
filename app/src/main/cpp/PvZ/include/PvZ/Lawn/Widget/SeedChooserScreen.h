@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_SEED_CHOOSER_SCREEN_H
-#define PVZ_LAWN_SEED_CHOOSER_SCREEN_H
+#ifndef PVZ_LAWN_WIDGET_SEED_CHOOSER_SCREEN_H
+#define PVZ_LAWN_WIDGET_SEED_CHOOSER_SCREEN_H
 
 #include "PvZ/Lawn/Board/ToolTipWidget.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -191,4 +191,4 @@ inline void (*old_SeedChooserScreen_MouseDrag)(SeedChooserScreen *seedChooserScr
 
 inline void (*old_SeedChooserScreen_MouseUp)(SeedChooserScreen *seedChooserScreen, int x, int y);
 
-#endif // PVZ_LAWN_SEED_CHOOSER_SCREEN_H
+#endif // PVZ_LAWN_WIDGET_SEED_CHOOSER_SCREEN_H

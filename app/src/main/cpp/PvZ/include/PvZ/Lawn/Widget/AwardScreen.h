@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_AWARD_SCREEN_H
-#define PVZ_LAWN_AWARD_SCREEN_H
+#ifndef PVZ_LAWN_WIDGET_AWARD_SCREEN_H
+#define PVZ_LAWN_WIDGET_AWARD_SCREEN_H
 
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
@@ -30,4 +30,4 @@ inline void (*old_AwardScreen_MouseDown)(AwardScreen *awardScreen, int x, int y,
 
 inline void (*old_AwardScreen_MouseUp)(AwardScreen *awardScreen, int x, int y, int theClickCount);
 
-#endif // PVZ_LAWN_AWARD_SCREEN_H
+#endif // PVZ_LAWN_WIDGET_AWARD_SCREEN_H

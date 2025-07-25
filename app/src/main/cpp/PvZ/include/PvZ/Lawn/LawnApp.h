@@ -25,7 +25,7 @@ class PottedPlant;
 class VSSetupMenu;
 class MailBox;
 
-class LawnApp : public __SexyAppBase {
+class LawnApp : public Sexy::__SexyAppBase {
 public:
     Board *mBoard;                           // 552
     TitleScreen *mTitleScreen;               // 553
@@ -72,7 +72,7 @@ public:
     int *mCrazyDaveMessageText;              // 598
     int mAppRandSeed;                        // 599;
     int unk7;                                // 600
-    DefaultProfileMgr *mProfileMgr;          // 601
+    Sexy::DefaultProfileMgr *mProfileMgr;    // 601
     int unk8[35];                            // 602 ~ 636
     Sexy::Image *mQRCodeImage;               // 637
     int unk8_1[7];                           // 638 ~ 644

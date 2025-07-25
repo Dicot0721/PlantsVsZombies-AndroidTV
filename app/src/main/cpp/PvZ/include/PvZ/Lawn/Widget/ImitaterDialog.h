@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_IMITATER_DIALOG_H
-#define PVZ_LAWN_IMITATER_DIALOG_H
+#ifndef PVZ_LAWN_WIDGET_IMITATER_DIALOG_H
+#define PVZ_LAWN_WIDGET_IMITATER_DIALOG_H
 
 #include "LawnDialog.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -29,4 +29,4 @@ void ImitaterDialog_ShowToolTip(ImitaterDialog *instance);
 
 bool ImitaterDialog_KeyDown(ImitaterDialog *a, int a2);
 
-#endif // PVZ_LAWN_IMITATER_DIALOG_H
+#endif // PVZ_LAWN_WIDGET_IMITATER_DIALOG_H

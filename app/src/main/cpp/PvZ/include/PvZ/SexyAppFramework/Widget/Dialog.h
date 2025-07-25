@@ -1,23 +1,19 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_DIALOG_H
-#define PLANTSVSZOMBIES_ANDROIDTV_DIALOG_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_DIALOG_H
+#define PVZ_SEXYAPPFRAMEWORK_WIDGET_DIALOG_H
 
 #include "PvZ/SexyAppFramework/Misc/TextLayout.h"
-
-#include "ButtonListener.h"
-#include "Widget.h"
+#include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
+#include "PvZ/SexyAppFramework/Widget/Insets.h"
+#include "PvZ/SexyAppFramework/Widget/Widget.h"
 
 namespace Sexy {
 
-class DialogListener;
 class ButtonWidget;
 class DialogButton;
 class Font;
+class Image;
 
-class Dialog : public Widget {
+class Dialog : public Sexy::__Widget {
 public:
     ButtonListener mButtonListener; // 64
     int *mDialogListener;           // 65
@@ -52,4 +48,4 @@ public:
 
 } // namespace Sexy
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_DIALOG_H
+#endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_DIALOG_H

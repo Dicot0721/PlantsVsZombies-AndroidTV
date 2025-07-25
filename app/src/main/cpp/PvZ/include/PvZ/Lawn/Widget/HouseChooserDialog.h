@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_HOUSE_CHOOSER_DIALOG_H
-#define PVZ_LAWN_HOUSE_CHOOSER_DIALOG_H
+#ifndef PVZ_LAWN_WIDGET_HOUSE_CHOOSER_DIALOG_H
+#define PVZ_LAWN_WIDGET_HOUSE_CHOOSER_DIALOG_H
 
 #include "LawnDialog.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -36,4 +36,4 @@ inline void (*old_HouseChooserDialog_MouseDown)(HouseChooserDialog *a, int x, in
 
 inline void (*old_HouseChooserDialog_KeyDown)(HouseChooserDialog *a, Sexy::KeyCode theKey);
 
-#endif // PVZ_LAWN_HOUSE_CHOOSER_DIALOG_H
+#endif // PVZ_LAWN_WIDGET_HOUSE_CHOOSER_DIALOG_H

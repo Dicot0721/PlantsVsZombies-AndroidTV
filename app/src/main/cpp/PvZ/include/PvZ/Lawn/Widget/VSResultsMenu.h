@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_VS_RESULTS_MENU_H
-#define PVZ_LAWN_VS_RESULTS_MENU_H
+#ifndef PVZ_LAWN_WIDGET_VS_RESULTS_MENU_H
+#define PVZ_LAWN_WIDGET_VS_RESULTS_MENU_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
@@ -23,4 +23,4 @@ void VSResultsMenu_ButtonDepress(int *vsResultsScreen, int buttonId);
 
 void VSResultsMenu_DrawInfoBox(int *a, Sexy::Graphics *a2, int a3);
 
-#endif // PVZ_LAWN_VS_RESULTS_MENU_H
+#endif // PVZ_LAWN_WIDGET_VS_RESULTS_MENU_H

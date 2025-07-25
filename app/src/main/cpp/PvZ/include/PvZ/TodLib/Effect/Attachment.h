@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_ATTACHMENT_H
-#define PLANTSVSZOMBIES_ANDROIDTV_ATTACHMENT_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_EFFECT_ATTACHMENT_H
+#define PVZ_SEXYAPPFRAMEWORK_EFFECT_ATTACHMENT_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Misc/SexyMatrix.h"
@@ -33,8 +29,8 @@ public:
 inline AttachEffect *AttachReanim(AttachmentID &theAttachmentID, Reanimation *theReanimation, float theOffsetX, float theOffsetY) {
     return reinterpret_cast<AttachEffect *(*)(AttachmentID &, Reanimation *, float, float)>(AttachReanimAddr)(theAttachmentID, theReanimation, theOffsetX, theOffsetY);
 }
-inline void AttachmentDraw(AttachmentID &theAttachmentID, Graphics *g, bool theParentHidden) {
-    reinterpret_cast<void (*)(AttachmentID &, Graphics *, bool)>(AttachmentDrawAddr)(theAttachmentID, g, theParentHidden);
+inline void AttachmentDraw(AttachmentID &theAttachmentID, Sexy::Graphics *g, bool theParentHidden) {
+    reinterpret_cast<void (*)(AttachmentID &, Sexy::Graphics *, bool)>(AttachmentDrawAddr)(theAttachmentID, g, theParentHidden);
 }
 
 inline void AttachmentDie(AttachmentID &theAttachmentID) {
@@ -47,4 +43,4 @@ inline void AttachParticle(AttachmentID &theAttachmentID, TodParticleSystem *the
 
 class AttachmentHolder {};
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_ATTACHMENT_H
+#endif // PVZ_SEXYAPPFRAMEWORK_EFFECT_ATTACHMENT_H

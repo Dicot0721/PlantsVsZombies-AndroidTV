@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/27.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_BASEGAMEPADCONTROLS_H
-#define PLANTSVSZOMBIES_ANDROIDTV_BASEGAMEPADCONTROLS_H
+#ifndef PVZ_LAWN_BASE_GAMEPAD_CONTROLS_H
+#define PVZ_LAWN_BASE_GAMEPAD_CONTROLS_H
 
 #include "PvZ/Lawn/Board/GameObject.h"
 
@@ -43,4 +39,4 @@ public:
     void GetGamepadVelocity(float *horizontal, float *vertical);
 };
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_BASEGAMEPADCONTROLS_H
+#endif // PVZ_LAWN_BASE_GAMEPAD_CONTROLS_H

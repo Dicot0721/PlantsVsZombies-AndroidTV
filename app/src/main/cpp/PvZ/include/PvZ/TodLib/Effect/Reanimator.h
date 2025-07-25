@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_REANIMATION_H
-#define PVZ_LAWN_REANIMATION_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_EFFECT_REANIMATION_H
+#define PVZ_SEXYAPPFRAMEWORK_EFFECT_REANIMATION_H
 
 #include "EffectSystem.h"
 #include "FilterEffect.h"
@@ -16,6 +16,7 @@ class TodParticleSystem;
 class ReanimatorTransform;
 class ReanimatorDefinition;
 class ReanimatorFrameTime;
+
 namespace Sexy {
 class Font;
 class Graphics;
@@ -296,5 +297,4 @@ void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int 
 
 void DefinitionGetCompiledFilePathFromXMLFilePath(pvzstl::string &absPath, const pvzstl::string &defPathString);
 
-
-#endif // PVZ_LAWN_REANIMATION_H
+#endif // PVZ_SEXYAPPFRAMEWORK_EFFECT_REANIMATION_H

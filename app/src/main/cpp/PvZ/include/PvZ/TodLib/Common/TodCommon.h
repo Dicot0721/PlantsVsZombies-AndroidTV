@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/4/28.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_TODCOMMON_H
-#define PLANTSVSZOMBIES_ANDROIDTV_TODCOMMON_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_COMMON_H
+#define PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_COMMON_H
 
 #include "PvZ/Lawn/Common/LawnCommon.h"
 #include "PvZ/SexyAppFramework/Graphics/MemoryImage.h"
@@ -200,15 +196,11 @@ inline bool TestBit(uint theNum, int theIdx) {
     return theNum & (1 << theIdx);
 }
 
-inline int ClampInt(int theNum, int theMin, int theMax) {
-    return theNum <= theMin ? theMin : theNum >= theMax ? theMax : theNum;
-}
-
 inline Sexy::Color GetFlashingColor(int theCounter, int theFlashTime) {
     int aTimeAge = theCounter % theFlashTime;
     int aTimeInf = theFlashTime / 2;
-    int aGrayness = ClampInt(55 + 200 * abs(aTimeInf - aTimeAge) / aTimeInf, 0, 255);
+    int aGrayness = std::clamp(55 + 200 * abs(aTimeInf - aTimeAge) / aTimeInf, 0, 255);
     return Sexy::Color(aGrayness, aGrayness, aGrayness, 255);
 }
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_TODCOMMON_H
+#endif // PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_COMMON_H

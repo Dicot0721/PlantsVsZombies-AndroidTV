@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_HELP_OPTIONS_DIALOG_H
-#define PVZ_LAWN_HELP_OPTIONS_DIALOG_H
+#ifndef PVZ_LAWN_WIDGET_HELP_OPTIONS_DIALOG_H
+#define PVZ_LAWN_WIDGET_HELP_OPTIONS_DIALOG_H
 
 #include "LawnDialog.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -28,4 +28,4 @@ void HelpOptionsDialog_HelpOptionsDialog(HelpOptionsDialog *a, LawnApp *a2);
 
 void HelpOptionsDialog_Resize(HelpOptionsDialog *a, int a2, int a3, int a4, int a5);
 
-#endif // PVZ_LAWN_HELP_OPTIONS_DIALOG_H
+#endif // PVZ_LAWN_WIDGET_HELP_OPTIONS_DIALOG_H

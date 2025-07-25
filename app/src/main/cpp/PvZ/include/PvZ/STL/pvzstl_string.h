@@ -1,10 +1,6 @@
 #ifndef PVZ_STL_PVZSTL_STRING_H
 #define PVZ_STL_PVZSTL_STRING_H
 
-#ifdef PVZ_VERSION
-#include "PvZ/Symbols.h" // gLibBaseOffset
-#endif
-
 #include "pvzstl_concepts.h"
 
 #include <cassert>
@@ -12,6 +8,8 @@
 #include <atomic>
 #include <stdexcept>
 #include <string>
+
+extern uintptr_t gLibBaseOffset;
 
 namespace pvzstl {
 
@@ -269,9 +267,9 @@ protected:
 
         [[nodiscard, gnu::always_inline]] static __rep &empty_rep() noexcept {
 #ifdef PVZ_VERSION
-            assert(gLibBaseOffset != 0);
+            assert(::gLibBaseOffset != 0);
             static constexpr uintptr_t offset = (sizeof(value_type) == sizeof(int8_t)) ? /* string */ 0x71BB54 : /* wstring */ 0x69E45C;
-            static uintptr_t empty_rep_storage_addr = gLibBaseOffset + offset;
+            static uintptr_t empty_rep_storage_addr = ::gLibBaseOffset + offset;
             return *reinterpret_cast<__rep *>(empty_rep_storage_addr);
 #else
             alignas(__rep) static std::byte empty_rep_storage[sizeof(__rep) + sizeof(value_type)] = {};

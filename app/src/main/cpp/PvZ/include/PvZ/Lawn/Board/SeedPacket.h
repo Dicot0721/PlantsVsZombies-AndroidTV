@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_SEED_PACKET_H
-#define PVZ_LAWN_SEED_PACKET_H
+#ifndef PVZ_LAWN_BOARD_SEED_PACKET_H
+#define PVZ_LAWN_BOARD_SEED_PACKET_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Symbols.h"
@@ -88,4 +88,4 @@ inline void (*old_SeedPacket_EndDraw)(SeedPacket *, Sexy::Graphics *);
 inline void (*old_SeedPacket_FlashIfReady)(SeedPacket *seedPacket);
 
 
-#endif // PVZ_LAWN_SEED_PACKET_H
+#endif // PVZ_LAWN_BOARD_SEED_PACKET_H

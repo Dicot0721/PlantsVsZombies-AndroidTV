@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_CHALLENGE_H
-#define PVZ_LAWN_CHALLENGE_H
+#ifndef PVZ_LAWN_BOARD_CHALLENGE_H
+#define PVZ_LAWN_BOARD_CHALLENGE_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -178,4 +178,4 @@ inline GridItem *(*old_Challenge_IZombieGetBrainTarget)(Challenge *, Zombie *the
 
 inline void (*old_Challenge_IZombieSquishBrain)(Challenge *, GridItem *theBrain);
 
-#endif // PVZ_LAWN_CHALLENGE_H
+#endif // PVZ_LAWN_BOARD_CHALLENGE_H

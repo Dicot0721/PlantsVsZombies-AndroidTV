@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/25.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_LAWNCOMMON_H
-#define PLANTSVSZOMBIES_ANDROIDTV_LAWNCOMMON_H
+#ifndef PVZ_COMMON_LAWN_COMMON_H
+#define PVZ_COMMON_LAWN_COMMON_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -13,6 +9,7 @@
 class Board;
 class LawnStoneButton;
 class NewLawnButton;
+
 namespace Sexy {
 class Dialog;
 class Checkbox;
@@ -29,8 +26,8 @@ class CheckboxListener;
 // ====================================================================================================
 // ★ 控件
 // ====================================================================================================
-inline Sexy::Checkbox *MakeNewCheckbox(int theId, Sexy::CheckboxListener *theListener, Sexy::Widget *theParent, bool theDefault) {
-    return reinterpret_cast<Sexy::Checkbox *(*)(int, Sexy::CheckboxListener *, Sexy::Widget *, bool)>(MakeNewCheckboxAddr)(theId, theListener, theParent, theDefault);
+inline Sexy::Checkbox *MakeNewCheckbox(int theId, Sexy::CheckboxListener *theListener, Sexy::__Widget *theParent, bool theDefault) {
+    return reinterpret_cast<Sexy::Checkbox *(*)(int, Sexy::CheckboxListener *, Sexy::__Widget *, bool)>(MakeNewCheckboxAddr)(theId, theListener, theParent, theDefault);
 }
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_LAWNCOMMON_H
+#endif // PVZ_COMMON_LAWN_COMMON_H

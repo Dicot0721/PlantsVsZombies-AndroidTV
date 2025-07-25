@@ -1,11 +1,7 @@
-//
-// Created by 28636 on 2025/5/26.
-//
+#ifndef PVZ_SEXYAPPFRAMEWORK_GRAPHICS_COLOR_H
+#define PVZ_SEXYAPPFRAMEWORK_GRAPHICS_COLOR_H
 
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_COLOR_H
-#define PLANTSVSZOMBIES_ANDROIDTV_COLOR_H
-
-#include "../Misc/Common.h"
+#include "PvZ/SexyAppFramework/Misc/Common.h"
 
 namespace Sexy {
 
@@ -122,4 +118,4 @@ inline Sexy::Color gZombatarAccessoryColor2[] = {
 };
 
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_COLOR_H
+#endif // PVZ_SEXYAPPFRAMEWORK_GRAPHICS_COLOR_H

@@ -8,8 +8,6 @@
 #include "PvZ/Lawn/Widget/ZombatarWidget.h"
 #include "PvZ/SexyAppFramework/Widget/Checkbox.h"
 #include "PvZ/TodLib/Common/TodFoley.h"
-// #include "PvZ/TodLib/Common/TodList.h"
-// #include "TodLib/Common/TodCommon.h"
 
 inline void DrawCheckboxText(Sexy::Graphics *g, const pvzstl::string &theText1, Sexy::Checkbox *theCheckBox, const char *theText2) {
     reinterpret_cast<void (*)(Sexy::Graphics *, const pvzstl::string &, Sexy::Checkbox *, const char *)>(DrawCheckboxTextAddr)(g, theText1, theCheckBox, theText2);
@@ -42,6 +40,5 @@ void Sexy_ExtractLoadingSoundsResources(int *a, int *theManager);
 void WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(int *a, int *a2);
 
 void HelpBarWidget_HelpBarWidget(Sexy::Widget *a);
-
 
 #endif // PVZ_MISC_H

@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/6/11.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_TODSTRINGFILE_H
-#define PLANTSVSZOMBIES_ANDROIDTV_TODSTRINGFILE_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_STRING_FILE_H
+#define PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_STRING_FILE_H
 
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
@@ -30,12 +26,14 @@ inline void TodStringListLoad(const char *theFileName) {
     reinterpret_cast<void (*)(const char *)>(TodStringListLoadAddr)(theFileName);
 }
 
-inline void TodStringListFind(pvzstl::string &result, const pvzstl::string &theName) {
+inline pvzstl::string TodStringListFind(const pvzstl::string &theName) {
+    pvzstl::string result;
     reinterpret_cast<void (*)(pvzstl::string &, const pvzstl::string &)>(TodStringListFindAddr)(result, theName);
+    return result;
 }
 
 // inline void TodStringListLoad(const char* theFileName) {
 //     reinterpret_cast<void (*)(const char*)>(TodStringListLoadAddr)(theFileName);
 // }
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_TODSTRINGFILE_H
+#endif // PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_STRING_FILE_H

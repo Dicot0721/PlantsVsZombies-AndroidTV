@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_HELP_TEXT_SCREEN_H
-#define PVZ_LAWN_HELP_TEXT_SCREEN_H
+#ifndef PVZ_LAWN_WIDGET_HELP_TEXT_SCREEN_H
+#define PVZ_LAWN_WIDGET_HELP_TEXT_SCREEN_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
@@ -47,4 +47,4 @@ void HelpTextScreen_Delete2(HelpTextScreen *helpTextScreen);
 
 void HelpTextScreen_ButtonDepress(HelpTextScreen *helpTextScreen, int id);
 
-#endif // PVZ_LAWN_HELP_TEXT_SCREEN_H
+#endif // PVZ_LAWN_WIDGET_HELP_TEXT_SCREEN_H

@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_SETTINGS_DIALOG_H
-#define PVZ_LAWN_SETTINGS_DIALOG_H
+#ifndef PVZ_LAWN_WIDGET_SETTINGS_DIALOG_H
+#define PVZ_LAWN_WIDGET_SETTINGS_DIALOG_H
 
 #include "LawnDialog.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -39,4 +39,4 @@ void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g);
 
 void SettingsDialog_CheckboxChecked(SettingsDialog *settingsDialog, int id, bool isChecked);
 
-#endif // PVZ_LAWN_SETTINGS_DIALOG_H
+#endif // PVZ_LAWN_WIDGET_SETTINGS_DIALOG_H

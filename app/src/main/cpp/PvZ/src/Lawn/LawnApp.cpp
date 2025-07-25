@@ -124,8 +124,8 @@ void LawnApp::DoConfirmBackToMain(bool theIsSave) {
         return;
     }
     auto *aBackDialog = new ConfirmBackToMainDialog(theIsSave);
-    (*(void (**)(LawnApp *, int, Sexy::Widget *))(*(uint32_t *)this + 416))(this, Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN, aBackDialog);
-    (*(void (**)(uint32_t, Sexy::Widget *))(**((uint32_t **)this + 165) + 48))(*((uint32_t *)this + 165), aBackDialog);
+    (*(void (**)(LawnApp *, int, Sexy::__Widget *))(*(uint32_t *)this + 416))(this, Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN, aBackDialog);
+    (*(void (**)(uint32_t, Sexy::__Widget *))(**((uint32_t **)this + 165) + 48))(*((uint32_t *)this + 165), aBackDialog);
 }
 
 void LawnApp::DoBackToMain() {
@@ -422,16 +422,16 @@ void LawnApp::KillLeaderboards() {
 void LawnApp::ShowZombatarScreen() {
     gMainMenuZombatarWidget = new ZombatarWidget(this);
     //    Sexy_Widget_Resize(gMainMenuZombatarWidget,-80,-60,960,720);
-    (*(void (**)(int *, Sexy::Widget *))(*mWidgetManager + 24))(mWidgetManager, gMainMenuZombatarWidget); // AddWidget()
-    (*(void (**)(int *, Sexy::Widget *))(*mWidgetManager + 48))(mWidgetManager, gMainMenuZombatarWidget); // SetFocusedWidget()
+    (*(void (**)(int *, Sexy::__Widget *))(*mWidgetManager + 24))(mWidgetManager, gMainMenuZombatarWidget); // AddWidget()
+    (*(void (**)(int *, Sexy::__Widget *))(*mWidgetManager + 48))(mWidgetManager, gMainMenuZombatarWidget); // SetFocusedWidget()
 }
 
 void LawnApp::KillZombatarScreen() {
     if (gMainMenuZombatarWidget == nullptr)
         return;
 
-    (*(void (**)(int *, Sexy::Widget *))(*mWidgetManager + 28))(mWidgetManager, gMainMenuZombatarWidget); // RemoveWidget()
-    (*((void (**)(LawnApp *, Sexy::Widget *))vTable + 47))(this, gMainMenuZombatarWidget);                // MSGBOX()
+    (*(void (**)(int *, Sexy::__Widget *))(*mWidgetManager + 28))(mWidgetManager, gMainMenuZombatarWidget); // RemoveWidget()
+    (*((void (**)(LawnApp *, Sexy::__Widget *))vTable + 47))(this, gMainMenuZombatarWidget);                // MSGBOX()
     gMainMenuZombatarWidget = nullptr;
 }
 

@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_CURSOROBJECT_H
-#define PLANTSVSZOMBIES_ANDROIDTV_CURSOROBJECT_H
+#ifndef PVZ_LAWN_BOARD_CURSOR_OBJECT_H
+#define PVZ_LAWN_BOARD_CURSOR_OBJECT_H
 
 #include "GameObject.h"
 
@@ -53,4 +49,4 @@ inline bool (*old_CursorObject_BeginDraw)(CursorObject *cursorObject, Sexy::Grap
 
 inline void (*old_CursorObject_EndDraw)(CursorObject *cursorObject, Sexy::Graphics *graphics);
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_CURSOROBJECT_H
+#endif // PVZ_LAWN_BOARD_CURSOR_OBJECT_H

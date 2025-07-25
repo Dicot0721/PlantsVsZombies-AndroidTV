@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_REANIMATONLAWN_H
-#define PLANTSVSZOMBIES_ANDROIDTV_REANIMATONLAWN_H
+#ifndef PVZ_LAWN_SYSTEM_REANIMATON_LAWN_H
+#define PVZ_LAWN_SYSTEM_REANIMATON_LAWN_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Symbols.h"
@@ -61,4 +57,4 @@ inline void (*old_ReanimatorCache_DrawCachedPlant)(ReanimatorCache *a1, Sexy::Gr
 
 inline Sexy::MemoryImage *(*old_ReanimatorCache_MakeCachedZombieFrame)(ReanimatorCache *reanimatorCache, ZombieType zombieType);
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_REANIMATONLAWN_H
+#endif // PVZ_LAWN_SYSTEM_REANIMATON_LAWN_H

@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/7/18.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_TYPINGCHECK_H
-#define PLANTSVSZOMBIES_ANDROIDTV_TYPINGCHECK_H
+#ifndef PVZ_LAWN_SYSTEM_TYPING_CHECK_H
+#define PVZ_LAWN_SYSTEM_TYPING_CHECK_H
 
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
@@ -19,4 +15,4 @@ public:
     }
 };
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_TYPINGCHECK_H
+#endif // PVZ_LAWN_SYSTEM_TYPING_CHECK_H

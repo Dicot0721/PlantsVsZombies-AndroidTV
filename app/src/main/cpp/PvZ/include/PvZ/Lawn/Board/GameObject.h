@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_GAMEOBJECT_H
-#define PLANTSVSZOMBIES_ANDROIDTV_GAMEOBJECT_H
+#ifndef PVZ_LAWN_BOARD_GAME_OBJECT_H
+#define PVZ_LAWN_BOARD_GAME_OBJECT_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -39,4 +35,4 @@ public:
 };
 
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_GAMEOBJECT_H
+#endif // PVZ_LAWN_BOARD_GAME_OBJECT_H

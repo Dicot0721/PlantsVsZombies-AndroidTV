@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/27.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_FILTEREFFECT_H
-#define PLANTSVSZOMBIES_ANDROIDTV_FILTEREFFECT_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_EFFECT_FILTER_EFFECT_H
+#define PVZ_SEXYAPPFRAMEWORK_EFFECT_FILTER_EFFECT_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Symbols.h"
@@ -36,4 +32,5 @@ inline void FilterEffectDoWhite(Sexy::MemoryImage *theImage) {
 inline void FilterEffectDoLumSat(Sexy::MemoryImage *theImage, float theLum, float theSat) {
     reinterpret_cast<void (*)(Sexy::MemoryImage *, float, float)>(FilterEffectDoLumSatAddr)(theImage, theLum, theSat);
 }
-#endif // PLANTSVSZOMBIES_ANDROIDTV_FILTEREFFECT_H
+
+#endif // PVZ_SEXYAPPFRAMEWORK_EFFECT_FILTER_EFFECT_H

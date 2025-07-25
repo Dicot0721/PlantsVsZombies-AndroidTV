@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_POOLEFFECT_H
-#define PLANTSVSZOMBIES_ANDROIDTV_POOLEFFECT_H
+#ifndef PVZ_LAWN_SYSTEM_POOL_EFFECT_H
+#define PVZ_LAWN_SYSTEM_POOL_EFFECT_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Graphics/Image.h"
@@ -37,5 +33,4 @@ public:
     void PoolEffectDraw(Sexy::Graphics *g, bool theIsNight);
 };
 
-
-#endif // PLANTSVSZOMBIES_ANDROIDTV_POOLEFFECT_H
+#endif // PVZ_LAWN_SYSTEM_POOL_EFFECT_H

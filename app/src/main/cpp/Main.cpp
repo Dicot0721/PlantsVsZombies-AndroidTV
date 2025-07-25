@@ -28,7 +28,7 @@ static_assert((sizeof(void *) == sizeof(int32_t)), "Unsupported non-32-bit archi
  *
  * Java 层已指定模块加载顺序: 先 libGameMain.so, 后 libHomura.so.
  */
-[[gnu::constructor]] void lib_main() {
+[[gnu::constructor]] static void lib_main() {
 
     // Target lib here
     static constexpr char targetLibName[] = "libGameMain.so";
@@ -167,7 +167,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     useNewCobCannon = true;
 }
 
-std::string jstring2string(JNIEnv *env, jstring jStr) {
+static std::string jstring2string(JNIEnv *env, jstring jStr) {
     const char *cstr = env->GetStringUTFChars(jStr, nullptr);
     std::string str = std::string(cstr);
     env->ReleaseStringUTFChars(jStr, cstr);
@@ -675,7 +675,7 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
 }
 
 // 将char *转为jstring
-jstring charTojstring(JNIEnv *env, const char *pat) {
+static jstring charTojstring(JNIEnv *env, const char *pat) {
     // 定义java String类 strClass
     jclass strClass = (env)->FindClass("java/lang/String");
     // 获取String(byte[],String)的构造器,用于将本地byte[]数组转换为一个新String
@@ -691,7 +691,7 @@ jstring charTojstring(JNIEnv *env, const char *pat) {
 }
 
 // 先将string转为char *，再将char *转为jstring
-jstring stringToJstring(JNIEnv *env, const std::string &str) {
+static jstring stringToJstring(JNIEnv *env, const std::string &str) {
     return charTojstring(env, str.c_str());
 }
 
@@ -706,12 +706,12 @@ struct KeyValuePair {
 };
 
 // 计算哈希值
-int hashFunction(int key) {
+static int hashFunction(int key) {
     return key % HASH_SIZE;
 }
 
 // 插入键值对
-void insertKeyValuePair(KeyValuePair *hashTable[], int key, int value) {
+static void insertKeyValuePair(KeyValuePair *hashTable[], int key, int value) {
     int index = hashFunction(key);
 
     auto *newPair = new KeyValuePair;
@@ -741,7 +741,7 @@ void insertKeyValuePair(KeyValuePair *hashTable[], int key, int value) {
 }
 
 // 输出所有键值对
-std::string printAllKeyValuePairs(KeyValuePair *hashTable[]) {
+static std::string printAllKeyValuePairs(KeyValuePair *hashTable[]) {
     std::stringstream ss1; // 花盆荷叶
     std::stringstream ss2; // 普通植物
     std::stringstream ss3; // 南瓜
@@ -796,7 +796,7 @@ std::string printAllKeyValuePairs(KeyValuePair *hashTable[]) {
 }
 
 // 释放哈希表内存
-void freeMap(KeyValuePair *hashTable[]) {
+static void freeMap(KeyValuePair *hashTable[]) {
     for (int i = 0; i < HASH_SIZE; i++) {
         KeyValuePair *current = hashTable[i];
         while (current != nullptr) {
@@ -901,7 +901,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
             if (is_key_down) {
                 switch (buttonCode) {
                     case 7:
-                        gamepadControls->OnKeyDown(KeyCode::KEYCODE_SHOVEL, 1112);
+                        gamepadControls->OnKeyDown(Sexy::KeyCode::KEYCODE_SHOVEL, 1112);
                         gamepadControls->mGamepadState = 7;
                         break;
                     case 16:
@@ -940,7 +940,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
             if (is_key_down) {
                 switch (buttonCode) {
                     case 7:
-                        gamepadControls->OnKeyDown(KeyCode::KEYCODE_SHOVEL, 1112);
+                        gamepadControls->OnKeyDown(Sexy::KeyCode::KEYCODE_SHOVEL, 1112);
                         gamepadControls->mGamepadState = 7;
                         break;
                     case 16:

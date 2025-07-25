@@ -1,5 +1,5 @@
-#ifndef PVZ_ENUMS_H
-#define PVZ_ENUMS_H
+#ifndef PVZ_COMMON_CONST_ENUMS_H
+#define PVZ_COMMON_CONST_ENUMS_H
 
 enum AdviceType {
     ADVICE_NONE = -1,
@@ -1370,4 +1370,4 @@ enum PlantID { PLANTID_NULL };
 enum ReanimationID { REANIMATIONID_NULL };
 enum ZombieID { ZOMBIEID_NULL };
 
-#endif // PVZ_ENUMS_H
+#endif // PVZ_COMMON_CONST_ENUMS_H

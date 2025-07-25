@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_WIDGET_H
-#define PLANTSVSZOMBIES_ANDROIDTV_WIDGET_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_WIDGET_H
+#define PVZ_SEXYAPPFRAMEWORK_WIDGET_WIDGET_H
 
 #include "PvZ/SexyAppFramework/Graphics/Color.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -62,8 +58,8 @@ public:
     }
 
     void MarkDirty();
-    void AddWidget(Widget *theWidget);
-    void RemoveWidget(Widget *theWidget);
+    void AddWidget(__Widget *theWidget);
+    void RemoveWidget(__Widget *theWidget);
     Widget *FindWidget(int theId);
 };
 
@@ -79,5 +75,4 @@ public:
 
 } // namespace Sexy
 
-
-#endif // PLANTSVSZOMBIES_ANDROIDTV_WIDGET_H
+#endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_WIDGET_H

@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_CHALLENGE_SCREEN_H
-#define PVZ_LAWN_CHALLENGE_SCREEN_H
+#ifndef PVZ_LAWN_WIDGET_CHALLENGE_SCREEN_H
+#define PVZ_LAWN_WIDGET_CHALLENGE_SCREEN_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
@@ -103,4 +103,4 @@ inline void (*old_ChallengeScreen_MouseDrag)(ChallengeScreen *challengeScreen, i
 
 inline void (*old_ChallengeScreen_MouseUp)(ChallengeScreen *challengeScreen, int x, int y);
 
-#endif // PVZ_LAWN_CHALLENGE_SCREEN_H
+#endif // PVZ_LAWN_WIDGET_CHALLENGE_SCREEN_H

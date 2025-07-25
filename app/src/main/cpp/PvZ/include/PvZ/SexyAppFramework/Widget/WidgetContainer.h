@@ -1,13 +1,10 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_WIDGETCONTAINER_H
-#define PLANTSVSZOMBIES_ANDROIDTV_WIDGETCONTAINER_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_WIDGET_CONTAINER_H
+#define PVZ_SEXYAPPFRAMEWORK_WIDGET_WIDGET_CONTAINER_H
 
 #include "PvZ/SexyAppFramework/Misc/Common.h"
 #include "PvZ/SexyAppFramework/Misc/Flags.h"
 #include "PvZ/SexyAppFramework/Misc/Rect.h"
+#include "PvZ/Symbols.h"
 
 namespace Sexy {
 
@@ -59,4 +56,4 @@ public:
 } // namespace Sexy
 
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_WIDGETCONTAINER_H
+#endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_WIDGET_CONTAINER_H

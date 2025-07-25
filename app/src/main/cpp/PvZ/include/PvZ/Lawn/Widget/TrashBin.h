@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_TRASHBIN_H
-#define PLANTSVSZOMBIES_ANDROIDTV_TRASHBIN_H
+#ifndef PVZ_LAWN_WIDGET_TRASH_BIN_H
+#define PVZ_LAWN_WIDGET_TRASH_BIN_H
 
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
@@ -41,4 +37,4 @@ protected:
 
 inline void (*old_TrashBin_TrashBin)(TrashBin *trashBin, TrashBin::TrashPileType theTrashPileType, float height);
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_TRASHBIN_H
+#endif // PVZ_LAWN_WIDGET_TRASH_BIN_H

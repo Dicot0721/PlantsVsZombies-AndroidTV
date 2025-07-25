@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_CREDITSCREEN_H
-#define PLANTSVSZOMBIES_ANDROIDTV_CREDITSCREEN_H
+#ifndef PVZ_LAWN_WIDGET_CREDIT_SCREEN_H
+#define PVZ_LAWN_WIDGET_CREDIT_SCREEN_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
@@ -68,4 +64,5 @@ void CreditScreen_CreditScreen(Sexy::Widget *creditScreen, LawnApp *a2, bool a3)
 void CreditScreen_RemovedFromManager(Sexy::Widget *creditScreen, int a2);
 
 void CreditScreen_Delete2(Sexy::Widget *creditScreen);
-#endif // PLANTSVSZOMBIES_ANDROIDTV_CREDITSCREEN_H
+
+#endif // PVZ_LAWN_WIDGET_CREDIT_SCREEN_H

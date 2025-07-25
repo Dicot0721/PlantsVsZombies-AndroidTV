@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_MAIN_MENU_H
-#define PVZ_LAWN_MAIN_MENU_H
+#ifndef PVZ_LAWN_WIDGET_MAIN_MENU_H
+#define PVZ_LAWN_WIDGET_MAIN_MENU_H
 
 #include "LeaderboardsWidget.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -195,4 +195,5 @@ void TestMenuWidget_MouseUp(ZombatarWidget *zombatarWidget, int x, int y);
 void TestMenuWidget_MouseDrag(ZombatarWidget *zombatarWidget, int x, int y);
 
 void TestMenuWidget_KeyDown(ZombatarWidget *zombatarWidget, int keyCode);
-#endif // PVZ_LAWN_MAIN_MENU_H
+
+#endif // PVZ_LAWN_WIDGET_MAIN_MENU_H

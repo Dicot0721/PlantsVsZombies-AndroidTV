@@ -1,14 +1,7 @@
-//
-// Created by 28636 on 2025/4/25.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_GAMECONSTANTS_H
-#define PLANTSVSZOMBIES_ANDROIDTV_GAMECONSTANTS_H
-
-#pragma once
+#ifndef PVZ_COMMON_GAME_CONSTANTS_H
+#define PVZ_COMMON_GAME_CONSTANTS_H
 
 #include "ConstEnums.h"
-constexpr const double PI = 3.141592653589793;
 
 // ============================================================
 // ■ 常数
@@ -68,5 +61,4 @@ const int STORESCREEN_COINBANK_Y = 559;
 const int STORESCREEN_PAGESTRING_X = 470;
 const int STORESCREEN_PAGESTRING_Y = 500;
 
-
-#endif // PLANTSVSZOMBIES_ANDROIDTV_GAMECONSTANTS_H
+#endif // PVZ_COMMON_GAME_CONSTANTS_H

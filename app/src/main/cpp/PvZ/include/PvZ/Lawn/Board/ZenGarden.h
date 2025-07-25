@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_ZEN_GARDEN_H
-#define PVZ_LAWN_ZEN_GARDEN_H
+#ifndef PVZ_LAWN_BOARD_ZEN_GARDEN_H
+#define PVZ_LAWN_BOARD_ZEN_GARDEN_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -47,4 +47,4 @@ public:
 inline void (*old_ZenGarden_DrawBackdrop)(ZenGarden *zenGarden, Sexy::Graphics *graphics);
 
 
-#endif // PVZ_LAWN_ZEN_GARDEN_H
+#endif // PVZ_LAWN_BOARD_ZEN_GARDEN_H

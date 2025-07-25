@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_TITLE_SCREEN_H
-#define PVZ_LAWN_TITLE_SCREEN_H
+#ifndef PVZ_LAWN_WIDGET_TITLE_SCREEN_H
+#define PVZ_LAWN_WIDGET_TITLE_SCREEN_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
@@ -56,4 +56,4 @@ void TitleScreen_Update(TitleScreen *titleScreen);
 
 void TitleScreen_SwitchState(TitleScreen *titleScreen, TitleScreen::TitleState state, int duration);
 
-#endif // PVZ_LAWN_TITLE_SCREEN_H
+#endif // PVZ_LAWN_WIDGET_TITLE_SCREEN_H

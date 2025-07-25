@@ -1,13 +1,7 @@
-//
-// Created by 28636 on 2025/5/25.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_RESOURCES_H
-#define PLANTSVSZOMBIES_ANDROIDTV_RESOURCES_H
+#ifndef PVZ_COMMON_RESOURCES_H
+#define PVZ_COMMON_RESOURCES_H
 
 #include "PvZ/Symbols.h"
-
-using namespace Sexy;
 
 namespace Sexy {
 // inline Image *IMAGE_SHOVELBANK = *Sexy_IMAGE_SHOVELBANK_Addr;
@@ -15,4 +9,4 @@ namespace Sexy {
 // inline Image *IMAGE_BLANK = *Sexy_IMAGE_BLANK_Addr;
 }
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_RESOURCES_H
+#endif // PVZ_COMMON_RESOURCES_H

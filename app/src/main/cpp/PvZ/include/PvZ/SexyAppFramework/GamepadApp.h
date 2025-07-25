@@ -1,16 +1,12 @@
-//
-// Created by 28636 on 2025/7/17.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_GAMEPADAPP_H
-#define PLANTSVSZOMBIES_ANDROIDTV_GAMEPADAPP_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_GAMEPAD_APP_H
+#define PVZ_SEXYAPPFRAMEWORK_GAMEPAD_APP_H
 
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Symbols.h"
 
 namespace Sexy {
 
-class GamepadApp : public SexyAppBase {
+class GamepadApp : public __SexyAppBase {
 public:
     bool HasGamepad() {
         return reinterpret_cast<bool (*)(GamepadApp *)>(Sexy_GamepadApp_HasGamepadAddr)(this);
@@ -19,4 +15,4 @@ public:
 
 } // namespace Sexy
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_GAMEPADAPP_H
+#endif // PVZ_SEXYAPPFRAMEWORK_GAMEPAD_APP_H

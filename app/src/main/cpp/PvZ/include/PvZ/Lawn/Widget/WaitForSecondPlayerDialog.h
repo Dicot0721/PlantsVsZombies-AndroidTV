@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/7/17.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_WAITFORSECONDPLAYERDIALOG_H
-#define PLANTSVSZOMBIES_ANDROIDTV_WAITFORSECONDPLAYERDIALOG_H
+#ifndef PVZ_LAWN_WIDGET_WAIT_FOR_SECOND_PLAYER_DIALOG_H
+#define PVZ_LAWN_WIDGET_WAIT_FOR_SECOND_PLAYER_DIALOG_H
 
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Symbols.h"
@@ -26,4 +22,4 @@ protected:
 
 inline void (*old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog)(WaitForSecondPlayerDialog *a, int *a2);
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_WAITFORSECONDPLAYERDIALOG_H
+#endif // PVZ_LAWN_WIDGET_WAIT_FOR_SECOND_PLAYER_DIALOG_H

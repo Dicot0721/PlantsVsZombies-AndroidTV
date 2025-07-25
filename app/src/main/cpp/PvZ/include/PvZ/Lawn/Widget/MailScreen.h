@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_MAIL_SCREEN_H
-#define PVZ_LAWN_MAIL_SCREEN_H
+#ifndef PVZ_LAWN_WIDGET_MAIL_SCREEN_H
+#define PVZ_LAWN_WIDGET_MAIL_SCREEN_H
 
 #include "LawnDialog.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -61,4 +61,4 @@ inline void (*old_MailScreen_MouseDrag)(MailScreen *mailScreen, int x, int y);
 
 inline void (*old_MailScreen_MouseUp)(MailScreen *mailScreen, int x, int y);
 
-#endif // PVZ_LAWN_MAIL_SCREEN_H
+#endif // PVZ_LAWN_WIDGET_MAIL_SCREEN_H

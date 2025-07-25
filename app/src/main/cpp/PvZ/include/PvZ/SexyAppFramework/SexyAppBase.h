@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/27.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_SEXYAPPBASE_H
-#define PLANTSVSZOMBIES_ANDROIDTV_SEXYAPPBASE_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_SEXY_APP_BASE_H
+#define PVZ_SEXYAPPFRAMEWORK_SEXY_APP_BASE_H
 
 #include "Graphics/Color.h"
 #include "Graphics/MemoryImage.h"
@@ -84,4 +80,4 @@ public:
 
 inline void (*old_Sexy_SexyAppBase_SexyAppBase)(Sexy::__SexyAppBase *appBase);
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_SEXYAPPBASE_H
+#endif // PVZ_SEXYAPPFRAMEWORK_SEXY_APP_BASE_H

@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_POINT_H
-#define PLANTSVSZOMBIES_ANDROIDTV_POINT_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_MISC_POINT_H
+#define PVZ_SEXYAPPFRAMEWORK_MISC_POINT_H
 
 #include "PvZ/SexyAppFramework/Misc/Common.h"
 
@@ -82,4 +78,4 @@ typedef TPoint<double> FPoint;
 }; // namespace Sexy
 
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_POINT_H
+#endif // PVZ_SEXYAPPFRAMEWORK_MISC_POINT_H

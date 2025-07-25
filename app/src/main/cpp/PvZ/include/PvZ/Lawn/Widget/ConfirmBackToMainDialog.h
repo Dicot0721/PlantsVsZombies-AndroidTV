@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_CONFIRM_BACK_TO_MAIN_DIALOG_H
-#define PVZ_LAWN_CONFIRM_BACK_TO_MAIN_DIALOG_H
+#ifndef PVZ_LAWN_WIDGET_CONFIRM_BACK_TO_MAIN_DIALOG_H
+#define PVZ_LAWN_WIDGET_CONFIRM_BACK_TO_MAIN_DIALOG_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/Widget/LawnDialog.h"
@@ -33,4 +33,4 @@ void ConfirmBackToMainDialog_AddedToManager(ConfirmBackToMainDialog *confirmBack
 
 void ConfirmBackToMainDialog_ButtonDepress(ConfirmBackToMainDialog *a, int a2);
 
-#endif // PVZ_LAWN_CONFIRM_BACK_TO_MAIN_DIALOG_H
+#endif // PVZ_LAWN_WIDGET_CONFIRM_BACK_TO_MAIN_DIALOG_H

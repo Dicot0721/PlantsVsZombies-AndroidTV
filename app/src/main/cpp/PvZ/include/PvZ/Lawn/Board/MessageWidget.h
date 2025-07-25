@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_MESSAGEWIDGET_H
-#define PLANTSVSZOMBIES_ANDROIDTV_MESSAGEWIDGET_H
+#ifndef PVZ_LAWN_BOARD_MESSAGE_WIDGET_H
+#define PVZ_LAWN_BOARD_MESSAGE_WIDGET_H
 
 #include "PvZ//SexyAppFramework/Misc/Common.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -80,4 +76,4 @@ inline void (*old_MessageWidget_SetLabel)(CustomMessageWidget *messageWidget, co
 
 inline void (*old_MessageWidget_Update)(CustomMessageWidget *messageWidget);
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_MESSAGEWIDGET_H
+#endif // PVZ_LAWN_BOARD_MESSAGE_WIDGET_H

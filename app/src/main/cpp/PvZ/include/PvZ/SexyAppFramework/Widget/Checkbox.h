@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/26.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_CHECKBOX_H
-#define PLANTSVSZOMBIES_ANDROIDTV_CHECKBOX_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_CHECKBOX_H
+#define PVZ_SEXYAPPFRAMEWORK_WIDGET_CHECKBOX_H
 
 #include "PvZ/Symbols.h"
 
@@ -11,7 +7,7 @@
 
 namespace Sexy {
 
-class Checkbox : public Widget {
+class Checkbox : public __Widget {
 public:
     int unknownMember[8];   // 64 ~ 71
     int *mListener;         // 72
@@ -38,5 +34,4 @@ protected:
 
 } // namespace Sexy
 
-
-#endif // PLANTSVSZOMBIES_ANDROIDTV_CHECKBOX_H
+#endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_CHECKBOX_H

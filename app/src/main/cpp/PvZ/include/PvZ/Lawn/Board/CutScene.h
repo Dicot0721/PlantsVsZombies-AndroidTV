@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_CUT_SCENE_H
-#define PVZ_LAWN_CUT_SCENE_H
+#ifndef PVZ_LAWN_BOARD_CUT_SCENE_H
+#define PVZ_LAWN_BOARD_CUT_SCENE_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
@@ -60,4 +60,4 @@ inline void (*old_CutScene_ShowShovel)(CutScene *cutScene);
 
 inline void (*old_CutScene_Update)(CutScene *instance);
 
-#endif // PVZ_LAWN_CUT_SCENE_H
+#endif // PVZ_LAWN_BOARD_CUT_SCENE_H

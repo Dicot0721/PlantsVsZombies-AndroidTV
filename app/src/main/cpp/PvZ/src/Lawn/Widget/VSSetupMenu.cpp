@@ -17,7 +17,7 @@ void VSSetupMenu::Update() {
 
 void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
     // 修复在对战的阵营选取界面无法按返回键退出的BUG。
-    if (theKey == KeyCode::KEYCODE_ESCAPE) {
+    if (theKey == Sexy::KeyCode::KEYCODE_ESCAPE) {
         switch (mState) {
             case 1:
             case 2:

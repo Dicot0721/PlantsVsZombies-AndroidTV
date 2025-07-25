@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_STORE_SCREEN_H
-#define PVZ_LAWN_STORE_SCREEN_H
+#ifndef PVZ_LAWN_WIDGET_STORE_SCREEN_H
+#define PVZ_LAWN_WIDGET_STORE_SCREEN_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Widget/Dialog.h"
@@ -96,4 +96,4 @@ inline void (*old_StoreScreen_MouseDown)(StoreScreen *storeScreen, int x, int y,
 
 inline void (*old_StoreScreen_MouseUp)(StoreScreen *storeScreen, int x, int y, int theClickCount);
 
-#endif // PVZ_LAWN_STORE_SCREEN_H
+#endif // PVZ_LAWN_WIDGET_STORE_SCREEN_H

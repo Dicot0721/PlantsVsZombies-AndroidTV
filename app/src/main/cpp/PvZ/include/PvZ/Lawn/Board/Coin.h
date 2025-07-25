@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_COIN_H
-#define PVZ_LAWN_COIN_H
+#ifndef PVZ_LAWN_BOARD_COIN_H
+#define PVZ_LAWN_BOARD_COIN_H
 
 #include "GameObject.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -98,4 +98,4 @@ inline void (*old_Coin_UpdateFall)(Coin *coin);
 
 inline bool (*old_Coin_MouseHitTest)(Coin *coin, int a2, int a3, int **hitResult, int a5);
 
-#endif // PVZ_LAWN_COIN_H
+#endif // PVZ_LAWN_BOARD_COIN_H

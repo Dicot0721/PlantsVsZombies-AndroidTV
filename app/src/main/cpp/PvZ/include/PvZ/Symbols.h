@@ -1170,8 +1170,6 @@ inline void *j_AGVideoResumeAddr;
 inline void *j_AGVideoStopAddr;
 inline void *j_AGVideoCloseAddr;
 
-inline uintptr_t gLibBaseOffset = 0;
-
 
 inline bool GetFunctionAddr() {
     static constexpr char libGameMain[] = "libGameMain.so";

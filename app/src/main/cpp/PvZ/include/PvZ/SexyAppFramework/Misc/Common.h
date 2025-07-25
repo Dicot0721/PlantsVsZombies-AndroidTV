@@ -1,9 +1,8 @@
-//
-// Created by 28636 on 2025/4/29.
-//
+#ifndef PVZ_SEXYAPPFRAMEWORK_MISC_COMMON_H
+#define PVZ_SEXYAPPFRAMEWORK_MISC_COMMON_H
 
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_COMMON_H
-#define PLANTSVSZOMBIES_ANDROIDTV_COMMON_H
+#include "PvZ/STL/pvzstl_string.h"
+#include "PvZ/Symbols.h"
 
 #include <algorithm>
 #include <cstdlib>
@@ -13,13 +12,10 @@
 #include <string>
 #include <vector>
 
-#include "PvZ/STL/pvzstl_string.h"
-#include "PvZ/Symbols.h"
-
-typedef unsigned char uchar;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef unsigned long ulong;
+using uchar = unsigned char;
+using ushort = unsigned short;
+using uint = unsigned int;
+using ulong = unsigned long;
 
 enum PixelFormat {
     kPixelFormat_None = -1,
@@ -61,7 +57,6 @@ inline void vformat(pvzstl::string &output, const char *fmt, va_list vList) {
     return output;
 }
 
-
 } // namespace Sexy
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_COMMON_H
+#endif // PVZ_SEXYAPPFRAMEWORK_MISC_COMMON_H

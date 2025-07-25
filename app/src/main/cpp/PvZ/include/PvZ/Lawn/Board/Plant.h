@@ -1,5 +1,5 @@
-#ifndef PVZ_LAWN_PLANT_H
-#define PVZ_LAWN_PLANT_H
+#ifndef PVZ_LAWN_BOARD_PLANT_H
+#define PVZ_LAWN_BOARD_PLANT_H
 
 #include "GameObject.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
@@ -289,4 +289,4 @@ inline void (*old_Plant_PlayBodyReanim)(Plant *, const char *theTrackName, Reani
 
 // inline void (*old_Plant_CobCannonFire)(Plant* plant, int x, int y);
 
-#endif // PVZ_LAWN_PLANT_H
+#endif // PVZ_LAWN_BOARD_PLANT_H

@@ -1,9 +1,5 @@
-//
-// Created by 28636 on 2025/5/28.
-//
-
-#ifndef PLANTSVSZOMBIES_ANDROIDTV_RATIO_H
-#define PLANTSVSZOMBIES_ANDROIDTV_RATIO_H
+#ifndef PVZ_SEXYAPPFRAMEWORK_MISC_RATIO_H
+#define PVZ_SEXYAPPFRAMEWORK_MISC_RATIO_H
 
 #include "PvZ/Symbols.h"
 
@@ -17,4 +13,4 @@ struct Ratio {
 
 } // namespace Sexy
 
-#endif // PLANTSVSZOMBIES_ANDROIDTV_RATIO_H
+#endif // PVZ_SEXYAPPFRAMEWORK_MISC_RATIO_H
