@@ -20,15 +20,15 @@ void ZenGarden::DrawBackdrop(Graphics* g) {
 
 SpecialGridPlacement* ZenGarden::GetSpecialGridPlacements(int& theCount) {
     if (mBoard->mBackground == BackgroundType::BACKGROUND_MUSHROOM_GARDEN) {
-        theCount = LENGTH(gMushroomGridPlacement);
+        theCount = std::size(gMushroomGridPlacement);
         return gMushroomGridPlacement;
     }
     if (mBoard->mBackground == BackgroundType::BACKGROUND_ZOMBIQUARIUM) {
-        theCount = LENGTH(gAquariumGridPlacement);
+        theCount = std::size(gAquariumGridPlacement);
         return gAquariumGridPlacement;
     }
     if (mBoard->mBackground == BackgroundType::BACKGROUND_GREENHOUSE) {
-        theCount = LENGTH(gGreenhouseGridPlacement);
+        theCount = std::size(gGreenhouseGridPlacement);
         return gGreenhouseGridPlacement;
     }
 

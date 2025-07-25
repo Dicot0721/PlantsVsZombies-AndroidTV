@@ -342,18 +342,20 @@ void Challenge::InitZombieWaves() {
     old_Challenge_InitZombieWaves(this);
 
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN) {
-        ZombieType zombieList[] = {ZombieType::ZOMBIE_NORMAL,
-                                   ZombieType::ZOMBIE_TRAFFIC_CONE,
-                                   ZombieType::ZOMBIE_PAIL,
-                                   ZombieType::ZOMBIE_DOOR,
-                                   ZombieType::ZOMBIE_FOOTBALL,
-                                   ZombieType::ZOMBIE_NEWSPAPER,
-                                   ZombieType::ZOMBIE_JACK_IN_THE_BOX,
-                                   ZombieType::ZOMBIE_POLEVAULTER,
-                                   ZombieType::ZOMBIE_DOLPHIN_RIDER,
-                                   ZombieType::ZOMBIE_LADDER,
-                                   ZombieType::ZOMBIE_GARGANTUAR};
-        InitZombieWavesFromList(zombieList, sizeof(zombieList) / sizeof(zombieList[0]));
+        ZombieType zombieList[] = {
+            ZombieType::ZOMBIE_NORMAL,
+            ZombieType::ZOMBIE_TRAFFIC_CONE,
+            ZombieType::ZOMBIE_PAIL,
+            ZombieType::ZOMBIE_DOOR,
+            ZombieType::ZOMBIE_FOOTBALL,
+            ZombieType::ZOMBIE_NEWSPAPER,
+            ZombieType::ZOMBIE_JACK_IN_THE_BOX,
+            ZombieType::ZOMBIE_POLEVAULTER,
+            ZombieType::ZOMBIE_DOLPHIN_RIDER,
+            ZombieType::ZOMBIE_LADDER,
+            ZombieType::ZOMBIE_GARGANTUAR,
+        };
+        InitZombieWavesFromList(zombieList, std::size(zombieList));
     }
 }
 

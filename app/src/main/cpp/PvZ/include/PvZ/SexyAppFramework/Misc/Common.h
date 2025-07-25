@@ -21,8 +21,6 @@ typedef unsigned short ushort;
 typedef unsigned int uint;
 typedef unsigned long ulong;
 
-#define LENGTH(anyarray) (sizeof(anyarray) / sizeof(anyarray[0]))
-
 enum PixelFormat {
     kPixelFormat_None = -1,
     kPixelFormat_Automatic,

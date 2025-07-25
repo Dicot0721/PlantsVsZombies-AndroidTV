@@ -97,7 +97,7 @@ void SeedChooserScreen::__Constructor(bool theIsZombieChooser) {
         mSeedsIn1PBank += 1;
     } else if (mGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_SUNFLOWER) {
         SeedType types[] = {SeedType::SEED_WALLNUT, SeedType::SEED_STARFRUIT, SeedType::SEED_UMBRELLA};
-        for (int i = 0; i < sizeof(types) / sizeof(types[0]); ++i) {
+        for (int i = 0; i < std::size(types); ++i) {
             ChosenSeed *theChosenSeed = &(mChosenSeeds[types[i]]);
             GetSeedPositionInBank(i, &theChosenSeed->mX, &theChosenSeed->mY, 0);
             theChosenSeed->mEndX = theChosenSeed->mX;

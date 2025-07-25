@@ -91,7 +91,7 @@ void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int 
     if (theReanimationParamArraySize == 0) {
         return old_ReanimatorLoadDefinitions(theReanimationParamArray, theReanimationParamArraySize);
     }
-    int newReanimationArraySize = sizeof(gNewReanimationParamArray) / sizeof(gNewReanimationParamArray[0]);
+    int newReanimationArraySize = std::size(gNewReanimationParamArray);
     ReanimationParams *newReanimationParamArray = (ReanimationParams *)malloc((theReanimationParamArraySize + newReanimationArraySize) * sizeof(ReanimationParams));
     for (int i = 0; i < theReanimationParamArraySize; ++i) {
         newReanimationParamArray[i].mReanimationType = theReanimationParamArray[i].mReanimationType;

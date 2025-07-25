@@ -485,7 +485,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_android_support_Preferences_Changes(J
 }
 
 extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_GetFeatureList(JNIEnv *env, jobject thiz) {
-    const char *features[] = {
+    constexpr const char *features[] = {
         "Collapse_常用功能",
         "1_CollapseAdd_Toggle_无限阳光",
         "42_CollapseAdd_Toggle_自由种植",
@@ -649,7 +649,7 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
 
     };
 
-    int featuresCount = (sizeof(features) / sizeof(features[0]));
+    int featuresCount = std::size(features);
     auto ret = (jobjectArray)env->NewObjectArray(featuresCount, env->FindClass("java/lang/String"), env->NewStringUTF(""));
 
     for (int i = 0; i < featuresCount; i++)
@@ -666,7 +666,7 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
         "-6_Button_<font color='green'>返回菜单</font>",
     };
 
-    int featuresCount = (sizeof features / sizeof features[0]);
+    int featuresCount = std::size(features);
     auto ret = (jobjectArray)env->NewObjectArray(featuresCount, env->FindClass("java/lang/String"), env->NewStringUTF(""));
     for (int i = 0; i < featuresCount; i++) {
         env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
