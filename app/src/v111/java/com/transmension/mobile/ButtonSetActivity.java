@@ -14,7 +14,6 @@ import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -36,9 +35,9 @@ import android.widget.Toast;
 import com.trans.pvztv.R;
 
 public class ButtonSetActivity extends Activity {
+    public int SCREEN_WIDTH, SCREEN_HEIGHT;
     boolean isAddonWindowLoaded = false;
     private WindowManager mWindowManager;
-    public int SCREEN_WIDTH, SCREEN_HEIGHT;
     private WindowManager.LayoutParams enterParams, backParams, shovelParams, hammerParams, dpadParams, visibilityParams, stopParams;
     private ImageView enterButton, backButton, shovelButton, hammerButton, dpadButton, visibilityWindow, stopButton;
     private SeekBar seekBarSize, seekBarTran;
@@ -46,17 +45,6 @@ public class ButtonSetActivity extends Activity {
     private EditText editSize, editTran;
     private CheckBox checkKeep;
     private ViewsToSet viewToSet = ViewsToSet.NULL_BUTTON;
-
-    enum ViewsToSet {
-        ENTER_BUTTON,
-        BACK_BUTTON,
-        SHOVEL_BUTTON,
-        HAMMER_BUTTON,
-        DPAD_BUTTON,
-        VISIBILITY_WINDOW,
-        STOP_BUTTON,
-        NULL_BUTTON
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -363,8 +351,6 @@ public class ButtonSetActivity extends Activity {
         setContentView(scrollView);
     }
 
-
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if (!isAddonWindowLoaded) {
@@ -378,8 +364,8 @@ public class ButtonSetActivity extends Activity {
             SCREEN_HEIGHT = metrics.heightPixels;
             float density = getResources().getDisplayMetrics().density;
             final int enterSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sharedPreferences.getInt("enterSize", 100), getResources().getDisplayMetrics());
-            final int enterX = sharedPreferences.getInt("enterX", (int) (310*density));
-            final int enterY = sharedPreferences.getInt("enterY", (int) (125*density));
+            final int enterX = sharedPreferences.getInt("enterX", (int) (310 * density));
+            final int enterY = sharedPreferences.getInt("enterY", (int) (125 * density));
             enterParams = new WindowManager.LayoutParams(enterSize, enterSize, enterX, enterY, WindowManager.LayoutParams.TYPE_APPLICATION_PANEL, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSPARENT);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
@@ -434,8 +420,8 @@ public class ButtonSetActivity extends Activity {
 
 
             final int backSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sharedPreferences.getInt("backSize", 75), getResources().getDisplayMetrics());
-            final int backX = sharedPreferences.getInt("backX", (int) (180*density));
-            final int backY = sharedPreferences.getInt("backY", (int) (135*density));
+            final int backX = sharedPreferences.getInt("backX", (int) (180 * density));
+            final int backY = sharedPreferences.getInt("backY", (int) (135 * density));
             backParams = new WindowManager.LayoutParams(backSize, backSize, backX, backY, WindowManager.LayoutParams.TYPE_APPLICATION_PANEL, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSPARENT);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
@@ -490,8 +476,8 @@ public class ButtonSetActivity extends Activity {
 
 
             final int dpadSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sharedPreferences.getInt("dpadSize", 200), getResources().getDisplayMetrics());
-            final int dpadX = sharedPreferences.getInt("dpadX", (int) (-250*density));
-            final int dpadY = sharedPreferences.getInt("dpadY", (int) (85*density));
+            final int dpadX = sharedPreferences.getInt("dpadX", (int) (-250 * density));
+            final int dpadY = sharedPreferences.getInt("dpadY", (int) (85 * density));
             dpadParams = new WindowManager.LayoutParams(dpadSize, dpadSize, dpadX, dpadY, WindowManager.LayoutParams.TYPE_APPLICATION_PANEL, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSPARENT);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
@@ -546,8 +532,8 @@ public class ButtonSetActivity extends Activity {
 
 
             final int shovelSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sharedPreferences.getInt("shovelSize", 75), getResources().getDisplayMetrics());
-            final int shovelX = sharedPreferences.getInt("shovelX", (int) (210*density));
-            final int shovelY = sharedPreferences.getInt("shovelY", (int) (25*density));
+            final int shovelX = sharedPreferences.getInt("shovelX", (int) (210 * density));
+            final int shovelY = sharedPreferences.getInt("shovelY", (int) (25 * density));
             shovelParams = new WindowManager.LayoutParams(shovelSize, shovelSize, shovelX, shovelY, WindowManager.LayoutParams.TYPE_APPLICATION_PANEL, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSPARENT);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
@@ -601,8 +587,8 @@ public class ButtonSetActivity extends Activity {
             mWindowManager.addView(shovelButton, shovelParams);
 
             final int hammerSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sharedPreferences.getInt("hammerSize", 75), getResources().getDisplayMetrics());
-            final int hammerX = sharedPreferences.getInt("hammerX", (int) (330*density));
-            final int hammerY = sharedPreferences.getInt("hammerY", (int) (7*density));
+            final int hammerX = sharedPreferences.getInt("hammerX", (int) (330 * density));
+            final int hammerY = sharedPreferences.getInt("hammerY", (int) (7 * density));
             hammerParams = new WindowManager.LayoutParams(hammerSize, hammerSize, hammerX, hammerY, WindowManager.LayoutParams.TYPE_APPLICATION_PANEL, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSPARENT);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
@@ -657,8 +643,8 @@ public class ButtonSetActivity extends Activity {
 
 
             final int visibilitySize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sharedPreferences.getInt("visibilitySize", 40), getResources().getDisplayMetrics());
-            final int visibilityX = sharedPreferences.getInt("visibilityX", (int) (380*density) );
-            final int visibilityY = sharedPreferences.getInt("visibilityY", (int) (-110*density));
+            final int visibilityX = sharedPreferences.getInt("visibilityX", (int) (380 * density));
+            final int visibilityY = sharedPreferences.getInt("visibilityY", (int) (-110 * density));
             visibilityParams = new WindowManager.LayoutParams(visibilitySize, visibilitySize, visibilityX, visibilityY, WindowManager.LayoutParams.TYPE_APPLICATION_PANEL, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSPARENT);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
@@ -712,8 +698,8 @@ public class ButtonSetActivity extends Activity {
 
 
             final int stopSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sharedPreferences.getInt("stopSize", 75), getResources().getDisplayMetrics());
-            final int stopX = sharedPreferences.getInt("stopX", (int) (220*density));
-            final int stopY = sharedPreferences.getInt("stopY", (int) (-100*density));
+            final int stopX = sharedPreferences.getInt("stopX", (int) (220 * density));
+            final int stopY = sharedPreferences.getInt("stopY", (int) (-100 * density));
             stopParams = new WindowManager.LayoutParams(stopSize, stopSize, stopX, stopY, WindowManager.LayoutParams.TYPE_APPLICATION_PANEL, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL, PixelFormat.TRANSPARENT);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
@@ -779,6 +765,17 @@ public class ButtonSetActivity extends Activity {
         mWindowManager.removeViewImmediate(visibilityWindow);
         mWindowManager.removeViewImmediate(stopButton);
         super.onDestroy();
+    }
+
+    enum ViewsToSet {
+        ENTER_BUTTON,
+        BACK_BUTTON,
+        SHOVEL_BUTTON,
+        HAMMER_BUTTON,
+        DPAD_BUTTON,
+        VISIBILITY_WINDOW,
+        STOP_BUTTON,
+        NULL_BUTTON
     }
 
 }

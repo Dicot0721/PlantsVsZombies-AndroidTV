@@ -46,6 +46,7 @@ import java.util.Locale;
 public class EnhanceActivity extends MainActivity {
 
 
+    final float width = 1280, height = 720, boardMarginX = 240, boardMarginY = 60;
     //这几个按键事件是玩游戏需要的按键事件。用NativeInputManager.onKeyInputEventNative(mNativeHandle, null, keyEvent)就可以发送按键事件给游戏了。
     private final InputManager.KeyInputEvent enterEventDown = InputManager.KeyInputEvent.translate(new KeyEvent(0, 0, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BUTTON_A, 0, 0, 0, 0, 0, InputDevice.SOURCE_CLASS_BUTTON));
     private final InputManager.KeyInputEvent enterEventUp = InputManager.KeyInputEvent.translate(new KeyEvent(0, 0, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BUTTON_A, 0, 0, 0, 0, 0, InputDevice.SOURCE_CLASS_BUTTON));
@@ -55,22 +56,18 @@ public class EnhanceActivity extends MainActivity {
     private final InputManager.KeyInputEvent shovelEventUp = InputManager.KeyInputEvent.translate(new KeyEvent(0, 0, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_1, 0, 0, 0, 0, 0, InputDevice.SOURCE_CLASS_BUTTON));
     private final InputManager.KeyInputEvent hammerEventDown = InputManager.KeyInputEvent.translate(new KeyEvent(0, 0, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_2, 0, 0, 0, 0, 0, InputDevice.SOURCE_CLASS_BUTTON));
     private final InputManager.KeyInputEvent hammerEventUp = InputManager.KeyInputEvent.translate(new KeyEvent(0, 0, KeyEvent.ACTION_UP, KeyEvent.KEYCODE_2, 0, 0, 0, 0, 0, InputDevice.SOURCE_CLASS_BUTTON));
-
-
     //四个方向键的按键事件（注意，游戏并不会识别方向键的抬起事件，只会识别方向键的按下事件。）
     private final InputManager.KeyInputEvent upEventDown = InputManager.KeyInputEvent.translate(new KeyEvent(0, 0, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP, 0, 0, 0, 0, 0, InputDevice.SOURCE_CLASS_BUTTON));
     private final InputManager.KeyInputEvent downEventDown = InputManager.KeyInputEvent.translate(new KeyEvent(0, 0, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN, 0, 0, 0, 0, 0, InputDevice.SOURCE_CLASS_BUTTON));
     private final InputManager.KeyInputEvent leftEventDown = InputManager.KeyInputEvent.translate(new KeyEvent(0, 0, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT, 0, 0, 0, 0, 0, InputDevice.SOURCE_CLASS_BUTTON));
     private final InputManager.KeyInputEvent rightEventDown = InputManager.KeyInputEvent.translate(new KeyEvent(0, 0, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT, 0, 0, 0, 0, 0, InputDevice.SOURCE_CLASS_BUTTON));
-
     //LB键和RB键，用于商店翻页。
     private final InputManager.KeyInputEvent lbEventDown = InputManager.KeyInputEvent.translate(new KeyEvent(0, 0, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BUTTON_L1, 0, 0, 0, 0, 0, InputDevice.SOURCE_CLASS_BUTTON));
     private final InputManager.KeyInputEvent rbEventDown = InputManager.KeyInputEvent.translate(new KeyEvent(0, 0, KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BUTTON_R1, 0, 0, 0, 0, 0, InputDevice.SOURCE_CLASS_BUTTON));
-
-
+    private final Handler hammerHandler = new Handler();
+    private final HashMap<Integer, Integer> keyMap = new HashMap<>();
     //这些东西都是专门用在锤子键连点上的，长按锤子键即可触发每秒20次的锤子键连点。僵尸表示：NND，开挂是吧，举报了
     private boolean isHammerButtonPressed = false, isHammerHandlerRunning = false;
-    private final Handler hammerHandler = new Handler();
     private final Runnable hammerRunnable = new Runnable() {
         @Override
         public void run() {
@@ -80,10 +77,20 @@ public class EnhanceActivity extends MainActivity {
         }
     };
     private boolean isTwoPlayerKeyBoardMode = false;
-
     //fileObserver用于观测存放文件夹变动，并在存档更新时保留一份备份
     private boolean isFileObserverLaunched = false;
     private FileObserver fileObserver;
+    private OrientationEventListener mOrientationListener;
+    private boolean heavyWeaponAccel = false;
+    private ImageView enterButton, backButton, shovelButton, hammerButton, dpadButton, stopButton;
+    private boolean isVisible;
+    private boolean isAddonWindowLoaded = false;
+    private ImageView visibilityWindow;
+    private WindowManager mWindowManager;
+    private float gameViewWidth = 0, gameViewHeight = 0;
+    private float boardWidgetLeft, boardWidgetRight, boardWidgetTop, boardWidgetBottom;
+    private int keyCodePause = 0, keyCodeSwitchTwoPlayerMode = 0;
+    private boolean useSpecialPause = false;
 
     //用于fileObserver备份存档的一些函数
     public static void copyDir(File srcDir, File destDir) throws IOException {
@@ -128,6 +135,56 @@ public class EnhanceActivity extends MainActivity {
             file.delete();
         }
     }
+
+    public static native void nativeEnableManualCollect();//开启手动收集。
+
+    public static native void nativeUseXboxMusics();
+
+    public static native void nativeDisableShop();//关闭道具栏。
+
+    public static native void nativeEnableNewOptionsDialog();//使用新的暂停菜单。
+
+    public static native void nativeSetHeavyWeaponAngle(int i);//设定重型武器发射角度，i的值可以为0~180
+
+    public static native void native1PButtonDown(int code);//1P按下按键。用于对战和结盟中操作1P种植
+
+    public static native void native2PButtonDown(int code);//2P按下按键。用于对战和结盟中操作2P种植
+
+    public static native void nativeSwitchTwoPlayerMode(boolean isOn);
+
+    public static native boolean nativeIsInGame();
+
+    public static native void nativeGaoJiPause(boolean enable);//高级暂停
+
+    public static native boolean nativeIsGaoJiPaused();//高级暂停状态
+
+    public static native void nativeHideCoverLayer();
+
+    public static native void nativeShowCoolDown();
+
+    public static native void nativeEnableNormalLevelMode();
+
+    public static native void nativeEnableNewShovel();
+
+    public static native void nativeEnableImitater();
+
+    public static native void nativeDisableTrashBinZombie();
+
+    public static native void nativeSendSecondTouch(int x, int y, int action);
+
+    public static native void nativeShowHouse();//显示房屋。
+
+    public static native void nativeUseNewCobCannon();//新版加农炮光标。
+
+    public static native void nativeAutoFixPosition();
+
+    public static native void nativeSeedBankPin();
+
+    public static native void nativeDynamicPreview();
+
+    public static native void nativeEnableOpenSL();
+
+    public static native void nativeSendButtonEvent(boolean isButtonDown, int buttonCode);//发送按键
 
     public File getUserDataFile() {
         SharedPreferences sharedPreferences = getSharedPreferences("data", 0);
@@ -223,11 +280,6 @@ public class EnhanceActivity extends MainActivity {
             fileObserver.startWatching();
         }
     }
-
-    private OrientationEventListener mOrientationListener;
-    private boolean heavyWeaponAccel = false;
-    private ImageView enterButton, backButton, shovelButton, hammerButton, dpadButton, stopButton;
-    private boolean isVisible;
 
     public void addKeyboardButtons(SharedPreferences sharedPreferences) {
         if (!sharedPreferences.getBoolean("useInGameKeyboard", true)) {
@@ -474,6 +526,7 @@ public class EnhanceActivity extends MainActivity {
         //读取设置中的“重型武器重力感应”设置项，决定是否开启重力感应
         heavyWeaponAccel = sharedPreferences.getBoolean("heavyWeaponAccel", false);
     }
+
     private void addVisibilityButton(SharedPreferences sharedPreferences) {
         if (!sharedPreferences.getBoolean("useInGameKeyboard", true)) {
             return;
@@ -617,21 +670,253 @@ public class EnhanceActivity extends MainActivity {
         view.startAnimation(a2);
     }
 
+    public void refreshNativeViewBorders(View view) {
+
+        gameViewWidth = view.getWidth() / width;
+        gameViewHeight = view.getHeight() / height;
+
+        boardWidgetLeft = gameViewWidth * 240;
+        boardWidgetRight = gameViewWidth * 1040;
+        boardWidgetTop = gameViewHeight * 60;
+        boardWidgetBottom = gameViewHeight * 660;
+    }
+
+    void sendMotionEventNative(MotionEvent motionEvent) {
+        if ((motionEvent.getSource() & 16) != 0)
+            NativeInputManager.onJoystickEventNative(mNativeHandle, null, InputManager.JoystickEvent.translate(motionEvent));
+        else if ((motionEvent.getSource() & 4) == 0)
+            NativeInputManager.onTouchEventNative(mNativeHandle, null, InputManager.PointerEvent.translate(motionEvent));
+    }
+
+    void initKeyMap(SharedPreferences sharedPreferences) {
+        keyMap.put(sharedPreferences.getInt("P1PAUSE", KeyEvent.KEYCODE_ESCAPE), 5);
+
+        keyMap.put(KeyEvent.KEYCODE_ENTER, 6);
+        keyMap.put(sharedPreferences.getInt("P1A", KeyEvent.KEYCODE_1), 6);
+        keyMap.put(sharedPreferences.getInt("P1B", KeyEvent.KEYCODE_2), 7);
+        keyMap.put(sharedPreferences.getInt("P1X", KeyEvent.KEYCODE_3), 8);
+        keyMap.put(sharedPreferences.getInt("P1Y", KeyEvent.KEYCODE_4), 9);
+
+        keyMap.put(sharedPreferences.getInt("P1L1", KeyEvent.KEYCODE_0), 10);
+        keyMap.put(sharedPreferences.getInt("P1R1", KeyEvent.KEYCODE_PERIOD), 11);
+        keyMap.put(sharedPreferences.getInt("P1L2", KeyEvent.KEYCODE_5), 12);
+        keyMap.put(sharedPreferences.getInt("P1R2", KeyEvent.KEYCODE_6), 13);
+
+        keyMap.put(sharedPreferences.getInt("P1TL", KeyEvent.KEYCODE_7), 14);
+        keyMap.put(sharedPreferences.getInt("P1TR", KeyEvent.KEYCODE_8), 15);
+
+        keyMap.put(sharedPreferences.getInt("P1UP", KeyEvent.KEYCODE_DPAD_UP), 16);
+        keyMap.put(sharedPreferences.getInt("P1DOWN", KeyEvent.KEYCODE_DPAD_DOWN), 17);
+        keyMap.put(sharedPreferences.getInt("P1LEFT", KeyEvent.KEYCODE_DPAD_LEFT), 18);
+        keyMap.put(sharedPreferences.getInt("P1RIGHT", KeyEvent.KEYCODE_DPAD_RIGHT), 19);
+
+
+        keyMap.put(sharedPreferences.getInt("P2A", KeyEvent.KEYCODE_J), 6 + 256);
+        keyMap.put(sharedPreferences.getInt("P2B", KeyEvent.KEYCODE_K), 7 + 256);
+        keyMap.put(sharedPreferences.getInt("P2X", KeyEvent.KEYCODE_L), 8 + 256);
+        keyMap.put(sharedPreferences.getInt("P2Y", KeyEvent.KEYCODE_SEMICOLON), 9 + 256);
+
+        keyMap.put(sharedPreferences.getInt("P2L1", KeyEvent.KEYCODE_Q), 10 + 256);
+        keyMap.put(sharedPreferences.getInt("P2R1", KeyEvent.KEYCODE_E), 11 + 256);
+        keyMap.put(sharedPreferences.getInt("P2L2", KeyEvent.KEYCODE_U), 12 + 256);
+        keyMap.put(sharedPreferences.getInt("P2R2", KeyEvent.KEYCODE_I), 13 + 256);
+
+        keyMap.put(sharedPreferences.getInt("P2TL", KeyEvent.KEYCODE_O), 14 + 256);
+        keyMap.put(sharedPreferences.getInt("P2TR", KeyEvent.KEYCODE_P), 15 + 256);
+
+        keyMap.put(sharedPreferences.getInt("P2UP", KeyEvent.KEYCODE_W), 16 + 256);
+        keyMap.put(sharedPreferences.getInt("P2DOWN", KeyEvent.KEYCODE_S), 17 + 256);
+        keyMap.put(sharedPreferences.getInt("P2LEFT", KeyEvent.KEYCODE_A), 18 + 256);
+        keyMap.put(sharedPreferences.getInt("P2RIGHT", KeyEvent.KEYCODE_D), 19 + 256);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+
+        if (!isAddonWindowLoaded) {
+            isAddonWindowLoaded = true;
+
+            SharedPreferences sharedPreferences = getSharedPreferences("data", 0);
+
+            //读取设置中的“开启菜单修改器”设置项，决定是否开启菜单修改器
+            if (sharedPreferences.getBoolean("useMenu", true))
+                try {
+                    CkHomuraMenu menu = new CkHomuraMenu(this);
+                    menu.SetWindowManagerActivity();
+                    menu.ShowMenu();
+                } catch (NoClassDefFoundError ignored) {
+                }
+
+            if (heavyWeaponAccel) mOrientationListener.enable();
+
+            //暂停键
+            keyCodePause = sharedPreferences.getInt("keyCodePause", KeyEvent.KEYCODE_T);
+
+            // 切换键盘双人模式键
+            keyCodeSwitchTwoPlayerMode = sharedPreferences.getInt("keyCodeTwoPlayer", KeyEvent.KEYCODE_M);
+
+            initKeyMap(sharedPreferences);
+            //是否使用高级暂停
+            useSpecialPause = sharedPreferences.getBoolean("useSpecialPause", false);
+
+            //触控实现的核心逻辑就在这里！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+            mNativeView.setOnTouchListener(new View.OnTouchListener() {
+                private int mFirstTouchId = -1, mSecondTouchId = -1;
+
+
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    try {
+                        switch (motionEvent.getActionMasked()) {
+                            case MotionEvent.ACTION_DOWN:
+                            case MotionEvent.ACTION_POINTER_DOWN:
+
+                                final int pointerIndex = motionEvent.getActionIndex();
+                                final int pointerId = motionEvent.getPointerId(pointerIndex);
+
+                                if (mFirstTouchId == -1) {
+                                    mFirstTouchId = pointerId;
+                                    sendMotionEventNative(motionEvent);
+                                } else if (mSecondTouchId == -1) {
+                                    final float x = motionEvent.getX(pointerIndex);
+                                    final float y = motionEvent.getY(pointerIndex);
+                                    if (x > boardWidgetLeft && x < boardWidgetRight && y > boardWidgetTop && y < boardWidgetBottom) {
+                                        mSecondTouchId = pointerId;
+                                        nativeSendSecondTouch(Math.round((x - boardWidgetLeft) / gameViewWidth), Math.round((y - boardWidgetTop) / gameViewHeight), 0);
+                                    }
+                                }
+                                break;
+                            case MotionEvent.ACTION_MOVE:
+                                if (mFirstTouchId != -1) {
+                                    sendMotionEventNative(motionEvent);
+                                }
+                                if (mSecondTouchId != -1) {
+                                    final int secondPointerIndex = motionEvent.findPointerIndex(mSecondTouchId);
+                                    final float x1 = motionEvent.getX(secondPointerIndex);
+                                    final float y1 = motionEvent.getY(secondPointerIndex);
+                                    nativeSendSecondTouch(Math.round((x1 - boardWidgetLeft) / gameViewWidth), Math.round((y1 - boardWidgetTop) / gameViewHeight), 1);
+                                }
+                                break;
+
+                            case MotionEvent.ACTION_POINTER_UP:
+                            case MotionEvent.ACTION_UP:
+                            case MotionEvent.ACTION_CANCEL:
+                                final int pointerIndex1 = motionEvent.getActionIndex();
+                                final int pointerId1 = motionEvent.getPointerId(pointerIndex1);
+
+                                if (mFirstTouchId == pointerId1) {
+                                    sendMotionEventNative(motionEvent);
+                                    mFirstTouchId = -1;
+                                } else if (mSecondTouchId == pointerId1) {
+                                    final int secondPointerIndex = motionEvent.findPointerIndex(mSecondTouchId);
+                                    final float x1 = motionEvent.getX(secondPointerIndex);
+                                    final float y1 = motionEvent.getY(secondPointerIndex);
+                                    nativeSendSecondTouch(Math.round((x1 - boardWidgetLeft) / gameViewWidth), Math.round((y1 - boardWidgetTop) / gameViewHeight), 2);
+                                    mSecondTouchId = -1;
+                                }
+                                break;
+                        }
+                    } catch (IllegalArgumentException ignored) {
+                    }
+
+                    return true;
+                }
+            });
+            mNativeView.requestFocus();
+            addVisibilityButton(sharedPreferences);
+        }
+        super.onWindowFocusChanged(hasFocus);
+    }
+
+    // 玩家2的键值在上述键值的基础上添加256即可
+    @Override // com.transmension.mobile.NativeActivity
+    public void onNativeKeyEvent(KeyEvent event) {
+        int keyCode = event.getKeyCode();
+
+        if (event.getRepeatCount() == 0 && event.getAction() == KeyEvent.ACTION_DOWN && keyCode == keyCodeSwitchTwoPlayerMode) {
+            isTwoPlayerKeyBoardMode = !isTwoPlayerKeyBoardMode;
+            nativeSwitchTwoPlayerMode(isTwoPlayerKeyBoardMode);
+            return;
+        }
+
+        if (isTwoPlayerKeyBoardMode && nativeIsInGame()) {
+
+            if (keyCode == keyCodePause) {
+                if (useSpecialPause) nativeGaoJiPause(!nativeIsGaoJiPaused());
+                else {
+                    NativeApp.onPauseNative(mNativeHandle);
+                    NativeApp.onResumeNative(mNativeHandle);
+                }
+                return;
+            }
+
+            Integer i = keyMap.get(keyCode);
+            if (i != null) {
+                nativeSendButtonEvent(event.getAction() != KeyEvent.ACTION_UP, i);
+            }
+            return;
+        }
+
+        if (event.getRepeatCount() == 0 && event.getAction() == KeyEvent.ACTION_DOWN) {
+
+            if (keyCode == KeyEvent.KEYCODE_BUTTON_L1) {
+                native1PButtonDown(10);
+            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_R1) {
+                native1PButtonDown(11);
+            }
+        }
+
+
+        super.onNativeKeyEvent(event);
+    }
+
+    // 左摇杆上 0
+    // 左摇杆下 1
+    // 左摇杆左 2
+    // 左摇杆右 3
+
+    // 未知键 4
+    // 暂停键 5
+
+    // A 6
+    // B 7
+    // X 8
+    // Y 9
+
+    // L1 10
+    // R1 11
+    // L2 12
+    // R2 13
+
+    // TL 14
+    // TR 15
+
+    // 上 16
+    // 下 17
+    // 左 18
+    // 右 19
+
+    @Override
+    public void onDestroy() {
+        if (isFileObserverLaunched) fileObserver.stopWatching();
+        if (isAddonWindowLoaded && visibilityWindow != null) mWindowManager.removeViewImmediate(visibilityWindow);
+        if (heavyWeaponAccel) mOrientationListener.disable();
+        super.onDestroy();
+    }
 
     //方向键单独自定义一个类，这样方便我们自定义它
     public class CustomView extends ImageView implements View.OnTouchListener {
 
         private final Paint paint;      // 用于绘制的画笔
+        private final long longPressInterval; //长按方向键后触发连点的时间间隔
+        private final Handler dpadHandler = new Handler();
         private int cellWidth;          // 单元格宽度
         private int cellHeight;         // 单元格高度
         private int selectedRow = 1;    // 当前选中的行
         private int selectedCol = 1;    // 当前选中的列
-        private final long longPressInterval; //长按方向键后触发连点的时间间隔
-
-
         //这些东西用于连点功能
         private boolean rowPressed = false, colPressed = false, isHandlerRunning = false;
-        private final Handler dpadHandler = new Handler();
         private final Runnable dpadRunnable = new Runnable() {
             @Override
             public void run() {
@@ -716,301 +1001,6 @@ public class EnhanceActivity extends MainActivity {
             }
             return true;
         }
-    }
-
-    public static native void nativeEnableManualCollect();//开启手动收集。
-
-    public static native void nativeUseXboxMusics();
-
-    public static native void nativeDisableShop();//关闭道具栏。
-
-    public static native void nativeEnableNewOptionsDialog();//使用新的暂停菜单。
-
-    public static native void nativeSetHeavyWeaponAngle(int i);//设定重型武器发射角度，i的值可以为0~180
-    public static native void native1PButtonDown(int code);//1P按下按键。用于对战和结盟中操作1P种植
-
-    public static native void native2PButtonDown(int code);//2P按下按键。用于对战和结盟中操作2P种植
-
-    public static native void nativeSwitchTwoPlayerMode(boolean isOn);
-
-    public static native boolean nativeIsInGame();
-    public static native void nativeGaoJiPause(boolean enable);//高级暂停
-
-    public static native boolean nativeIsGaoJiPaused();//高级暂停状态
-
-    public static native void nativeHideCoverLayer();
-
-    public static native void nativeShowCoolDown();
-
-    public static native void nativeEnableNormalLevelMode();
-
-    public static native void nativeEnableNewShovel();
-
-    public static native void nativeEnableImitater();
-
-    public static native void nativeDisableTrashBinZombie();
-    public static native void nativeSendSecondTouch(int x,int y,int action);
-
-    public static native void nativeShowHouse();//显示房屋。
-
-    public static native void nativeUseNewCobCannon();//新版加农炮光标。
-
-    public static native void nativeAutoFixPosition();
-    public static native void nativeSeedBankPin();
-
-    public static native void nativeDynamicPreview();
-
-    public static native void nativeEnableOpenSL();
-
-    private boolean isAddonWindowLoaded = false;
-    private ImageView visibilityWindow;
-    private WindowManager mWindowManager;
-
-    private float gameViewWidth = 0, gameViewHeight = 0;
-
-    final float width = 1280, height = 720, boardMarginX = 240, boardMarginY = 60;
-
-    private float boardWidgetLeft,boardWidgetRight,boardWidgetTop,boardWidgetBottom;
-
-    public void refreshNativeViewBorders(View view) {
-
-        gameViewWidth = view.getWidth() / width;
-        gameViewHeight = view.getHeight() / height;
-
-        boardWidgetLeft = gameViewWidth * 240;
-        boardWidgetRight = gameViewWidth * 1040;
-        boardWidgetTop = gameViewHeight * 60;
-        boardWidgetBottom = gameViewHeight * 660;
-    }
-
-    void sendMotionEventNative(MotionEvent motionEvent) {
-        if ((motionEvent.getSource() & 16) != 0)
-            NativeInputManager.onJoystickEventNative(mNativeHandle, null, InputManager.JoystickEvent.translate(motionEvent));
-        else if ((motionEvent.getSource() & 4) == 0)
-            NativeInputManager.onTouchEventNative(mNativeHandle, null, InputManager.PointerEvent.translate(motionEvent));
-    }
-
-
-    void initKeyMap(SharedPreferences sharedPreferences) {
-        keyMap.put(sharedPreferences.getInt("P1PAUSE", KeyEvent.KEYCODE_ESCAPE), 5);
-
-        keyMap.put(KeyEvent.KEYCODE_ENTER, 6);
-        keyMap.put(sharedPreferences.getInt("P1A", KeyEvent.KEYCODE_1), 6);
-        keyMap.put(sharedPreferences.getInt("P1B", KeyEvent.KEYCODE_2), 7);
-        keyMap.put(sharedPreferences.getInt("P1X", KeyEvent.KEYCODE_3), 8);
-        keyMap.put(sharedPreferences.getInt("P1Y", KeyEvent.KEYCODE_4), 9);
-
-        keyMap.put(sharedPreferences.getInt("P1L1", KeyEvent.KEYCODE_0), 10);
-        keyMap.put(sharedPreferences.getInt("P1R1", KeyEvent.KEYCODE_PERIOD), 11);
-        keyMap.put(sharedPreferences.getInt("P1L2", KeyEvent.KEYCODE_5), 12);
-        keyMap.put(sharedPreferences.getInt("P1R2", KeyEvent.KEYCODE_6), 13);
-
-        keyMap.put(sharedPreferences.getInt("P1TL", KeyEvent.KEYCODE_7), 14);
-        keyMap.put(sharedPreferences.getInt("P1TR", KeyEvent.KEYCODE_8), 15);
-
-        keyMap.put(sharedPreferences.getInt("P1UP", KeyEvent.KEYCODE_DPAD_UP), 16);
-        keyMap.put(sharedPreferences.getInt("P1DOWN", KeyEvent.KEYCODE_DPAD_DOWN), 17);
-        keyMap.put(sharedPreferences.getInt("P1LEFT", KeyEvent.KEYCODE_DPAD_LEFT), 18);
-        keyMap.put(sharedPreferences.getInt("P1RIGHT", KeyEvent.KEYCODE_DPAD_RIGHT), 19);
-
-
-        keyMap.put(sharedPreferences.getInt("P2A", KeyEvent.KEYCODE_J), 6 + 256);
-        keyMap.put(sharedPreferences.getInt("P2B", KeyEvent.KEYCODE_K), 7 + 256);
-        keyMap.put(sharedPreferences.getInt("P2X", KeyEvent.KEYCODE_L), 8 + 256);
-        keyMap.put(sharedPreferences.getInt("P2Y", KeyEvent.KEYCODE_SEMICOLON), 9 + 256);
-
-        keyMap.put(sharedPreferences.getInt("P2L1", KeyEvent.KEYCODE_Q), 10 + 256);
-        keyMap.put(sharedPreferences.getInt("P2R1", KeyEvent.KEYCODE_E), 11 + 256);
-        keyMap.put(sharedPreferences.getInt("P2L2", KeyEvent.KEYCODE_U), 12 + 256);
-        keyMap.put(sharedPreferences.getInt("P2R2", KeyEvent.KEYCODE_I), 13 + 256);
-
-        keyMap.put(sharedPreferences.getInt("P2TL", KeyEvent.KEYCODE_O), 14 + 256);
-        keyMap.put(sharedPreferences.getInt("P2TR", KeyEvent.KEYCODE_P), 15 + 256);
-
-        keyMap.put(sharedPreferences.getInt("P2UP", KeyEvent.KEYCODE_W), 16 + 256);
-        keyMap.put(sharedPreferences.getInt("P2DOWN", KeyEvent.KEYCODE_S), 17 + 256);
-        keyMap.put(sharedPreferences.getInt("P2LEFT", KeyEvent.KEYCODE_A), 18 + 256);
-        keyMap.put(sharedPreferences.getInt("P2RIGHT", KeyEvent.KEYCODE_D), 19 + 256);
-    }
-    private final HashMap<Integer, Integer> keyMap = new HashMap<>();
-    private int keyCodePause = 0, keyCodeSwitchTwoPlayerMode = 0;
-    private boolean useSpecialPause = false;
-
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-
-        if (!isAddonWindowLoaded) {
-            isAddonWindowLoaded = true;
-
-            SharedPreferences sharedPreferences = getSharedPreferences("data", 0);
-
-            //读取设置中的“开启菜单修改器”设置项，决定是否开启菜单修改器
-            if (sharedPreferences.getBoolean("useMenu", true))
-                try {
-                    CkHomuraMenu menu = new CkHomuraMenu(this);
-                    menu.SetWindowManagerActivity();
-                    menu.ShowMenu();
-                } catch (NoClassDefFoundError ignored) {
-                }
-
-            if (heavyWeaponAccel) mOrientationListener.enable();
-
-            //暂停键
-            keyCodePause = sharedPreferences.getInt("keyCodePause", KeyEvent.KEYCODE_T);
-
-            // 切换键盘双人模式键
-            keyCodeSwitchTwoPlayerMode = sharedPreferences.getInt("keyCodeTwoPlayer", KeyEvent.KEYCODE_M);
-
-            initKeyMap(sharedPreferences);
-            //是否使用高级暂停
-            useSpecialPause = sharedPreferences.getBoolean("useSpecialPause", false);
-
-            //触控实现的核心逻辑就在这里！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-            mNativeView.setOnTouchListener(new View.OnTouchListener() {
-                private int mFirstTouchId = -1, mSecondTouchId = -1;
-
-
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    try {
-                        switch (motionEvent.getActionMasked()) {
-                            case MotionEvent.ACTION_DOWN:
-                            case MotionEvent.ACTION_POINTER_DOWN:
-
-                                final int pointerIndex = motionEvent.getActionIndex();
-                                final int pointerId = motionEvent.getPointerId(pointerIndex);
-
-                                if (mFirstTouchId == -1) {
-                                    mFirstTouchId = pointerId;
-                                    sendMotionEventNative(motionEvent);
-                                } else if (mSecondTouchId == -1) {
-                                    final float x = motionEvent.getX(pointerIndex);
-                                    final float y = motionEvent.getY(pointerIndex);
-                                    if (x > boardWidgetLeft && x < boardWidgetRight && y > boardWidgetTop && y < boardWidgetBottom){
-                                        mSecondTouchId = pointerId;
-                                        nativeSendSecondTouch(Math.round((x - boardWidgetLeft)/gameViewWidth),Math.round((y-boardWidgetTop)/gameViewHeight),0);
-                                    }
-                                }
-                                break;
-                            case MotionEvent.ACTION_MOVE:
-                                if (mFirstTouchId != -1){
-                                    sendMotionEventNative(motionEvent);
-                                }
-                                if (mSecondTouchId != -1){
-                                    final int secondPointerIndex = motionEvent.findPointerIndex(mSecondTouchId);
-                                    final float x1 = motionEvent.getX(secondPointerIndex);
-                                    final float y1 = motionEvent.getY(secondPointerIndex);
-                                    nativeSendSecondTouch(Math.round((x1 - boardWidgetLeft)/gameViewWidth),Math.round((y1-boardWidgetTop)/gameViewHeight),1);
-                                }
-                                break;
-
-                            case MotionEvent.ACTION_POINTER_UP:
-                            case MotionEvent.ACTION_UP:
-                            case MotionEvent.ACTION_CANCEL:
-                                final int pointerIndex1 = motionEvent.getActionIndex();
-                                final int pointerId1 = motionEvent.getPointerId(pointerIndex1);
-
-                                if (mFirstTouchId == pointerId1) {
-                                    sendMotionEventNative(motionEvent);
-                                    mFirstTouchId = -1;
-                                } else if (mSecondTouchId == pointerId1) {
-                                    final int secondPointerIndex = motionEvent.findPointerIndex(mSecondTouchId);
-                                    final float x1 = motionEvent.getX(secondPointerIndex);
-                                    final float y1 = motionEvent.getY(secondPointerIndex);
-                                    nativeSendSecondTouch(Math.round((x1 - boardWidgetLeft)/gameViewWidth),Math.round((y1-boardWidgetTop)/gameViewHeight),2);
-                                    mSecondTouchId = -1;
-                                }
-                                break;
-                        }
-                    } catch (IllegalArgumentException ignored) {
-                    }
-
-                    return true;
-                }
-            });
-            mNativeView.requestFocus();
-            addVisibilityButton(sharedPreferences);
-        }
-        super.onWindowFocusChanged(hasFocus);
-    }
-
-    public static native void nativeSendButtonEvent(boolean isButtonDown, int buttonCode);//发送按键
-
-    // 左摇杆上 0
-    // 左摇杆下 1
-    // 左摇杆左 2
-    // 左摇杆右 3
-
-    // 未知键 4
-    // 暂停键 5
-
-    // A 6
-    // B 7
-    // X 8
-    // Y 9
-
-    // L1 10
-    // R1 11
-    // L2 12
-    // R2 13
-
-    // TL 14
-    // TR 15
-
-    // 上 16
-    // 下 17
-    // 左 18
-    // 右 19
-
-    // 玩家2的键值在上述键值的基础上添加256即可
-    @Override // com.transmension.mobile.NativeActivity
-    public void onNativeKeyEvent(KeyEvent event) {
-        int keyCode = event.getKeyCode();
-
-        if (event.getRepeatCount() == 0 && event.getAction() == KeyEvent.ACTION_DOWN && keyCode == keyCodeSwitchTwoPlayerMode) {
-            isTwoPlayerKeyBoardMode = !isTwoPlayerKeyBoardMode;
-            nativeSwitchTwoPlayerMode(isTwoPlayerKeyBoardMode);
-            return;
-        }
-
-        if (isTwoPlayerKeyBoardMode && nativeIsInGame()) {
-
-            if (keyCode == keyCodePause) {
-                if (useSpecialPause) nativeGaoJiPause(!nativeIsGaoJiPaused());
-                else {
-                    NativeApp.onPauseNative(mNativeHandle);
-                    NativeApp.onResumeNative(mNativeHandle);
-                }
-                return;
-            }
-
-            Integer i = keyMap.get(keyCode);
-            if (i != null) {
-                nativeSendButtonEvent(event.getAction() != KeyEvent.ACTION_UP, i);
-            }
-            return;
-        }
-
-        if (event.getRepeatCount() == 0 && event.getAction() == KeyEvent.ACTION_DOWN) {
-
-            if (keyCode == KeyEvent.KEYCODE_BUTTON_L1) {
-                native1PButtonDown(10);
-            } else if (keyCode == KeyEvent.KEYCODE_BUTTON_R1) {
-                native1PButtonDown(11);
-            }
-        }
-
-
-        super.onNativeKeyEvent(event);
-    }
-
-    @Override
-    public void onDestroy() {
-        if (isFileObserverLaunched) fileObserver.stopWatching();
-        if (isAddonWindowLoaded && visibilityWindow != null) mWindowManager.removeViewImmediate(visibilityWindow);
-        if (heavyWeaponAccel) mOrientationListener.disable();
-        super.onDestroy();
     }
 
 }

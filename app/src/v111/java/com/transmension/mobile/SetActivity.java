@@ -78,6 +78,99 @@ import java.util.zip.ZipOutputStream;
 
 public class SetActivity extends Activity {
 
+    public static File getUserDataFile(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("data", 0);
+        if (sharedPreferences.getBoolean("useExternalPath", Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
+            return context.getExternalFilesDir(null);
+        } else {
+            return context.getFilesDir();
+        }
+    }
+
+    public static void copyDir(File srcDir, File destDir) throws IOException {
+        if (srcDir.isDirectory()) {
+            if (!destDir.exists()) {
+                destDir.mkdirs();
+            }
+
+            String[] children = srcDir.list();
+            if (children == null) return;
+            for (String child : children) {
+                File srcFile = new File(srcDir, child);
+                File destFile = new File(destDir, child);
+                copyDir(srcFile, destFile);
+            }
+        } else {
+            FileInputStream inputStream = new FileInputStream(srcDir);
+            FileOutputStream outputStream = new FileOutputStream(destDir);
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            inputStream.close();
+            outputStream.close();
+        }
+    }
+
+    public static void deleteRecursive(File file) {
+        if (file.isFile()) {
+            file.delete();
+        } else {
+            // 如果是文件夹，递归删除
+            File[] files = file.listFiles();
+            if (files != null && files.length > 0) {
+                for (File subFile : files) {
+                    deleteRecursive(subFile);
+                }
+            }
+            file.delete();
+        }
+    }
+
+    public static List<Pair<String, Long>> findNumDirs(File dir) {
+        List<Pair<String, Long>> list = new ArrayList<>();
+        if (dir.exists() && dir.isDirectory()) {
+            File[] files = dir.listFiles((dir1, name) -> {
+                // 判断只要是数字开头的文件夹就符合要求
+                return new File(dir1, name).isDirectory() && Character.isDigit(name.charAt(0));
+            });
+            if (files != null && files.length > 0) {
+                // 将文件夹的名称和修改时间存入Pair中，再将Pair存入list中
+                for (File file : files) {
+                    String dirName = file.getName();
+                    long modifiedTime = file.lastModified();
+                    Pair<String, Long> pair = new Pair<>(dirName, modifiedTime);
+                    list.add(pair);
+                }
+                // 按照修改时间排序
+                Collections.sort(list, (o1, o2) -> o2.second.compareTo(o1.second));
+            }
+        }
+        return list;
+    }
+
+    public static void addFolderToZip(File folder, ZipOutputStream zipOutputStream) throws IOException {
+        File[] files = folder.listFiles();
+        if (files == null) return;
+        for (File file : files) {
+            if (file.isDirectory()) {
+                addFolderToZip(file, zipOutputStream);
+            } else {
+                byte[] buffer = new byte[1024];
+                FileInputStream fileInputStream = new FileInputStream(file);
+                zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
+                int length;
+                while ((length = fileInputStream.read(buffer)) > 0) {
+                    zipOutputStream.write(buffer, 0, length);
+                }
+                fileInputStream.close();
+            }
+        }
+    }
+
     public void loadPreferencesFromAssetsFile(SharedPreferences preferences, SharedPreferences sharedPreferences) {
         //如果是初次启动，则载入assets文件夹中的data.xml
         if (preferences.getBoolean("firstLaunch", true)) {
@@ -113,15 +206,6 @@ public class SetActivity extends Activity {
                 e.printStackTrace();
             }
             preferences.edit().putBoolean("firstLaunch", false).apply();
-        }
-    }
-
-    public static File getUserDataFile(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("data", 0);
-        if (sharedPreferences.getBoolean("useExternalPath", Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)) {
-            return context.getExternalFilesDir(null);
-        } else {
-            return context.getFilesDir();
         }
     }
 
@@ -937,10 +1021,10 @@ public class SetActivity extends Activity {
         Button zombatarButton = new Button(this);
         zombatarButton.setText(R.string.addon_appearance_export_zombatar);
         zombatarButton.setOnClickListener(view -> {
-            File file = new File(getUserDataFile(this),"ZOMBATAR.PNG");
+            File file = new File(getUserDataFile(this), "ZOMBATAR.PNG");
             if (file.exists()) {
                 try {
-                    MediaStore.Images.Media.insertImage(getContentResolver(),file.getAbsolutePath(),"","");
+                    MediaStore.Images.Media.insertImage(getContentResolver(), file.getAbsolutePath(), "", "");
                     Toast.makeText(this, R.string.addon_appearance_toast6, Toast.LENGTH_SHORT).show();
                 } catch (FileNotFoundException ignored) {
                     Toast.makeText(this, R.string.addon_appearance_toast7, Toast.LENGTH_SHORT).show();
@@ -1249,8 +1333,8 @@ public class SetActivity extends Activity {
             normalLevelInfo.setText(b ? normalLevelText1 : normalLevelText2);
             hardAdventureSelectInfo.setText(b ? hardAdventureSelectInfoText1 : hardAdventureSelectInfoText2);
             sharedPreferences.edit().putBoolean("normalLevel", b).apply();
-            if (!b){
-                int adventureId = sharedPreferences.getInt("adventureId",0);
+            if (!b) {
+                int adventureId = sharedPreferences.getInt("adventureId", 0);
                 if (adventureId == -1) return;
                 File destDir = new File(getUserDataFile(this), "properties");
                 if (!destDir.exists()) {
@@ -1345,166 +1429,6 @@ public class SetActivity extends Activity {
 
 
     }
-
-
-
-    public static class PopFragment extends DialogFragment {
-
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-
-            Window window = getDialog().getWindow();
-            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            super.onActivityCreated(savedInstanceState);
-        }
-
-        @Override
-        public void onStart() {
-            Window window = getDialog().getWindow();
-            window.setLayout(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? getResources().getDisplayMetrics().heightPixels : getResources().getDisplayMetrics().widthPixels - 150, -2);
-            super.onStart();
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            Dialog dialog = new Dialog(getActivity());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                dialog.requestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setCanceledOnTouchOutside(true);
-            return dialog;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            List<Pair<String, Long>> backupsList = findNumDirs(getUserDataFile(getActivity()));
-            ListView listView = new ListView(getActivity());
-            if (backupsList.isEmpty()) {
-                Toast.makeText(getActivity(), R.string.addon_auto_backup_toast1, Toast.LENGTH_SHORT).show();
-                new Handler().postDelayed(this::dismiss, 1000);
-                return listView;
-            }
-            boolean isNight = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_YES) == Configuration.UI_MODE_NIGHT_YES;
-            float density = getResources().getDisplayMetrics().density;
-            ShapeDrawable oval = new ShapeDrawable(new RoundRectShape(new float[]{20 * density, 20 * density, 20 * density, 20 * density, 20 * density, 20 * density, 20 * density, 20 * density}, null, null));
-            oval.getPaint().setColor(isNight ? 0xff424c50 : Color.LTGRAY);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-                listView.setBackground(oval);
-
-
-            listView.setAdapter(new BaseAdapter() {
-                @Override
-                public int getCount() {
-                    return backupsList.size();
-                }
-
-                @Override
-                public Object getItem(int i) {
-                    return backupsList.get(i);
-                }
-
-                @Override
-                public long getItemId(int i) {
-                    return i;
-                }
-
-                @Override
-                public View getView(int i, View view, ViewGroup viewGroup) {
-                    view = new TextView(getActivity());
-                    ((TextView) view).setText(backupsList.get(i).first);
-                    ((TextView) view).setGravity(Gravity.CENTER);
-                    ((TextView) view).setHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getActivity().getResources().getDisplayMetrics()));
-                    ((TextView) view).setTextSize(16f);
-                    ((TextView) view).setTextColor(isNight ? Color.WHITE : Color.BLACK);
-                    view.setOnClickListener(view1 -> Toast.makeText(getActivity(), R.string.addon_auto_backup_toast2, Toast.LENGTH_SHORT).show());
-                    view.setOnLongClickListener(view12 -> {
-                        String backupFile = backupsList.get(i).first;
-                        File file = new File(getUserDataFile(getActivity()), backupFile);
-                        File destFile = new File(getUserDataFile(getActivity()), "userdata");
-                        deleteRecursive(destFile);
-                        try {
-                            copyDir(file, destFile);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Toast.makeText(getActivity(), R.string.addon_auto_backup_toast3, Toast.LENGTH_SHORT).show();
-                        return true;
-                    });
-                    return view;
-                }
-            });
-            listView.setLayoutTransition(new LayoutTransition());
-            listView.setOnItemClickListener((parent, view, position, id) -> dismiss());
-            return listView;
-        }
-    }
-
-
-    public static void copyDir(File srcDir, File destDir) throws IOException {
-        if (srcDir.isDirectory()) {
-            if (!destDir.exists()) {
-                destDir.mkdirs();
-            }
-
-            String[] children = srcDir.list();
-            if (children == null) return;
-            for (String child : children) {
-                File srcFile = new File(srcDir, child);
-                File destFile = new File(destDir, child);
-                copyDir(srcFile, destFile);
-            }
-        } else {
-            FileInputStream inputStream = new FileInputStream(srcDir);
-            FileOutputStream outputStream = new FileOutputStream(destDir);
-
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-
-            inputStream.close();
-            outputStream.close();
-        }
-    }
-
-    public static void deleteRecursive(File file) {
-        if (file.isFile()) {
-            file.delete();
-        } else {
-            // 如果是文件夹，递归删除
-            File[] files = file.listFiles();
-            if (files != null && files.length > 0) {
-                for (File subFile : files) {
-                    deleteRecursive(subFile);
-                }
-            }
-            file.delete();
-        }
-    }
-
-    public static List<Pair<String, Long>> findNumDirs(File dir) {
-        List<Pair<String, Long>> list = new ArrayList<>();
-        if (dir.exists() && dir.isDirectory()) {
-            File[] files = dir.listFiles((dir1, name) -> {
-                // 判断只要是数字开头的文件夹就符合要求
-                return new File(dir1, name).isDirectory() && Character.isDigit(name.charAt(0));
-            });
-            if (files != null && files.length > 0) {
-                // 将文件夹的名称和修改时间存入Pair中，再将Pair存入list中
-                for (File file : files) {
-                    String dirName = file.getName();
-                    long modifiedTime = file.lastModified();
-                    Pair<String, Long> pair = new Pair<>(dirName, modifiedTime);
-                    list.add(pair);
-                }
-                // 按照修改时间排序
-                Collections.sort(list, (o1, o2) -> o2.second.compareTo(o1.second));
-            }
-        }
-        return list;
-    }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1608,33 +1532,11 @@ public class SetActivity extends Activity {
         }
     }
 
-
-    public static void addFolderToZip(File folder, ZipOutputStream zipOutputStream) throws IOException {
-        File[] files = folder.listFiles();
-        if (files == null) return;
-        for (File file : files) {
-            if (file.isDirectory()) {
-                addFolderToZip(file, zipOutputStream);
-            } else {
-                byte[] buffer = new byte[1024];
-                FileInputStream fileInputStream = new FileInputStream(file);
-                zipOutputStream.putNextEntry(new ZipEntry(file.getName()));
-                int length;
-                while ((length = fileInputStream.read(buffer)) > 0) {
-                    zipOutputStream.write(buffer, 0, length);
-                }
-                fileInputStream.close();
-            }
-        }
-    }
-
-
     @Override
     public void onBackPressed() {
         finish();
         super.onBackPressed();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1680,6 +1582,97 @@ public class SetActivity extends Activity {
         int count = radioGroup.getChildCount();
         for (int i = 0; i < count; i++) {
             radioGroup.getChildAt(i).setEnabled(enabled);
+        }
+    }
+
+    public static class PopFragment extends DialogFragment {
+
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+
+            Window window = getDialog().getWindow();
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            super.onActivityCreated(savedInstanceState);
+        }
+
+        @Override
+        public void onStart() {
+            Window window = getDialog().getWindow();
+            window.setLayout(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? getResources().getDisplayMetrics().heightPixels : getResources().getDisplayMetrics().widthPixels - 150, -2);
+            super.onStart();
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            Dialog dialog = new Dialog(getActivity());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                dialog.requestWindowFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCanceledOnTouchOutside(true);
+            return dialog;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            List<Pair<String, Long>> backupsList = findNumDirs(getUserDataFile(getActivity()));
+            ListView listView = new ListView(getActivity());
+            if (backupsList.isEmpty()) {
+                Toast.makeText(getActivity(), R.string.addon_auto_backup_toast1, Toast.LENGTH_SHORT).show();
+                new Handler().postDelayed(this::dismiss, 1000);
+                return listView;
+            }
+            boolean isNight = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_YES) == Configuration.UI_MODE_NIGHT_YES;
+            float density = getResources().getDisplayMetrics().density;
+            ShapeDrawable oval = new ShapeDrawable(new RoundRectShape(new float[]{20 * density, 20 * density, 20 * density, 20 * density, 20 * density, 20 * density, 20 * density, 20 * density}, null, null));
+            oval.getPaint().setColor(isNight ? 0xff424c50 : Color.LTGRAY);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                listView.setBackground(oval);
+
+
+            listView.setAdapter(new BaseAdapter() {
+                @Override
+                public int getCount() {
+                    return backupsList.size();
+                }
+
+                @Override
+                public Object getItem(int i) {
+                    return backupsList.get(i);
+                }
+
+                @Override
+                public long getItemId(int i) {
+                    return i;
+                }
+
+                @Override
+                public View getView(int i, View view, ViewGroup viewGroup) {
+                    view = new TextView(getActivity());
+                    ((TextView) view).setText(backupsList.get(i).first);
+                    ((TextView) view).setGravity(Gravity.CENTER);
+                    ((TextView) view).setHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getActivity().getResources().getDisplayMetrics()));
+                    ((TextView) view).setTextSize(16f);
+                    ((TextView) view).setTextColor(isNight ? Color.WHITE : Color.BLACK);
+                    view.setOnClickListener(view1 -> Toast.makeText(getActivity(), R.string.addon_auto_backup_toast2, Toast.LENGTH_SHORT).show());
+                    view.setOnLongClickListener(view12 -> {
+                        String backupFile = backupsList.get(i).first;
+                        File file = new File(getUserDataFile(getActivity()), backupFile);
+                        File destFile = new File(getUserDataFile(getActivity()), "userdata");
+                        deleteRecursive(destFile);
+                        try {
+                            copyDir(file, destFile);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(getActivity(), R.string.addon_auto_backup_toast3, Toast.LENGTH_SHORT).show();
+                        return true;
+                    });
+                    return view;
+                }
+            });
+            listView.setLayoutTransition(new LayoutTransition());
+            listView.setOnItemClickListener((parent, view, position, id) -> dismiss());
+            return listView;
         }
     }
 }

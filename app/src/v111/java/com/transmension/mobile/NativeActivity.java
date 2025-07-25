@@ -28,14 +28,10 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.Set;
 
 
 public class NativeActivity extends Activity {
-    public static int ACTION_OPEN = 0;
-    public static int ACTION_SEND = 1;
     public static final int MBB_CANCEL = 2;
     public static final int MBB_NO = 4;
     public static final int MBB_OK = 1;
@@ -51,13 +47,15 @@ public class NativeActivity extends Activity {
     public static final String META_DATA_LIBS = "android.app.libs";
     public static final String META_DATA_LIB_NAME = "android.app.lib_name";
     private static final String TAG = "NativeActivity";
-    private boolean mDestroyed;
+    public static int ACTION_OPEN = 0;
+    public static int ACTION_SEND = 1;
+    private final Handler mHandler = new Handler();
     public long mNativeHandle;
     protected NativeView mNativeView;
-    private View mStartupView;
     protected FrameLayout mLayout = null;
     protected FrameLayout container = null;
-    private final Handler mHandler = new Handler();
+    private boolean mDestroyed;
+    private View mStartupView;
     private long mStartupTime = System.nanoTime();
     private long mStartupMinDuration = 4000;
     private long mStartupMaxDuration = 15000;
@@ -67,7 +65,7 @@ public class NativeActivity extends Activity {
     }
 
 
-    void setUI(){
+    void setUI() {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
             setTheme(android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen);
@@ -79,7 +77,7 @@ public class NativeActivity extends Activity {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if(getSharedPreferences("data",0).getBoolean("immersive",true)) {
+            if (getSharedPreferences("data", 0).getBoolean("immersive", true)) {
                 window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             }
         }
@@ -389,31 +387,12 @@ public class NativeActivity extends Activity {
         return getApplicationInfo().nativeLibraryDir;
     }
 
-
-    /* loaded from: classes.dex */
-    class MessageBoxListener implements DialogInterface.OnClickListener {
-        public int mId;
-        public int mMessageBoxId;
-
-        MessageBoxListener(int mbId, int id) {
-            mMessageBoxId = mbId;
-            mId = id;
-        }
-
-        @Override // android.content.DialogInterface.OnClickListener
-        public void onClick(DialogInterface dialog, int which) {
-            NativeApp.onMessageBoxButtonClickedNative(mNativeHandle, mMessageBoxId, mId);
-        }
-    }
-
     public int showMessageBox(String title, String message, int flags) {
         return 1048576;
     }
 
-
     public void closeMessageBox(int handle) {
     }
-
 
     public void closeAllMessageBoxes() {
     }
@@ -619,6 +598,12 @@ public class NativeActivity extends Activity {
         }
     }
 
+    @Override // android.app.Activity
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        NativeApp.onNewIntentNative(mNativeHandle);
+    }
+
 
 //    public void addActivityResultListener(ActivityResultListener listener) {
 //    }
@@ -631,13 +616,6 @@ public class NativeActivity extends Activity {
 //
 //    public void removeActivityNewIntentListener(ActivityNewIntentListener listener) {
 //    }
-
-
-    @Override // android.app.Activity
-    public void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        NativeApp.onNewIntentNative(mNativeHandle);
-    }
 
     public boolean startWebBrowser(String url, int options) {
         return false;
@@ -662,5 +640,21 @@ public class NativeActivity extends Activity {
 
     public String getClipboard() {
         return "";
+    }
+
+    /* loaded from: classes.dex */
+    class MessageBoxListener implements DialogInterface.OnClickListener {
+        public int mId;
+        public int mMessageBoxId;
+
+        MessageBoxListener(int mbId, int id) {
+            mMessageBoxId = mbId;
+            mId = id;
+        }
+
+        @Override // android.content.DialogInterface.OnClickListener
+        public void onClick(DialogInterface dialog, int which) {
+            NativeApp.onMessageBoxButtonClickedNative(mNativeHandle, mMessageBoxId, mId);
+        }
     }
 }

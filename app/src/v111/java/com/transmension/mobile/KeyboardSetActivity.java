@@ -24,25 +24,10 @@ import com.trans.pvztv.R;
 
 public class KeyboardSetActivity extends Activity {
 
-    private final String[] preferenceNames1P = new String[]{"keyCodeTwoPlayer","P1A", "P1B", "P1X", "P1L1", "P1R1", "P1UP", "P1DOWN", "P1LEFT", "P1RIGHT", "P2A", "P2B", "P2X", "P2L1", "P2R1", "P2UP", "P2DOWN", "P2LEFT", "P2RIGHT","keyCodePause"};
+    private final String[] preferenceNames1P = new String[]{"keyCodeTwoPlayer", "P1A", "P1B", "P1X", "P1L1", "P1R1", "P1UP", "P1DOWN", "P1LEFT", "P1RIGHT", "P2A", "P2B", "P2X", "P2L1", "P2R1", "P2UP", "P2DOWN", "P2LEFT", "P2RIGHT", "keyCodePause"};
 
     private String[] preferenceIntros1P = null;
     private MyTextView keyToSet = null;
-
-    static class MyTextView extends TextView {
-
-        public final int preferenceId;
-
-        public MyTextView(Context context) {
-            super(context);
-            preferenceId = -1;
-        }
-
-        public MyTextView(Context context, int id) {
-            super(context);
-            preferenceId = id;
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +55,7 @@ public class KeyboardSetActivity extends Activity {
         setTitle(getString(R.string.secondplayer_title));
         SharedPreferences sharedPreferences = getSharedPreferences("data", 0);
 
-        preferenceIntros1P = new String[]{getString(R.string.secondplayer_preferencesIntro0),getString(R.string.secondplayer_preferencesIntro1), getString(R.string.secondplayer_preferencesIntro2), getString(R.string.secondplayer_preferencesIntro3), getString(R.string.secondplayer_preferencesIntro4), getString(R.string.secondplayer_preferencesIntro5), getString(R.string.secondplayer_preferencesIntro6), getString(R.string.secondplayer_preferencesIntro7), getString(R.string.secondplayer_preferencesIntro8), getString(R.string.secondplayer_preferencesIntro9), getString(R.string.secondplayer_preferencesIntro10), getString(R.string.secondplayer_preferencesIntro11), getString(R.string.secondplayer_preferencesIntro12), getString(R.string.secondplayer_preferencesIntro13), getString(R.string.secondplayer_preferencesIntro14), getString(R.string.secondplayer_preferencesIntro15), getString(R.string.secondplayer_preferencesIntro16), getString(R.string.secondplayer_preferencesIntro17), getString(R.string.secondplayer_preferencesIntro18),getString(R.string.secondplayer_preferencesIntro19)};
+        preferenceIntros1P = new String[]{getString(R.string.secondplayer_preferencesIntro0), getString(R.string.secondplayer_preferencesIntro1), getString(R.string.secondplayer_preferencesIntro2), getString(R.string.secondplayer_preferencesIntro3), getString(R.string.secondplayer_preferencesIntro4), getString(R.string.secondplayer_preferencesIntro5), getString(R.string.secondplayer_preferencesIntro6), getString(R.string.secondplayer_preferencesIntro7), getString(R.string.secondplayer_preferencesIntro8), getString(R.string.secondplayer_preferencesIntro9), getString(R.string.secondplayer_preferencesIntro10), getString(R.string.secondplayer_preferencesIntro11), getString(R.string.secondplayer_preferencesIntro12), getString(R.string.secondplayer_preferencesIntro13), getString(R.string.secondplayer_preferencesIntro14), getString(R.string.secondplayer_preferencesIntro15), getString(R.string.secondplayer_preferencesIntro16), getString(R.string.secondplayer_preferencesIntro17), getString(R.string.secondplayer_preferencesIntro18), getString(R.string.secondplayer_preferencesIntro19)};
 
         ScrollView scrollView = new ScrollView(this);
         LinearLayout linearLayout = new LinearLayout(this);
@@ -120,12 +105,27 @@ public class KeyboardSetActivity extends Activity {
         if (keyCode != 4 && keyCode != 82 && event.getRepeatCount() == 0) {
             if (keyToSet != null) {
                 SharedPreferences sharedPreferences = getSharedPreferences("data", 0);
-                keyToSet.setText(String.format("%s: %s", preferenceIntros1P[keyToSet.preferenceId], keyCode == KeyEvent.KEYCODE_UNKNOWN ? (getString(R.string.secondplayer_default)+"("+KeyEvent.keyCodeToString(keyCode).replace("KEYCODE_", "")+")") : KeyEvent.keyCodeToString(keyCode).replace("KEYCODE_", "")));
+                keyToSet.setText(String.format("%s: %s", preferenceIntros1P[keyToSet.preferenceId], keyCode == KeyEvent.KEYCODE_UNKNOWN ? (getString(R.string.secondplayer_default) + "(" + KeyEvent.keyCodeToString(keyCode).replace("KEYCODE_", "") + ")") : KeyEvent.keyCodeToString(keyCode).replace("KEYCODE_", "")));
                 sharedPreferences.edit().putInt(preferenceNames1P[keyToSet.preferenceId], keyCode).apply();
             }
 
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    static class MyTextView extends TextView {
+
+        public final int preferenceId;
+
+        public MyTextView(Context context) {
+            super(context);
+            preferenceId = -1;
+        }
+
+        public MyTextView(Context context, int id) {
+            super(context);
+            preferenceId = id;
+        }
     }
 
 }

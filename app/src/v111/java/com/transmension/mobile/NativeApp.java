@@ -5,14 +5,15 @@ import android.content.res.AssetManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
 /* loaded from: classes.dex */
 public class NativeApp {
-    private static boolean mLoaded = false;
     private static final Set<String> mLoadedLibraries = new HashSet<>();
+    private static boolean mLoaded = false;
 
     public static native long loadNativeApp(String str, String str2, Activity activity, View view, String str3, String str4, int i, AssetManager assetManager);
 

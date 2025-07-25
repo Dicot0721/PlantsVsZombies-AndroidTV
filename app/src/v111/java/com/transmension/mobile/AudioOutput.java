@@ -4,15 +4,14 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.os.Build;
-import android.util.Log;
 
 import java.nio.ByteBuffer;
 
 /* loaded from: classes.dex */
 public class AudioOutput {
+    private final Context mContext;
     byte[] mAudioData = new byte[8192];
     private MobileAudioTrack mAudioTrack;
-    private final Context mContext;
 
 //    private native void nativePause();
 //    private native void nativeResume();

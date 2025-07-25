@@ -3,11 +3,6 @@ package com.transmension.mobile;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Rect;
-import android.media.MediaCodec;
-import android.media.MediaCodecInfo;
-import android.media.MediaFormat;
-import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -24,43 +19,22 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
 
-import java.io.File;
-import java.io.IOException;
-
 /* loaded from: classes.dex */
 public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, ViewTreeObserver.OnGlobalLayoutListener {
     static final String TAG = "NativeView";
+    final int[] mLocation;
+    private final boolean shiLiuBiJiu;
+    private final int widthAs, heightAs;
     NativeActivity mActivity;
-    private SurfaceHolder mCurSurfaceHolder;
     boolean mDispatchingUnhandledKeyEvent;
     int mLastContentHeight;
     int mLastContentWidth;
     int mLastContentX;
     int mLastContentY;
-    final int[] mLocation;
+    private SurfaceHolder mCurSurfaceHolder;
     private EditText mTextInput;
     private AlertDialog mTextInputDialog;
     private TextInputManager mTextInputManager;
-    private final boolean shiLiuBiJiu;
-    private final int widthAs, heightAs;
-
-    protected native void onContentRectChangedNative(long j, int i, int i2, int i3, int i4);
-
-    protected native void onKeyboardFrameNative(long j, int i);
-
-    protected native static void onSurfaceChangedNative(long j, Surface surface, int i, int i2, int i3);
-
-    protected native void onSurfaceCreatedNative(long j, Surface surface);
-
-    protected native void onSurfaceDestroyedNative(long j);
-
-    protected native void onSurfaceRedrawNeededNative(long j, Surface surface);
-
-    protected native void onTextChangedNative(long j, String str, int i, int i2, long j2);
-
-    protected native void onTextInputNative(long j, String str);
-
-    protected native void onWindowFocusChangedNative(long j, boolean z);
 
     public NativeView(Context context) {
         super(context);
@@ -89,6 +63,24 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
         widthAs = context.getSharedPreferences("data", 0).getInt("width", 16);
         heightAs = context.getSharedPreferences("data", 0).getInt("height", 9);
     }
+
+    protected native static void onSurfaceChangedNative(long j, Surface surface, int i, int i2, int i3);
+
+    protected native void onContentRectChangedNative(long j, int i, int i2, int i3, int i4);
+
+    protected native void onKeyboardFrameNative(long j, int i);
+
+    protected native void onSurfaceCreatedNative(long j, Surface surface);
+
+    protected native void onSurfaceDestroyedNative(long j);
+
+    protected native void onSurfaceRedrawNeededNative(long j, Surface surface);
+
+    protected native void onTextChangedNative(long j, String str, int i, int i2, long j2);
+
+    protected native void onTextInputNative(long j, String str);
+
+    protected native void onWindowFocusChangedNative(long j, boolean z);
 
     /* JADX INFO: Access modifiers changed from: package-private */
     public void setActivity(NativeActivity activity) {
@@ -299,13 +291,6 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
         }
     }
 
-    public void setInputCookie(long cookie) {
-        Log.i(TAG, String.format("setInputCookie: 0x%x", cookie));
-        if (mTextInputManager != null) {
-            mTextInputManager.setInputCookie(cookie);
-        }
-    }
-
     public long getInputCookie() {
         if (mTextInputManager != null) {
             return mTextInputManager.getInputCookie();
@@ -313,10 +298,10 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
         return 0L;
     }
 
-    public void setInputType(int type) {
-        Log.i(TAG, String.format("setInputType: 0x%x", type));
+    public void setInputCookie(long cookie) {
+        Log.i(TAG, String.format("setInputCookie: 0x%x", cookie));
         if (mTextInputManager != null) {
-            mTextInputManager.setInputType(type);
+            mTextInputManager.setInputCookie(cookie);
         }
     }
 
@@ -327,10 +312,10 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
         return 0;
     }
 
-    public void setImeOptions(int options) {
-        Log.i(TAG, String.format("setImeOptions: 0x%x", options));
+    public void setInputType(int type) {
+        Log.i(TAG, String.format("setInputType: 0x%x", type));
         if (mTextInputManager != null) {
-            mTextInputManager.setImeOptions(options);
+            mTextInputManager.setInputType(type);
         }
     }
 
@@ -341,10 +326,10 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
         return 0;
     }
 
-    public void setText(String text) {
-        Log.i(TAG, "setText: " + text);
+    public void setImeOptions(int options) {
+        Log.i(TAG, String.format("setImeOptions: 0x%x", options));
         if (mTextInputManager != null) {
-            mTextInputManager.setText(text);
+            mTextInputManager.setImeOptions(options);
         }
     }
 
@@ -357,6 +342,13 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
 
     public CharSequence getText() {
         return mTextInputManager != null ? mTextInputManager.getText() : "";
+    }
+
+    public void setText(String text) {
+        Log.i(TAG, "setText: " + text);
+        if (mTextInputManager != null) {
+            mTextInputManager.setText(text);
+        }
     }
 
     public void setSelection(int start, int end) {

@@ -31,23 +31,23 @@ public class AndroidTextInputManager implements TextInputManager {
     static final int EXTRACT_NOTHING = -2;
     static final int EXTRACT_UNKNOWN = -1;
     static final int IME_FLAG_NAVIGATE_NEXT = 134217728;
-    private static final int PRIORITY = 100;
     static final String TAG = "TextInputManager";
-    private ChangeWatcher mChangeWatcher;
-    protected Context mContext;
-    private ExtractedTextRequest mExtractedTextRequest;
+    private static final int PRIORITY = 100;
     private final InputMethodManager mIMM;
-    private EditorInfo mLastEditorInfo;
-    protected TextInputManager.Listener mListener;
-    private EditText mTextInput;
-    private AlertDialog mTextInputDialog;
-    protected View mView;
-    private int mInputType = 1;
-    private int mImeOptions = 0;
     private final String mHint = "";
     private final ExtractedText mExtractedText = new ExtractedText();
-    private CharSequence mText = "";
     private final Editable.Factory mEditableFactory = Editable.Factory.getInstance();
+    protected Context mContext;
+    protected TextInputManager.Listener mListener;
+    protected View mView;
+    private ChangeWatcher mChangeWatcher;
+    private ExtractedTextRequest mExtractedTextRequest;
+    private EditorInfo mLastEditorInfo;
+    private EditText mTextInput;
+    private AlertDialog mTextInputDialog;
+    private int mInputType = 1;
+    private int mImeOptions = 0;
+    private CharSequence mText = "";
     private int mBatchEditNesting = 0;
     private boolean mContentChanged = false;
     private int mChangedStart = -1;
@@ -64,10 +64,8 @@ public class AndroidTextInputManager implements TextInputManager {
         setText("");
     }
 
-    @Override // com.transmension.mobile.TextInputManager
-    public void setInputCookie(long cookie) {
-        Log.i(TAG, String.format("setInputCookie: 0x%x", cookie));
-        this.mInputCookie = cookie;
+    private static boolean isMultilineInputType(int type) {
+        return (131087 & type) == 131073;
     }
 
     @Override // com.transmension.mobile.TextInputManager
@@ -76,8 +74,9 @@ public class AndroidTextInputManager implements TextInputManager {
     }
 
     @Override // com.transmension.mobile.TextInputManager
-    public void setInputType(int type) {
-        this.mInputType = type;
+    public void setInputCookie(long cookie) {
+        Log.i(TAG, String.format("setInputCookie: 0x%x", cookie));
+        this.mInputCookie = cookie;
     }
 
     @Override // com.transmension.mobile.TextInputManager
@@ -86,8 +85,8 @@ public class AndroidTextInputManager implements TextInputManager {
     }
 
     @Override // com.transmension.mobile.TextInputManager
-    public void setImeOptions(int options) {
-        this.mImeOptions = options;
+    public void setInputType(int type) {
+        this.mInputType = type;
     }
 
     @Override // com.transmension.mobile.TextInputManager
@@ -96,13 +95,8 @@ public class AndroidTextInputManager implements TextInputManager {
     }
 
     @Override // com.transmension.mobile.TextInputManager
-    public void setText(String text) {
-        Log.i(TAG, "setText: " + text);
-        this.mText = this.mEditableFactory.newEditable(text);
-        InputMethodManager imm = this.mIMM;
-        if (imm != null) {
-            imm.restartInput(this.mView);
-        }
+    public void setImeOptions(int options) {
+        this.mImeOptions = options;
     }
 
     @Override // com.transmension.mobile.TextInputManager
@@ -160,6 +154,16 @@ public class AndroidTextInputManager implements TextInputManager {
     @Override // com.transmension.mobile.TextInputManager
     public CharSequence getText() {
         return this.mText;
+    }
+
+    @Override // com.transmension.mobile.TextInputManager
+    public void setText(String text) {
+        Log.i(TAG, "setText: " + text);
+        this.mText = this.mEditableFactory.newEditable(text);
+        InputMethodManager imm = this.mIMM;
+        if (imm != null) {
+            imm.restartInput(this.mView);
+        }
     }
 
     @Override // com.transmension.mobile.TextInputManager
@@ -379,10 +383,6 @@ public class AndroidTextInputManager implements TextInputManager {
         }
     }
 
-    private static boolean isMultilineInputType(int type) {
-        return (131087 & type) == 131073;
-    }
-
     void handleTextChanged(CharSequence buffer, int start, int before, int after) {
         this.mContentChanged = true;
         if (this.mChangedStart < 0) {
@@ -448,41 +448,146 @@ public class AndroidTextInputManager implements TextInputManager {
         }
     }
 
-    /* loaded from: classes.dex */
-    private class ChangeWatcher implements TextWatcher, SpanWatcher {
-        private ChangeWatcher() {
+    @Override // com.transmension.mobile.TextInputManager
+    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+        Log.i(TAG, "onCreateInputConnection()");
+        outAttrs.inputType = getInputType();
+        outAttrs.imeOptions = this.mImeOptions;
+        outAttrs.privateImeOptions = "";
+        outAttrs.actionLabel = null;
+        outAttrs.actionId = 0;
+        outAttrs.extras = new Bundle();
+        if ((outAttrs.imeOptions & 255) == 0) {
+            if ((outAttrs.imeOptions & IME_FLAG_NAVIGATE_NEXT) != 0) {
+                outAttrs.imeOptions |= 5;
+            } else {
+                outAttrs.imeOptions |= 6;
+            }
         }
-
-        /* synthetic */ ChangeWatcher(AndroidTextInputManager androidTextInputManager, ChangeWatcher changeWatcher) {
-            this();
+        if (isMultilineInputType(outAttrs.inputType)) {
+            outAttrs.imeOptions |= 1073741824;
         }
+        outAttrs.hintText = this.mHint;
+        InputConnection ic = new EditableInputConnection(this, this.mInputCookie);
+        outAttrs.initialSelStart = getSelectionStart();
+        outAttrs.initialSelEnd = getSelectionEnd();
+        outAttrs.initialCapsMode = ic.getCursorCapsMode(getInputType());
+        this.mLastEditorInfo = outAttrs;
+        this.mLastInputCookie = this.mInputCookie;
+        return ic;
+    }
 
-        @Override // android.text.TextWatcher
-        public void beforeTextChanged(CharSequence buffer, int start, int before, int after) {
+    @Override // com.transmension.mobile.TextInputManager
+    public void showIme(int mode) {
+        if (this.mIMM != null) {
+            this.mIMM.showSoftInput(this.mView, mode);
         }
+    }
 
-        @Override // android.text.TextWatcher
-        public void onTextChanged(CharSequence buffer, int start, int before, int after) {
-            AndroidTextInputManager.this.handleTextChanged(buffer, start, before, after);
+    @Override // com.transmension.mobile.TextInputManager
+    public void hideIme(int mode) {
+        if (this.mIMM != null) {
+            this.mIMM.hideSoftInputFromWindow(this.mView.getWindowToken(), mode);
         }
+    }
 
-        @Override // android.text.TextWatcher
-        public void afterTextChanged(Editable buffer) {
+    @Override // com.transmension.mobile.TextInputManager
+    public void showTextInputDialog(int mode, String title, String hint, String initial) {
+        if (this.mTextInputDialog != null) {
+            this.mTextInput.setHint(hint);
+            this.mTextInput.setText(initial);
+            this.mTextInputDialog.show();
+            return;
         }
-
-        @Override // android.text.SpanWatcher
-        public void onSpanChanged(Spannable buf, Object what, int s, int e, int st, int en) {
-            AndroidTextInputManager.this.spanChange(buf, what, s, st, e, en);
+        this.mTextInput = new EditText(this.mContext);
+        int type = 1;
+        switch (mode) {
+            case 0:
+                break;
+            case 1:
+                type = 129;
+                break;
+            case 2:
+                type = 17;
+                break;
+            case 3:
+                type = 33;
+                break;
+            case 4:
+                type = 145;
+                break;
         }
-
-        @Override // android.text.SpanWatcher
-        public void onSpanAdded(Spannable buf, Object what, int s, int e) {
-            AndroidTextInputManager.this.spanChange(buf, what, -1, s, -1, e);
+        this.mTextInput.setInputType(type);
+        if (mode == 1) {
+            this.mTextInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
         }
+        if (mode == 4 || mode == 1) {
+            InputFilter filter = (source, start, end, dest, dstart, dend) -> {
+                for (int i = start; i < end; i++) {
+                    if (!Character.isLetterOrDigit(source.charAt(i)) || source.charAt(i) > '\u007f') {
+                        return "";
+                    }
+                }
+                return null;
+            };
+            this.mTextInput.setFilters(new InputFilter[]{filter});
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
+        this.mTextInput.setHint(hint);
+        this.mTextInput.setText(initial);
+        builder.setTitle(title);
+        builder.setView(this.mTextInput);
+        builder.setPositiveButton("确定", (dialogInterface, i) -> onTextInput(mTextInput.getText().toString()));
+        builder.setNegativeButton("返回", (dialogInterface, i) -> {
+            onTextInput(null);
+            hideTextInputDialog(true);
+        });
+        builder.setOnCancelListener(dialogInterface -> {
+            onTextInput(null);
+            hideTextInputDialog(true);
+        });
+        this.mTextInputDialog = builder.create();
+        this.mTextInputDialog.show();
+    }
 
-        @Override // android.text.SpanWatcher
-        public void onSpanRemoved(Spannable buf, Object what, int s, int e) {
-            AndroidTextInputManager.this.spanChange(buf, what, s, -1, e, -1);
+    @Override // com.transmension.mobile.TextInputManager
+    public void hideTextInputDialog() {
+        hideTextInputDialog(false);
+    }
+
+    @Override // com.transmension.mobile.TextInputManager
+    public void hideTextInputDialog(boolean cancel) {
+        if (this.mTextInputDialog != null) {
+            DialogInterface dialog = this.mTextInputDialog;
+            this.mTextInputDialog = null;
+            this.mTextInput = null;
+            if (cancel) {
+                dialog.cancel();
+            } else {
+                dialog.dismiss();
+            }
+        }
+    }
+
+    @Override // com.transmension.mobile.TextInputManager
+    public TextInputManager.Listener getListener() {
+        return this.mListener;
+    }
+
+    @Override // com.transmension.mobile.TextInputManager
+    public void setListener(TextInputManager.Listener listener) {
+        this.mListener = listener;
+    }
+
+    void onTextChanged(String text, int start, int end, long cookie) {
+        if (this.mListener != null) {
+            this.mListener.onTextChanged(this.mView, text, start, end, cookie);
+        }
+    }
+
+    void onTextInput(String text) {
+        if (this.mListener != null) {
+            this.mListener.onTextInput(this.mView, text);
         }
     }
 
@@ -490,9 +595,9 @@ public class AndroidTextInputManager implements TextInputManager {
     public static class EditableInputConnection extends BaseInputConnection {
         private static final boolean DEBUG = true;
         private static final String TAG = "EditableInputConnection";
-        private int mBatchEditNesting;
         private final long mCookie;
         private final AndroidTextInputManager mTextInput;
+        private int mBatchEditNesting;
 
         public EditableInputConnection(AndroidTextInputManager textInput, long cookie) {
             super(textInput.mView, true);
@@ -605,148 +710,41 @@ public class AndroidTextInputManager implements TextInputManager {
         }
     }
 
-    @Override // com.transmension.mobile.TextInputManager
-    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        Log.i(TAG, "onCreateInputConnection()");
-        outAttrs.inputType = getInputType();
-        outAttrs.imeOptions = this.mImeOptions;
-        outAttrs.privateImeOptions = "";
-        outAttrs.actionLabel = null;
-        outAttrs.actionId = 0;
-        outAttrs.extras = new Bundle();
-        if ((outAttrs.imeOptions & 255) == 0) {
-            if ((outAttrs.imeOptions & IME_FLAG_NAVIGATE_NEXT) != 0) {
-                outAttrs.imeOptions |= 5;
-            } else {
-                outAttrs.imeOptions |= 6;
-            }
+    /* loaded from: classes.dex */
+    private class ChangeWatcher implements TextWatcher, SpanWatcher {
+        private ChangeWatcher() {
         }
-        if (isMultilineInputType(outAttrs.inputType)) {
-            outAttrs.imeOptions |= 1073741824;
+
+        /* synthetic */ ChangeWatcher(AndroidTextInputManager androidTextInputManager, ChangeWatcher changeWatcher) {
+            this();
         }
-        outAttrs.hintText = this.mHint;
-        InputConnection ic = new EditableInputConnection(this, this.mInputCookie);
-        outAttrs.initialSelStart = getSelectionStart();
-        outAttrs.initialSelEnd = getSelectionEnd();
-        outAttrs.initialCapsMode = ic.getCursorCapsMode(getInputType());
-        this.mLastEditorInfo = outAttrs;
-        this.mLastInputCookie = this.mInputCookie;
-        return ic;
-    }
 
-    @Override // com.transmension.mobile.TextInputManager
-    public void showIme(int mode) {
-        if (this.mIMM != null) {
-            this.mIMM.showSoftInput(this.mView, mode);
+        @Override // android.text.TextWatcher
+        public void beforeTextChanged(CharSequence buffer, int start, int before, int after) {
         }
-    }
 
-    @Override // com.transmension.mobile.TextInputManager
-    public void hideIme(int mode) {
-        if (this.mIMM != null) {
-            this.mIMM.hideSoftInputFromWindow(this.mView.getWindowToken(), mode);
+        @Override // android.text.TextWatcher
+        public void onTextChanged(CharSequence buffer, int start, int before, int after) {
+            AndroidTextInputManager.this.handleTextChanged(buffer, start, before, after);
         }
-    }
 
-    @Override // com.transmension.mobile.TextInputManager
-    public void showTextInputDialog(int mode, String title, String hint, String initial) {
-        if (this.mTextInputDialog != null) {
-            this.mTextInput.setHint(hint);
-            this.mTextInput.setText(initial);
-            this.mTextInputDialog.show();
-            return;
+        @Override // android.text.TextWatcher
+        public void afterTextChanged(Editable buffer) {
         }
-        this.mTextInput = new EditText(this.mContext);
-        int type = 1;
-        switch (mode) {
-            case 0:
-                break;
-            case 1:
-                type = 129;
-                break;
-            case 2:
-                type = 17;
-                break;
-            case 3:
-                type = 33;
-                break;
-            case 4:
-                type = 145;
-                break;
+
+        @Override // android.text.SpanWatcher
+        public void onSpanChanged(Spannable buf, Object what, int s, int e, int st, int en) {
+            AndroidTextInputManager.this.spanChange(buf, what, s, st, e, en);
         }
-        this.mTextInput.setInputType(type);
-        if (mode == 1) {
-            this.mTextInput.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+        @Override // android.text.SpanWatcher
+        public void onSpanAdded(Spannable buf, Object what, int s, int e) {
+            AndroidTextInputManager.this.spanChange(buf, what, -1, s, -1, e);
         }
-        if (mode == 4 || mode == 1) {
-            InputFilter filter = (source, start, end, dest, dstart, dend) -> {
-                for (int i = start; i < end; i++) {
-                    if (!Character.isLetterOrDigit(source.charAt(i)) || source.charAt(i) > '\u007f') {
-                        return "";
-                    }
-                }
-                return null;
-            };
-            this.mTextInput.setFilters(new InputFilter[]{filter});
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
-        this.mTextInput.setHint(hint);
-        this.mTextInput.setText(initial);
-        builder.setTitle(title);
-        builder.setView(this.mTextInput);
-        builder.setPositiveButton("确定", (dialogInterface, i) -> onTextInput(mTextInput.getText().toString()));
-        builder.setNegativeButton("返回", (dialogInterface, i) -> {
-            onTextInput(null);
-            hideTextInputDialog(true);
-        });
-        builder.setOnCancelListener(dialogInterface -> {
-            onTextInput(null);
-            hideTextInputDialog(true);
-        });
-        this.mTextInputDialog = builder.create();
-        this.mTextInputDialog.show();
-    }
 
-
-
-    @Override // com.transmension.mobile.TextInputManager
-    public void hideTextInputDialog() {
-        hideTextInputDialog(false);
-    }
-
-    @Override // com.transmension.mobile.TextInputManager
-    public void hideTextInputDialog(boolean cancel) {
-        if (this.mTextInputDialog != null) {
-            DialogInterface dialog = this.mTextInputDialog;
-            this.mTextInputDialog = null;
-            this.mTextInput = null;
-            if (cancel) {
-                dialog.cancel();
-            } else {
-                dialog.dismiss();
-            }
-        }
-    }
-
-    @Override // com.transmension.mobile.TextInputManager
-    public void setListener(TextInputManager.Listener listener) {
-        this.mListener = listener;
-    }
-
-    @Override // com.transmension.mobile.TextInputManager
-    public TextInputManager.Listener getListener() {
-        return this.mListener;
-    }
-
-    void onTextChanged(String text, int start, int end, long cookie) {
-        if (this.mListener != null) {
-            this.mListener.onTextChanged(this.mView, text, start, end, cookie);
-        }
-    }
-
-    void onTextInput(String text) {
-        if (this.mListener != null) {
-            this.mListener.onTextInput(this.mView, text);
+        @Override // android.text.SpanWatcher
+        public void onSpanRemoved(Spannable buf, Object what, int s, int e) {
+            AndroidTextInputManager.this.spanChange(buf, what, s, -1, e, -1);
         }
     }
 }

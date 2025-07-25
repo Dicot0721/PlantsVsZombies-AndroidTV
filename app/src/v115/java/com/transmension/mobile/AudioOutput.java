@@ -14,7 +14,7 @@ public class AudioOutput {
     byte[] mAudioData = new byte[8192];
     String TAG = "TAG";
 
-//    private native void nativePause();
+    //    private native void nativePause();
 //    private native void nativeResume();
 //    private native void nativeWrite(byte[] data, int length);
     private MobileAudioTrack mAudioTrack = null;

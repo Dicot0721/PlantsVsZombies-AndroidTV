@@ -142,22 +142,6 @@ public interface InputManager {
         public int mActionIndex = 0;
         public List<Pointer> mPointers = new ArrayList<>();
 
-        /* loaded from: classes.dex */
-        public static class Pointer {
-            public int mId;
-            public float mPressure;
-            public float mX;
-            public float mY;
-        }
-
-        public int getActionIndex() {
-            return this.mActionIndex;
-        }
-
-        public final List<Pointer> getPointers() {
-            return this.mPointers;
-        }
-
         /* JADX INFO: Access modifiers changed from: package-private */
         public static PointerEvent translate(MotionEvent motionEvent) {
             PointerEvent event = new PointerEvent();
@@ -188,22 +172,28 @@ public interface InputManager {
 
             return event;
         }
-    }
-
-    @SuppressLint({"NewApi"})
-    /* loaded from: classes.dex */ class JoystickEvent extends InputEvent {
-        public int mActionIndex = 0;
-        public List<Axis> mAxes = new ArrayList<>();
-
-        /* loaded from: classes.dex */
-        public static class Axis {
-            public int mAxis;
-            public float mValue;
-        }
 
         public int getActionIndex() {
             return this.mActionIndex;
         }
+
+        public final List<Pointer> getPointers() {
+            return this.mPointers;
+        }
+
+        /* loaded from: classes.dex */
+        public static class Pointer {
+            public int mId;
+            public float mPressure;
+            public float mX;
+            public float mY;
+        }
+    }
+
+    @SuppressLint({"NewApi"})
+            /* loaded from: classes.dex */ class JoystickEvent extends InputEvent {
+        public int mActionIndex = 0;
+        public List<Axis> mAxes = new ArrayList<>();
 
         /* JADX INFO: Access modifiers changed from: package-private */
         public static JoystickEvent translate(MotionEvent motionEvent) {
@@ -224,6 +214,16 @@ public interface InputManager {
             }
             return event;
         }
+
+        public int getActionIndex() {
+            return this.mActionIndex;
+        }
+
+        /* loaded from: classes.dex */
+        public static class Axis {
+            public int mAxis;
+            public float mValue;
+        }
     }
 
     /* loaded from: classes.dex */
@@ -234,6 +234,24 @@ public interface InputManager {
         public int mRepeatCount = 0;
         public int mScanCode = 0;
         public String mCharacters = "";
+
+        /* JADX INFO: Access modifiers changed from: package-private */
+        public static KeyInputEvent translate(KeyEvent keyEvent) {
+            KeyInputEvent event = new KeyInputEvent();
+            event.mDeviceId = keyEvent.getDeviceId();
+            event.mEventTime = keyEvent.getEventTime();
+            event.mDownTime = keyEvent.getDownTime();
+            event.mAction = keyEvent.getAction();
+            event.mSource = keyEvent.getSource();
+            event.mFlags = keyEvent.getFlags();
+            event.mMetaState = keyEvent.getMetaState();
+            event.mKeyCode = keyEvent.getKeyCode();
+            event.mKeyChar = keyEvent.getUnicodeChar();
+            event.mRepeatCount = keyEvent.getRepeatCount();
+            event.mScanCode = keyEvent.getScanCode();
+            event.mCharacters = keyEvent.getCharacters();
+            return event;
+        }
 
         public int getMetaState() {
             return this.mMetaState;
@@ -257,24 +275,6 @@ public interface InputManager {
 
         public String getCharacters() {
             return this.mCharacters;
-        }
-
-        /* JADX INFO: Access modifiers changed from: package-private */
-        public static KeyInputEvent translate(KeyEvent keyEvent) {
-            KeyInputEvent event = new KeyInputEvent();
-            event.mDeviceId = keyEvent.getDeviceId();
-            event.mEventTime = keyEvent.getEventTime();
-            event.mDownTime = keyEvent.getDownTime();
-            event.mAction = keyEvent.getAction();
-            event.mSource = keyEvent.getSource();
-            event.mFlags = keyEvent.getFlags();
-            event.mMetaState = keyEvent.getMetaState();
-            event.mKeyCode = keyEvent.getKeyCode();
-            event.mKeyChar = keyEvent.getUnicodeChar();
-            event.mRepeatCount = keyEvent.getRepeatCount();
-            event.mScanCode = keyEvent.getScanCode();
-            event.mCharacters = keyEvent.getCharacters();
-            return event;
         }
     }
 
