@@ -91,11 +91,11 @@ inline unsigned long AverageNearByPixels(Sexy::MemoryImage *theImage, unsigned l
         return 0;
 
     aRed /= aBitsCount;
-    aRed = min(aRed, 255);
+    aRed = std::min(aRed, 255);
     aGreen /= aBitsCount;
-    aGreen = min(aGreen, 255);
+    aGreen = std::min(aGreen, 255);
     aBlue /= aBitsCount;
-    aBlue = min(aBlue, 255);
+    aBlue = std::min(aBlue, 255);
     return (aRed << 16) | (aGreen << 8) | (aBlue);
 }
 

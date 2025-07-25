@@ -51,26 +51,20 @@ public:
     LeaderboardReanimations *mLeaderboardReanimations; // 70
     int mLongestRecordPool;                            // 71
     Sexy::GameButton *mBackButton;
-    Sexy::ButtonListener *mButtonListener;
+    Sexy::ButtonListener *mButtonListener = &sButtonListener;
     int mFocusedAchievementIndex;
     bool mHighLightAchievement;
 
 private:
-    static constexpr Sexy::ButtonListener::VTable sButtonListenerVtable{
-        // .ButtonPress = (void *)LeaderboardsWidget_ButtonPress;
-        .ButtonPress2 = (void *)&LeaderboardsWidget::ButtonPress,
-        .ButtonDepress = (void *)&LeaderboardsWidget::ButtonDepress,
-        .ButtonDownTick = (void *)Sexy_ButtonListener_ButtonDownTick,
-        .ButtonMouseEnter = (void *)Sexy_ButtonListener_ButtonMouseEnter,
-        .ButtonMouseLeave = (void *)Sexy_ButtonListener_ButtonMouseLeave,
-        .ButtonMouseMove = (void *)Sexy_ButtonListener_ButtonMouseMove,
-    };
+    static constexpr Sexy::ButtonListener::VTable sButtonListenerVtable{// .ButtonPress = (void *)LeaderboardsWidget_ButtonPress;
+                                                                        .ButtonPress2 = (void *)&LeaderboardsWidget::ButtonPress,
+                                                                        .ButtonDepress = (void *)&LeaderboardsWidget::ButtonDepress};
 
     static inline Sexy::ButtonListener sButtonListener{&sButtonListenerVtable};
 
 }; // 我想用LeaderboardsWidget取代DaveHelp。
 
-class DaveHelp : public Sexy::Widget {
+class DaveHelp : public Sexy::__Widget {
 public:
     DaveHelp(LawnApp *theApp) {
         __Constructor(theApp);

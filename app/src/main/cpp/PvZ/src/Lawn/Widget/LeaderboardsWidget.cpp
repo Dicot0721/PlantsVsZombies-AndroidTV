@@ -144,11 +144,9 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
         if (i == 0) {
             mApp->SetHouseReanim(reanim);
             reanim->SetPosition(456.9f, 129.3f);
-        }
-        if (i == 1 || i == 2 || i == 3) {
+        } else if (i == 1 || i == 2 || i == 3) {
             reanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 12.0f);
-        }
-        if (i == 4) {
+        } else if (i == 4) {
             reanim->PlayReanim("anim_float", ReanimLoopType::REANIM_LOOP, 0, 2.0f); // 云儿飘得慢一些
         }
         reanim->Update(); // 一次Update是必要的，否则绘制出来是Empty
@@ -187,11 +185,9 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
 
     mLongestRecordPool = theApp->mPlayerInfo->mChallengeRecords[GameMode::GAMEMODE_SURVIVAL_ENDLESS_STAGE_3 - 2];
     //    this_->mLongestRecordPool = theApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ENDLESS_FLAGS];
-    mButtonListener = &sButtonListener;
 
     pvzstl::string str = TodStringTranslate("[CLOSE]");
     Sexy::GameButton *aBackButton = MakeButton(1000, mButtonListener, this, str);
-    LOG_DEBUG("aBackButton {} ", (void *)aBackButton);
     aBackButton->Resize(1040, 590, 120, 50);
     AddWidget((Sexy::Widget *)aBackButton);
     mBackButton = aBackButton;
@@ -208,8 +204,8 @@ void LeaderboardsWidget::ButtonDepress(this LeaderboardsWidget &self, int id) {
 }
 
 void DaveHelp_Update(LeaderboardsWidget *leaderboardsWidget) {
-    for (Reanimation *&i : leaderboardsWidget->mLeaderboardReanimations->backgroundReanim) {
-        i->Update();
+    for (auto &reanim : leaderboardsWidget->mLeaderboardReanimations->backgroundReanim) {
+        reanim->Update();
     }
 
     for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {

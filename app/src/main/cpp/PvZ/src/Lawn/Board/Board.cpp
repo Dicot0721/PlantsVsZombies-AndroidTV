@@ -35,7 +35,6 @@
 #include <cstdio>
 
 using namespace Sexy;
-using namespace std;
 
 Board::Board(LawnApp *theApp) {
     __Constructor(theApp);
@@ -1592,7 +1591,7 @@ void Board::PickZombieWaves() {
             int &aZombiePoints = zombiePicker.mZombiePoints;
             aZombiePoints = i * 4 / 5 + 1;
             if (isFlagWave) {
-                int num2 = min(zombiePicker.mZombiePoints, 8);
+                int num2 = std::min(zombiePicker.mZombiePoints, 8);
                 zombiePicker.mZombiePoints = (int)(zombiePicker.mZombiePoints * 2.5f);
                 for (int k = 0; k < num2; k++) {
                     PutZombieInWave(ZombieType::ZOMBIE_NORMAL, i, &zombiePicker);
@@ -1622,7 +1621,7 @@ void Board::PickZombieWaves() {
             int &aZombiePoints = zombiePicker.mZombiePoints;
             aZombiePoints = i * 4 / 5 + 1;
             if (isFlagWave) {
-                int num2 = min(zombiePicker.mZombiePoints, 8);
+                int num2 = std::min(zombiePicker.mZombiePoints, 8);
                 zombiePicker.mZombiePoints = (int)(zombiePicker.mZombiePoints * 2.5f);
                 for (int k = 0; k < num2; k++) {
                     PutZombieInWave(ZombieType::ZOMBIE_NORMAL, i, &zombiePicker);
@@ -3330,7 +3329,7 @@ GridItem *Board::GetScaryPotAt(int theGridX, int theGridY) {
 
 int Board::PixelToGridXKeepOnBoard(int theX, int theY) {
     int aGridX = PixelToGridX(theX, theY);
-    return max(aGridX, 0);
+    return std::max(aGridX, 0);
 }
 
 int Board::GridToPixelX(int theGridX, int theGridY) {
@@ -3344,8 +3343,8 @@ int Board::GridToPixelX(int theGridX, int theGridY) {
 }
 
 int Board::PixelToGridYKeepOnBoard(int theX, int theY) {
-    int aGridY = PixelToGridY(max(theX, 80), theY);
-    return max(aGridY, 0);
+    int aGridY = PixelToGridY(std::max(theX, 80), theY);
+    return std::max(aGridY, 0);
 }
 
 int Board::GridToPixelY(int theGridX, int theGridY) {

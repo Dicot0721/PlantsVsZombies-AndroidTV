@@ -34,9 +34,6 @@ public:
     int *mAnimatorForState[4];     // 60 ~ 63
     // 大小64个整数！
 
-    __Widget() = default;
-    ~__Widget() = default;
-
     void __Constructor() {
         reinterpret_cast<void (*)(__Widget *)>(Sexy_Widget___ConstructorAddr)(this);
     }
@@ -61,6 +58,10 @@ public:
     void AddWidget(__Widget *theWidget);
     void RemoveWidget(__Widget *theWidget);
     Widget *FindWidget(int theId);
+
+protected:
+    __Widget() = default;
+    ~__Widget() = default;
 };
 
 class Widget : public __Widget {

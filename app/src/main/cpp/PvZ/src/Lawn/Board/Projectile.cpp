@@ -14,7 +14,6 @@
 #include "Homura/Logger.h"
 
 using namespace Sexy;
-using namespace std;
 
 ProjectileDefinition gProjectileDefinition[] = {{ProjectileType::PROJECTILE_PEA, 0, 20},
                                                 {ProjectileType::PROJECTILE_SNOWPEA, 0, 20},
@@ -415,7 +414,7 @@ void Projectile::CheckForCollision() {
         if (aPlant) {
             const ProjectileDefinition& aProjectileDef = GetProjectileDef();
             aPlant->mPlantHealth -= aProjectileDef.mDamage;
-            aPlant->mEatenFlashCountdown = max(aPlant->mEatenFlashCountdown, 25);
+            aPlant->mEatenFlashCountdown = std::max(aPlant->mEatenFlashCountdown, 25);
 
             mApp->PlayFoley(FoleyType::FOLEY_SPLAT);
             mApp->AddTodParticle(mPosX - 3.0f, mPosY + 17.0f, mRenderOrder + 1, ParticleEffect::PARTICLE_PEA_SPLAT);

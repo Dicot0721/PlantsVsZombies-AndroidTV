@@ -17,7 +17,6 @@
 #include <algorithm>
 
 using namespace Sexy;
-using namespace std;
 
 PlantDefinition gPlantDefs[SeedType::NUM_SEED_TYPES] = {
     {SeedType::SEED_PEASHOOTER, nullptr, ReanimationType::REANIM_PEASHOOTER, 0, 100, 750, PlantSubClass::SUBCLASS_SHOOTER, 150, "PEASHOOTER"},
@@ -282,7 +281,7 @@ void Plant::Draw(Sexy::Graphics *g) {
         float ratioSquished = 0.5f;
         g->SetScale(1.0f, ratioSquished, 0.0f, 0.0f);
         g->SetColorizeImages(true);
-        Color color = {255, 255, 255, (int)(255.0f * min(1.0f, mDisappearCountdown / 100.0f))};
+        Color color = {255, 255, 255, (int)(255.0f * std::min(1.0f, mDisappearCountdown / 100.0f))};
         g->SetColor(color);
         Plant::DrawSeedType(g, mSeedType, mImitaterType, DrawVariation::VARIATION_NORMAL, aOffsetX, aOffsetY + 85.0f * (1 - ratioSquished));
         g->SetScale(1.0f, 1.0f, 0.0f, 0.0f);

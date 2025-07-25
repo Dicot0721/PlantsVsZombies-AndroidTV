@@ -16,7 +16,6 @@
 #include "PvZ/TodLib/Effect/TodParticle.h"
 
 using namespace Sexy;
-using namespace std;
 
 ZombieDefinition gZombieDefs[NUM_ZOMBIE_TYPES] = {
     {ZOMBIE_NORMAL, REANIM_ZOMBIE, 1, 1, 1, 4000, "ZOMBIE"},
@@ -1086,7 +1085,7 @@ void Zombie::GetDrawPos(ZombieDrawPosition &theDrawPos) {
         if (mInPool) {
             theDrawPos.mClipHeight = theDrawPos.mBodyY;
         } else {
-            float aHeightLimit = min(mPhaseCounter, 40);
+            float aHeightLimit = std::min(mPhaseCounter, 40);
             theDrawPos.mClipHeight = theDrawPos.mBodyY + aHeightLimit;
         }
 

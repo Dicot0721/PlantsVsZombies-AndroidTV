@@ -20,7 +20,6 @@
 #include <algorithm>
 
 using namespace Sexy;
-using namespace std;
 
 namespace {
 
@@ -2167,7 +2166,6 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     theApp->LoadZombatarResources();
     theApp->Load("DelayLoad_Almanac");
     mApp = theApp;
-    mButtonListener = &sButtonListener;
     pvzstl::string str{"[CLOSE]"};
     Sexy::GameButton *backButton = MakeButton(1000, mButtonListener, this, str);
     backButton->Resize(471, 628, addonZombatarImages.zombatar_mainmenuback_highlight->mWidth, addonZombatarImages.zombatar_mainmenuback_highlight->mHeight);
@@ -2285,8 +2283,7 @@ void TestMenuWidget_DrawHair(ZombatarWidget *zombatarWidget, Sexy::Graphics *g) 
         Sexy::Image *image1 = ZombatarWidget_GetHairMaskImageByIndex(i);
         int mWidth = image->mWidth;
         int mHeight = image->mHeight;
-        int max = std::max(mWidth, mHeight);
-        float ratio = 58.0 / max;
+        float ratio = 58 / float(std::max(mWidth, mHeight));
         if (ratio > 1.3)
             ratio = 1.3;
         float widthOffset = (58 - ratio * mWidth) / 2;
@@ -2347,8 +2344,7 @@ void TestMenuWidget_DrawFHair(ZombatarWidget *zombatarWidget, Sexy::Graphics *g)
             Sexy::Image *image1 = ZombatarWidget_GetFHairMaskImageByIndex(i);
             int mWidth = image->mWidth;
             int mHeight = image->mHeight;
-            int max = std::max(mWidth, mHeight);
-            float ratio = 58.0 / max;
+            float ratio = 58 / float(std::max(mWidth, mHeight));
             if (ratio > 1.3)
                 ratio = 1.3;
             float widthOffset = (58 - ratio * mWidth) / 2;
@@ -2386,8 +2382,7 @@ void TestMenuWidget_DrawFHair(ZombatarWidget *zombatarWidget, Sexy::Graphics *g)
             Sexy::Image *image1 = ZombatarWidget_GetFHairMaskImageByIndex(i + 17);
             int mWidth = image->mWidth;
             int mHeight = image->mHeight;
-            int max = std::max(mWidth, mHeight);
-            float ratio = 58.0 / max;
+            float ratio = 58 / float(std::max(mWidth, mHeight));
             if (ratio > 1.3)
                 ratio = 1.3;
             float widthOffset = (58 - ratio * mWidth) / 2;
@@ -2452,8 +2447,7 @@ void TestMenuWidget_DrawTidBit(ZombatarWidget *zombatarWidget, Sexy::Graphics *g
         Sexy::Image *image = ZombatarWidget_GetTidBitImageByIndex(i);
         int mWidth = image->mWidth;
         int mHeight = image->mHeight;
-        int max = std::max(mWidth, mHeight);
-        float ratio = 58.0 / max;
+        float ratio = 58 / float(std::max(mWidth, mHeight));
         if (ratio > 1.3)
             ratio = 1.3;
         float widthOffset = (58 - ratio * mWidth) / 2;
@@ -2509,8 +2503,7 @@ void TestMenuWidget_DrawEyeWear(ZombatarWidget *zombatarWidget, Sexy::Graphics *
         Sexy::Image *image1 = ZombatarWidget_GetEyeWearMaskImageByIndex(i);
         int mWidth = image->mWidth;
         int mHeight = image->mHeight;
-        int max = std::max(mWidth, mHeight);
-        float ratio = 58.0 / max;
+        float ratio = 58 / float(std::max(mWidth, mHeight));
         if (ratio > 1.3)
             ratio = 1.3;
         float widthOffset = (58 - ratio * mWidth) / 2;
@@ -2567,8 +2560,7 @@ void TestMenuWidget_DrawCloth(ZombatarWidget *zombatarWidget, Sexy::Graphics *g)
         Sexy::Image *image1 = ZombatarWidget_GetClothImageByIndex(i);
         int mWidth = image->mWidth;
         int mHeight = image->mHeight;
-        int max = std::max(mWidth, mHeight);
-        float ratio = 58.0 / max;
+        float ratio = 58.0 / float(std::max(mWidth, mHeight));
         if (ratio > 1.3)
             ratio = 1.3;
         float widthOffset = (58 - ratio * mWidth) / 2;
@@ -2614,8 +2606,7 @@ void TestMenuWidget_DrawAccessory(ZombatarWidget *zombatarWidget, Sexy::Graphics
         Sexy::Image *image = ZombatarWidget_GetAccessoryImageByIndex(i);
         int mWidth = image->mWidth;
         int mHeight = image->mHeight;
-        int max = std::max(mWidth, mHeight);
-        float ratio = 58.0 / max;
+        float ratio = 58 / float(std::max(mWidth, mHeight));
         if (ratio > 1.3)
             ratio = 1.3;
         float widthOffset = (58 - ratio * mWidth) / 2;
@@ -2665,8 +2656,7 @@ void TestMenuWidget_DrawHat(ZombatarWidget *zombatarWidget, Sexy::Graphics *g) {
         Sexy::Image *image1 = ZombatarWidget_GetHatMaskImageByIndex(i);
         int mWidth = image->mWidth;
         int mHeight = image->mHeight;
-        int max = std::max(mWidth, mHeight);
-        float ratio = 58.0 / max;
+        float ratio = 58 / float(std::max(mWidth, mHeight));
         if (ratio > 1.3)
             ratio = 1.3;
         float widthOffset = (58 - ratio * mWidth) / 2;
@@ -2955,7 +2945,7 @@ void TestMenuWidget_Draw(ZombatarWidget *zombatarWidget, Sexy::Graphics *g) {
         TestMenuWidget_DrawZombieSelection(zombatarWidget, g);
     } else {
         g->DrawImage(addonZombatarImages.zombatar_widget_inner_bg, 160 + 179, 148);
-        for (int i = 0; i < ZombatarWidget::MaxTabNum; ++i) {
+        for (int i = 0; i < ZombatarWidget::MAX_TAB_NUM; ++i) {
             g->DrawImage(i == zombatarWidget->mSelectedTab ? ZombatarWidget_GetTabButtonDownImageByIndex(i) : ZombatarWidget_GetTabButtonImageByIndex(i), 160 + 67, 152 + i * 43);
         }
         g->DrawImage(addonZombatarImages.zombatar_colors_bg, 160 + 260, 394);
@@ -3387,7 +3377,7 @@ void TestMenuWidget_MouseDown(ZombatarWidget *zombatarWidget, int x, int y) {
     if (gMainMenuZombatarWidget->mShowExistingZombatarPortrait) {
         return;
     }
-    for (char i = 0; i < ZombatarWidget::MaxTabNum; ++i) {
+    for (char i = 0; i < ZombatarWidget::MAX_TAB_NUM; ++i) {
         Sexy::Rect rect = {160 + 67, 152 + i * 43, 125, 47};
         if (TRect_Contains(&rect, x, y)) {
             zombatarWidget->mSelectedTab = i;

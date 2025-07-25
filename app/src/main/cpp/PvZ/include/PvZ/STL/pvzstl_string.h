@@ -9,7 +9,9 @@
 #include <stdexcept>
 #include <string>
 
+#ifdef PVZ_VERSION
 extern uintptr_t gLibBaseOffset;
+#endif
 
 namespace pvzstl {
 

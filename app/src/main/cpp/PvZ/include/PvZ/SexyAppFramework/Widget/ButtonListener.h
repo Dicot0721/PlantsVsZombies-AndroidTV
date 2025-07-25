@@ -6,29 +6,25 @@ namespace Sexy {
 class ButtonListener {
 public:
     struct VTable {
-        void *__Destructor;
-        void *__Destructor2;
-        void *ButtonPress;
-        void *ButtonPress2;
-        void *ButtonDepress;
-        void *ButtonDownTick;
-        void *ButtonMouseEnter;
-        void *ButtonMouseLeave;
-        void *ButtonMouseMove;
+        void *__Destructor = nullptr;
+        void *__Destructor2 = nullptr;
+        void *ButtonPress = nullptr;
+        void *ButtonPress2 = nullptr;
+        void *ButtonDepress = nullptr;
+        void *ButtonDownTick = (void *)&ButtonListener::ButtonDownTick;
+        void *ButtonMouseEnter = (void *)&ButtonListener::ButtonMouseEnter;
+        void *ButtonMouseLeave = (void *)&ButtonListener::ButtonMouseLeave;
+        void *ButtonMouseMove = (void *)&ButtonListener::ButtonMouseMove;
     };
+
+    void ButtonDownTick(this ButtonListener &self, int id) {}
+    void ButtonMouseEnter(this ButtonListener &self, int id) {}
+    void ButtonMouseLeave(this ButtonListener &self, int id) {}
+    void ButtonMouseMove(this ButtonListener &self, int id, int x, int y) {}
 
     const VTable *mVTable;
 };
 
 } // namespace Sexy
-
-inline void Sexy_ButtonListener_ButtonMouseEnter(Sexy::ButtonListener *listener, int id) {}
-
-inline void Sexy_ButtonListener_ButtonMouseMove(Sexy::ButtonListener *listener, int id, int x, int y) {}
-
-inline void Sexy_ButtonListener_ButtonMouseLeave(Sexy::ButtonListener *listener, int id) {}
-
-inline void Sexy_ButtonListener_ButtonDownTick(Sexy::ButtonListener *listener, int id) {}
-
 
 #endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_BUTTON_LISTENER_H

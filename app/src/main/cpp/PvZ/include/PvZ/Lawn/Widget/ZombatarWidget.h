@@ -9,7 +9,18 @@ class Reanimation;
 
 class ZombatarWidget : public Sexy::MenuWidget {
 public:
-    enum TabType { SKIN = 0, HAIR = 1, FHAIR = 2, TIDBIT = 3, EYEWEAR = 4, CLOTHES = 5, ACCESSORY = 6, HAT = 7, BACKGROUND = 8, MaxTabNum = 9 };
+    enum TabType {
+        SKIN = 0,
+        HAIR = 1,
+        FHAIR = 2,
+        TIDBIT = 3,
+        EYEWEAR = 4,
+        CLOTHES = 5,
+        ACCESSORY = 6,
+        HAT = 7,
+        BACKGROUND = 8,
+        MAX_TAB_NUM = 9,
+    };
 
     enum AccessoryNum {
         HairNum = 16,
@@ -22,7 +33,7 @@ public:
         BackgroundNum = 83,
     };
 
-    Sexy::ButtonListener *mButtonListener;
+    Sexy::ButtonListener *mButtonListener = &sButtonListener;
     LawnApp *mApp;
     Zombie *mPreviewZombie;
     Sexy::GameButton *mBackButton;
@@ -64,10 +75,6 @@ private:
         // .ButtonPress = (void *)LeaderboardsWidget_ButtonPress;
         .ButtonPress2 = (void *)&ZombatarWidget::ButtonPress,
         .ButtonDepress = (void *)&ZombatarWidget::ButtonDepress,
-        .ButtonDownTick = (void *)Sexy_ButtonListener_ButtonDownTick,
-        .ButtonMouseEnter = (void *)Sexy_ButtonListener_ButtonMouseEnter,
-        .ButtonMouseLeave = (void *)Sexy_ButtonListener_ButtonMouseLeave,
-        .ButtonMouseMove = (void *)Sexy_ButtonListener_ButtonMouseMove,
     };
 
     static inline Sexy::ButtonListener sButtonListener{&sButtonListenerVtable};

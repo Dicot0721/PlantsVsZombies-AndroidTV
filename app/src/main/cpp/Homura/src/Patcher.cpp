@@ -8,7 +8,6 @@
 #include <cstring>
 
 #include <fstream>
-#include <limits>
 #include <map>
 #include <sstream>
 #include <string>
@@ -42,7 +41,7 @@ Patcher Patcher::CreateWithStr(std::string libName, uintptr_t offset, bool isUse
 
     // 'byte' cannot be uint8_t (aka: unsigned char)
     for (uint16_t byte; !stream.eof() && (stream >> std::hex >> byte);) {
-        if (byte > std::numeric_limits<uint8_t>::max()) {
+        if (byte > UINT8_MAX) {
             isTooBig = true;
             break;
         }
@@ -100,7 +99,7 @@ bool Patcher::WriteMemory(uintptr_t address, const std::vector<uint8_t> &buffer)
 
 void Patcher::Modify() {
     if (!_hasModified && WriteMemory(_address, _patchCode)) {
-        LOG_DEBUG("Modified address at 0x{:X} successfully.", _address);
+        // LOG_DEBUG("Modified address at 0x{:X} successfully.", _address);
         _hasModified = true;
     } else {
         LOG_WARN("Failed to modify address at 0x{:X}.", _address);
@@ -109,7 +108,7 @@ void Patcher::Modify() {
 
 void Patcher::Restore() {
     if (_hasModified && WriteMemory(_address, _originCode)) {
-        LOG_DEBUG("Restored address at 0x{:X} successfully.", _address);
+        // LOG_DEBUG("Restored address at 0x{:X} successfully.", _address);
         _hasModified = false;
     } else {
         LOG_WARN("Failed to restore address at 0x{:X}.", _address);
