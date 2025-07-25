@@ -58,10 +58,10 @@ public:
         return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *, const Rect &)>(Sexy_SexyAppBase_CopyImage2Addr)(this, theImage, theRect);
     }
 
+protected:
     __SexyAppBase() = default;
     ~__SexyAppBase() = default;
 
-protected:
     friend void ::InitHookFunction();
 
     void __Constructor();

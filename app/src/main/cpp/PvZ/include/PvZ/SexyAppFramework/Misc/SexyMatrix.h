@@ -9,8 +9,6 @@ namespace Sexy {
 
 class SexyMatrix3 {
 public:
-    SexyMatrix3() = default; // so 中存在对应的空函数
-
     union {
         float m[3][3];
         struct {
@@ -19,6 +17,8 @@ public:
             float m20, m21, m22;
         };
     };
+
+    SexyMatrix3() = default; // so 中存在对应的空函数
 };
 
 class SexyTransform2D : public SexyMatrix3 {

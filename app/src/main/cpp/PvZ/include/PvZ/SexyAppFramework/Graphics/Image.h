@@ -38,15 +38,16 @@ public:
     int unkMems3;          // 27
     // 大小28个整数
 
-    __Image() = default;
-    ~__Image() = default;
-
     int GetWidth();
     int GetHeight();
     int GetCelWidth();  // returns the width of just 1 cel in a strip of images
     int GetCelHeight(); // like above but for vertical strips
     void PushTransform(const SexyMatrix3 &theTransform, bool concatenate);
     void PopTransform();
+
+protected:
+    __Image() = default;
+    ~__Image() = default;
 };
 
 class Image : public __Image {

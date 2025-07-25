@@ -36,15 +36,16 @@ public:
     int mWidgetId;                 // 28
     // 大小未知，目前认为是29个整数。反正Widget是64个整数，足够了。
 
-    __WidgetContainer() = default;
-    ~__WidgetContainer() = default;
-
     void SetFocus(Widget *theWidget) {
         reinterpret_cast<void (*)(__WidgetContainer *, Widget *)>(Sexy_WidgetContainer_SetFocusAddr)(this, theWidget);
     }
     void MarkDirty() {
         reinterpret_cast<void (*)(__WidgetContainer *)>(Sexy_WidgetContainer_MarkDirtyAddr)(this);
     }
+
+protected:
+    __WidgetContainer() = default;
+    ~__WidgetContainer() = default;
 };
 
 class WidgetContainer : public __WidgetContainer {

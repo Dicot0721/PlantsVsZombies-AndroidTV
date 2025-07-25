@@ -78,9 +78,6 @@ public:
     float mNormalVolume;                   // 25
     // 大小26个整数
 
-    __Music() = default;
-    ~__Music() = default;
-
     void StopAllMusic() {
         reinterpret_cast<void (*)(__Music*)>(Music_StopAllMusicAddr)(this);
     }
@@ -104,6 +101,9 @@ public:
     void StartGameMusic(bool theStart);
 
 protected:
+    __Music() = default;
+    ~__Music() = default;
+
     void __Constructor() {
         reinterpret_cast<void (*)(__Music*)>(Music_MusicAddr)(this);
     }
