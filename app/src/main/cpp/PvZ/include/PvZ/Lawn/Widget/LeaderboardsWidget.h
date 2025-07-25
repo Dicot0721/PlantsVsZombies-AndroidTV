@@ -38,6 +38,12 @@ struct LeaderboardReanimations {
 
 class LeaderboardsWidget : public Sexy::Widget {
 public:
+    LeaderboardsWidget(LawnApp *theApp);
+
+    void ButtonPress(this LeaderboardsWidget &self, int id, int theCount) {}
+
+    void ButtonDepress(this LeaderboardsWidget &self, int id);
+
     LawnApp *mApp;                                     // 64
     TrashBin *mZombieTrashBin;                         // 65
     TrashBin *mPlantTrashBin;                          // 66
@@ -49,7 +55,19 @@ public:
     int mFocusedAchievementIndex;
     bool mHighLightAchievement;
 
-    LeaderboardsWidget(LawnApp *theApp);
+private:
+    static constexpr Sexy::ButtonListener::VTable sButtonListenerVtable{
+        // .ButtonPress = (void *)LeaderboardsWidget_ButtonPress;
+        .ButtonPress2 = (void *)&LeaderboardsWidget::ButtonPress,
+        .ButtonDepress = (void *)&LeaderboardsWidget::ButtonDepress,
+        .ButtonDownTick = (void *)Sexy_ButtonListener_ButtonDownTick,
+        .ButtonMouseEnter = (void *)Sexy_ButtonListener_ButtonMouseEnter,
+        .ButtonMouseLeave = (void *)Sexy_ButtonListener_ButtonMouseLeave,
+        .ButtonMouseMove = (void *)Sexy_ButtonListener_ButtonMouseMove,
+    };
+
+    static inline Sexy::ButtonListener sButtonListener{&sButtonListenerVtable};
+
 }; // 我想用LeaderboardsWidget取代DaveHelp。
 
 class DaveHelp : public Sexy::Widget {

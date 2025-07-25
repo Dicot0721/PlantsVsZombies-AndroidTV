@@ -130,16 +130,6 @@ int LeaderboardsWidget_GetAchievementIdByDrawOrder(int drawOrder) {
     return type - ReanimationType::REANIM_ACHIEVEMENT_HOME_SECURITY;
 }
 
-void LeaderboardsWidget_ButtonDepress(Sexy::ButtonListener *listener, int id) {
-    if (id == 1000) {
-        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-        lawnApp->KillLeaderboards();
-        lawnApp->ShowMainMenuScreen();
-    }
-}
-
-void LeaderboardsWidget_ButtonPress(Sexy::ButtonListener *listener, int id, int theCount) {}
-
 LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     new (this) DaveHelp{theApp};
     Resize(-240, -60, 1280, 720);
@@ -197,21 +187,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
 
     mLongestRecordPool = theApp->mPlayerInfo->mChallengeRecords[GameMode::GAMEMODE_SURVIVAL_ENDLESS_STAGE_3 - 2];
     //    this_->mLongestRecordPool = theApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ENDLESS_FLAGS];
-    LOG_DEBUG("mLongestRecordPool {} ", mLongestRecordPool);
-
-    // clang-format off
-    mButtonListener = new Sexy::ButtonListener{
-        .vTable = new Sexy::ButtonListenerVTable{
-            // .ButtonPress = (void *)LeaderboardsWidget_ButtonPress;
-            .ButtonPress2 = (void *)LeaderboardsWidget_ButtonPress,
-            .ButtonDepress = (void *)LeaderboardsWidget_ButtonDepress,
-            .ButtonDownTick = (void *)Sexy_ButtonListener_ButtonDownTick,
-            .ButtonMouseEnter = (void *)Sexy_ButtonListener_ButtonMouseEnter,
-            .ButtonMouseLeave = (void *)Sexy_ButtonListener_ButtonMouseLeave,
-            .ButtonMouseMove = (void *)Sexy_ButtonListener_ButtonMouseMove,
-        }
-    };
-    // clang-format on
+    mButtonListener = &sButtonListener;
 
     pvzstl::string str = TodStringTranslate("[CLOSE]");
     Sexy::GameButton *aBackButton = MakeButton(1000, mButtonListener, this, str);
@@ -221,6 +197,14 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     mBackButton = aBackButton;
     mFocusedAchievementIndex = 0;
     mHighLightAchievement = false;
+}
+
+void LeaderboardsWidget::ButtonDepress(this LeaderboardsWidget &self, int id) {
+    if (id == 1000) {
+        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+        lawnApp->KillLeaderboards();
+        lawnApp->ShowMainMenuScreen();
+    }
 }
 
 void DaveHelp_Update(LeaderboardsWidget *leaderboardsWidget) {
@@ -324,9 +308,7 @@ void DaveHelp_Delete2(LeaderboardsWidget *leaderboardsWidget) {
         delete leaderboardsWidget->mLeaderboardReanimations->achievementReanim[i];
     }
     leaderboardsWidget->mBackButton->~GameButton();
-    operator delete(leaderboardsWidget->mButtonListener->vTable);
-    operator delete(leaderboardsWidget->mButtonListener);
-    operator delete(leaderboardsWidget->mLeaderboardReanimations);
+    delete leaderboardsWidget->mLeaderboardReanimations;
 
     old_DaveHelp_Delete2(leaderboardsWidget);
 }

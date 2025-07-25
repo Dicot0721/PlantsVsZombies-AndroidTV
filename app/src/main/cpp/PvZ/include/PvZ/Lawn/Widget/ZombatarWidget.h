@@ -55,6 +55,23 @@ public:
 
     ZombatarWidget(LawnApp *theApp);
 
+    void ButtonPress(this ZombatarWidget &self, int id) {}
+
+    void ButtonDepress(this ZombatarWidget &self, int id);
+
+private:
+    static constexpr Sexy::ButtonListener::VTable sButtonListenerVtable{
+        // .ButtonPress = (void *)LeaderboardsWidget_ButtonPress;
+        .ButtonPress2 = (void *)&ZombatarWidget::ButtonPress,
+        .ButtonDepress = (void *)&ZombatarWidget::ButtonDepress,
+        .ButtonDownTick = (void *)Sexy_ButtonListener_ButtonDownTick,
+        .ButtonMouseEnter = (void *)Sexy_ButtonListener_ButtonMouseEnter,
+        .ButtonMouseLeave = (void *)Sexy_ButtonListener_ButtonMouseLeave,
+        .ButtonMouseMove = (void *)Sexy_ButtonListener_ButtonMouseMove,
+    };
+
+    static inline Sexy::ButtonListener sButtonListener{&sButtonListenerVtable};
+
 }; // 我想用ZombatarWidget取代TestMenuWidget。;
 
 class TestMenuWidget : public Sexy::MenuWidget {

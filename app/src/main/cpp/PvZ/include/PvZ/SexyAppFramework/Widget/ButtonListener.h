@@ -3,21 +3,21 @@
 
 namespace Sexy {
 
-struct ButtonListenerVTable {
-    void *__Destructor;
-    void *__Destructor2;
-    void *ButtonPress;
-    void *ButtonPress2;
-    void *ButtonDepress;
-    void *ButtonDownTick;
-    void *ButtonMouseEnter;
-    void *ButtonMouseLeave;
-    void *ButtonMouseMove;
-};
-
 class ButtonListener {
 public:
-    ButtonListenerVTable *vTable;
+    struct VTable {
+        void *__Destructor;
+        void *__Destructor2;
+        void *ButtonPress;
+        void *ButtonPress2;
+        void *ButtonDepress;
+        void *ButtonDownTick;
+        void *ButtonMouseEnter;
+        void *ButtonMouseLeave;
+        void *ButtonMouseMove;
+    };
+
+    const VTable *mVTable;
 };
 
 } // namespace Sexy

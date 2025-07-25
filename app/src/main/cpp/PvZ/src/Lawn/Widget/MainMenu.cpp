@@ -787,9 +787,7 @@ void ZombatarWidget_SetDefault(ZombatarWidget *zombatarWidget) {
     Reanimation_SetZombatarReanim(zombatarWidget->mZombatarReanim);
 }
 
-void ZombatarWidget_ButtonPress(ZombatarWidget *zombatarWidget, int id) {}
-
-void ZombatarWidget_ButtonDepress(ZombatarWidget *zombatarWidget, int id) {
+void ZombatarWidget::ButtonDepress(this ZombatarWidget &self, int id) {
     if (id == 1000) {
         LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
         lawnApp->KillZombatarScreen();
@@ -2169,20 +2167,9 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     theApp->LoadZombatarResources();
     theApp->Load("DelayLoad_Almanac");
     mApp = theApp;
-    Sexy::ButtonListener *mZombatarListener = (Sexy::ButtonListener *)operator new(sizeof(Sexy::ButtonListener));
-    mButtonListener = mZombatarListener;
-    Sexy::ButtonListenerVTable *mVTable = (Sexy::ButtonListenerVTable *)operator new(sizeof(Sexy::ButtonListenerVTable));
-    mZombatarListener->vTable = mVTable;
-    //    mVTable->ButtonPress = (void *) ZombatarWidget_ButtonPress;
-    mVTable->ButtonPress2 = (void *)ZombatarWidget_ButtonPress;
-    mVTable->ButtonDepress = (void *)ZombatarWidget_ButtonDepress;
-    mVTable->ButtonMouseEnter = (void *)Sexy_ButtonListener_ButtonMouseEnter;
-    mVTable->ButtonMouseMove = (void *)Sexy_ButtonListener_ButtonMouseMove;
-    mVTable->ButtonMouseLeave = (void *)Sexy_ButtonListener_ButtonMouseLeave;
-    mVTable->ButtonDownTick = (void *)Sexy_ButtonListener_ButtonDownTick;
-
+    mButtonListener = &sButtonListener;
     pvzstl::string str{"[CLOSE]"};
-    Sexy::GameButton *backButton = MakeButton(1000, mZombatarListener, this, str);
+    Sexy::GameButton *backButton = MakeButton(1000, mButtonListener, this, str);
     backButton->Resize(471, 628, addonZombatarImages.zombatar_mainmenuback_highlight->mWidth, addonZombatarImages.zombatar_mainmenuback_highlight->mHeight);
     AddWidget(backButton);
     backButton->mDrawStoneButton = false;
@@ -2192,7 +2179,7 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     mBackButton = backButton;
 
     pvzstl::string str1{"[OK]"};
-    Sexy::GameButton *finishButton = MakeButton(1001, mZombatarListener, nullptr, str1);
+    Sexy::GameButton *finishButton = MakeButton(1001, mButtonListener, nullptr, str1);
     finishButton->Resize(160 + 523, 565, addonZombatarImages.zombatar_finished_button->mWidth, addonZombatarImages.zombatar_finished_button->mHeight);
     AddWidget(finishButton);
     finishButton->mDrawStoneButton = false;
@@ -2202,7 +2189,7 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     mFinishButton = finishButton;
 
     pvzstl::string str2{"[OK]"};
-    Sexy::GameButton *viewPortraitButton = MakeButton(1002, mZombatarListener, nullptr, str2);
+    Sexy::GameButton *viewPortraitButton = MakeButton(1002, mButtonListener, nullptr, str2);
     viewPortraitButton->Resize(160 + 75, 565, addonZombatarImages.zombatar_view_button->mWidth, addonZombatarImages.zombatar_view_button->mHeight);
     AddWidget((Widget *)viewPortraitButton);
     viewPortraitButton->mDrawStoneButton = false;
@@ -2212,13 +2199,13 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     mViewPortraitButton = viewPortraitButton;
 
     pvzstl::string str3{"[ZOMBATAR_NEW_BUTTON]"};
-    Sexy::GameButton *newButton = MakeButton(1003, mZombatarListener, nullptr, str3);
+    Sexy::GameButton *newButton = MakeButton(1003, mButtonListener, nullptr, str3);
     newButton->Resize(578, 490, 170, 50);
     AddWidget((Widget *)newButton);
     mNewButton = newButton;
 
     pvzstl::string str4{"[ZOMBATAR_DELETE_BUTTON]"};
-    Sexy::GameButton *deleteButton = MakeButton(1004, mZombatarListener, nullptr, str4);
+    Sexy::GameButton *deleteButton = MakeButton(1004, mButtonListener, nullptr, str4);
     deleteButton->Resize(314, 490, 170, 50);
     AddWidget((Widget *)deleteButton);
     mDeleteButton = deleteButton;
@@ -3048,8 +3035,6 @@ void TestMenuWidget_Delete2(ZombatarWidget *zombatarWidget) {
 
     // GameButton_Delete(zombatarWidget->mNewButton);
     // GameButton_Delete(zombatarWidget->mDeleteButton);
-    operator delete(zombatarWidget->mButtonListener->vTable);
-    operator delete(zombatarWidget->mButtonListener);
     old_TestMenuWidget_Delete2(zombatarWidget);
 }
 
