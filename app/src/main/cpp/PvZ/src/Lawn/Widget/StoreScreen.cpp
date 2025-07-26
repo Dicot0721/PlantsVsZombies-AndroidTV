@@ -147,10 +147,12 @@ void StoreScreen::Draw(Sexy::Graphics *a2) {
         }
     }
 
-    if (theTotalPages <= 1)
+    if (theTotalPages <= 1) {
         return;
-
-    mPage == 5 ? 5 : mPage + 1;
+    }
+    if (mPage != 5) {
+        ++((int &)mPage);
+    }
     pvzstl::string str = StrFormat("%d/%d", mPage, theTotalPages);
     Color theColor = {200, 200, 200, 255};
     TodDrawString(a2, str, 410, 512, *Sexy_FONT_BRIANNETOD16_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);

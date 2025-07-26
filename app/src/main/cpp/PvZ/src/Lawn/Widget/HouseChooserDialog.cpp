@@ -26,7 +26,7 @@
 
 bool HouseChooserDialog::IsHouseAvaliable(HouseType houseType) {
     LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-    return houseType == 0 || lawnApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_BLUEPRINT_BLING + houseType] > 0;
+    return houseType == 0 || lawnApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_BLUEPRINT_BLING + int(houseType)] > 0;
 }
 
 void HouseChooserDialog::MouseDown(int x, int y, int theClickCount) {
@@ -72,5 +72,7 @@ void HouseChooserDialog::KeyDown(Sexy::KeyCode keyCode) {
         case 13:
         case 304:
             return GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+        default:
+            break;
     }
 }

@@ -102,10 +102,10 @@ void Plant::PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, Se
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         switch (theSeedType) {
             case SeedType::SEED_SUNFLOWER:
-                mPlantMaxHealth = 300;
-                break;
             case SeedType::SEED_PEASHOOTER:
                 mPlantMaxHealth = 300;
+                break;
+            default:
                 break;
         }
         mPlantHealth = mPlantMaxHealth;

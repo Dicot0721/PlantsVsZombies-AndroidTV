@@ -173,7 +173,6 @@ public:
     void SetScale(float theScaleX, float theScaleY, float theOrigX, float theOrigY);
     void PushTransform(int *theTransform, bool concatenate);
     void PopTransform();
-    void DrawTrianglesTex2(Image *theTexture, TriVertex theVertices[][3], int theNumTriangles);
 };
 
 } // namespace Sexy

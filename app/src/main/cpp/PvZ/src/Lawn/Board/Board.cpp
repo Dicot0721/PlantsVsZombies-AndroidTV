@@ -442,8 +442,9 @@ bool Board_ZenGardenItemNumIsZero(Board *board, CursorType cursorType) {
             return lawnApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_CHOCOLATE] <= 1000;
         case CursorType::CURSOR_TYPE_TREE_FOOD:
             return lawnApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_TREE_FOOD] <= 1000;
+        default:
+            return false;
     }
-    return false;
 }
 
 void Board::DrawZenButtons(Sexy::Graphics *g) {
@@ -487,7 +488,6 @@ void Board::UpdateZombieSpawning() {
 
     // 在黄油爆米花关卡改变出怪倒计时。
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN) {
-        int mZombieCountDown = mZombieCountDown;
         if (mZombieCountDown >= 2500 && mZombieCountDown <= 3100) {
             mZombieCountDown = 750;
             mZombieCountDownStart = mZombieCountDown;
@@ -2092,8 +2092,6 @@ void Board::MouseDown(int x, int y, int theClickCount) {
         }
     }
 
-
-    int seekBankPosition = mGamepadControls1->mSelectedSeedIndex;
     if (gPlayerIndex == TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
         if (mGameState == 7 || isCobCannonSelected || requestDrawShovelInCursor
             || (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN && mTouchState != TouchState::TOUCHSTATE_USEFUL_SEED_PACKET)) {
@@ -2167,8 +2165,6 @@ void Board::MouseDrag(int x, int y) {
 
     bool isCobCannonSelected = mGamepadControls1->mIsCobCannonSelected;
     SeedBank *seedBank = mGamepadControls1->GetSeedBank();
-    SeedBank *seedBank_2P = mGamepadControls2->GetSeedBank();
-    int currentSeedBankIndex_2P = mGamepadControls2->mSelectedSeedIndex;
     int mGameState_2P = mGamepadControls2->mGamepadState;
     bool isCobCannonSelected_2P = mGamepadControls2->mIsCobCannonSelected;
     int mGameState = mGamepadControls1->mGamepadState;
@@ -2303,14 +2299,12 @@ void Board::MouseUp(int x, int y, int theClickCount) {
     old_Board_MouseUp(this, x, y, theClickCount);
     if (mTouchState != TouchState::TOUCHSTATE_NONE && mSendKeyWhenTouchUp) {
         SeedBank *seedBank = mGamepadControls1->GetSeedBank();
-        int currentSeedBankIndex = mGamepadControls1->mSelectedSeedIndex;
         int numSeedsInBank = seedBank->GetNumSeedsOnConveyorBelt();
         int mGameState = mGamepadControls1->mGamepadState;
         bool isCobCannonSelected = mGamepadControls1->mIsCobCannonSelected;
 
         SeedBank *seedBank_2P = mGamepadControls2->GetSeedBank();
         int numSeedsInBank_2P = seedBank_2P->GetNumSeedsOnConveyorBelt();
-        int currentSeedBankIndex_2P = mGamepadControls2->mSelectedSeedIndex;
         int mGameState_2P = mGamepadControls2->mGamepadState;
         bool isCobCannonSelected_2P = mGamepadControls2->mIsCobCannonSelected;
 
@@ -2378,8 +2372,7 @@ void Board::MouseUp(int x, int y, int theClickCount) {
                 mGamepadControls2->mIsInShopSeedBank = mGameStateNew_2P != 7;
                 if (mGameState_2P != mGameStateNew_2P) {
                     if (!HasConveyorBeltSeedBank(1) || numSeedsInBank_2P == numSeedsInBankNew_2P) { // 修复传送带关卡种植之后SeedBank动画不正常
-                        SeedBank *seedBank_2P = mGamepadControls2->GetSeedBank();
-                        seedBank_2P->mSeedPackets[seedPacketIndexNew_2P].mLastSelectedTime = 0.0f; // 动画效果专用
+                        seedBank_2P->mSeedPackets[seedPacketIndexNew_2P].mLastSelectedTime = 0.0f;  // 动画效果专用
                     }
                 }
                 if (mGameMode == GameMode::GAMEMODE_MP_VS) {
@@ -2692,8 +2685,6 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
         }
     }
 
-
-    int seekBankPosition = mGamepadControls1->mSelectedSeedIndex;
     if (gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
         if (mGameState == 7 || isCobCannonSelected || requestDrawShovelInCursor
             || (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN && gTouchStateSecond != TouchState::TOUCHSTATE_USEFUL_SEED_PACKET)) {
@@ -2772,8 +2763,6 @@ void Board::MouseDragSecond(int x, int y) {
     bool isCobCannonSelected = mGamepadControls1->mIsCobCannonSelected;
     bool isCobCannonSelected_2P = mGamepadControls2->mIsCobCannonSelected;
     SeedBank *aSeedBank = mGamepadControls1->GetSeedBank();
-    SeedBank *aSeedBank_2P = mGamepadControls2->GetSeedBank();
-    int currentSeedBankIndex_2P = mGamepadControls2->mSelectedSeedIndex;
     int aGameState = mGamepadControls1->mGamepadState;
     int aGameState_2P = mGamepadControls2->mGamepadState;
     GameMode aGameMode = mApp->mGameMode;
@@ -2905,13 +2894,11 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
     if (gTouchStateSecond != TouchState::TOUCHSTATE_NONE && gSendKeyWhenTouchUpSecond) {
         SeedBank *aSeedBank = mGamepadControls1->GetSeedBank();
         int aNumSeedsOnConveyor = aSeedBank->GetNumSeedsOnConveyorBelt();
-        int aCurrentSeedBankIndex = mGamepadControls1->mSelectedSeedIndex;
         int aGameState = mGamepadControls1->mGamepadState;
         bool aIsCobCannonSelected = mGamepadControls1->mIsCobCannonSelected;
 
         SeedBank *aSeedBank_2P = mGamepadControls2->GetSeedBank();
         int aNumSeedsOnConveyor_2P = aSeedBank_2P->GetNumSeedsOnConveyorBelt();
-        int aCurrentSeedBankIndex_2P = mGamepadControls2->mSelectedSeedIndex;
         int aGameState_2P = mGamepadControls2->mGamepadState;
         bool aIsCobCannonSelected_2P = mGamepadControls2->mIsCobCannonSelected;
 
@@ -3522,6 +3509,8 @@ void Board::FixReanimErrorAfterLoad() {
                             break;
                     }
                     break;
+                case ShieldType::SHIELDTYPE_NONE:
+                    break;
             }
         }
 
@@ -3591,6 +3580,8 @@ void Board::FixReanimErrorAfterLoad() {
                             break;
                     }
                 } break;
+                default:
+                    break;
             }
         }
 

@@ -32,23 +32,6 @@ void Graphics::PopTransform() {
     old_Sexy_Graphics_PopTransform(this);
 }
 
-void Graphics::DrawTrianglesTex2(Image *theTexture, TriVertex theVertices[][3], int theNumTriangles) {
-    SexyVertex2D tmp[theNumTriangles][3];
-
-    for (int i = 0; i < theNumTriangles; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            for (int j = 0; j < 3; ++j) {
-                tmp[i][j].x = theVertices[i][j].x;
-                tmp[i][j].y = theVertices[i][j].y;
-                tmp[i][j].u = theVertices[i][j].u;
-                tmp[i][j].v = theVertices[i][j].v;
-                tmp[i][j].color = theVertices[i][j].color;
-            }
-        }
-        DrawTrianglesTex(theTexture, tmp, theNumTriangles);
-    }
-}
-
 void Sexy_Graphics_DrawImageColorized(Sexy::Graphics *g, Sexy::Image *image, Sexy::Color *color, int x, int y) {
     g->SetColor(*color);
     g->SetColorizeImages(true);

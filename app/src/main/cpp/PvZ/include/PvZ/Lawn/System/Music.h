@@ -113,10 +113,8 @@ public:
     void MusicResync();
     void StartBurst();
     void PlayFromOffset(MusicFile theMusicFile, int theOffset, double theVolume);
-    void UpdateMusicBurst1();
     void UpdateMusicBurst2();
     void ResyncChannel(MusicFile theFile1, MusicFile theFile2);
-    void SetupMusicFileForTune1(MusicFile theMusicFile, MusicTune theMusicTune);
     void StartGameMusic(bool theStart);
 
 protected:

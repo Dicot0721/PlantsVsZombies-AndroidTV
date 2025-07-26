@@ -942,16 +942,14 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
             } else {
                 switch (buttonCode) {
                     case 16:
-                        GamepadVelocityYOfPlayer1 = 0;
-                        break;
                     case 17:
                         GamepadVelocityYOfPlayer1 = 0;
                         break;
                     case 18:
-                        GamepadVelocityXOfPlayer1 = 0;
-                        break;
                     case 19:
                         GamepadVelocityXOfPlayer1 = 0;
+                        break;
+                    default:
                         break;
                 }
             }
@@ -981,16 +979,14 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
             } else {
                 switch (buttonCode) {
                     case 16:
-                        GamepadVelocityYOfPlayer2 = 0;
-                        break;
                     case 17:
                         GamepadVelocityYOfPlayer2 = 0;
                         break;
                     case 18:
-                        GamepadVelocityXOfPlayer2 = 0;
-                        break;
                     case 19:
                         GamepadVelocityXOfPlayer2 = 0;
+                        break;
+                    default:
                         break;
                 }
             }

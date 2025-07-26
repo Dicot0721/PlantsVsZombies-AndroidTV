@@ -328,6 +328,8 @@ void GamepadControls::UpdatePreviewReanim() {
                 case ZombieType::ZOMBIE_POLEVAULTER:
                     theDrawHeightOffset += 15.0;
                     break;
+                default:
+                    break;
             }
             ZombieDefinition &theZombieDefinition = GetZombieDefinition(theZombieType);
             Reanimation *zombieReanim = aApp->AddReanimation(-20.0, -35 - theDrawHeightOffset, aRenderOrder + 1, theZombieDefinition.mReanimationType);

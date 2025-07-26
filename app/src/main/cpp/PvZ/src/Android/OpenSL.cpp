@@ -47,7 +47,7 @@ SLPlayItf playerPlay;
 SLAndroidSimpleBufferQueueItf playerBufferQueue;
 
 // Buffer
-unsigned char buffer[8192];
+[[maybe_unused]] unsigned char buffer[8192];
 
 } // namespace
 
@@ -150,9 +150,8 @@ bool Native_AudioOutput_setup(Native::AudioOutput *audioOutput, int sampleRate, 
     setup(sampleRate, channels, bits);
     play();
     Native::NativeApp *mNativeApp = audioOutput->mNativeApp;
-    int *mAudioOutput = *(int **)(*(uint32_t *)mNativeApp + 188);
+    // int *mAudioOutput = *(int **)(*(uint32_t *)mNativeApp + 188);
     *(uint32_t *)(*(uint32_t *)mNativeApp + 188) = 0;
-
 
     return result;
 }

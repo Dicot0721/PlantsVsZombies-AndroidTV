@@ -40,127 +40,6 @@ bool muteMusic;
 int theCounter;
 } // namespace
 
-void __Music::SetupMusicFileForTune1(MusicFile theMusicFile, MusicTune theMusicTune) {
-    int v7;  // r7
-    int v9;  // r9
-    int v10; // r8
-    int v11; // r4
-    int v8;
-    float v13; // r3
-    bool v14;  // r2
-    int v15;   // r2
-
-    if (theMusicTune == MusicTune::MUSIC_TUNE_DAY_GRASSWALK) {
-        switch (theMusicFile) {
-            case MusicFile::MUSIC_FILE_MAIN_MUSIC:
-                v8 = -1;
-                v7 = 23;
-                v9 = 0;
-                v10 = 29;
-                break;
-            case MusicFile::MUSIC_FILE_DRUMS:
-                v8 = -1;
-                v7 = 26;
-                v9 = 24;
-                v10 = 29;
-                break;
-            case MusicFile::MUSIC_FILE_HIHATS:
-                v7 = 27;
-                v8 = -1;
-                v9 = 27;
-                v10 = 29;
-                break;
-        }
-    } else if (theMusicTune == MusicTune::MUSIC_TUNE_POOL_WATERYGRAVES) {
-        switch (theMusicFile) {
-            case MusicFile::MUSIC_FILE_MAIN_MUSIC:
-                v8 = -1;
-                v7 = 17;
-                v10 = 29;
-                break;
-            case MusicFile::MUSIC_FILE_DRUMS:
-                v8 = -1;
-                v7 = 28;
-                v9 = 18;
-                v10 = 29;
-                break;
-            case MusicFile::MUSIC_FILE_HIHATS:
-                v8 = 29;
-                v7 = 24;
-                v10 = 29;
-                v9 = 18;
-                break;
-        }
-    } else if (theMusicTune == MusicTune::MUSIC_TUNE_FOG_RIGORMORMIST) {
-        switch (theMusicFile) {
-            case MusicFile::MUSIC_FILE_MAIN_MUSIC:
-                v9 = 0;
-                v8 = -1;
-                v7 = 15;
-                v10 = 29;
-                break;
-            case MusicFile::MUSIC_FILE_DRUMS:
-                v8 = -1;
-                v7 = 22;
-                v9 = 16;
-                v10 = 29;
-                break;
-            case MusicFile::MUSIC_FILE_HIHATS:
-                v7 = 23;
-                v8 = -1;
-                v9 = 23;
-                v10 = 29;
-                break;
-        }
-    } else if (theMusicTune == MusicTune::MUSIC_TUNE_ROOF_GRAZETHEROOF) {
-        switch (theMusicFile) {
-            case MusicFile::MUSIC_FILE_MAIN_MUSIC:
-                v8 = -1;
-                v7 = 17;
-                v9 = 0;
-                v10 = 29;
-                break;
-            case MusicFile::MUSIC_FILE_DRUMS:
-                v8 = -1;
-                v7 = 20;
-                v9 = 18;
-                v10 = 29;
-                break;
-            case MusicFile::MUSIC_FILE_HIHATS:
-                v7 = 21;
-                v8 = -1;
-                v9 = 21;
-                v10 = 29;
-                break;
-        }
-    } else if ((unsigned int)(theMusicFile - 1) <= 2) {
-        v7 = 29;
-        v9 = 0;
-        v10 = 29;
-        v8 = -1;
-    } else {
-        v8 = -1;
-        v10 = 0;
-        v7 = -1;
-        v9 = -1;
-    }
-    v11 = 0;
-    do {
-        v13 = 1.0;
-        v14 = v11 <= v7;
-        if (v11 < v9)
-            v14 = 0;
-        if (!v14) {
-            if (v8 == v11)
-                v13 = 1.0;
-            else
-                v13 = 0.0;
-        }
-        v15 = v11++;
-        mMusicInterface->SetChannelVolume(theMusicFile, v15, v13);
-    } while (v10 >= v11);
-}
-
 void __Music::PlayFromOffset(MusicFile theMusicFile, int theOffset, double theVolume) {
     mMusicInterface->StopMusic(theMusicFile);
     SetupMusicFileForTune(theMusicFile, mCurMusicTune);
@@ -320,7 +199,7 @@ void __Music::UpdateMusicBurst2() {
     double v9;                           // st6
     int v11;                             // eax
     unsigned int v14;                    // eax
-    MusicTune v15;                       // ebx
+    [[maybe_unused]] MusicTune v15;      // ebx
     int v16;                             // edi
     int aQueuedDrumTrackPackedOrder_low; // ecx
     int v18;                             // eax
@@ -401,7 +280,7 @@ void __Music::UpdateMusicBurst2() {
                     mBurstStateCounter = 800;
                     mMusicDrumsState = MusicDrumsState::MUSIC_DRUMS_OFF_QUEUED;
                     mQueuedDrumTrackPackedOrder = MusicOrder;
-                } else if (isNightMoonGrainsMode) {
+                } else {
                     mMusicBurstState = MusicBurstState::MUSIC_BURST_FINISHING;
                     mBurstStateCounter = 1100;
                     mMusicDrumsState = MusicDrumsState::MUSIC_DRUMS_FADING;
@@ -468,6 +347,8 @@ void __Music::UpdateMusicBurst2() {
             aFadeTrackVolume = TodAnimateCurveFloat(isNightMoonGrainsMode ? 800 : 50, 0, mDrumsStateCounter, aPositionStart, aPositionEnd, TodCurves::CURVE_LINEAR);
             if (mDrumsStateCounter == 0)
                 mMusicDrumsState = MusicDrumsState::MUSIC_DRUMS_OFF;
+            break;
+        case MusicDrumsState::MUSIC_DRUMS_OFF:
             break;
     }
     if (!isNightMoonGrainsMode) {

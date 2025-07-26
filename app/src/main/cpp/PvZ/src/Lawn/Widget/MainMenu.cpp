@@ -2267,13 +2267,15 @@ void TestMenuWidget_Update(ZombatarWidget *zombatarWidget) {
 
 void TestMenuWidget_DrawZombieSelection(ZombatarWidget *zombatarWidget, Sexy::Graphics *graphics) {
     // TODO: 做僵尸选择功能
-    ZombieType types[] = {ZombieType::ZOMBIE_NORMAL,
-                          ZombieType::ZOMBIE_FLAG,
-                          ZombieType::ZOMBIE_TRAFFIC_CONE,
-                          ZombieType::ZOMBIE_DOOR,
-                          ZombieType::ZOMBIE_TRASH_BIN,
-                          ZombieType::ZOMBIE_PAIL,
-                          ZombieType::ZOMBIE_DUCKY_TUBE};
+    [[maybe_unused]] ZombieType types[] = {
+        ZombieType::ZOMBIE_NORMAL,
+        ZombieType::ZOMBIE_FLAG,
+        ZombieType::ZOMBIE_TRAFFIC_CONE,
+        ZombieType::ZOMBIE_DOOR,
+        ZombieType::ZOMBIE_TRASH_BIN,
+        ZombieType::ZOMBIE_PAIL,
+        ZombieType::ZOMBIE_DUCKY_TUBE,
+    };
 }
 
 void TestMenuWidget_DrawSkin(ZombatarWidget *zombatarWidget, Sexy::Graphics *graphics) {

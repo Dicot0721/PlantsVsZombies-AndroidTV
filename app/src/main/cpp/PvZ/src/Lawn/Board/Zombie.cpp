@@ -1096,6 +1096,8 @@ void Zombie::GetDrawPos(ZombieDrawPosition &theDrawPos) {
         case ZombieType::ZOMBIE_BOBSLED:
             theDrawPos.mImageOffsetY -= 12.0f;
             break;
+        default:
+            break;
     }
 
     if (mZombiePhase == ZombiePhase::PHASE_RISING_FROM_GRAVE) {

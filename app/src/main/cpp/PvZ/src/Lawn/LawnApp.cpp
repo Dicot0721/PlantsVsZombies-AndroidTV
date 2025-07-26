@@ -169,7 +169,7 @@ int LawnApp::GamepadToPlayerIndex(unsigned int thePlayerIndex) {
     }
 
     if (thePlayerIndex <= 3) {
-        if (mPlayerInfo && thePlayerIndex == (*((int(__fastcall **)(DefaultPlayerInfo *))mPlayerInfo->vTable + 2))(mPlayerInfo))
+        if (mPlayerInfo && thePlayerIndex == (*((int (**)(DefaultPlayerInfo *))mPlayerInfo->vTable + 2))(mPlayerInfo))
             return 0;
 
         if (mTwoPlayerState != -1 && mTwoPlayerState == thePlayerIndex)
@@ -465,7 +465,7 @@ void LawnApp::SetHouseReanim(Reanimation *theHouseAnim) {
         return;
 
     HouseType currentHouseType = mPlayerInfo->mGameStats.mHouseType;
-    int currentHouseLevel = mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_BLUEPRINT_BLING + currentHouseType];
+    int currentHouseLevel = mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_BLUEPRINT_BLING + int(currentHouseType)];
     if (currentHouseType == HouseType::BLUEPRINT_BLING) {
         if (CanShowStore()) {
             currentHouseLevel += 3;

@@ -98,6 +98,8 @@ int LeaderboardsWidget_GetAchievementIdByReanimationType(ReanimationType type) {
         case ReanimationType::REANIM_ACHIEVEMENT_NOM_NOM_NOM:
             id = AchievementId::ACHIEVEMENT_CHOMP;
             break;
+        default:
+            break;
     }
     return id - AchievementId::ACHIEVEMENT_HOME_SECURITY;
 }

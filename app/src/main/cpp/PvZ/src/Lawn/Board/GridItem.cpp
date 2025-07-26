@@ -191,6 +191,8 @@ void GridItem::DrawSquirrel(Sexy::Graphics* g) {
         case GridItemState::GRIDITEM_STATE_SQUIRREL_RUNNING_RIGHT:
             aXPos += TodAnimateCurve(50, 0, mGridItemCounter, -80, 0.0f, TodCurves::CURVE_EASE_IN);
             break;
+        default:
+            break;
     }
 
     g->DrawImage(addonImages.squirrel, aXPos, aYPos);

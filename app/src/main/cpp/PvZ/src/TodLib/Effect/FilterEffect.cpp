@@ -47,6 +47,8 @@ MemoryImage *FilterEffectCreateImage(Image *theImage, FilterEffect theFilterEffe
         case FilterEffect::FILTEREFFECT_CUSTOM:
             FilterEffectDoLumSat(aImage, 1.05, 0.8); // 仅MainMenu显示房子雾蒙蒙效果时用到。数值是自己瞎调的
             break;
+        default:
+            break;
     }
     //    ++memoryImage->mBitsChangedCount;
     aImage->BitsChanged();

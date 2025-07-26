@@ -58,12 +58,12 @@ void ChallengeScreen::__Constructor(LawnApp *theApp, ChallengePage thePage) {
 
 namespace {
 ChallengeDefinition gButteredPopcornDef = {GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN, 37, ChallengePage::CHALLENGE_PAGE_CHALLENGE, 6, 1, "[BUTTERED_POPCORN]"};
-ChallengeDefinition gPoolPartyDef = {GameMode::GAMEMODE_CHALLENGE_POOL_PARTY, 37, ChallengePage::CHALLENGE_PAGE_CHALLENGE, 6, 2, "[POOL_PARTY]"};
-ChallengeDefinition gVSDayDef = {GameMode::GAMEMODE_MP_VS_DAY, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_DAY]"};
-ChallengeDefinition gVSNightDef = {GameMode::GAMEMODE_MP_VS_NIGHT, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_NIGHT]"};
-ChallengeDefinition gVSPoolDayDef = {GameMode::GAMEMODE_MP_VS_POOL_DAY, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_POOL_DAY]"};
-ChallengeDefinition gVSPoolNightDef = {GameMode::GAMEMODE_MP_VS_POOL_NIGHT, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_POOL_NIGHT]"};
-ChallengeDefinition gVSRoofDef = {GameMode::GAMEMODE_MP_VS_ROOF, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_ROOF]"};
+[[maybe_unused]] ChallengeDefinition gPoolPartyDef = {GameMode::GAMEMODE_CHALLENGE_POOL_PARTY, 37, ChallengePage::CHALLENGE_PAGE_CHALLENGE, 6, 2, "[POOL_PARTY]"};
+[[maybe_unused]] ChallengeDefinition gVSDayDef = {GameMode::GAMEMODE_MP_VS_DAY, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_DAY]"};
+[[maybe_unused]] ChallengeDefinition gVSNightDef = {GameMode::GAMEMODE_MP_VS_NIGHT, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_NIGHT]"};
+[[maybe_unused]] ChallengeDefinition gVSPoolDayDef = {GameMode::GAMEMODE_MP_VS_POOL_DAY, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_POOL_DAY]"};
+[[maybe_unused]] ChallengeDefinition gVSPoolNightDef = {GameMode::GAMEMODE_MP_VS_POOL_NIGHT, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_POOL_NIGHT]"};
+[[maybe_unused]] ChallengeDefinition gVSRoofDef = {GameMode::GAMEMODE_MP_VS_ROOF, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_ROOF]"};
 } // namespace
 
 ChallengeDefinition &GetChallengeDefinition(int theChallengeMode) {
@@ -111,6 +111,8 @@ void ChallengeScreen::Draw(Sexy::Graphics *graphics) {
             break;
         case ChallengePage::CHALLENGE_PAGE_PUZZLE:
             mTotalTrophiesInPage = 18;
+            break;
+        default:
             break;
     }
 

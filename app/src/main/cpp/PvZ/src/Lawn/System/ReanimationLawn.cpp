@@ -34,7 +34,6 @@ void ReanimatorCache::LoadCachedImages() {
 void ReanimatorCache::UpdateReanimationForVariation(Reanimation *theReanim, DrawVariation theDrawVariation) {
     // 修复商店花盆不显示、修复花园花盆不显示、修复花园手套和推车预览不显示。原理就是Reanimation::Update。
     old_ReanimatorCache_UpdateReanimationForVariation(this, theReanim, theDrawVariation);
-    float tmp = theReanim->mAnimRate;
     //    Reanimation_SetAnimRate(theReanim, 0.0f);
     theReanim->Update();
     //    Reanimation_SetAnimRate(theReanim, tmp);
