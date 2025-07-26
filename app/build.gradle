@@ -47,7 +47,7 @@ android {
             jniDebuggable = false
             minifyEnabled = true
             shrinkResources = true
-//            signingConfig = signingConfigs.release
+            signingConfig = signingConfigs.release
         }
     }
 
