@@ -29,25 +29,28 @@ android {
     signingConfigs {
         // 本文件已被 git 跟踪, 不要在此处修改签名配置, 需要自定义签名配置请参考 README.md
         release {
-            keyAlias = keystoreProperties.getProperty("keyAlias", "key0")
-            keyPassword = keystoreProperties.getProperty("keyPassword", "wewewe")
-            storeFile = file(keystoreProperties.getProperty("storeFile", "D:/key.keystore"))
-            storePassword = keystoreProperties.getProperty("storePassword", "wewewe")
+            keyAlias = keystoreProperties.getProperty("keyAlias", "androiddebugkey")
+            keyPassword = keystoreProperties.getProperty("keyPassword", "android")
+            storeFile = file(keystoreProperties.getProperty("storeFile", "${System.getProperty("user.home")}/debug.keystore"))
+            storePassword = keystoreProperties.getProperty("storePassword", "android")
         }
     }
 
     buildTypes {
         debug {
-            debuggable = true
-            jniDebuggable = true
+            applicationIdSuffix = ".debug"
         }
 
         release {
-            debuggable = false
-            jniDebuggable = false
-            minifyEnabled = true
-            shrinkResources = true
             signingConfig = signingConfigs.release
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Release" // will be "RelWithDebInfo" if not set
+                }
+            }
+            /* Uncommenting will cause a crash. */
+            // minifyEnabled = true
+            // shrinkResources = true
         }
     }
 
@@ -56,7 +59,7 @@ android {
     productFlavors {
         create("v111") {
             dimension = "version"
-            applicationIdSuffix = ".v111"
+            applicationId = "com.trans.pvz"
             versionName = "1.1.1"
             externalNativeBuild {
                 cmake {
@@ -67,7 +70,6 @@ android {
 
         create("v115") {
             dimension = "version"
-            applicationIdSuffix = ".v115"
             versionName = "1.1.5"
             externalNativeBuild {
                 cmake {
