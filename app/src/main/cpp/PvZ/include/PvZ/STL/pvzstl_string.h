@@ -25,6 +25,7 @@
 #include <atomic>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 
 #ifdef PVZ_VERSION
 extern uintptr_t gLibBaseOffset;
@@ -64,13 +65,27 @@ struct __uninitialized_size_tag {};
 template <typename CharT>
 class basic_string {
 public:
+    static_assert(std::is_same_v<CharT, char> || std::is_same_v<CharT, wchar_t> || std::is_same_v<CharT, char32_t>);
+
     using traits_type = std::char_traits<CharT>;
     using value_type = CharT;
     using size_type = std::uint32_t;
+    using difference_type = std::ptrdiff_t;
+    using pointer = value_type *;
+    using const_pointer = const value_type *;
+    using reference = value_type &;
+    using const_reference = const value_type &;
+
+#ifdef __cpp_lib_ranges_as_const
+    using const_iterator = std::basic_const_iterator<const_pointer>;
+#else
+    using const_iterator = const_pointer;
+#endif
+    using iterator = const_iterator;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    using reverse_iterator = const_reverse_iterator;
 
     using __self_view = std::basic_string_view<CharT>;
-
-    static_assert(std::is_same_v<CharT, char> || std::is_same_v<CharT, wchar_t> || std::is_same_v<CharT, char32_t>);
 
     static constexpr size_type npos = static_cast<size_type>(-1);
 
@@ -94,6 +109,12 @@ public:
         str.__check_range(pos, "basic_string");
         __init(str.c_str() + pos, str.size() - pos);
     }
+
+    basic_string(basic_string &&str, size_type pos, size_type n)
+        : basic_string{std::move(str.assign(str, pos, n))} {}
+
+    basic_string(basic_string &&str, size_type pos)
+        : basic_string{std::move(str.assign(str, pos))} {}
 
     basic_string(const CharT *s, size_type n) {
         assert((s != nullptr || n == 0) && "basic_string(const CharT *, n) detected nullptr");
@@ -124,7 +145,7 @@ public:
     }
 
     basic_string &operator=(basic_string &&other) noexcept {
-        this->swap(other);
+        swap(other);
         return *this;
     }
 
@@ -134,7 +155,7 @@ public:
 
     basic_string &operator=(std::nullptr_t) = delete;
 
-    basic_string &assign(const basic_string &str, size_type pos, size_type n) {
+    basic_string &assign(const basic_string &str, size_type pos, size_type n = npos) {
         str.__check_range(pos, "basic_string::assign");
         return assign(str.c_str() + pos, std::min(n, str.size() - pos));
     }
@@ -152,15 +173,14 @@ public:
         __check_length(0, n, "basic_string::assign");
         if (__disjunct(s) || __get_rep()->__is_shared()) {
             return __replace_safe(0, size(), s, n);
-        } else {
-            const size_type pos = s - c_str();
-            if (pos >= n) {
-                traits_type::copy(__data_, s, n);
-            } else if (pos > 0) {
-                traits_type::move(__data_, s, n);
-            }
-            __get_rep()->__set_size(n);
         }
+        const size_type pos = s - c_str();
+        if (pos >= n) {
+            traits_type::copy(__data_, s, n);
+        } else if (pos > 0) {
+            traits_type::move(__data_, s, n);
+        }
+        __get_rep()->__set_size(n);
         return *this;
     }
 
@@ -197,6 +217,38 @@ public:
 
     [[nodiscard]] const CharT *c_str() const noexcept {
         return __data_;
+    }
+
+    [[nodiscard]] const_iterator begin() const noexcept {
+        return cbegin();
+    }
+
+    [[nodiscard]] const_iterator end() const noexcept {
+        return cend();
+    }
+
+    [[nodiscard]] const_iterator cbegin() const noexcept {
+        return const_iterator{c_str()};
+    }
+
+    [[nodiscard]] const_iterator cend() const noexcept {
+        return const_iterator{c_str() + size()};
+    }
+
+    [[nodiscard]] const_reverse_iterator rbegin() const noexcept {
+        return crbegin();
+    }
+
+    [[nodiscard]] const_reverse_iterator rend() const noexcept {
+        return crend();
+    }
+
+    [[nodiscard]] const_reverse_iterator crbegin() const noexcept {
+        return const_reverse_iterator{cend()};
+    }
+
+    [[nodiscard]] const_reverse_iterator crend() const noexcept {
+        return const_reverse_iterator{cbegin()};
     }
 
     [[nodiscard]] bool empty() const noexcept {
@@ -250,22 +302,21 @@ public:
         __check_length(0, n, "basic_string::insert");
         if (__disjunct(s) || __get_rep()->__is_shared()) {
             return __replace_safe(pos, 0, s, n);
-        } else {
-            const size_type off = s - c_str();
-            __mutate(pos, 0, n);
-            s = c_str() + off;
-            CharT *p = __data_ + pos;
-            if (s + n <= p) {
-                traits_type::copy(p, s, n);
-            } else if (s >= p) {
-                traits_type::copy(p, s + n, n);
-            } else {
-                const size_type nleft = p - s;
-                traits_type::copy(p, s, nleft);
-                traits_type::copy(p + nleft, p + n, n - nleft);
-            }
-            return *this;
         }
+        const size_type off = s - c_str();
+        __mutate(pos, 0, n);
+        s = c_str() + off;
+        CharT *p = __data_ + pos;
+        if (s + n <= p) {
+            traits_type::copy(p, s, n);
+        } else if (s >= p) {
+            traits_type::copy(p, s + n, n);
+        } else {
+            const size_type nleft = p - s;
+            traits_type::copy(p, s, nleft);
+            traits_type::copy(p + nleft, p + n, n - nleft);
+        }
+        return *this;
     }
 
     basic_string &insert(size_type pos, const CharT *s) {
@@ -306,12 +357,14 @@ public:
         }
         __check_length(0, n, "basic_string::append");
         const size_type len = n + size();
-        if (__disjunct(s)) {
-            reserve(len);
-        } else {
-            const size_type off = s - c_str();
-            reserve(len);
-            s = c_str() + off;
+        if (len > capacity() || __get_rep()->__is_shared()) {
+            if (__disjunct(s)) {
+                reserve(len);
+            } else {
+                const size_type off = s - c_str();
+                reserve(len);
+                s = c_str() + off;
+            }
         }
         traits_type::copy(__data_ + size(), s, n);
         __get_rep()->__set_size(len);
@@ -383,9 +436,7 @@ public:
     }
 
     void swap(basic_string &other) noexcept {
-        if (__get_rep() != other.__get_rep()) {
-            std::swap(__data_, other.__data_);
-        }
+        std::swap(__data_, other.__data_);
     }
 
     [[nodiscard]] size_type find(const basic_string &str, size_type pos = 0) const noexcept {
@@ -393,7 +444,7 @@ public:
     }
 
     template <__convertible_to_string_view<CharT> StringViewLike>
-    [[nodiscard]] size_type find(const StringViewLike &t, size_type pos = 0) const noexcept {
+    [[nodiscard]] size_type find(const StringViewLike &t, size_type pos = 0) const noexcept(std::is_nothrow_convertible_v<const StringViewLike &, __self_view>) {
         const auto xpos = __self_view{c_str(), size()}.find(__self_view{t}, pos);
         if constexpr (std::is_same_v<size_type, typename __self_view::size_type>) {
             return xpos;
@@ -458,8 +509,12 @@ public:
         return __self_view{c_str(), size()}.contains(s);
     }
 
-    [[nodiscard]] basic_string substr(size_type pos = 0, size_type n = npos) const {
+    [[nodiscard]] basic_string substr(size_type pos = 0, size_type n = npos) const & {
         return basic_string{*this, __check_range(pos, "basic_string::substr"), n};
+    }
+
+    [[nodiscard]] basic_string substr(size_type pos = 0, size_type n = npos) && {
+        return basic_string{std::move(*this), __check_range(pos, "basic_string::substr"), n};
     }
 
     /**
