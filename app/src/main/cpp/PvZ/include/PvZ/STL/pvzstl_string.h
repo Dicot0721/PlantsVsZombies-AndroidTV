@@ -524,7 +524,7 @@ public:
      * @brief 就地构造 pvzstl::basic_string 对象.
      */
     template <typename... Args>
-        requires std::constructible_from<basic_string, Args...>
+        requires std::constructible_from<basic_string, Args &&...>
     basic_string &emplace(Args &&...args) {
         return *::new (this) basic_string{std::forward<Args>(args)...};
     }
