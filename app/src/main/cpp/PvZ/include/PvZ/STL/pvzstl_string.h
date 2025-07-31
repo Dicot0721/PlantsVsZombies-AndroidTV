@@ -89,10 +89,10 @@ public:
 
     static constexpr size_type npos = static_cast<size_type>(-1);
 
-    basic_string()
+    basic_string() noexcept
         : __data_{__rep::__empty_rep().__data} {}
 
-    basic_string(const basic_string &other)
+    basic_string(const basic_string &other) noexcept
         : __data_{other.__get_rep()->__ref_copy()} {}
 
     basic_string(basic_string &&other) noexcept
@@ -136,7 +136,7 @@ public:
         return __self_view{c_str(), size()};
     }
 
-    basic_string &operator=(const basic_string &other) {
+    basic_string &operator=(const basic_string &other) noexcept {
         if (__get_rep() != other.__get_rep()) {
             __get_rep()->__dispose();
             __data_ = other.__get_rep()->__ref_copy();
