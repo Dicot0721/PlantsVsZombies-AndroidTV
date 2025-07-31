@@ -453,12 +453,12 @@ public:
         }
     }
 
-    [[nodiscard]] size_type find(const CharT *s, size_type pos, size_type n) const noexcept {
+    [[nodiscard]] size_type find(const CharT *s, size_type pos, size_type n) const {
         assert((s != nullptr || n == 0) && "basic_string::find received nullptr");
         return find(__self_view{s, n}, pos);
     }
 
-    [[nodiscard]] size_type find(const CharT *s, size_type pos = 0) const noexcept {
+    [[nodiscard]] size_type find(const CharT *s, size_type pos = 0) const {
         assert((s != nullptr) && "basic_string::find received nullptr");
         return find(__self_view{s}, pos);
     }
@@ -481,7 +481,8 @@ public:
         return !empty() && (front() == c);
     }
 
-    [[nodiscard]] bool starts_with(const CharT *s) const noexcept {
+    [[nodiscard]] bool starts_with(const CharT *s) const {
+        assert((s != nullptr) && "basic_string::starts_with received nullptr");
         return starts_with(__self_view{s});
     }
 
@@ -493,7 +494,8 @@ public:
         return !empty() && (back() == c);
     }
 
-    [[nodiscard]] bool ends_with(const CharT *s) const noexcept {
+    [[nodiscard]] bool ends_with(const CharT *s) const {
+        assert((s != nullptr) && "basic_string::ends_with received nullptr");
         return ends_with(__self_view{s});
     }
 
@@ -506,6 +508,7 @@ public:
     }
 
     [[nodiscard]] bool contains(const CharT *s) const {
+        assert((s != nullptr) && "basic_string::contains received nullptr");
         return __self_view{c_str(), size()}.contains(s);
     }
 
@@ -672,7 +675,7 @@ template <typename CharT>
 }
 
 template <typename CharT>
-[[nodiscard]] bool operator==(const basic_string<CharT> &lhs, const CharT *rhs) noexcept {
+[[nodiscard]] bool operator==(const basic_string<CharT> &lhs, const CharT *rhs) {
     return std::basic_string_view<CharT>{lhs} == std::basic_string_view<CharT>{rhs};
 }
 
@@ -682,7 +685,7 @@ template <typename CharT>
 }
 
 template <typename CharT>
-[[nodiscard]] auto operator<=>(const basic_string<CharT> &lhs, const CharT *rhs) noexcept {
+[[nodiscard]] auto operator<=>(const basic_string<CharT> &lhs, const CharT *rhs) {
     return std::basic_string_view<CharT>{lhs} <=> std::basic_string_view<CharT>{rhs};
 }
 
