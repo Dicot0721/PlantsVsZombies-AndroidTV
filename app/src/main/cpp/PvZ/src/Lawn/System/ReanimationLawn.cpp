@@ -236,19 +236,19 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
 
             ReanimationType aHeadType = ReanimationType::REANIM_WALLNUT;
 
-            Reanimation *aHeadReanim = mApp->AddReanimation(0, 0, 0, aHeadType);
-            aHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
+        Reanimation *aHeadReanim = mApp->AddReanimation(0, 0, 0, aHeadType);
+        aHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
 
-            ReanimatorTrackInstance *aTrackInstance = aReanim->GetTrackInstanceByName("Zombie_body");
-            AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aHeadReanim, 0.0f, 0.0f);
-            aReanim->mFrameBasePose = 0;
+        ReanimatorTrackInstance *aTrackInstance = aReanim->GetTrackInstanceByName("Zombie_body");
+        AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aHeadReanim, 0.0f, 0.0f);
+        aReanim->mFrameBasePose = 0;
 
-            TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 50.0f, 0.0f, 0.2f, -0.8f, 0.8f);
-            aHeadReanim->mColorOverride = Color(255, 64, 64);
+        TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 50.0f, 0.0f, 0.2f, -0.8f, 0.8f);
+        aHeadReanim->mColorOverride = Color(255, 64, 64);
 
-            SexyTransform2D aOverlayMatrix;
-            aReanim->GetAttachmentOverlayMatrix(aReanim->FindTrackIndex("Zombie_body"), aOverlayMatrix);
-            AttachmentUpdateAndSetMatrix(aTrackInstance->mAttachmentID, aOverlayMatrix);
+        SexyTransform2D aOverlayMatrix;
+        aReanim->GetAttachmentOverlayMatrix(aReanim->FindTrackIndex("Zombie_body"), aOverlayMatrix);
+        AttachmentUpdateAndSetMatrix(aTrackInstance->mAttachmentID, aOverlayMatrix);
 
             aReanim->Update();
             aReanim->Draw(&aMemoryGraphics);

@@ -489,11 +489,11 @@ public:
     bool ChooseSeedsOnCurrentLevel() {
         return reinterpret_cast<bool (*)(Board *)>(Board_ChooseSeedsOnCurrentLevelAddr)(this);
     }
-    void UpdateCoverLayer() {
-        reinterpret_cast<void (*)(Board *)>(Board_UpdateCoverLayerAddr)(this);
-    }
     bool RowCanHaveZombies(int theRow) {
         return reinterpret_cast<bool (*)(Board *, int)>(Board_RowCanHaveZombiesAddr)(this, theRow);
+    }
+    void UpdateCoverLayer() {
+        reinterpret_cast<void (*)(Board *)>(Board_UpdateCoverLayerAddr)(this);
     }
 
     Board(LawnApp *theApp);
