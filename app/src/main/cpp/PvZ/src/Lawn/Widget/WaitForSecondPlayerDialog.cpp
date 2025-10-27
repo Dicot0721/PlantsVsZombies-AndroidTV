@@ -30,8 +30,9 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
 
     // 解决此Dialog显示时背景僵尸全部聚集、且草丛大块空缺的问题
-    if (theApp->mBoard != nullptr && theApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        theApp->mBoard->Update();
+    if (theApp->mBoard != nullptr) {
+        theApp->mBoard->UpdateGame();
+        theApp->mBoard->UpdateCoverLayer();
     }
 
     pvzstl::string str = StrFormat("[PLAY_OFFLINE]");
