@@ -664,6 +664,13 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
         return;
     }
 
+    if (mGameMode == GameMode::GAMEMODE_CHALLENGE_BIG_TIME && (mSelectedSeedType == SeedType::SEED_SUNFLOWER || mSelectedSeedType == SeedType::SEED_WALLNUT || mSelectedSeedType == SeedType::SEED_MARIGOLD)) {
+        //种大突破关卡 放大植物预览
+        g->SetScale(1.5, 1.5, 0, 0);
+        g->Translate( -15, -25);
+        return old_GamepadControls_DrawPreview(this, g);
+    }
+
     return old_GamepadControls_DrawPreview(this, g);
 }
 
