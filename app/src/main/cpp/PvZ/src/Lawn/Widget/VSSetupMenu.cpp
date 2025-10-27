@@ -98,14 +98,6 @@ void VSSetupMenu::Draw(Graphics *g) {
 
 void VSSetupMenu::Update() {
     // 记录当前游戏状态
-    if (mState == 1) {
-        // 自动分配阵营
-        GameButtonDown(18, 0, 0);
-        GameButtonDown(19, 1, 0);
-        GameButtonDown(6, 0, 0);
-        GameButtonDown(6, 1, 0);
-    }
-
     old_VSSetupMenu_Update(this);
 }
 
@@ -157,6 +149,14 @@ void VSSetupMenu::ButtonPress(int theId) {
 void VSSetupMenu::ButtonDepress(int theId) {
     old_VSSetupMenu_ButtonDepress(this, theId);
 
+    if (!isKeyboardTwoPlayerMode && mState == 1) {
+        // 自动分配阵营
+        GameButtonDown(ButtonCode::BUTTONCODE_LEFT, 0, 0);
+        GameButtonDown(ButtonCode::BUTTONCODE_RIGHT, 1, 0);
+        GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+        GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+    }
+
     mApp->mBoard->PickBackground(); // 修改器修改场地后开局立即更换
 
     // 对战额外卡槽
@@ -181,7 +181,9 @@ void VSSetupMenu::ButtonDepress(int theId) {
             }
             break;
         case 10: // 自定义战场
-            gVSMorePacketsButton->SetDisable();
+            if (mState == 3) {
+                gVSMorePacketsButton->SetDisable();
+            }
             break;
         case 11: // 随机战场
             if (aNumPackets == 7) {

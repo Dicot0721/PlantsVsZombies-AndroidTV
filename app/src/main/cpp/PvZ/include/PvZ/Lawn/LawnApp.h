@@ -299,6 +299,7 @@ public:
     bool IsSquirrelLevel();
     bool IsSurvivalEndless(GameMode theGameMode);
     bool IsWhackAZombieLevel();
+    bool IsVSMode();
     bool IsCoopMode();
     bool IsTwinSunbankMode();
     bool IsFinalBossLevel();

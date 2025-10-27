@@ -25,9 +25,11 @@
 #include "Misc/Common.h"
 #include "Misc/Rect.h"
 #include "PvZ/STL/pvzstl_string.h"
+#include "PvZ/SexyAppFramework/Widget/WidgetManager.h"
 #include "PvZ/Symbols.h"
 #include "Sound/AudiereSoundManager.h"
 #include "Widget/ButtonListener.h"
+
 
 void InitHookFunction();
 
@@ -40,7 +42,7 @@ class __SexyAppBase {
 public:
     int *vTable;                            // 0
     int unkMem1[164];                       // 1 ~ 164
-    int *mWidgetManager;                    // 165
+    WidgetManager *mWidgetManager;          // 165
     int unkMem2[70];                        // 166 ~ 235, musicinterface 193
     bool mLawnMouseMode;                    // 944
     int unkMem3[77];                        // 237 ~ 313

@@ -914,6 +914,8 @@ inline void *Sexy_Widget___DestructorAddr;
 inline void *Sexy_Widget_SetVisibleAddr;
 inline void *Sexy_Widget_MoveAddr;
 inline void *Sexy_WidgetContainer_SetFocusAddr;
+inline void *Sexy_WidgetContainer_AddWidgetAddr;
+inline void *Sexy_WidgetContainer_RemoveWidgetAddr;
 inline void *Sexy_WidgetManager_GetWidgetAtAddr;
 inline void *Sexy_WidgetManager_SetFocusAddr;
 inline void *Sexy_WidgetManager_MouseDownAddr;
@@ -2178,6 +2180,8 @@ inline bool GetFunctionAddr() {
     Sexy_Widget_MoveAddr = dlsym(handle, "_ZN4Sexy6Widget4MoveEii");
     Sexy_WidgetManager_GetWidgetAtAddr = dlsym(handle, "_ZN4Sexy13WidgetManager11GetWidgetAtEiiPiS1_");
     Sexy_WidgetManager_SetFocusAddr = dlsym(handle, "_ZN4Sexy13WidgetManager11GetWidgetAtEiiPiS1_");
+    Sexy_WidgetContainer_AddWidgetAddr = dlsym(handle, "_ZN4Sexy15WidgetContainer9AddWidgetEPNS_6WidgetE");
+    Sexy_WidgetContainer_RemoveWidgetAddr = dlsym(handle, "_ZN4Sexy15WidgetContainer12RemoveWidgetEPNS_6WidgetE");
     Sexy_WidgetContainer_SetFocusAddr = dlsym(handle, "_ZN4Sexy15WidgetContainer8SetFocusEPNS_6WidgetE");
     Sexy_WidgetManager_MouseDownAddr = dlsym(handle, "_ZN4Sexy13WidgetManager8SetFocusEPNS_6WidgetE");
     Sexy_WidgetManager_MouseDragAddr = dlsym(handle, "_ZN4Sexy13WidgetManager9MouseDragEii");

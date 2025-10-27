@@ -71,6 +71,8 @@ static_assert((sizeof(void *) == sizeof(int32_t)), "Unsupported non-32-bit archi
 //     return JNI_VERSION_1_6;
 // }
 
+using namespace Sexy;
+
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeDisableShop(JNIEnv *env, jclass clazz) {
     disableShop = true;
 }
@@ -888,17 +890,17 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIsInGame(JNIEnv *env, jclass clazz) {
     LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
     Board *board = lawnApp->mBoard;
-    int *mWidgetManager = lawnApp->mWidgetManager;
-    auto *mFocusWidget = (Sexy::__Widget *)mWidgetManager[40];
-    if (board != nullptr && mFocusWidget == board) {
+    auto *mWidgetManager = lawnApp->mWidgetManager;
+    auto *mFocusWidget = mWidgetManager->mFocusWidget;
+    if (board != nullptr && mFocusWidget == reinterpret_cast<Widget *>(board)) {
         return true;
     }
     SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
-    if (lawnApp->IsCoopMode() && seedChooserScreen != nullptr && mFocusWidget == seedChooserScreen) {
+    if (lawnApp->IsCoopMode() && seedChooserScreen && mFocusWidget == reinterpret_cast<Widget *>(seedChooserScreen)) {
         return true;
     }
 
-    if (lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS && lawnApp->mVSSetupScreen != nullptr && lawnApp->mVSSetupScreen->mState == 3) {
+    if (lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS && lawnApp->mVSSetupScreen && (lawnApp->mVSSetupScreen->mState == 1 || lawnApp->mVSSetupScreen->mState == 3)) {
         return true;
     }
     return false;
@@ -912,27 +914,27 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 
 
     Board *board = lawnApp->mBoard;
-    int *mWidgetManager = lawnApp->mWidgetManager;
-    auto *mFocusWidget = (Sexy::__Widget *)mWidgetManager[40];
-    if (board != nullptr && mFocusWidget == board) {
+    auto *mWidgetManager = lawnApp->mWidgetManager;
+    auto *mFocusWidget = mWidgetManager->mFocusWidget;
+    if (board != nullptr && mFocusWidget == reinterpret_cast<Widget *>(board)) {
         GamepadControls *gamepadControls = playerIndex ? board->mGamepadControls2 : board->mGamepadControls1;
         if (!playerIndex) {
             if (is_key_down) {
                 switch (buttonCode) {
-                    case 7:
+                    case ButtonCode::BUTTONCODE_B:
                         gamepadControls->OnKeyDown(Sexy::KeyCode::KEYCODE_SHOVEL, 1112);
                         gamepadControls->mGamepadState = 7;
                         break;
-                    case 16:
+                    case ButtonCode::BUTTONCODE_UP:
                         GamepadVelocityYOfPlayer1 = -400;
                         break;
-                    case 17:
+                    case ButtonCode::BUTTONCODE_DOWN:
                         GamepadVelocityYOfPlayer1 = 400;
                         break;
-                    case 18:
+                    case ButtonCode::BUTTONCODE_LEFT:
                         GamepadVelocityXOfPlayer1 = -400;
                         break;
-                    case 19:
+                    case ButtonCode::BUTTONCODE_RIGHT:
                         GamepadVelocityXOfPlayer1 = 400;
                         break;
                     default:
@@ -941,12 +943,12 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
                 }
             } else {
                 switch (buttonCode) {
-                    case 16:
-                    case 17:
+                    case ButtonCode::BUTTONCODE_UP:
+                    case ButtonCode::BUTTONCODE_DOWN:
                         GamepadVelocityYOfPlayer1 = 0;
                         break;
-                    case 18:
-                    case 19:
+                    case ButtonCode::BUTTONCODE_LEFT:
+                    case ButtonCode::BUTTONCODE_RIGHT:
                         GamepadVelocityXOfPlayer1 = 0;
                         break;
                     default:
@@ -956,20 +958,20 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
         } else {
             if (is_key_down) {
                 switch (buttonCode) {
-                    case 7:
+                    case ButtonCode::BUTTONCODE_B:
                         gamepadControls->OnKeyDown(Sexy::KeyCode::KEYCODE_SHOVEL, 1112);
                         gamepadControls->mGamepadState = 7;
                         break;
-                    case 16:
+                    case ButtonCode::BUTTONCODE_UP:
                         GamepadVelocityYOfPlayer2 = -400;
                         break;
-                    case 17:
+                    case ButtonCode::BUTTONCODE_DOWN:
                         GamepadVelocityYOfPlayer2 = 400;
                         break;
-                    case 18:
+                    case ButtonCode::BUTTONCODE_LEFT:
                         GamepadVelocityXOfPlayer2 = -400;
                         break;
-                    case 19:
+                    case ButtonCode::BUTTONCODE_RIGHT:
                         GamepadVelocityXOfPlayer2 = 400;
                         break;
                     default:
@@ -978,12 +980,12 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
                 }
             } else {
                 switch (buttonCode) {
-                    case 16:
-                    case 17:
+                    case ButtonCode::BUTTONCODE_UP:
+                    case ButtonCode::BUTTONCODE_DOWN:
                         GamepadVelocityYOfPlayer2 = 0;
                         break;
-                    case 18:
-                    case 19:
+                    case ButtonCode::BUTTONCODE_LEFT:
+                    case ButtonCode::BUTTONCODE_RIGHT:
                         GamepadVelocityXOfPlayer2 = 0;
                         break;
                     default:
@@ -994,13 +996,13 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
         return;
     }
     SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
-    if (is_key_down && lawnApp->IsCoopMode() && seedChooserScreen != nullptr && mFocusWidget == seedChooserScreen) {
-        seedChooserScreen->GameButtonDown((ButtonCode)buttonCode, playerIndex);
+    if (is_key_down && lawnApp->IsCoopMode() && seedChooserScreen && mFocusWidget == reinterpret_cast<Widget *>(seedChooserScreen)) {
+        seedChooserScreen->GameButtonDown(buttonCode, playerIndex);
         return;
     }
 
     VSSetupMenu *theVSSetupScreen = lawnApp->mVSSetupScreen;
-    if (is_key_down && lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS && theVSSetupScreen != nullptr && theVSSetupScreen->mState == 3) {
+    if (is_key_down && lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS && theVSSetupScreen && (theVSSetupScreen->mState == 1 || theVSSetupScreen->mState == 3)) {
         theVSSetupScreen->GameButtonDown(buttonCode, playerIndex, 0);
         return;
     }

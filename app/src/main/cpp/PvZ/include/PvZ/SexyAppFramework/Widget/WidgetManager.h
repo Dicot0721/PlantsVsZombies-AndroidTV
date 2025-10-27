@@ -23,14 +23,17 @@
 #include "../Misc/Common.h"
 #include "../Misc/KeyCodes.h"
 
-// #include "WidgetContainer.h"
+ #include "WidgetContainer.h"
 
 namespace Sexy {
 
 class Widget;
 
-class WidgetManager {
+class WidgetManager  : public __WidgetContainer {
 public:
+    char unkMem[44];
+    Widget* mFocusWidget;    // 40
+
     void SetFocus(Widget* aWidget) {
         reinterpret_cast<void (*)(WidgetManager*, Widget*)>(Sexy_WidgetManager_SetFocusAddr)(this, aWidget);
     }

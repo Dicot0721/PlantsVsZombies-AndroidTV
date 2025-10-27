@@ -20,6 +20,7 @@
 #ifndef PVZ_LAWN_WIDGET_VS_SETUP_MENU_H
 #define PVZ_LAWN_WIDGET_VS_SETUP_MENU_H
 
+#include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
@@ -106,8 +107,8 @@ public:
     int unkInt363[161];                   // 363 ~ 523
     int mInt524;                          // 524
 
-    void GameButtonDown(int theButton, unsigned int thePlayerIndex, int a4) {
-        reinterpret_cast<void (*)(VSSetupMenu *, int, unsigned int, int)>(VSSetupMenu_GameButtonDownAddr)(this, theButton, thePlayerIndex, a4);
+    void GameButtonDown(ButtonCode theButton, unsigned int thePlayerIndex, int a4) {
+        reinterpret_cast<void (*)(VSSetupMenu *, ButtonCode, unsigned int, int)>(VSSetupMenu_GameButtonDownAddr)(this, theButton, thePlayerIndex, a4);
     }
     void SetSecondPlayerIndex(int thePlayerIndex) {
         reinterpret_cast<void (*)(VSSetupMenu *, int)>(VSSetupMenu_SetSecondPlayerIndexAddr)(this, thePlayerIndex);

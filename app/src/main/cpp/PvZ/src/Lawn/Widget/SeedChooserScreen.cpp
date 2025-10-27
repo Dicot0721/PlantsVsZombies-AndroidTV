@@ -404,14 +404,18 @@ int SeedChooserScreen::NumColumns() {
 void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
     old_SeedChooserScreen_ShowToolTip(this, thePlayerIndex);
 
+    bool is2P = thePlayerIndex == 1 ? true : false;
+    ToolTipWidget *aTolTip = is2P ? mToolTip2 : mToolTip1;
+
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && mIsZombieChooser) {
         SeedType aSeedType = SeedHitTest(mCursorPositionX2, mCursorPositionY2);
         if (mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_GRAVESTONE].mSeedState == ChosenSeedState::SEED_IN_BANK && mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_GRAVESTONE].mCrazyDavePicked) {
-            pvzstl::string str = TodStringTranslate("[ZOMBIE_BOSS_WANTS]");
-            mToolTip2->SetWarningText(str);
+            bool seedIsGrave = (mToolTipWidgetSeed1 == SeedType::SEED_ZOMBIE_GRAVESTONE || mToolTipWidgetSeed2 == SeedType::SEED_ZOMBIE_GRAVESTONE) ? true : false;
+            pvzstl::string str = seedIsGrave ? TodStringTranslate("[ZOMBIE_BOSS_WANTS]") : "";
+            aTolTip->SetWarningText(str);
         }
         // 对战显示隐藏僵尸卡信息
-        if (aSeedType >= SeedType::SEED_ZOMBIE_YETI && aSeedType < SeedType::NUM_ZOMBIE_SEED_IN_CHOOSER) {
+        if (aSeedType > SeedType::SEED_ZOMBIE_GARGANTUAR && aSeedType < SeedType::NUM_ZOMBIE_SEED_IN_CHOOSER) {
             pvzstl::string aTitle, aLabel;
             switch (aSeedType) {
 //                case SeedType::SEED_ZOMBIE_REDEYE_GARGANTUAR: // 红眼巨人僵尸
@@ -465,8 +469,8 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
                 default:
                     return;
             }
-            mToolTip2->SetTitle(aTitle);
-            mToolTip2->SetLabel(aLabel);
+            aTolTip->SetTitle(aTitle);
+            aTolTip->SetLabel(aLabel);
         }
     }
 }
@@ -476,29 +480,35 @@ SeedType SeedChooserScreen::GetZombieIndexBySeedType(SeedType theSeedType) {
 }
 
 void SeedChooserScreen::MouseMove(int x, int y) {
-    SeedType seedType = SeedHitTest(x, y);
+    SeedType aSeedType = SeedHitTest(x, y);
     // 该函数探测不到模仿者位置
-    if (seedType == SeedType::SEED_NONE) {
+    if (aSeedType == SeedType::SEED_NONE) {
         return;
     }
+
     if (mIsZombieChooser) {
-        SeedType zombieSeedType = GetZombieIndexBySeedType(seedType);
+        SeedType zombieSeedType = GetZombieIndexBySeedType(aSeedType);
+        GetSeedPositionInChooser(zombieSeedType, mCursorPositionX1, mCursorPositionX1);
         GetSeedPositionInChooser(zombieSeedType, mCursorPositionX2, mCursorPositionY2);
         mSeedType2 = zombieSeedType;
     } else if (m1PChoosingSeeds) {
-        if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && seedType > SeedType::SEED_MELONPULT)
+        if (mApp->IsVSMode() && aSeedType > SeedType::SEED_MELONPULT)
             return;
-        GetSeedPositionInChooser(seedType, mCursorPositionX1, mCursorPositionY1);
-        mSeedType1 = seedType;
+
+        if (mApp->IsVSMode()) {
+            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionX1);
+            GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
+        } else {
+            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
+        }
+        mSeedType1 = aSeedType;
     } else {
-        GetSeedPositionInChooser(seedType, mCursorPositionX2, mCursorPositionY2);
-        mSeedType2 = seedType;
+        GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
+        mSeedType2 = aSeedType;
     }
 }
 
 void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
-    GameMode mGameMode = mApp->mGameMode;
-
     m1PChoosingSeeds = !mApp->IsCoopMode() || mSeedsIn1PBank < 4;
 
     bool mViewLawnButtonDisabled = mViewLawnButton == nullptr || !mBoard->mCutScene->IsSurvivalRepick();
@@ -550,7 +560,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         }
     }
 
-    if (HasPacket(SeedType::SEED_IMITATER, 0) && mGameMode != GameMode::GAMEMODE_MP_VS && !mIsZombieChooser) {
+    if (HasPacket(SeedType::SEED_IMITATER, 0) && !mApp->IsVSMode() && !mIsZombieChooser) {
         int mImitaterPositionX = 0;
         int mImitaterPositionY = 0;
         GetSeedPositionInChooser(SeedType::SEED_IMITATER, mImitaterPositionX, mImitaterPositionY);
@@ -582,12 +592,19 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
 
     if (mIsZombieChooser) {
         SeedType zombieSeedType = GetZombieIndexBySeedType(aSeedType);
+        GetSeedPositionInChooser(zombieSeedType, mCursorPositionX1, mCursorPositionY1);
         GetSeedPositionInChooser(zombieSeedType, mCursorPositionX2, mCursorPositionY2);
         mSeedType2 = zombieSeedType;
     } else if (m1PChoosingSeeds) {
-        if (mGameMode == GameMode::GAMEMODE_MP_VS && aSeedType > SeedType::SEED_MELONPULT)
+        if (mApp->IsVSMode() && aSeedType > SeedType::SEED_MELONPULT)
             return;
-        GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
+
+        if (mApp->IsVSMode()) {
+            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionX1);
+            GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
+        } else {
+            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
+        }
         mSeedType1 = aSeedType;
     } else {
         GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
@@ -605,12 +622,19 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
         }
         if (mIsZombieChooser) {
             SeedType zombieSeedType = GetZombieIndexBySeedType(aSeedType);
+            GetSeedPositionInChooser(zombieSeedType, mCursorPositionX1, mCursorPositionY1);
             GetSeedPositionInChooser(zombieSeedType, mCursorPositionX2, mCursorPositionY2);
             mSeedType2 = zombieSeedType;
         } else if (m1PChoosingSeeds) {
-            if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && aSeedType > SeedType::SEED_MELONPULT)
+            if (mApp->IsVSMode() && aSeedType > SeedType::SEED_MELONPULT)
                 return;
-            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
+
+            if (mApp->IsVSMode()) {
+                GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionX1);
+                GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
+            } else {
+                GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
+            }
             mSeedType1 = aSeedType;
         } else {
             GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
@@ -628,7 +652,11 @@ void SeedChooserScreen::MouseUp(int x, int y) {
             if (mIsZombieChooser) {
                 GameButtonDown(BUTTONCODE_A, 1);
             } else if (m1PChoosingSeeds) {
-                GameButtonDown(BUTTONCODE_A, 0);
+                if (mApp->IsCoopMode()) {
+                    GameButtonDown(BUTTONCODE_A, 0);
+                } else {
+                    GameButtonDown(BUTTONCODE_A, 1);
+                }
             } else {
                 GameButtonDown(BUTTONCODE_A, 1);
             }

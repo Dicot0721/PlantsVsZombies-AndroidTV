@@ -1382,9 +1382,12 @@ void Zombie::UpdateZombieSunflowerHead() {
 }
 
 void Zombie::UpdateZombieTorchwoodHead() {
+    if (!mHasHead)
+        return;
+
     Reanimation *aHeadReanim = mApp->ReanimationTryToGet(mSpecialHeadReanimID);
 
-    if (mChilledCounter > 0 || mIceTrapCounter > 0) {
+    if (mChilledCounter > 0 || mIceTrapCounter > 0) { // 受到寒冰效果火炬熄灭
         mHasObject = false;
     }
 
@@ -3162,10 +3165,10 @@ void Zombie::PickRandomSpeed() {
     } else if (mZombieType == ZombieType::ZOMBIE_YETI) {
         mVelX = 0.4f;
     } else if (mZombieType == ZombieType::ZOMBIE_DANCER || mZombieType == ZombieType::ZOMBIE_BACKUP_DANCER || mZombieType == ZombieType::ZOMBIE_POGO || mZombieType == ZombieType::ZOMBIE_FLAG
-               || mZombieType == ZombieType::ZOMBIE_JACKSON || mZombieType == ZombieType::ZOMBIE_BACKUP_DANCER2) {
+               || mZombiePhase == ZombiePhase::PHASE_IMP_RUNNING || mZombieType == ZombieType::ZOMBIE_JACKSON || mZombieType == ZombieType::ZOMBIE_BACKUP_DANCER2) {
         mVelX = 0.45f;
     } else if (mZombiePhase == ZombiePhase::PHASE_DIGGER_TUNNELING || mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT || mZombieType == ZombieType::ZOMBIE_FOOTBALL
-               || mZombieType == ZombieType::ZOMBIE_SNORKEL || mZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX || mZombiePhase == ZombiePhase::PHASE_IMP_RUNNING) {
+               || mZombieType == ZombieType::ZOMBIE_SNORKEL || mZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX) {
         mVelX = RandRangeFloat(0.66f, 0.68f);
     } else if (mZombiePhase == ZombiePhase::PHASE_LADDER_CARRYING || mZombieType == ZombieType::ZOMBIE_SQUASH_HEAD) {
         mVelX = RandRangeFloat(0.79f, 0.81f);

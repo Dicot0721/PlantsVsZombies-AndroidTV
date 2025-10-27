@@ -437,15 +437,15 @@ void LawnApp::SetFoleyVolume(FoleyType theFoleyType, double theVolume) {
 
 void LawnApp::ShowLeaderboards() {
     gMainMenuLeaderboardsWidget = new LeaderboardsWidget(this);
-    (*(void (**)(int *, Sexy::__Widget *))(*mWidgetManager + 24))(mWidgetManager, gMainMenuLeaderboardsWidget); // AddWidget()
-    (*(void (**)(int *, Sexy::__Widget *))(*mWidgetManager + 48))(mWidgetManager, gMainMenuLeaderboardsWidget); // SetFocusedWidget()
+    mWidgetManager->AddWidget(reinterpret_cast<Widget *>(gMainMenuLeaderboardsWidget));
+    mWidgetManager->SetFocus(reinterpret_cast<Widget *>(gMainMenuLeaderboardsWidget));
 }
 
 void LawnApp::KillLeaderboards() {
     if (gMainMenuLeaderboardsWidget == nullptr)
         return;
 
-    (*(void (**)(int *, Sexy::__Widget *))(*mWidgetManager + 28))(mWidgetManager, gMainMenuLeaderboardsWidget); // RemoveWidget()
+    mWidgetManager->RemoveWidget(reinterpret_cast<Widget *>(gMainMenuLeaderboardsWidget));
     (*((void (**)(LawnApp *, Sexy::__Widget *))vTable + 47))(this, gMainMenuLeaderboardsWidget);                // MSGBOX()
     gMainMenuLeaderboardsWidget = nullptr;
 }
@@ -453,15 +453,15 @@ void LawnApp::KillLeaderboards() {
 void LawnApp::ShowZombatarScreen() {
     gMainMenuZombatarWidget = new ZombatarWidget(this);
     //    Sexy_Widget_Resize(gMainMenuZombatarWidget,-80,-60,960,720);
-    (*(void (**)(int *, Sexy::__Widget *))(*mWidgetManager + 24))(mWidgetManager, gMainMenuZombatarWidget); // AddWidget()
-    (*(void (**)(int *, Sexy::__Widget *))(*mWidgetManager + 48))(mWidgetManager, gMainMenuZombatarWidget); // SetFocusedWidget()
+    mWidgetManager->AddWidget(reinterpret_cast<Widget *>(gMainMenuZombatarWidget));
+    mWidgetManager->SetFocus(reinterpret_cast<Widget *>(gMainMenuZombatarWidget));
 }
 
 void LawnApp::KillZombatarScreen() {
     if (gMainMenuZombatarWidget == nullptr)
         return;
 
-    (*(void (**)(int *, Sexy::__Widget *))(*mWidgetManager + 28))(mWidgetManager, gMainMenuZombatarWidget); // RemoveWidget()
+    mWidgetManager->RemoveWidget(reinterpret_cast<Widget *>(gMainMenuZombatarWidget));
     (*((void (**)(LawnApp *, Sexy::__Widget *))vTable + 47))(this, gMainMenuZombatarWidget);                // MSGBOX()
     gMainMenuZombatarWidget = nullptr;
 }
@@ -565,6 +565,10 @@ bool LawnApp::IsWhackAZombieLevel() {
         return true;
 
     return IsAdventureMode() && mPlayerInfo->mLevel == 15;
+}
+
+bool LawnApp::IsVSMode() {
+    return mGameMode == GameMode::GAMEMODE_MP_VS;
 }
 
 bool LawnApp::IsCoopMode() {

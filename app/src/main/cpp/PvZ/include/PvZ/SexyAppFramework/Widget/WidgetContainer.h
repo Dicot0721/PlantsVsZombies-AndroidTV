@@ -61,6 +61,12 @@ public:
     void MarkDirty() {
         reinterpret_cast<void (*)(__WidgetContainer *)>(Sexy_WidgetContainer_MarkDirtyAddr)(this);
     }
+    void AddWidget(Widget *theWidget) {
+        reinterpret_cast<void (*)(__WidgetContainer *, Widget *)>(Sexy_WidgetContainer_AddWidgetAddr)(this, theWidget);
+    }
+    void RemoveWidget(Widget *theWidget) {
+        reinterpret_cast<void (*)(__WidgetContainer *, Widget *)>(Sexy_WidgetContainer_RemoveWidgetAddr)(this, theWidget);
+    }
 
 protected:
     __WidgetContainer() = default;

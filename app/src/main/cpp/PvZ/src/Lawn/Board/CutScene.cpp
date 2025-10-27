@@ -23,6 +23,9 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
+#include "PvZ/SexyAppFramework/Widget/WidgetManager.h"
+
+using namespace Sexy;
 
 void CutScene::ShowShovel() {
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN) {
@@ -43,11 +46,11 @@ void CutScene::Update() {
     if (mApp->mGameMode == GameMode::GAMEMODE_ADVENTURE_TWO_PLAYER || mApp->IsCoopMode()) {
         if (mApp->mTwoPlayerState == -1 && !(*((int (**)(LawnApp *, int))mApp->vTable + 103))(mApp, 39) && !(*((int (**)(LawnApp *, int))mApp->vTable + 103))(mApp, 73)) {
 
-            auto *aWaitDialog = new WaitForSecondPlayerDialog(mApp);
-            mApp->AddDialog(aWaitDialog);
-            (*(void (**)(int *, WaitForSecondPlayerDialog *))(*mApp->mWidgetManager + 48))(mApp->mWidgetManager, aWaitDialog);
+            auto *aDialog = new WaitForSecondPlayerDialog(mApp);
+            mApp->AddDialog(aDialog);
+            mApp->mWidgetManager->SetFocus(reinterpret_cast<Widget *>(aDialog));
 
-            int buttonId = ((int (*)(WaitForSecondPlayerDialog *, bool))aWaitDialog->vTable[127])(aWaitDialog, true);
+            int buttonId = ((int (*)(WaitForSecondPlayerDialog *, bool))aDialog->vTable[127])(aDialog, true);
             if (buttonId == 1001) {
                 mBoard->unknownBool = 1;
             } else {
