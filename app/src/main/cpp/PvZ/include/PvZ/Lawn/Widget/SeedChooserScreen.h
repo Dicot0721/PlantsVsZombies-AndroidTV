@@ -32,7 +32,14 @@ class LawnApp;
 class SeedBank;
 class GameButton;
 
-enum SeedChooserTouchState { ViewLawnButton, SeedChooser, StoreButton, StartButton, AlmanacButton, SEEDCHOOSER_TOUCHSTATE_NONE };
+enum SeedChooserTouchState {
+    ViewLawnButton,
+    SeedChooser,
+    StoreButton,
+    StartButton,
+    AlmanacButton,
+    SEEDCHOOSER_TOUCHSTATE_NONE,
+};
 
 class ChosenSeed {
 public:
