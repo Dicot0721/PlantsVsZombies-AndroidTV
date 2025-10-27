@@ -676,6 +676,8 @@ inline void (*old_FixBoardAfterLoad)(Board *board);
 
 inline int (*old_LawnSaveGame)(Board *a1, int *a2);
 
+inline int (*old_LawnLoadGame)(Board *a1, int* a2);
+
 inline void (*old_Board_UpdateGame)(Board *board);
 
 inline void (*old_Board_UpdateGameObjects)(Board *board);
@@ -788,6 +790,8 @@ void FixBoardAfterLoad(Board *board);
 void SyncReanimation(Board *a1, Reanimation *a2, int *theSaveGameContext);
 
 int LawnSaveGame(Board *board, int *a2);
+
+int LawnLoadGame(Board *board, int *a2);
 
 const char *GetNameByAchievementId(AchievementId theAchievementId);
 

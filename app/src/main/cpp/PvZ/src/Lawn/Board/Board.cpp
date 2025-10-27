@@ -122,15 +122,79 @@ void Board_SetGrids(Board *board) {
     }
 }
 
-int LawnSaveGame(Board *board, int *a2) {
-    //    Zombie *zombie = nullptr;
-    //    while (IterateZombies(this, &zombie)) {
-    //        if (zombie->mZombieType == ZombieType::ZOMBIE_FLAG) {
+int LawnSaveGame(Board *board, int* a2) {
+
+    // 结盟模式存档，将SeedBank2的4个种子放到SeedBank1里面。因为原版存档逻辑难以改动，只好出此下策，凑合着存吧。
+    if (board->mApp->IsCoopMode() && board->mApp->mGameMode != GameMode::GAMEMODE_TWO_PLAYER_COOP_BOWLING && board->mApp->mGameMode != GameMode::GAMEMODE_TWO_PLAYER_COOP_BOSS) {
+        int theSeedNum = 4;
+        SeedBank *seedBank1 = board->mSeedBank1;
+        SeedBank *seedBank2 = board->mSeedBank2;
+        seedBank1->mNumPackets = 2 * theSeedNum;
+        seedBank1->mX = seedBank2->mX;
+        for (int i = theSeedNum; i < 2 * theSeedNum; ++i) {
+            seedBank1->mSeedPackets[i].mX = seedBank2->mSeedPackets[i - theSeedNum].mX;
+            seedBank1->mSeedPackets[i].mY = seedBank2->mSeedPackets[i - theSeedNum].mY;
+            seedBank1->mSeedPackets[i].mRefreshCounter = seedBank2->mSeedPackets[i - theSeedNum].mRefreshCounter;
+            seedBank1->mSeedPackets[i].mRefreshTime = seedBank2->mSeedPackets[i - theSeedNum].mRefreshTime;
+            seedBank1->mSeedPackets[i].mIndex = seedBank2->mSeedPackets[i - theSeedNum].mIndex;
+            seedBank1->mSeedPackets[i].mOffsetY = seedBank2->mSeedPackets[i - theSeedNum].mOffsetY;
+            seedBank1->mSeedPackets[i].mPacketType = seedBank2->mSeedPackets[i - theSeedNum].mPacketType;
+            seedBank1->mSeedPackets[i].mImitaterType = seedBank2->mSeedPackets[i - theSeedNum].mImitaterType;
+            seedBank1->mSeedPackets[i].mActive = seedBank2->mSeedPackets[i - theSeedNum].mActive;
+            seedBank1->mSeedPackets[i].mRefreshing = seedBank2->mSeedPackets[i - theSeedNum].mRefreshing;
+            seedBank1->mSeedPackets[i].mTimesUsed = seedBank2->mSeedPackets[i - theSeedNum].mTimesUsed;
+            seedBank1->mSeedPackets[i].mSeedBank = seedBank1;
+            seedBank1->mSeedPackets[i].mSelectedBy2P = seedBank2->mSeedPackets[i - theSeedNum].mSelectedBy2P;
+            seedBank1->mSeedPackets[i].mSelectedBy1P = seedBank2->mSeedPackets[i - theSeedNum].mSelectedBy1P;
+        }
+        int result = old_LawnSaveGame(board,a2);
+        seedBank1->mNumPackets = theSeedNum;
+        seedBank1->mX = 0;
+        return result;
+    }
+    //    Zombie *zombie = NULL;
+    //    while (Board_IterateZombies(board, &zombie)) {
+    //        if (zombie->mZombieType == ZombieType::Flag) {
     //            LawnApp_RemoveReanimation(zombie->mApp, zombie->mBossFireBallReanimID);
     //            zombie->mBossFireBallReanimID = 0;
     //        }
     //    }
-    return old_LawnSaveGame(board, a2);
+    return old_LawnSaveGame(board,a2);
+}
+
+
+int LawnLoadGame(Board *board, int* a2) {
+    // 结盟模式读档，将SeedBank2的4个种子从SeedBank1里面取出。因为原版读档逻辑难以改动，只好出此下策，凑合着读吧。
+    if (board->mApp->IsCoopMode() && board->mApp->mGameMode != GameMode::GAMEMODE_TWO_PLAYER_COOP_BOWLING && board->mApp->mGameMode != GameMode::GAMEMODE_TWO_PLAYER_COOP_BOSS) {
+        int result = old_LawnLoadGame(board, a2);
+        int theSeedNum = 4;
+        SeedBank *seedBank1 = board->mSeedBank1;
+        SeedBank *seedBank2 = board->mSeedBank2;
+        seedBank2->mNumPackets = theSeedNum;
+        seedBank1->mNumPackets = theSeedNum;
+        seedBank2->mX = seedBank1->mX;
+        seedBank1->mX = 0;
+        for (int i = theSeedNum; i < 2 * theSeedNum; ++i) {
+            seedBank2->mSeedPackets[i - theSeedNum].mX = seedBank1->mSeedPackets[i].mX;
+            seedBank2->mSeedPackets[i - theSeedNum].mY = seedBank1->mSeedPackets[i].mY;
+            seedBank2->mSeedPackets[i - theSeedNum].mRefreshCounter = seedBank1->mSeedPackets[i].mRefreshCounter;
+            seedBank2->mSeedPackets[i - theSeedNum].mRefreshTime = seedBank1->mSeedPackets[i].mRefreshTime;
+            seedBank2->mSeedPackets[i - theSeedNum].mIndex = seedBank1->mSeedPackets[i].mIndex;
+            seedBank2->mSeedPackets[i - theSeedNum].mOffsetY = seedBank1->mSeedPackets[i].mOffsetY;
+            seedBank2->mSeedPackets[i - theSeedNum].mPacketType = seedBank1->mSeedPackets[i].mPacketType;
+            seedBank2->mSeedPackets[i - theSeedNum].mImitaterType = seedBank1->mSeedPackets[i].mImitaterType;
+            seedBank2->mSeedPackets[i - theSeedNum].mActive = seedBank1->mSeedPackets[i].mActive;
+            seedBank2->mSeedPackets[i - theSeedNum].mRefreshing = seedBank1->mSeedPackets[i].mRefreshing;
+            seedBank2->mSeedPackets[i - theSeedNum].mTimesUsed = seedBank1->mSeedPackets[i].mTimesUsed;
+            seedBank2->mSeedPackets[i - theSeedNum].mSeedBank = seedBank2;
+            seedBank2->mSeedPackets[i - theSeedNum].mSelectedBy2P = seedBank1->mSeedPackets[i].mSelectedBy2P;
+            seedBank2->mSeedPackets[i - theSeedNum].mSelectedBy1P = seedBank1->mSeedPackets[i].mSelectedBy1P;
+        }
+
+        return result;
+    }
+
+    return old_LawnLoadGame(board,a2);
 }
 
 void Board::ShovelDown() {

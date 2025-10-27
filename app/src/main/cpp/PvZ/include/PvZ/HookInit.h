@@ -158,7 +158,7 @@ inline void InitHookFunction() {
 
     homura::HookFunction(FixBoardAfterLoadAddr, &FixBoardAfterLoad, &old_FixBoardAfterLoad);
     homura::HookFunction(LawnSaveGameAddr, &LawnSaveGame, &old_LawnSaveGame);
-
+    homura::HookFunction(LawnLoadGameAddr, &LawnLoadGame, &old_LawnLoadGame);
 
     homura::HookFunction(Challenge_UpdateAddr, &Challenge::Update, &old_Challenge_Update);
     homura::HookFunction(Challenge_ChallengeAddr, &Challenge::_constructor, &old_Challenge_Challenge);

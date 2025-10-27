@@ -195,7 +195,7 @@ inline void *SyncBoardAddr;
 inline void *FixBoardAfterLoadAddr;
 inline void *SyncReanimationAddr;
 inline void *LawnSaveGameAddr;
-
+inline void *LawnLoadGameAddr;
 
 inline void *CutScene_UpdateAddr;
 inline void *CutScene_ShowShovelAddr;
@@ -1471,6 +1471,8 @@ inline bool GetFunctionAddr() {
     FixBoardAfterLoadAddr = dlsym(handle, "_Z17FixBoardAfterLoadP5Board");
     SyncReanimationAddr = dlsym(handle, "_Z15SyncReanimationP5BoardP11ReanimationP15SaveGameContext");
     LawnSaveGameAddr = dlsym(handle, "_Z12LawnSaveGameP5BoardRKSs");
+    LawnLoadGameAddr = dlsym(handle, "_Z12LawnLoadGameP5BoardP15SaveGameContext");
+
 
 
     CutScene_UpdateAddr = dlsym(handle, "_ZN8CutScene6UpdateEv");
