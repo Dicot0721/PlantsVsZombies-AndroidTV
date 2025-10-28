@@ -486,7 +486,7 @@ inline void InitHookFunction() {
     homura::HookFunction(ReanimatorCache_DrawCachedPlantAddr, &ReanimatorCache::DrawCachedPlant, &old_ReanimatorCache_DrawCachedPlant);
     homura::HookFunction(ReanimatorCache_UpdateReanimationForVariationAddr, &ReanimatorCache::UpdateReanimationForVariation, &old_ReanimatorCache_UpdateReanimationForVariation);
     homura::HookFunction(ReanimatorCache_LoadCachedImagesAddr, &ReanimatorCache::LoadCachedImages, &old_ReanimatorCache_LoadCachedImages);
-    homura::HookFunction(ReanimatorCache_MakeCachedZombieFrameAddr, &ReanimatorCache::MakeCachedZombieFrame, &old_ReanimatorCache_MakeCachedZombieFrame);
+    homura::HookFunction(ReanimatorCache_MakeCachedZombieFrameAddr, &ReanimatorCache::MakeCachedZombieFrame, nullptr);
 
 
     homura::HookFunction(HelpBarWidget_HelpBarWidgetAddr, &HelpBarWidget_HelpBarWidget, &old_HelpBarWidget_HelpBarWidget);

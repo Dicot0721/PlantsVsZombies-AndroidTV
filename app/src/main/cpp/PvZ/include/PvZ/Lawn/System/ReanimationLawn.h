@@ -80,6 +80,4 @@ inline void (*old_ReanimatorCache_UpdateReanimationForVariation)(ReanimatorCache
 
 inline void (*old_ReanimatorCache_DrawCachedPlant)(ReanimatorCache *a1, Sexy::Graphics *graphics, float thePosX, float thePosY, SeedType theSeedType, DrawVariation drawVariation);
 
-inline Sexy::MemoryImage *(*old_ReanimatorCache_MakeCachedZombieFrame)(ReanimatorCache *reanimatorCache, ZombieType zombieType);
-
 #endif // PVZ_LAWN_SYSTEM_REANIMATON_LAWN_H
