@@ -407,7 +407,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
     bool is2P = thePlayerIndex == 1 ? true : false;
     ToolTipWidget *aTolTip = is2P ? mToolTip2 : mToolTip1;
 
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && mIsZombieChooser) {
+    if (mApp->IsVSMode() && mIsZombieChooser) {
         SeedType aSeedType = SeedHitTest(mCursorPositionX2, mCursorPositionY2);
         if (mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_GRAVESTONE].mSeedState == ChosenSeedState::SEED_IN_BANK && mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_GRAVESTONE].mCrazyDavePicked) {
             bool seedIsGrave = (mToolTipWidgetSeed1 == SeedType::SEED_ZOMBIE_GRAVESTONE || mToolTipWidgetSeed2 == SeedType::SEED_ZOMBIE_GRAVESTONE) ? true : false;
@@ -418,10 +418,10 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
         if (aSeedType > SeedType::SEED_ZOMBIE_GARGANTUAR && aSeedType < SeedType::NUM_ZOMBIE_SEED_IN_CHOOSER) {
             pvzstl::string aTitle, aLabel;
             switch (aSeedType) {
-//                case SeedType::SEED_ZOMBIE_REDEYE_GARGANTUAR: // 红眼巨人僵尸
-//                    aTitle = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE]");
-//                    aLabel = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE_DESCRIPTION_HEADER]");
-//                    break;
+                case SeedType::SEED_ZOMBIE_REDEYE_GARGANTUAR: // 红眼巨人僵尸
+                    aTitle = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE]");
+                    aLabel = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE_DESCRIPTION_HEADER]");
+                    break;
                 case SeedType::SEED_ZOMBIE_PEA_HEAD: // 豌豆射手僵尸
                     aTitle = TodStringTranslate("[PEA_HEAD_ZOMBIE]");
                     aLabel = TodStringTranslate("[PEA_HEAD_ZOMBIE_DESCRIPTION_HEADER]");

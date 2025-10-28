@@ -148,6 +148,13 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
     int maxWidth = 200;
     int maxHeight = 210;
 
+    if (theZombieType == ZombieType::ZOMBIE_ZAMBONI)
+        maxWidth = 300;
+    if (theZombieType == ZombieType::ZOMBIE_CACHED_POLEVAULTER_WITH_POLE)
+        maxWidth = 250;
+    if (theZombieType == ZombieType::ZOMBIE_BUNGEE)
+        maxHeight = 810;
+
     MemoryImage *aMemoryImage = MakeBlankCanvasImage(maxWidth, maxHeight);
     Graphics aMemoryGraphics((Image *)aMemoryImage);
     aMemoryGraphics.SetLinearBlend(true);
@@ -159,7 +166,6 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
     ZombieDefinition &aZombieDef = GetZombieDefinition(aUseZombieType);
 
     float aPosX = 40.0f, aPosY = 40.0f;
-
     if (theZombieType > ZombieType::NUM_CACHED_ZOMBIE_TYPES) {
         if (theZombieType == ZombieType::ZOMBIE_SUNFLOWER_HEAD) {
             Reanimation *aReanim = mApp->AddReanimation(aPosX, aPosY, 0, aZombieDef.mReanimationType);
@@ -330,7 +336,6 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
         aReanim.Update();
         aReanim.Draw(&aMemoryGraphics);
         mZombieImages[theZombieType] = aMemoryImage;
-        return aMemoryImage;
     } else if (theZombieType == ZombieType::ZOMBIE_WALLNUT_HEAD || theZombieType == ZombieType::ZOMBIE_TALLNUT_HEAD || theZombieType == ZombieType::ZOMBIE_JALAPENO_HEAD) {
         Reanimation aReanim;
         aReanim.ReanimationInitializeType(aPosX, aPosY, aZombieDef.mReanimationType);
@@ -372,7 +377,6 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
         aReanim.Update();
         aReanim.Draw(&aMemoryGraphics);
         mZombieImages[theZombieType] = aMemoryImage;
-        return aMemoryImage;
     } else if (aZombieDef.mReanimationType == ReanimationType::REANIM_ZOMBIE) {
         Reanimation aReanim;
         aReanim.ReanimationInitializeType(aPosX, aPosY, aZombieDef.mReanimationType);
@@ -387,16 +391,27 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
             aReanim.AssignRenderGroupToTrack("Zombie_outerarm_screendoor", RENDER_GROUP_NORMAL);
             aReanim.SetImageOverride("anim_screendoor", *IMAGE_REANIM_ZOMBIE_TRASHCAN1);
         } else if (theZombieType == ZombieType::ZOMBIE_FLAG) {
-            //            Reanimation aReanimFlag;
-            //            aReanimFlag.ReanimationInitializeType(aPosX, aPosY, ReanimationType::REANIM_ZOMBIE_FLAGPOLE);
-            //            aReanimFlag.SetFramesForLayer("Zombie_flag");
-            //            aReanimFlag.Draw(&aMemoryGraphics);
-            return old_ReanimatorCache_MakeCachedZombieFrame(this, theZombieType);
+            Reanimation aReanimFlag;
+            aReanimFlag.ReanimationInitializeType(aPosX, aPosY, ReanimationType::REANIM_ZOMBIE_FLAGPOLE);
+            aReanimFlag.SetFramesForLayer("Zombie_flag");
+            aReanimFlag.Draw(&aMemoryGraphics);
         }
         aReanim.Update();
         aReanim.Draw(&aMemoryGraphics);
-        mZombieImages[theZombieType] = aMemoryImage;
-        return aMemoryImage;
+    } else if (aZombieDef.mReanimationType == ReanimationType::REANIM_BOSS) {
+        Reanimation aReanim;
+        aReanim.ReanimationInitializeType(-524.0f, -88.0f, aZombieDef.mReanimationType);
+        aReanim.SetFramesForLayer("anim_head_idle");
+        Reanimation aReanimDriver;
+        aReanimDriver.ReanimationInitializeType(46.0f, 22.0f, ReanimationType::REANIM_BOSS_DRIVER);
+        aReanimDriver.SetFramesForLayer("anim_idle");
+
+        aReanim.Draw(&aMemoryGraphics);
+        aReanimDriver.Draw(&aMemoryGraphics);
+        aReanim.AssignRenderGroupToTrack("boss_body1", RENDER_GROUP_HIDDEN);
+        aReanim.AssignRenderGroupToTrack("boss_neck", RENDER_GROUP_HIDDEN);
+        aReanim.AssignRenderGroupToTrack("boss_head2", RENDER_GROUP_HIDDEN);
+        aReanim.Draw(&aMemoryGraphics);
     } else if (theZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR) { // 为红眼巨人增加SeedPacket图标
         Reanimation aReanim;
         aReanim.ReanimationInitializeType(aPosX, aPosY + 20, aZombieDef.mReanimationType);
@@ -406,8 +421,20 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
         aReanim.Update();
         aReanim.Draw(&aMemoryGraphics);
         mZombieImages[theZombieType] = aMemoryImage;
-        return aMemoryImage;
     } else {
-        return old_ReanimatorCache_MakeCachedZombieFrame(this, theZombieType);
+        const char *aTrackName = "anim_idle";
+        if (theZombieType == ZombieType::ZOMBIE_POGO) {
+            aTrackName = "anim_pogo";
+        } else if (theZombieType == ZombieType::ZOMBIE_CACHED_POLEVAULTER_WITH_POLE) {
+            aTrackName = "anim_idle";
+        } else if (theZombieType == ZombieType::ZOMBIE_POLEVAULTER) {
+            aTrackName = "anim_walk";
+        } else if (theZombieType == ZombieType::ZOMBIE_GARGANTUAR) {
+            aPosY = 60.0f;
+        }
+
+        DrawReanimatorFrame(&aMemoryGraphics, aPosX, aPosY, aZombieDef.mReanimationType, aTrackName, DrawVariation::VARIATION_NORMAL);
     }
+
+    return aMemoryImage;
 }
