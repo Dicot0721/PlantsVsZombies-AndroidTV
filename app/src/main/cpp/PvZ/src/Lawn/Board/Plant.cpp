@@ -851,8 +851,6 @@ int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
                     return 225;
                 case SeedType::SEED_ZOMBIE_GARGANTUAR:
                     return 250;
-                case SeedType::SEED_ZOMBIE_SUNFLOWER_HEAD:
-                    return 0;
                 default:
                     return GetPlantDefinition(theSeedType).mSeedCost;
             }
@@ -976,7 +974,6 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
 int Plant::GetCostAdjusted(SeedType theSeedType) {
     switch (theSeedType) {
         case SeedType::SEED_SUNSHROOM:
-        case SeedType::SEED_ZOMBIE_SUNFLOWER_HEAD:
             return 0;
         case SeedType::SEED_INSTANT_COFFEE:
         case SeedType::SEED_ZOMBIE_NORMAL:

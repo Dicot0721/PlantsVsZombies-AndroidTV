@@ -225,7 +225,7 @@ void GridItem::DrawCrater(Sexy::Graphics* g) {
         float aPos = mGridY * std::numbers::pi_v<float> + mGridX * std::numbers::pi_v<float> * 0.25f;
         float aTime = mBoard->mMainCounter * std::numbers::pi_v<float> * 2.0f / 200.0f;
         aYPos = sin(aPos + aTime) * 2.0f;
-    } else if (Board_StageHasRoof(mBoard)) {
+    } else if (mBoard->StageHasRoof()) {
         if (mGridX < 5) {
             if (mBoard->StageIsNight()) {
                 aImage = addonImages.crater_night_roof_left;

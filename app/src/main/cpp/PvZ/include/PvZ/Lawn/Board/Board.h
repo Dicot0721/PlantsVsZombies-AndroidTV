@@ -498,9 +498,11 @@ public:
 
     Board(LawnApp *theApp);
     void InitLevel();
+    void SetGrids();
     void StartLevel();
     void Update();
     void RemovedFromManager(Sexy::WidgetManager *theManager);
+    void UpdateButtons();
     int GetNumSeedsInBank(bool thePlayerIndex);
     void RemoveParticleByType(ParticleEffect theEffectType);
     void FadeOutLevel();
@@ -542,6 +544,7 @@ public:
     bool StageIsNight();
     bool StageHasPool();
     bool StageHasRoof();
+    bool StageHas6Rows();
     Zombie *AddZombieInRow(ZombieType theZombieType, int theRow, int theFromWave, bool theIsRustle);
     Zombie *AddZombie(ZombieType theZombieType, int theFromWave, bool theIsRustle);
     void DoPlantingEffects(int theGridX, int theGridY, Plant *thePlant);
@@ -571,6 +574,7 @@ public:
     int CountPlantByType(SeedType theSeedType);
     void ParseFormationSegment(char *theSegment);
     void LoadFormation(char *theFormation);
+    bool ZenGardenItemNumIsZero(CursorType theCursorType);
     int GetSeedBankExtraWidth();
     Sexy::Rect GetShovelButtonRect();
     bool PlantUsesAcceleratedPricing(SeedType theSeedType);
@@ -797,24 +801,10 @@ const char *GetNameByAchievementId(AchievementId theAchievementId);
 
 Sexy::Image *GetIconByAchievementId(AchievementId theAchievementId);
 
-void Board_FixReanimErrorAfterLoad(Board *board);
-
 bool TRect_Contains(Sexy::Rect *rect, int x, int y);
-
-void Board_DoPlantingAchievementCheck(Board *board, SeedType theType);
-
-bool Board_ZenGardenItemNumIsZero(Board *, CursorType);
-
-void Board_SetGrids(Board *board);
 
 bool Board_KeyUp(Board *board, int keyCode);
 
-bool Board_StageHasRoof(Board *board);
-
-bool Board_StageHas6Rows(Board *board);
-
 void Board_DrawStartButton(Board *board, Sexy::Graphics *graphics, LawnApp *lawnApp);
-
-void Board_UpdateButtons(Board *board);
 
 #endif // PVZ_LAWN_BOARD_BOARD_H
