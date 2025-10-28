@@ -633,7 +633,7 @@ void Projectile::Draw(Graphics* g) {
     }
 
     Graphics gProj(*g);
-    gProj.SetColorizeImages(true);
+//    gProj.SetColorizeImages(true);
 //    gProj.SetColor(mOverrideColor);
 
     const ProjectileDefinition& aProjectileDef = GetProjectileDef();
