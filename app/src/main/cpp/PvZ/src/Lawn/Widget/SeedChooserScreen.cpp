@@ -488,7 +488,7 @@ void SeedChooserScreen::MouseMove(int x, int y) {
 
     if (mIsZombieChooser) {
         SeedType zombieSeedType = GetZombieIndexBySeedType(aSeedType);
-        GetSeedPositionInChooser(zombieSeedType, mCursorPositionX1, mCursorPositionX1);
+        GetSeedPositionInChooser(zombieSeedType, mCursorPositionX1, mCursorPositionY1);
         GetSeedPositionInChooser(zombieSeedType, mCursorPositionX2, mCursorPositionY2);
         mSeedType2 = zombieSeedType;
     } else if (m1PChoosingSeeds) {
@@ -496,7 +496,7 @@ void SeedChooserScreen::MouseMove(int x, int y) {
             return;
 
         if (mApp->IsVSMode()) {
-            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionX1);
+            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
             GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
         } else {
             GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
@@ -600,7 +600,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
             return;
 
         if (mApp->IsVSMode()) {
-            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionX1);
+            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
             GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
         } else {
             GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
@@ -630,7 +630,7 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
                 return;
 
             if (mApp->IsVSMode()) {
-                GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionX1);
+                GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
                 GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
             } else {
                 GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
