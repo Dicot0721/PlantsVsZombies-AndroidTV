@@ -124,7 +124,7 @@ void Board_SetGrids(Board *board) {
     }
 }
 
-int LawnSaveGame(Board *board, int* a2) {
+int LawnSaveGame(Board *board, int *a2) {
 
     // 结盟模式存档，将SeedBank2的4个种子放到SeedBank1里面。因为原版存档逻辑难以改动，只好出此下策，凑合着存吧。
     if (board->mApp->IsCoopMode() && board->mApp->mGameMode != GameMode::GAMEMODE_TWO_PLAYER_COOP_BOWLING && board->mApp->mGameMode != GameMode::GAMEMODE_TWO_PLAYER_COOP_BOSS) {
@@ -149,7 +149,7 @@ int LawnSaveGame(Board *board, int* a2) {
             seedBank1->mSeedPackets[i].mSelectedBy2P = seedBank2->mSeedPackets[i - theSeedNum].mSelectedBy2P;
             seedBank1->mSeedPackets[i].mSelectedBy1P = seedBank2->mSeedPackets[i - theSeedNum].mSelectedBy1P;
         }
-        int result = old_LawnSaveGame(board,a2);
+        int result = old_LawnSaveGame(board, a2);
         seedBank1->mNumPackets = theSeedNum;
         seedBank1->mX = 0;
         return result;
@@ -161,11 +161,11 @@ int LawnSaveGame(Board *board, int* a2) {
     //            zombie->mBossFireBallReanimID = 0;
     //        }
     //    }
-    return old_LawnSaveGame(board,a2);
+    return old_LawnSaveGame(board, a2);
 }
 
 
-int LawnLoadGame(Board *board, int* a2) {
+int LawnLoadGame(Board *board, int *a2) {
     // 结盟模式读档，将SeedBank2的4个种子从SeedBank1里面取出。因为原版读档逻辑难以改动，只好出此下策，凑合着读吧。
     if (board->mApp->IsCoopMode() && board->mApp->mGameMode != GameMode::GAMEMODE_TWO_PLAYER_COOP_BOWLING && board->mApp->mGameMode != GameMode::GAMEMODE_TWO_PLAYER_COOP_BOSS) {
         int result = old_LawnLoadGame(board, a2);
@@ -196,7 +196,7 @@ int LawnLoadGame(Board *board, int* a2) {
         return result;
     }
 
-    return old_LawnLoadGame(board,a2);
+    return old_LawnLoadGame(board, a2);
 }
 
 void Board::ShovelDown() {
@@ -953,82 +953,130 @@ bool TRect_Contains(Rect *rect, int x, int y) {
 void Board::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
     int handledBufSize = 0;
 
-    while(bufSize - handledBufSize > sizeof (BaseEvent)) {
-        BaseEvent *event = (BaseEvent *)((unsigned char*)buf + handledBufSize);
-        LOG_DEBUG("TYPE:{}",(int)event->type);
+    while (bufSize - handledBufSize > sizeof(BaseEvent)) {
+        BaseEvent *event = (BaseEvent *)((unsigned char *)buf + handledBufSize);
+        LOG_DEBUG("TYPE:{}", (int)event->type);
         switch (event->type) {
             case EVENT_BOARD_TOUCH_DOWN: {
-                handledBufSize += sizeof (TwoShortDataEvent);
-                TwoShortDataEvent* event1 = (TwoShortDataEvent*)event;
-                MouseDownSecond(event1->data1,event1->data2,0);
-                TwoCharDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_DOWN_REPLY,(unsigned char)mGamepadControls2->mSelectedSeedIndex,(unsigned char)mGamepadControls2->mGamepadState};
-                send(tcpClientSocket,&eventReply,sizeof (TwoCharDataEvent),0);
+                handledBufSize += sizeof(TwoShortDataEvent);
+                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+                MouseDownSecond(event1->data1, event1->data2, 0);
+                TwoCharDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_DOWN_REPLY, (unsigned char)mGamepadControls2->mSelectedSeedIndex, (unsigned char)mGamepadControls2->mGamepadState};
+                send(tcpClientSocket, &eventReply, sizeof(TwoCharDataEvent), 0);
             } break;
             case EVENT_BOARD_TOUCH_DRAG: {
-                handledBufSize += sizeof (TwoShortDataEvent);
-                TwoShortDataEvent* event1 = (TwoShortDataEvent*)event;
-                MouseDragSecond(event1->data1,event1->data2);
-                TwoShortDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_DRAG_REPLY,(short)mGamepadControls2->mCursorPositionX,(short)mGamepadControls2->mCursorPositionY};
-                send(tcpClientSocket,&eventReply,sizeof (TwoShortDataEvent),0);
+                handledBufSize += sizeof(TwoShortDataEvent);
+                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+                MouseDragSecond(event1->data1, event1->data2);
+                TwoShortDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_DRAG_REPLY, (short)mGamepadControls2->mCursorPositionX, (short)mGamepadControls2->mCursorPositionY};
+                send(tcpClientSocket, &eventReply, sizeof(TwoShortDataEvent), 0);
             } break;
             case EVENT_BOARD_TOUCH_UP: {
-                handledBufSize += sizeof (TwoShortDataEvent);
-                TwoShortDataEvent* event1 = (TwoShortDataEvent*)event;
-                MouseUpSecond(event1->data1,event1->data2,0);
-                TwoCharDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_UP_REPLY,(unsigned char )mGamepadControls2->mGamepadState,(unsigned char)mCursorObject2->mCursorType};
-                send(tcpClientSocket,&eventReply,sizeof (TwoCharDataEvent),0);
+                handledBufSize += sizeof(TwoShortDataEvent);
+                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+                MouseUpSecond(event1->data1, event1->data2, 0);
+                TwoCharDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_UP_REPLY, (unsigned char)mGamepadControls2->mGamepadState, (unsigned char)mCursorObject2->mCursorType};
+                send(tcpClientSocket, &eventReply, sizeof(TwoCharDataEvent), 0);
             } break;
             default:
-                handledBufSize += sizeof (BaseEvent);
+                handledBufSize += sizeof(BaseEvent);
                 break;
         }
     }
-
 }
 
 void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
     int handledBufSize = 0;
 
-    while(bufSize - handledBufSize > sizeof (BaseEvent)) {
-        BaseEvent *event = (BaseEvent *)((unsigned char*)buf + handledBufSize);
+    while (bufSize - handledBufSize > sizeof(BaseEvent)) {
+        BaseEvent *event = (BaseEvent *)((unsigned char *)buf + handledBufSize);
         switch (event->type) {
             case EVENT_BOARD_TOUCH_DOWN_REPLY: {
-                handledBufSize += sizeof (TwoCharDataEvent);
-                TwoCharDataEvent* event1 = (TwoCharDataEvent*)buf;
-                mGamepadControls2->mSelectedSeedIndex = event1->data1;
+                handledBufSize += sizeof(TwoCharDataEvent);
+                TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
+                if (mGamepadControls2->mSelectedSeedIndex != event1->data1) {
+                    mGamepadControls2->mSelectedSeedIndex = event1->data1;
+                    mSeedBank2->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
+                }
                 mGamepadControls2->mGamepadState = event1->data2;
             } break;
             case EVENT_BOARD_TOUCH_DRAG_REPLY: {
-                handledBufSize += sizeof (TwoShortDataEvent);
-                TwoShortDataEvent* event1 = (TwoShortDataEvent*)buf;
+                handledBufSize += sizeof(TwoShortDataEvent);
+                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
                 mGamepadControls2->mCursorPositionX = event1->data1;
                 mGamepadControls2->mCursorPositionY = event1->data2;
             } break;
             case EVENT_BOARD_TOUCH_UP_REPLY: {
-                handledBufSize += sizeof (TwoCharDataEvent);
-                TwoCharDataEvent* event1 = (TwoCharDataEvent*)buf;
+                handledBufSize += sizeof(TwoCharDataEvent);
+                TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
                 mGamepadControls2->mGamepadState = event1->data1;
-                mCursorObject2->mCursorType = (CursorType) event1->data2;
+                mCursorObject2->mCursorType = (CursorType)event1->data2;
             } break;
+
+            case EVENT_SERVER_BOARD_TOUCH_DOWN: {
+                handledBufSize += sizeof(TwoCharTwoShortDataEvent);
+                TwoCharTwoShortDataEvent *event1 = (TwoCharTwoShortDataEvent *)event;
+                if (mGamepadControls1->mSelectedSeedIndex != event1->data1) {
+                    mGamepadControls1->mSelectedSeedIndex = event1->data1;
+                    mSeedBank1->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
+                }
+                mGamepadControls1->mGamepadState = event1->data2;
+                mGamepadControls1->mCursorPositionX = event1->data3;
+                mGamepadControls1->mCursorPositionY = event1->data4;
+            } break;
+            case EVENT_SERVER_BOARD_TOUCH_DRAG: {
+                handledBufSize += sizeof(TwoShortDataEvent);
+                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+                mGamepadControls1->mCursorPositionX = event1->data1;
+                mGamepadControls1->mCursorPositionY = event1->data2;
+            } break;
+            case EVENT_SERVER_BOARD_TOUCH_UP: {
+                handledBufSize += sizeof(TwoCharDataEvent);
+                TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
+                mGamepadControls1->mGamepadState = event1->data1;
+                mCursorObject1->mCursorType = (CursorType)event1->data2;
+            } break;
+            case EVENT_SERVER_BOARD_TOUCH_CLEAR_CURSOR: {
+                handledBufSize += sizeof(BaseEvent);
+                BaseEvent *event1 = (BaseEvent *)event;
+                ClearCursor(0);
+                mGamepadControls1->mGamepadState = 1;
+            } break;
+            case EVENT_BOARD_TOUCH_CLEAR_CURSOR: {
+                handledBufSize += sizeof(BaseEvent);
+                BaseEvent *event1 = (BaseEvent *)event;
+                ClearCursor(1);
+                mGamepadControls2->mGamepadState = 1;
+            } break;
+            case EVENT_BOARD_GAMEPAD_SET_STATE: {
+                handledBufSize += sizeof(SimpleEvent);
+                SimpleEvent *event1 = (SimpleEvent *)event;
+                mGamepadControls2->mGamepadState = event1->data;
+            } break;
+            case EVENT_SERVER_BOARD_GAMEPAD_SET_STATE: {
+                handledBufSize += sizeof(SimpleEvent);
+                SimpleEvent *event1 = (SimpleEvent *)event;
+                mGamepadControls1->mGamepadState = event1->data;
+            } break;
+
             default:
-                handledBufSize += sizeof (BaseEvent);
+                handledBufSize += sizeof(BaseEvent);
                 break;
         }
     }
-
 }
 
 void Board::Update() {
     isMainMenu = false;
 
-    if (mApp->mGameMode ==GAMEMODE_MP_VS && !mApp->mVSSetupScreen){
+    if (mApp->mGameMode == GAMEMODE_MP_VS && !mApp->mVSSetupScreen) {
         if (tcpClientSocket >= 0) {
             char buf[1024];
             while (true) {
                 ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
                 if (n > 0) {
                     //                buf[n] = '\0'; // 确保字符串结束
-//                    LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
+                    //                    LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
 
                     HandleTcpClientMessage(buf, n);
                 } else if (n == 0) {
@@ -1059,8 +1107,8 @@ void Board::Update() {
             while (true) {
                 ssize_t n = recv(tcpServerSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
                 if (n > 0) {
-//                    buf[n] = '\0'; // 确保字符串结束
-//                    LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
+                    //                    buf[n] = '\0'; // 确保字符串结束
+                    //                    LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
                     HandleTcpServerMessage(buf, n);
 
                 } else if (n == 0) {
@@ -1090,7 +1138,6 @@ void Board::Update() {
             }
         }
     }
-
 
 
     if (requestDrawButterInCursor) {
@@ -1711,8 +1758,6 @@ void Board::Draw(Sexy::Graphics *g) {
         pvzstl::string morePackets = StrFormat("额外卡槽");
         g->DrawString(morePackets, MORE_PACKETS_BUTTON_X + 40, MORE_PACKETS_BUTTON_Y + 25);
     }
-
-
 }
 
 void Board::Pause(bool thePause) {
@@ -2064,11 +2109,31 @@ Rect slotMachineRect = {250, 0, 320, 100};
 // 触控落下手指在此处理
 void Board::MouseDown(int x, int y, int theClickCount) {
 
+
+    bool inRangeOf2P = PixelToGridX(x, y) > 5 || mSeedBank2->ContainsPoint(x, y);
     if (tcp_connected) {
-        TwoShortDataEvent event = {EventType::EVENT_BOARD_TOUCH_DOWN,(short)x,(short)y};
-        send(tcpServerSocket,&event,sizeof (TwoShortDataEvent),0);
+        if (!inRangeOf2P) return;
+        TwoShortDataEvent event = {EventType::EVENT_BOARD_TOUCH_DOWN, (short)x, (short)y};
+        send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
         return;
     }
+    if (tcpClientSocket >= 0 && inRangeOf2P) {
+        return;
+    }
+    __MouseDown(x, y, theClickCount);
+
+
+    if (tcpClientSocket >= 0) {
+        TwoCharTwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_TOUCH_DOWN,
+                                          (unsigned char)mGamepadControls1->mSelectedSeedIndex,
+                                          (unsigned char)mGamepadControls1->mGamepadState,
+                                          (short)mGamepadControls1->mCursorPositionX,
+                                          (short)mGamepadControls1->mCursorPositionY};
+        send(tcpClientSocket, &event, sizeof(TwoCharTwoShortDataEvent), 0);
+    }
+}
+void Board::__MouseDown(int x, int y, int theClickCount) {
+
     old_Board_MouseDown(this, x, y, theClickCount);
     mTouchDownX = x;
     mTouchDownY = y;
@@ -2415,11 +2480,20 @@ void Board::MouseDown(int x, int y, int theClickCount) {
 void Board::MouseDrag(int x, int y) {
     // Drag函数仅仅负责移动光标即可
     if (tcp_connected) {
-        TwoShortDataEvent event = {EventType::EVENT_BOARD_TOUCH_DRAG,(short)x,(short)y};
-       ssize_t n = send(tcpServerSocket,&event,sizeof (TwoShortDataEvent),0);
-        LOG_DEBUG("send{}",n);
+        TwoShortDataEvent event = {EventType::EVENT_BOARD_TOUCH_DRAG, (short)x, (short)y};
+        ssize_t n = send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
+        LOG_DEBUG("send{}", n);
         return;
     }
+    __MouseDrag(x, y);
+
+    if (tcpClientSocket >= 0) {
+        TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_TOUCH_DRAG, (short)mGamepadControls1->mCursorPositionX, (short)mGamepadControls1->mCursorPositionY};
+        send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+    }
+}
+void Board::__MouseDrag(int x, int y) {
+    // Drag函数仅仅负责移动光标即可
     old_Board_MouseDrag(this, x, y);
     //    xx = x;
     //    yy = y;
@@ -2441,6 +2515,10 @@ void Board::MouseDrag(int x, int y) {
             mGamepadControls1->mGamepadState = 7;
             mGamepadControls1->mIsInShopSeedBank = false;
             requestDrawShovelInCursor = false;
+            if (tcpClientSocket >= 0) {
+                SimpleEvent event = {EventType::EVENT_SERVER_BOARD_GAMEPAD_SET_STATE , 7};
+                send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
+            }
         } else {
             mGamepadControls2->mGamepadState = 7;
             mGamepadControls2->mIsInShopSeedBank = false;
@@ -2510,6 +2588,11 @@ void Board::MouseDrag(int x, int y) {
             seedBank->mSeedPackets[newSeedPacketIndex].mLastSelectedTime = 0.0f; // 动画效果专用
             mTouchState = TouchState::TOUCHSTATE_NONE;
             mSendKeyWhenTouchUp = false;
+
+            if (tcpClientSocket >= 0) {
+                BaseEvent event = {EventType::EVENT_SERVER_BOARD_TOUCH_CLEAR_CURSOR};
+                send(tcpClientSocket, &event, sizeof(BaseEvent), 0);
+            }
         }
     } else {
         if (mGameState_2P == 7 && mTouchLastY > seedBankHeight && y <= seedBankHeight) {
@@ -2561,11 +2644,20 @@ void Board::MouseDrag(int x, int y) {
 
 void Board::MouseUp(int x, int y, int theClickCount) {
     if (tcp_connected) {
-        TwoShortDataEvent event = {EventType::EVENT_BOARD_TOUCH_UP,(short)x,(short)y};
-        ssize_t n = send(tcpServerSocket,&event,sizeof (TwoShortDataEvent),0);
-        LOG_DEBUG("send{}",n);
+        TwoShortDataEvent event = {EventType::EVENT_BOARD_TOUCH_UP, (short)x, (short)y};
+        ssize_t n = send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
+        LOG_DEBUG("send{}", n);
         return;
     }
+    __MouseUp(x, y, theClickCount);
+
+    if (tcpClientSocket >= 0) {
+        TwoCharDataEvent event = {EventType::EVENT_SERVER_BOARD_TOUCH_UP, (unsigned char)mGamepadControls1->mGamepadState, (unsigned char)mCursorObject1->mCursorType};
+        send(tcpClientSocket, &event, sizeof(TwoCharDataEvent), 0);
+    }
+}
+void Board::__MouseUp(int x, int y, int theClickCount) {
+
     old_Board_MouseUp(this, x, y, theClickCount);
     if (mTouchState != TouchState::TOUCHSTATE_NONE && mSendKeyWhenTouchUp) {
         SeedBank *seedBank = mGamepadControls1->GetSeedBank();
@@ -3048,6 +3140,10 @@ void Board::MouseDragSecond(int x, int y) {
             mGamepadControls2->mGamepadState = 7;
             mGamepadControls2->mIsInShopSeedBank = false;
             requestDrawButterInCursor = false;
+            if (tcpClientSocket >= 0) {
+                SimpleEvent event = {EventType::EVENT_BOARD_GAMEPAD_SET_STATE , 7};
+                send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
+            }
         }
         gSendKeyWhenTouchUpSecond = true;
     }
@@ -3126,6 +3222,11 @@ void Board::MouseDragSecond(int x, int y) {
             seedBank_2P->mSeedPackets[newSeedPacketIndex_2P].mLastSelectedTime = 0.0f; // 动画效果专用
             gTouchStateSecond = TouchState::TOUCHSTATE_NONE;
             gSendKeyWhenTouchUpSecond = false;
+
+            if (tcpClientSocket >= 0) {
+                BaseEvent event = {EventType::EVENT_BOARD_TOUCH_CLEAR_CURSOR};
+                send(tcpClientSocket, &event, sizeof(BaseEvent), 0);
+            }
         }
     }
 

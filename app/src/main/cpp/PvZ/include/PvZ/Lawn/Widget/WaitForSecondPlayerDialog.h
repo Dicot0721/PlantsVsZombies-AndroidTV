@@ -139,7 +139,16 @@ enum EventType : unsigned char {
     EVENT_BOARD_TOUCH_DOWN_REPLY,
     EVENT_BOARD_TOUCH_DRAG_REPLY,
     EVENT_BOARD_TOUCH_UP_REPLY,
+    EVENT_SERVER_BOARD_TOUCH_DOWN,
+    EVENT_SERVER_BOARD_TOUCH_DRAG,
+    EVENT_SERVER_BOARD_TOUCH_UP,
 
+
+    EVENT_BOARD_TOUCH_CLEAR_CURSOR,
+    EVENT_SERVER_BOARD_TOUCH_CLEAR_CURSOR,
+
+    EVENT_BOARD_GAMEPAD_SET_STATE,
+    EVENT_SERVER_BOARD_GAMEPAD_SET_STATE,
 };
 
 class BaseEvent {
@@ -162,6 +171,14 @@ class TwoShortDataEvent : public BaseEvent {
 public:
     short data1;
     short data2;
+};
+
+class TwoCharTwoShortDataEvent : public BaseEvent {
+public:
+    unsigned char data1;
+    unsigned char data2;
+    short data3;
+    short data4;
 };
 
 

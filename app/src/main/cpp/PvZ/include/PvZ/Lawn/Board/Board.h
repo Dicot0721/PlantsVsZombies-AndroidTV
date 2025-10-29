@@ -613,6 +613,9 @@ protected:
     void _constructor(LawnApp *theApp);
     void HandleTcpClientMessage(void *buf, ssize_t bufSize);
     void HandleTcpServerMessage(void *buf, ssize_t bufSize);
+    void __MouseDown(int x, int y, int theClickCount);
+    void __MouseDrag(int x, int y);
+    void __MouseUp(int x, int y, int theClickCount);
 };
 
 int GetRectOverlap(const Sexy::Rect &rect1, const Sexy::Rect &rect2);

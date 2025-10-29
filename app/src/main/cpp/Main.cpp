@@ -152,6 +152,8 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeSendSecondTouch(JNIEnv *env, jclass clazz, jint x, jint y, jint action) {
+    if (tcp_connected || tcpClientSocket >= 0)
+        return;
     LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
     Board *board = lawnApp->mBoard;
     if (board == nullptr) {
