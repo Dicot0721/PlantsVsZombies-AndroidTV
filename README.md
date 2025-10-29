@@ -3,14 +3,7 @@
 [![许可协议](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)
 ](https://www.gnu.org/licenses/gpl-3.0.html)
 
-*一个基于植物大战僵尸 TV 版的改版*
-
-## 待办事项
-
-- [x] 将函数的声明移至头文件中 (短期)
-- [x] 将 PvZ 中的成员函数移至对应的类内 (中期)
-- [x] 对于无需修改的 PvZ 成员函数, 在函数体中调用符号地址, 而不是将符号地址赋值给函数指针 (中期)
-- [ ] 重构修改器功能 (长期)
+一个基于植物大战僵尸 TV 版的改版.
 
 ## 构建
 
@@ -34,14 +27,14 @@ storeFile=myStoreFileLocation
 
 ## 编码风格
 
-### 命名
+### 命名约定
 
-- 类: `ClassName`
-- 变量: `varName`
-- 命名空间: `name_space_name`
-- 宏/常量/枚举量: `MACRO_NAME`
+- 函数/类型/枚举/概念: `PascalCase`
+- 变量: `camelCase`
+- 命名空间: `snake_case`
+- 宏/常量/枚举值/非类型模板参数: `UPPER_CASE`
 
-### 其他
+### 格式
 
 见项目根目录下的 `.clang-format` 文件.
 
