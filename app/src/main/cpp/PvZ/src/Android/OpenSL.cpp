@@ -70,6 +70,8 @@ static void waitForBufferConsumption() {
 }
 
 static void setup(int sampleRate, int channels, int bits) {
+    pthread_mutex_init(&mutex, nullptr);
+    pthread_cond_init(&cond, nullptr);
     slCreateEngine(&engineObject, 0, nullptr, 0, nullptr, nullptr);
     (*engineObject)->Realize(engineObject, SL_BOOLEAN_FALSE);
     (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineEngine);
@@ -93,8 +95,7 @@ static void setup(int sampleRate, int channels, int bits) {
     (*playerObject)->GetInterface(playerObject, SL_IID_PLAY, &playerPlay);
     (*playerObject)->GetInterface(playerObject, SL_IID_BUFFERQUEUE, &playerBufferQueue);
     (*playerBufferQueue)->RegisterCallback(playerBufferQueue, playerCallback, nullptr);
-    pthread_mutex_init(&mutex, nullptr);
-    pthread_cond_init(&cond, nullptr);
+
 }
 
 static void play() {

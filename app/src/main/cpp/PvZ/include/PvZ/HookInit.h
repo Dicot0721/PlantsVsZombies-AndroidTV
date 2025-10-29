@@ -401,6 +401,8 @@ inline void InitHookFunction() {
     homura::HookFunction(VSSetupMenu_OnStateEnterAddr, &VSSetupMenu::OnStateEnter, &old_VSSetupMenu_OnStateEnter);
     //    homura::HookFunction(VSSetupMenu_ButtonPressAddr, &VSSetupMenu::ButtonPress, &old_VSSetupMenu_ButtonPress);
     homura::HookFunction(VSSetupMenu_ButtonDepressAddr, &VSSetupMenu::ButtonDepress, &old_VSSetupMenu_ButtonDepress);
+    homura::HookFunction(VSSetupMenu_PickRandomZombiesAddr, &VSSetupMenu::PickRandomZombies, &old_VSSetupMenu_PickRandomZombies);
+    homura::HookFunction(VSSetupMenu_PickRandomPlantsAddr, &VSSetupMenu::PickRandomPlants, &old_VSSetupMenu_PickRandomPlants);
 
 
     homura::HookFunction(VSResultsMenu_UpdateAddr, &VSResultsMenu_Update, &old_VSResultsMenu_Update);
@@ -635,9 +637,9 @@ inline void InitVTableHookFunction() {
 
 
     homura::HookVirtualFunc(vTableForWaitForSecondPlayerDialogAddr, 142, &WaitForSecondPlayerDialog_ButtonDepress, &old_WaitForSecondPlayerDialog_ButtonDepress);
-    //    homura::HookVirtualFunc(vTableForWaitForSecondPlayerDialogAddr, 33, &WaitForSecondPlayerDialog::Update, nullptr);
+    homura::HookVirtualFunc(vTableForWaitForSecondPlayerDialogAddr, 33, &WaitForSecondPlayerDialog::Update, nullptr);
     homura::HookVirtualFunc(vTableForWaitForSecondPlayerDialogAddr, 38, &WaitForSecondPlayerDialog::Draw, &old_WaitForSecondPlayerDialog_Draw);
-    //    homura::HookVirtualFunc(vTableForWaitForSecondPlayerDialogAddr, 52, &WaitForSecondPlayerDialog::Resize, nullptr);
+    homura::HookVirtualFunc(vTableForWaitForSecondPlayerDialogAddr, 52, &WaitForSecondPlayerDialog::Resize, nullptr);
 }
 
 inline void InitOpenSL() {

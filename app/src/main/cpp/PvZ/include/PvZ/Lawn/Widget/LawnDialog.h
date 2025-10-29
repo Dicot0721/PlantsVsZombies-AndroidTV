@@ -59,6 +59,10 @@ public:
     //        reinterpret_cast<void(*)(__LawnDialog*)>(LawnDialog_Delete2Addr)(this);
     //    }
 
+    void Resize(int theX, int theY, int theWidth, int theHeight) {
+        reinterpret_cast<void (*)(__Widget *, int, int, int, int)>(LawnDialog_ResizeAddr)(this, theX, theY, theWidth, theHeight);
+    }
+
 protected:
     __LawnDialog() = default;
     ~__LawnDialog() = default;
@@ -81,6 +85,8 @@ public:
     //    ~LawnDialog() {
     //        __LawnDialog::_destructor();
     //    };
+
+
 };
 
 #endif // PVZ_LAWN_WIDGET_LAWN_DIALOG_H

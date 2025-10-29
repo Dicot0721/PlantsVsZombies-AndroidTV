@@ -18,10 +18,13 @@
  */
 
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
+#include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/SeedChooserScreen.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
+#include <unistd.h>
 
 using namespace Sexy;
 
@@ -99,6 +102,195 @@ void VSSetupMenu::Draw(Graphics *g) {
 void VSSetupMenu::Update() {
     // 记录当前游戏状态
     old_VSSetupMenu_Update(this);
+    if (mState == 0)
+        return;
+    if (tcpClientSocket >= 0) {
+        char buf[1024];
+
+        while (true) {
+            ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
+            if (n > 0) {
+                //                buf[n] = '\0'; // 确保字符串结束
+//                LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
+
+                HandleTcpClientMessage(buf, n);
+            } else if (n == 0) {
+                // 对端关闭连接（收到FIN）
+                LOG_DEBUG("[TCP] 对方关闭连接");
+                close(tcpClientSocket);
+                tcpClientSocket = -1;
+                break;
+            } else {
+                if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                    // 没有更多数据可读，正常退出
+                    break;
+                } else if (errno == EINTR) {
+                    // 被信号中断，重试
+                    continue;
+                } else {
+                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
+                    close(tcpClientSocket);
+                    tcpClientSocket = -1;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (tcp_connected) {
+        char buf[1024];
+        while (true) {
+            ssize_t n = recv(tcpServerSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
+            if (n > 0) {
+//                buf[n] = '\0'; // 确保字符串结束
+//                LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
+                HandleTcpServerMessage(buf, n);
+
+            } else if (n == 0) {
+                // 对端关闭连接（收到FIN）
+                LOG_DEBUG("[TCP] 对方关闭连接");
+                close(tcpServerSocket);
+                tcpServerSocket = -1;
+                tcp_connecting = false;
+                tcp_connected = false;
+                break;
+            } else {
+                if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                    // 没有更多数据可读，正常退出
+                    break;
+                } else if (errno == EINTR) {
+                    // 被信号中断，重试
+                    continue;
+                } else {
+                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
+                    close(tcpServerSocket);
+                    tcpServerSocket = -1;
+                    tcp_connecting = false;
+                    tcp_connected = false;
+                    break;
+                }
+            }
+        }
+    }
+}
+
+void VSSetupMenu::PickRandomZombies(std::vector<SeedType, std::allocator<SeedType>> &theZombieSeeds) {
+    old_VSSetupMenu_PickRandomZombies(this, theZombieSeeds);
+}
+
+void VSSetupMenu::PickRandomPlants(std::vector<SeedType, std::allocator<SeedType>> &thePlantSeeds, std::vector<SeedType, std::allocator<SeedType>> const &theZombieSeeds) {
+    old_VSSetupMenu_PickRandomPlants(this, thePlantSeeds, theZombieSeeds);
+    //    for (int i = 0; i < thePlantSeeds.size(); ++i) {
+    //        SeedType type = thePlantSeeds[i];
+    //        LOG_DEBUG("1{} {}", i, (int)type);
+    //    }
+    //
+    //    for (int i = 0; i < theZombieSeeds.size(); ++i) {
+    //        SeedType type = theZombieSeeds[i];
+    //        LOG_DEBUG("2{} {}", i, (int)type);
+    //    }
+
+    if (tcpClientSocket >= 0) {
+        BaseEvent event = {EventType::EVENT_VSSETUPMENU_RANDOM_PICK};
+        unsigned char data[10];
+        for (int i = 0; i < thePlantSeeds.size(); ++i) {
+            data[i] = thePlantSeeds[i];
+        }
+
+        for (int i = 0; i < theZombieSeeds.size(); ++i) {
+            data[i + 5] = theZombieSeeds[i];
+        }
+
+        unsigned char buffer[sizeof(BaseEvent) + sizeof(data)];
+        std::memcpy(buffer, &event, sizeof(BaseEvent));               // 拷贝事件头
+        std::memcpy(buffer + sizeof(BaseEvent), data, sizeof(data));  // 紧跟 payload
+
+        ssize_t n = send(tcpClientSocket, &buffer, sizeof(BaseEvent) + sizeof(data), 0);
+        LOG_DEBUG("send {}", n);
+    }
+}
+
+void VSSetupMenu::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
+    BaseEvent *event = (BaseEvent *)buf;
+    switch (event->type) {
+        case EVENT_SEEDCHOOSER_SELECT_SEED: {
+            TwoCharDataEvent *event1 = (TwoCharDataEvent *)buf;
+            SeedType theSeedType = (SeedType)event1->data1;
+            bool mIsZombieChooser = event1->data2;
+            LOG_DEBUG("theSeedType={}", event1->data1);
+            LOG_DEBUG("mIsZombieChooser={}", mIsZombieChooser);
+            SeedChooserScreen *screen = (mIsZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
+            screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX1, screen->mCursorPositionY1);
+            screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX2, screen->mCursorPositionY2);
+            (mIsZombieChooser ? screen->mSeedType2 : screen->mSeedType1) = theSeedType;
+            screen->GameButtonDown(ButtonCode::BUTTONCODE_A, screen->mPlayerIndex);
+        } break;
+        default:
+            break;
+    }
+}
+
+void VSSetupMenu::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
+
+    int handledBufSize = 0;
+
+    while(bufSize - handledBufSize > sizeof (BaseEvent)) {
+        BaseEvent *event = (BaseEvent *)((unsigned char*)buf + handledBufSize);
+        switch (event->type) {
+            case EVENT_VSSETUPMENU_BUTTON_DEPRESS: {
+                handledBufSize += sizeof (SimpleEvent);
+                SimpleEvent *event1 = (SimpleEvent *)event;
+                int theId = event1->data;
+                LOG_DEBUG("theId={}", theId);
+                if (theId == 11 && mState == 2) { // 随机战场
+                    break;
+                }
+                tcp_connected = false;
+                ButtonDepress(theId);
+                tcp_connected = true;
+            } break;
+            case EVENT_VSSETUPMENU_ENTER_STATE: {
+                handledBufSize += sizeof (SimpleEvent);
+                SimpleEvent *event1 = (SimpleEvent *)event;
+                int theState = event1->data;
+                LOG_DEBUG("theState={}", theState);
+//                GoToState(theState);
+            } break;
+            case EVENT_SEEDCHOOSER_SELECT_SEED: {
+                handledBufSize += sizeof (TwoCharDataEvent);
+                TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
+                SeedType theSeedType = (SeedType)event1->data1;
+                bool mIsZombieChooser = event1->data2;
+                LOG_DEBUG("theSeedType={}", event1->data1);
+                LOG_DEBUG("mIsZombieChooser={}", mIsZombieChooser);
+                SeedChooserScreen *screen = (mIsZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
+                screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX1, screen->mCursorPositionY1);
+                screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX2, screen->mCursorPositionY2);
+                (mIsZombieChooser ? screen->mSeedType2 : screen->mSeedType1) = theSeedType;
+                screen->GameButtonDown(ButtonCode::BUTTONCODE_A, screen->mPlayerIndex);
+            } break;
+            case EVENT_VSSETUPMENU_RANDOM_PICK: {
+                handledBufSize += sizeof (BaseEvent) + 10;
+                unsigned char* data = (unsigned char*)event + sizeof(BaseEvent);
+                tcp_connected = false;
+                ButtonDepress(11);
+                tcp_connected = true;
+
+                mApp->mBoard->mSeedBank1->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER,SeedType::SEED_NONE);
+                for (int i = 0; i < 5; ++i) {
+                    mApp->mBoard->mSeedBank1->mSeedPackets[i+1].SetPacketType((SeedType)data[i],SeedType::SEED_NONE);
+                }
+
+                mApp->mBoard->mSeedBank2->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE,SeedType::SEED_NONE);
+                for (int i = 0; i < 5; ++i) {
+                    mApp->mBoard->mSeedBank2->mSeedPackets[i+1].SetPacketType((SeedType)data[i+5],SeedType::SEED_NONE);
+                }
+            } break;
+            default:
+                handledBufSize += sizeof (BaseEvent);
+                break;
+        }
+    }
 }
 
 void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
@@ -109,7 +301,7 @@ void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
             case 2:
                 mApp->DoBackToMain();
                 return;
-            case 3:
+            case 3: // 自定义战场
                 mApp->DoNewOptions(false, 0);
                 return;
         }
@@ -123,7 +315,7 @@ void VSSetupMenu::OnStateEnter(int theState) {
         mInt76 = -1;
         // TODO:修复 WaitForSecondPlayerDialog重复构造
         auto *aWaitDialog = new WaitForSecondPlayerDialog(mApp);
-        //        mApp->AddDialog(aWaitDialog); // 生成了两份mLawnNoButton
+        mApp->AddDialog(aWaitDialog); // 生成了两份mLawnNoButton
 
         int buttonId = ((int (*)(WaitForSecondPlayerDialog *, bool))aWaitDialog->vTable[127])(aWaitDialog, true);
         if (buttonId == 1000) {
@@ -133,10 +325,11 @@ void VSSetupMenu::OnStateEnter(int theState) {
             CloseVSSetup(1);
             mApp->KillBoard();
             mApp->ShowGameSelector();
-        } else {
-            // TODO：联机
         }
         return;
+    } else if (tcpClientSocket >= 0) {
+        SimpleEvent event = {EventType::EVENT_VSSETUPMENU_ENTER_STATE, (unsigned char)theState};
+        send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
     }
 
     old_VSSetupMenu_OnStateEnter(this, theState);
@@ -147,7 +340,18 @@ void VSSetupMenu::ButtonPress(int theId) {
 }
 
 void VSSetupMenu::ButtonDepress(int theId) {
+
+    if (tcp_connected) {
+        return;
+    }
+
+
     old_VSSetupMenu_ButtonDepress(this, theId);
+
+    if (tcpClientSocket >= 0) {
+        SimpleEvent event = {EventType::EVENT_VSSETUPMENU_BUTTON_DEPRESS, (unsigned char)theId};
+        send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
+    }
 
     if (!isKeyboardTwoPlayerMode && mState == 1) {
         // 自动分配阵营

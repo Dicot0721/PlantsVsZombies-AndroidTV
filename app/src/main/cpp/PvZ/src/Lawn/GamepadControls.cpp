@@ -27,6 +27,7 @@
 #include "PvZ/Lawn/Board/ZenGarden.h"
 #include "PvZ/Lawn/Board/Zombie.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -204,7 +205,7 @@ void GamepadControls::Update(float a2) {
         }
     }
 
-    if (positionAutoFix && !aApp->IsWhackAZombieLevel() && aApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM) {
+    if (positionAutoFix && !aApp->IsWhackAZombieLevel() && aApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM && tcpServerSocket == -1) {
         if (mPlayerIndex2 == 0 && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER1 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
             mCursorPositionX += (mGridCenterPositionX - mCursorPositionX) / 10;
             mCursorPositionY += (mGridCenterPositionY - mCursorPositionY) / 10;

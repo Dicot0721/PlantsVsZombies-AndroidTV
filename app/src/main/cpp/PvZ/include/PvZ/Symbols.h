@@ -908,6 +908,7 @@ inline void *Sexy_MemoryImage_WriteToJPEGAddr;
 inline void *Sexy_MemoryImage_BitsChangedAddr;
 inline void *LawnDialog_LawnDialogAddr;
 inline void *LawnDialog_Delete2Addr;
+inline void *LawnDialog_ResizeAddr;
 inline void *Sexy_Widget_ResizeAddr;
 inline void *Sexy_Widget___ConstructorAddr;
 inline void *Sexy_Widget___DestructorAddr;
@@ -2173,6 +2174,7 @@ inline bool GetFunctionAddr() {
     Sexy_MemoryImage_BitsChangedAddr = dlsym(handle, "_ZN4Sexy11MemoryImage11BitsChangedEv");
     LawnDialog_LawnDialogAddr = dlsym(handle, "_ZN10LawnDialogC2EP7LawnAppPN4Sexy5ImageEibRKSsS6_S6_i");
     LawnDialog_Delete2Addr = dlsym(handle, "_ZN10LawnDialogD2Ev");
+    LawnDialog_ResizeAddr = dlsym(handle, "_ZN10LawnDialog6ResizeEiiii");
     Sexy_Widget_ResizeAddr = dlsym(handle, "_ZN4Sexy6Widget6ResizeEiiii");
     Sexy_Widget___ConstructorAddr = dlsym(handle, "_ZN4Sexy6WidgetC2Ev");
     Sexy_Widget___DestructorAddr = dlsym(handle, "_ZN4Sexy6WidgetD2Ev");

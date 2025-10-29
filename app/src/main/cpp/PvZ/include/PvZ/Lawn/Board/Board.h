@@ -611,6 +611,8 @@ protected:
     friend void InitHookFunction();
 
     void _constructor(LawnApp *theApp);
+    void HandleTcpClientMessage(void *buf, ssize_t bufSize);
+    void HandleTcpServerMessage(void *buf, ssize_t bufSize);
 };
 
 int GetRectOverlap(const Sexy::Rect &rect1, const Sexy::Rect &rect2);
