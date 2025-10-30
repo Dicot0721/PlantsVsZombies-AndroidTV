@@ -3539,16 +3539,16 @@ void Board::StartLevel() {
         if (tcpClientSocket >= 0) {
             GridItem *gridItem = nullptr;
             while (IterateGridItems(gridItem)) {
-                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER, gridItem->mGridItemID, (short)gridItem->mLaunchCounter};
+                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER, (short)gridItem->mGridItemID, (short)gridItem->mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
             }
             Plant *plant = nullptr;
             while (IteratePlants(plant)) {
-                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER, plant->mPlantID, (short)plant->mLaunchCounter};
+                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER, (short)plant->mPlantID, (short)plant->mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
                 TwoShortTwoIntDataEvent event1;
                 event1.type = EventType::EVENT_SERVER_BOARD_PLANT_ANIMATION;
-                event1.data1 = plant->mPlantID;
+                event1.data1 = (short)plant->mPlantID;
                 event1.data2 = (short)plant->mFrameLength;
                 event1.data3.i = plant->mAnimCounter;
                 event1.data4.f = mApp->ReanimationGet(plant->mBodyReanimID)->mAnimRate;

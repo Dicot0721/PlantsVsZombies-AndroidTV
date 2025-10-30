@@ -168,7 +168,7 @@ void GridItem::Update() {
             }
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if (tcpClientSocket >= 0) {
-                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER, mGridItemID, (short)mLaunchCounter};
+                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER, (short)mGridItemID, (short)mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
             }
             mBoard->AddCoin( mBoard->GridToPixelX(mGridX,mGridY), mBoard->GridToPixelY(mGridX,mGridY), CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_FROM_GRAVE);
