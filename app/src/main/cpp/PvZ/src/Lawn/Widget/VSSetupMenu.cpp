@@ -472,7 +472,7 @@ void VSSetupMenu::OnStateEnter(int theState) {
         auto *aWaitDialog = new WaitForSecondPlayerDialog(mApp);
         mApp->AddDialog(aWaitDialog); // 生成了两份mLawnNoButton
 
-        int buttonId = ((int (*)(WaitForSecondPlayerDialog *, bool))aWaitDialog->vTable[127])(aWaitDialog, true);
+        int buttonId = aWaitDialog->WaitForResult(true);
         if (buttonId == 1000) {
             SetSecondPlayerIndex(mApp->mTwoPlayerState);
             GoToState(1);

@@ -62,8 +62,8 @@ public:
     int mBeghouledMatchesThisMove;        // 25
     ChallengeState mChallengeState;       // 26
     int mChallengeStateCounter;           // 27
-    int mConveyorBeltCounter;             // 28
-    int unk2;                             // 29
+    int mConveyorBeltCounter1;            // 28
+    int mConveyorBeltCounter2;            // 29
     int mChallengeScore;                  // 30
     bool mShowBowlingLine;                // 124
     SeedType mLastConveyorSeedType;       // 32
@@ -165,6 +165,7 @@ protected:
 
     void _constructor();
     void _destructor();
+    void UpdateConveyorBelt(int playerIndex);
 };
 
 /***************************************************************************************************************/
@@ -202,5 +203,8 @@ inline void (*old_Challenge_ScaryPotterOpenPot)(Challenge *, GridItem *theScaryP
 inline GridItem *(*old_Challenge_IZombieGetBrainTarget)(Challenge *, Zombie *theZombie);
 
 inline void (*old_Challenge_IZombieSquishBrain)(Challenge *, GridItem *theBrain);
+
+inline void (*old_Challenge_UpdateConveyorBelt)(Challenge *, int);
+
 
 #endif // PVZ_LAWN_BOARD_CHALLENGE_H

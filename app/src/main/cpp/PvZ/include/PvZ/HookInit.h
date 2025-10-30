@@ -183,6 +183,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Challenge_ScaryPotterOpenPotAddr, &Challenge::ScaryPotterOpenPot, &old_Challenge_ScaryPotterOpenPot);
     homura::HookFunction(Challenge_IZombieGetBrainTargetAddr, &Challenge::IZombieGetBrainTarget, &old_Challenge_IZombieGetBrainTarget);
     homura::HookFunction(Challenge_IZombieSquishBrainAddr, &Challenge::IZombieSquishBrain, &old_Challenge_IZombieSquishBrain);
+    homura::HookFunction(Challenge_UpdateConveyorBeltAddr, &Challenge::UpdateConveyorBelt, &old_Challenge_UpdateConveyorBelt);
 
 
     homura::HookFunction(ChallengeScreen_AddedToManagerAddr, &ChallengeScreen::AddedToManager, &old_ChallengeScreen_AddedToManager);
@@ -391,6 +392,7 @@ inline void InitHookFunction() {
     //    homura::HookFunction(SeedBank_SeedBankAddr, &SeedBank::Create, &old_SeedBank_SeedBank);
     //    homura::HookFunction(SeedBank_UpdateWidthAddr, &SeedBank::UpdateWidth, &old_SeedBank_UpdateWidth);
     homura::HookFunction(SeedBank_MoveAddr, &SeedBank::Move, nullptr);
+    homura::HookFunction(SeedBank_AddSeedAddr, &SeedBank::AddSeed, &old_SeedBank_AddSeed);
 
 
     homura::HookFunction(AwardScreen_MouseDownAddr, &AwardScreen::MouseDown, &old_AwardScreen_MouseDown);

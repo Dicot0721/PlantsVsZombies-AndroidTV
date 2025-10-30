@@ -513,6 +513,7 @@ inline void *SeedBank_UpdateWidthAddr;
 inline void *SeedBank_MoveAddr;
 inline void *SeedBank_GetNumSeedsOnConveyorBeltAddr;
 inline void *SeedBank_ContainsPointAddr;
+inline void *SeedBank_AddSeedAddr;
 
 
 inline void *Challenge_UpdateAddr;
@@ -558,7 +559,7 @@ inline void *Challenge_DrawRainAddr;
 inline void *Challenge_DrawStormNightAddr;
 inline void *Challenge_CanTargetZombieWithPortalsAddr;
 inline void *Challenge_ScaryPotterJackExplodeAddr;
-
+inline void *Challenge_UpdateConveyorBeltAddr;
 
 inline void *Plant_UpdateAddr;
 inline void *Plant_DieAddr;
@@ -670,6 +671,7 @@ inline void *WaitForSecondPlayerDialog_DeleteAddr;
 
 inline void *Sexy_Dialog_AddedToManagerWidgetManagerAddr;
 inline void *Sexy_Dialog_RemovedFromManagerAddr;
+inline void *Sexy_Dialog_WaitForResultAddr;
 
 
 inline void *AlmanacDialog_AddedToManagerAddr;
@@ -1801,6 +1803,7 @@ inline bool GetFunctionAddr() {
     SeedBank_MouseHitTestAddr = dlsym(handle, "_ZN8SeedBank12MouseHitTestEiiP9HitResult");
     SeedBank_GetNumSeedsOnConveyorBeltAddr = dlsym(handle, "_ZN8SeedBank25GetNumSeedsOnConveyorBeltEv");
     SeedBank_ContainsPointAddr = dlsym(handle, "_ZN8SeedBank13ContainsPointEii");
+    SeedBank_AddSeedAddr = dlsym(handle, "_ZN8SeedBank7AddSeedE8SeedTypeb");
 
 
     Challenge_UpdateAddr = dlsym(handle, "_ZN9Challenge6UpdateEv");
@@ -1846,6 +1849,7 @@ inline bool GetFunctionAddr() {
     Challenge_DrawStormNightAddr = dlsym(handle, "_ZN9Challenge14DrawStormNightEPN4Sexy8GraphicsE");
     Challenge_CanTargetZombieWithPortalsAddr = dlsym(handle, "_ZN9Challenge26CanTargetZombieWithPortalsEP5PlantP6Zombie");
     Challenge_ScaryPotterJackExplodeAddr = dlsym(handle, "_ZN9Challenge22ScaryPotterJackExplodeEii");
+    Challenge_UpdateConveyorBeltAddr = dlsym(handle, "_ZN9Challenge18UpdateConveyorBeltEi");
 
 
     Plant_UpdateAddr = dlsym(handle, "_ZN5Plant6UpdateEv");
@@ -1957,6 +1961,7 @@ inline bool GetFunctionAddr() {
 
     Sexy_Dialog_AddedToManagerWidgetManagerAddr = dlsym(handle, "_ZN4Sexy6Dialog14AddedToManagerEPNS_13WidgetManagerE");
     Sexy_Dialog_RemovedFromManagerAddr = dlsym(handle, "_ZN4Sexy6Dialog18RemovedFromManagerEPNS_13WidgetManagerE");
+    Sexy_Dialog_WaitForResultAddr = dlsym(handle, "_ZN4Sexy6Dialog13WaitForResultEb");
 
 
     AlmanacDialog_AddedToManagerAddr = dlsym(handle, "_ZN13AlmanacDialog14AddedToManagerEPN4Sexy13WidgetManagerE");

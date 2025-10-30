@@ -58,6 +58,7 @@ public:
     bool ContainsPoint(int x, int y);
     bool BeginDraw(Sexy::Graphics *g);
     void EndDraw(Sexy::Graphics *g);
+    void AddSeed(int a2, int a3);
 
 protected:
     friend void InitHookFunction();
@@ -81,5 +82,6 @@ inline bool (*old_SeedBank_BeginDraw)(SeedBank *seedBank, Sexy::Graphics *graphi
 
 inline void (*old_SeedBank_EndDraw)(SeedBank *seedBank, Sexy::Graphics *graphics);
 
+inline void (*old_SeedBank_AddSeed)(SeedBank *seedBank, int a2, int a3);
 
 #endif // PVZ_LAWN_BOARD_SEED_BANK_H

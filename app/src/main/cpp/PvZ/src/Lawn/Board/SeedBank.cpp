@@ -269,3 +269,7 @@ bool SeedBank::BeginDraw(Sexy::Graphics *g) {
 void SeedBank::EndDraw(Sexy::Graphics *g) {
     old_SeedBank_EndDraw(this, g);
 }
+
+void SeedBank::AddSeed(int a2, int a3) {
+    old_SeedBank_AddSeed(this, a2, a3);
+}

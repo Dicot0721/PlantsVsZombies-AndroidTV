@@ -44,13 +44,13 @@ void CutScene::Update() {
     if (mPreUpdatingBoard)
         return;
     if (mApp->mGameMode == GameMode::GAMEMODE_ADVENTURE_TWO_PLAYER || mApp->IsCoopMode()) {
-        if (mApp->mTwoPlayerState == -1 && !(*((int (**)(LawnApp *, int))mApp->vTable + 103))(mApp, 39) && !(*((int (**)(LawnApp *, int))mApp->vTable + 103))(mApp, 73)) {
+        if (mApp->mTwoPlayerState == -1 && !mApp->GetDialog(Dialogs::DIALOG_CONTINUE) && !mApp->GetDialog(Dialogs::DIALOG_WAIT_FOR_SECOND_PLAYER)) {
 
             auto *aDialog = new WaitForSecondPlayerDialog(mApp);
             mApp->AddDialog(aDialog);
             mApp->mWidgetManager->SetFocus(reinterpret_cast<Widget *>(aDialog));
 
-            int buttonId = ((int (*)(WaitForSecondPlayerDialog *, bool))aDialog->vTable[127])(aDialog, true);
+            int buttonId = aDialog->WaitForResult(true);
             if (buttonId == 1001) {
                 mBoard->unknownBool = 1;
             } else {

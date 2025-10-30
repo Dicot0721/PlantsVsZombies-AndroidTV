@@ -18,6 +18,8 @@
  */
 
 #include "PvZ/Lawn/Board/Challenge.h"
+#include "PvZ/Lawn/Board/SeedBank.h"
+#include "Homura/Logger.h"
 #include "PvZ/Android/IntroVideo.h"
 #include "PvZ/Android/Native/NativeApp.h"
 #include "PvZ/GlobalVariable.h"
@@ -341,6 +343,16 @@ void Challenge::InitLevel() {
         mBoard->NewPlant(0, 4, SeedType::SEED_COBCANNON, SeedType::SEED_NONE, -1);
         mBoard->NewPlant(0, 5, SeedType::SEED_COBCANNON, SeedType::SEED_NONE, -1);
     }
+
+    // 为结盟僵王的2P传送带补充开局的4个固定植物
+    if (mApp->mGameMode == GAMEMODE_TWO_PLAYER_COOP_BOSS)
+    {
+        mBoard->mSeedBank2->AddSeed(SeedType::SEED_CABBAGEPULT,false);
+        mBoard->mSeedBank2->AddSeed(SeedType::SEED_JALAPENO,false);
+        mBoard->mSeedBank2->AddSeed(SeedType::SEED_CABBAGEPULT,false);
+        mBoard->mSeedBank2->AddSeed(SeedType::SEED_ICESHROOM,false);
+        mConveyorBeltCounter2 = 1000;
+    }
 }
 
 void Challenge::StartLevel() {
@@ -571,6 +583,10 @@ void Challenge::_destructor() {
 
 void Challenge::ScaryPotterOpenPot(GridItem* theScaryPot) {
     return old_Challenge_ScaryPotterOpenPot(this, theScaryPot);
+}
+
+void Challenge::UpdateConveyorBelt(int playerIndex) {
+    return old_Challenge_UpdateConveyorBelt(this, playerIndex);
 }
 
 GridItem* Challenge::IZombieGetBrainTarget(Zombie* theZombie) {

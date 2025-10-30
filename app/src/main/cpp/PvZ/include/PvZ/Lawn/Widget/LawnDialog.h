@@ -60,7 +60,7 @@ public:
     //    }
 
     void Resize(int theX, int theY, int theWidth, int theHeight) {
-        reinterpret_cast<void (*)(__Widget *, int, int, int, int)>(LawnDialog_ResizeAddr)(this, theX, theY, theWidth, theHeight);
+        reinterpret_cast<void (*)(__LawnDialog *, int, int, int, int)>(LawnDialog_ResizeAddr)(this, theX, theY, theWidth, theHeight);
     }
 
 protected:
