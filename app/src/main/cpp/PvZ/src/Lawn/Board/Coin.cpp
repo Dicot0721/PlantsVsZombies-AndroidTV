@@ -26,6 +26,7 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 #include "PvZ/TodLib/Effect/Attachment.h"
 
 #include <cmath>
@@ -43,7 +44,28 @@ void Coin::GamepadCursorOver(int thePlayerIndex) {
         return;
     }
 
-    old_Coin_GamepadCursorOver(this, thePlayerIndex);
+
+    //    old_Coin_GamepadCursorOver(this, thePlayerIndex);
+
+    if (mBoard && !mBoard->mPaused && mApp->mGameScene == SCENE_PLAYING && !mDead) {
+        if (mType == COIN_USABLE_SEED_PACKET) {
+            Collect(thePlayerIndex);
+        } else if (mType != COIN_COOP_DOUBLE_SUN && !mIsBeingCollected && mCoinMotion != COIN_MOTION_FROM_NEAR_CURSOR) {
+            if (!IsSun() || mScale >= GetSunScale()) {
+                mPlayerIndex = thePlayerIndex;
+                mCoinMotion = COIN_MOTION_FROM_NEAR_CURSOR;
+                unk2 = 0.0;
+                if (IsSun())
+                    mScale = GetSunScale();
+                if (mApp->IsFirstTimeAdventureMode()) {
+                    if (mBoard->mLevel == 1) {
+                        pvzstl::string str = TodStringTranslate("[ADVICE_CLICKED_ON_SUN]");
+                        mBoard->DisplayAdvice(str, MESSAGE_STYLE_TUTORIAL_LEVEL1_STAY, ADVICE_CLICKED_ON_SUN);
+                    }
+                }
+            }
+        }
+    }
 }
 
 void Coin::Update() {

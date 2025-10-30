@@ -50,7 +50,7 @@ public:
     float mPosY;                             // 14
     float mGoalX;                            // 15
     float mGoalY;                            // 16
-    Reanimation *mGridItemReanimID;          // 17
+    ReanimationID mGridItemReanimID;         // 17
     int *mGridItemParticleID;                // 18
     ZombieType mZombieType;                  // 19
     SeedType mSeedType;                      // 20
@@ -60,7 +60,12 @@ public:
     int mSunCount;                           // 24
     MotionTrailFrame mMotionTrailFrames[12]; // 25 ~ 60
     int mMotionTrailCount;                   // 61
-    int unkMems[14];                         // 62 ~ 75
+    int unkMems[4];                          // 62 ~ 65
+    int mLaunchCounter;                      // 66
+    int mLaunchRate;                         // 67
+    int mBeatenFlashCountdown;               // 68
+    int unkMems2[6];                         // 69 ~ 74
+    short mGridItemIndexInList;              // 75
     // 大小76个整数
 
     void GridItemDie() {

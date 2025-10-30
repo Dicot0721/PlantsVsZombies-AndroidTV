@@ -125,9 +125,9 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     //        lawnApp->mPlayerInfo->mChallengeRecords[GameMode::ChallengeHeavyWeapon - 2] = 0;
     //    }
     if (enable) {
-        LawnApp_PlaySample(lawnApp, *Sexy_SOUND_PAUSE_Addr);
+        lawnApp->PlaySample( *Sexy_SOUND_PAUSE_Addr);
     } else {
-        LawnApp_PlaySample(lawnApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
+        lawnApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
     }
 }
 

@@ -174,11 +174,11 @@ void VSSetupMenu::Update() {
     }
 }
 
-void VSSetupMenu::PickRandomZombies(std::vector<SeedType, std::allocator<SeedType>> &theZombieSeeds) {
+void VSSetupMenu::PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
     old_VSSetupMenu_PickRandomZombies(this, theZombieSeeds);
 }
 
-void VSSetupMenu::PickRandomPlants(std::vector<SeedType, std::allocator<SeedType>> &thePlantSeeds, std::vector<SeedType, std::allocator<SeedType>> const &theZombieSeeds) {
+void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds) {
     old_VSSetupMenu_PickRandomPlants(this, thePlantSeeds, theZombieSeeds);
     //    for (int i = 0; i < thePlantSeeds.size(); ++i) {
     //        SeedType type = thePlantSeeds[i];

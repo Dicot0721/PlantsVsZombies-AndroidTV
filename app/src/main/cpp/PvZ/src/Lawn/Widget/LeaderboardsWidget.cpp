@@ -347,7 +347,7 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
         leaderboardsWidget->mPlantTrashBin->mX, leaderboardsWidget->mPlantTrashBin->mY - plantHeight, addonImages.plant_can->mWidth, addonImages.plant_can->mHeight + plantHeight};
 
     if (TRect_Contains(&plantTrashBinRect, x, y)) {
-        LawnApp_PlaySample(leaderboardsWidget->mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
+        leaderboardsWidget->mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
         pvzstl::string str1 = TodStringTranslate("[PLANTS_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{PLANTS}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, str2.c_str(), "", "[DIALOG_BUTTON_OK]", "", 3);
@@ -359,7 +359,7 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
         leaderboardsWidget->mZombieTrashBin->mX, leaderboardsWidget->mZombieTrashBin->mY - zombieHeight, addonImages.zombie_can->mWidth, addonImages.zombie_can->mHeight + zombieHeight};
 
     if (TRect_Contains(&zombieTrashBinRect, x, y)) {
-        LawnApp_PlaySample(leaderboardsWidget->mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
+        leaderboardsWidget->mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
         pvzstl::string str1 = TodStringTranslate("[ZOMBIES_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{ZOMBIES}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ZOMBIES_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, str2.c_str(), "", "[DIALOG_BUTTON_OK]", "", 3);
@@ -384,7 +384,7 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
     //    Rect rect = {1066, 574, 72, 72};
     //    if (TRect_Contains(&rect, x, y)) {
     //        leaderboardsWidget->mTouchDownInBackRect = true;
-    //        LawnApp_PlaySample(leaderboardsWidget->mApp,*Sexy_SOUND_GRAVEBUTTON_Addr);
+    //        leaderboardsWidget->mApp,->PlaySample(Sexy_SOUND_GRAVEBUTTON_Addr);
     //    }
 }
 
@@ -447,14 +447,14 @@ void DaveHelp_KeyDown(LeaderboardsWidget *leaderboardsWidget, int keyCode) {
         return;
     }
     if (keyCode == Sexy::KEYCODE_SHOVEL) {
-        LawnApp_PlaySample(leaderboardsWidget->mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
+        leaderboardsWidget->mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
         pvzstl::string str1 = TodStringTranslate("[PLANTS_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{PLANTS}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, str2.c_str(), "", "[DIALOG_BUTTON_OK]", "", 3);
         return;
     }
     if (keyCode == Sexy::KEYCODE_HAMMER) {
-        LawnApp_PlaySample(leaderboardsWidget->mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
+        leaderboardsWidget->mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
         pvzstl::string str1 = TodStringTranslate("[ZOMBIES_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{ZOMBIES}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ZOMBIES_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, str2.c_str(), "", "[DIALOG_BUTTON_OK]", "", 3);

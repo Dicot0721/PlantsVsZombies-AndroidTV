@@ -26,6 +26,7 @@
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/ReanimationLawn.h"
+#include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -1287,4 +1288,101 @@ void Plant::BurnRow(int theRow) {
         // 注：原版中将 Zombie::BossDestroyIceballInRow(int) 函数改为了 Zombie::BossDestroyIceball()，冰球是否位于目标行的判断则移动至此处进行
         aBossZombie->BossDestroyIceballInRow(theRow);
     }
+}
+
+void Plant::UpdateProductionPlant() {
+    if (mApp->mGameMode == GAMEMODE_MP_VS && (tcp_connected || tcpClientSocket >= 0)) {
+        if (!IsInPlay())
+        {
+            return;
+        }
+        if (mApp->IsIZombieLevel() || mApp->mGameMode == GameMode::GAMEMODE_UPSELL || mApp->mGameMode == GameMode::GAMEMODE_INTRO)
+        {
+            return;
+        }
+        if (mBoard->HasLevelAwardDropped())
+        {
+            return;
+        }
+        if (mSeedType == SeedType::SEED_MARIGOLD && mBoard->mCurrentWave == mBoard->mNumWaves)
+        {
+            if (mState != PlantState::STATE_MARIGOLD_ENDING)
+            {
+                mState = PlantState::STATE_MARIGOLD_ENDING;
+                mStateCountdown = 6000;
+            }
+            else if (mStateCountdown <= 0)
+            {
+                return;
+            }
+        }
+        if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mBoard->mChallenge->mChallengeState != ChallengeState::STATECHALLENGE_LAST_STAND_ONSLAUGHT)
+        {
+            return;
+        }
+        //mLaunchCounter -= 3;
+        mLaunchCounter--;
+        if (mLaunchCounter <= 100)
+        {
+            int num = TodAnimateCurve(100, 0, mLaunchCounter, 0, 100, TodCurves::CURVE_LINEAR);
+            mEatenFlashCountdown = mEatenFlashCountdown > num ? mEatenFlashCountdown: num;
+        }
+        if (mLaunchCounter <= 0)
+        // 生产
+        {
+            if (tcp_connected) {
+                return;
+            }
+            mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
+            if (tcpClientSocket >= 0) {
+                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER, mPlantIndexInList, (short)mLaunchCounter};
+                send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+            }
+            mApp->PlayFoley(FoleyType::FOLEY_SPAWN_SUN);
+            if (mSeedType == SeedType::SEED_SUNSHROOM)
+            {
+                if (mState == PlantState::STATE_SUNSHROOM_SMALL)
+                {
+                    mBoard->AddCoin(mX, mY, CoinType::COIN_SMALLSUN, CoinMotion::COIN_MOTION_FROM_PLANT);
+                }
+                else
+                {
+                    mBoard->AddCoin(mX, mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
+                }
+            }
+            else if (mSeedType == SeedType::SEED_SUNFLOWER)
+            {
+                mBoard->AddCoin(mX, mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
+            }
+            else if (mSeedType == SeedType::SEED_TWINSUNFLOWER)
+            {
+                mBoard->AddCoin(mX, mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
+                mBoard->AddCoin(mX, mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
+            }
+            else if (mSeedType == SeedType::SEED_MARIGOLD)
+            {
+                int num2 = Sexy::Rand(100);
+                CoinType theCoinType = CoinType::COIN_SILVER;
+                if (num2 < 10)
+                {
+                    theCoinType = CoinType::COIN_GOLD;
+                }
+                mBoard->AddCoin(mX, mY, theCoinType, CoinMotion::COIN_MOTION_COIN);
+            }
+            if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BIG_TIME)
+            {
+                if (mSeedType == SeedType::SEED_SUNFLOWER)
+                {
+                    mBoard->AddCoin(mX, mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
+                    return;
+                }
+                if (mSeedType == SeedType::SEED_MARIGOLD)
+                {
+                    mBoard->AddCoin(mX, mY, CoinType::COIN_SILVER, CoinMotion::COIN_MOTION_COIN);
+                }
+            }
+        }
+        return;
+    }
+    return old_Plant_UpdateProductionPlant(this);
 }

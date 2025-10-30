@@ -145,8 +145,8 @@ protected:
     void _destructor();
     void HandleTcpClientMessage(void *buf, ssize_t bufSize);
     void HandleTcpServerMessage(void *buf, ssize_t bufSize);
-    void PickRandomZombies(std::vector<SeedType, std::allocator<SeedType>> &theZombieSeeds);
-    void PickRandomPlants(std::vector<SeedType, std::allocator<SeedType>> &thePlantSeeds, std::vector<SeedType, std::allocator<SeedType>> const &theZombieSeeds) ;
+    void PickRandomZombies(std::vector<SeedType> &theZombieSeeds);
+    void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds) ;
 };
 
 

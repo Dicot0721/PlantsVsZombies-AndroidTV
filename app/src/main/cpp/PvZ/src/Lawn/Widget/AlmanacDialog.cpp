@@ -132,9 +132,9 @@ void AlmanacDialog::MouseDown(int x, int y, int a4) {
     if (mOpenPage == 0) {
         // 如果当前的Page是Index Page
         if (mPlantButton->IsMouseOver())
-            LawnApp_PlaySample(mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
+            mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
         if (mZombieButton->IsMouseOver())
-            LawnApp_PlaySample(mApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
+            mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
         return;
     } else if (TRect_Contains(&mTextRect, x, y)) {
         isTouchDownInTextRect = true;
@@ -145,13 +145,13 @@ void AlmanacDialog::MouseDown(int x, int y, int a4) {
     if (seedType != SeedType::SEED_NONE && seedType != mSelectedSeed) {
         mSelectedSeed = seedType;
         SetupPlant();
-        LawnApp_PlaySample(mApp, *Sexy_SOUND_TAP_Addr);
+        mApp->PlaySample( *Sexy_SOUND_TAP_Addr);
     }
     ZombieType zombieType = ZombieHitTest(x, y);
     if (zombieType != -1 && zombieType != mSelectedZombie) {
         mSelectedZombie = zombieType;
         SetupZombie();
-        LawnApp_PlaySample(mApp, *Sexy_SOUND_TAP_Addr);
+        mApp->PlaySample( *Sexy_SOUND_TAP_Addr);
     }
 }
 

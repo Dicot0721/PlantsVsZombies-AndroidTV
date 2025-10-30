@@ -26,6 +26,7 @@
 #include "PvZ/Lawn/Board/ZenGarden.h"
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -128,7 +129,52 @@ void GridItem::Update() {
     if (requestPause) {
         return; // 高级暂停
     }
+    if (mGridItemType == GRIDITEM_GRAVESTONE && mApp->mGameMode == GAMEMODE_MP_VS && mApp->mGameScene == SCENE_PLAYING) {
 
+        if ( mBeatenFlashCountdown > 0 )
+            mBeatenFlashCountdown--;
+        mLaunchCounter--;
+        if (mLaunchCounter <= 100)
+        {
+            int num = TodAnimateCurve(100, 0, mLaunchCounter, 0, 100, TodCurves::CURVE_LINEAR);
+            mBeatenFlashCountdown = mBeatenFlashCountdown > num ? mBeatenFlashCountdown: num;
+        }
+        Reanimation* reanimation = mApp->ReanimationTryToGet(mGridItemReanimID);
+        if ( mBeatenFlashCountdown <= 0 )
+        {
+            reanimation->mEnableExtraAdditiveDraw = false;
+        }
+        else
+        {
+            int v13 = 3 * mBeatenFlashCountdown;
+            int v11;
+            if ( v13 <= 254 )
+            {
+                v11 = v13 / 2;
+            }
+            else
+            {
+                v13 = 255;
+                v11 = 127;
+            }
+            reanimation->mExtraAdditiveColor = Color(v13, v11, v13,255);
+            reanimation->mEnableExtraAdditiveDraw = true;
+        }
+        if ( mLaunchCounter <= 0 )
+        // 生产
+        {
+            if (tcp_connected) {
+                return;
+            }
+            mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
+            if (tcpClientSocket >= 0) {
+                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER, mGridItemIndexInList, (short)mLaunchCounter};
+                send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+            }
+            mBoard->AddCoin( mBoard->GridToPixelX(mGridX,mGridY), mBoard->GridToPixelY(mGridX,mGridY), CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_FROM_GRAVE);
+        }
+        return;
+    }
     old_GridItem_Update(this);
 }
 

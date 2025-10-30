@@ -233,7 +233,7 @@ void ChallengeScreen::MouseUp(int x, int y) {
         if (mSelectedMode == mUnk1[gameIndex]) {
             KeyDown(Sexy::KEYCODE_ACCEPT);
         } else {
-            LawnApp_PlaySample(mApp, *Sexy_SOUND_BUTTONCLICK_Addr);
+            mApp->PlaySample( *Sexy_SOUND_BUTTONCLICK_Addr);
             mSelectedMode = mUnk1[gameIndex];
         }
     }

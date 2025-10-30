@@ -381,9 +381,13 @@ public:
     void ClearAdviceImmediately() {
         reinterpret_cast<void (*)(Board *)>(Board_ClearAdviceImmediatelyAddr)(this);
     }
+    void DisplayAdvice(const pvzstl::string &theAdvice, MessageStyle theMessageStyle, AdviceType theHelpIndex) {
+        reinterpret_cast<void (*)(Board *, const pvzstl::string &, MessageStyle, AdviceType)>(Board_DisplayAdviceAddr)(this, theAdvice, theMessageStyle, theHelpIndex);
+    }
     void DisplayAdviceAgain(const pvzstl::string &theAdvice, MessageStyle theMessageStyle, AdviceType theHelpIndex) {
         reinterpret_cast<void (*)(Board *, const pvzstl::string &, MessageStyle, AdviceType)>(Board_DisplayAdviceAgainAddr)(this, theAdvice, theMessageStyle, theHelpIndex);
     }
+
     Plant *NewPlant(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int thePlayerIndex) {
         return reinterpret_cast<Plant *(*)(Board *, int, int, SeedType, SeedType, int)>(Board_NewPlantAddr)(this, theGridX, theGridY, theSeedType, theImitaterType, thePlayerIndex);
     }
@@ -423,9 +427,9 @@ public:
     bool CanInteractWithBoardButtons() {
         return reinterpret_cast<bool (*)(Board *)>(Board_CanInteractWithBoardButtonsAddr)(this);
     }
-    Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion) {
-        return reinterpret_cast<Coin *(*)(Board *, int, int, CoinType, CoinMotion)>(Board_AddCoinAddr)(this, theX, theY, theCoinType, theCoinMotion);
-    }
+//    Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion) {
+//        return reinterpret_cast<Coin *(*)(Board *, int, int, CoinType, CoinMotion)>(Board_AddCoinAddr)(this, theX, theY, theCoinType, theCoinMotion);
+//    }
     bool CanTakeSunMoney(int theAmount, int thePlayerIndex) {
         return reinterpret_cast<bool (*)(Board *, int, int)>(Board_CanTakeSunMoneyAddr)(this, theAmount, thePlayerIndex);
     }
@@ -606,7 +610,7 @@ public:
     void MouseDragSecond(int x, int y);
     void ButtonDepress(int theId);
     void KeyDown(Sexy::KeyCode theKey);
-
+    Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion);
 protected:
     friend void InitHookFunction();
 
@@ -616,6 +620,7 @@ protected:
     void __MouseDown(int x, int y, int theClickCount);
     void __MouseDrag(int x, int y);
     void __MouseUp(int x, int y, int theClickCount);
+    void PauseFromSecondPlayer(bool thePause);
 };
 
 int GetRectOverlap(const Sexy::Rect &rect1, const Sexy::Rect &rect2);
@@ -793,6 +798,7 @@ inline int (*old_Board_GetNumSeedsInBank)(Board *, bool);
 
 inline void (*old_Board_Draw)(Board *, Sexy::Graphics *g);
 
+inline Coin* (*old_Board_AddCoin)(Board *board, int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion);
 
 void FixBoardAfterLoad(Board *board);
 

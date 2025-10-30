@@ -234,7 +234,7 @@ void MainMenu::ButtonPress(MainMenuButtonId theSelectedButton) {
             gLawnApp->PlayFoley(FoleyType::FOLEY_CERAMIC);
             break;
         default:
-            LawnApp_PlaySample(gLawnApp, *Sexy_SOUND_GRAVEBUTTON_Addr);
+            gLawnApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
             break;
     }
 }

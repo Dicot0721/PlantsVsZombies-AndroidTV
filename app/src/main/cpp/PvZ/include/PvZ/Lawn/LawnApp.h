@@ -139,9 +139,9 @@ public:
     Reanimation *ReanimationTryToGet(ReanimationID theReanimationID) {
         return reinterpret_cast<Reanimation *(*)(LawnApp *, ReanimationID)>(LawnApp_ReanimationTryToGetAddr)(this, theReanimationID);
     }
-    void ClearSecondPlayer() {
-        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ClearSecondPlayerAddr)(this);
-    }
+//    void ClearSecondPlayer() {
+//        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ClearSecondPlayerAddr)(this);
+//    }
     bool CanShowStore() {
         return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_CanShowStoreAddr)(this);
     }
@@ -259,7 +259,7 @@ public:
         reinterpret_cast<void (*)(LawnApp *, FoleyType)>(LawnApp_PlayFoleyAddr)(this, theFoleyType);
     }
     void PlaySample(int theSoundNum) {
-        reinterpret_cast<void (*)(LawnApp *, int)>(LawnApp_PlaySampleAddr)(this, theSoundNum);
+        reinterpret_cast<void (*)(LawnApp *, int,bool unknown)>(LawnApp_PlaySampleAddr)(this, theSoundNum, true);
     }
 
     LawnApp() {
@@ -320,7 +320,7 @@ public:
     void SetHouseReanim(Reanimation *theHouseAnim);
     void LoadZombatarResources();
     PottedPlant *GetPottedPlantByIndex(int thePottedPlantIndex);
-
+    void ClearSecondPlayer();
     bool Is3DAccelerated() {
         // 修复关闭3D加速后MV错位
         return mNewIs3DAccelerated || (mCreditScreen != nullptr);
@@ -342,6 +342,7 @@ inline bool disableShop;
 inline bool doCheatDialog;     // 菜单DoCheatDialog
 inline bool doCheatCodeDialog; // 菜单DoCheatCodeDialog
 
+inline void (*old_LawnApp_ClearSecondPlayer)(LawnApp *lawnApp);
 
 inline void (*old_LawnApp_DoBackToMain)(LawnApp *lawnApp);
 

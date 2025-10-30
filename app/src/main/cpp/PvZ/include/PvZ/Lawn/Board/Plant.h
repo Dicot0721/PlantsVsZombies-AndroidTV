@@ -203,7 +203,7 @@ public:
     bool mInFlowerPot;                         // 342
     bool mGloveGrabbed;                        // 343
     int unk;                                   // 86
-    int mPlantIndexInList;                     // 87
+    short mPlantIndexInList;                   // 87
     // 大小88个整数
 
     void UpdateAbilities() {
@@ -260,6 +260,7 @@ public:
     bool DrawMagnetItemsOnTop();
     void SetImitaterFilterEffect();
     void BurnRow(int theRow);
+    void UpdateProductionPlant();
 };
 
 inline float PlantDrawHeightOffset(Board *theBoard, Plant *thePlant, SeedType theSeedType, int theCol, int theRow) {
@@ -315,6 +316,8 @@ inline void (*old_Plant_Die)(Plant *this_);
 inline void (*old_Plant_PlayBodyReanim)(Plant *, const char *theTrackName, ReanimLoopType theLoopType, int theBlendTime, float theAnimRate);
 
 inline Zombie *(*old_Plant_FindTargetZombie)(Plant *, int theRow, PlantWeapon thePlantWeapon);
+
+inline void (*old_Plant_UpdateProductionPlant)(Plant *);
 
 // inline void (*old_Plant_CobCannonFire)(Plant* plant, int x, int y);
 

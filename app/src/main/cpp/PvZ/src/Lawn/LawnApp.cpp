@@ -24,11 +24,13 @@
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
 #include "PvZ/Lawn/Widget/ConfirmBackToMainDialog.h"
 #include "PvZ/Lawn/Widget/MainMenu.h"
+#include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/Misc.h"
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
+#include <unistd.h>
 
 using namespace Sexy;
 
@@ -156,6 +158,33 @@ void LawnApp::DoConfirmBackToMain(bool theIsSave) {
     auto *aBackDialog = new ConfirmBackToMainDialog(theIsSave);
     (*(void (**)(LawnApp *, int, Sexy::__Widget *))(*(uint32_t *)this + 416))(this, Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN, aBackDialog);
     (*(void (**)(uint32_t, Sexy::__Widget *))(**((uint32_t **)this + 165) + 48))(*((uint32_t *)this + 165), aBackDialog);
+}
+
+
+
+void LawnApp::ClearSecondPlayer() {
+    if (tcp_connected) {
+        close(tcpServerSocket);
+        tcpServerSocket = -1;
+        tcp_connected = false;
+    }
+    if (tcpClientSocket >= 0) {
+        close(tcpClientSocket);
+        tcpClientSocket = -1;
+    }
+    if (tcpListenSocket >= 0) {
+        close(tcpListenSocket);
+        tcpListenSocket = -1;
+    }
+    if (udpScanSocket >= 0) {
+        close(udpScanSocket);
+        udpScanSocket = -1;
+    }
+    if (udpBroadcastSocket >= 0) {
+        close(udpBroadcastSocket);
+        udpBroadcastSocket = -1;
+    }
+    return old_LawnApp_ClearSecondPlayer(this);
 }
 
 void LawnApp::DoBackToMain() {
@@ -388,7 +417,7 @@ int LawnApp::GetNumPreloadingTasks() {
 bool LawnApp::GrantAchievement(AchievementId theAchievementId) {
     // 一些非Board的成就在这里处理
     if (!mPlayerInfo->mAchievements[theAchievementId]) {
-        LawnApp_PlaySample(this, addonSounds.achievement);
+        PlaySample( addonSounds.achievement);
         //    int holder[1];
         //    StrFormat(holder,"一二三四五六 成就达成！");
         //    ((CustomMessageWidget*)board->mAdvice)->mIcon = GetIconByAchievementId(theAchievementId);

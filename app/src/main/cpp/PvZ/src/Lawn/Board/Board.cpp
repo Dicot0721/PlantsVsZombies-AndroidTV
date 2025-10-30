@@ -535,6 +535,14 @@ void Board::KeyDown(KeyCode theKey) {
     return old_Board_KeyDown(this, theKey);
 }
 
+Coin *Board::AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion) {
+    if (tcpClientSocket >= 0) {
+        TwoCharTwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_ADD_COIN, (unsigned char)theCoinType, (unsigned char)theCoinMotion, (short)theX, (short)theY};
+        send(tcpClientSocket, &event, sizeof(TwoCharTwoShortDataEvent), 0);
+    }
+    return old_Board_AddCoin(this, theX, theY, theCoinType, theCoinMotion);
+}
+
 void Board::UpdateSunSpawning() {
     if (requestPause) {
         // 如果开了高级暂停
@@ -544,6 +552,9 @@ void Board::UpdateSunSpawning() {
         return;
     }
 
+    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && tcp_connected) {
+        return;
+    }
     return old_Board_UpdateSunSpawning(this);
 }
 
@@ -568,7 +579,7 @@ void Board::UpdateZombieSpawning() {
     //            mFinalWaveSoundCounter--;
     //            this[5660] = mFinalWaveSoundCounter;
     //            if (mFinalWaveSoundCounter == 0) {
-    //                LawnApp_PlaySample(lawnApp,Sexy_SOUND_FINALWAVE_Addr);
+    //                mApp->PlaySample(Sexy_SOUND_FINALWAVE_Addr);
     //            }
     //        }
     //        if (Board_HasLevelAwardDropped(this)) {
@@ -593,7 +604,7 @@ void Board::UpdateZombieSpawning() {
     //                Board_NextWaveComing(this);
     //                this[5550] = 1; //  mZombieCountDown = 1;
     //            }else if(mHugeWaveCountDown == 725){
-    //                LawnApp_PlaySample(lawnApp,Sexy_SOUND_FINALWAVE_Addr);
+    //                mApp->PlaySample(Sexy_SOUND_FINALWAVE_Addr);
     //            }
     //        }
     //
@@ -957,26 +968,31 @@ void Board::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
         BaseEvent *event = (BaseEvent *)((unsigned char *)buf + handledBufSize);
         LOG_DEBUG("TYPE:{}", (int)event->type);
         switch (event->type) {
-            case EVENT_BOARD_TOUCH_DOWN: {
+            case EVENT_CLIENT_BOARD_TOUCH_DOWN: {
                 handledBufSize += sizeof(TwoShortDataEvent);
                 TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
                 MouseDownSecond(event1->data1, event1->data2, 0);
                 TwoCharDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_DOWN_REPLY, (unsigned char)mGamepadControls2->mSelectedSeedIndex, (unsigned char)mGamepadControls2->mGamepadState};
                 send(tcpClientSocket, &eventReply, sizeof(TwoCharDataEvent), 0);
             } break;
-            case EVENT_BOARD_TOUCH_DRAG: {
+            case EVENT_CLIENT_BOARD_TOUCH_DRAG: {
                 handledBufSize += sizeof(TwoShortDataEvent);
                 TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
                 MouseDragSecond(event1->data1, event1->data2);
                 TwoShortDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_DRAG_REPLY, (short)mGamepadControls2->mCursorPositionX, (short)mGamepadControls2->mCursorPositionY};
                 send(tcpClientSocket, &eventReply, sizeof(TwoShortDataEvent), 0);
             } break;
-            case EVENT_BOARD_TOUCH_UP: {
+            case EVENT_CLIENT_BOARD_TOUCH_UP: {
                 handledBufSize += sizeof(TwoShortDataEvent);
                 TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
                 MouseUpSecond(event1->data1, event1->data2, 0);
                 TwoCharDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_UP_REPLY, (unsigned char)mGamepadControls2->mGamepadState, (unsigned char)mCursorObject2->mCursorType};
                 send(tcpClientSocket, &eventReply, sizeof(TwoCharDataEvent), 0);
+            } break;
+            case EVENT_CLIENT_BOARD_PAUSE: {
+                handledBufSize += sizeof(SimpleEvent);
+                SimpleEvent *event1 = (SimpleEvent *)event;
+                PauseFromSecondPlayer(event1->data);
             } break;
             default:
                 handledBufSize += sizeof(BaseEvent);
@@ -1042,13 +1058,13 @@ void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
                 ClearCursor(0);
                 mGamepadControls1->mGamepadState = 1;
             } break;
-            case EVENT_BOARD_TOUCH_CLEAR_CURSOR: {
+            case EVENT_CLIENT_BOARD_TOUCH_CLEAR_CURSOR: {
                 handledBufSize += sizeof(BaseEvent);
                 BaseEvent *event1 = (BaseEvent *)event;
                 ClearCursor(1);
                 mGamepadControls2->mGamepadState = 1;
             } break;
-            case EVENT_BOARD_GAMEPAD_SET_STATE: {
+            case EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE: {
                 handledBufSize += sizeof(SimpleEvent);
                 SimpleEvent *event1 = (SimpleEvent *)event;
                 mGamepadControls2->mGamepadState = event1->data;
@@ -1057,6 +1073,28 @@ void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
                 handledBufSize += sizeof(SimpleEvent);
                 SimpleEvent *event1 = (SimpleEvent *)event;
                 mGamepadControls1->mGamepadState = event1->data;
+            } break;
+            case EVENT_SERVER_BOARD_PAUSE: {
+                handledBufSize += sizeof(SimpleEvent);
+                SimpleEvent *event1 = (SimpleEvent *)event;
+                PauseFromSecondPlayer(event1->data);
+            } break;
+            case EVENT_SERVER_BOARD_ADD_COIN: {
+                handledBufSize += sizeof(TwoCharTwoShortDataEvent);
+                TwoCharTwoShortDataEvent *event1 = (TwoCharTwoShortDataEvent *)event;
+                AddCoin(event1->data3,event1->data4,(CoinType)event1->data1,(CoinMotion) event1->data2);
+            } break;
+            case EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER: {
+                handledBufSize += sizeof(TwoShortDataEvent);
+                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+                Plant* plant = mPlantsBlock + event1->data1;
+                plant->mLaunchCounter = event1->data2;
+            } break;
+            case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER: {
+                handledBufSize += sizeof(TwoShortDataEvent);
+                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+                GridItem* gridItem = mGridItemsBlock + event1->data1;
+                gridItem->mLaunchCounter = event1->data2;
             } break;
 
             default:
@@ -1084,6 +1122,7 @@ void Board::Update() {
                     LOG_DEBUG("[TCP] 对方关闭连接");
                     close(tcpClientSocket);
                     tcpClientSocket = -1;
+                    mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 } else {
                     if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -1096,6 +1135,7 @@ void Board::Update() {
                         LOG_DEBUG("[TCP] recv 出错 errno=%d", errno);
                         close(tcpClientSocket);
                         tcpClientSocket = -1;
+                        mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
                         break;
                     }
                 }
@@ -1118,6 +1158,7 @@ void Board::Update() {
                     tcpServerSocket = -1;
                     tcp_connecting = false;
                     tcp_connected = false;
+                    mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 } else {
                     if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -1132,6 +1173,7 @@ void Board::Update() {
                         tcpServerSocket = -1;
                         tcp_connecting = false;
                         tcp_connected = false;
+                        mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
                         break;
                     }
                 }
@@ -1569,7 +1611,7 @@ bool Board::IsFlagWave(int theWaveNumber) {
 void Board::SpawnZombieWave() {
     // 在对战模式中放出一大波僵尸时播放大波僵尸音效
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        LawnApp_PlaySample(mApp, *Sexy_SOUND_HUGE_WAVE_Addr);
+        mApp->PlaySample( *Sexy_SOUND_HUGE_WAVE_Addr);
     }
 
     old_Board_SpawnZombieWave(this);
@@ -1731,22 +1773,29 @@ void Board::DrawShovel(Sexy::Graphics *g) {
 void Board::Draw(Sexy::Graphics *g) {
     old_Board_Draw(this, g);
 
-    if (tcp_connected) {
-        Color aColor = Color(0, 205, 0, 255);
-        g->SetColor(aColor);
-        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+    if (mApp->mGameMode == GAMEMODE_MP_VS) {
+        if (tcp_connected) {
+            Color aColor = Color(0, 205, 0, 255);
+            g->SetColor(aColor);
+            g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
 
-        pvzstl::string morePackets = StrFormat("房间中");
-        g->DrawString(morePackets, 370, -20);
-    }
+            pvzstl::string morePackets = StrFormat("房间中");
+            g->DrawString(morePackets, 370, -20);
+        } else if (tcpClientSocket >= 0) {
+            Color aColor = Color(0, 205, 0, 255);
+            g->SetColor(aColor);
+            g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
 
-    if (tcpClientSocket >= 0) {
-        Color aColor = Color(0, 205, 0, 255);
-        g->SetColor(aColor);
-        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+            pvzstl::string morePackets = StrFormat("房主");
+            g->DrawString(morePackets, 380, -20);
+        } else {
+            Color aColor = Color(0, 205, 0, 255);
+            g->SetColor(aColor);
+            g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
 
-        pvzstl::string morePackets = StrFormat("房主");
-        g->DrawString(morePackets, 380, -20);
+            pvzstl::string morePackets = StrFormat("本地游戏");
+            g->DrawString(morePackets, 360, -20);
+        }
     }
 
 
@@ -1760,10 +1809,40 @@ void Board::Draw(Sexy::Graphics *g) {
     }
 }
 
+void Board::PauseFromSecondPlayer(bool thePause) {
+    if (mPaused == thePause)
+        return;
+    if (thePause) {
+        mApp->PlaySample(*Sexy_SOUND_PAUSE_Addr);
+        mApp->DoNewOptions(false, 0);
+    } else {
+        mApp->KillNewOptionsDialog();
+    }
+    Pause(thePause);
+}
+
+
 void Board::Pause(bool thePause) {
     //  能在这里得知游戏是否暂停
     //    if (thePause) Music2_StopAllMusic((Music2*)this->mApp->mMusic);
     //    else Music2_StartGameMusic((Music2*)this->mApp->mMusic, true);
+    if (mApp->mGameMode == GAMEMODE_MP_VS && !mApp->mVSSetupScreen) {
+        if (mPaused == thePause)
+            return;
+
+        if (tcp_connected) {
+            SimpleEvent event = {EventType::EVENT_CLIENT_BOARD_PAUSE, thePause};
+            ssize_t n = send(tcpServerSocket, &event, sizeof(SimpleEvent), 0);
+            LOG_DEBUG("send{}", n);
+        }
+
+        if (tcpClientSocket >= 0) {
+            SimpleEvent event = {EventType::EVENT_SERVER_BOARD_PAUSE, thePause};
+            ssize_t n = send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
+            LOG_DEBUG("send{}", n);
+        }
+    }
+
     old_Board_Pause(this, thePause);
 }
 
@@ -1842,7 +1921,7 @@ void Board::DoPlantingEffects(int theGridX, int theGridY, Plant *thePlant) {
     mApp->PlayFoley(FoleyType::FOLEY_PLANT);
     //    switch (mSeedType) {
     //        case a::SEED_SUNFLOWER:
-    //            LawnApp_PlaySample(mApp, Addon_Sounds.achievement);
+    //            mApp->PlaySample( Addon_Sounds.achievement);
     //            break;
     //        default:
     //            PlayFoley(mApp, FoleyType::Plant);
@@ -2113,7 +2192,7 @@ void Board::MouseDown(int x, int y, int theClickCount) {
     bool inRangeOf2P = PixelToGridX(x, y) > 5 || mSeedBank2->ContainsPoint(x, y);
     if (tcp_connected) {
         if (!inRangeOf2P) return;
-        TwoShortDataEvent event = {EventType::EVENT_BOARD_TOUCH_DOWN, (short)x, (short)y};
+        TwoShortDataEvent event = {EventType::EVENT_CLIENT_BOARD_TOUCH_DOWN, (short)x, (short)y};
         send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
         return;
     }
@@ -2187,7 +2266,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                 if (seedPacket->CanPickUp()) {
                     mSendKeyWhenTouchUp = true;
                 } else {
-                    LawnApp_PlaySample(mApp, *Sexy_SOUND_BUZZER_Addr);
+                    mApp->PlaySample( *Sexy_SOUND_BUZZER_Addr);
                     return;
                 }
             }
@@ -2203,7 +2282,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
             if (currentSeedBankIndex != newSeedPacketIndex || mGameState != 7) {
                 mGamepadControls1->mGamepadState = 7;
                 mGamepadControls1->mIsInShopSeedBank = false;
-                LawnApp_PlaySample(mApp, *Sexy_SOUND_SEEDLIFT_Addr);
+                mApp->PlaySample( *Sexy_SOUND_SEEDLIFT_Addr);
             } else if (currentSeedBankIndex == newSeedPacketIndex && mGameState == 7) {
                 mGamepadControls1->mGamepadState = 1;
                 if (!isTwoSeedBankMode)
@@ -2220,7 +2299,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                 if (seedPacket->CanPickUp()) {
                     mSendKeyWhenTouchUp = true;
                 } else {
-                    LawnApp_PlaySample(mApp, *Sexy_SOUND_BUZZER_Addr);
+                    mApp->PlaySample( *Sexy_SOUND_BUZZER_Addr);
                     return;
                 }
             }
@@ -2237,7 +2316,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
             if (currentSeedBankIndex_2P != newSeedPacketIndex_2P || mGameState_2P != 7) {
                 mGamepadControls2->mGamepadState = 7;
                 mGamepadControls2->mIsInShopSeedBank = false;
-                LawnApp_PlaySample(mApp, *Sexy_SOUND_SEEDLIFT_Addr);
+                mApp->PlaySample( *Sexy_SOUND_SEEDLIFT_Addr);
             } else if (currentSeedBankIndex_2P == newSeedPacketIndex_2P && mGameState_2P == 7) {
                 mGamepadControls2->mGamepadState = 1;
                 if (!isTwoSeedBankMode)
@@ -2480,7 +2559,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
 void Board::MouseDrag(int x, int y) {
     // Drag函数仅仅负责移动光标即可
     if (tcp_connected) {
-        TwoShortDataEvent event = {EventType::EVENT_BOARD_TOUCH_DRAG, (short)x, (short)y};
+        TwoShortDataEvent event = {EventType::EVENT_CLIENT_BOARD_TOUCH_DRAG, (short)x, (short)y};
         ssize_t n = send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
         LOG_DEBUG("send{}", n);
         return;
@@ -2644,7 +2723,7 @@ void Board::__MouseDrag(int x, int y) {
 
 void Board::MouseUp(int x, int y, int theClickCount) {
     if (tcp_connected) {
-        TwoShortDataEvent event = {EventType::EVENT_BOARD_TOUCH_UP, (short)x, (short)y};
+        TwoShortDataEvent event = {EventType::EVENT_CLIENT_BOARD_TOUCH_UP, (short)x, (short)y};
         ssize_t n = send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
         LOG_DEBUG("send{}", n);
         return;
@@ -2811,7 +2890,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
                 if (seedPacket->CanPickUp()) {
                     gSendKeyWhenTouchUpSecond = true;
                 } else {
-                    LawnApp_PlaySample(mApp, *Sexy_SOUND_BUZZER_Addr);
+                    mApp->PlaySample( *Sexy_SOUND_BUZZER_Addr);
                     return;
                 }
             }
@@ -2828,7 +2907,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
             if (currentSeedBankIndex != newSeedPacketIndex || mGameState != 7) {
                 mGamepadControls1->mGamepadState = 7;
                 mGamepadControls1->mIsInShopSeedBank = false;
-                LawnApp_PlaySample(mApp, *Sexy_SOUND_SEEDLIFT_Addr);
+                mApp->PlaySample( *Sexy_SOUND_SEEDLIFT_Addr);
             } else if (currentSeedBankIndex == newSeedPacketIndex && mGameState == 7) {
                 mGamepadControls1->mGamepadState = 1;
                 if (!isTwoSeedBankMode)
@@ -2845,7 +2924,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
                 if (seedPacket->CanPickUp()) {
                     gSendKeyWhenTouchUpSecond = true;
                 } else {
-                    LawnApp_PlaySample(mApp, *Sexy_SOUND_BUZZER_Addr);
+                    mApp->PlaySample( *Sexy_SOUND_BUZZER_Addr);
                     return;
                 }
             }
@@ -2862,7 +2941,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
             if (currentSeedBankIndex_2P != newSeedPacketIndex_2P || mGameState_2P != 7) {
                 mGamepadControls2->mGamepadState = 7;
                 mGamepadControls2->mIsInShopSeedBank = false;
-                LawnApp_PlaySample(mApp, *Sexy_SOUND_SEEDLIFT_Addr);
+                mApp->PlaySample( *Sexy_SOUND_SEEDLIFT_Addr);
             } else if (currentSeedBankIndex_2P == newSeedPacketIndex_2P && mGameState_2P == 7) {
                 mGamepadControls2->mGamepadState = 1;
                 if (!isTwoSeedBankMode)
@@ -3141,7 +3220,7 @@ void Board::MouseDragSecond(int x, int y) {
             mGamepadControls2->mIsInShopSeedBank = false;
             requestDrawButterInCursor = false;
             if (tcpClientSocket >= 0) {
-                SimpleEvent event = {EventType::EVENT_BOARD_GAMEPAD_SET_STATE , 7};
+                SimpleEvent event = {EventType::EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE, 7};
                 send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
             }
         }
@@ -3224,7 +3303,7 @@ void Board::MouseDragSecond(int x, int y) {
             gSendKeyWhenTouchUpSecond = false;
 
             if (tcpClientSocket >= 0) {
-                BaseEvent event = {EventType::EVENT_BOARD_TOUCH_CLEAR_CURSOR};
+                BaseEvent event = {EventType::EVENT_CLIENT_BOARD_TOUCH_CLEAR_CURSOR};
                 send(tcpClientSocket, &event, sizeof(BaseEvent), 0);
             }
         }
@@ -3348,6 +3427,20 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
 
 
 void Board::StartLevel() {
+    if (mApp->mGameMode == GAMEMODE_MP_VS) {
+        if (tcpClientSocket >= 0) {
+         GridItem* gridItem = nullptr;
+         while(IterateGridItems(gridItem)) {
+             TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER, gridItem->mGridItemIndexInList, (short)gridItem->mLaunchCounter};
+             send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+         }
+         Plant *plant = nullptr;
+         while (IteratePlants(plant)) {
+             TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER, plant->mPlantIndexInList, (short)plant->mLaunchCounter};
+             send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+         }
+        }
+    }
     old_Board_StartLevel(this);
 }
 
@@ -3392,7 +3485,7 @@ void Board::ButtonDepress(int theId) {
             lawnApp->DoBackToMain();
             return;
         }
-        LawnApp_PlaySample(lawnApp, *Sexy_SOUND_PAUSE_Addr);
+        mApp->PlaySample( *Sexy_SOUND_PAUSE_Addr);
         lawnApp->DoNewOptions(false, 0);
         return;
     } else if (theId == 1001) {
@@ -3480,7 +3573,7 @@ bool Board::GrantAchievement(AchievementId theAchievementId, bool theIsShow) {
     LawnApp *lawnApp = mApp;
     DefaultPlayerInfo *playerInfo = lawnApp->mPlayerInfo;
     if (!playerInfo->mAchievements[theAchievementId]) {
-        LawnApp_PlaySample(lawnApp, addonSounds.achievement);
+        mApp->PlaySample( addonSounds.achievement);
         ClearAdviceImmediately();
         const char *theAchievementName = GetNameByAchievementId(theAchievementId);
         pvzstl::string str = TodStringTranslate("[ACHIEVEMENT_GRANTED]");

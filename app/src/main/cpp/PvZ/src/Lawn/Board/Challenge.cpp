@@ -224,7 +224,7 @@ bool Challenge::IZombieEatBrain(Zombie* theZombie) {
     int mHealth = aBrain->mGridItemCounter - 2; // 一次吃掉脑子的两滴血
     aBrain->mGridItemCounter = mHealth;
     if (mHealth <= 0) {
-        LawnApp_PlaySample(mApp, *Sexy_SOUND_GULP_Addr);
+        mApp->PlaySample( *Sexy_SOUND_GULP_Addr);
         aBrain->GridItemDie();
         IZombieScoreBrain(aBrain);
     }

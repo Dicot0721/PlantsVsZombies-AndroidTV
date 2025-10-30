@@ -381,7 +381,7 @@ void Projectile::DoImpact(Zombie* theZombie) {
         int aRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_GROUND, mCobTargetRow, 2);
         mApp->AddTodParticle(mPosX + 80.0f, mPosY + 40.0f, aRenderOrder, ParticleEffect::PARTICLE_BLASTMARK);
         mApp->AddTodParticle(mPosX + 80.0f, mPosY + 40.0f, mRenderOrder + 1, ParticleEffect::PARTICLE_POPCORNSPLASH);
-        LawnApp_PlaySample(mApp, *Sexy_SOUND_DOOMSHROOM_Addr);
+        mApp->PlaySample( *Sexy_SOUND_DOOMSHROOM_Addr);
         mBoard->ShakeBoard(3, -4);
     } else if (mProjectileType == ProjectileType::PROJECTILE_PEA) {
         aSplatPosX -= 15.0f;

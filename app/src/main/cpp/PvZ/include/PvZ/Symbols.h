@@ -592,6 +592,7 @@ inline void *Plant_UpdateAbilitiesAddr;
 inline void *Plant_AnimateAddr;
 inline void *GetPlantDefinitionAddr;
 inline void *Plant_PlayBodyReanimAddr;
+inline void *Plant_UpdateProductionPlantAddr;
 
 
 inline void *Projectile_UpdateAddr;
@@ -1874,6 +1875,7 @@ inline bool GetFunctionAddr() {
     Plant_AnimateAddr = dlsym(handle, "_ZN5Plant7AnimateEv");
     GetPlantDefinitionAddr = dlsym(handle, "_Z18GetPlantDefinition8SeedType");
     Plant_PlayBodyReanimAddr = dlsym(handle, "_ZN5Plant14PlayBodyReanimEPKc14ReanimLoopTypeif");
+    Plant_UpdateProductionPlantAddr = dlsym(handle, "_ZN5Plant21UpdateProductionPlantEv");
 
 
     Projectile_UpdateAddr = dlsym(handle, "_ZN10Projectile6UpdateEv");

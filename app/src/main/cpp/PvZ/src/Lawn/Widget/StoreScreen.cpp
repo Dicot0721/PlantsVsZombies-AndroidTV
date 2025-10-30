@@ -78,7 +78,7 @@ void StoreScreen::ButtonDepress(int theId) {
         case StoreScreen::StoreScreen_Prev:
             mHatchTimer = 50;
             unk197 = 1;
-            LawnApp_PlaySample(mApp, *Sexy_SOUND_HATCHBACK_CLOSE_Addr);
+            mApp->PlaySample( *Sexy_SOUND_HATCHBACK_CLOSE_Addr);
             mBubbleCountDown = 0;
             mApp->CrazyDaveStopTalking();
             EnableButtons(false);
@@ -98,7 +98,7 @@ void StoreScreen::ButtonDepress(int theId) {
         case StoreScreen::StoreScreen_Next:
             mHatchTimer = 50;
             unk197 = 2;
-            LawnApp_PlaySample(mApp, *Sexy_SOUND_HATCHBACK_CLOSE_Addr);
+            mApp->PlaySample( *Sexy_SOUND_HATCHBACK_CLOSE_Addr);
             mBubbleCountDown = 0;
             mApp->CrazyDaveStopTalking();
             EnableButtons(false);
