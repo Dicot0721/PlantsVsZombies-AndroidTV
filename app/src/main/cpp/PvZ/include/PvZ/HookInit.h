@@ -351,7 +351,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Zombie_DrawBungeeCordAddr, &Zombie::DrawBungeeCord, nullptr);
     homura::HookFunction(Zombie_IsTangleKelpTargetAddr, &Zombie::IsTangleKelpTarget, nullptr);
     homura::HookFunction(Zombie_IsTangleKelpTarget2Addr, &Zombie::IsTangleKelpTarget, nullptr);
-//    homura::HookFunction(Zombie_DrawReanimAddr, &Zombie::DrawReanim, nullptr);
+    homura::HookFunction(Zombie_DrawReanimAddr, &Zombie::DrawReanim, nullptr);
     homura::HookFunction(Zombie_DropHeadAddr, &Zombie::DropHead, &old_Zombie_DropHead);
     homura::HookFunction(Zombie_DropArmAddr, &Zombie::DropArm, &old_Zombie_DropArm);
     homura::HookFunction(Zombie_ZombieInitializeAddr, &Zombie::ZombieInitialize, &old_Zombie_ZombieInitialize);
