@@ -1431,8 +1431,9 @@ enum CoinID { COINID_NULL };
 enum ParticleID { PARTICLEID_NULL };
 enum ParticleEmitterID { PARTICLEEMITTERID_NULL };
 enum ParticleSystemID { PARTICLESYSTEMID_NULL };
-enum PlantID { PLANTID_NULL };
+enum PlantID : short { PLANTID_NULL };
 enum ReanimationID { REANIMATIONID_NULL };
-enum ZombieID { ZOMBIEID_NULL };
+enum ZombieID : short { ZOMBIEID_NULL };
+enum GridItemID : short { GRIDITEMID_NULL };
 
 #endif // PVZ_COMMON_CONST_ENUMS_H

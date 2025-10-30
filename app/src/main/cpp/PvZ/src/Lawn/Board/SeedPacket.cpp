@@ -80,13 +80,13 @@ void SeedPacket::Update() {
 void SeedPacket::UpdateSelected() {
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS || mApp->IsCoopMode()) {
         // 如果是双人模式关卡(对战或结盟)，则使用下面的逻辑来更新当前选中的卡片。用于修复1P和2P的卡片选择框同时出现在两个人各自的植物栏里(也就是植物栏一共出现四个选择框)的问题。
-        int mSelectedSeedIndex1P = mBoard->mGamepadControls1->mSelectedSeedIndex;
-        int mSelectedSeedIndex2P = mBoard->mGamepadControls2->mSelectedSeedIndex;
-        bool playerIndex = GetPlayerIndex();
-        bool selectedBy1P = playerIndex == 0 && mIndex == mSelectedSeedIndex1P;
-        bool selectedBy2P = playerIndex == 1 && mIndex == mSelectedSeedIndex2P;
-        mSelectedBy1P = selectedBy1P || selectedBy2P;
-        mSelectedBy2P = selectedBy2P;
+
+        GamepadControls* theGamepad = GetPlayerIndex() ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1;
+
+        mSelected = theGamepad->mSelectedSeedIndex == mIndex;
+        mSelectedBy2P = theGamepad->mPlayerIndex1 == 1 && theGamepad->mSelectedSeedIndex == mIndex;
+
+
         return;
     }
 

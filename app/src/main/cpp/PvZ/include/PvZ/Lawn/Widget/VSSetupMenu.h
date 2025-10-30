@@ -65,17 +65,24 @@ inline VSSetupWidget *gVSMorePacketsButton;
 
 class VSSetupMenu : public Sexy::__Widget {
 public:
+    enum VSSetupState {
+        VS_SETUP_CONTROLLERS = 0,
+        VS_SETUP_SIDES = 1,
+        VS_SELECT_BATTLE = 2,
+        VS_CUSTOM_BATTLE = 3
+    };
+
     Sexy::ButtonListener mButtonListener; // 64
     int unkInt[5];                        // 65 ~ 69
     int mInt70;                           // 70
     int mInt71;                           // 71
     int mInt72;                           // 72
     LawnApp *mApp;                        // 73
-    int mState;                           // 74 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
+    VSSetupState mState;                           // 74 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
     int mInt75;                           // 75
     int mInt76;                           // 76
-    int mInt77;                           // 77
-    int mInt78;                           // 78
+    int mController1Position;             // 77  // -1 0 1， 分别位于左 中 右
+    int mController2Position;             // 78  // -1 0 1， 分别位于左 中 右
     int unkInt79;                         // 79
     int mInt80;                           // 80
     int mInt81;                           // 81
@@ -138,6 +145,10 @@ public:
     void OnStateEnter(int theState);
     void ButtonPress(int theId);
     void ButtonDepress(int theId);
+    void MouseDown(int x, int y, int theCount);
+    void MouseDrag(int x, int y);
+    void MouseUp(int x, int y, int theCount);
+    void AddedToManager(Sexy::WidgetManager *a2);
 
 protected:
     friend void InitHookFunction();
@@ -147,8 +158,13 @@ protected:
     void HandleTcpServerMessage(void *buf, ssize_t bufSize);
     void PickRandomZombies(std::vector<SeedType> &theZombieSeeds);
     void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds) ;
+
+
 };
 
+inline bool is1PControllerMoving;
+inline bool is2PControllerMoving;
+inline int touchDownX;
 
 inline void (*old_VSSetupMenu_Constructor)(VSSetupMenu *);
 
@@ -166,8 +182,10 @@ inline void (*old_VSSetupMenu_ButtonPress)(VSSetupMenu *, int theId);
 
 inline void (*old_VSSetupMenu_ButtonDepress)(VSSetupMenu *, int theId);
 
-inline void (*old_VSSetupMenu_PickRandomZombies)(VSSetupMenu *,std::vector<SeedType, std::allocator<SeedType>> &theVector);
+inline void (*old_VSSetupMenu_PickRandomZombies)(VSSetupMenu *,std::vector<SeedType> &theVector);
 
-inline void (*old_VSSetupMenu_PickRandomPlants)(VSSetupMenu *,std::vector<SeedType, std::allocator<SeedType>> &theVector1, std::vector<SeedType, std::allocator<SeedType>> const &theVector2) ;
+inline void (*old_VSSetupMenu_PickRandomPlants)(VSSetupMenu *,std::vector<SeedType> &theVector1, std::vector<SeedType> const &theVector2) ;
+
+inline void (*old_VSSetupMenu_AddedToManager)(VSSetupMenu *, Sexy::WidgetManager *a2);
 
 #endif // PVZ_LAWN_WIDGET_VS_SETUP_MENU_H

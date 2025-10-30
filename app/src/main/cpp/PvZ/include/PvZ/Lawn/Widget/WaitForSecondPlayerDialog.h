@@ -130,6 +130,8 @@ enum EventType : unsigned char {
     EVENT_VSSETUPMENU_BUTTON_DEPRESS,
     EVENT_VSSETUPMENU_ENTER_STATE,
     EVENT_VSSETUPMENU_RANDOM_PICK,
+    EVENT_VSSETUPMENU_MOVE_CONTROLLER,
+    EVENT_VSSETUPMENU_SET_CONTROLLER,
 
     EVENT_SEEDCHOOSER_SELECT_SEED,
 
@@ -153,10 +155,39 @@ enum EventType : unsigned char {
     EVENT_CLIENT_BOARD_PAUSE,
     EVENT_SERVER_BOARD_PAUSE,
 
-    EVENT_SERVER_BOARD_ADD_COIN,
-    EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER,
+    EVENT_SERVER_BOARD_COIN_ADD,
+
     EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER,
+
+
+    EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER,
+    EVENT_SERVER_BOARD_PLANT_ANIMATION, // 效果不佳，后续再想办法
+    EVENT_SERVER_BOARD_PLANT_FIRE,
+    EVENT_SERVER_BOARD_PLANT_ADD,
+
+
+    EVENT_SERVER_BOARD_ZOMBIE_ADD,
 };
+
+struct TwoShort {
+    short s1;
+    short s2;
+};
+
+struct FourChar {
+    unsigned char c1;
+    unsigned char c2;
+    unsigned char c3;
+    unsigned char c4;
+};
+
+union IntFloatShortChar {
+    int i;
+    float f;
+    TwoShort s;
+    FourChar c;
+};
+
 
 class BaseEvent {
 public:
@@ -166,6 +197,10 @@ public:
 class SimpleEvent : public BaseEvent {
 public:
     unsigned char data;
+};
+class SimpleShortEvent : public BaseEvent {
+public:
+    short data;
 };
 
 class TwoCharDataEvent : public BaseEvent {
@@ -187,6 +222,24 @@ public:
     short data3;
     short data4;
 };
+
+class FourCharDataEvent : public BaseEvent {
+public:
+    unsigned char data1;
+    unsigned char data2;
+    unsigned char data3;
+    unsigned char data4;
+};
+
+
+class TwoShortTwoIntDataEvent : public BaseEvent {
+public:
+    short data1;
+    short data2;
+    IntFloatShortChar data3;
+    IntFloatShortChar data4;
+};
+
 
 
 inline server_info servers[MAX_SERVERS];

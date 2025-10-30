@@ -593,6 +593,8 @@ inline void *Plant_AnimateAddr;
 inline void *GetPlantDefinitionAddr;
 inline void *Plant_PlayBodyReanimAddr;
 inline void *Plant_UpdateProductionPlantAddr;
+inline void *Plant_FireAddr;
+
 
 
 inline void *Projectile_UpdateAddr;
@@ -639,6 +641,7 @@ inline void *SeedPacket_SetPacketTypeAddr;
 inline void *VSSetupMenu_VSSetupMenuAddr;
 inline void *VSSetupMenu_Delete2Addr;
 inline void *VSSetupMenu_DrawAddr;
+inline void *VSSetupMenu_AddedToManagerAddr;
 inline void *VSSetupMenu_UpdateAddr;
 inline void *VSSetupMenu_KeyDownAddr;
 inline void *VSSetupMenu_GameButtonDownAddr;
@@ -650,6 +653,7 @@ inline void *VSSetupMenu_ButtonPressAddr;
 inline void *VSSetupMenu_ButtonDepressAddr;
 inline void *VSSetupMenu_PickRandomZombiesAddr;
 inline void *VSSetupMenu_PickRandomPlantsAddr;
+inline int *VSSetupMenu_GAMEPAD_X_POSITIONSAddr;
 
 
 inline void *VSResultsMenu_UpdateAddr;
@@ -1266,6 +1270,7 @@ inline void *vTableForCursorObjectAddr;
 inline void *vTableForBoardAddr;
 inline void *vTableForStoreScreenAddr;
 inline void *vTableForMailScreenAddr;
+inline void *vTableForVSSetupMenuAddr;
 inline void *vTableForChallengeScreenAddr;
 inline void *vTableForVSResultsMenuAddr;
 inline void *vTableForSeedChooserScreenAddr;
@@ -1876,6 +1881,7 @@ inline bool GetFunctionAddr() {
     GetPlantDefinitionAddr = dlsym(handle, "_Z18GetPlantDefinition8SeedType");
     Plant_PlayBodyReanimAddr = dlsym(handle, "_ZN5Plant14PlayBodyReanimEPKc14ReanimLoopTypeif");
     Plant_UpdateProductionPlantAddr = dlsym(handle, "_ZN5Plant21UpdateProductionPlantEv");
+    Plant_FireAddr = dlsym(handle, "_ZN5Plant4FireEP6Zombiei11PlantWeaponP8GridItem");
 
 
     Projectile_UpdateAddr = dlsym(handle, "_ZN10Projectile6UpdateEv");
@@ -1922,6 +1928,7 @@ inline bool GetFunctionAddr() {
     VSSetupMenu_VSSetupMenuAddr = dlsym(handle, "_ZN11VSSetupMenuC2Ev");
     VSSetupMenu_Delete2Addr = dlsym(handle, "_ZN11VSSetupMenuD2Ev");
     VSSetupMenu_DrawAddr = dlsym(handle, "_ZN11VSSetupMenu4DrawEPN4Sexy8GraphicsE");
+    VSSetupMenu_AddedToManagerAddr = dlsym(handle, "_ZN11VSSetupMenu14AddedToManagerEPN4Sexy13WidgetManagerE");
     VSSetupMenu_UpdateAddr = dlsym(handle, "_ZN11VSSetupMenu6UpdateEv");
     VSSetupMenu_GameButtonDownAddr = dlsym(handle, "_ZN11VSSetupMenu14GameButtonDownEN4Sexy13GamepadButtonEij");
     VSSetupMenu_KeyDownAddr = dlsym(handle, "_ZN11VSSetupMenu7KeyDownEN4Sexy7KeyCodeE");
@@ -1933,6 +1940,7 @@ inline bool GetFunctionAddr() {
     VSSetupMenu_ButtonDepressAddr = dlsym(handle, "_ZN11VSSetupMenu13ButtonDepressEi");
     VSSetupMenu_PickRandomZombiesAddr = dlsym(handle, "_ZN11VSSetupMenu17PickRandomZombiesERSt6vectorI8SeedTypeSaIS1_EE");
     VSSetupMenu_PickRandomPlantsAddr = dlsym(handle, "_ZN11VSSetupMenu16PickRandomPlantsERSt6vectorI8SeedTypeSaIS1_EERKS3_");
+    VSSetupMenu_GAMEPAD_X_POSITIONSAddr = (int*)dlsym(handle, "_ZN11VSSetupMenu19GAMEPAD_X_POSITIONSE");
 
 
     VSResultsMenu_UpdateAddr = dlsym(handle, "_ZN13VSResultsMenu6UpdateEv");
@@ -2532,6 +2540,7 @@ inline bool GetFunctionAddr() {
     vTableForBoardAddr = dlsym(handle, "_ZTV5Board");
     vTableForStoreScreenAddr = dlsym(handle, "_ZTV11StoreScreen");
     vTableForMailScreenAddr = dlsym(handle, "_ZTV10MailScreen");
+    vTableForVSSetupMenuAddr = dlsym(handle, "_ZTV11VSSetupMenu");
     vTableForChallengeScreenAddr = dlsym(handle, "_ZTV15ChallengeScreen");
     vTableForVSResultsMenuAddr = dlsym(handle, "_ZTV13VSResultsMenu");
     vTableForSeedChooserScreenAddr = dlsym(handle, "_ZTV17SeedChooserScreen");

@@ -300,6 +300,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Plant_DieAddr, &Plant::Die, &old_Plant_Die);
     homura::HookFunction(Plant_PlayBodyReanimAddr, &Plant::PlayBodyReanim, &old_Plant_PlayBodyReanim);
     homura::HookFunction(Plant_UpdateProductionPlantAddr, &Plant::UpdateProductionPlant, &old_Plant_UpdateProductionPlant);
+    homura::HookFunction(Plant_FireAddr, &Plant::Fire, &old_Plant_Fire);
 
     //    MSHookFunction(Plant_CobCannonFireAddr, (void *) Plant_CobCannonFire, (void **) &old_Plant_CobCannonFire);
     //    MSHookFunction(Plant_UpdateReanimAddr, (void *) Plant_UpdateReanim, (void **) &old_Plant_UpdateReanim);
@@ -350,7 +351,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Zombie_DrawBungeeCordAddr, &Zombie::DrawBungeeCord, nullptr);
     homura::HookFunction(Zombie_IsTangleKelpTargetAddr, &Zombie::IsTangleKelpTarget, nullptr);
     homura::HookFunction(Zombie_IsTangleKelpTarget2Addr, &Zombie::IsTangleKelpTarget, nullptr);
-    homura::HookFunction(Zombie_DrawReanimAddr, &Zombie::DrawReanim, nullptr);
+//    homura::HookFunction(Zombie_DrawReanimAddr, &Zombie::DrawReanim, nullptr);
     homura::HookFunction(Zombie_DropHeadAddr, &Zombie::DropHead, &old_Zombie_DropHead);
     homura::HookFunction(Zombie_DropArmAddr, &Zombie::DropArm, &old_Zombie_DropArm);
     homura::HookFunction(Zombie_ZombieInitializeAddr, &Zombie::ZombieInitialize, &old_Zombie_ZombieInitialize);
@@ -399,6 +400,7 @@ inline void InitHookFunction() {
     homura::HookFunction(VSSetupMenu_VSSetupMenuAddr, &VSSetupMenu::_constructor, &old_VSSetupMenu_Constructor);
     homura::HookFunction(VSSetupMenu_Delete2Addr, &VSSetupMenu::_destructor, &old_VSSetupMenu_Destructor);
     homura::HookFunction(VSSetupMenu_DrawAddr, &VSSetupMenu::Draw, &old_VSSetupMenu_Draw);
+    homura::HookFunction(VSSetupMenu_AddedToManagerAddr, &VSSetupMenu::AddedToManager, &old_VSSetupMenu_AddedToManager);
     homura::HookFunction(VSSetupMenu_UpdateAddr, &VSSetupMenu::Update, &old_VSSetupMenu_Update);
     homura::HookFunction(VSSetupMenu_KeyDownAddr, &VSSetupMenu::KeyDown, &old_VSSetupMenu_KeyDown);
     homura::HookFunction(VSSetupMenu_OnStateEnterAddr, &VSSetupMenu::OnStateEnter, &old_VSSetupMenu_OnStateEnter);
@@ -557,9 +559,14 @@ inline void InitVTableHookFunction() {
     homura::HookVirtualFunc(vTableForChallengeScreenAddr, 83, &ChallengeScreen::MouseDrag, &old_ChallengeScreen_MouseDrag);
     homura::HookVirtualFunc(vTableForChallengeScreenAddr, 130, &ChallengeScreen::ButtonPress, nullptr);
 
-    //    VTableHookFunction(vTableForVSResultsMenuAddr, 78, (void *) VSResultsMenu_MouseDown,(void **) &old_VSResultsMenu_MouseDown);
-    //    VTableHookFunction(vTableForVSResultsMenuAddr, 81, (void *) VSResultsMenu_MouseUp,(void **) &old_VSResultsMenu_MouseUp);
-    //    VTableHookFunction(vTableForVSResultsMenuAddr, 83, (void *) VSResultsMenu_MouseDrag,(void **) &old_VSResultsMenu_MouseDrag);
+//    homura::HookVirtualFunc(vTableForVSResultsMenuAddr, 78, &VSResultsMenu::MouseDown,nullptr);
+//    homura::HookVirtualFunc(vTableForVSResultsMenuAddr, 81, &VSResultsMenu::MouseUp,nullptr);
+//    homura::HookVirtualFunc(vTableForVSResultsMenuAddr, 83, &VSResultsMenu::MouseDrag,nullptr);
+
+
+    homura::HookVirtualFunc(vTableForVSSetupMenuAddr, 78, &VSSetupMenu::MouseDown,nullptr);
+    homura::HookVirtualFunc(vTableForVSSetupMenuAddr, 81, &VSSetupMenu::MouseUp,nullptr);
+    homura::HookVirtualFunc(vTableForVSSetupMenuAddr, 83, &VSSetupMenu::MouseDrag,nullptr);
 
     homura::HookVirtualFunc(vTableForSeedChooserScreenAddr, 77, &SeedChooserScreen::MouseMove, &old_SeedChooserScreen_MouseMove);
     homura::HookVirtualFunc(vTableForSeedChooserScreenAddr, 78, &SeedChooserScreen::MouseDown, &old_SeedChooserScreen_MouseDown);

@@ -71,6 +71,7 @@ void VSSetupWidget::CheckboxChecked(int theId, bool checked) {
 void VSSetupMenu::_constructor() {
     old_VSSetupMenu_Constructor(this);
 
+
     Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
     Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
     pvzstl::string str = StrFormat("");
@@ -99,11 +100,121 @@ void VSSetupMenu::Draw(Graphics *g) {
     old_VSSetupMenu_Draw(this, g);
 }
 
+
+void VSSetupMenu::AddedToManager(Sexy::WidgetManager *a2) {
+    old_VSSetupMenu_AddedToManager(this, a2);
+    // 缩小Widget，使得触控可传递给VSSetupMenu自身
+    for (int i = 0; i < 9; ++i) {
+        Sexy::Widget *theWidget = FindWidget(i);
+        if (theWidget) {
+            theWidget->Resize(theWidget->mX, theWidget->mY, 0, 0);
+        }
+    }
+}
+
+void VSSetupMenu::MouseDown(int x, int y, int theCount) {
+    if (mState == VS_SETUP_SIDES) {
+
+        Sexy::Widget *theController1Widget = FindWidget(7);
+        Sexy::Widget *theController2Widget = FindWidget(8);
+        if (x > theController1Widget->mX && x < theController1Widget->mX + 170 && y > theController1Widget->mY && y < theController1Widget->mY + 122) {
+            is1PControllerMoving = true;
+        } else if (x > theController2Widget->mX && x < theController2Widget->mX + 170 && y > theController2Widget->mY && y < theController2Widget->mY + 122) {
+            is2PControllerMoving = true;
+        }
+        touchDownX = x;
+    }
+}
+
+void VSSetupMenu::MouseDrag(int x, int y) {
+    if (is1PControllerMoving) {
+        if (tcp_connected)
+            return;
+        Sexy::Widget *theController1Widget = FindWidget(7);
+        theController1Widget->Move(theController1Widget->mX + x - touchDownX, theController1Widget->mY);
+        if (tcpClientSocket >= 0) {
+            SimpleShortEvent event = {EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER, (short)theController1Widget->mX};
+            send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
+        }
+    } else if (is2PControllerMoving) {
+        if (tcpClientSocket >= 0)
+            return;
+        Sexy::Widget *theController2Widget = FindWidget(8);
+        theController2Widget->Move(theController2Widget->mX + x - touchDownX, theController2Widget->mY);
+        if (tcpServerSocket >= 0) {
+            SimpleShortEvent event = {EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER, (short)theController2Widget->mX};
+            send(tcpServerSocket, &event, sizeof(SimpleShortEvent), 0);
+        }
+    }
+    touchDownX = x;
+}
+
+void VSSetupMenu::MouseUp(int x, int y, int theCount) {
+
+    if (is1PControllerMoving) {
+        if (tcp_connected)
+            return;
+        Sexy::Widget *theController1Widget = FindWidget(7);
+        int newController1Position = theController1Widget->mX > 400 ? 1 : theController1Widget->mX > 250 ? -1 : 0;
+        if (newController1Position == mController1Position) {
+            GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+        }
+        mController1Position = newController1Position;
+        if (tcpClientSocket >= 0) {
+            SimpleShortEvent event = {EventType::EVENT_VSSETUPMENU_SET_CONTROLLER, (short)mController1Position};
+            send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
+        }
+        is1PControllerMoving = false;
+    } else if (is2PControllerMoving) {
+        if (tcpClientSocket >= 0)
+            return;
+        Sexy::Widget *theController2Widget = FindWidget(8);
+        int newController2Position = theController2Widget->mX > 400 ? 1 : theController2Widget->mX > 250 ? -1 : 0;
+
+        if (newController2Position == mController2Position) {
+            GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+        }
+        mController2Position = newController2Position;
+        if (tcpServerSocket >= 0) {
+            SimpleShortEvent event = {EventType::EVENT_VSSETUPMENU_SET_CONTROLLER, (short)mController2Position};
+            send(tcpServerSocket, &event, sizeof(SimpleShortEvent), 0);
+        }
+        is2PControllerMoving = false;
+    }
+
+    if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
+        GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+        GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+    }
+
+}
 void VSSetupMenu::Update() {
-    // 记录当前游戏状态
-    old_VSSetupMenu_Update(this);
-    if (mState == 0)
+
+    if (is1PControllerMoving || is2PControllerMoving) {
+        Sexy::Widget *theController1Widget = FindWidget(7);
+        Sexy::Widget *theController2Widget = FindWidget(8);
+        int Controller1X = theController1Widget->mX;
+        int Controller2X = theController2Widget->mX;
+        old_VSSetupMenu_Update(this);
+        if (is1PControllerMoving) theController1Widget->Move(Controller1X, theController1Widget->mY);
+        if (is2PControllerMoving) theController2Widget->Move(Controller2X, theController2Widget->mY);
+    } else {
+        old_VSSetupMenu_Update(this);
+    }
+
+    if (mState == VS_SETUP_CONTROLLERS) {
         return;
+    }
+    if (mState == VS_SETUP_SIDES && !tcp_connected && tcpClientSocket == -1 && !isKeyboardTwoPlayerMode) {
+        // 本地游戏
+        // 自动分配阵营
+        mController1Position = 0;
+        mController2Position = 1;
+        GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+        GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+        return;
+    }
+
     if (tcpClientSocket >= 0) {
         char buf[1024];
 
@@ -111,7 +222,7 @@ void VSSetupMenu::Update() {
             ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
             if (n > 0) {
                 //                buf[n] = '\0'; // 确保字符串结束
-//                LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
+                //                LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
 
                 HandleTcpClientMessage(buf, n);
             } else if (n == 0) {
@@ -142,8 +253,8 @@ void VSSetupMenu::Update() {
         while (true) {
             ssize_t n = recv(tcpServerSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
             if (n > 0) {
-//                buf[n] = '\0'; // 确保字符串结束
-//                LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
+                //                buf[n] = '\0'; // 确保字符串结束
+                //                LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
                 HandleTcpServerMessage(buf, n);
 
             } else if (n == 0) {
@@ -202,8 +313,8 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::ve
         }
 
         unsigned char buffer[sizeof(BaseEvent) + sizeof(data)];
-        std::memcpy(buffer, &event, sizeof(BaseEvent));               // 拷贝事件头
-        std::memcpy(buffer + sizeof(BaseEvent), data, sizeof(data));  // 紧跟 payload
+        std::memcpy(buffer, &event, sizeof(BaseEvent));              // 拷贝事件头
+        std::memcpy(buffer + sizeof(BaseEvent), data, sizeof(data)); // 紧跟 payload
 
         ssize_t n = send(tcpClientSocket, &buffer, sizeof(BaseEvent) + sizeof(data), 0);
         LOG_DEBUG("send {}", n);
@@ -211,38 +322,62 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::ve
 }
 
 void VSSetupMenu::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
-    BaseEvent *event = (BaseEvent *)buf;
-    switch (event->type) {
-        case EVENT_SEEDCHOOSER_SELECT_SEED: {
-            TwoCharDataEvent *event1 = (TwoCharDataEvent *)buf;
-            SeedType theSeedType = (SeedType)event1->data1;
-            bool mIsZombieChooser = event1->data2;
-            LOG_DEBUG("theSeedType={}", event1->data1);
-            LOG_DEBUG("mIsZombieChooser={}", mIsZombieChooser);
-            SeedChooserScreen *screen = (mIsZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
-            screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX1, screen->mCursorPositionY1);
-            screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX2, screen->mCursorPositionY2);
-            (mIsZombieChooser ? screen->mSeedType2 : screen->mSeedType1) = theSeedType;
-            screen->GameButtonDown(ButtonCode::BUTTONCODE_A, screen->mPlayerIndex);
-        } break;
-        default:
-            break;
+    int handledBufSize = 0;
+    while (bufSize - handledBufSize > sizeof(BaseEvent)) {
+        BaseEvent *event = (BaseEvent *)((unsigned char *)buf + handledBufSize);
+        switch (event->type) {
+            case EVENT_SEEDCHOOSER_SELECT_SEED: {
+                handledBufSize += sizeof(TwoCharDataEvent);
+                TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
+                SeedType theSeedType = (SeedType)event1->data1;
+                bool mIsZombieChooser = event1->data2;
+                LOG_DEBUG("theSeedType={}", event1->data1);
+                LOG_DEBUG("mIsZombieChooser={}", mIsZombieChooser);
+                SeedChooserScreen *screen = (mIsZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
+                screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX1, screen->mCursorPositionY1);
+                screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX2, screen->mCursorPositionY2);
+                (mIsZombieChooser ? screen->mSeedType2 : screen->mSeedType1) = theSeedType;
+                screen->GameButtonDown(ButtonCode::BUTTONCODE_A, screen->mPlayerIndex);
+            } break;
+            case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
+                handledBufSize += sizeof(SimpleShortEvent);
+                SimpleShortEvent *event1 = (SimpleShortEvent *)event;
+                Sexy::Widget *theController2Widget = FindWidget(8);
+                theController2Widget->Move(event1->data, theController2Widget->mY);
+                is2PControllerMoving = true;
+            } break;
+            case EVENT_VSSETUPMENU_SET_CONTROLLER: {
+                handledBufSize += sizeof(SimpleShortEvent);
+                SimpleShortEvent *event1 = (SimpleShortEvent *)event;
+                if (mController2Position == event1->data) {
+                    GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+                }
+                mController2Position = event1->data;
+                is2PControllerMoving = false;
+                if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
+                    GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+                    GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+                }
+            } break;
+            default:
+                handledBufSize += sizeof(BaseEvent);
+                break;
+        }
     }
 }
 
 void VSSetupMenu::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
-
     int handledBufSize = 0;
 
-    while(bufSize - handledBufSize > sizeof (BaseEvent)) {
-        BaseEvent *event = (BaseEvent *)((unsigned char*)buf + handledBufSize);
+    while (bufSize - handledBufSize > sizeof(BaseEvent)) {
+        BaseEvent *event = (BaseEvent *)((unsigned char *)buf + handledBufSize);
         switch (event->type) {
             case EVENT_VSSETUPMENU_BUTTON_DEPRESS: {
-                handledBufSize += sizeof (SimpleEvent);
+                handledBufSize += sizeof(SimpleEvent);
                 SimpleEvent *event1 = (SimpleEvent *)event;
                 int theId = event1->data;
                 LOG_DEBUG("theId={}", theId);
-                if (theId == 11 && mState == 2) { // 随机战场
+                if (theId == 11 && mState == VS_SELECT_BATTLE) { // 随机战场
                     break;
                 }
                 tcp_connected = false;
@@ -250,14 +385,14 @@ void VSSetupMenu::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
                 tcp_connected = true;
             } break;
             case EVENT_VSSETUPMENU_ENTER_STATE: {
-                handledBufSize += sizeof (SimpleEvent);
+                handledBufSize += sizeof(SimpleEvent);
                 SimpleEvent *event1 = (SimpleEvent *)event;
                 int theState = event1->data;
                 LOG_DEBUG("theState={}", theState);
-//                GoToState(theState);
+                //                GoToState(theState);
             } break;
             case EVENT_SEEDCHOOSER_SELECT_SEED: {
-                handledBufSize += sizeof (TwoCharDataEvent);
+                handledBufSize += sizeof(TwoCharDataEvent);
                 TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
                 SeedType theSeedType = (SeedType)event1->data1;
                 bool mIsZombieChooser = event1->data2;
@@ -270,24 +405,44 @@ void VSSetupMenu::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
                 screen->GameButtonDown(ButtonCode::BUTTONCODE_A, screen->mPlayerIndex);
             } break;
             case EVENT_VSSETUPMENU_RANDOM_PICK: {
-                handledBufSize += sizeof (BaseEvent) + 10;
-                unsigned char* data = (unsigned char*)event + sizeof(BaseEvent);
+                handledBufSize += sizeof(BaseEvent) + 10;
+                unsigned char *data = (unsigned char *)event + sizeof(BaseEvent);
                 tcp_connected = false;
                 ButtonDepress(11);
                 tcp_connected = true;
 
-                mApp->mBoard->mSeedBank1->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER,SeedType::SEED_NONE);
+                mApp->mBoard->mSeedBank1->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
                 for (int i = 0; i < 5; ++i) {
-                    mApp->mBoard->mSeedBank1->mSeedPackets[i+1].SetPacketType((SeedType)data[i],SeedType::SEED_NONE);
+                    mApp->mBoard->mSeedBank1->mSeedPackets[i + 1].SetPacketType((SeedType)data[i], SeedType::SEED_NONE);
                 }
 
-                mApp->mBoard->mSeedBank2->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE,SeedType::SEED_NONE);
+                mApp->mBoard->mSeedBank2->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE, SeedType::SEED_NONE);
                 for (int i = 0; i < 5; ++i) {
-                    mApp->mBoard->mSeedBank2->mSeedPackets[i+1].SetPacketType((SeedType)data[i+5],SeedType::SEED_NONE);
+                    mApp->mBoard->mSeedBank2->mSeedPackets[i + 1].SetPacketType((SeedType)data[i + 5], SeedType::SEED_NONE);
+                }
+            } break;
+            case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
+                handledBufSize += sizeof(SimpleShortEvent);
+                SimpleShortEvent *event1 = (SimpleShortEvent *)event;
+                Sexy::Widget *theController1Widget = FindWidget(7);
+                theController1Widget->Move(event1->data, theController1Widget->mY);
+                is1PControllerMoving = true;
+            } break;
+            case EVENT_VSSETUPMENU_SET_CONTROLLER: {
+                handledBufSize += sizeof(SimpleShortEvent);
+                SimpleShortEvent *event1 = (SimpleShortEvent *)event;
+                if (mController1Position == event1->data) {
+                    GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+                }
+                mController1Position = event1->data;
+                is1PControllerMoving = false;
+                if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
+                    GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+                    GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
                 }
             } break;
             default:
-                handledBufSize += sizeof (BaseEvent);
+                handledBufSize += sizeof(BaseEvent);
                 break;
         }
     }
@@ -297,11 +452,11 @@ void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
     // 修复在对战的阵营选取界面无法按返回键退出的BUG。
     if (theKey == Sexy::KeyCode::KEYCODE_ESCAPE) {
         switch (mState) {
-            case 1:
-            case 2:
+            case VS_SETUP_SIDES:
+            case VS_SELECT_BATTLE:
                 mApp->DoBackToMain();
                 return;
-            case 3: // 自定义战场
+            case VS_CUSTOM_BATTLE: // 自定义战场
                 mApp->DoNewOptions(false, 0);
                 return;
         }
@@ -345,6 +500,22 @@ void VSSetupMenu::ButtonDepress(int theId) {
         return;
     }
 
+    if (!isKeyboardTwoPlayerMode && mState == VS_SETUP_SIDES) {
+        // 自动分配阵营
+        //        GameButtonDown(ButtonCode::BUTTONCODE_LEFT, 0, 0);
+        //        GameButtonDown(ButtonCode::BUTTONCODE_RIGHT, 1, 0);
+        if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
+            GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+            GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+        } else {
+            return;
+            //            // 自动分配阵营
+            //            mController1Position = 0;
+            //            mController2Position = 1;
+            //            GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+            //            GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+        }
+    }
 
     old_VSSetupMenu_ButtonDepress(this, theId);
 
@@ -353,13 +524,6 @@ void VSSetupMenu::ButtonDepress(int theId) {
         send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
     }
 
-    if (!isKeyboardTwoPlayerMode && mState == 1) {
-        // 自动分配阵营
-        GameButtonDown(ButtonCode::BUTTONCODE_LEFT, 0, 0);
-        GameButtonDown(ButtonCode::BUTTONCODE_RIGHT, 1, 0);
-        GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
-        GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
-    }
 
     mApp->mBoard->PickBackground(); // 修改器修改场地后开局立即更换
 
@@ -385,7 +549,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
             }
             break;
         case 10: // 自定义战场
-            if (mState == 3) {
+            if (mState == VS_CUSTOM_BATTLE) {
                 gVSMorePacketsButton->SetDisable();
             }
             break;

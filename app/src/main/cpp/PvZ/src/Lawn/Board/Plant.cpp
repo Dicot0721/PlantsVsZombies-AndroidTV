@@ -600,6 +600,26 @@ void Plant::DoSpecial() {
 //     old_Plant_CobCannonFire(plant,x,y);
 // }
 
+void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *gridItem) {
+    if (mApp->mGameMode == GAMEMODE_MP_VS) {
+        if (tcp_connected)
+            return;
+        if (tcpClientSocket >= 0) {
+            TwoShortTwoIntDataEvent event;
+
+            event.type = EventType::EVENT_SERVER_BOARD_PLANT_FIRE;
+            event.data1 = mPlantID;
+            event.data2 = theTargetZombie == nullptr ? -1 : theTargetZombie->mZombieID;
+            event.data3.s.s1 = (short)theRow;
+            event.data3.s.s2 = (short)thePlantWeapon;
+            event.data4.s.s1 = gridItem == nullptr ? -1 : gridItem->mGridItemID;
+            send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
+
+        }
+    }
+    old_Plant_Fire(this,theTargetZombie, theRow, thePlantWeapon, gridItem);
+}
+
 Zombie *Plant::FindTargetZombie(int theRow, PlantWeapon thePlantWeapon) {
     int aDamageRangeFlags = GetDamageRangeFlags(thePlantWeapon);
     Rect aAttackRect = GetPlantAttackRect(thePlantWeapon);
@@ -1335,7 +1355,7 @@ void Plant::UpdateProductionPlant() {
             }
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if (tcpClientSocket >= 0) {
-                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER, mPlantIndexInList, (short)mLaunchCounter};
+                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER, mPlantID, (short)mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
             }
             mApp->PlayFoley(FoleyType::FOLEY_SPAWN_SUN);

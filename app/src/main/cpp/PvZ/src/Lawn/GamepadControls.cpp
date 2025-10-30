@@ -18,6 +18,7 @@
  */
 
 #include "PvZ/Lawn/GamepadControls.h"
+#include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Challenge.h"
@@ -177,6 +178,8 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
 }
 
 void GamepadControls::Update(float a2) {
+
+
     LawnApp *aApp = mGameObject.mApp;
     int theGridX = mBoard->PixelToGridXKeepOnBoard(mCursorPositionX, mCursorPositionY);
     int theGridY = mBoard->PixelToGridYKeepOnBoard(mCursorPositionX, mCursorPositionY);
@@ -206,11 +209,11 @@ void GamepadControls::Update(float a2) {
     }
 
     if (positionAutoFix && !aApp->IsWhackAZombieLevel() && aApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM && tcpServerSocket == -1) {
-        if (mPlayerIndex2 == 0 && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER1 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
+        if (this == mBoard->mGamepadControls1 && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER1 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
             mCursorPositionX += (mGridCenterPositionX - mCursorPositionX) / 10;
             mCursorPositionY += (mGridCenterPositionY - mCursorPositionY) / 10;
         }
-        if (mPlayerIndex2 == 1 && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER2 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER2) {
+        if (this == mBoard->mGamepadControls2 && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER2 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER2) {
             mCursorPositionX += (mGridCenterPositionX - mCursorPositionX) / 10;
             mCursorPositionY += (mGridCenterPositionY - mCursorPositionY) / 10;
         }
@@ -675,8 +678,8 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
     return old_GamepadControls_DrawPreview(this, g);
 }
 
-void GamepadControls::OnButtonDown(ButtonCode theButton, int theIsZombieControl, unsigned int thePlayerIndex) {
-    old_GamepadControls_OnButtonDown(this, theButton, theIsZombieControl, thePlayerIndex);
+void GamepadControls::OnButtonDown(ButtonCode theButton, int thePlayerIndex, unsigned int unk) {
+    old_GamepadControls_OnButtonDown(this, theButton, thePlayerIndex, unk);
 
     SeedBank *aSeedBank = GetSeedBank();
     SeedPacket *aSeedPacket = &aSeedBank->mSeedPackets[mSelectedSeedIndex];

@@ -46,7 +46,8 @@ public:
     int unknownIntMember1;           // 26
     int unknownIntMember2;           // 27
     bool mSelectedBy2P;              // 112
-    bool mSelectedBy1P;              // 113
+    bool mSelected;                  // 113
+    bool mSelectedByBothPlayer;      // 114
     // 大小29个整数
 
     void DrawBackground(Sexy::Graphics *g) {

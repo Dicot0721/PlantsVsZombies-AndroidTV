@@ -65,7 +65,7 @@ public:
     int mLaunchRate;                         // 67
     int mBeatenFlashCountdown;               // 68
     int unkMems2[6];                         // 69 ~ 74
-    short mGridItemIndexInList;              // 75
+    GridItemID mGridItemID;              // 75
     // 大小76个整数
 
     void GridItemDie() {

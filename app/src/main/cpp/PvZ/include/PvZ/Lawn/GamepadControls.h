@@ -105,7 +105,7 @@ public:
     void Update(float a2);
     void DrawPreview(Sexy::Graphics *g);
     void UpdatePreviewReanim();
-    void OnButtonDown(ButtonCode theButton, int theIsZombieControl, unsigned int thePlayerIndex);
+    void OnButtonDown(ButtonCode theButton, int thePlayerIndex, unsigned int unk);
 
 protected:
     friend void InitHookFunction();
@@ -136,7 +136,7 @@ inline void (*old_GamepadControls_UpdatePreviewReanim)(GamepadControls *gamePad)
 
 inline void (*old_GamepadControls_DrawPreview)(GamepadControls *gamePad, Sexy::Graphics *graphics);
 
-inline void (*old_GamepadControls_OnButtonDown)(GamepadControls *, ButtonCode theButton, int theIsZombieControl, unsigned int thePlayerIndex);
+inline void (*old_GamepadControls_OnButtonDown)(GamepadControls *, ButtonCode theButton, int thePlayerIndex, unsigned int unk);
 
 inline void (*old_ZenGardenControls_Update)(ZenGardenControls *a1, float a2);
 
