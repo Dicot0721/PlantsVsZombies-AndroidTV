@@ -84,7 +84,7 @@ public:
     int mSeedsInFlight;                   // 934
     int mSeedsInBothBank;                 // 935
     int mSeedsIn1PBank;                   // 936
-    int unkMem2;                          // 937
+    int mSeedsIn2PBank;                   // 937
     ToolTipWidget *mToolTip1;             // 938
     ToolTipWidget *mToolTip2;             // 939
     int mToolTipWidgetSeed1;             // 940
@@ -142,13 +142,19 @@ public:
     bool SeedNotAllowedDuringTrial(SeedType theSeedType) {
         return reinterpret_cast<bool (*)(SeedChooserScreen *, SeedType)>(SeedChooserScreen_SeedNotAllowedDuringTrialAddr)(this, theSeedType);
     }
+    bool CanPickNow() {
+        return reinterpret_cast<bool (*)(SeedChooserScreen *)>(SeedChooserScreen_CanPickNowAddr)(this);
+    }
+    void RemoveToolTip(int thePlayerIndex) {
+        reinterpret_cast<void (*)(SeedChooserScreen *, int)>(SeedChooserScreen_RemoveToolTipAddr)(this, thePlayerIndex);
+    }
 
     SeedChooserScreen(bool theIsZombieChooser);
     void EnableStartButton(int theIsEnabled);
     void RebuildHelpbar();
     SeedType GetZombieSeedType(SeedType theSeedType);
     ZombieType GetZombieType(ZombieType theZombieType);
-    void ClickedSeedInChooser(ChosenSeed *theChosenSeed, int thePlayerIndex);
+    void ClickedSeedInChooser(ChosenSeed &theChosenSeed, int thePlayerIndex);
     void CrazyDavePickSeeds();
     void OnStartButton();
     void Update();
@@ -196,7 +202,7 @@ inline void (*old_SeedChooserScreen_OnStartButton)(SeedChooserScreen *seedChoose
 
 inline bool (*old_SeedChooserScreen_SeedNotAllowedToPick)(SeedChooserScreen *seedChooserScreen, SeedType theSeedType);
 
-inline void (*old_SeedChooserScreen_ClickedSeedInChooser)(SeedChooserScreen *a1, ChosenSeed *a2, int a3);
+inline void (*old_SeedChooserScreen_ClickedSeedInChooser)(SeedChooserScreen *a1, ChosenSeed &a2, int a3);
 
 inline void (*old_SeedChooserScreen_CrazyDavePickSeeds)(SeedChooserScreen *a);
 

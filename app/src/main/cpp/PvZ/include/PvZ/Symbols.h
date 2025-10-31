@@ -308,6 +308,7 @@ inline void *LawnApp_HasSeedTypeAddr;
 inline void *LawnApp_KillBoardAddr;
 inline void *LawnApp_ShowGameSelectorAddr;
 inline void *LawnApp_SetSecondPlayerAddr;
+inline void *LawnApp_PlayerToGamepadIndexAddr;
 
 
 inline void *ChallengeScreen_UpdateAddr;
@@ -463,6 +464,7 @@ inline void *SeedChooserScreen_FindSeedInBankAddr;
 inline void *SeedChooserScreen_DrawAddr;
 inline void *SeedChooserScreen_SeedNotRecommendedToPickAddr;
 inline void *SeedChooserScreen_SeedNotAllowedDuringTrialAddr;
+inline void *SeedChooserScreen_CanPickNowAddr;
 
 
 inline void *Coin_CoinInitializeAddr;
@@ -655,6 +657,7 @@ inline void *VSSetupMenu_ButtonPressAddr;
 inline void *VSSetupMenu_ButtonDepressAddr;
 inline void *VSSetupMenu_PickRandomZombiesAddr;
 inline void *VSSetupMenu_PickRandomPlantsAddr;
+inline void *VSSetupMenu_OnPlayerPickedSeedAddr;
 inline int *VSSetupMenu_GAMEPAD_X_POSITIONSAddr;
 
 
@@ -1186,6 +1189,8 @@ inline Font **FONT_DWARVENTODCRAFT18;
 
 inline int *SOUND_BALLOON_POP;
 inline int *SOUND_BOING;
+inline int *SOUND_BUZZER;
+inline int *SOUND_TAP;
 }
 
 inline Sexy::Image **Sexy_IMAGE_SEEDPACKETFLASH_Addr;
@@ -1598,6 +1603,7 @@ inline bool GetFunctionAddr() {
     LawnApp_KillBoardAddr = dlsym(handle, "_ZN7LawnApp9KillBoardEv");
     LawnApp_ShowGameSelectorAddr = dlsym(handle, "_ZN7LawnApp16ShowGameSelectorEv");
     LawnApp_SetSecondPlayerAddr = dlsym(handle, "_ZN7LawnApp15SetSecondPlayerEi");
+    LawnApp_PlayerToGamepadIndexAddr = dlsym(handle, "_ZN7LawnApp20PlayerToGamepadIndexEi");
 
 
     ChallengeScreen_UpdateAddr = dlsym(handle, "_ZN15ChallengeScreen6UpdateEv");
@@ -1753,7 +1759,8 @@ inline bool GetFunctionAddr() {
     SeedChooserScreen_FindSeedInBankAddr = dlsym(handle, "_ZN17SeedChooserScreen14FindSeedInBankEii");
     SeedChooserScreen_DrawAddr = dlsym(handle, "_ZN17SeedChooserScreen4DrawEPN4Sexy8GraphicsE");
     SeedChooserScreen_SeedNotRecommendedToPickAddr = dlsym(handle, "_ZN17SeedChooserScreen24SeedNotRecommendedToPickE8SeedType");
-    SeedChooserScreen_SeedNotAllowedDuringTrialAddr = dlsym(handle, "_ZN17SeedChooserScreen25SeedNotAllowedDuringTrialE8SeedType");;
+    SeedChooserScreen_SeedNotAllowedDuringTrialAddr = dlsym(handle, "_ZN17SeedChooserScreen25SeedNotAllowedDuringTrialE8SeedType");
+    SeedChooserScreen_CanPickNowAddr = dlsym(handle, "_ZN17SeedChooserScreen10CanPickNowEv");
 
 
     Coin_CoinInitializeAddr = dlsym(handle, "_ZN4Coin14CoinInitializeEii8CoinType10CoinMotion");
@@ -1946,6 +1953,7 @@ inline bool GetFunctionAddr() {
     VSSetupMenu_ButtonDepressAddr = dlsym(handle, "_ZN11VSSetupMenu13ButtonDepressEi");
     VSSetupMenu_PickRandomZombiesAddr = dlsym(handle, "_ZN11VSSetupMenu17PickRandomZombiesERSt6vectorI8SeedTypeSaIS1_EE");
     VSSetupMenu_PickRandomPlantsAddr = dlsym(handle, "_ZN11VSSetupMenu16PickRandomPlantsERSt6vectorI8SeedTypeSaIS1_EERKS3_");
+    VSSetupMenu_OnPlayerPickedSeedAddr = dlsym(handle, "_ZN11VSSetupMenu18OnPlayerPickedSeedEi");
     VSSetupMenu_GAMEPAD_X_POSITIONSAddr = (int*)dlsym(handle, "_ZN11VSSetupMenu19GAMEPAD_X_POSITIONSE");
 
 
@@ -2523,6 +2531,8 @@ inline bool GetFunctionAddr() {
     Sexy_gSexyAppBase_Addr = (int *)dlsym(handle, "_ZN4Sexy12gSexyAppBaseE");
     Sexy_SOUND_PAUSE_Addr = (int *)dlsym(handle, "_ZN4Sexy11SOUND_PAUSEE");
     Sexy::SOUND_BOING = reinterpret_cast<int *>(dlsym(handle, "_ZN4Sexy11SOUND_BOINGE"));
+    Sexy::SOUND_BUZZER = reinterpret_cast<int *>(dlsym(handle, "_ZN4Sexy12SOUND_BUZZERE"));
+    Sexy::SOUND_TAP = reinterpret_cast<int *>(dlsym(handle, "_ZN4Sexy9SOUND_TAPE"));
     Sexy_SOUND_FROZEN_Addr = (int *)dlsym(handle, "_ZN4Sexy12SOUND_FROZENE");
     Sexy_SOUND_TAP_Addr = (int *)dlsym(handle, "_ZN4Sexy9SOUND_TAPE");
     Sexy_SOUND_FINALWAVE_Addr = (int *)dlsym(handle, "_ZN4Sexy15SOUND_FINALWAVEE");

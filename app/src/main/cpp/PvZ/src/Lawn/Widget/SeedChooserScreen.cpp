@@ -266,12 +266,96 @@ ZombieType SeedChooserScreen::GetZombieType(ZombieType theZombieType) {
     return theZombieType >= NUM_ZOMBIE_TYPES ? ZOMBIE_INVALID : theZombieType;
 }
 
-void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed *theChosenSeed, int thePlayerIndex) {
+void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int thePlayerIndex) {
     // 实现1P结盟选卡选满后自动转换为2P选卡
     if (mApp->IsCoopMode())
         thePlayerIndex = !m1PChoosingSeeds;
 
     old_SeedChooserScreen_ClickedSeedInChooser(this, theChosenSeed, thePlayerIndex);
+
+//    int seedsInBank;
+//    VSSetupMenu *aVSSetupScreen;
+//    int aPlayerIndex;
+//    int seedsInFlight;
+//
+//    int aGamepadIndex = mApp->PlayerToGamepadIndex(thePlayerIndex);
+//    if ( mApp->IsCoopMode() )
+//    {
+//        if ( mSeedsInBothBank > 8 )
+//            return;
+//    LABEL_3:
+//        goto LABEL_9;
+//    }
+//    if ( mSeedsInBothBank == mSeedBank1->mNumPackets )
+//        return;
+//    if ( mApp->IsVSMode() )
+//    {
+//        if ( !CanPickNow() )
+//        {
+//            mApp->PlaySample(*SOUND_BUZZER);
+//            return;
+//        }
+//        goto LABEL_3;
+//    }
+//LABEL_9:
+//    if ( !mApp->IsCoopMode() || *(&mSeedsIn1PBank + thePlayerIndex) <= 3 )
+//    {
+//        if ( mApp->IsCoopMode() && thePlayerIndex == 1 )
+//            seedsInBank = mSeedsIn2PBank;
+//        else
+//            seedsInBank = mSeedsIn1PBank;
+//        theChosenSeed.mStartX = theChosenSeed.mX;
+//        theChosenSeed.mStartY = theChosenSeed.mY;
+//        theChosenSeed.mTimeStartMotion = mSeedChooserAge;
+//        theChosenSeed.mTimeEndMotion = mSeedChooserAge + 25;
+//        if ( mApp->IsAdventureMode() )
+//        {
+//            aPlayerIndex = 0;
+//            theChosenSeed.mChosenPlayerIndex = 0;
+//        }
+//        else
+//        {
+//            if ( mApp->IsVSMode() )
+//            {
+//                aVSSetupScreen = mApp->mVSSetupScreen;
+//            }
+//            else
+//            {
+//                aPlayerIndex = thePlayerIndex;
+//                theChosenSeed.mChosenPlayerIndex = thePlayerIndex;
+//            }
+//            if ( mApp->IsVSMode() )
+//            {
+//                aPlayerIndex = (thePlayerIndex == 1) ? aVSSetupScreen->mPlayerIndex2 : aVSSetupScreen->mPlayerIndex1;
+//                theChosenSeed.mChosenPlayerIndex = aPlayerIndex;
+//            }
+//        }
+//        GetSeedPositionInBank(seedsInBank, theChosenSeed.mEndX, theChosenSeed.mEndY, aPlayerIndex);
+//        seedsInFlight = mSeedsInFlight + 1;
+//        theChosenSeed.mSeedIndexInBank = seedsInBank;
+//        theChosenSeed.mSeedState = SEED_FLYING_TO_BANK;
+//        mSeedsInFlight = seedsInFlight;
+//        mSeedsInBothBank = mSeedsInBothBank + 1;
+//        if ( mApp->IsCoopMode() && thePlayerIndex == 1 )
+//            ++seedsInBank;
+//        else
+//            ++mSeedsIn1PBank;
+//        RemoveToolTip(thePlayerIndex);
+//        mApp->PlaySample(*SOUND_TAP);
+//        if ( mSeedsInBothBank == mSeedBank1->mNumPackets && !mApp->IsCoopMode() )
+//            EnableStartButton(1);
+//        if ( mApp->IsCoopMode()
+//            && mSeedsInBothBank == mSeedBank2->mNumPackets + mSeedBank1->mNumPackets )
+//        {
+//            EnableStartButton(1);
+//        }
+//        if (mApp->IsVSMode())
+//        {
+//            aVSSetupScreen = mApp->mVSSetupScreen;
+//            if (aVSSetupScreen)
+//                aVSSetupScreen->OnPlayerPickedSeed(aGamepadIndex);
+//        }
+//    }
 }
 
 void SeedChooserScreen::CrazyDavePickSeeds() {

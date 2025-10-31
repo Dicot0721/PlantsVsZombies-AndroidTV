@@ -51,25 +51,22 @@ bool ImitaterDialog_KeyDown(ImitaterDialog *a, int a2) {
 }
 
 void ImitaterDialog::MouseDown(int x, int y, int theCount) {
-    SeedType seedType = SeedHitTest(x, y);
-    if (seedType == SeedType::SEED_NONE) {
-        return;
-    }
-    LawnApp *lawnApp = mApp;
-    SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
-
-    if (!seedChooserScreen->SeedNotAllowedToPick(seedType)) {
-        ChosenSeed *chosenSeed = &(seedChooserScreen->mChosenSeeds[SeedType::SEED_IMITATER]);
-        chosenSeed->mImitaterType = seedType;
-        chosenSeed->mSeedState = ChosenSeedState::SEED_IN_CHOOSER;
-        seedChooserScreen->GetSeedPositionInChooser(SeedType::SEED_IMITATER, chosenSeed->mX, chosenSeed->mY);
-        //        SeedChooserScreen_ClickedSeedInChooser(*(uint32_t *) (a[184] + 2244), seedChooserScreen + 835, -1);//模仿者选种子闪退，就是因为这里参数为-1而不是0或者1
-        //        int mIsZombie = a[194];
-        seedChooserScreen->ClickedSeedInChooser(chosenSeed, m1PChoosingSeeds ? 0 : 1);
-        seedChooserScreen->UpdateImitaterButton();
-        //        (*(void (**)(int, int)) (*(uint32_t *) a[184] + 428))(a[184], a[179]);
-        seedChooserScreen->RemoveWidget(this);
-        (*(void (**)(LawnApp *, Sexy::__Widget *))(*(uint32_t *)lawnApp + 188))(lawnApp, this);
-        seedChooserScreen->mImitaterDialogOpened = 0;
+    SeedType aSeedType = SeedHitTest(x, y);
+    if (aSeedType != SeedType::SEED_NONE) {
+        SeedChooserScreen *aSeedChooser = mApp->mSeedChooserScreen;
+        if (!aSeedChooser->SeedNotAllowedToPick(aSeedType)) {
+            ChosenSeed &aImitater = aSeedChooser->mChosenSeeds[SeedType::SEED_IMITATER];
+            aImitater.mImitaterType = aSeedType;
+            aImitater.mSeedState = ChosenSeedState::SEED_IN_CHOOSER;
+            aSeedChooser->GetSeedPositionInChooser(SeedType::SEED_IMITATER, aImitater.mX, aImitater.mY);
+            //        SeedChooserScreen_ClickedSeedInChooser(*(uint32_t *) (a[184] + 2244), aSeedChooser + 835, -1);//模仿者选种子闪退，就是因为这里参数为-1而不是0或者1
+            //        int mIsZombie = a[194];
+            aSeedChooser->ClickedSeedInChooser(aImitater, m1PChoosingSeeds ? 0 : 1);
+            aSeedChooser->UpdateImitaterButton();
+            //        (*(void (**)(int, int)) (*(uint32_t *) a[184] + 428))(a[184], a[179]);
+            aSeedChooser->RemoveWidget(this);
+            (*(void (**)(LawnApp *, Sexy::__Widget *))(*(uint32_t *)mApp + 188))(mApp, this);
+            aSeedChooser->mImitaterDialogOpened = 0;
+        }
     }
 }

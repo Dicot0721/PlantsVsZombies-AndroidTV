@@ -261,6 +261,9 @@ public:
     void PlaySample(int theSoundNum) {
         reinterpret_cast<void (*)(LawnApp *, int,bool unknown)>(LawnApp_PlaySampleAddr)(this, theSoundNum, true);
     }
+    int PlayerToGamepadIndex(int thePlayerIndex) {
+        return reinterpret_cast<int (*)(LawnApp *, int)>(LawnApp_PlayerToGamepadIndexAddr)(this, thePlayerIndex);
+    }
 
     LawnApp() {
         _constructor();
