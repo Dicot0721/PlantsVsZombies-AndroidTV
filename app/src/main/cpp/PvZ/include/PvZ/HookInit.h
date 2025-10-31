@@ -156,6 +156,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Board_GetNumSeedsInBankAddr, &Board::GetNumSeedsInBank, &old_Board_GetNumSeedsInBank);
     homura::HookFunction(Board_GetSeedPacketPositionXAddr, &Board::GetSeedPacketPositionX, nullptr);
     homura::HookFunction(Board_AddCoinAddr, &Board::AddCoin, &old_Board_AddCoin);
+    homura::HookFunction(Board_AddAGraveStoneAddr, &Board::AddAGraveStone, &old_Board_AddAGraveStone);
 
 
     homura::HookFunction(FixBoardAfterLoadAddr, &FixBoardAfterLoad, &old_FixBoardAfterLoad);

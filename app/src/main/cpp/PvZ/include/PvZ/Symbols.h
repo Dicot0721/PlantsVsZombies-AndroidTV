@@ -155,6 +155,7 @@ inline void *Board_RemoveAllPlantsAddr;
 inline void *Board_RemoveAllZombiesAddr;
 inline void *Board_GetSeedBankExtraWidthAddr;
 inline void *Board_AddCoinAddr;
+inline void *Board_AddAGraveStoneAddr;
 inline void *Board_IsValidCobCannonSpotAddr;
 inline void *Board_IsValidCobCannonSpotHelperAddr;
 inline void *Board_PickRowForNewZombieAddr;
@@ -1442,6 +1443,7 @@ inline bool GetFunctionAddr() {
     Board_GetSeedPacketPositionXAddr = dlsym(handle, "_ZN5Board22GetSeedPacketPositionXEiib");
     Board_GetSeedBankExtraWidthAddr = dlsym(handle, "_ZN5Board21GetSeedBankExtraWidthEv");
     Board_AddCoinAddr = dlsym(handle, "_ZN5Board7AddCoinEii8CoinType10CoinMotion");
+    Board_AddAGraveStoneAddr = dlsym(handle, "_ZN5Board14AddAGraveStoneEii");
     Board_IsValidCobCannonSpotAddr = dlsym(handle, "_ZN5Board20IsValidCobCannonSpotEii");
     Board_IsValidCobCannonSpotHelperAddr = dlsym(handle, "_ZN5Board26IsValidCobCannonSpotHelperEii");
     Board_PickRowForNewZombieAddr = dlsym(handle, "_ZN5Board19PickRowForNewZombieE10ZombieType");

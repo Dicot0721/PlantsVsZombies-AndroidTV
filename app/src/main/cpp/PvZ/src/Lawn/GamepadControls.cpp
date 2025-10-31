@@ -587,10 +587,17 @@ void GamepadControls::UpdatePreviewReanim() {
         flagDrawGray = true;
     }
     if (!mBoard->HasConveyorBeltSeedBank(mPlayerIndex2) && aCursorObject->mCursorType != CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
-        if (mIsZombie && aGameMode == GameMode::GAMEMODE_MP_VS) {
-            if (!mBoard->CanTakeDeathMoney(mBoard->GetCurrentPlantCost(aSeedType, SeedType::SEED_NONE))) {
-                flagUpdateCanPlant = false;
-                flagDrawGray = true;
+        if (aGameMode == GameMode::GAMEMODE_MP_VS) {
+            if (mIsZombie) {
+                if (!mBoard->CanTakeDeathMoney(mBoard->GetCurrentPlantCost(aSeedType, SeedType::SEED_NONE))) {
+                    flagUpdateCanPlant = false;
+                    flagDrawGray = true;
+                }
+            } else {
+                if (!mBoard->CanTakeSunMoney(mBoard->GetCurrentPlantCost(aSeedType, SeedType::SEED_NONE), 0)) {
+                    flagUpdateCanPlant = false;
+                    flagDrawGray = true;
+                }
             }
         } else {
             if (!mBoard->CanTakeSunMoney(mBoard->GetCurrentPlantCost(aSeedType, SeedType::SEED_NONE), mPlayerIndex2)) {

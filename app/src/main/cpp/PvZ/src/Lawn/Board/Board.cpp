@@ -1189,6 +1189,13 @@ void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
                 GridItem *gridItem = mGridItemsBlock + event1->data1;
                 gridItem->mLaunchCounter = event1->data2;
             } break;
+            case EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE: {
+                handledBufSize += sizeof(TwoCharTwoShortDataEvent);
+                TwoCharTwoShortDataEvent *event1 = (TwoCharTwoShortDataEvent *)event;
+                GridItem *gridItem = AddAGraveStone( event1->data1, event1->data2);
+                gridItem->mGridItemCounter = event1->data3;
+                gridItem->mLaunchCounter = event1->data4;
+            } break;
             case EVENT_SERVER_BOARD_PLANT_ANIMATION: {
                 handledBufSize += sizeof(TwoShortTwoIntDataEvent);
                 TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
@@ -4509,4 +4516,13 @@ GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
     }
 
     return mGamepadControls1;
+}
+
+GridItem *Board::AddAGraveStone(int gridX, int gridY) {
+    GridItem *result = old_Board_AddAGraveStone(this, gridX, gridY);
+    if (tcpClientSocket >= 0) {
+        TwoCharTwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE, (unsigned char)gridX, (unsigned char)gridY,(short)result->mGridItemCounter,(short)result->mLaunchCounter};
+        send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+    }
+    return result;
 }

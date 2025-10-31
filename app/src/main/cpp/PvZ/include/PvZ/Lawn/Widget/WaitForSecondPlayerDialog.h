@@ -158,7 +158,7 @@ enum EventType : unsigned char {
     EVENT_SERVER_BOARD_COIN_ADD,
 
     EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER,
-
+    EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE,
 
     EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER,
     EVENT_SERVER_BOARD_PLANT_ANIMATION, // 效果不佳，后续再想办法
@@ -208,6 +208,14 @@ public:
     unsigned char data1;
     unsigned char data2;
 };
+
+class TwoCharOneShortDataEvent : public BaseEvent {
+public:
+    unsigned char data1;
+    unsigned char data2;
+    short data3;
+};
+
 
 class TwoShortDataEvent : public BaseEvent {
 public:

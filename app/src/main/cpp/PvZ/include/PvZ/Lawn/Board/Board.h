@@ -621,6 +621,7 @@ protected:
     void __MouseDrag(int x, int y);
     void __MouseUp(int x, int y, int theClickCount);
     void PauseFromSecondPlayer(bool thePause);
+    GridItem *AddAGraveStone(int gridX, int gridY);
 };
 
 int GetRectOverlap(const Sexy::Rect &rect1, const Sexy::Rect &rect2);
@@ -817,5 +818,7 @@ bool TRect_Contains(Sexy::Rect *rect, int x, int y);
 bool Board_KeyUp(Board *board, int keyCode);
 
 void Board_DrawStartButton(Board *board, Sexy::Graphics *graphics, LawnApp *lawnApp);
+
+inline GridItem* (*old_Board_AddAGraveStone)(Board *board, int gridX, int gridY);
 
 #endif // PVZ_LAWN_BOARD_BOARD_H
