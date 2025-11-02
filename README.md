@@ -1,22 +1,28 @@
+<div align="center">
+
 # PlantsVsZombies-AndroidTV
 
-[![许可协议](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)
+_A mod of Plants vs. Zombies Android TV version._
+
+[![License](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)
 ](https://www.gnu.org/licenses/gpl-3.0.html)
 
-一个基于植物大战僵尸 TV 版的改版.
+**English** | **[简体中文](./README.zh-cn.md)**
 
-## 构建
+</div>
+
+## Build
 
 > [!NOTE]
-> 需要资源文件请联系仓库作者
+> If you require resource files, please contact the repository author.
 
-使用 Android Studio 或其他支持 gradle 的 IDE, 要求已安装:
+Use Android Studio or another IDE that supports Gradle, requiring the following to be installed:
 
 - Android SDK Platform 34
 - NDK v27.2.12479018
 - CMake v3.20+
 
-签名配置位于项目根目录的 `keystore.properties` 文件中 (需要自行创建), 文件内容样式如下:
+Signing configuration is specified in the `keystore.properties` file located in the project root directory (you must create this file yourself). The file content format is as follows:
 
 ```properties
 storePassword=myStorePassword
@@ -25,35 +31,21 @@ keyAlias=myKeyAlias
 storeFile=myStoreFileLocation
 ```
 
-## 编码风格
+## Coding Style
 
-### 命名约定
+### Name Convention
 
-- 函数/类型/枚举/概念: `PascalCase`
-- 变量: `camelCase`
-- 命名空间: `snake_case`
-- 宏/常量/枚举值/非类型模板参数: `UPPER_CASE`
+- Function / Type / Enum / Concept: `PascalCase`
+- Variable: `camelCase`
+- Namespace: `snake_case`
+- Macro / Constant / Enumerator / Non-type template parameter: `UPPER_CASE`
 
-### 格式
+### Format
 
-见项目根目录下的 `.clang-format` 文件.
+See the `.clang-format` file in the project's root directory.
 
-> 建议在每次提交更改前先用 IDE 对代码进行格式化.
+> It is recommended to format your code using an IDE before each commit.
 
-## 许可协议
+## License
 
-```
-Copyright (C) 2023-2025  PvZ TV Touch Team
-
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation, either version 3 of the License, or (at your option) any later
-version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with
-this program. If not, see <https://www.gnu.org/licenses/>.
-```
+This project is licensed under the [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html) license.
