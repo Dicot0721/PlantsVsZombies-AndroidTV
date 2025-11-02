@@ -29,7 +29,7 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Decode Keystore
+      - name: Decode keystore
         env:
           KEYSTORE_ENCODED: ${{ secrets.KEYSTORE }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -47,14 +47,14 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleRelease
 
-      - name: Upload v111 Artifact
+      - name: Upload v111 artifact
         uses: actions/upload-artifact@v4
         with:
           name: PvZ-TV-v1.1.1-release
           path: |
             app/build/outputs/apk/v111/release/*.apk
 
-      - name: Upload v115 Artifact
+      - name: Upload v115 artifact
         uses: actions/upload-artifact@v4
         with:
           name: PvZ-TV-v1.1.5-release
@@ -69,13 +69,13 @@ jobs:
       github.repository == 'Dicot0721/PlantsVsZombies-AndroidTV'
 
     steps:
-      - name: Download v111 Artifact
+      - name: Download v111 artifact
         uses: actions/download-artifact@v4
         with:
           name: PvZ-TV-v1.1.1-release
           path: apks
 
-      - name: Download v115 Artifact
+      - name: Download v115 artifact
         uses: actions/download-artifact@v4
         with:
           name: PvZ-TV-v1.1.5-release
@@ -86,7 +86,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "continous"
-          prerelease: false
+          prerelease: true
           title: "Automatic CI builds"
           files: |
             apks/*.apk
