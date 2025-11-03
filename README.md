@@ -4,8 +4,10 @@
 
 _A mod of Plants vs. Zombies Android TV version._
 
-[![License](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)
+[![license](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)
 ](https://www.gnu.org/licenses/gpl-3.0.html)
+[![Android CI](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml/badge.svg)
+](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml)
 
 **English** | **[简体中文](./README.zh-cn.md)**
 
@@ -31,7 +33,7 @@ keyAlias=myKeyAlias
 storeFile=myStoreFileLocation
 ```
 
-## Coding Style
+## Coding Style (C++)
 
 ### Name Convention
 

@@ -4,8 +4,10 @@
 
 _一个基于植物大战僵尸 TV 版的改版._
 
-[![许可协议](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)
+[![license](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)
 ](https://www.gnu.org/licenses/gpl-3.0.html)
+[![Android CI](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml/badge.svg)
+](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml)
 
 **[English](./README.md)** | **简体中文**
 
@@ -31,7 +33,7 @@ keyAlias=myKeyAlias
 storeFile=myStoreFileLocation
 ```
 
-## 编码风格
+## 编码风格 (C++)
 
 ### 命名约定
 
