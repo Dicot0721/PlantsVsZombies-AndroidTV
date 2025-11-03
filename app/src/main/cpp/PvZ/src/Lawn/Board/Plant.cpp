@@ -609,10 +609,10 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
 
             event.type = EventType::EVENT_SERVER_BOARD_PLANT_FIRE;
             event.data1 = mPlantID;
-            event.data2 = theTargetZombie == nullptr ? -1 : theTargetZombie->mZombieID;
+            event.data2 = theTargetZombie == nullptr ? -1 : (short)theTargetZombie->mZombieID;
             event.data3.s.s1 = (short)theRow;
             event.data3.s.s2 = (short)thePlantWeapon;
-            event.data4.s.s1 = gridItem == nullptr ? -1 : gridItem->mGridItemID;
+            event.data4.s.s1 = gridItem == nullptr ? -1 : (short)gridItem->mGridItemID;
             send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
 
         }

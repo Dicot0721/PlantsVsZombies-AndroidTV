@@ -475,9 +475,9 @@ public:
     bool CanTakeDeathMoney(int theAmount) {
         return reinterpret_cast<bool (*)(Board *, int)>(Board_CanTakeDeathMoneyAddr)(this, theAmount);
     }
-    int TakeDeathMoney(int theAmount) {
-        return reinterpret_cast<int (*)(Board *, int)>(Board_TakeDeathMoneyAddr)(this, theAmount);
-    }
+//    int TakeDeathMoney(int theAmount) {
+//        return reinterpret_cast<int (*)(Board *, int)>(Board_TakeDeathMoneyAddr)(this, theAmount);
+//    }
     void RemoveAllMowers() {
         reinterpret_cast<void (*)(Board *)>(Board_RemoveAllMowersAddr)(this);
     }
@@ -611,6 +611,9 @@ public:
     void ButtonDepress(int theId);
     void KeyDown(Sexy::KeyCode theKey);
     Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion);
+    bool TakeDeathMoney(int theAmount) ;
+    GridItem *AddAGraveStone(int gridX, int gridY);
+    bool TakeSunMoney(int theAmount, int thePlayer);
 protected:
     friend void InitHookFunction();
 
@@ -621,7 +624,7 @@ protected:
     void __MouseDrag(int x, int y);
     void __MouseUp(int x, int y, int theClickCount);
     void PauseFromSecondPlayer(bool thePause);
-    GridItem *AddAGraveStone(int gridX, int gridY);
+
 };
 
 int GetRectOverlap(const Sexy::Rect &rect1, const Sexy::Rect &rect2);
@@ -820,5 +823,9 @@ bool Board_KeyUp(Board *board, int keyCode);
 void Board_DrawStartButton(Board *board, Sexy::Graphics *graphics, LawnApp *lawnApp);
 
 inline GridItem* (*old_Board_AddAGraveStone)(Board *board, int gridX, int gridY);
+
+inline bool (*old_Board_TakeSunMoney)(Board *board, int amount, int player);
+
+inline bool (*old_Board_TakeDeathMoney)(Board *board, int amount);
 
 #endif // PVZ_LAWN_BOARD_BOARD_H

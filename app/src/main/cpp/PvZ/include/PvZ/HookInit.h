@@ -157,6 +157,8 @@ inline void InitHookFunction() {
     homura::HookFunction(Board_GetSeedPacketPositionXAddr, &Board::GetSeedPacketPositionX, nullptr);
     homura::HookFunction(Board_AddCoinAddr, &Board::AddCoin, &old_Board_AddCoin);
     homura::HookFunction(Board_AddAGraveStoneAddr, &Board::AddAGraveStone, &old_Board_AddAGraveStone);
+    homura::HookFunction(Board_TakeSunMoneyAddr, &Board::TakeSunMoney, &old_Board_TakeSunMoney);
+    homura::HookFunction(Board_TakeDeathMoneyAddr, &Board::TakeDeathMoney, &old_Board_TakeDeathMoney);
 
 
     homura::HookFunction(FixBoardAfterLoadAddr, &FixBoardAfterLoad, &old_FixBoardAfterLoad);
@@ -327,6 +329,7 @@ inline void InitHookFunction() {
     homura::HookFunction(SeedPacket_FlashIfReadyAddr, &SeedPacket::FlashIfReady, &old_SeedPacket_FlashIfReady);
     homura::HookFunction(SeedPacket_SetPacketTypeAddr, &SeedPacket::SetPacketType, &old_SeedPacket_SetPacketType);
     //    MSHookFunction(SeedPacket_MouseDownAddr, (void *) SeedPacket_MouseDown, (void **) &old_SeedPacket_MouseDown);
+    homura::HookFunction(SeedPacket_WasPlantedAddr, &SeedPacket::WasPlanted, &old_SeedPacket_WasPlanted);
 
 
     homura::HookFunction(Zombie_UpdateAddr, &Zombie::Update, &old_Zombie_Update);

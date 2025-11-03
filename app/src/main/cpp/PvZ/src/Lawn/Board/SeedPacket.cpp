@@ -18,12 +18,14 @@
  */
 
 #include "PvZ/Lawn/Board/SeedPacket.h"
+#include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Font.h"
@@ -548,4 +550,13 @@ void DrawSeedPacket(Sexy::Graphics *g,
         g->PopState();
     }
     g->SetColorizeImages(false);
+}
+
+
+void SeedPacket::WasPlanted(int player) {
+    old_SeedPacket_WasPlanted(this,player);
+    if (tcpClientSocket >= 0) {
+        TwoCharDataEvent event = {EventType::EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED, (unsigned char)mIndex, mSeedBank == mBoard->mSeedBank1};
+        send(tcpClientSocket,&event,sizeof (TwoCharDataEvent),0);
+    }
 }

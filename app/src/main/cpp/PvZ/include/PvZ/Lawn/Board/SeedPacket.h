@@ -68,9 +68,9 @@ public:
     void Deactivate() {
         reinterpret_cast<void (*)(SeedPacket *)>(SeedPacket_DeactivateAddr)(this);
     }
-    void WasPlanted(int thePlayerIndex) {
-        reinterpret_cast<void (*)(SeedPacket *, int)>(SeedPacket_WasPlantedAddr)(this, thePlayerIndex);
-    }
+//    void WasPlanted(int thePlayerIndex) {
+//        reinterpret_cast<void (*)(SeedPacket *, int)>(SeedPacket_WasPlantedAddr)(this, thePlayerIndex);
+//    }
 
     void Update();
     void UpdateSelected();
@@ -80,6 +80,7 @@ public:
     bool BeginDraw(Sexy::Graphics *g);
     void EndDraw(Sexy::Graphics *g);
     void SetPacketType(SeedType theSeedType, SeedType theImitaterType);
+    void WasPlanted(int thePlayerIndex);
 };
 
 void DrawSeedPacket(Sexy::Graphics *g,
@@ -115,5 +116,7 @@ inline void (*old_SeedPacket_EndDraw)(SeedPacket *, Sexy::Graphics *);
 inline void (*old_SeedPacket_FlashIfReady)(SeedPacket *seedPacket);
 
 inline void (*old_SeedPacket_SetPacketType)(SeedPacket *, SeedType theSeedType, SeedType theImitaterType);
+
+inline void (*old_SeedPacket_WasPlanted)(SeedPacket *, int player);
 
 #endif // PVZ_LAWN_BOARD_SEED_PACKET_H

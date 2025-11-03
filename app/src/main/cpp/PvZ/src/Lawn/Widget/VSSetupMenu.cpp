@@ -323,7 +323,7 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::ve
 
 void VSSetupMenu::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
     int handledBufSize = 0;
-    while (bufSize - handledBufSize > sizeof(BaseEvent)) {
+    while (bufSize - handledBufSize >= sizeof(BaseEvent)) {
         BaseEvent *event = (BaseEvent *)((unsigned char *)buf + handledBufSize);
         switch (event->type) {
             case EVENT_SEEDCHOOSER_SELECT_SEED: {
@@ -369,7 +369,7 @@ void VSSetupMenu::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
 void VSSetupMenu::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
     int handledBufSize = 0;
 
-    while (bufSize - handledBufSize > sizeof(BaseEvent)) {
+    while (bufSize - handledBufSize >= sizeof(BaseEvent)) {
         BaseEvent *event = (BaseEvent *)((unsigned char *)buf + handledBufSize);
         switch (event->type) {
             case EVENT_VSSETUPMENU_BUTTON_DEPRESS: {

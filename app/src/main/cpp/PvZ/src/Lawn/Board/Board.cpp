@@ -1040,7 +1040,7 @@ bool TRect_Contains(Rect *rect, int x, int y) {
 void Board::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
     int handledBufSize = 0;
 
-    while (bufSize - handledBufSize > sizeof(BaseEvent)) {
+    while (bufSize - handledBufSize >= sizeof(BaseEvent)) {
         BaseEvent *event = (BaseEvent *)((unsigned char *)buf + handledBufSize);
         LOG_DEBUG("TYPE:{}", (int)event->type);
         switch (event->type) {
@@ -1084,8 +1084,9 @@ void Board::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
 void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
     int handledBufSize = 0;
 
-    while (bufSize - handledBufSize > sizeof(BaseEvent)) {
+    while (bufSize - handledBufSize >= sizeof(BaseEvent)) {
         BaseEvent *event = (BaseEvent *)((unsigned char *)buf + handledBufSize);
+        LOG_DEBUG("TYPE:{}", (int)event->type);
         switch (event->type) {
             case EVENT_BOARD_TOUCH_DOWN_REPLY: {
                 handledBufSize += sizeof(TwoCharDataEvent);
@@ -1192,7 +1193,7 @@ void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             case EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE: {
                 handledBufSize += sizeof(TwoCharTwoShortDataEvent);
                 TwoCharTwoShortDataEvent *event1 = (TwoCharTwoShortDataEvent *)event;
-                GridItem *gridItem = AddAGraveStone( event1->data1, event1->data2);
+                GridItem *gridItem = AddAGraveStone(event1->data1, event1->data2);
                 gridItem->mGridItemCounter = event1->data3;
                 gridItem->mLaunchCounter = event1->data4;
             } break;
@@ -1228,6 +1229,25 @@ void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
                 AddZombieInRow((ZombieType)event1->data1, event1->data2, event1->data3, event1->data4);
                 tcp_connected = true;
             } break;
+            case EVENT_SERVER_BOARD_TAKE_SUNMONEY: {
+                handledBufSize += sizeof(SimpleShortEvent);
+                SimpleShortEvent *event1 = (SimpleShortEvent *)event;
+                mSunMoney1 = event1->data;
+            } break;
+            case EVENT_SERVER_BOARD_TAKE_DEATHMONEY: {
+                handledBufSize += sizeof(SimpleShortEvent);
+                SimpleShortEvent *event1 = (SimpleShortEvent *)event;
+                mDeathMoney = event1->data;
+            } break;
+            case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED: {
+                LOG_DEBUG("777");
+                handledBufSize += sizeof(TwoCharDataEvent);
+                TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
+                SeedBank* theSeedBank = event1->data2 ? mSeedBank1 : mSeedBank2;
+                SeedPacket* seedPacket = &theSeedBank->mSeedPackets[event1->data1];
+                seedPacket->Deactivate();
+                seedPacket->WasPlanted(0);
+            } break;
 
             default:
                 handledBufSize += sizeof(BaseEvent);
@@ -1243,7 +1263,7 @@ void Board::Update() {
         if (tcpClientSocket >= 0) {
             char buf[1024];
             while (true) {
-                ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
+                ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) , MSG_DONTWAIT);
                 if (n > 0) {
                     //                buf[n] = '\0'; // 确保字符串结束
                     //                    LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
@@ -1277,7 +1297,7 @@ void Board::Update() {
         if (tcp_connected) {
             char buf[1024];
             while (true) {
-                ssize_t n = recv(tcpServerSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
+                ssize_t n = recv(tcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);
                 if (n > 0) {
                     //                    buf[n] = '\0'; // 确保字符串结束
                     //                    LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
@@ -1964,14 +1984,12 @@ void Board::Pause(bool thePause) {
 
         if (tcp_connected) {
             SimpleEvent event = {EventType::EVENT_CLIENT_BOARD_PAUSE, thePause};
-            ssize_t n = send(tcpServerSocket, &event, sizeof(SimpleEvent), 0);
-            LOG_DEBUG("send{}", n);
+            send(tcpServerSocket, &event, sizeof(SimpleEvent), 0);
         }
 
         if (tcpClientSocket >= 0) {
             SimpleEvent event = {EventType::EVENT_SERVER_BOARD_PAUSE, thePause};
-            ssize_t n = send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
-            LOG_DEBUG("send{}", n);
+            send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
         }
     }
 
@@ -2703,8 +2721,7 @@ void Board::MouseDrag(int x, int y) {
     }
     if (tcp_connected) {
         TwoShortDataEvent event = {EventType::EVENT_CLIENT_BOARD_TOUCH_DRAG, (short)x, (short)y};
-        ssize_t n = send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
-        LOG_DEBUG("send{}", n);
+        send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
         return;
     }
     __MouseDrag(x, y);
@@ -2876,8 +2893,7 @@ void Board::MouseUp(int x, int y, int theClickCount) {
     }
     if (tcp_connected) {
         TwoShortDataEvent event = {EventType::EVENT_CLIENT_BOARD_TOUCH_UP, (short)x, (short)y};
-        ssize_t n = send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
-        LOG_DEBUG("send{}", n);
+        send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
         return;
     }
     __MouseUp(x, y, theClickCount);
@@ -4523,6 +4539,24 @@ GridItem *Board::AddAGraveStone(int gridX, int gridY) {
     if (tcpClientSocket >= 0) {
         TwoCharTwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE, (unsigned char)gridX, (unsigned char)gridY,(short)result->mGridItemCounter,(short)result->mLaunchCounter};
         send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+    }
+    return result;
+}
+
+bool Board::TakeSunMoney(int theAmount, int thePlayer) {
+    bool result = old_Board_TakeSunMoney(this,theAmount,thePlayer);
+    if (tcpClientSocket >= 0) {
+        SimpleShortEvent event = {EventType::EVENT_SERVER_BOARD_TAKE_SUNMONEY,(short)mSunMoney1};
+        send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
+    }
+    return result;
+}
+
+bool Board::TakeDeathMoney(int theAmount) {
+    bool result = old_Board_TakeDeathMoney(this,theAmount);
+    if (tcpClientSocket >= 0) {
+        SimpleShortEvent event = {EventType::EVENT_SERVER_BOARD_TAKE_DEATHMONEY,(short)mDeathMoney};
+        send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
     }
     return result;
 }
