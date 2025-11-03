@@ -48,4 +48,6 @@ storeFile=myStoreFileLocation
 
 ## 许可协议
 
-本项目使用 [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html) 许可进行授权。
+本项目的源代码使用 [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html) 许可进行授权.
+
+本项目与渡维科技、宝开或艺电无关, 也未获得他们的认可.

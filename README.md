@@ -48,4 +48,6 @@ See the `.clang-format` file in the project's root directory.
 
 ## License
 
-This project is licensed under the [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html) license.
+The source code for this project is licensed under the [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html) license.
+
+This project is not associated with or endorsed by TRANSMENSION, PopCap or Electronic Arts.
