@@ -586,7 +586,7 @@ void Challenge::ScaryPotterOpenPot(GridItem* theScaryPot) {
 }
 
 void Challenge::UpdateConveyorBelt(int playerIndex) {
-    return old_Challenge_UpdateConveyorBelt(this, playerIndex);
+    old_Challenge_UpdateConveyorBelt(this, playerIndex);
 }
 
 GridItem* Challenge::IZombieGetBrainTarget(Zombie* theZombie) {

@@ -988,13 +988,22 @@ void Board::DrawFog(Sexy::Graphics *g) {
     old_Board_DrawFog(this, g);
 }
 
+bool Board::ZombieIsAddInRow(ZombieType theZombieType) {
+    if (!mApp->IsVSMode())
+        return false;
+
+    return theZombieType == ZOMBIE_FLAG || theZombieType == ZOMBIE_DANCER || theZombieType == ZOMBIE_DUCKY_TUBE || theZombieType == ZOMBIE_SNORKEL || theZombieType == ZOMBIE_ZAMBONI
+        || theZombieType == ZOMBIE_BOBSLED || theZombieType == ZOMBIE_DOLPHIN_RIDER || theZombieType == ZOMBIE_JACK_IN_THE_BOX || theZombieType == ZOMBIE_BALLOON || theZombieType == ZOMBIE_CATAPULT
+        || theZombieType == ZOMBIE_GARGANTUAR;
+}
+
 Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromWave, bool theIsRustle) {
     // 修复蹦极僵尸出现时草丛也会摇晃
     if (theZombieType == ZombieType::ZOMBIE_BUNGEE)
         theIsRustle = false;
 
     if (mApp->mGameMode == GAMEMODE_MP_VS && mApp->mGameScene == SCENE_PLAYING) {
-        if (tcp_connected)
+        if (tcp_connected || !ZombieIsAddInRow(theZombieType))
             return nullptr;
         if (tcpClientSocket >= 0) {
             FourCharDataEvent event;
@@ -1011,6 +1020,19 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
 }
 
 Zombie *Board::AddZombie(ZombieType theZombieType, int theFromWave, bool theIsRustle) {
+    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
+        if (tcp_connected || ZombieIsAddInRow(theZombieType))
+            return nullptr;
+        if (tcpClientSocket >= 0) {
+            FourCharDataEvent event;
+            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
+            event.data1 = (unsigned char)theZombieType;
+            event.data2 = (unsigned char)theFromWave;
+            event.data3 = (unsigned char)theIsRustle;
+            send(tcpClientSocket, &event, sizeof(FourCharDataEvent), 0);
+        }
+    }
+
     return old_Board_AddZombie(this, theZombieType, theFromWave, theIsRustle);
 }
 
@@ -1224,9 +1246,17 @@ void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             } break;
             case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
                 handledBufSize += sizeof(FourCharDataEvent);
-                FourCharDataEvent *event1 = (FourCharDataEvent *)event;
+                FourCharDataEvent *eventAddZombie = (FourCharDataEvent *)event;
+                TwoCharTwoShortDataEvent *eventPixelToGrid = (TwoCharTwoShortDataEvent *)event;
                 tcp_connected = false;
-                AddZombieInRow((ZombieType)event1->data1, event1->data2, event1->data3, event1->data4);
+                if (ZombieIsAddInRow((ZombieType)eventAddZombie->data1)) {
+                    AddZombieInRow((ZombieType)eventAddZombie->data1, eventAddZombie->data2, eventAddZombie->data3, eventAddZombie->data4);
+                } else {
+                    Zombie *aZombie = AddZombie((ZombieType)eventAddZombie->data1, -5, false);
+                    if (aZombie)
+                        aZombie->RiseFromGrave(eventPixelToGrid->data1, eventPixelToGrid->data2);
+                }
+
                 tcp_connected = true;
             } break;
             case EVENT_SERVER_BOARD_TAKE_SUNMONEY: {
