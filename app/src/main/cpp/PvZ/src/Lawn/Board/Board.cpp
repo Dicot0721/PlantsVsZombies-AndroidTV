@@ -952,14 +952,8 @@ bool Board::StageHasRoof() {
     return (mBackground == BackgroundType::BACKGROUND_5_ROOF || mBackground == BackgroundType::BACKGROUND_6_BOSS);
 }
 
-bool Board_StageHasRoof(Board *board) {
-    BackgroundType mBackground = board->mBackground;
-    return mBackground == BackgroundType::BACKGROUND_5_ROOF || mBackground == BackgroundType::BACKGROUND_6_BOSS;
-}
-
-bool Board_StageHas6Rows(Board *board) {
+bool Board::StageHas6Rows() {
     // 关系到第六路可否操控（比如种植植物）。
-    BackgroundType mBackground = board->mBackground;
     return mBackground == BackgroundType::BACKGROUND_3_POOL || mBackground == BackgroundType::BACKGROUND_4_FOG;
 }
 
@@ -1003,7 +997,7 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
         theIsRustle = false;
 
     if (mApp->mGameMode == GAMEMODE_MP_VS && mApp->mGameScene == SCENE_PLAYING) {
-        if (tcp_connected || !ZombieIsAddInRow(theZombieType))
+        if (tcp_connected)
             return nullptr;
         if (tcpClientSocket >= 0) {
             FourCharDataEvent event;
@@ -1020,20 +1014,7 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
 }
 
 Zombie *Board::AddZombie(ZombieType theZombieType, int theFromWave, bool theIsRustle) {
-    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (tcp_connected || ZombieIsAddInRow(theZombieType))
-            return nullptr;
-        if (tcpClientSocket >= 0) {
-            FourCharDataEvent event;
-            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
-            event.data1 = (unsigned char)theZombieType;
-            event.data2 = (unsigned char)theFromWave;
-            event.data3 = (unsigned char)theIsRustle;
-            send(tcpClientSocket, &event, sizeof(FourCharDataEvent), 0);
-        }
-    }
-
-    return old_Board_AddZombie(this, theZombieType, theFromWave, theIsRustle);
+    return AddZombieInRow(theZombieType, PickRowForNewZombie(theZombieType), theFromWave, theIsRustle);
 }
 
 // void (*old_Board_UpdateCoverLayer)(Board *this);
@@ -1245,17 +1226,16 @@ void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
                 tcp_connected = true;
             } break;
             case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
+                // ToDo: 修复客户端点击放置僵尸光标不能及时移动。
                 handledBufSize += sizeof(FourCharDataEvent);
                 FourCharDataEvent *eventAddZombie = (FourCharDataEvent *)event;
-                TwoCharTwoShortDataEvent *eventPixelToGrid = (TwoCharTwoShortDataEvent *)event;
+                GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+                int aGridX = PixelToGridXKeepOnBoard(clientGamepadControls->mCursorPositionX, clientGamepadControls->mCursorPositionY);
+                int aGridY = PixelToGridYKeepOnBoard(clientGamepadControls->mCursorPositionX, clientGamepadControls->mCursorPositionY);
                 tcp_connected = false;
-                if (ZombieIsAddInRow((ZombieType)eventAddZombie->data1)) {
-                    AddZombieInRow((ZombieType)eventAddZombie->data1, eventAddZombie->data2, eventAddZombie->data3, eventAddZombie->data4);
-                } else {
-                    Zombie *aZombie = AddZombie((ZombieType)eventAddZombie->data1, -5, false);
-                    if (aZombie)
-                        aZombie->RiseFromGrave(eventPixelToGrid->data1, eventPixelToGrid->data2);
-                }
+                Zombie *aZombie = AddZombieInRow((ZombieType)eventAddZombie->data1, eventAddZombie->data2, eventAddZombie->data3, eventAddZombie->data4);
+                if (aZombie && !ZombieIsAddInRow((ZombieType)eventAddZombie->data1))
+                    aZombie->RiseFromGrave(aGridX, aGridY);
 
                 tcp_connected = true;
             } break;
@@ -1557,7 +1537,7 @@ void Board::Update() {
     }
 
     if (ladderBuild) {
-        if (theBuildLadderX < 9 && theBuildLadderY < (Board_StageHas6Rows(this) ? 6 : 5) && GetLadderAt(theBuildLadderX, theBuildLadderY) == nullptr)
+        if (theBuildLadderX < 9 && theBuildLadderY < (StageHas6Rows() ? 6 : 5) && GetLadderAt(theBuildLadderX, theBuildLadderY) == nullptr)
             // 防止选“所有行”或“所有列”的时候放置到场外
             AddALadder(theBuildLadderX, theBuildLadderY);
         ladderBuild = false;
@@ -1568,7 +1548,7 @@ void Board::Update() {
     if (plantBuild && theBuildPlantType != SeedType::SEED_NONE) {
         int colsCount = (theBuildPlantType == SeedType::SEED_COBCANNON) ? 8 : 9; // 玉米加农炮不种在九列
         int width = (theBuildPlantType == SeedType::SEED_COBCANNON) ? 2 : 1;     // 玉米加农炮宽度两列
-        int rowsCount = Board_StageHas6Rows(this) ? 6 : 5;
+        int rowsCount = StageHas6Rows() ? 6 : 5;
         bool isIZMode = mApp->IsIZombieLevel();
         // 全场
         if (theBuildPlantX == 9 && theBuildPlantY == 6) {
@@ -1619,7 +1599,7 @@ void Board::Update() {
             AddZombieInRow(theBuildZombieType, 0, 0, true);
         else {
             int colsCount = 9;
-            int rowsCount = Board_StageHas6Rows(this) ? 6 : 5;
+            int rowsCount = StageHas6Rows() ? 6 : 5;
             // 僵尸出生线
             if (BuildZombieX == 10 && BuildZombieY == 6)
                 for (int y = 0; y < rowsCount; ++y)
@@ -1650,7 +1630,7 @@ void Board::Update() {
     // 放置墓碑
     if (graveBuild) {
         int colsCount = 9;
-        int rowsCount = Board_StageHas6Rows(this) ? 6 : 5;
+        int rowsCount = StageHas6Rows() ? 6 : 5;
         // 全场
         if (BuildZombieX == 9 && BuildZombieY == 6) {
             GridItem *aGridItem = nullptr;

@@ -139,7 +139,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Board_DrawShovelAddr, &Board::DrawShovel, nullptr);
     homura::HookFunction(Board_StageHasPoolAddr, &Board::StageHasPool, nullptr);
     homura::HookFunction(Board_AddZombieInRowAddr, &Board::AddZombieInRow, &old_Board_AddZombieInRow);
-    homura::HookFunction(Board_AddZombieAddr, &Board::AddZombie, &old_Board_AddZombie);
+    homura::HookFunction(Board_AddZombieAddr, &Board::AddZombie, nullptr);
     homura::HookFunction(Board_DoPlantingEffectsAddr, &Board::DoPlantingEffects, nullptr);
     homura::HookFunction(Board_InitLawnMowersAddr, &Board::InitLawnMowers, &old_Board_InitLawnMowers);
     homura::HookFunction(Board_PickZombieWavesAddr, &Board::PickZombieWaves, &old_Board_PickZombieWaves);

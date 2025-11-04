@@ -48,24 +48,18 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
         theApp->mBoard->UpdateCoverLayer();
     }
 
-    pvzstl::string str = StrFormat("[PLAY_OFFLINE]");
-    GameButton *playOfflineButton = MakeButton(1000, &mButtonListener, this, str);
+    GameButton *playOfflineButton = MakeButton(1000, &mButtonListener, this, "[PLAY_OFFLINE]");
     mLawnYesButton = playOfflineButton;
 
-    pvzstl::string str2 = StrFormat("[BACK]");
-    GameButton *backButton = MakeButton(1001, &mButtonListener, this, str2);
+    GameButton *backButton = MakeButton(1001, &mButtonListener, this, "[BACK]");
     mLawnNoButton = backButton;
 
-    pvzstl::string str4 = StrFormat("[JOIN_ROOM_BUTTON]");
-    GameButton *joinButton = MakeButton(1002, &mButtonListener, this, str4);
-    joinButton->mDisabled = true;
-    mJoinButton = joinButton;
-    AddWidget(joinButton);
+    mJoinButton = MakeButton(1002, &mButtonListener, this, "[JOIN_ROOM_BUTTON]");
+    mJoinButton->mDisabled = true;
+    AddWidget(mJoinButton);
 
-    pvzstl::string str3 = StrFormat("[CREATE_ROOM_BUTTON]");
-    GameButton *createButton = MakeButton(1003, &mButtonListener, this, str3);
-    mCreateButton = createButton;
-    AddWidget(createButton);
+    mCreateButton = MakeButton(1003, &mButtonListener, this, "[CREATE_ROOM_BUTTON]");
+    AddWidget(mCreateButton);
 
     this->LawnDialog::Resize(0, 0, 800, 600);
 
@@ -77,15 +71,15 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     backButton->mWidth -= 30;
     backButton->mX += 15;
 
-    joinButton->mX = playOfflineButton->mX;
-    joinButton->mY = playOfflineButton->mY - 80;
-    joinButton->mWidth = playOfflineButton->mWidth;
-    joinButton->mHeight = playOfflineButton->mHeight;
+    mJoinButton->mX = playOfflineButton->mX;
+    mJoinButton->mY = playOfflineButton->mY - 80;
+    mJoinButton->mWidth = playOfflineButton->mWidth;
+    mJoinButton->mHeight = playOfflineButton->mHeight;
 
-    createButton->mX = backButton->mX;
-    createButton->mY = backButton->mY - 80;
-    createButton->mWidth = backButton->mWidth;
-    createButton->mHeight = backButton->mHeight;
+    mCreateButton->mX = backButton->mX;
+    mCreateButton->mY = backButton->mY - 80;
+    mCreateButton->mWidth = backButton->mWidth;
+    mCreateButton->mHeight = backButton->mHeight;
 
     InitUdpScanSocket();
     mIsCreatingRoom = false;
@@ -715,23 +709,19 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
             dialog->InitUdpScanSocket();
 
             dialog->mCreateButton->mDisabled = false;
-            pvzstl::string str = "[JOIN_ROOM_BUTTON]";
-            dialog->mJoinButton->SetLabel(str);
+            dialog->mJoinButton->SetLabel("[JOIN_ROOM_BUTTON]");
 
             dialog->mLawnYesButton->mDisabled = false;
-            pvzstl::string str1 = "[PLAY_OFFLINE]";
-            dialog->mLawnYesButton->SetLabel(str1);
+            dialog->mLawnYesButton->SetLabel("[PLAY_OFFLINE]");
         } else {
             dialog->JoinRoom();
             dialog->CloseUdpScanSocket();
 
             dialog->mCreateButton->mDisabled = true;
-            pvzstl::string str = "[LEAVE_ROOM_BUTTON]";
-            dialog->mJoinButton->SetLabel(str);
+            dialog->mJoinButton->SetLabel("[LEAVE_ROOM_BUTTON]");
 
             dialog->mLawnYesButton->mDisabled = true;
-            pvzstl::string str1 = "[PLAY_ONLINE]";
-            dialog->mLawnYesButton->SetLabel(str1);
+            dialog->mLawnYesButton->SetLabel("[PLAY_ONLINE]");
         }
     } else if (id == 1003) {
 
@@ -741,23 +731,19 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
             dialog->InitUdpScanSocket();
 
             dialog->mJoinButton->mDisabled = true;
-            pvzstl::string str = "[CREATE_ROOM_BUTTON]";
-            dialog->mCreateButton->SetLabel(str);
+            dialog->mCreateButton->SetLabel("[CREATE_ROOM_BUTTON]");
 
             dialog->mLawnYesButton->mDisabled = false;
-            pvzstl::string str1 = "[PLAY_OFFLINE]";
-            dialog->mLawnYesButton->SetLabel(str1);
+            dialog->mLawnYesButton->SetLabel("[PLAY_OFFLINE]");
         } else {
             dialog->CreateRoom();
             dialog->CloseUdpScanSocket();
 
             dialog->mJoinButton->mDisabled = true;
-            pvzstl::string str = "[EXIT_ROOM_BUTTON]";
-            dialog->mCreateButton->SetLabel(str);
+            dialog->mCreateButton->SetLabel("[EXIT_ROOM_BUTTON]");
 
             dialog->mLawnYesButton->mDisabled = true;
-            pvzstl::string str1 = "[PLAY_ONLINE]";
-            dialog->mLawnYesButton->SetLabel(str1);
+            dialog->mLawnYesButton->SetLabel("[PLAY_ONLINE]");
         }
     }
 

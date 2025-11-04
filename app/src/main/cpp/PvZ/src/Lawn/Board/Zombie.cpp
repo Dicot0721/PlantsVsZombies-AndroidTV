@@ -3223,6 +3223,10 @@ void Zombie::ApplyBurn() {
         mSpecialHeadReanimID = ReanimationID::REANIMATIONID_NULL;
     }
 
+    if (mZombieType == ZombieType::ZOMBIE_EXPLODE_O_NUT_HEAD) {
+        DoSpecial();
+    }
+
     if (mIceTrapCounter > 0) {
         RemoveIceTrap();
     }

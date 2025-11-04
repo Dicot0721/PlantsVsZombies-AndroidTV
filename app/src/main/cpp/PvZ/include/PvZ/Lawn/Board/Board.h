@@ -733,8 +733,6 @@ inline void (*old_Board_DrawFog)(Board *board, Sexy::Graphics *g);
 
 inline Zombie *(*old_Board_AddZombieInRow)(Board *board, ZombieType theZombieType, int theRow, int theFromWave, bool playAnim);
 
-inline Zombie *(*old_Board_AddZombie)(Board *, ZombieType theZombieType, int theFromWave, bool theIsRustle);
-
 inline void (*old_Board_Update)(Board *board);
 
 inline bool (*old_Board_IsFlagWave)(Board *board, int currentWave);
