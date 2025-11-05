@@ -708,9 +708,8 @@ void MaskHelpWidget_Draw(AchievementsWidget *achievementsWidget, Sexy::Graphics 
         Sexy::Rect rect = {460, theAchievementY + 60, 540, 0};
         TodDrawString(g, str, 460, theAchievementY + 40, *Sexy_FONT_HOUSEOFTERROR28_Addr, theColor, DrawStringJustification::DS_ALIGN_LEFT);
         if (i == AchievementId::ACHIEVEMENT_SHOP) {
-            pvzstl::string str2;
             str = TodReplaceNumberString(str1, "{coin}", achievementsWidget->mApp->mPlayerInfo->mUsedCoins * 10);
-            TodDrawStringWrapped(g, str2, rect, *Sexy_FONT_HOUSEOFTERROR20_Addr, theColor1, DrawStringJustification::DS_ALIGN_LEFT, false);
+            TodDrawStringWrapped(g, "", rect, *Sexy_FONT_HOUSEOFTERROR20_Addr, theColor1, DrawStringJustification::DS_ALIGN_LEFT, false);
         } else {
             TodDrawStringWrapped(g, str1, rect, *Sexy_FONT_HOUSEOFTERROR20_Addr, theColor1, DrawStringJustification::DS_ALIGN_LEFT, false);
         }
@@ -830,8 +829,7 @@ void ZombatarWidget::ButtonDepress(this ZombatarWidget &self, int id) {
         aImage->mIsVolatile = true;
         Graphics graphics = Graphics(reinterpret_cast<Image *>(aImage));
         TestMenuWidget_DrawPortrait(gMainMenuZombatarWidget, &graphics, 0, 0);
-        pvzstl::string str{"ZOMBATAR.PNG"};
-        aImage->WriteToPng((int *)&str);
+        aImage->WriteToPng("ZOMBATAR.PNG");
         //        StringDelete(holder);
         addonImages.zombatar_portrait = reinterpret_cast<Image *>(aImage);
         gMainMenuZombatarWidget->mShowExistingZombatarPortrait = true;
@@ -2195,8 +2193,7 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     backButton->mOverImage = addonZombatarImages.zombatar_mainmenuback_highlight;
     mBackButton = backButton;
 
-    pvzstl::string str1{"[OK]"};
-    GameButton *finishButton = MakeButton(1001, mButtonListener, nullptr, str1);
+    GameButton *finishButton = MakeButton(1001, mButtonListener, nullptr, "[OK]");
     finishButton->Resize(160 + 523, 565, addonZombatarImages.zombatar_finished_button->mWidth, addonZombatarImages.zombatar_finished_button->mHeight);
     AddWidget(finishButton);
     finishButton->mDrawStoneButton = false;
@@ -2205,8 +2202,7 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     finishButton->mOverImage = addonZombatarImages.zombatar_finished_button_highlight;
     mFinishButton = finishButton;
 
-    pvzstl::string str2{"[OK]"};
-    GameButton *viewPortraitButton = MakeButton(1002, mButtonListener, nullptr, str2);
+    GameButton *viewPortraitButton = MakeButton(1002, mButtonListener, nullptr, "[OK]");
     viewPortraitButton->Resize(160 + 75, 565, addonZombatarImages.zombatar_view_button->mWidth, addonZombatarImages.zombatar_view_button->mHeight);
     AddWidget((Widget *)viewPortraitButton);
     viewPortraitButton->mDrawStoneButton = false;
@@ -2215,14 +2211,12 @@ ZombatarWidget::ZombatarWidget(LawnApp *theApp) {
     viewPortraitButton->mOverImage = addonZombatarImages.zombatar_view_button_highlight;
     mViewPortraitButton = viewPortraitButton;
 
-    pvzstl::string str3{"[ZOMBATAR_NEW_BUTTON]"};
-    GameButton *newButton = MakeButton(1003, mButtonListener, nullptr, str3);
+    GameButton *newButton = MakeButton(1003, mButtonListener, nullptr, "[ZOMBATAR_NEW_BUTTON]");
     newButton->Resize(578, 490, 170, 50);
     AddWidget((Widget *)newButton);
     mNewButton = newButton;
 
-    pvzstl::string str4{"[ZOMBATAR_DELETE_BUTTON]"};
-    GameButton *deleteButton = MakeButton(1004, mButtonListener, nullptr, str4);
+    GameButton *deleteButton = MakeButton(1004, mButtonListener, nullptr, "[ZOMBATAR_DELETE_BUTTON]");
     deleteButton->Resize(314, 490, 170, 50);
     AddWidget((Widget *)deleteButton);
     mDeleteButton = deleteButton;

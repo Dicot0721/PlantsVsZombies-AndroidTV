@@ -74,10 +74,9 @@ void VSSetupMenu::_constructor() {
 
     Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
     Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
-    pvzstl::string str;
     // 拓展卡槽
     gVSMorePacketsButton = new VSSetupWidget;
-    ButtonWidget *aMorePacketsButton = MakeNewButton(1145, &mButtonListener, this, str, nullptr, aCheckbox, aCheckbox, aCheckbox);
+    ButtonWidget *aMorePacketsButton = MakeNewButton(1145, &mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
     gVSMorePacketsButton->mMorePacketsButton = aMorePacketsButton;
     gVSMorePacketsButton->mCheckboxImage = aCheckbox;
     gVSMorePacketsButton->mCheckboxImagePress = aCheckboxPressed;

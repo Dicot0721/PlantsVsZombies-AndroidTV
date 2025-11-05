@@ -36,9 +36,9 @@ inline int TodDrawStringWrappedHelper(
 }
 
 inline pvzstl::string TodStringTranslate(const char *theString) {
-    pvzstl::string str;
-    reinterpret_cast<void (*)(pvzstl::string &, const char *)>(TodStringTranslateAddr)(str, theString);
-    return str;
+    pvzstl::string result;
+    reinterpret_cast<void (*)(pvzstl::string &, const char *)>(TodStringTranslateAddr)(result, theString);
+    return result;
 }
 
 inline void TodStringListLoad(const char *theFileName) {

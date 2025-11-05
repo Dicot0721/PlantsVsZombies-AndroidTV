@@ -535,7 +535,6 @@ void DrawSeedPacket(Sexy::Graphics *g,
         int height = 48 + (*((int (**)(Sexy::Font *))font->vTable + 2))(font); // 50  ---- >  48, 微调一下文字位置，上移2个像素点
         Color theColor = {0, 0, 0, 255};
         g->PushState();
-        ;
         if (g->mScaleX == 1.0 && g->mScaleY == 1.0) {
             TodDrawString(g, str, width + x, height + y, font, theColor, DrawStringJustification::DS_ALIGN_LEFT);
         } else {

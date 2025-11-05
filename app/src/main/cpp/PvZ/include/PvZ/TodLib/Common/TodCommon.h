@@ -198,15 +198,15 @@ inline bool TodLoadResources(const pvzstl::string &theGroup) {
 }
 
 inline pvzstl::string TodReplaceString(const pvzstl::string &theText, const char *theStringToFind, const pvzstl::string &theStringToSubstitute) {
-    pvzstl::string str;
-    reinterpret_cast<void (*)(pvzstl::string &, const pvzstl::string &, const char *, const pvzstl::string &)>(TodReplaceStringAddr)(str, theText, theStringToFind, theStringToSubstitute);
-    return str;
+    pvzstl::string result;
+    reinterpret_cast<void (*)(pvzstl::string &, const pvzstl::string &, const char *, const pvzstl::string &)>(TodReplaceStringAddr)(result, theText, theStringToFind, theStringToSubstitute);
+    return result;
 }
 
 inline pvzstl::string TodReplaceNumberString(const pvzstl::string &theText, const char *theStringToFind, int theNumber) {
-    pvzstl::string str;
-    reinterpret_cast<void (*)(pvzstl::string &, const pvzstl::string &, const char *, int)>(TodReplaceNumberStringAddr)(str, theText, theStringToFind, theNumber);
-    return str;
+    pvzstl::string result;
+    reinterpret_cast<void (*)(pvzstl::string &, const pvzstl::string &, const char *, int)>(TodReplaceNumberStringAddr)(result, theText, theStringToFind, theNumber);
+    return result;
 }
 
 inline TodAllocator *FindGlobalAllocator(int theSize) {
