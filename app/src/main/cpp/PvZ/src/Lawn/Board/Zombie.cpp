@@ -410,8 +410,7 @@ void Zombie::DoSpecial() {
             //        mApp->PlayFoley(FoleyType::FOLEY_THRILLER);
             mApp->PlaySample(addonSounds.thriller); // PlayFoley仅第一次播放生效，故暂时采用PlaySample
 
-            pvzstl::string str = StrFormat("[RAISE_DEAD]");
-            mBoard->DisplayAdviceAgain(str, MessageStyle::MESSAGE_STYLE_HUGE_WAVE, AdviceType::ADVICE_HUGE_WAVE);
+            mBoard->DisplayAdviceAgain("[RAISE_DEAD]", MessageStyle::MESSAGE_STYLE_HUGE_WAVE, AdviceType::ADVICE_HUGE_WAVE);
 
             SummonBackupDancers();
             RaiseDeadZombies();
