@@ -155,7 +155,7 @@ void WaitForSecondPlayerDialog::Update() {
         char buf[1024];
 
         while (true) {
-            ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
+            ssize_t n = recv(tcpClientSocket, buf, sizeof(buf), MSG_DONTWAIT);
             if (n > 0) {
 //                buf[n] = '\0'; // 确保字符串结束
 //                LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
@@ -188,7 +188,7 @@ void WaitForSecondPlayerDialog::Update() {
         if (tcp_connected) {
                 char buf[1024];
                 while (true) {
-                    ssize_t n = recv(tcpServerSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
+                    ssize_t n = recv(tcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);
                     if (n > 0) {
 //                        buf[n] = '\0'; // 确保字符串结束
 //                        LOG_DEBUG("[TCP] 收到来自Server的数据: %s", buf);
@@ -279,7 +279,7 @@ void WaitForSecondPlayerDialog::CloseUdpScanSocket() {
     //    scanned_server_count = 0;
 }
 
-bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in& out_bcast, std::string* out_ifname = nullptr) {
+bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in& out_bcast, std::string* out_ifname) {
     int fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (fd < 0) return false;
 
@@ -294,15 +294,19 @@ bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in& out_bcast, std::
 
     struct ifreq* it = (struct ifreq*)buf;
     struct ifreq* end = (struct ifreq*)(buf + ifc.ifc_len);
-    bool found = false;
-    sockaddr_in best{};
+
+    bool found_wifi = false;
+    bool found_other = false;
+    sockaddr_in wifi_bcast{};
+    sockaddr_in other_bcast{};
+    std::string wifi_if, other_if;
 
     for (; it < end; ++it) {
         struct ifreq ifr;
         std::memset(&ifr, 0, sizeof(ifr));
         std::strncpy(ifr.ifr_name, it->ifr_name, IFNAMSIZ);
 
-        // 跳过回环
+        // 跳过回环 / 未启用接口
         if (ioctl(fd, SIOCGIFFLAGS, &ifr) == 0) {
             if ((ifr.ifr_flags & IFF_LOOPBACK) || !(ifr.ifr_flags & IFF_UP))
                 continue;
@@ -311,23 +315,44 @@ bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in& out_bcast, std::
         // 获取广播地址
         if (ioctl(fd, SIOCGIFBRDADDR, &ifr) == 0) {
             struct sockaddr_in* sin = (struct sockaddr_in*)&ifr.ifr_broadaddr;
-            if (sin->sin_family == AF_INET) {
-                best = *sin;
-                found = true;
-                if (out_ifname) *out_ifname = ifr.ifr_name;
-                break;
+            if (sin->sin_family != AF_INET)
+                continue;
+
+            // ✅ Wi-Fi / 热点接口优先（wlan*, ap*, en*）
+            if (strncasecmp(ifr.ifr_name, "wlan", 4) == 0 ||
+                strncasecmp(ifr.ifr_name, "ap", 2) == 0 ||
+                strncasecmp(ifr.ifr_name, "en", 2) == 0) {
+                wifi_bcast = *sin;
+                wifi_if = ifr.ifr_name;
+                found_wifi = true;
+                // 不 break，继续扫描，看是否还有更匹配的
+                continue;
+            }
+
+            // 记录其他接口（例如 ccmni、rmnet 等）
+            if (!found_other) {
+                other_bcast = *sin;
+                other_if = ifr.ifr_name;
+                found_other = true;
             }
         }
     }
 
     close(fd);
 
-    if (found) {
-        out_bcast = best;
+    if (found_wifi) {
+        out_bcast = wifi_bcast;
+        if (out_ifname) *out_ifname = wifi_if;
+        return true;
+    } else if (found_other) {
+        out_bcast = other_bcast;
+        if (out_ifname) *out_ifname = other_if;
         return true;
     }
+
     return false;
 }
+
 
 void WaitForSecondPlayerDialog::CreateRoom() {
     // 1. 创建TCP监听socket
@@ -399,7 +424,7 @@ void WaitForSecondPlayerDialog::CreateRoom() {
     flags = fcntl(udpBroadcastSocket, F_GETFL, 0);
     fcntl(udpBroadcastSocket, F_SETFL, flags | O_NONBLOCK);
 
-    LOG_DEBUG("[Host] Room created. TCP port=%d, UDP port=%d\n", tcpPort, UDP_PORT);
+    LOG_DEBUG("[Host] Room created. TCP port={}, UDP port={}\n", tcpPort, UDP_PORT);
     UdpBroadcastRoom();
     mIsCreatingRoom = true;
 }
@@ -467,7 +492,7 @@ void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
         ssize_t sent = sendto(udpBroadcastSocket, send_buf, total_len, 0, (struct sockaddr *)&broadcast_addr, sizeof(broadcast_addr));
 
         if (sent > 0)
-            LOG_DEBUG("[Send] msg: '%s', num: %d\n", message, tcpPort);
+            LOG_DEBUG("[Send] msg: '{}', num: {}\n", message, tcpPort);
         else if (!(errno == EAGAIN || errno == EWOULDBLOCK))
             LOG_DEBUG("sendto ERROR {}",errno);
     }
@@ -537,7 +562,7 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
                     strncpy(servers[i].name, msg, NAME_LENGTH);
                     servers[i].last_seen = now;
                     found = true;
-                    LOG_DEBUG("[Scan] Update server: %s:%d (%s)\n", server_ip, tcp_port, msg);
+                    LOG_DEBUG("[Scan] Update server: {}:{} ({})\n", server_ip, tcp_port, msg);
                     break;
                 }
             }
@@ -549,7 +574,7 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
                 servers[scanned_server_count].tcp_port = tcp_port;
                 servers[scanned_server_count].last_seen = now;
                 scanned_server_count++;
-                LOG_DEBUG("[Scan] New server: %s:%d (%s)\n", server_ip, tcp_port, msg);
+                LOG_DEBUG("[Scan] New server: {}:{} ({})\n", server_ip, tcp_port, msg);
             }
 
         } else if (n < 0) {
@@ -567,7 +592,7 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
     time_t current_time = time(NULL);
     for (int i = 0; i < scanned_server_count;) {
         if (difftime(current_time, servers[i].last_seen) > UDP_TIMEOUT) {
-            LOG_DEBUG("[Scan] Server timeout: %s:%d (%s)\n", servers[i].ip, servers[i].tcp_port, servers[i].name);
+            LOG_DEBUG("[Scan] Server timeout:{}:{} ({})\n", servers[i].ip, servers[i].tcp_port, servers[i].name);
 
             // 删除该服务端，将最后一个移到当前位置
             servers[i] = servers[scanned_server_count - 1];
@@ -610,7 +635,7 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
         if (ret < 0) {
             if (errno == EINPROGRESS) {
                 tcp_connecting = true; // 正在连接
-                LOG_DEBUG("[Client] Connecting to %s:%d ...\n", target->ip, target->tcp_port);
+                LOG_DEBUG("[Client] Connecting to {}:{} ...\n", target->ip, target->tcp_port);
             } else {
                 LOG_DEBUG("[Client] connect ERROR");
                 close(tcpServerSocket);
@@ -628,7 +653,7 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
             int cnt = 3;       setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT,   &cnt,  sizeof(cnt));
             tcp_connected = true;
             tcp_connecting = false;
-            LOG_DEBUG("[Client] Connected immediately to %s:%d\n", target->ip, target->tcp_port);
+            LOG_DEBUG("[Client] Connected immediately to {}:{}\n", target->ip, target->tcp_port);
         }
 
     } else {
@@ -661,7 +686,7 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
                 int cnt = 3;       setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT,   &cnt,  sizeof(cnt));
                 tcp_connected = true;
                 tcp_connecting = false;
-                LOG_DEBUG("[Client] Connected to %s:%d\n", target->ip, target->tcp_port);
+                LOG_DEBUG("[Client] Connected to {}:{}\n", target->ip, target->tcp_port);
             } else {
                 LOG_DEBUG("[Client] Connect failed, err={}", err);
                 close(tcpServerSocket);

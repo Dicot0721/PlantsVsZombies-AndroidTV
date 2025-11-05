@@ -168,11 +168,13 @@ enum EventType : unsigned char {
 
 
     EVENT_SERVER_BOARD_ZOMBIE_ADD,
+    EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE,
 
     EVENT_SERVER_BOARD_TAKE_SUNMONEY,
     EVENT_SERVER_BOARD_TAKE_DEATHMONEY,
 
     EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED,
+    EVENT_SERVER_BOARD_START_LEVEL,
 };
 
 struct TwoShort {
@@ -245,6 +247,25 @@ public:
     unsigned char data4;
 };
 
+class FourShortDataEvent : public BaseEvent {
+public:
+    short data1;
+    short data2;
+    short data3;
+    short data4;
+};
+
+class NineShortDataEvent : public BaseEvent {
+public:
+    short data[9];
+};
+
+
+class TenShortDataEvent : public BaseEvent {
+public:
+    short data[10];
+};
+
 
 class TwoShortTwoIntDataEvent : public BaseEvent {
 public:
@@ -252,6 +273,13 @@ public:
     short data2;
     IntFloatShortChar data3;
     IntFloatShortChar data4;
+};
+
+class FourCharOneShortTwoIntDataEvent : public BaseEvent {
+public:
+    unsigned char data1[4];
+    short data2;
+    IntFloatShortChar data3[2];
 };
 
 

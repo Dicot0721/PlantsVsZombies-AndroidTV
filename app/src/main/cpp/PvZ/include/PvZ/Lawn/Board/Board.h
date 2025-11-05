@@ -33,6 +33,7 @@
 #include "LawnMower.h"
 #include "Plant.h"
 #include "Projectile.h"
+#include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "Zombie.h"
 
 constexpr int MAX_GRID_SIZE_X = 9;
@@ -138,48 +139,12 @@ public:
     Sexy::ButtonListener mButtonListener;       // 64
     int unknownMembers1[4];                     // 65 ~ 68
     LawnApp *mApp;                              // 69
-    Zombie *mZombiesBlock;                      // 70
-    unsigned int mZombiesMaxUsedCount;          // 71
-    unsigned int mZombiesMaxSize;               // 72
-    unsigned int mZombiesFreeListHead;          // 73
-    unsigned int mZombiesSize;                  // 74
-    unsigned int mZombiesNextKey;               // 75
-    const char *mZombiesName;                   // 76
-    Plant *mPlantsBlock;                        // 77
-    unsigned int mPlantsMaxUsedCount;           // 78
-    unsigned int mPlantsMaxSize;                // 79
-    unsigned int mPlantsFreeListHead;           // 80
-    unsigned int mPlantsSize;                   // 81
-    unsigned int mPlantsNextKey;                // 82
-    const char *mPlantsName;                    // 83
-    Projectile *mProjectilesBlock;              // 84
-    unsigned int mProjectilesMaxUsedCount;      // 85
-    unsigned int mProjectilesMaxSize;           // 86
-    unsigned int mProjectilesFreeListHead;      // 87
-    unsigned int mProjectilesSize;              // 88
-    unsigned int mProjectilesNextKey;           // 89
-    const char *mProjectilesName;               // 90
-    Coin *mCoinsBlock;                          // 91
-    unsigned int mCoinsMaxUsedCount;            // 92
-    unsigned int mCoinsMaxSize;                 // 93
-    unsigned int mCoinsFreeListHead;            // 94
-    unsigned int mCoinsSize;                    // 95
-    unsigned int mCoinsNextKey;                 // 96
-    const char *mCoinsName;                     // 97
-    int *mLawnMowersBlock;                      // 98
-    unsigned int mLawnMowersMaxUsedCount;       // 99
-    unsigned int mLawnMowersMaxSize;            // 100
-    unsigned int mLawnMowersFreeListHead;       // 101
-    unsigned int mLawnMowersSize;               // 102
-    unsigned int mLawnMowersNextKey;            // 103
-    const char *mLawnMowersName;                // 104
-    GridItem *mGridItemsBlock;                  // 105
-    unsigned int mGridItemsMaxUsedCount;        // 106
-    unsigned int mGridItemsMaxSize;             // 107
-    unsigned int mGridItemsFreeListHead;        // 108
-    unsigned int mGridItemsSize;                // 109
-    unsigned int mGridItemsNextKey;             // 110
-    const char *mGridItemsName;                 // 111
+    DataArray<Zombie> mZombiesList;             // 70 ~ 76
+    DataArray<Plant> mPlantsList;               // 77 ~ 83
+    DataArray<Projectile> mProjectilesList;     // 84 ~ 90
+    DataArray<Coin> mCoinsList;                 // 91 ~ 97
+    DataArray<LawnMower> mLawnMowersList;       // 98 ~ 104
+    DataArray<GridItem> mGridItemsList;         // 105 ~ 111
     PlantRbTree mTangleKelpTree;                // 112 ~ 117
     PlantRbTree mFlowerPotTree;                 // 118 ~ 123
     PlantRbTree mPumpkinTree;                   // 124 ~ 129
@@ -626,6 +591,10 @@ protected:
     void __MouseUp(int x, int y, int theClickCount);
     void PauseFromSecondPlayer(bool thePause);
 
+    size_t getClientEventSize(EventType type);
+    void processClientEvent(void *buf, ssize_t bufSize);
+    size_t getServerEventSize(EventType type);
+    void processServerEvent(void *buf, ssize_t bufSize);
 };
 
 int GetRectOverlap(const Sexy::Rect &rect1, const Sexy::Rect &rect2);

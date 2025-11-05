@@ -48,6 +48,7 @@
 #include "PvZ/SexyAppFramework/GamepadApp.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/TodLib/Common/DynamicMap.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Effect/TodParticle.h"
@@ -447,6 +448,7 @@ int Board::CountPlantByType(SeedType theSeedType) {
 
 Plant *Board::AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int thePlayerIndex, bool theIsDoEffect) {
 
+    Plant *aPlant = NewPlant(theGridX, theGridY, theSeedType, theImitaterType, thePlayerIndex);
 
     if (mApp->mGameMode == GAMEMODE_MP_VS && mApp->mGameScene == SCENE_PLAYING) {
         if (tcp_connected)
@@ -458,14 +460,12 @@ Plant *Board::AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedTyp
             event.data2 = (short)theGridY;
             event.data3.s.s1 = (short)theSeedType;
             event.data3.s.s2 = (short)theImitaterType;
-            event.data4.s.s1 = (short)thePlayerIndex;
+            event.data4.s.s1 = (short)aPlant->mPlantID;
             event.data4.s.s2 = theIsDoEffect;
             send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
         }
     }
 
-
-    Plant *aPlant = NewPlant(theGridX, theGridY, theSeedType, theImitaterType, thePlayerIndex);
     if (theIsDoEffect) {
         DoPlantingEffects(theGridX, theGridY, aPlant);
     }
@@ -952,8 +952,14 @@ bool Board::StageHasRoof() {
     return (mBackground == BackgroundType::BACKGROUND_5_ROOF || mBackground == BackgroundType::BACKGROUND_6_BOSS);
 }
 
-bool Board::StageHas6Rows() {
+bool Board_StageHasRoof(Board *board) {
+    BackgroundType mBackground = board->mBackground;
+    return mBackground == BackgroundType::BACKGROUND_5_ROOF || mBackground == BackgroundType::BACKGROUND_6_BOSS;
+}
+
+bool Board_StageHas6Rows(Board *board) {
     // 关系到第六路可否操控（比如种植植物）。
+    BackgroundType mBackground = board->mBackground;
     return mBackground == BackgroundType::BACKGROUND_3_POOL || mBackground == BackgroundType::BACKGROUND_4_FOG;
 }
 
@@ -999,22 +1005,42 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
     if (mApp->mGameMode == GAMEMODE_MP_VS && mApp->mGameScene == SCENE_PLAYING) {
         if (tcp_connected)
             return nullptr;
+
+        Zombie* zombie = old_Board_AddZombieInRow(this, theZombieType, theRow, theFromWave, theIsRustle);
         if (tcpClientSocket >= 0) {
-            FourCharDataEvent event;
+            FourCharOneShortTwoIntDataEvent event;
             event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
-            event.data1 = (unsigned char)theZombieType;
-            event.data2 = (unsigned char)theRow;
-            event.data3 = (unsigned char)theFromWave;
-            event.data4 = (unsigned char)theIsRustle;
-            send(tcpClientSocket, &event, sizeof(FourCharDataEvent), 0);
+            event.data1[0] = (unsigned char)theZombieType;
+            event.data1[1] = (unsigned char)theRow;
+            event.data1[2] = (unsigned char)theFromWave;
+            event.data1[3] = (unsigned char)theIsRustle;
+
+            event.data2 = (short)zombie->mZombieID;
+            event.data3[0].f = zombie->mVelX;
+            event.data3[1].f = zombie->mPosX;
+            send(tcpClientSocket, &event, sizeof(FourCharOneShortTwoIntDataEvent), 0);
         }
+        return zombie;
     }
 
     return old_Board_AddZombieInRow(this, theZombieType, theRow, theFromWave, theIsRustle);
 }
 
 Zombie *Board::AddZombie(ZombieType theZombieType, int theFromWave, bool theIsRustle) {
-    return AddZombieInRow(theZombieType, PickRowForNewZombie(theZombieType), theFromWave, theIsRustle);
+//    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
+//        if (tcp_connected || ZombieIsAddInRow(theZombieType))
+//            return nullptr;
+//        if (tcpClientSocket >= 0) {
+//            FourCharDataEvent event;
+//            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
+//            event.data1 = (unsigned char)theZombieType;
+//            event.data2 = (unsigned char)theFromWave;
+//            event.data3 = (unsigned char)theIsRustle;
+//            send(tcpClientSocket, &event, sizeof(FourCharDataEvent), 0);
+//        }
+//    }
+
+    return old_Board_AddZombie(this, theZombieType, theFromWave, theIsRustle);
 }
 
 // void (*old_Board_UpdateCoverLayer)(Board *this);
@@ -1039,230 +1065,387 @@ bool TRect_Contains(Rect *rect, int x, int y) {
     return rect->mX < x && rect->mY < y && rect->mX + rect->mWidth > x && rect->mY + rect->mHeight > y;
 }
 
+std::vector<char> clientRecvBuffer;
 
-void Board::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
-    int handledBufSize = 0;
 
-    while (bufSize - handledBufSize >= sizeof(BaseEvent)) {
-        BaseEvent *event = (BaseEvent *)((unsigned char *)buf + handledBufSize);
-        LOG_DEBUG("TYPE:{}", (int)event->type);
-        switch (event->type) {
-            case EVENT_CLIENT_BOARD_TOUCH_DOWN: {
-                handledBufSize += sizeof(TwoShortDataEvent);
-                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
-                MouseDownSecond(event1->data1, event1->data2, 0);
-                GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-                TwoCharDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_DOWN_REPLY, (unsigned char)clientGamepadControls->mSelectedSeedIndex, (unsigned char)clientGamepadControls->mGamepadState};
-                send(tcpClientSocket, &eventReply, sizeof(TwoCharDataEvent), 0);
-            } break;
-            case EVENT_CLIENT_BOARD_TOUCH_DRAG: {
-                handledBufSize += sizeof(TwoShortDataEvent);
-                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
-                MouseDragSecond(event1->data1, event1->data2);
-                GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-                TwoShortDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_DRAG_REPLY, (short)clientGamepadControls->mCursorPositionX, (short)clientGamepadControls->mCursorPositionY};
-                send(tcpClientSocket, &eventReply, sizeof(TwoShortDataEvent), 0);
-            } break;
-            case EVENT_CLIENT_BOARD_TOUCH_UP: {
-                handledBufSize += sizeof(TwoShortDataEvent);
-                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
-                MouseUpSecond(event1->data1, event1->data2, 0);
-                GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-                CursorObject * clientCursorObject = mGamepadControls2->mPlayerIndex2 == 1 ? mCursorObject2 : mCursorObject1;
-                TwoCharDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_UP_REPLY, (unsigned char)clientGamepadControls->mGamepadState, (unsigned char)clientCursorObject->mCursorType};
-                send(tcpClientSocket, &eventReply, sizeof(TwoCharDataEvent), 0);
-            } break;
-            case EVENT_CLIENT_BOARD_PAUSE: {
-                handledBufSize += sizeof(SimpleEvent);
-                SimpleEvent *event1 = (SimpleEvent *)event;
-                PauseFromSecondPlayer(event1->data);
-            } break;
-            default:
-                handledBufSize += sizeof(BaseEvent);
-                break;
-        }
+size_t Board::getClientEventSize(EventType type) {
+    switch (type) {
+        case EVENT_CLIENT_BOARD_TOUCH_DOWN:
+        case EVENT_CLIENT_BOARD_TOUCH_DRAG:
+        case EVENT_CLIENT_BOARD_TOUCH_UP:
+            return sizeof(TwoShortDataEvent);
+        case EVENT_CLIENT_BOARD_PAUSE:
+            return sizeof(SimpleEvent);
+        default:
+            return sizeof(BaseEvent);
     }
 }
 
-void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
-    int handledBufSize = 0;
+void Board::processClientEvent(void *buf, ssize_t bufSize) {
+    BaseEvent *event = (BaseEvent *)buf;
+    LOG_DEBUG("TYPE:{}", (int)event->type);
+    switch (event->type) {
+        case EVENT_CLIENT_BOARD_TOUCH_DOWN: {
+            TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+            MouseDownSecond(event1->data1, event1->data2, 0);
+            GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+            TwoCharDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_DOWN_REPLY, (unsigned char)clientGamepadControls->mSelectedSeedIndex, (unsigned char)clientGamepadControls->mGamepadState};
+            send(tcpClientSocket, &eventReply, sizeof(TwoCharDataEvent), 0);
+        } break;
+        case EVENT_CLIENT_BOARD_TOUCH_DRAG: {
+            TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+            MouseDragSecond(event1->data1, event1->data2);
+            GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+            TwoShortDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_DRAG_REPLY, (short)clientGamepadControls->mCursorPositionX, (short)clientGamepadControls->mCursorPositionY};
+            send(tcpClientSocket, &eventReply, sizeof(TwoShortDataEvent), 0);
+        } break;
+        case EVENT_CLIENT_BOARD_TOUCH_UP: {
+            TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+            MouseUpSecond(event1->data1, event1->data2, 0);
+            GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+            CursorObject * clientCursorObject = mGamepadControls2->mPlayerIndex2 == 1 ? mCursorObject2 : mCursorObject1;
+            TwoCharDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_UP_REPLY, (unsigned char)clientGamepadControls->mGamepadState, (unsigned char)clientCursorObject->mCursorType};
+            send(tcpClientSocket, &eventReply, sizeof(TwoCharDataEvent), 0);
+        } break;
+        case EVENT_CLIENT_BOARD_PAUSE: {
+            SimpleEvent *event1 = (SimpleEvent *)event;
+            PauseFromSecondPlayer(event1->data);
+        } break;
+        default:
+            break;
+    }
+}
 
-    while (bufSize - handledBufSize >= sizeof(BaseEvent)) {
-        BaseEvent *event = (BaseEvent *)((unsigned char *)buf + handledBufSize);
-        LOG_DEBUG("TYPE:{}", (int)event->type);
-        switch (event->type) {
-            case EVENT_BOARD_TOUCH_DOWN_REPLY: {
-                handledBufSize += sizeof(TwoCharDataEvent);
-                TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
-                GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-                SeedBank *clientSeedBank = mGamepadControls2->mPlayerIndex2 == 1 ? mSeedBank2 : mSeedBank1;
-                if (clientGamepadControls->mSelectedSeedIndex != event1->data1) {
-                    clientGamepadControls->mSelectedSeedIndex = event1->data1;
-                    clientSeedBank->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
-                }
-                clientGamepadControls->mGamepadState = event1->data2;
-            } break;
-            case EVENT_BOARD_TOUCH_DRAG_REPLY: {
-                handledBufSize += sizeof(TwoShortDataEvent);
-                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
-                GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-                clientGamepadControls->mCursorPositionX = event1->data1;
-                clientGamepadControls->mCursorPositionY = event1->data2;
-            } break;
-            case EVENT_BOARD_TOUCH_UP_REPLY: {
-                handledBufSize += sizeof(TwoCharDataEvent);
-                TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
-                GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-                CursorObject * clientCursorObject = mGamepadControls2->mPlayerIndex2 == 1 ? mCursorObject2 : mCursorObject1;
-                clientGamepadControls->mGamepadState = event1->data1;
-                clientCursorObject->mCursorType = (CursorType)event1->data2;
-            } break;
-            case EVENT_SERVER_BOARD_TOUCH_DOWN: {
-                handledBufSize += sizeof(TwoCharTwoShortDataEvent);
-                TwoCharTwoShortDataEvent *event1 = (TwoCharTwoShortDataEvent *)event;
-                GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-                SeedBank *serverSeedBank = mGamepadControls1->mPlayerIndex2 == 0 ? mSeedBank1 : mSeedBank2;
-                if (serverGamepadControls->mSelectedSeedIndex != event1->data1) {
-                    serverGamepadControls->mSelectedSeedIndex = event1->data1;
-                    serverSeedBank->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
-                }
-                serverGamepadControls->mGamepadState = event1->data2;
-                serverGamepadControls->mCursorPositionX = event1->data3;
-                serverGamepadControls->mCursorPositionY = event1->data4;
-            } break;
-            case EVENT_SERVER_BOARD_TOUCH_DRAG: {
-                handledBufSize += sizeof(TwoShortDataEvent);
-                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
-                GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-                serverGamepadControls->mCursorPositionX = event1->data1;
-                serverGamepadControls->mCursorPositionY = event1->data2;
-            } break;
-            case EVENT_SERVER_BOARD_TOUCH_UP: {
-                handledBufSize += sizeof(TwoCharDataEvent);
-                TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
-                GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-                CursorObject * serverCursorObject = mGamepadControls1->mPlayerIndex2 == 0 ? mCursorObject1 : mCursorObject2;
-                serverGamepadControls->mGamepadState = event1->data1;
-                serverCursorObject->mCursorType = (CursorType)event1->data2;
-            } break;
-            case EVENT_SERVER_BOARD_TOUCH_CLEAR_CURSOR: {
-                handledBufSize += sizeof(BaseEvent);
-                BaseEvent *event1 = (BaseEvent *)event;
-                GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-                ClearCursor(mGamepadControls1->mPlayerIndex2 == 0 ? 0 : 1);
-                serverGamepadControls->mGamepadState = 1;
-            } break;
-            case EVENT_CLIENT_BOARD_TOUCH_CLEAR_CURSOR: {
-                handledBufSize += sizeof(BaseEvent);
-                BaseEvent *event1 = (BaseEvent *)event;
-                GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-                ClearCursor(mGamepadControls1->mPlayerIndex2 == 0 ? 1 : 0);
-                clientGamepadControls->mGamepadState = 1;
-            } break;
-            case EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE: {
-                handledBufSize += sizeof(SimpleEvent);
-                GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-                SimpleEvent *event1 = (SimpleEvent *)event;
-                clientGamepadControls->mGamepadState = event1->data;
-            } break;
-            case EVENT_SERVER_BOARD_GAMEPAD_SET_STATE: {
-                handledBufSize += sizeof(SimpleEvent);
-                SimpleEvent *event1 = (SimpleEvent *)event;
-                GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-                serverGamepadControls->mGamepadState = event1->data;
-            } break;
-            case EVENT_SERVER_BOARD_PAUSE: {
-                handledBufSize += sizeof(SimpleEvent);
-                SimpleEvent *event1 = (SimpleEvent *)event;
-                PauseFromSecondPlayer(event1->data);
-            } break;
-            case EVENT_SERVER_BOARD_COIN_ADD: {
-                handledBufSize += sizeof(TwoCharTwoShortDataEvent);
-                TwoCharTwoShortDataEvent *event1 = (TwoCharTwoShortDataEvent *)event;
-                AddCoin(event1->data3, event1->data4, (CoinType)event1->data1, (CoinMotion)event1->data2);
-            } break;
-            case EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER: {
-                handledBufSize += sizeof(TwoShortDataEvent);
-                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
-                Plant *plant = mPlantsBlock + event1->data1;
+void Board::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
+
+    clientRecvBuffer.insert(clientRecvBuffer.end(), (char*)buf, (char*)buf + bufSize);
+    size_t offset = 0;
+
+    while (clientRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
+        BaseEvent* base = (BaseEvent*)&clientRecvBuffer[offset];
+        size_t eventSize = getClientEventSize(base->type);
+        if (clientRecvBuffer.size() - offset < eventSize)
+            break; // 不完整
+
+        processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
+        offset += eventSize;
+    }
+
+    if (offset != 0) {
+        clientRecvBuffer.erase(clientRecvBuffer.begin(), clientRecvBuffer.begin() + offset);
+    }
+}
+
+
+
+std::vector<char> serverRecvBuffer;
+DynamicMap serverPlantIDMap;
+DynamicMap serverZombieIDMap;
+DynamicMap serverCoinIDMap;
+DynamicMap serverGridItemIDMap;
+
+
+
+size_t Board::getServerEventSize(EventType type) {
+    switch (type) {
+        // --- 触摸相关事件 ---
+        case EVENT_BOARD_TOUCH_DOWN_REPLY:
+        case EVENT_BOARD_TOUCH_UP_REPLY:
+            return sizeof(TwoCharDataEvent);
+
+        case EVENT_BOARD_TOUCH_DRAG_REPLY:
+            return sizeof(TwoShortDataEvent);
+
+        case EVENT_SERVER_BOARD_TOUCH_DOWN:
+        case EVENT_SERVER_BOARD_COIN_ADD:
+        case EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE:
+            return sizeof(TwoCharTwoShortDataEvent);
+
+        case EVENT_SERVER_BOARD_TOUCH_DRAG:
+            return sizeof(TwoShortDataEvent);
+
+        case EVENT_SERVER_BOARD_TOUCH_UP:
+            return sizeof(TwoCharDataEvent);
+
+        case EVENT_SERVER_BOARD_TOUCH_CLEAR_CURSOR:
+        case EVENT_CLIENT_BOARD_TOUCH_CLEAR_CURSOR:
+            return sizeof(BaseEvent);
+
+        // --- Gamepad 相关 ---
+        case EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE:
+        case EVENT_SERVER_BOARD_GAMEPAD_SET_STATE:
+        case EVENT_SERVER_BOARD_PAUSE:
+            return sizeof(SimpleEvent);
+
+        // --- 发射计数类事件 ---
+        case EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER:
+        case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER:
+            return sizeof(TwoShortDataEvent);
+
+        // --- 动画、开火、植物添加 ---
+        case EVENT_SERVER_BOARD_PLANT_ANIMATION:
+        case EVENT_SERVER_BOARD_PLANT_FIRE:
+        case EVENT_SERVER_BOARD_PLANT_ADD:
+            return sizeof(TwoShortTwoIntDataEvent);
+
+        // --- 僵尸添加 ---
+        case EVENT_SERVER_BOARD_ZOMBIE_ADD:
+            return sizeof(FourCharOneShortTwoIntDataEvent);
+
+        // --- 金钱类 ---
+        case EVENT_SERVER_BOARD_TAKE_SUNMONEY:
+        case EVENT_SERVER_BOARD_TAKE_DEATHMONEY:
+            return sizeof(SimpleShortEvent);
+
+        // --- 种子包被种下 ---
+        case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED:
+            return sizeof(TwoCharDataEvent);
+
+        // --- 未知类型或基础事件 ---
+        case EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE:
+            return sizeof (TwoCharOneShortDataEvent);
+
+        case EVENT_SERVER_BOARD_START_LEVEL:
+            return sizeof (NineShortDataEvent);
+
+        default:
+            return sizeof(BaseEvent);
+    }
+}
+
+
+void Board::processServerEvent(void *buf, ssize_t bufSize) {
+    BaseEvent *event = (BaseEvent *)buf;
+    LOG_DEBUG("TYPE:{}", (int)event->type);
+    switch (event->type) {
+        case EVENT_BOARD_TOUCH_DOWN_REPLY: {
+            TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
+            GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+            SeedBank *clientSeedBank = mGamepadControls2->mPlayerIndex2 == 1 ? mSeedBank2 : mSeedBank1;
+            if (clientGamepadControls->mSelectedSeedIndex != event1->data1) {
+                clientGamepadControls->mSelectedSeedIndex = event1->data1;
+                clientSeedBank->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
+            }
+            clientGamepadControls->mGamepadState = event1->data2;
+        } break;
+        case EVENT_BOARD_TOUCH_DRAG_REPLY: {
+            TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+            GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+            clientGamepadControls->mCursorPositionX = event1->data1;
+            clientGamepadControls->mCursorPositionY = event1->data2;
+        } break;
+        case EVENT_BOARD_TOUCH_UP_REPLY: {
+            TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
+            GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+            CursorObject * clientCursorObject = mGamepadControls2->mPlayerIndex2 == 1 ? mCursorObject2 : mCursorObject1;
+            clientGamepadControls->mGamepadState = event1->data1;
+            clientCursorObject->mCursorType = (CursorType)event1->data2;
+        } break;
+        case EVENT_SERVER_BOARD_TOUCH_DOWN: {
+            TwoCharTwoShortDataEvent *event1 = (TwoCharTwoShortDataEvent *)event;
+            GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
+            SeedBank *serverSeedBank = mGamepadControls1->mPlayerIndex2 == 0 ? mSeedBank1 : mSeedBank2;
+            if (serverGamepadControls->mSelectedSeedIndex != event1->data1) {
+                serverGamepadControls->mSelectedSeedIndex = event1->data1;
+                serverSeedBank->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
+            }
+            serverGamepadControls->mGamepadState = event1->data2;
+            serverGamepadControls->mCursorPositionX = event1->data3;
+            serverGamepadControls->mCursorPositionY = event1->data4;
+        } break;
+        case EVENT_SERVER_BOARD_TOUCH_DRAG: {
+            TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+            GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
+            serverGamepadControls->mCursorPositionX = event1->data1;
+            serverGamepadControls->mCursorPositionY = event1->data2;
+        } break;
+        case EVENT_SERVER_BOARD_TOUCH_UP: {
+            TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
+            GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
+            CursorObject * serverCursorObject = mGamepadControls1->mPlayerIndex2 == 0 ? mCursorObject1 : mCursorObject2;
+            serverGamepadControls->mGamepadState = event1->data1;
+            serverCursorObject->mCursorType = (CursorType)event1->data2;
+        } break;
+        case EVENT_SERVER_BOARD_TOUCH_CLEAR_CURSOR: {
+            BaseEvent *event1 = (BaseEvent *)event;
+            GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
+            ClearCursor(mGamepadControls1->mPlayerIndex2 == 0 ? 0 : 1);
+            serverGamepadControls->mGamepadState = 1;
+        } break;
+        case EVENT_CLIENT_BOARD_TOUCH_CLEAR_CURSOR: {
+            BaseEvent *event1 = (BaseEvent *)event;
+            GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+            ClearCursor(mGamepadControls1->mPlayerIndex2 == 0 ? 1 : 0);
+            clientGamepadControls->mGamepadState = 1;
+        } break;
+        case EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE: {
+            GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+            SimpleEvent *event1 = (SimpleEvent *)event;
+            clientGamepadControls->mGamepadState = event1->data;
+        } break;
+        case EVENT_SERVER_BOARD_GAMEPAD_SET_STATE: {
+            SimpleEvent *event1 = (SimpleEvent *)event;
+            GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
+            serverGamepadControls->mGamepadState = event1->data;
+        } break;
+        case EVENT_SERVER_BOARD_PAUSE: {
+            SimpleEvent *event1 = (SimpleEvent *)event;
+            PauseFromSecondPlayer(event1->data);
+        } break;
+        case EVENT_SERVER_BOARD_COIN_ADD: {
+            TwoCharTwoShortDataEvent *event1 = (TwoCharTwoShortDataEvent *)event;
+            AddCoin(event1->data3, event1->data4, (CoinType)event1->data1, (CoinMotion)event1->data2);
+        } break;
+        case EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER: {
+            TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+            short clientPlantID;
+            if (serverPlantIDMap.Lookup(event1->data1, clientPlantID)) {
+                Plant *plant = mPlantsList.DataArrayGet(clientPlantID);
                 plant->mLaunchCounter = event1->data2;
-            } break;
-            case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER: {
-                handledBufSize += sizeof(TwoShortDataEvent);
-                TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
-                GridItem *gridItem = mGridItemsBlock + event1->data1;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER: {
+            TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
+            short clientGridItemID;
+            if (serverGridItemIDMap.Lookup(event1->data1, clientGridItemID)) {
+                GridItem *gridItem = mGridItemsList.DataArrayGet(clientGridItemID);
                 gridItem->mLaunchCounter = event1->data2;
-            } break;
-            case EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE: {
-                handledBufSize += sizeof(TwoCharTwoShortDataEvent);
-                TwoCharTwoShortDataEvent *event1 = (TwoCharTwoShortDataEvent *)event;
-                GridItem *gridItem = AddAGraveStone(event1->data1, event1->data2);
-                gridItem->mGridItemCounter = event1->data3;
-                gridItem->mLaunchCounter = event1->data4;
-            } break;
-            case EVENT_SERVER_BOARD_PLANT_ANIMATION: {
-                handledBufSize += sizeof(TwoShortTwoIntDataEvent);
-                TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
-                Plant *plant = mPlantsBlock + event1->data1;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE: {
+            TwoCharTwoShortDataEvent *event1 = (TwoCharTwoShortDataEvent *)event;
+            GridItem *gridItem = AddAGraveStone(event1->data1, event1->data2);
+            gridItem->mLaunchCounter = event1->data4;
+            gridItem->mVSGraveStoneHealth = 350;
+            gridItem->unkBool1 = true;
+            serverGridItemIDMap.Add(event1->data3,(short)gridItem->mGridItemID);
+        } break;
+        case EVENT_SERVER_BOARD_PLANT_ANIMATION: {
+            TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
+            short clientPlantID;
+            if (serverPlantIDMap.Lookup(event1->data1, clientPlantID)) {
+                Plant *plant = mPlantsList.DataArrayGet(clientPlantID);
                 plant->mFrameLength = event1->data2;
                 plant->mAnimCounter = event1->data3.i;
                 mApp->ReanimationGet(plant->mBodyReanimID)->mAnimRate = event1->data4.f;
-            } break;
-            case EVENT_SERVER_BOARD_PLANT_FIRE: {
-                handledBufSize += sizeof(TwoShortTwoIntDataEvent);
-                TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
-                Plant *plant = mPlantsBlock + event1->data1;
-                Zombie *zombie = event1->data2 == -1 ? nullptr : mZombiesBlock + event1->data2;
-                GridItem *gridItem = event1->data4.s.s1 == -1 ? nullptr : mGridItemsBlock + event1->data4.s.s1;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_PLANT_FIRE: {
+            TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
+            short clientPlantID;
+            if (serverPlantIDMap.Lookup(event1->data1, clientPlantID)) {
+                Plant *plant = mPlantsList.DataArrayGet(clientPlantID);
+                Zombie *zombie = event1->data2 == 0 ? nullptr : mZombiesList.DataArrayGet(serverZombieIDMap.Lookup(event1->data2));
+                GridItem *gridItem = event1->data4.s.s1 == 0 ? nullptr : mGridItemsList.DataArrayGet(serverGridItemIDMap.Lookup(event1->data4.s.s1)) ;
                 tcp_connected = false;
                 plant->Fire(zombie, event1->data3.s.s1, (PlantWeapon)event1->data3.s.s2, gridItem);
                 tcp_connected = true;
-            } break;
-            case EVENT_SERVER_BOARD_PLANT_ADD: {
-                handledBufSize += sizeof(TwoShortTwoIntDataEvent);
-                TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
-                tcp_connected = false;
-                AddPlant(event1->data1, event1->data2, (SeedType)event1->data3.s.s1, (SeedType)event1->data3.s.s2, event1->data4.s.s1, event1->data4.s.s2);
-                tcp_connected = true;
-            } break;
-            case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
-                // ToDo: 修复客户端点击放置僵尸光标不能及时移动。
-                handledBufSize += sizeof(FourCharDataEvent);
-                FourCharDataEvent *eventAddZombie = (FourCharDataEvent *)event;
-                GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-                int aGridX = PixelToGridXKeepOnBoard(clientGamepadControls->mCursorPositionX, clientGamepadControls->mCursorPositionY);
-                int aGridY = PixelToGridYKeepOnBoard(clientGamepadControls->mCursorPositionX, clientGamepadControls->mCursorPositionY);
-                tcp_connected = false;
-                Zombie *aZombie = AddZombieInRow((ZombieType)eventAddZombie->data1, eventAddZombie->data2, eventAddZombie->data3, eventAddZombie->data4);
-                if (aZombie && !ZombieIsAddInRow((ZombieType)eventAddZombie->data1))
-                    aZombie->RiseFromGrave(aGridX, aGridY);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_PLANT_ADD: {
+            TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
+            tcp_connected = false;
+            Plant* plant = AddPlant(event1->data1, event1->data2, (SeedType)event1->data3.s.s1, (SeedType)event1->data3.s.s2, 0, event1->data4.s.s2);
+            serverPlantIDMap.Add(event1->data4.s.s1,(short)plant->mPlantID);
+            tcp_connected = true;
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
+            FourCharOneShortTwoIntDataEvent *event1 = (FourCharOneShortTwoIntDataEvent *)event;
+            tcp_connected = false;
+            Zombie *zombie = AddZombieInRow((ZombieType)event1->data1[0], event1->data1[1], event1->data1[2], event1->data1[3]);
+            LOG_DEBUG("serverZombieIDMap Add {} {}",event1->data2,(short)zombie->mZombieID);
+            serverZombieIDMap.Add(event1->data2, (short)zombie->mZombieID);
+            tcp_connected = true;
+            zombie->mVelX = event1->data3[0].f;
+            zombie->UpdateAnimSpeed();
+            zombie->mPosX = event1->data3[1].f;
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE: {
+            TwoCharOneShortDataEvent *event1 = (TwoCharOneShortDataEvent *)event;
+            LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE ID {}",event1->data3);
+            short clientZombieID;
+            if (serverZombieIDMap.Lookup(event1->data3, clientZombieID)) {
+                LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE clientZombieID {}",clientZombieID);
+                Zombie* zombie = mZombiesList.DataArrayGet(clientZombieID);
+                zombie->RiseFromGrave(event1->data1,event1->data2);
+            }
 
-                tcp_connected = true;
-            } break;
-            case EVENT_SERVER_BOARD_TAKE_SUNMONEY: {
-                handledBufSize += sizeof(SimpleShortEvent);
-                SimpleShortEvent *event1 = (SimpleShortEvent *)event;
-                mSunMoney1 = event1->data;
-            } break;
-            case EVENT_SERVER_BOARD_TAKE_DEATHMONEY: {
-                handledBufSize += sizeof(SimpleShortEvent);
-                SimpleShortEvent *event1 = (SimpleShortEvent *)event;
-                mDeathMoney = event1->data;
-            } break;
-            case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED: {
-                LOG_DEBUG("777");
-                handledBufSize += sizeof(TwoCharDataEvent);
-                TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
-                SeedBank* theSeedBank = event1->data2 ? mSeedBank1 : mSeedBank2;
-                SeedPacket* seedPacket = &theSeedBank->mSeedPackets[event1->data1];
-                seedPacket->Deactivate();
-                seedPacket->WasPlanted(0);
-            } break;
+        } break;
+        case EVENT_SERVER_BOARD_TAKE_SUNMONEY: {
+            SimpleShortEvent *event1 = (SimpleShortEvent *)event;
+            mSunMoney1 = event1->data;
+        } break;
+        case EVENT_SERVER_BOARD_TAKE_DEATHMONEY: {
+            SimpleShortEvent *event1 = (SimpleShortEvent *)event;
+            mDeathMoney = event1->data;
+        } break;
+        case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED: {
+            TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
+            SeedBank* theSeedBank = event1->data2 ? mSeedBank1 : mSeedBank2;
+            SeedPacket* seedPacket = &theSeedBank->mSeedPackets[event1->data1];
+            seedPacket->Deactivate();
+            seedPacket->WasPlanted(0);
+        } break;
+        case EVENT_SERVER_BOARD_START_LEVEL: {
+            NineShortDataEvent *event1 = (NineShortDataEvent *)event;
+            serverPlantIDMap.ClearAll();
+            serverZombieIDMap.ClearAll();
+            serverCoinIDMap.ClearAll();
+            serverGridItemIDMap.ClearAll();
 
-            default:
-                handledBufSize += sizeof(BaseEvent);
-                break;
-        }
+            GridItem *gridItem = nullptr;
+            while (IterateGridItems(gridItem)) {
+                if (gridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
+                    LOG_DEBUG("{} {} {}",gridItem->mGridY,event1->data[gridItem->mGridY],(short)gridItem->mGridItemID);
+                    serverGridItemIDMap.Add(event1->data[gridItem->mGridY], (short)gridItem->mGridItemID);
+                }
+                if (gridItem->mGridItemType == GRIDITEM_GRAVESTONE) {
+                    if (gridItem->mGridY == 1) {
+                        serverGridItemIDMap.Add(event1->data[5],(short)gridItem->mGridItemID);
+                        LOG_DEBUG("1{} {} {}",gridItem->mGridY,event1->data[gridItem->mGridY],(short)gridItem->mGridItemID);
+                    }
+                    if (gridItem->mGridY >= 3) {
+                        serverGridItemIDMap.Add(event1->data[6],(short)gridItem->mGridItemID);
+                        LOG_DEBUG("3{} {} {}",gridItem->mGridY,event1->data[gridItem->mGridY],(short)gridItem->mGridItemID);
+                    }
+                }
+            }
+
+            Plant *plant = nullptr;
+            while (IteratePlants(plant)) {
+                if (plant->mRow == 1) {
+                    serverPlantIDMap.Add(event1->data[7],(short)plant->mPlantID);
+                }
+                if (plant->mRow >= 3) {
+                    serverPlantIDMap.Add(event1->data[8],(short)plant->mPlantID);
+                }
+            }
+        } break;
+
+        default:
+            break;
+    }
+}
+
+
+
+
+void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
+    serverRecvBuffer.insert(serverRecvBuffer.end(), (char*)buf, (char*)buf + bufSize);
+    size_t offset = 0;
+
+    while (serverRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
+        BaseEvent* base = (BaseEvent*)&serverRecvBuffer[offset];
+        size_t eventSize = getServerEventSize(base->type);
+        if (serverRecvBuffer.size() - offset < eventSize)
+            break; // 不完整
+
+        processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
+        offset += eventSize;
+    }
+
+    if (offset != 0) {
+        serverRecvBuffer.erase(serverRecvBuffer.begin(), serverRecvBuffer.begin() + offset);
     }
 }
 
@@ -1537,7 +1720,7 @@ void Board::Update() {
     }
 
     if (ladderBuild) {
-        if (theBuildLadderX < 9 && theBuildLadderY < (StageHas6Rows() ? 6 : 5) && GetLadderAt(theBuildLadderX, theBuildLadderY) == nullptr)
+        if (theBuildLadderX < 9 && theBuildLadderY < (Board_StageHas6Rows(this) ? 6 : 5) && GetLadderAt(theBuildLadderX, theBuildLadderY) == nullptr)
             // 防止选“所有行”或“所有列”的时候放置到场外
             AddALadder(theBuildLadderX, theBuildLadderY);
         ladderBuild = false;
@@ -1548,7 +1731,7 @@ void Board::Update() {
     if (plantBuild && theBuildPlantType != SeedType::SEED_NONE) {
         int colsCount = (theBuildPlantType == SeedType::SEED_COBCANNON) ? 8 : 9; // 玉米加农炮不种在九列
         int width = (theBuildPlantType == SeedType::SEED_COBCANNON) ? 2 : 1;     // 玉米加农炮宽度两列
-        int rowsCount = StageHas6Rows() ? 6 : 5;
+        int rowsCount = Board_StageHas6Rows(this) ? 6 : 5;
         bool isIZMode = mApp->IsIZombieLevel();
         // 全场
         if (theBuildPlantX == 9 && theBuildPlantY == 6) {
@@ -1599,7 +1782,7 @@ void Board::Update() {
             AddZombieInRow(theBuildZombieType, 0, 0, true);
         else {
             int colsCount = 9;
-            int rowsCount = StageHas6Rows() ? 6 : 5;
+            int rowsCount = Board_StageHas6Rows(this) ? 6 : 5;
             // 僵尸出生线
             if (BuildZombieX == 10 && BuildZombieY == 6)
                 for (int y = 0; y < rowsCount; ++y)
@@ -1630,7 +1813,7 @@ void Board::Update() {
     // 放置墓碑
     if (graveBuild) {
         int colsCount = 9;
-        int rowsCount = StageHas6Rows() ? 6 : 5;
+        int rowsCount = Board_StageHas6Rows(this) ? 6 : 5;
         // 全场
         if (BuildZombieX == 9 && BuildZombieY == 6) {
             GridItem *aGridItem = nullptr;
@@ -2765,7 +2948,7 @@ void Board::__MouseDrag(int x, int y) {
             mGamepadControls1->mGamepadState = 7;
             mGamepadControls1->mIsInShopSeedBank = false;
             requestDrawShovelInCursor = false;
-            if (tcpClientSocket >= 0) {
+            if (tcpClientSocket >= 0 && mGamepadControls1->mPlayerIndex2 == 0) {
                 SimpleEvent event = {EventType::EVENT_SERVER_BOARD_GAMEPAD_SET_STATE, 7};
                 send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
             }
@@ -2773,6 +2956,10 @@ void Board::__MouseDrag(int x, int y) {
             mGamepadControls2->mGamepadState = 7;
             mGamepadControls2->mIsInShopSeedBank = false;
             requestDrawButterInCursor = false;
+            if (tcpClientSocket >= 0 && mGamepadControls2->mPlayerIndex2 == 0) {
+                SimpleEvent event = {EventType::EVENT_SERVER_BOARD_GAMEPAD_SET_STATE, 7};
+                send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
+            }
         }
         mSendKeyWhenTouchUp = true;
     }
@@ -3395,11 +3582,15 @@ void Board::MouseDragSecond(int x, int y) {
             mGamepadControls1->mGamepadState = 7;
             mGamepadControls1->mIsInShopSeedBank = false;
             requestDrawShovelInCursor = false;
+            if (tcpClientSocket >= 0 && mGamepadControls1->mPlayerIndex2 == 1) {
+                SimpleEvent event = {EventType::EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE, 7};
+                send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
+            }
         } else {
             mGamepadControls2->mGamepadState = 7;
             mGamepadControls2->mIsInShopSeedBank = false;
             requestDrawButterInCursor = false;
-            if (tcpClientSocket >= 0) {
+            if (tcpClientSocket >= 0 && mGamepadControls2->mPlayerIndex2 == 1) {
                 SimpleEvent event = {EventType::EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE, 7};
                 send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
             }
@@ -3614,12 +3805,47 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
 void Board::StartLevel() {
     if (mApp->mGameMode == GAMEMODE_MP_VS) {
         if (tcpClientSocket >= 0) {
+
+            NineShortDataEvent nineShortDataEvent;
+            nineShortDataEvent.type = EventType::EVENT_SERVER_BOARD_START_LEVEL;
+
             GridItem *gridItem = nullptr;
+            while (IterateGridItems(gridItem)) {
+                if (gridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
+                    nineShortDataEvent.data[gridItem->mGridY] = (short)gridItem->mGridItemID;
+                    LOG_DEBUG("{} {}",gridItem->mGridY,(short)gridItem->mGridItemID);
+                }
+                if (gridItem->mGridItemType == GRIDITEM_GRAVESTONE) {
+                    if (gridItem->mGridY == 1) {
+                        nineShortDataEvent.data[5] = (short)gridItem->mGridItemID;
+                        LOG_DEBUG("1 {} {}",gridItem->mGridY,(short)gridItem->mGridItemID);
+                    }
+                    if (gridItem->mGridY >= 3) {
+                        nineShortDataEvent.data[6] = (short)gridItem->mGridItemID;
+                        LOG_DEBUG("3 {} {}",gridItem->mGridY,(short)gridItem->mGridItemID);
+                    }
+                }
+            }
+
+            Plant *plant = nullptr;
+            while (IteratePlants(plant)) {
+                if (plant->mRow == 1) {
+                    nineShortDataEvent.data[7] = (short)plant->mPlantID;
+                }
+                if (plant->mRow >= 3) {
+                    nineShortDataEvent.data[8] = (short)plant->mPlantID;
+                }
+            }
+
+            send(tcpClientSocket, &nineShortDataEvent, sizeof(NineShortDataEvent), 0);
+
+            gridItem = nullptr;
             while (IterateGridItems(gridItem)) {
                 TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER, (short)gridItem->mGridItemID, (short)gridItem->mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
             }
-            Plant *plant = nullptr;
+
+            plant = nullptr;
             while (IteratePlants(plant)) {
                 TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER, (short)plant->mPlantID, (short)plant->mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
@@ -4547,11 +4773,12 @@ GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
 GridItem *Board::AddAGraveStone(int gridX, int gridY) {
     GridItem *result = old_Board_AddAGraveStone(this, gridX, gridY);
     if (tcpClientSocket >= 0) {
-        TwoCharTwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE, (unsigned char)gridX, (unsigned char)gridY,(short)result->mGridItemCounter,(short)result->mLaunchCounter};
-        send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+        TwoCharTwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE, (unsigned char)gridX, (unsigned char)gridY,(short)result->mGridItemID,(short)result->mLaunchCounter};
+        send(tcpClientSocket, &event, sizeof(TwoCharTwoShortDataEvent), 0);
     }
     return result;
 }
+
 
 bool Board::TakeSunMoney(int theAmount, int thePlayer) {
     bool result = old_Board_TakeSunMoney(this,theAmount,thePlayer);

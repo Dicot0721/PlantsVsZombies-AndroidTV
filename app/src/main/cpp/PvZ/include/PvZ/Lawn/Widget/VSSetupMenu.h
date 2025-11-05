@@ -24,6 +24,7 @@
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
+#include "WaitForSecondPlayerDialog.h"
 
 namespace Sexy {
 class ButtonWidget;
@@ -169,11 +170,17 @@ protected:
     void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds) ;
 
 
+    void processServerEvent(void *buf, ssize_t bufSize);
+    size_t getServerEventSize(EventType type);
+
+    void processClientEvent(void *buf, ssize_t bufSize);
+    size_t getClientEventSize(EventType type);
 };
 
 inline bool is1PControllerMoving;
 inline bool is2PControllerMoving;
 inline int touchDownX;
+inline int touchingOnWhichController; // 0 NONE, 1 1P, 2 2P
 
 inline void (*old_VSSetupMenu_Constructor)(VSSetupMenu *);
 

@@ -60,11 +60,15 @@ public:
     int mSunCount;                           // 24
     MotionTrailFrame mMotionTrailFrames[12]; // 25 ~ 60
     int mMotionTrailCount;                   // 61
-    int unkMems[4];                          // 62 ~ 65
+    bool unkBool;                            // 62 * 4
+    bool unkBool1;                            // 62 * 4 + 1
+    int unkMems[3];                          // 63 ~ 65
     int mLaunchCounter;                      // 66
     int mLaunchRate;                         // 67
     int mBeatenFlashCountdown;               // 68
-    int unkMems2[6];                         // 69 ~ 74
+    int mVSGraveStoneHealth;                 // 69
+    int mVSTargetZombieHealth;               // 70
+    int unkMems2[4];                         // 71 ~ 74
     GridItemID mGridItemID;              // 75
     // 大小76个整数
 

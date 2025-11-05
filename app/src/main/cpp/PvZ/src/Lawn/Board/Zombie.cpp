@@ -1664,22 +1664,25 @@ Rect Zombie::GetZombieRect() {
 
 void Zombie::RiseFromGrave(int theGridX, int theGridY) {
     // 修复对战切换场地为泳池后的闪退BUG。但是仅仅是修复闪退，泳池对战还谈不上能玩的程度
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        if (mBoard->mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
-            //                if (old_ZombieTypeCanGoInPool(mZombieType)) {
-            DieNoLoot();
-            mBoard->AddZombieInRow(mZombieType, theGridY, mBoard->mCurrentWave, 1);
-            return;
-            //                }
-        }
-
-        BackgroundType tmp = mBoard->mBackground;
-        mBoard->mBackground = BackgroundType::BACKGROUND_1_DAY;
-        old_Zombie_RiseFromGrave(this, theGridX, theGridY);
-        mBoard->mBackground = tmp;
-        return;
+    if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS) {
+       return old_Zombie_RiseFromGrave(this, theGridX, theGridY);
     }
+
+    if (mBoard->mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
+        //                if (old_ZombieTypeCanGoInPool(mZombieType)) {
+        DieNoLoot();
+        mBoard->AddZombieInRow(mZombieType, theGridY, mBoard->mCurrentWave, 1);
+        return;
+        //                }
+    }
+
+    BackgroundType tmp = mBoard->mBackground;
+    mBoard->mBackground = BackgroundType::BACKGROUND_1_DAY;
     old_Zombie_RiseFromGrave(this, theGridX, theGridY);
+    mBoard->mBackground = tmp;
+
+    TwoCharOneShortDataEvent event = {EventType::EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE,(unsigned char)theGridX,(unsigned char)theGridY,(short )mZombieID};
+    send(tcpClientSocket, &event, sizeof(TwoCharOneShortDataEvent), 0);
 }
 
 void Zombie::CheckForBoardEdge() {
