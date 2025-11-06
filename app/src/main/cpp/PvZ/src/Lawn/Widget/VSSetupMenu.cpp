@@ -440,10 +440,9 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             tcp_connected = true;
         } break;
         case EVENT_VSSETUPMENU_ENTER_STATE: {
-            SimpleEvent *event1 = (SimpleEvent *)event;
-            // int theState = event1->data;
-            LOG_DEBUG("theState={}", event1->data);
-            // GoToState(theState);
+            [[maybe_unused]] int aState = reinterpret_cast<SimpleEvent *>(event)->data;
+            LOG_DEBUG("theState={}", aState);
+            // GoToState(aState);
         } break;
         case EVENT_SEEDCHOOSER_SELECT_SEED: {
             TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;

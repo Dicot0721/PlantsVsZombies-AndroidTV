@@ -1076,7 +1076,7 @@ void Board::processClientEvent(void *buf, ssize_t bufSize) {
             TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
             MouseDragSecond(event1->data1, event1->data2);
             GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-            TwoShortDataEvent eventReply = {EventType::EVENT_BOARD_TOUCH_DRAG_REPLY, (short)clientGamepadControls->mCursorPositionX, (short)clientGamepadControls->mCursorPositionY};
+            TwoShortDataEvent eventReply = {{EventType::EVENT_BOARD_TOUCH_DRAG_REPLY}, (short)clientGamepadControls->mCursorPositionX, (short)clientGamepadControls->mCursorPositionY};
             send(tcpClientSocket, &eventReply, sizeof(TwoShortDataEvent), 0);
         } break;
         case EVENT_CLIENT_BOARD_TOUCH_UP: {
@@ -3569,7 +3569,7 @@ void Board::MouseDragSecond(int x, int y) {
             mGamepadControls2->mIsInShopSeedBank = false;
             requestDrawButterInCursor = false;
             if (tcpClientSocket >= 0 && mGamepadControls2->mPlayerIndex2 == 1) {
-                SimpleEvent event = {EventType::EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE, 7};
+                SimpleEvent event = {{EventType::EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE}, 7};
                 send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
             }
         }
