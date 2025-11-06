@@ -554,7 +554,7 @@ void VSSetupMenu::OnStateEnter(int theState) {
         }
         return;
     } else if (tcpClientSocket >= 0) {
-        SimpleEvent event = {[EventType::EVENT_VSSETUPMENU_ENTER_STATE], (unsigned char)theState};
+        SimpleEvent event = {{EventType::EVENT_VSSETUPMENU_ENTER_STATE}, (unsigned char)theState};
         send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
     }
 
