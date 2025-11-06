@@ -28,8 +28,6 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(Homura PRIVATE PVZ_DEBUG=1)
 endif ()
 
-target_link_options(Homura PRIVATE "-Wl,-Bsymbolic") # 优先使用本地符号
-
 find_library(android-lib android)
 find_library(EGL-lib EGL)
 find_library(GLESv2-lib GLESv2)
