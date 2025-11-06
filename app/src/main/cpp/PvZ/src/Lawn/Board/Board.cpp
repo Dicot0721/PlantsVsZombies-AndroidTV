@@ -598,7 +598,7 @@ void Board::KeyDown(KeyCode theKey) {
 
 Coin *Board::AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion) {
     if (tcpClientSocket >= 0) {
-        TwoCharTwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_COIN_ADD, (unsigned char)theCoinType, (unsigned char)theCoinMotion, (short)theX, (short)theY};
+        TwoCharTwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_COIN_ADD}, (unsigned char)theCoinType, (unsigned char)theCoinMotion, (short)theX, (short)theY};
         send(tcpClientSocket, &event, sizeof(TwoCharTwoShortDataEvent), 0);
     }
     return old_Board_AddCoin(this, theX, theY, theCoinType, theCoinMotion);
@@ -2156,12 +2156,12 @@ void Board::Pause(bool thePause) {
             return;
 
         if (tcp_connected) {
-            SimpleEvent event = {EventType::EVENT_CLIENT_BOARD_PAUSE, thePause};
+            SimpleEvent event = {{EventType::EVENT_CLIENT_BOARD_PAUSE}, thePause};
             send(tcpServerSocket, &event, sizeof(SimpleEvent), 0);
         }
 
         if (tcpClientSocket >= 0) {
-            SimpleEvent event = {EventType::EVENT_SERVER_BOARD_PAUSE, thePause};
+            SimpleEvent event = {{EventType::EVENT_SERVER_BOARD_PAUSE}, thePause};
             send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
         }
     }
@@ -2520,7 +2520,7 @@ void Board::MouseDown(int x, int y, int theClickCount) {
     if (tcp_connected) {
         if (!inRangeOf2P)
             return;
-        TwoShortDataEvent event = {EventType::EVENT_CLIENT_BOARD_TOUCH_DOWN, (short)x, (short)y};
+        TwoShortDataEvent event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_DOWN}, (short)x, (short)y};
         send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
         return;
     }
@@ -2533,7 +2533,7 @@ void Board::MouseDown(int x, int y, int theClickCount) {
 
     if (tcpClientSocket >= 0) {
         GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-        TwoCharTwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_TOUCH_DOWN,
+        TwoCharTwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_TOUCH_DOWN},
                                           (unsigned char)serverGamepadControls->mSelectedSeedIndex,
                                           (unsigned char)serverGamepadControls->mGamepadState,
                                           (short)serverGamepadControls->mCursorPositionX,
@@ -2893,7 +2893,7 @@ void Board::MouseDrag(int x, int y) {
         return __MouseDrag(x, y);
     }
     if (tcp_connected) {
-        TwoShortDataEvent event = {EventType::EVENT_CLIENT_BOARD_TOUCH_DRAG, (short)x, (short)y};
+        TwoShortDataEvent event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_DRAG}, (short)x, (short)y};
         send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
         return;
     }
@@ -2901,7 +2901,7 @@ void Board::MouseDrag(int x, int y) {
 
     if (tcpClientSocket >= 0) {
         GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-        TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_TOUCH_DRAG, (short)serverGamepadControls->mCursorPositionX, (short)serverGamepadControls->mCursorPositionY};
+        TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_TOUCH_DRAG}, (short)serverGamepadControls->mCursorPositionX, (short)serverGamepadControls->mCursorPositionY};
         send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
     }
 }
@@ -2929,7 +2929,7 @@ void Board::__MouseDrag(int x, int y) {
             mGamepadControls1->mIsInShopSeedBank = false;
             requestDrawShovelInCursor = false;
             if (tcpClientSocket >= 0 && mGamepadControls1->mPlayerIndex2 == 0) {
-                SimpleEvent event = {EventType::EVENT_SERVER_BOARD_GAMEPAD_SET_STATE, 7};
+                SimpleEvent event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_SET_STATE}, 7};
                 send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
             }
         } else {
@@ -2937,7 +2937,7 @@ void Board::__MouseDrag(int x, int y) {
             mGamepadControls2->mIsInShopSeedBank = false;
             requestDrawButterInCursor = false;
             if (tcpClientSocket >= 0 && mGamepadControls2->mPlayerIndex2 == 0) {
-                SimpleEvent event = {EventType::EVENT_SERVER_BOARD_GAMEPAD_SET_STATE, 7};
+                SimpleEvent event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_SET_STATE}, 7};
                 send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
             }
         }
@@ -3069,7 +3069,7 @@ void Board::MouseUp(int x, int y, int theClickCount) {
         return __MouseUp(x, y, theClickCount);
     }
     if (tcp_connected) {
-        TwoShortDataEvent event = {EventType::EVENT_CLIENT_BOARD_TOUCH_UP, (short)x, (short)y};
+        TwoShortDataEvent event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_UP}, (short)x, (short)y};
         send(tcpServerSocket, &event, sizeof(TwoShortDataEvent), 0);
         return;
     }
@@ -3078,7 +3078,7 @@ void Board::MouseUp(int x, int y, int theClickCount) {
     if (tcpClientSocket >= 0) {
         GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
         CursorObject *serverCursorObject = mGamepadControls1->mPlayerIndex2 == 0 ? mCursorObject1 : mCursorObject2;
-        TwoCharDataEvent event = {EventType::EVENT_SERVER_BOARD_TOUCH_UP, (unsigned char)serverGamepadControls->mGamepadState, (unsigned char)serverCursorObject->mCursorType};
+        TwoCharDataEvent event = {{EventType::EVENT_SERVER_BOARD_TOUCH_UP}, (unsigned char)serverGamepadControls->mGamepadState, (unsigned char)serverCursorObject->mCursorType};
         send(tcpClientSocket, &event, sizeof(TwoCharDataEvent), 0);
     }
 }
@@ -3563,7 +3563,7 @@ void Board::MouseDragSecond(int x, int y) {
             mGamepadControls1->mIsInShopSeedBank = false;
             requestDrawShovelInCursor = false;
             if (tcpClientSocket >= 0 && mGamepadControls1->mPlayerIndex2 == 1) {
-                SimpleEvent event = {EventType::EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE, 7};
+                SimpleEvent event = {{EventType::EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE}, 7};
                 send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
             }
         } else {
@@ -3821,13 +3821,13 @@ void Board::StartLevel() {
 
             gridItem = nullptr;
             while (IterateGridItems(gridItem)) {
-                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER, (short)gridItem->mGridItemID, (short)gridItem->mLaunchCounter};
+                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, (short)gridItem->mGridItemID, (short)gridItem->mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
             }
 
             plant = nullptr;
             while (IteratePlants(plant)) {
-                TwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER, (short)plant->mPlantID, (short)plant->mLaunchCounter};
+                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, (short)plant->mPlantID, (short)plant->mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
                 TwoShortTwoIntDataEvent event1;
                 event1.type = EventType::EVENT_SERVER_BOARD_PLANT_ANIMATION;
@@ -4753,7 +4753,7 @@ GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
 GridItem *Board::AddAGraveStone(int gridX, int gridY) {
     GridItem *result = old_Board_AddAGraveStone(this, gridX, gridY);
     if (tcpClientSocket >= 0) {
-        TwoCharTwoShortDataEvent event = {EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE, (unsigned char)gridX, (unsigned char)gridY,(short)result->mGridItemID,(short)result->mLaunchCounter};
+        TwoCharTwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE}, (unsigned char)gridX, (unsigned char)gridY,(short)result->mGridItemID,(short)result->mLaunchCounter};
         send(tcpClientSocket, &event, sizeof(TwoCharTwoShortDataEvent), 0);
     }
     return result;
@@ -4763,7 +4763,7 @@ GridItem *Board::AddAGraveStone(int gridX, int gridY) {
 bool Board::TakeSunMoney(int theAmount, int thePlayer) {
     bool result = old_Board_TakeSunMoney(this,theAmount,thePlayer);
     if (tcpClientSocket >= 0) {
-        SimpleShortEvent event = {EventType::EVENT_SERVER_BOARD_TAKE_SUNMONEY,(short)mSunMoney1};
+        SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_TAKE_SUNMONEY},(short)mSunMoney1};
         send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
     }
     return result;
@@ -4772,7 +4772,7 @@ bool Board::TakeSunMoney(int theAmount, int thePlayer) {
 bool Board::TakeDeathMoney(int theAmount) {
     bool result = old_Board_TakeDeathMoney(this,theAmount);
     if (tcpClientSocket >= 0) {
-        SimpleShortEvent event = {EventType::EVENT_SERVER_BOARD_TAKE_DEATHMONEY,(short)mDeathMoney};
+        SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_TAKE_DEATHMONEY},(short)mDeathMoney};
         send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
     }
     return result;

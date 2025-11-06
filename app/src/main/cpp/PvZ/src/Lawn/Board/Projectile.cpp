@@ -638,7 +638,7 @@ void Projectile::Draw(Graphics* g) {
 
     const ProjectileDefinition& aProjectileDef = GetProjectileDef();
 
-    Image* aImage;
+    Image* aImage = nullptr;
     float aScaleX = 1.0f;
     float aScaleY = 1.0f;
 
@@ -650,8 +650,6 @@ void Projectile::Draw(Graphics* g) {
     if (mProjectileType == ProjectileType::PROJCTILE_ZOMBIE_SOUL) {
         aImage = *IMAGE_PUFFSHROOM_PUFF1;
         aScaleX = aScaleY = TodAnimateCurveFloat(0, 30, mProjectileAge, 0.3f, 1.0f, TodCurves::CURVE_LINEAR);
-    } else if (mProjectileType == ProjectileType::PROJECTILE_ZOMBIE_FIREBALL) {
-        aImage = nullptr;
     }
 
     if (aImage) {
@@ -742,6 +740,8 @@ void Projectile::DrawShadow(Graphics* g) {
         case ProjectileType::PROJECTILE_FIREBALL:
         case ProjectileType::PROJECTILE_ZOMBIE_FIREBALL:
             aScale = 1.4f;
+            break;
+        default:
             break;
     }
 

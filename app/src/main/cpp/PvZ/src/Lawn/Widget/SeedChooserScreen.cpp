@@ -401,7 +401,7 @@ void SeedChooserScreen::GameButtonDown(ButtonCode theButton, unsigned int thePla
     }
 
     if (tcpClientSocket >= 0 && mApp->mGameMode == GAMEMODE_MP_VS) {
-        TwoCharDataEvent event = {EventType::EVENT_SEEDCHOOSER_SELECT_SEED, (unsigned char)(mIsZombieChooser ? mSeedType2 : mSeedType1), mIsZombieChooser};
+        TwoCharDataEvent event = {{EventType::EVENT_SEEDCHOOSER_SELECT_SEED}, (unsigned char)(mIsZombieChooser ? mSeedType2 : mSeedType1), mIsZombieChooser};
         send(tcpClientSocket, &event, sizeof(TwoCharDataEvent), 0);
     }
 
@@ -746,7 +746,7 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
 void SeedChooserScreen::MouseUp(int x, int y) {
 
     if (tcp_connected && mApp->mGameMode == GAMEMODE_MP_VS) {
-        TwoCharDataEvent event = {EventType::EVENT_SEEDCHOOSER_SELECT_SEED, (unsigned char)(mIsZombieChooser?mSeedType2:mSeedType1), mIsZombieChooser};
+        TwoCharDataEvent event = {{EventType::EVENT_SEEDCHOOSER_SELECT_SEED}, (unsigned char)(mIsZombieChooser?mSeedType2:mSeedType1), mIsZombieChooser};
         send(tcpServerSocket, &event, sizeof(TwoCharDataEvent), 0);
         return;
     }

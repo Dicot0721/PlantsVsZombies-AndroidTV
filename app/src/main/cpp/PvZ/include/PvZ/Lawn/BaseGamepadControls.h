@@ -55,11 +55,10 @@ public:
     int unkMems[2];                // 41 ~ 42
     // 大小43个整数
 
-    void GetGamepadVelocity(float *horizontal, float *vertical);
+    __BaseGamepadControls() = delete;
+    ~__BaseGamepadControls() = delete;
 
-protected:
-    __BaseGamepadControls() = default;
-    ~__BaseGamepadControls() = default;
+    void GetGamepadVelocity(float *horizontal, float *vertical);
 };
 
 class BaseGamepadControls : public __BaseGamepadControls {

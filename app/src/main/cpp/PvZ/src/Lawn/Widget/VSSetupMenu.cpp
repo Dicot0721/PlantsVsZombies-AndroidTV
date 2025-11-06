@@ -138,7 +138,7 @@ void VSSetupMenu::MouseDrag(int x, int y) {
         Sexy::Widget *theController1Widget = FindWidget(7);
         theController1Widget->Move(theController1Widget->mX + x - touchDownX, theController1Widget->mY);
         if (tcpClientSocket >= 0) {
-            SimpleShortEvent event = {EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER, (short)theController1Widget->mX};
+            SimpleShortEvent event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, (short)theController1Widget->mX};
             send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
         }
     } else if (touchingOnWhichController == 2) {
@@ -147,7 +147,7 @@ void VSSetupMenu::MouseDrag(int x, int y) {
         Sexy::Widget *theController2Widget = FindWidget(8);
         theController2Widget->Move(theController2Widget->mX + x - touchDownX, theController2Widget->mY);
         if (tcpServerSocket >= 0) {
-            SimpleShortEvent event = {EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER, (short)theController2Widget->mX};
+            SimpleShortEvent event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, (short)theController2Widget->mX};
             send(tcpServerSocket, &event, sizeof(SimpleShortEvent), 0);
         }
     }
@@ -166,7 +166,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         }
         mController1Position = newController1Position;
         if (tcpClientSocket >= 0) {
-            SimpleShortEvent event = {EventType::EVENT_VSSETUPMENU_SET_CONTROLLER, (short)mController1Position};
+            SimpleShortEvent event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, (short)mController1Position};
             send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
         }
         is1PControllerMoving = false;
@@ -181,7 +181,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         }
         mController2Position = newController2Position;
         if (tcpServerSocket >= 0) {
-            SimpleShortEvent event = {EventType::EVENT_VSSETUPMENU_SET_CONTROLLER, (short)mController2Position};
+            SimpleShortEvent event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, (short)mController2Position};
             send(tcpServerSocket, &event, sizeof(SimpleShortEvent), 0);
         }
         is2PControllerMoving = false;
@@ -554,7 +554,7 @@ void VSSetupMenu::OnStateEnter(int theState) {
         }
         return;
     } else if (tcpClientSocket >= 0) {
-        SimpleEvent event = {EventType::EVENT_VSSETUPMENU_ENTER_STATE, (unsigned char)theState};
+        SimpleEvent event = {[EventType::EVENT_VSSETUPMENU_ENTER_STATE], (unsigned char)theState};
         send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
     }
 
@@ -591,7 +591,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
     old_VSSetupMenu_ButtonDepress(this, theId);
 
     if (tcpClientSocket >= 0) {
-        SimpleEvent event = {EventType::EVENT_VSSETUPMENU_BUTTON_DEPRESS, (unsigned char)theId};
+        SimpleEvent event = {{EventType::EVENT_VSSETUPMENU_BUTTON_DEPRESS}, (unsigned char)theId};
         send(tcpClientSocket, &event, sizeof(SimpleEvent), 0);
     }
 

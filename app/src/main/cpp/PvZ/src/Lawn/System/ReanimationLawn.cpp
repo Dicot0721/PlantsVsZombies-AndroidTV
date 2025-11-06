@@ -353,7 +353,7 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
             aHeadType = ReanimationType::REANIM_WALLNUT;
         else if (theZombieType == ZombieType::ZOMBIE_TALLNUT_HEAD)
             aHeadType = ReanimationType::REANIM_TALLNUT;
-        else if (theZombieType == ZombieType::ZOMBIE_JALAPENO_HEAD)
+        else // if (theZombieType == ZombieType::ZOMBIE_JALAPENO_HEAD)
             aHeadType = ReanimationType::REANIM_JALAPENO;
 
         Reanimation *aHeadReanim = mApp->AddReanimation(0, 0, 0, aHeadType);
