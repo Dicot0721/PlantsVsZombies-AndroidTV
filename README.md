@@ -2,12 +2,12 @@
 
 # PlantsVsZombies AndroidTV
 
-A mod of Plants vs. Zombies Android TV version.
+**English** | **[简体中文](./README.zh-cn.md)**
 
 [![license](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)][GPL-3.0]
 [![Android CI](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml/badge.svg)](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml "Android CI")
 
-**English** | **[简体中文](./README.zh-cn.md)**
+A mod of _Plants vs. Zombies_ Android TV version.
 
 </div>
 
