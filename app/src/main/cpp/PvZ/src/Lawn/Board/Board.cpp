@@ -1247,11 +1247,13 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             serverCursorObject->mCursorType = (CursorType)event1->data2;
         } break;
         case EVENT_SERVER_BOARD_TOUCH_CLEAR_CURSOR: {
+            [[maybe_unused]] BaseEvent *event1 = (BaseEvent *)event;
             GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
             ClearCursor(mGamepadControls1->mPlayerIndex2 == 0 ? 0 : 1);
             serverGamepadControls->mGamepadState = 1;
         } break;
         case EVENT_CLIENT_BOARD_TOUCH_CLEAR_CURSOR: {
+            [[maybe_unused]] BaseEvent *event1 = (BaseEvent *)event;
             GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
             ClearCursor(mGamepadControls1->mPlayerIndex2 == 0 ? 1 : 0);
             clientGamepadControls->mGamepadState = 1;
