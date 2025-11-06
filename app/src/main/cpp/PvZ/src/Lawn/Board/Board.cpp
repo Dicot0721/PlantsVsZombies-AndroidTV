@@ -110,16 +110,16 @@ void Board::InitLevel() {
     mNewPeaShooterCount = 0;
 }
 
-void Board_SetGrids(Board *board) {
+void Board::SetGrids() {
     // 更换场地时需要，用于初始化每一个格子的类型。
-    for (int i = 0; i < 9; i++) {
-        for (int j = 0; j < 6; j++) {
-            if (board->mPlantRow[j] == PlantRowType::PLANTROW_DIRT) {
-                board->mGridSquareType[i][j] = GridSquareType::GRIDSQUARE_DIRT;
-            } else if (board->mPlantRow[j] == PlantRowType::PLANTROW_POOL && i >= 0 && i <= 8) {
-                board->mGridSquareType[i][j] = GridSquareType::GRIDSQUARE_POOL;
-            } else if (board->mPlantRow[j] == PlantRowType::PLANTROW_HIGH_GROUND && i >= 4 && i <= 8) {
-                board->mGridSquareType[i][j] = GridSquareType::GRIDSQUARE_HIGH_GROUND;
+    for (int i = 0; i < MAX_GRID_SIZE_X; i++) {
+        for (int j = 0; j < MAX_GRID_SIZE_Y; j++) {
+            if (mPlantRow[j] == PlantRowType::PLANTROW_DIRT) {
+                mGridSquareType[i][j] = GridSquareType::GRIDSQUARE_DIRT;
+            } else if (mPlantRow[j] == PlantRowType::PLANTROW_POOL && i >= 0 && i <= 8) {
+                mGridSquareType[i][j] = GridSquareType::GRIDSQUARE_POOL;
+            } else if (mPlantRow[j] == PlantRowType::PLANTROW_HIGH_GROUND && i >= 4 && i <= 8) {
+                mGridSquareType[i][j] = GridSquareType::GRIDSQUARE_HIGH_GROUND;
             }
         }
     }
@@ -429,7 +429,7 @@ void Board::ZombiesWon(Zombie *theZombie) {
     }
     if (ZombieCanNotWon) {
         theZombie->ApplyBurn();
-        theZombie->Zombie::DieNoLoot();
+        theZombie->DieNoLoot();
         return;
     }
     return old_BoardZombiesWon(this, theZombie);
@@ -559,18 +559,17 @@ void Board::LoadFormation(char *theFormation) {
 }
 
 
-bool Board_ZenGardenItemNumIsZero(Board *board, CursorType cursorType) {
+bool Board::ZenGardenItemNumIsZero(CursorType theCursorType) {
     // 消耗性工具的数量是否为0个
-    LawnApp *lawnApp = board->mApp;
-    switch (cursorType) {
+    switch (theCursorType) {
         case CursorType::CURSOR_TYPE_FERTILIZER:
-            return lawnApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_FERTILIZER] <= 1000;
+            return mApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_FERTILIZER] <= 1000;
         case CursorType::CURSOR_TYPE_BUG_SPRAY:
-            return lawnApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_BUG_SPRAY] <= 1000;
+            return mApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_BUG_SPRAY] <= 1000;
         case CursorType::CURSOR_TYPE_CHOCOLATE:
-            return lawnApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_CHOCOLATE] <= 1000;
+            return mApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_CHOCOLATE] <= 1000;
         case CursorType::CURSOR_TYPE_TREE_FOOD:
-            return lawnApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_TREE_FOOD] <= 1000;
+            return mApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_TREE_FOOD] <= 1000;
         default:
             return false;
     }
@@ -787,7 +786,7 @@ void Board::PickBackground() {
         mPlantRow[4] = PlantRowType::PLANTROW_NORMAL;
         mPlantRow[5] = PlantRowType::PLANTROW_NORMAL;
         InitCoverLayer();
-        Board_SetGrids(this);
+        SetGrids();
     } else if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_POOL_PARTY) {
         mBackground = BackgroundType::BACKGROUND_3_POOL;
         LoadBackgroundImages();
@@ -798,7 +797,7 @@ void Board::PickBackground() {
         mPlantRow[4] = PlantRowType::PLANTROW_POOL;
         mPlantRow[5] = PlantRowType::PLANTROW_NORMAL;
         InitCoverLayer();
-        Board_SetGrids(this);
+        SetGrids();
         //    } else if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
 
     } else {
@@ -813,7 +812,7 @@ void Board::PickBackground() {
                 mPlantRow[4] = PlantRowType::PLANTROW_NORMAL;
                 mPlantRow[5] = PlantRowType::PLANTROW_DIRT;
                 InitCoverLayer();
-                Board_SetGrids(this);
+                SetGrids();
                 break;
             case 2:
                 mBackground = BackgroundType::BACKGROUND_2_NIGHT;
@@ -825,7 +824,7 @@ void Board::PickBackground() {
                 mPlantRow[4] = PlantRowType::PLANTROW_NORMAL;
                 mPlantRow[5] = PlantRowType::PLANTROW_DIRT;
                 InitCoverLayer();
-                Board_SetGrids(this);
+                SetGrids();
                 break;
             case 3:
                 mBackground = BackgroundType::BACKGROUND_3_POOL;
@@ -837,7 +836,7 @@ void Board::PickBackground() {
                 mPlantRow[4] = PlantRowType::PLANTROW_NORMAL;
                 mPlantRow[5] = PlantRowType::PLANTROW_NORMAL;
                 InitCoverLayer();
-                Board_SetGrids(this);
+                SetGrids();
                 break;
             case 4:
                 mBackground = BackgroundType::BACKGROUND_4_FOG;
@@ -849,7 +848,7 @@ void Board::PickBackground() {
                 mPlantRow[4] = PlantRowType::PLANTROW_NORMAL;
                 mPlantRow[5] = PlantRowType::PLANTROW_NORMAL;
                 InitCoverLayer();
-                Board_SetGrids(this);
+                SetGrids();
                 break;
             case 5:
                 mBackground = BackgroundType::BACKGROUND_5_ROOF;
@@ -861,7 +860,7 @@ void Board::PickBackground() {
                 mPlantRow[4] = PlantRowType::PLANTROW_NORMAL;
                 mPlantRow[5] = PlantRowType::PLANTROW_DIRT;
                 InitCoverLayer();
-                Board_SetGrids(this);
+                SetGrids();
                 if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
                     AddPlant(0, 1, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, 0);
                     AddPlant(0, 3, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, 0);
@@ -882,7 +881,7 @@ void Board::PickBackground() {
                 mPlantRow[4] = PlantRowType::PLANTROW_NORMAL;
                 mPlantRow[5] = PlantRowType::PLANTROW_DIRT;
                 InitCoverLayer();
-                Board_SetGrids(this);
+                SetGrids();
                 if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
                     AddPlant(0, 1, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, 0);
                     AddPlant(0, 3, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, 0);
@@ -903,7 +902,7 @@ void Board::PickBackground() {
                 mPlantRow[4] = PlantRowType::PLANTROW_NORMAL;
                 mPlantRow[5] = PlantRowType::PLANTROW_DIRT;
                 InitCoverLayer();
-                Board_SetGrids(this);
+                SetGrids();
                 break;
             case 8:
                 mBackground = BackgroundType::BACKGROUND_MUSHROOM_GARDEN;
@@ -915,7 +914,7 @@ void Board::PickBackground() {
                 mPlantRow[4] = PlantRowType::PLANTROW_NORMAL;
                 mPlantRow[5] = PlantRowType::PLANTROW_DIRT;
                 InitCoverLayer();
-                Board_SetGrids(this);
+                SetGrids();
                 break;
             case 9:
                 mBackground = BackgroundType::BACKGROUND_ZOMBIQUARIUM;
@@ -927,7 +926,7 @@ void Board::PickBackground() {
                 mPlantRow[4] = PlantRowType::PLANTROW_NORMAL;
                 mPlantRow[5] = PlantRowType::PLANTROW_NORMAL;
                 InitCoverLayer();
-                Board_SetGrids(this);
+                SetGrids();
                 break;
             default:
                 old_Board_PickBackground(this);
@@ -952,14 +951,8 @@ bool Board::StageHasRoof() {
     return (mBackground == BackgroundType::BACKGROUND_5_ROOF || mBackground == BackgroundType::BACKGROUND_6_BOSS);
 }
 
-bool Board_StageHasRoof(Board *board) {
-    BackgroundType mBackground = board->mBackground;
-    return mBackground == BackgroundType::BACKGROUND_5_ROOF || mBackground == BackgroundType::BACKGROUND_6_BOSS;
-}
-
-bool Board_StageHas6Rows(Board *board) {
+bool Board::StageHas6Rows() {
     // 关系到第六路可否操控（比如种植植物）。
-    BackgroundType mBackground = board->mBackground;
     return mBackground == BackgroundType::BACKGROUND_3_POOL || mBackground == BackgroundType::BACKGROUND_4_FOG;
 }
 
@@ -993,8 +986,8 @@ bool Board::ZombieIsAddInRow(ZombieType theZombieType) {
         return false;
 
     return theZombieType == ZOMBIE_FLAG || theZombieType == ZOMBIE_DANCER || theZombieType == ZOMBIE_DUCKY_TUBE || theZombieType == ZOMBIE_SNORKEL || theZombieType == ZOMBIE_ZAMBONI
-        || theZombieType == ZOMBIE_BOBSLED || theZombieType == ZOMBIE_DOLPHIN_RIDER || theZombieType == ZOMBIE_JACK_IN_THE_BOX || theZombieType == ZOMBIE_BALLOON || theZombieType == ZOMBIE_CATAPULT
-        || theZombieType == ZOMBIE_GARGANTUAR;
+        || theZombieType == ZOMBIE_BOBSLED || theZombieType == ZOMBIE_DOLPHIN_RIDER || theZombieType == ZOMBIE_JACK_IN_THE_BOX || theZombieType == ZOMBIE_BALLOON || theZombieType == ZOMBIE_DIGGER
+        || theZombieType == ZOMBIE_CATAPULT || theZombieType == ZOMBIE_GARGANTUAR;
 }
 
 Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromWave, bool theIsRustle) {
@@ -1027,20 +1020,7 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
 }
 
 Zombie *Board::AddZombie(ZombieType theZombieType, int theFromWave, bool theIsRustle) {
-//    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-//        if (tcp_connected || ZombieIsAddInRow(theZombieType))
-//            return nullptr;
-//        if (tcpClientSocket >= 0) {
-//            FourCharDataEvent event;
-//            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
-//            event.data1 = (unsigned char)theZombieType;
-//            event.data2 = (unsigned char)theFromWave;
-//            event.data3 = (unsigned char)theIsRustle;
-//            send(tcpClientSocket, &event, sizeof(FourCharDataEvent), 0);
-//        }
-//    }
-
-    return old_Board_AddZombie(this, theZombieType, theFromWave, theIsRustle);
+    return AddZombieInRow(theZombieType, PickRowForNewZombie(theZombieType), theFromWave, theIsRustle);
 }
 
 // void (*old_Board_UpdateCoverLayer)(Board *this);
@@ -1720,7 +1700,7 @@ void Board::Update() {
     }
 
     if (ladderBuild) {
-        if (theBuildLadderX < 9 && theBuildLadderY < (Board_StageHas6Rows(this) ? 6 : 5) && GetLadderAt(theBuildLadderX, theBuildLadderY) == nullptr)
+        if (theBuildLadderX < 9 && theBuildLadderY < (StageHas6Rows() ? 6 : 5) && GetLadderAt(theBuildLadderX, theBuildLadderY) == nullptr)
             // 防止选“所有行”或“所有列”的时候放置到场外
             AddALadder(theBuildLadderX, theBuildLadderY);
         ladderBuild = false;
@@ -1731,7 +1711,7 @@ void Board::Update() {
     if (plantBuild && theBuildPlantType != SeedType::SEED_NONE) {
         int colsCount = (theBuildPlantType == SeedType::SEED_COBCANNON) ? 8 : 9; // 玉米加农炮不种在九列
         int width = (theBuildPlantType == SeedType::SEED_COBCANNON) ? 2 : 1;     // 玉米加农炮宽度两列
-        int rowsCount = Board_StageHas6Rows(this) ? 6 : 5;
+        int rowsCount = StageHas6Rows() ? 6 : 5;
         bool isIZMode = mApp->IsIZombieLevel();
         // 全场
         if (theBuildPlantX == 9 && theBuildPlantY == 6) {
@@ -1782,7 +1762,7 @@ void Board::Update() {
             AddZombieInRow(theBuildZombieType, 0, 0, true);
         else {
             int colsCount = 9;
-            int rowsCount = Board_StageHas6Rows(this) ? 6 : 5;
+            int rowsCount = StageHas6Rows() ? 6 : 5;
             // 僵尸出生线
             if (BuildZombieX == 10 && BuildZombieY == 6)
                 for (int y = 0; y < rowsCount; ++y)
@@ -1813,7 +1793,7 @@ void Board::Update() {
     // 放置墓碑
     if (graveBuild) {
         int colsCount = 9;
-        int rowsCount = Board_StageHas6Rows(this) ? 6 : 5;
+        int rowsCount = StageHas6Rows() ? 6 : 5;
         // 全场
         if (BuildZombieX == 9 && BuildZombieY == 6) {
             GridItem *aGridItem = nullptr;
@@ -3151,7 +3131,7 @@ void Board::__MouseUp(int x, int y, int theClickCount) {
                        || mCursorType == CursorType::CURSOR_TYPE_PHONOGRAPH || mCursorType == CursorType::CURSOR_TYPE_CHOCOLATE || mCursorType == CursorType::CURSOR_TYPE_GLOVE
                        || mCursorType == CursorType::CURSOR_TYPE_MONEY_SIGN || mCursorType == CursorType::CURSOR_TYPE_WHEEELBARROW || mCursorType == CursorType::CURSOR_TYPE_TREE_FOOD
                        || mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_GLOVE) {
-                if (!Board_ZenGardenItemNumIsZero(this, mCursorType)) {
+                if (!ZenGardenItemNumIsZero(mCursorType)) {
                     if (mCursorType == CursorType::CURSOR_TYPE_WATERING_CAN && mApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_GOLD_WATERINGCAN] != 0) {
                         MouseDownWithTool(x - 40, y - 40, 0, mCursorType, 0);
                     } else {
