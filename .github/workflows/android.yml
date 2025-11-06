@@ -64,7 +64,7 @@ jobs:
   release:
     needs: [ build ]
     runs-on: ubuntu-latest
-    if:
+    if: >
       github.ref == 'refs/heads/main' &&
       github.repository == 'Dicot0721/PlantsVsZombies-AndroidTV'
 
@@ -87,5 +87,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           automatic_release_tag: continous
           prerelease: true
-          title: 'Automatic CI builds'
+          title: Automatic CI builds
           files: apks/*.apk
