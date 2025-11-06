@@ -441,9 +441,9 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_VSSETUPMENU_ENTER_STATE: {
             SimpleEvent *event1 = (SimpleEvent *)event;
-            int theState = event1->data;
-            LOG_DEBUG("theState={}", theState);
-            //                GoToState(theState);
+            // int theState = event1->data;
+            LOG_DEBUG("theState={}", event1->data);
+            // GoToState(theState);
         } break;
         case EVENT_SEEDCHOOSER_SELECT_SEED: {
             TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
@@ -523,6 +523,8 @@ void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
     // 修复在对战的阵营选取界面无法按返回键退出的BUG。
     if (theKey == Sexy::KeyCode::KEYCODE_ESCAPE) {
         switch (mState) {
+            case VS_SETUP_CONTROLLERS:
+                break;
             case VS_SETUP_SIDES:
             case VS_SELECT_BATTLE:
                 mApp->DoBackToMain();

@@ -485,7 +485,6 @@ void Zombie::UpdateZombieGigaFootball() {
             int aGridX = aPlant->mPlantCol;
             int aGridY = aPlant->mRow;
             Plant *aPot = mBoard->GetFlowerPotAt(aGridX, aGridY);
-            Plant *aPumpkin = mBoard->GetPumpkinAt(aGridX, aGridY);
             if (aPlant->mPlantHealth < 4500) {
                 if (aPot && aSeedType != SEED_FLOWERPOT) {
                     aPot->mPlantHealth -= 4500 - aPlant->mPlantHealth;
@@ -2796,7 +2795,6 @@ Plant *Zombie::FindPlantTarget(ZombieAttackType theAttackType) {
 }
 
 Plant *Zombie::FindPlantTargetInNextGrid(ZombieAttackType theAttackType) {
-    Rect aAttackRect = GetZombieAttackRect();
     int aPosX = mX + mWidth / 2;
     int aNextGridX = mBoard->PixelToGridX(mX, mY) - 1;
     int aDistance = aPosX - mBoard->GridToPixelX(aNextGridX, 0);

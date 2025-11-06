@@ -163,7 +163,6 @@ void SeedPacket::FlashIfReady() {
 void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
     old_SeedPacket_SetPacketType(this, theSeedType, theImitaterType);
 
-    int aRefreshTime = Plant::GetRefreshTime(theSeedType, theImitaterType);
     // 此处修改对战开局的初始冷却
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         switch (theSeedType) {
