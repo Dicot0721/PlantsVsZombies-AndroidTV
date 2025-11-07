@@ -1,0 +1,20 @@
+name: clang-format Check
+
+on:
+  push:
+    paths:
+      - 'app/src/main/cpp/**'
+
+jobs:
+  formatting-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run clang-format style check
+        uses: jidicula/clang-format-action@v4.16.0
+        with:
+          clang-format-version: 20
+          check-path: app/src/main/cpp
+          exclude-regex: (ThirdParty)
