@@ -105,7 +105,7 @@ BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: true
 
 # 每行字符的限制, 0 表示没有限制
-ColumnLimit: 200
+ColumnLimit: 0
 
 # 描述具有特殊意义的注释的正则表达式, 它不应该被分割为多行或以其它方式改变
 CommentPragmas: '^ IWYU pragma:'

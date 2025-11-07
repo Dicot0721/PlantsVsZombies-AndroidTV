@@ -28,21 +28,9 @@
 /**
  * @file 简单的日志工具. (接口已封装为宏)
  *
- * 调试时可在命令行工具中输入命令 adb logcat -s pvztv 查看日志.
- * 也可以输入 adb logcat *:S pvztv:D/I/W/E 控制输出级别.
+ * 调试时可在命令行工具中输入命令 `adb logcat -s pvztv` 查看日志.
+ * 也可以输入 `adb logcat *:S [pvztv:D] [pvztv:I] [pvztv:W] [pvztv:E]` 控制输出级别 (`[]` 中为可选项).
  */
-
-#ifdef PVZ_DEBUG
-#define LOG_DEBUG(...) homura::Log<ANDROID_LOG_DEBUG>(std::source_location::current(), __VA_ARGS__)
-#define LOG_INFO(...) homura::Log<ANDROID_LOG_INFO>(std::source_location::current(), __VA_ARGS__)
-#define LOG_WARN(...) homura::Log<ANDROID_LOG_WARN>(std::source_location::current(), __VA_ARGS__)
-#define LOG_ERROR(...) homura::Log<ANDROID_LOG_ERROR>(std::source_location::current(), __VA_ARGS__)
-#else
-#define LOG_DEBUG(...) ((void)0)
-#define LOG_INFO(...) ((void)0)
-#define LOG_WARN(...) ((void)0)
-#define LOG_ERROR(...) ((void)0)
-#endif // PVZ_DEBUG
 
 namespace homura {
 
@@ -53,11 +41,51 @@ constexpr const char *PVZ_LOG_TAG = "pvztv";
 template <android_LogPriority LEVEL, typename... Args>
 void Log(std::source_location location, std::format_string<Args...> format, Args &&...args) {
     if constexpr (LEVEL >= PVZ_LOG_LEVEL) {
-        std::string message = std::vformat(format.get(), std::make_format_args(args...));
+        const std::string message = std::vformat(format.get(), std::make_format_args(args...));
         __android_log_print(LEVEL, PVZ_LOG_TAG, "[%s] %s", location.function_name(), message.c_str());
     }
 }
 
 } // namespace homura
+
+#ifdef PVZ_DEBUG
+#define LOG_IMPL(level, ...) homura::Log<level>(std::source_location::current(), __VA_ARGS__)
+
+#define LOG_IF(log_func, flag, ...) \
+    do {                            \
+        if (flag) {                 \
+            log_func(__VA_ARGS__);  \
+        }                           \
+    } while (0)
+
+#define LOG_ONCE(log_func, ...)      \
+    do {                             \
+        static bool firstLog = true; \
+        if (firstLog) {              \
+            log_func(__VA_ARGS__);   \
+            firstLog = false;        \
+        }                            \
+    } while (0)
+
+#else // PVZ_DEBUG
+#define LOG_IMPL(level, ...) ((void)0)
+#define LOG_IF(log_func, flag, ...) ((void)0)
+#define LOG_ONCE(log_func, ...) ((void)0)
+#endif // PVZ_DEBUG
+
+#define LOG_DEBUG(...) LOG_IMPL(ANDROID_LOG_DEBUG, __VA_ARGS__)
+#define LOG_INFO(...) LOG_IMPL(ANDROID_LOG_INFO, __VA_ARGS__)
+#define LOG_WARN(...) LOG_IMPL(ANDROID_LOG_WARN, __VA_ARGS__)
+#define LOG_ERROR(...) LOG_IMPL(ANDROID_LOG_ERROR, __VA_ARGS__)
+
+#define LOG_DEBUG_IF(flag, ...) LOG_IF(LOG_DEBUG, flag, __VA_ARGS__)
+#define LOG_INFO_IF(flag, ...) LOG_IF(LOG_INFO, flag, __VA_ARGS__)
+#define LOG_WARN_IF(flag, ...) LOG_IF(LOG_WARN, flag, __VA_ARGS__)
+#define LOG_ERROR_IF(flag, ...) LOG_IF(LOG_ERROR, flag, __VA_ARGS__)
+
+#define LOG_DEBUG_ONCE(...) LOG_ONCE(LOG_DEBUG, __VA_ARGS__)
+#define LOG_INFO_ONCE(...) LOG_ONCE(LOG_INFO, __VA_ARGS__)
+#define LOG_WARN_ONCE(...) LOG_ONCE(LOG_WARN, __VA_ARGS__)
+#define LOG_ERROR_ONCE(...) LOG_ONCE(LOG_ERROR, __VA_ARGS__)
 
 #endif // HOMURA_LOGGER_H
