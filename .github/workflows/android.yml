@@ -5,6 +5,7 @@ on:
     branches: [ main, dev ]
     paths-ignore:
       - '**/*.md'
+      - '.clang-format'
 
 permissions:
   contents: write
