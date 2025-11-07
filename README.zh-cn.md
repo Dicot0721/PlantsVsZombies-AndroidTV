@@ -24,8 +24,8 @@
     ```
 
 - 复制 assets 文件到路径 `PlantsVsZombies-AndroidTV/app/src/main/assets/` 下.
-  > [!NOTE]
-  > 需要资源文件请联系仓库作者.
+    > [!NOTE]
+    > 需要资源文件请联系仓库作者.
 
 - 构建方式:
     * Android Studio: 点击构建按钮.
@@ -62,8 +62,7 @@
 
 ### 提交
 
-参考
-_[AngularJS 提交信息指南](https://github.com/angular/angular/blob/20.0.x/CONTRIBUTING.md#-commit-message-guidelines)_.
+参考 _[AngularJS 提交信息指南](https://github.com/angular/angular/blob/20.0.x/CONTRIBUTING.md#-commit-message-guidelines)_.
 
 ### 拉取请求 (PR)
 

@@ -24,8 +24,8 @@ A mod of _Plants vs. Zombies_ Android TV version.
     ```
 
 - Copy assets files to the path `PlantsVsZombies-AndroidTV/app/src/main/assets/`.
-  > [!NOTE]
-  > If you need resource files, please contact the repository author.
+    > [!NOTE]
+    > If you need resource files, please contact the repository author.
 
 - Build with:
     * Android Studio: Click on the build button.
@@ -63,8 +63,7 @@ See the file `.clang-format` in the project root directory.
 
 ### Commit
 
-See
-_[AngularJS Commit Message Guidelines](https://github.com/angular/angular/blob/20.0.x/CONTRIBUTING.md#-commit-message-guidelines)_.
+See _[AngularJS Commit Message Guidelines](https://github.com/angular/angular/blob/20.0.x/CONTRIBUTING.md#-commit-message-guidelines)_.
 
 ### Pull Request (PR)
 
