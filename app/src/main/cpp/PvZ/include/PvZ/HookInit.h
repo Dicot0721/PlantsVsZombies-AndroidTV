@@ -91,7 +91,7 @@ inline void InitHookFunction() {
     homura::HookFunction(LawnApp_KillSeedChooserScreenAddr, &LawnApp::KillSeedChooserScreen, &old_LawnApp_KillSeedChooserScreen);
     homura::HookFunction(LawnApp_GetSeedsAvailableAddr, &LawnApp::GetSeedsAvailable, &old_LawnApp_GetSeedsAvailable);
     homura::HookFunction(LawnApp_ClearSecondPlayerAddr, &LawnApp::ClearSecondPlayer, &old_LawnApp_ClearSecondPlayer);
-    //    homura::HookFunction(LawnApp_HasSeedTypeAddr, &LawnApp_HasSeedType, &old_LawnApp_HasSeedType);
+    // homura::HookFunction(LawnApp_HasSeedTypeAddr, &LawnApp_HasSeedType, &old_LawnApp_HasSeedType);
 
 
     homura::HookFunction(Board_DrawAddr, &Board::Draw, &old_Board_Draw);
@@ -150,9 +150,9 @@ inline void InitHookFunction() {
     homura::HookFunction(Board_ShakeBoardAddr, &Board::ShakeBoard, &old_Board_ShakeBoard);
     homura::HookFunction(Board_DrawZenButtonsAddr, &Board::DrawZenButtons, &old_Board_DrawZenButtons);
     homura::HookFunction(Board_DrawGameObjectsAddr, &Board::DrawGameObjects, &old_Board_DrawGameObjects);
-    //    homura::HookFunction(Board_AddProjectileAddr, &Board::AddProjectile, &old_Board_AddProjectile);
-    //    homura::HookFunction(Board_PixelToGridXAddr, &Board::PixelToGridX, &old_Board_PixelToGridX);
-    //    homura::HookFunction(Board_PixelToGridYAddr, &Board::PixelToGridY, &old_Board_PixelToGridY);
+    // homura::HookFunction(Board_AddProjectileAddr, &Board::AddProjectile, &old_Board_AddProjectile);
+    // homura::HookFunction(Board_PixelToGridXAddr, &Board::PixelToGridX, &old_Board_PixelToGridX);
+    // homura::HookFunction(Board_PixelToGridYAddr, &Board::PixelToGridY, &old_Board_PixelToGridY);
     homura::HookFunction(Board_GetNumSeedsInBankAddr, &Board::GetNumSeedsInBank, &old_Board_GetNumSeedsInBank);
     homura::HookFunction(Board_GetSeedPacketPositionXAddr, &Board::GetSeedPacketPositionX, nullptr);
     homura::HookFunction(Board_AddCoinAddr, &Board::AddCoin, &old_Board_AddCoin);
@@ -266,7 +266,7 @@ inline void InitHookFunction() {
     homura::HookFunction(MainMenu_ExitAddr, &MainMenu::Exit, &old_MainMenu_Exit);
     homura::HookFunction(MainMenu_UpdateExitAddr, &MainMenu::UpdateExit, &old_MainMenu_UpdateExit);
     homura::HookFunction(MainMenu_OnExitAddr, &MainMenu::OnExit, &old_MainMenu_OnExit);
-    //    MSHookFunction(MainMenu_SetSceneAddr, (void *) SetScene, (void **) &old_MainMenu_SetScene);
+    // MSHookFunction(MainMenu_SetSceneAddr, (void *) SetScene, (void **) &old_MainMenu_SetScene);
     homura::HookFunction(MainMenu_OnSceneAddr, &MainMenu::OnScene, &old_MainMenu_OnScene);
     homura::HookFunction(MainMenu_SyncButtonsAddr, &MainMenu::SyncButtons, &old_MainMenu_SyncButtons);
     homura::HookFunction(MainMenu_MainMenuAddr, &MainMenu::_constructor, &old_MainMenu_MainMenu);
@@ -306,8 +306,8 @@ inline void InitHookFunction() {
     homura::HookFunction(Plant_UpdateProductionPlantAddr, &Plant::UpdateProductionPlant, &old_Plant_UpdateProductionPlant);
     homura::HookFunction(Plant_FireAddr, &Plant::Fire, &old_Plant_Fire);
 
-    //    MSHookFunction(Plant_CobCannonFireAddr, (void *) Plant_CobCannonFire, (void **) &old_Plant_CobCannonFire);
-    //    MSHookFunction(Plant_UpdateReanimAddr, (void *) Plant_UpdateReanim, (void **) &old_Plant_UpdateReanim);
+    // MSHookFunction(Plant_CobCannonFireAddr, (void *) Plant_CobCannonFire, (void **) &old_Plant_CobCannonFire);
+    // MSHookFunction(Plant_UpdateReanimAddr, (void *) Plant_UpdateReanim, (void **) &old_Plant_UpdateReanim);
 
 
     homura::HookFunction(Projectile_ProjectileInitializeAddr, &Projectile::ProjectileInitialize, &old_Projectile_ProjectileInitialize);
@@ -328,7 +328,7 @@ inline void InitHookFunction() {
     homura::HookFunction(SeedPacket_DrawAddr, &SeedPacket::Draw, &old_SeedPacket_Draw);
     homura::HookFunction(SeedPacket_FlashIfReadyAddr, &SeedPacket::FlashIfReady, &old_SeedPacket_FlashIfReady);
     homura::HookFunction(SeedPacket_SetPacketTypeAddr, &SeedPacket::SetPacketType, &old_SeedPacket_SetPacketType);
-    //    MSHookFunction(SeedPacket_MouseDownAddr, (void *) SeedPacket_MouseDown, (void **) &old_SeedPacket_MouseDown);
+    // MSHookFunction(SeedPacket_MouseDownAddr, (void *) SeedPacket_MouseDown, (void **) &old_SeedPacket_MouseDown);
     homura::HookFunction(SeedPacket_WasPlantedAddr, &SeedPacket::WasPlanted, &old_SeedPacket_WasPlanted);
 
 
@@ -393,8 +393,8 @@ inline void InitHookFunction() {
 
     homura::HookFunction(SeedBank_DrawAddr, &SeedBank::Draw, &old_SeedBank_Draw);
     homura::HookFunction(SeedBank_MouseHitTestAddr, &SeedBank::MouseHitTest, nullptr);
-    //    homura::HookFunction(SeedBank_SeedBankAddr, &SeedBank::Create, &old_SeedBank_SeedBank);
-    //    homura::HookFunction(SeedBank_UpdateWidthAddr, &SeedBank::UpdateWidth, &old_SeedBank_UpdateWidth);
+    // homura::HookFunction(SeedBank_SeedBankAddr, &SeedBank::Create, &old_SeedBank_SeedBank);
+    // homura::HookFunction(SeedBank_UpdateWidthAddr, &SeedBank::UpdateWidth, &old_SeedBank_UpdateWidth);
     homura::HookFunction(SeedBank_MoveAddr, &SeedBank::Move, nullptr);
     homura::HookFunction(SeedBank_AddSeedAddr, &SeedBank::AddSeed, &old_SeedBank_AddSeed);
 
@@ -410,7 +410,7 @@ inline void InitHookFunction() {
     homura::HookFunction(VSSetupMenu_UpdateAddr, &VSSetupMenu::Update, &old_VSSetupMenu_Update);
     homura::HookFunction(VSSetupMenu_KeyDownAddr, &VSSetupMenu::KeyDown, &old_VSSetupMenu_KeyDown);
     homura::HookFunction(VSSetupMenu_OnStateEnterAddr, &VSSetupMenu::OnStateEnter, &old_VSSetupMenu_OnStateEnter);
-    //    homura::HookFunction(VSSetupMenu_ButtonPressAddr, &VSSetupMenu::ButtonPress, &old_VSSetupMenu_ButtonPress);
+    // homura::HookFunction(VSSetupMenu_ButtonPressAddr, &VSSetupMenu::ButtonPress, &old_VSSetupMenu_ButtonPress);
     homura::HookFunction(VSSetupMenu_ButtonDepressAddr, &VSSetupMenu::ButtonDepress, &old_VSSetupMenu_ButtonDepress);
     homura::HookFunction(VSSetupMenu_PickRandomZombiesAddr, &VSSetupMenu::PickRandomZombies, &old_VSSetupMenu_PickRandomZombies);
     homura::HookFunction(VSSetupMenu_PickRandomPlantsAddr, &VSSetupMenu::PickRandomPlants, &old_VSSetupMenu_PickRandomPlants);
@@ -424,7 +424,7 @@ inline void InitHookFunction() {
 
     homura::HookFunction(ImitaterDialog_ImitaterDialogAddr, &ImitaterDialog_ImitaterDialog, &old_ImitaterDialog_ImitaterDialog);
     homura::HookFunction(ImitaterDialog_MouseDownAddr, &ImitaterDialog::MouseDown, &old_ImitaterDialog_MouseDown);
-    //    MSHookFunction(ImitaterDialog_OnKeyDownAddr, (void *) ImitaterDialog_OnKeyDown,(void **) &old_ImitaterDialog_OnKeyDown);
+    // MSHookFunction(ImitaterDialog_OnKeyDownAddr, (void *) ImitaterDialog_OnKeyDown,(void **) &old_ImitaterDialog_OnKeyDown);
     homura::HookFunction(ImitaterDialog_KeyDownAddr, &ImitaterDialog_KeyDown, &old_ImitaterDialog_KeyDown);
     homura::HookFunction(ImitaterDialog_ShowToolTipAddr, &ImitaterDialog_ShowToolTip, &old_ImitaterDialog_ShowToolTip);
 
@@ -437,11 +437,11 @@ inline void InitHookFunction() {
 
     homura::HookFunction(ZenGardenControls_UpdateAddr, &ZenGardenControls::Update, &old_ZenGardenControls_Update);
     homura::HookFunction(ZenGarden_DrawBackdropAddr, &ZenGarden::DrawBackdrop, &old_ZenGarden_DrawBackdrop);
-    //    MSHookFunction(ZenGarden_MouseDownWithFeedingToolAddr, (void *) ZenGarden_MouseDownWithFeedingTool, (void **) &old_ZenGarden_MouseDownWithFeedingTool);
+    // MSHookFunction(ZenGarden_MouseDownWithFeedingToolAddr, (void *) ZenGarden_MouseDownWithFeedingTool, (void **) &old_ZenGarden_MouseDownWithFeedingTool);
     // MSHookFunction(ZenGarden_DrawPottedPlantAddr, (void *) ZenGarden_DrawPottedPlant, nullptr);
 
-    //    MSHookFunction( Sexy_GamepadApp_CheckGamepadAddr,(void *) Sexy_GamepadApp_CheckGamepad,nullptr);
-    //    MSHookFunction( Sexy_GamepadApp_HasGamepadAddr,(void *) Sexy_GamepadApp_HasGamepad,nullptr);
+    // MSHookFunction( Sexy_GamepadApp_CheckGamepadAddr,(void *) Sexy_GamepadApp_CheckGamepad,nullptr);
+    // MSHookFunction( Sexy_GamepadApp_HasGamepadAddr,(void *) Sexy_GamepadApp_HasGamepad,nullptr);
 
 
     homura::HookFunction(CutScene_ShowShovelAddr, &CutScene::ShowShovel, &old_CutScene_ShowShovel);
@@ -452,14 +452,14 @@ inline void InitHookFunction() {
 
     homura::HookFunction(LookupFoleyAddr, &LookupFoley, &old_LookupFoley);
 
-    //    MSHookFunction(TodDrawStringWrappedHelperAddr, (void *) TodDrawStringWrappedHelper, (void **) &old_TodDrawStringWrappedHelper);
+    // MSHookFunction(TodDrawStringWrappedHelperAddr, (void *) TodDrawStringWrappedHelper, (void **) &old_TodDrawStringWrappedHelper);
     homura::HookFunction(MessageWidget_ClearLabelAddr, &CustomMessageWidget::ClearLabel, &old_MessageWidget_ClearLabel);
     homura::HookFunction(MessageWidget_SetLabelAddr, &CustomMessageWidget::SetLabel, &old_MessageWidget_SetLabel);
     homura::HookFunction(MessageWidget_UpdateAddr, &CustomMessageWidget::Update, &old_MessageWidget_Update);
     homura::HookFunction(MessageWidget_DrawAddr, &CustomMessageWidget::Draw, &old_MessageWidget_Draw);
 
     homura::HookFunction(Sexy_ExtractLoadingSoundsResourcesAddr, &Sexy_ExtractLoadingSoundsResources, &old_Sexy_ExtractLoadingSoundsResources);
-    //    MSHookFunction(Sexy_ScrollbarWidget_MouseDownAddr, (void *) Sexy_ScrollbarWidget_MouseDown,nullptr);
+    // MSHookFunction(Sexy_ScrollbarWidget_MouseDownAddr, (void *) Sexy_ScrollbarWidget_MouseDown,nullptr);
 
     homura::HookFunction(CustomScrollbarWidget_RemoveScrollButtonsAddr, &Sexy::CustomScrollbarWidget::RemoveScrollButtons, nullptr);
 
@@ -483,14 +483,14 @@ inline void InitHookFunction() {
     homura::HookFunction(Sexy_WidgetManager_MouseDownAddr, &Sexy::WidgetManager::MouseDown, &old_Sexy_WidgetManager_MouseDown);
     homura::HookFunction(Sexy_WidgetManager_MouseDragAddr, &Sexy::WidgetManager::MouseDrag, &old_Sexy_WidgetManager_MouseDrag);
     homura::HookFunction(Sexy_WidgetManager_MouseUpAddr, &Sexy::WidgetManager::MouseUp, &old_Sexy_WidgetManager_MouseUp);
-    //    MSHookFunction(Sexy_WidgetManager_AxisMovedAddr, (void *) Sexy_WidgetManager_AxisMoved, nullptr);
+    // MSHookFunction(Sexy_WidgetManager_AxisMovedAddr, (void *) Sexy_WidgetManager_AxisMoved, nullptr);
 
 
     homura::HookFunction(LawnMower_UpdateAddr, &LawnMower::Update, &old_LawnMower_Update);
     homura::HookFunction(ConfirmBackToMainDialog_ButtonDepressAddr, &ConfirmBackToMainDialog_ButtonDepress, &old_ConfirmBackToMainDialog_ButtonDepress);
     homura::HookFunction(ConfirmBackToMainDialog_AddedToManagerAddr, &ConfirmBackToMainDialog_AddedToManager, &old_ConfirmBackToMainDialog_AddedToManager);
-    //    MSHookFunction(FilterEffectDisposeForAppAddr,(void *) FilterEffectDisposeForApp,nullptr);
-    //    MSHookFunction(FilterEffectGetImageAddr,(void *) FilterEffectGetImage,nullptr);
+    // MSHookFunction(FilterEffectDisposeForAppAddr,(void *) FilterEffectDisposeForApp,nullptr);
+    // MSHookFunction(FilterEffectGetImageAddr,(void *) FilterEffectGetImage,nullptr);
     homura::HookFunction(Reanimation_DrawTrackAddr, &Reanimation::DrawTrack, &old_Reanimation_DrawTrack);
 
 
@@ -514,7 +514,7 @@ inline void InitHookFunction() {
     homura::HookFunction(LawnPlayerInfo_AddCoinsAddr, &LawnPlayerInfo::AddCoins, nullptr);
     homura::HookFunction(MaskHelpWidget_UpdateAddr, &MaskHelpWidget_Update, nullptr);
     homura::HookFunction(MaskHelpWidget_DrawAddr, &MaskHelpWidget_Draw, nullptr);
-    //    MSHookFunction(DaveHelp_DaveHelpAddr, (void *) DaveHelp_DaveHelp, (void **) &old_DaveHelp_DaveHelp);
+    // MSHookFunction(DaveHelp_DaveHelpAddr, (void *) DaveHelp_DaveHelp, (void **) &old_DaveHelp_DaveHelp);
     homura::HookFunction(DaveHelp_UpdateAddr, &DaveHelp_Update, nullptr);
     homura::HookFunction(DaveHelp_DrawAddr, &DaveHelp_Draw, nullptr);
     homura::HookFunction(DaveHelp_Delete2Addr, &DaveHelp_Delete2, &old_DaveHelp_Delete2);
@@ -552,7 +552,7 @@ inline void InitVTableHookFunction() {
 
     homura::HookVirtualFunc(vTableForStoreScreenAddr, 78, &StoreScreen::MouseDown, &old_StoreScreen_MouseDown);
     homura::HookVirtualFunc(vTableForStoreScreenAddr, 81, &StoreScreen::MouseUp, &old_StoreScreen_MouseUp);
-    //    VTableHookFunction(vTableForStoreScreenAddr, 83, (void *) StoreScreen_MouseDrag,(void **) &old_StoreScreen_MouseDrag);
+    // VTableHookFunction(vTableForStoreScreenAddr, 83, (void *) StoreScreen_MouseDrag,(void **) &old_StoreScreen_MouseDrag);
 
     homura::HookVirtualFunc(vTableForMailScreenAddr, 78, &MailScreen::MouseDown, &old_MailScreen_MouseDown);
     homura::HookVirtualFunc(vTableForMailScreenAddr, 81, &MailScreen::MouseUp, &old_MailScreen_MouseUp);
@@ -565,14 +565,14 @@ inline void InitVTableHookFunction() {
     homura::HookVirtualFunc(vTableForChallengeScreenAddr, 83, &ChallengeScreen::MouseDrag, &old_ChallengeScreen_MouseDrag);
     homura::HookVirtualFunc(vTableForChallengeScreenAddr, 130, &ChallengeScreen::ButtonPress, nullptr);
 
-//    homura::HookVirtualFunc(vTableForVSResultsMenuAddr, 78, &VSResultsMenu::MouseDown,nullptr);
-//    homura::HookVirtualFunc(vTableForVSResultsMenuAddr, 81, &VSResultsMenu::MouseUp,nullptr);
-//    homura::HookVirtualFunc(vTableForVSResultsMenuAddr, 83, &VSResultsMenu::MouseDrag,nullptr);
+    // homura::HookVirtualFunc(vTableForVSResultsMenuAddr, 78, &VSResultsMenu::MouseDown,nullptr);
+    // homura::HookVirtualFunc(vTableForVSResultsMenuAddr, 81, &VSResultsMenu::MouseUp,nullptr);
+    // homura::HookVirtualFunc(vTableForVSResultsMenuAddr, 83, &VSResultsMenu::MouseDrag,nullptr);
 
 
-    homura::HookVirtualFunc(vTableForVSSetupMenuAddr, 78, &VSSetupMenu::MouseDown,nullptr);
-    homura::HookVirtualFunc(vTableForVSSetupMenuAddr, 81, &VSSetupMenu::MouseUp,nullptr);
-    homura::HookVirtualFunc(vTableForVSSetupMenuAddr, 83, &VSSetupMenu::MouseDrag,nullptr);
+    homura::HookVirtualFunc(vTableForVSSetupMenuAddr, 78, &VSSetupMenu::MouseDown, nullptr);
+    homura::HookVirtualFunc(vTableForVSSetupMenuAddr, 81, &VSSetupMenu::MouseUp, nullptr);
+    homura::HookVirtualFunc(vTableForVSSetupMenuAddr, 83, &VSSetupMenu::MouseDrag, nullptr);
 
     homura::HookVirtualFunc(vTableForSeedChooserScreenAddr, 77, &SeedChooserScreen::MouseMove, &old_SeedChooserScreen_MouseMove);
     homura::HookVirtualFunc(vTableForSeedChooserScreenAddr, 78, &SeedChooserScreen::MouseDown, &old_SeedChooserScreen_MouseDown);
@@ -583,8 +583,8 @@ inline void InitVTableHookFunction() {
 
     homura::HookVirtualFunc(vTableForHelpTextScreenAddr, 38, &HelpTextScreen_Draw, &old_HelpTextScreen_Draw);
     homura::HookVirtualFunc(vTableForHelpTextScreenAddr, 78, &HelpTextScreen::MouseDown, &old_HelpTextScreen_MouseDown);
-    //    VTableHookFunction(vTableForHelpTextScreenAddr, 81, (void *) HelpTextScreen_MouseUp,(void **) &old_HelpTextScreen_MouseUp);
-    //    VTableHookFunction(vTableForHelpTextScreenAddr, 83, (void *) HelpTextScreen_MouseDrag,(void **) &old_HelpTextScreen_MouseDrag);
+    // VTableHookFunction(vTableForHelpTextScreenAddr, 81, (void *) HelpTextScreen_MouseUp,(void **) &old_HelpTextScreen_MouseUp);
+    // VTableHookFunction(vTableForHelpTextScreenAddr, 83, (void *) HelpTextScreen_MouseDrag,(void **) &old_HelpTextScreen_MouseDrag);
     homura::HookVirtualFunc(vTableForHelpTextScreenAddr, 136, &HelpTextScreen_ButtonDepress, &old_HelpTextScreen_ButtonDepress);
 
     homura::HookVirtualFunc(vTableForAlmanacDialogAddr, 83, &AlmanacDialog::MouseDrag, &old_AlmanacDialog_MouseDrag);
@@ -615,12 +615,12 @@ inline void InitVTableHookFunction() {
     homura::HookVirtualFunc(vTableForMusic2Addr, 7, &Music2::StopAllMusic, &old_Music2_StopAllMusic);
     homura::HookVirtualFunc(vTableForMusic2Addr, 8, &Music2::StartGameMusic, &old_Music2_StartGameMusic);
     homura::HookVirtualFunc(vTableForMusic2Addr, 11, &Music2::GameMusicPause, &old_Music2_GameMusicPause);
-    //    VTableHookFunction(vTableForMusic2Addr, 12, (void *) Music2_UpdateMusicBurst,(void **) &old_Music2_UpdateMusicBurst);
-    //    VTableHookFunction(vTableForMusic2Addr, 13, (void *) Music2_StartBurst,(void **) &old_Music2_StartBurst);
+    // VTableHookFunction(vTableForMusic2Addr, 12, (void *) Music2_UpdateMusicBurst,(void **) &old_Music2_UpdateMusicBurst);
+    // VTableHookFunction(vTableForMusic2Addr, 13, (void *) Music2_StartBurst,(void **) &old_Music2_StartBurst);
     homura::HookVirtualFunc(vTableForMusic2Addr, 17, &Music2::FadeOut, &old_Music2_FadeOut);
 
 
-    //    VTableHookFunction(vTableForMaskHelpWidgetAddr, 71, (void *) MaskHelpWidget_KeyDown,nullptr);
+    // VTableHookFunction(vTableForMaskHelpWidgetAddr, 71, (void *) MaskHelpWidget_KeyDown,nullptr);
     homura::HookVirtualFunc(vTableForMaskHelpWidgetAddr, 78, &MaskHelpWidget_MouseDown, nullptr);
     homura::HookVirtualFunc(vTableForMaskHelpWidgetAddr, 81, &MaskHelpWidget_MouseUp, nullptr);
     homura::HookVirtualFunc(vTableForMaskHelpWidgetAddr, 83, &MaskHelpWidget_MouseDrag, nullptr);
@@ -667,27 +667,27 @@ inline void InitOpenSL() {
 
 inline void InitIntroVideo() {
 
-    //    MSHookFunction(j_AGVideoOpenAddr,(void *) AGVideoOpen,nullptr);
-    //    MSHookFunction(j_AGVideoShowAddr,(void *) AGVideoShow,nullptr);
-    //    MSHookFunction(j_AGVideoEnableAddr,(void *) AGVideoEnable,nullptr);
-    //    MSHookFunction(j_AGVideoIsPlayingAddr,(void *) AGVideoIsPlaying,nullptr);
-    //    MSHookFunction(j_AGVideoPlayAddr,(void *) AGVideoPlay,nullptr);
-    //    MSHookFunction(j_AGVideoPauseAddr,(void *) AGVideoPause,nullptr);
-    //    MSHookFunction(j_AGVideoResumeAddr,(void *) AGVideoResume,nullptr);
+    // MSHookFunction(j_AGVideoOpenAddr,(void *) AGVideoOpen,nullptr);
+    // MSHookFunction(j_AGVideoShowAddr,(void *) AGVideoShow,nullptr);
+    // MSHookFunction(j_AGVideoEnableAddr,(void *) AGVideoEnable,nullptr);
+    // MSHookFunction(j_AGVideoIsPlayingAddr,(void *) AGVideoIsPlaying,nullptr);
+    // MSHookFunction(j_AGVideoPlayAddr,(void *) AGVideoPlay,nullptr);
+    // MSHookFunction(j_AGVideoPauseAddr,(void *) AGVideoPause,nullptr);
+    // MSHookFunction(j_AGVideoResumeAddr,(void *) AGVideoResume,nullptr);
 
-    //    const std::string libGameMain = "libGameMain.so";
-    //    homura::HookPltFunction(libGameMain, AGVideoOpenOffset, AGVideoOpen, nullptr);
-    //    homura::HookPltFunction(libGameMain, AGVideoShowOffset, AGVideoShow, nullptr);
-    //    homura::HookPltFunction(libGameMain, AGVideoEnableOffset, AGVideoEnable, nullptr);
-    //    homura::HookPltFunction(libGameMain, AGVideoIsPlayingOffset, AGVideoIsPlaying, nullptr);
-    //    homura::HookPltFunction(libGameMain, AGVideoPlayOffset, AGVideoPlay, nullptr);
+    // const std::string libGameMain = "libGameMain.so";
+    // homura::HookPltFunction(libGameMain, AGVideoOpenOffset, AGVideoOpen, nullptr);
+    // homura::HookPltFunction(libGameMain, AGVideoShowOffset, AGVideoShow, nullptr);
+    // homura::HookPltFunction(libGameMain, AGVideoEnableOffset, AGVideoEnable, nullptr);
+    // homura::HookPltFunction(libGameMain, AGVideoIsPlayingOffset, AGVideoIsPlaying, nullptr);
+    // homura::HookPltFunction(libGameMain, AGVideoPlayOffset, AGVideoPlay, nullptr);
 }
 
 
 inline void CallHook() {
     InitHookFunction();
     InitVTableHookFunction();
-    //    InitIntroVideo();
+    // InitIntroVideo();
 }
 
 #endif // PVZ_HOOK_INIT_H

@@ -152,8 +152,8 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     Resize(-240, -60, 1280, 720);
     mLeaderboardReanimations = (LeaderboardReanimations *)operator new(sizeof(LeaderboardReanimations));
     for (int i = 0; i < 5; ++i) {
-        //        Reanimation *reanim = (Reanimation *)operator new(sizeof(Reanimation));
-        //        Reanimation_Reanimation(reanim);
+        // Reanimation *reanim = (Reanimation *)operator new(sizeof(Reanimation));
+        // Reanimation_Reanimation(reanim);
         Reanimation *reanim = new Reanimation;
         reanim->ReanimationInitializeType(0.0, 0.0, (ReanimationType)(ReanimationType::REANIM_LEADERBOARDS_HOUSE + i));
         reanim->SetAnimRate(0.0f);
@@ -173,8 +173,8 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     mLeaderboardReanimations->backgroundReanim[1]->SetImageOverride("survival button 1", addonImages.survival_button); // 设置无尽模式按钮
     Reanimation_HideTrack(mLeaderboardReanimations->backgroundReanim[1], "house 1", true);                             // 隐藏默认房屋
     Reanimation_HideTrack(mLeaderboardReanimations->backgroundReanim[1], "house achievements 1", true);                // 隐藏默认房屋
-    //    Reanimation_HideTrack(this_->mLeaderboardReanimations->backgroundReanim[1],"house 2",true); // 隐藏默认房屋
-    //    Reanimation_HideTrack(this_->mLeaderboardReanimations->backgroundReanim[1],"house achievements 2",true); // 隐藏默认房屋
+    // Reanimation_HideTrack(this_->mLeaderboardReanimations->backgroundReanim[1],"house 2",true); // 隐藏默认房屋
+    // Reanimation_HideTrack(this_->mLeaderboardReanimations->backgroundReanim[1],"house achievements 2",true); // 隐藏默认房屋
 
     int zombieTrackIndex = mLeaderboardReanimations->backgroundReanim[0]->FindTrackIndex("zombie_trash");
     SexyTransform2D zombieSexyTransform2D;
@@ -190,8 +190,8 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
 
     for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {
         mAchievements[i] = theApp->mPlayerInfo->mAchievements[LeaderboardsWidget_GetAchievementIdByReanimationType((ReanimationType)(ReanimationType::REANIM_ACHIEVEMENT_HOME_SECURITY + i))];
-        //        Reanimation *reanim = (Reanimation *)operator new(sizeof(Reanimation));
-        //        Reanimation_Reanimation(reanim);
+        // Reanimation *reanim = (Reanimation *)operator new(sizeof(Reanimation));
+        // Reanimation_Reanimation(reanim);
         Reanimation *reanim = new Reanimation;
         reanim->ReanimationInitializeType(0.0, 0.0, (ReanimationType)(ReanimationType::REANIM_ACHIEVEMENT_HOME_SECURITY + i));
         reanim->SetPosition(gLeaderboardAchievementsPosition[i][0], gLeaderboardAchievementsPosition[i][1]);
@@ -201,7 +201,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     }
 
     mLongestRecordPool = theApp->mPlayerInfo->mChallengeRecords[GameMode::GAMEMODE_SURVIVAL_ENDLESS_STAGE_3 - 2];
-    //    this_->mLongestRecordPool = theApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ENDLESS_FLAGS];
+    // this_->mLongestRecordPool = theApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ENDLESS_FLAGS];
 
     pvzstl::string str = TodStringTranslate("[CLOSE]");
     GameButton *aBackButton = MakeButton(1000, mButtonListener, this, str);
@@ -275,7 +275,7 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
         TodDrawStringWrapped(g, str1, theRect, theFont, yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
     }
 
-    //    DrawImage(g, addonImages.survival_button, 270, 579);
+    // DrawImage(g, addonImages.survival_button, 270, 579);
 
     pvzstl::string str2 = TodStringTranslate("[PLAYERS_HOUSE]");
     Sexy::Rect theRect1 = {240, 70, 800, 70};
@@ -284,31 +284,31 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
     Sexy::Font *theFont1 = *Sexy_FONT_HOUSEOFTERROR28_Addr;
     TodDrawStringWrapped(g, str4, theRect1, theFont1, white, DrawStringJustification::DS_ALIGN_CENTER, false);
 
-    //    int plantHeight = plantPileHeight * leaderboardsWidget->mPlantTrashBin->mPileNum;
-    //    int zombieHeight = zombiePileHeight * leaderboardsWidget->mZombieTrashBin->mPileNum;
-    //    Rect plantTrashBinRect = {leaderboardsWidget->mPlantTrashBin->mX,leaderboardsWidget->mPlantTrashBin->mY - plantHeight,addonImages.plant_can->mWidth,addonImages.plant_can->mHeight +
-    //    plantHeight}; Rect zombieTrashBinRect = {leaderboardsWidget->mZombieTrashBin->mX,leaderboardsWidget->mZombieTrashBin->mY -
-    //    zombieHeight,addonImages.zombie_can->mWidth,addonImages.zombie_can->mHeight + zombieHeight};
+    // int plantHeight = plantPileHeight * leaderboardsWidget->mPlantTrashBin->mPileNum;
+    // int zombieHeight = zombiePileHeight * leaderboardsWidget->mZombieTrashBin->mPileNum;
+    // Rect plantTrashBinRect = {leaderboardsWidget->mPlantTrashBin->mX,leaderboardsWidget->mPlantTrashBin->mY - plantHeight,addonImages.plant_can->mWidth,addonImages.plant_can->mHeight +
+    // plantHeight}; Rect zombieTrashBinRect = {leaderboardsWidget->mZombieTrashBin->mX,leaderboardsWidget->mZombieTrashBin->mY -
+    // zombieHeight,addonImages.zombie_can->mWidth,addonImages.zombie_can->mHeight + zombieHeight};
     //
-    //    SetColor(g, &yellow);
-    //    DrawRect(g, &plantTrashBinRect);
+    // SetColor(g, &yellow);
+    // DrawRect(g, &plantTrashBinRect);
     //
-    //    SetColor(g, &green);
-    //    DrawRect(g, &zombieTrashBinRect);
+    // SetColor(g, &green);
+    // DrawRect(g, &zombieTrashBinRect);
 
 
-    //    SetColor(g, &yellow);
-    //    Rect rect = {xx,yy,xw,yh};
-    //    DrawRect(g, &rect);
+    // SetColor(g, &yellow);
+    // Rect rect = {xx,yy,xw,yh};
+    // DrawRect(g, &rect);
     //
-    //    SetColor(g, &green);
-    //    Rect rect2 = {xx1,yy1,xw1,yh1};
-    //    DrawRect(g, &rect2);
-    //    if (LawnApp_EarnedGoldTrophy(leaderboardsWidget->mApp)) {
-    //        DrawImageCeliiii(g, *Sexy_IMAGE_SUNFLOWER_TROPHY_Addr, 1110, 290, 1, 0);
-    //    } else if (LawnApp_HasFinishedAdventure(leaderboardsWidget->mApp)) {
-    //        DrawImageCeliiii(g, *Sexy_IMAGE_SUNFLOWER_TROPHY_Addr, 1110, 290, 0, 0);
-    //    }
+    // SetColor(g, &green);
+    // Rect rect2 = {xx1,yy1,xw1,yh1};
+    // DrawRect(g, &rect2);
+    // if (LawnApp_EarnedGoldTrophy(leaderboardsWidget->mApp)) {
+    // DrawImageCeliiii(g, *Sexy_IMAGE_SUNFLOWER_TROPHY_Addr, 1110, 290, 1, 0);
+    // } else if (LawnApp_HasFinishedAdventure(leaderboardsWidget->mApp)) {
+    // DrawImageCeliiii(g, *Sexy_IMAGE_SUNFLOWER_TROPHY_Addr, 1110, 290, 0, 0);
+    // }
 }
 
 void DaveHelp_Delete2(LeaderboardsWidget *leaderboardsWidget) {
@@ -347,7 +347,7 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
         leaderboardsWidget->mPlantTrashBin->mX, leaderboardsWidget->mPlantTrashBin->mY - plantHeight, addonImages.plant_can->mWidth, addonImages.plant_can->mHeight + plantHeight};
 
     if (TRect_Contains(&plantTrashBinRect, x, y)) {
-        leaderboardsWidget->mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
+        leaderboardsWidget->mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
         pvzstl::string str1 = TodStringTranslate("[PLANTS_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{PLANTS}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, str2.c_str(), "", "[DIALOG_BUTTON_OK]", "", 3);
@@ -359,45 +359,45 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
         leaderboardsWidget->mZombieTrashBin->mX, leaderboardsWidget->mZombieTrashBin->mY - zombieHeight, addonImages.zombie_can->mWidth, addonImages.zombie_can->mHeight + zombieHeight};
 
     if (TRect_Contains(&zombieTrashBinRect, x, y)) {
-        leaderboardsWidget->mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
+        leaderboardsWidget->mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
         pvzstl::string str1 = TodStringTranslate("[ZOMBIES_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{ZOMBIES}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ZOMBIES_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, str2.c_str(), "", "[DIALOG_BUTTON_OK]", "", 3);
         return;
     }
 
-    //    tmp = !tmp;
-    //    if (tmp) {
-    //        xx = x;
-    //        yy = y;
-    //        xw = 0;
-    //        yh = 0;
-    //        LOGD("%d %d", x, y);
-    //    }else{
-    //        xx1 = x;
-    //        yy1 = y;
-    //        xw1 = 0;
-    //        yh1 = 0;
-    //        LOGD("%d %d", x, y);
-    //    }
+    // tmp = !tmp;
+    // if (tmp) {
+    // xx = x;
+    // yy = y;
+    // xw = 0;
+    // yh = 0;
+    // LOGD("%d %d", x, y);
+    // }else{
+    // xx1 = x;
+    // yy1 = y;
+    // xw1 = 0;
+    // yh1 = 0;
+    // LOGD("%d %d", x, y);
+    // }
 
-    //    Rect rect = {1066, 574, 72, 72};
-    //    if (TRect_Contains(&rect, x, y)) {
-    //        leaderboardsWidget->mTouchDownInBackRect = true;
-    //        leaderboardsWidget->mApp,->PlaySample(Sexy_SOUND_GRAVEBUTTON_Addr);
-    //    }
+    // Rect rect = {1066, 574, 72, 72};
+    // if (TRect_Contains(&rect, x, y)) {
+    // leaderboardsWidget->mTouchDownInBackRect = true;
+    // leaderboardsWidget->mApp,->PlaySample(Sexy_SOUND_GRAVEBUTTON_Addr);
+    // }
 }
 
 void DaveHelp_MouseDrag(LeaderboardsWidget *leaderboardsWidget, int x, int y) {
-    //    if (tmp) {
-    //        xw = x - xx;
-    //        yh = y - yy;
-    //        LOGD("%d: %d, %d, %d, %d",leaderboardsWidget->mFocusedAchievementIndex,xx,yy,xw,yh);
-    //    }else{
-    //        xw1 = x - xx1;
-    //        yh1 = y - yy1;
-    //        LOGD("%d: %d, %d, %d, %d",leaderboardsWidget->mFocusedAchievementIndex,xx1,yy1,xw1,yh1);
-    //    }
+    // if (tmp) {
+    // xw = x - xx;
+    // yh = y - yy;
+    // LOGD("%d: %d, %d, %d, %d",leaderboardsWidget->mFocusedAchievementIndex,xx,yy,xw,yh);
+    // }else{
+    // xw1 = x - xx1;
+    // yh1 = y - yy1;
+    // LOGD("%d: %d, %d, %d, %d",leaderboardsWidget->mFocusedAchievementIndex,xx1,yy1,xw1,yh1);
+    // }
 }
 
 void DaveHelp_MouseUp(LeaderboardsWidget *leaderboardsWidget, int x, int y) {}
@@ -447,14 +447,14 @@ void DaveHelp_KeyDown(LeaderboardsWidget *leaderboardsWidget, int keyCode) {
         return;
     }
     if (keyCode == Sexy::KEYCODE_SHOVEL) {
-        leaderboardsWidget->mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
+        leaderboardsWidget->mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
         pvzstl::string str1 = TodStringTranslate("[PLANTS_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{PLANTS}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, str2.c_str(), "", "[DIALOG_BUTTON_OK]", "", 3);
         return;
     }
     if (keyCode == Sexy::KEYCODE_HAMMER) {
-        leaderboardsWidget->mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
+        leaderboardsWidget->mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
         pvzstl::string str1 = TodStringTranslate("[ZOMBIES_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{ZOMBIES}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ZOMBIES_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, str2.c_str(), "", "[DIALOG_BUTTON_OK]", "", 3);

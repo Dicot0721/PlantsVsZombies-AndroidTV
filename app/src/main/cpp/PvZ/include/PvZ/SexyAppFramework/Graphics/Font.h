@@ -37,7 +37,7 @@ public:
     int mHeight;
     int mLineSpacingOffset;
 
-    //    virtual void DrawString(Graphics* g, int theX, int theY, const pvzstl::string& theString, const Color& theColor, const Rect& theClipRect);
+    // virtual void DrawString(Graphics* g, int theX, int theY, const pvzstl::string& theString, const Color& theColor, const Rect& theClipRect);
 };
 
 } // namespace Sexy

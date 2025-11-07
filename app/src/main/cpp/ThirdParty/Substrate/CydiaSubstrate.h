@@ -127,8 +127,8 @@ static inline void MSHookFunction(const char *name, Type_ *replace, Type_ **resu
 
 #endif // __cplusplus
 
-#define MSHook(type, name, args...)                                                                                                                                                                    \
-    _disused static type (*_##name)(args);                                                                                                                                                             \
+#define MSHook(type, name, args...)        \
+    _disused static type (*_##name)(args); \
     static type $##name(args)
 
 #ifdef __cplusplus

@@ -273,89 +273,89 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
 
     old_SeedChooserScreen_ClickedSeedInChooser(this, theChosenSeed, thePlayerIndex);
 
-//    int seedsInBank;
-//    VSSetupMenu *aVSSetupScreen;
-//    int aPlayerIndex;
-//    int seedsInFlight;
-//
-//    int aGamepadIndex = mApp->PlayerToGamepadIndex(thePlayerIndex);
-//    if ( mApp->IsCoopMode() )
-//    {
-//        if ( mSeedsInBothBank > 8 )
-//            return;
-//    LABEL_3:
-//        goto LABEL_9;
-//    }
-//    if ( mSeedsInBothBank == mSeedBank1->mNumPackets )
-//        return;
-//    if ( mApp->IsVSMode() )
-//    {
-//        if ( !CanPickNow() )
-//        {
-//            mApp->PlaySample(*SOUND_BUZZER);
-//            return;
-//        }
-//        goto LABEL_3;
-//    }
-//LABEL_9:
-//    if ( !mApp->IsCoopMode() || *(&mSeedsIn1PBank + thePlayerIndex) <= 3 )
-//    {
-//        if ( mApp->IsCoopMode() && thePlayerIndex == 1 )
-//            seedsInBank = mSeedsIn2PBank;
-//        else
-//            seedsInBank = mSeedsIn1PBank;
-//        theChosenSeed.mStartX = theChosenSeed.mX;
-//        theChosenSeed.mStartY = theChosenSeed.mY;
-//        theChosenSeed.mTimeStartMotion = mSeedChooserAge;
-//        theChosenSeed.mTimeEndMotion = mSeedChooserAge + 25;
-//        if ( mApp->IsAdventureMode() )
-//        {
-//            aPlayerIndex = 0;
-//            theChosenSeed.mChosenPlayerIndex = 0;
-//        }
-//        else
-//        {
-//            if ( mApp->IsVSMode() )
-//            {
-//                aVSSetupScreen = mApp->mVSSetupScreen;
-//            }
-//            else
-//            {
-//                aPlayerIndex = thePlayerIndex;
-//                theChosenSeed.mChosenPlayerIndex = thePlayerIndex;
-//            }
-//            if ( mApp->IsVSMode() )
-//            {
-//                aPlayerIndex = (thePlayerIndex == 1) ? aVSSetupScreen->mPlayerIndex2 : aVSSetupScreen->mPlayerIndex1;
-//                theChosenSeed.mChosenPlayerIndex = aPlayerIndex;
-//            }
-//        }
-//        GetSeedPositionInBank(seedsInBank, theChosenSeed.mEndX, theChosenSeed.mEndY, aPlayerIndex);
-//        seedsInFlight = mSeedsInFlight + 1;
-//        theChosenSeed.mSeedIndexInBank = seedsInBank;
-//        theChosenSeed.mSeedState = SEED_FLYING_TO_BANK;
-//        mSeedsInFlight = seedsInFlight;
-//        mSeedsInBothBank = mSeedsInBothBank + 1;
-//        if ( mApp->IsCoopMode() && thePlayerIndex == 1 )
-//            ++seedsInBank;
-//        else
-//            ++mSeedsIn1PBank;
-//        RemoveToolTip(thePlayerIndex);
-//        mApp->PlaySample(*SOUND_TAP);
-//        if ( mSeedsInBothBank == mSeedBank1->mNumPackets && !mApp->IsCoopMode() )
-//            EnableStartButton(1);
-//        if ( mApp->IsCoopMode()
-//            && mSeedsInBothBank == mSeedBank2->mNumPackets + mSeedBank1->mNumPackets )
-//        {
-//            EnableStartButton(1);
-//        }
-//        if (mApp->IsVSMode())
-//        {
-//            aVSSetupScreen = mApp->mVSSetupScreen;
-//            if (aVSSetupScreen)
-//                aVSSetupScreen->OnPlayerPickedSeed(aGamepadIndex);
-//        }
-//    }
+    // int seedsInBank;
+    // VSSetupMenu *aVSSetupScreen;
+    // int aPlayerIndex;
+    // int seedsInFlight;
+    //
+    // int aGamepadIndex = mApp->PlayerToGamepadIndex(thePlayerIndex);
+    // if ( mApp->IsCoopMode() )
+    // {
+    // if ( mSeedsInBothBank > 8 )
+    // return;
+    // LABEL_3:
+    // goto LABEL_9;
+    // }
+    // if ( mSeedsInBothBank == mSeedBank1->mNumPackets )
+    // return;
+    // if ( mApp->IsVSMode() )
+    // {
+    // if ( !CanPickNow() )
+    // {
+    // mApp->PlaySample(*SOUND_BUZZER);
+    // return;
+    // }
+    // goto LABEL_3;
+    // }
+    // LABEL_9:
+    // if ( !mApp->IsCoopMode() || *(&mSeedsIn1PBank + thePlayerIndex) <= 3 )
+    // {
+    // if ( mApp->IsCoopMode() && thePlayerIndex == 1 )
+    // seedsInBank = mSeedsIn2PBank;
+    // else
+    // seedsInBank = mSeedsIn1PBank;
+    // theChosenSeed.mStartX = theChosenSeed.mX;
+    // theChosenSeed.mStartY = theChosenSeed.mY;
+    // theChosenSeed.mTimeStartMotion = mSeedChooserAge;
+    // theChosenSeed.mTimeEndMotion = mSeedChooserAge + 25;
+    // if ( mApp->IsAdventureMode() )
+    // {
+    // aPlayerIndex = 0;
+    // theChosenSeed.mChosenPlayerIndex = 0;
+    // }
+    // else
+    // {
+    // if ( mApp->IsVSMode() )
+    // {
+    // aVSSetupScreen = mApp->mVSSetupScreen;
+    // }
+    // else
+    // {
+    // aPlayerIndex = thePlayerIndex;
+    // theChosenSeed.mChosenPlayerIndex = thePlayerIndex;
+    // }
+    // if ( mApp->IsVSMode() )
+    // {
+    // aPlayerIndex = (thePlayerIndex == 1) ? aVSSetupScreen->mPlayerIndex2 : aVSSetupScreen->mPlayerIndex1;
+    // theChosenSeed.mChosenPlayerIndex = aPlayerIndex;
+    // }
+    // }
+    // GetSeedPositionInBank(seedsInBank, theChosenSeed.mEndX, theChosenSeed.mEndY, aPlayerIndex);
+    // seedsInFlight = mSeedsInFlight + 1;
+    // theChosenSeed.mSeedIndexInBank = seedsInBank;
+    // theChosenSeed.mSeedState = SEED_FLYING_TO_BANK;
+    // mSeedsInFlight = seedsInFlight;
+    // mSeedsInBothBank = mSeedsInBothBank + 1;
+    // if ( mApp->IsCoopMode() && thePlayerIndex == 1 )
+    // ++seedsInBank;
+    // else
+    // ++mSeedsIn1PBank;
+    // RemoveToolTip(thePlayerIndex);
+    // mApp->PlaySample(*SOUND_TAP);
+    // if ( mSeedsInBothBank == mSeedBank1->mNumPackets && !mApp->IsCoopMode() )
+    // EnableStartButton(1);
+    // if ( mApp->IsCoopMode()
+    // && mSeedsInBothBank == mSeedBank2->mNumPackets + mSeedBank1->mNumPackets )
+    // {
+    // EnableStartButton(1);
+    // }
+    // if (mApp->IsVSMode())
+    // {
+    // aVSSetupScreen = mApp->mVSSetupScreen;
+    // if (aVSSetupScreen)
+    // aVSSetupScreen->OnPlayerPickedSeed(aGamepadIndex);
+    // }
+    // }
 }
 
 void SeedChooserScreen::CrazyDavePickSeeds() {
@@ -436,7 +436,7 @@ void SeedChooserScreen::ButtonDepress(int theId) {
     }
 
     if (theId == SeedChooserScreen_Menu) {
-        mApp->PlaySample( *Sexy_SOUND_PAUSE_Addr);
+        mApp->PlaySample(*Sexy_SOUND_PAUSE_Addr);
         mApp->DoNewOptions(false, 0);
         return;
     }
@@ -513,10 +513,10 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
             if (aSeedType > SeedType::SEED_ZOMBIE_GARGANTUAR && aSeedType < SeedType::NUM_ZOMBIE_SEED_IN_CHOOSER) {
                 pvzstl::string aTitle, aLabel;
                 switch (aSeedType) {
-                        //                case SeedType::SEED_ZOMBIE_REDEYE_GARGANTUAR: // 红眼巨人僵尸
-                        //                    aTitle = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE]");
-                        //                    aLabel = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE_DESCRIPTION_HEADER]");
-                        //                    break;
+                        // case SeedType::SEED_ZOMBIE_REDEYE_GARGANTUAR: // 红眼巨人僵尸
+                        // aTitle = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE]");
+                        // aLabel = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE_DESCRIPTION_HEADER]");
+                        // break;
                     case SeedType::SEED_ZOMBIE_REDEYE_GARGANTUAR: // 红眼巨人僵尸
                         aTitle = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE]");
                         aLabel = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE_DESCRIPTION_HEADER]");
@@ -618,22 +618,22 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
 
     if (!mViewLawnButtonDisabled) { // !mDisabled
         Sexy::Rect mViewLawnButtonRect = {mViewLawnButton->mX, mViewLawnButton->mY, mViewLawnButton->mWidth, 50};
-        //        LOGD("mStoreButtonRect:%d %d %d %d",mStoreButtonRect[0],mStoreButtonRect[1],mStoreButtonRect[2],mStoreButtonRect[3]);
+        // LOGD("mStoreButtonRect:%d %d %d %d",mStoreButtonRect[0],mStoreButtonRect[1],mStoreButtonRect[2],mStoreButtonRect[3]);
         if (TRect_Contains(&mViewLawnButtonRect, x, y)) {
-            mApp->PlaySample( *Sexy_SOUND_TAP_Addr);
+            mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
             gSeedChooserTouchState = SeedChooserTouchState::ViewLawnButton;
-            //            GameButtonDown(seedChooserScreen, 8, 0);
+            // GameButtonDown(seedChooserScreen, 8, 0);
             return;
         }
     }
 
     if (!mStoreButtonDisabled) { // !mDisabled
         Sexy::Rect mStoreButtonRect = {mStoreButton->mX, mStoreButton->mY, mStoreButton->mWidth, 50};
-        //        LOGD("mStoreButtonRect:%d %d %d %d",mStoreButtonRect[0],mStoreButtonRect[1],mStoreButtonRect[2],mStoreButtonRect[3]);
+        // LOGD("mStoreButtonRect:%d %d %d %d",mStoreButtonRect[0],mStoreButtonRect[1],mStoreButtonRect[2],mStoreButtonRect[3]);
         if (TRect_Contains(&mStoreButtonRect, x, y)) {
-            mApp->PlaySample( *Sexy_SOUND_TAP_Addr);
+            mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
             gSeedChooserTouchState = SeedChooserTouchState::StoreButton;
-            //            GameButtonDown(seedChooserScreen, 8, 0);
+            // GameButtonDown(seedChooserScreen, 8, 0);
             return;
         }
     }
@@ -641,10 +641,10 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
     if (!mStartButtonDisabled) { // !mDisabled
         Sexy::Rect mStartButtonRect = {mStartButton->mX, mStartButton->mY, mStartButton->mWidth, 50};
         if (TRect_Contains(&mStartButtonRect, x, y)) {
-            mApp->PlaySample( *Sexy_SOUND_TAP_Addr);
+            mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
             gSeedChooserTouchState = SeedChooserTouchState::StartButton;
 
-            //            SeedChooserScreen_OnStartButton(seedChooserScreen);
+            // SeedChooserScreen_OnStartButton(seedChooserScreen);
             return;
         }
     }
@@ -652,10 +652,10 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
     if (!mAlmanacButtonDisabled) { // !mDisabled
         Sexy::Rect mAlmanacButtonRect = {mAlmanacButton->mX, mAlmanacButton->mY, mAlmanacButton->mWidth, 50};
         if (TRect_Contains(&mAlmanacButtonRect, x, y)) {
-            mApp->PlaySample( *Sexy_SOUND_TAP_Addr);
+            mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
             gSeedChooserTouchState = SeedChooserTouchState::AlmanacButton;
 
-            //            GameButtonDown(seedChooserScreen, 9, 0);
+            // GameButtonDown(seedChooserScreen, 9, 0);
             return;
         }
     }
@@ -746,7 +746,7 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
 void SeedChooserScreen::MouseUp(int x, int y) {
 
     if (tcp_connected && mApp->mGameMode == GAMEMODE_MP_VS) {
-        TwoCharDataEvent event = {{EventType::EVENT_SEEDCHOOSER_SELECT_SEED}, (unsigned char)(mIsZombieChooser?mSeedType2:mSeedType1), mIsZombieChooser};
+        TwoCharDataEvent event = {{EventType::EVENT_SEEDCHOOSER_SELECT_SEED}, (unsigned char)(mIsZombieChooser ? mSeedType2 : mSeedType1), mIsZombieChooser};
         send(tcpServerSocket, &event, sizeof(TwoCharDataEvent), 0);
         return;
     }
@@ -853,100 +853,100 @@ int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, int thePlayerIndex) {
 }
 
 void SeedChooserScreen::Draw(Graphics *g) {
-    //    if (mIsZombieChooser) {
-    //        if (mApp->GetDialog(DIALOG_STORE) || mApp->GetDialog(DIALOG_ALMANAC))
-    //            return;
+    // if (mIsZombieChooser) {
+    // if (mApp->GetDialog(DIALOG_STORE) || mApp->GetDialog(DIALOG_ALMANAC))
+    // return;
     ////
-    //        g->SetLinearBlend(true);
-    //        if (!mBoard->ChooseSeedsOnCurrentLevel() || (mBoard->mCutScene && mBoard->mCutScene->IsBeforePreloading()))
-    //            return;
+    // g->SetLinearBlend(true);
+    // if (!mBoard->ChooseSeedsOnCurrentLevel() || (mBoard->mCutScene && mBoard->mCutScene->IsBeforePreloading()))
+    // return;
     ////
-    //        Image *aBackgroundImage = *IMAGE_SEEDCHOOSER_BACKGROUND2;
-    //        g->DrawImage(aBackgroundImage, 0, 87);
-    //        int aStringX = *(reinterpret_cast<int *>(aBackgroundImage) + 9) / 2;
-    //        Color aColor = Color(0, 255, 0);
-    //        TodDrawString(g, "[CHOOSE_YOUR_ZOMBIES]", aStringX, 114, *Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+    // Image *aBackgroundImage = *IMAGE_SEEDCHOOSER_BACKGROUND2;
+    // g->DrawImage(aBackgroundImage, 0, 87);
+    // int aStringX = *(reinterpret_cast<int *>(aBackgroundImage) + 9) / 2;
+    // Color aColor = Color(0, 255, 0);
+    // TodDrawString(g, "[CHOOSE_YOUR_ZOMBIES]", aStringX, 114, *Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
     //
-    //        int aNumSeeds = NUM_ZOMBIE_SEED_IN_CHOOSER;
-    //        for (SeedType aSeedShadow = SEED_ZOMBIE_GRAVESTONE; aSeedShadow < aNumSeeds; aSeedShadow = (SeedType)(aSeedShadow + 1)) {
-    //            int x, y;
-    //            GetSeedPositionInChooser(aSeedShadow, x, y);
+    // int aNumSeeds = NUM_ZOMBIE_SEED_IN_CHOOSER;
+    // for (SeedType aSeedShadow = SEED_ZOMBIE_GRAVESTONE; aSeedShadow < aNumSeeds; aSeedShadow = (SeedType)(aSeedShadow + 1)) {
+    // int x, y;
+    // GetSeedPositionInChooser(aSeedShadow, x, y);
     //
-    //            int aZombieSeed = aSeedShadow - SEED_ZOMBIE_GRAVESTONE;
-    //            if (mApp->GetSeedsAvailable(aSeedShadow)) {
-    //                ChosenSeed &aChosenSeed = mChosenSeeds[aZombieSeed];
-    //                if (aChosenSeed.mSeedState != SEED_IN_CHOOSER) {
-    //                    Graphics aSeedGraphics(*g);
-    //                    DrawSeedPacket(&aSeedGraphics, x, y, aSeedShadow, SEED_NONE, 0, 55, true, false, mIsZombieChooser, true);
-    //                }
-    //            } else {
-    //                Graphics aSeedGraphics(*g);
-    //                ChosenSeed &aChosenSeed = mChosenSeeds[aZombieSeed];
-    //                aSeedGraphics.DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
-    //            }
-    //        }
+    // int aZombieSeed = aSeedShadow - SEED_ZOMBIE_GRAVESTONE;
+    // if (mApp->GetSeedsAvailable(aSeedShadow)) {
+    // ChosenSeed &aChosenSeed = mChosenSeeds[aZombieSeed];
+    // if (aChosenSeed.mSeedState != SEED_IN_CHOOSER) {
+    // Graphics aSeedGraphics(*g);
+    // DrawSeedPacket(&aSeedGraphics, x, y, aSeedShadow, SEED_NONE, 0, 55, true, false, mIsZombieChooser, true);
+    // }
+    // } else {
+    // Graphics aSeedGraphics(*g);
+    // ChosenSeed &aChosenSeed = mChosenSeeds[aZombieSeed];
+    // aSeedGraphics.DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
+    // }
+    // }
     //
-    //        int aNumSeedsInBank = std::min(mBoard->mSeedBank2->mNumPackets, aNumSeeds);
-    //        for (int anIndex = 0; anIndex < aNumSeedsInBank; anIndex++)
-    //        {
-    //            if (FindSeedInBank(anIndex, mPlayerIndex) == SEED_NONE)
-    //            {
-    //                int x, y;
-    //                GetSeedPositionInBank(anIndex, x, y, mPlayerIndex);
-    //                g->DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
-    //            }
-    //        }
+    // int aNumSeedsInBank = std::min(mBoard->mSeedBank2->mNumPackets, aNumSeeds);
+    // for (int anIndex = 0; anIndex < aNumSeedsInBank; anIndex++)
+    // {
+    // if (FindSeedInBank(anIndex, mPlayerIndex) == SEED_NONE)
+    // {
+    // int x, y;
+    // GetSeedPositionInBank(anIndex, x, y, mPlayerIndex);
+    // g->DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
+    // }
+    // }
     //
-    //        for (SeedType aSeedType = SEED_ZOMBIE_GRAVESTONE; aSeedType < NUM_ZOMBIE_SEED_IN_CHOOSER; aSeedType = (SeedType)(aSeedType + 1))
-    //        {
-    //            ChosenSeed& aChosenSeed = mChosenSeeds[aSeedType - SEED_ZOMBIE_GRAVESTONE];
-    //            ChosenSeedState aSeedState = aChosenSeed.mSeedState;
-    //            if (mApp->GetSeedsAvailable(aSeedType) && aSeedState != SEED_FLYING_TO_BANK && aSeedState != SEED_FLYING_TO_CHOOSER &&
-    //                aSeedState != SEED_PACKET_HIDDEN && (aSeedState == SEED_IN_CHOOSER || mBoard->mCutScene->mSeedChoosing))
-    //            {
-    //                bool aGrayed = false;
-    //                if (((SeedNotRecommendedToPick(aSeedType) || SeedNotAllowedToPick(aSeedType)) && aSeedState == SEED_IN_CHOOSER) ||
-    //                    SeedNotAllowedDuringTrial(aSeedType))
-    //                    aGrayed = true;
+    // for (SeedType aSeedType = SEED_ZOMBIE_GRAVESTONE; aSeedType < NUM_ZOMBIE_SEED_IN_CHOOSER; aSeedType = (SeedType)(aSeedType + 1))
+    // {
+    // ChosenSeed& aChosenSeed = mChosenSeeds[aSeedType - SEED_ZOMBIE_GRAVESTONE];
+    // ChosenSeedState aSeedState = aChosenSeed.mSeedState;
+    // if (mApp->GetSeedsAvailable(aSeedType) && aSeedState != SEED_FLYING_TO_BANK && aSeedState != SEED_FLYING_TO_CHOOSER &&
+    // aSeedState != SEED_PACKET_HIDDEN && (aSeedState == SEED_IN_CHOOSER || mBoard->mCutScene->mSeedChoosing))
+    // {
+    // bool aGrayed = false;
+    // if (((SeedNotRecommendedToPick(aSeedType) || SeedNotAllowedToPick(aSeedType)) && aSeedState == SEED_IN_CHOOSER) ||
+    // SeedNotAllowedDuringTrial(aSeedType))
+    // aGrayed = true;
     //
-    //                int aPosX = aChosenSeed.mX;
-    //                int aPosY = aChosenSeed.mY;
-    //                int x, y;
-    //                if (aSeedState == SEED_IN_BANK)
-    //                {
+    // int aPosX = aChosenSeed.mX;
+    // int aPosY = aChosenSeed.mY;
+    // int x, y;
+    // if (aSeedState == SEED_IN_BANK)
+    // {
     //
-    //                    GetSeedPositionInBank(aSeedType, x, y, mPlayerIndex);
+    // GetSeedPositionInBank(aSeedType, x, y, mPlayerIndex);
     ////                    aPosX -= mX;
     ////                    aPosY -= mY;
-    //                }
+    // }
     //
-    //                Graphics aSeedGraphics(*g);
+    // Graphics aSeedGraphics(*g);
     ////                DrawSeedPacket(&aSeedGraphics, aPosX, aPosY, aChosenSeed.mSeedType, aChosenSeed.mImitaterType, 0, aGrayed ? 115 : 255, true, false, mIsZombieChooser, true);
-    //                DrawPacket(&aSeedGraphics, aPosX, aPosY, aChosenSeed.mSeedType, SeedType::SEED_NONE, 0, aGrayed ? 115 : 255, &white, true, true);
-    //            }
-    //        }
+    // DrawPacket(&aSeedGraphics, aPosX, aPosY, aChosenSeed.mSeedType, SeedType::SEED_NONE, 0, aGrayed ? 115 : 255, &white, true, true);
+    // }
+    // }
     //
-    //        for (SeedType aSeedType = SEED_ZOMBIE_GRAVESTONE; aSeedType < NUM_ZOMBIE_SEED_IN_CHOOSER; aSeedType = (SeedType)(aSeedType + 1))
-    //        {
-    //            ChosenSeed& aChosenSeed = mChosenSeeds[aSeedType - SEED_ZOMBIE_GRAVESTONE];
-    //            ChosenSeedState aSeedState = aChosenSeed.mSeedState;
-    //            if (mApp->GetSeedsAvailable(aSeedType) && (aSeedState == SEED_FLYING_TO_BANK || aSeedState == SEED_FLYING_TO_CHOOSER))
-    //            {
-    //                if (aSeedState == SEED_FLYING_TO_BANK)
-    //                {
-    //                    GetSeedPositionInChooser(aSeedType, aChosenSeed.mStartX, aChosenSeed.mStartY);
-    //                }
-    //                else if (aSeedState == SEED_FLYING_TO_CHOOSER)
-    //                {
-    //                    GetSeedPositionInChooser(aSeedType, aChosenSeed.mEndY, aChosenSeed.mEndY);
-    //                }
+    // for (SeedType aSeedType = SEED_ZOMBIE_GRAVESTONE; aSeedType < NUM_ZOMBIE_SEED_IN_CHOOSER; aSeedType = (SeedType)(aSeedType + 1))
+    // {
+    // ChosenSeed& aChosenSeed = mChosenSeeds[aSeedType - SEED_ZOMBIE_GRAVESTONE];
+    // ChosenSeedState aSeedState = aChosenSeed.mSeedState;
+    // if (mApp->GetSeedsAvailable(aSeedType) && (aSeedState == SEED_FLYING_TO_BANK || aSeedState == SEED_FLYING_TO_CHOOSER))
+    // {
+    // if (aSeedState == SEED_FLYING_TO_BANK)
+    // {
+    // GetSeedPositionInChooser(aSeedType, aChosenSeed.mStartX, aChosenSeed.mStartY);
+    // }
+    // else if (aSeedState == SEED_FLYING_TO_CHOOSER)
+    // {
+    // GetSeedPositionInChooser(aSeedType, aChosenSeed.mEndY, aChosenSeed.mEndY);
+    // }
     //
     ////                DrawSeedPacket(g, aChosenSeed.mX, aChosenSeed.mY, aChosenSeed.mSeedType, aChosenSeed.mImitaterType, 0, 255, true, false, mIsZombieChooser, true);
-    //                DrawPacket(g, aChosenSeed.mX, aChosenSeed.mX, aChosenSeed.mSeedType, SeedType::SEED_NONE, 0, 255, &white, true, true);
-    //            }
-    //        }
-    //        return;
-    //    }
+    // DrawPacket(g, aChosenSeed.mX, aChosenSeed.mX, aChosenSeed.mSeedType, SeedType::SEED_NONE, 0, 255, &white, true, true);
+    // }
+    // }
+    // return;
+    // }
 
     old_SeedChooserScreen_Draw(this, g);
 }

@@ -83,10 +83,9 @@ public:
         return x * x + y * y;
     }
 
-    SexyVector2 Normalize() const
-    {
+    SexyVector2 Normalize() const {
         float aMag = Magnitude();
-        return aMag!=0 ? (*this)/aMag : *this;
+        return aMag != 0 ? (*this) / aMag : *this;
     }
 };
 

@@ -67,14 +67,14 @@ void CutScene::Update() {
                         seedBank->mShopSeedPackets[i] = seedBank2->mShopSeedPackets[i];
                     }
 
-//                    seedBank2->~SeedBank();
-//                    mApp->mBoard->mSeedBank2 = nullptr;
+                    // seedBank2->~SeedBank();
+                    // mApp->mBoard->mSeedBank2 = nullptr;
                     mApp->SetSecondPlayer(1);
                     mApp->mBoard->mGamepadControls2->mPlayerIndex2 = 1;
                     for (int i = 0; i < seedBank->mNumPackets; ++i) {
                         seedBank->mSeedPackets[i].mSeedBank = seedBank;
                     }
-//                    mApp->mBoard->mSeedBank2 = seedBank;
+                    // mApp->mBoard->mSeedBank2 = seedBank;
                 }
             }
             return;

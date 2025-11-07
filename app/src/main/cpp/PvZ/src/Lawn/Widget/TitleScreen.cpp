@@ -25,19 +25,19 @@
 
 void TitleScreen_Draw(TitleScreen *titleScreen, Sexy::Graphics *graphics) {
     old_TitleScreen_Draw(titleScreen, graphics);
-    //    LOGD("%d",*Sexy_IMAGE_ESRB_RATING_Addr);
-    //    if (*Sexy_IMAGE_ESRB_RATING_Addr)
-    //    DrawImage(graphics,*Sexy_IMAGE_ESRB_RATING_Addr,0,0);
-    //    LOGD("draw");
-    //    int *q = nullptr;
-    //    q[1] = 1;
+    // LOGD("%d",*Sexy_IMAGE_ESRB_RATING_Addr);
+    // if (*Sexy_IMAGE_ESRB_RATING_Addr)
+    // DrawImage(graphics,*Sexy_IMAGE_ESRB_RATING_Addr,0,0);
+    // LOGD("draw");
+    // int *q = nullptr;
+    // q[1] = 1;
 }
 
 void TitleScreen_Update(TitleScreen *titleScreen) {
     old_TitleScreen_Update(titleScreen);
-    //    LOGD("Update");
-    //    int *q = nullptr;
-    //    q[1] = 1;
+    // LOGD("Update");
+    // int *q = nullptr;
+    // q[1] = 1;
 }
 
 void TitleScreen_SwitchState(TitleScreen *titleScreen, TitleScreen::TitleState state, int duration) {

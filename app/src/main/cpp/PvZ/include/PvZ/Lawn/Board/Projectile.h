@@ -52,7 +52,7 @@ public:
     float mAccZ;                    // 22
     float mShadowY;                 // 23
     bool mDead;                     // 96
-                                    //    short mNewProjectileLastX; // 在对齐空隙新增成员，98 ~ 99
+                                    // short mNewProjectileLastX; // 在对齐空隙新增成员，98 ~ 99
     int mAnimTicksPerFrame;         // 25
     ProjectileMotion mMotionType;   // 26
     ProjectileType mProjectileType; // 27
@@ -61,7 +61,7 @@ public:
     float mRotation;                // 30
     float mRotationSpeed;           // 31
     bool mOnHighGround;             // 128
-                                    //    short mNewProjectileLastY; // 在对齐空隙新增成员，130 ~ 131
+                                    // short mNewProjectileLastY; // 在对齐空隙新增成员，130 ~ 131
     int mDamageRangeFlags;          // 33
     int mHitTorchwoodGridX;         // 34
     AttachmentID mAttachmentID;     // 35
@@ -104,7 +104,7 @@ public:
     bool PeaAboutToHitTorchwood();
     Zombie *FindCollisionTarget();
     void Draw(Sexy::Graphics *g);
-    void DrawShadow(Sexy::Graphics* g);
+    void DrawShadow(Sexy::Graphics *g);
 };
 
 /***************************************************************************************************************/

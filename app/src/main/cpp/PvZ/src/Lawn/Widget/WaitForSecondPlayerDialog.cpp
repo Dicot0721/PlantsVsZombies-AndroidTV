@@ -24,23 +24,22 @@
 #include <arpa/inet.h>
 #include <asm-generic/fcntl.h>
 #include <fcntl.h>
+#include <ifaddrs.h>
 #include <linux/in.h>
+#include <net/if.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sys/endian.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include <netinet/tcp.h>
-#include <ifaddrs.h>
-#include <net/if.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>
 
 using namespace Sexy;
 
 void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(this, theApp);
 
-    //    GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
-    //    GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
+    // GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
+    // GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
 
     // 解决此Dialog显示时背景僵尸全部聚集、且草丛大块空缺的问题
     if (theApp->mBoard != nullptr) {
@@ -98,11 +97,11 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
         g->DrawString(str, 230, 150);
 
         if (tcpPort != 0) {
-            pvzstl::string str1 = StrFormat("网口:%s PORT:%d",ifname.c_str(), tcpPort);
+            pvzstl::string str1 = StrFormat("网口:%s PORT:%d", ifname.c_str(), tcpPort);
             g->DrawString(str1, 260, 200);
         }
 
-        pvzstl::string str2 = udpBroadcastSocket >= 0 ? StrFormat("房间可被查找") : StrFormat("房间不可查找") ;
+        pvzstl::string str2 = udpBroadcastSocket >= 0 ? StrFormat("房间可被查找") : StrFormat("房间不可查找");
         g->DrawString(str2, 260, 250);
 
         pvzstl::string str3 = tcpClientSocket == -1 ? StrFormat("对方未加入...") : StrFormat("对方已加入！");
@@ -128,7 +127,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
 
 
 void WaitForSecondPlayerDialog::Update() {
-    //    mJoinButton->mDisabled = server_count == 0;
+    // mJoinButton->mDisabled = server_count == 0;
 
     if (!mIsCreatingRoom && !mIsJoiningRoom) {
         mJoinButton->mDisabled = scanned_server_count == 0;
@@ -157,10 +156,10 @@ void WaitForSecondPlayerDialog::Update() {
         while (true) {
             ssize_t n = recv(tcpClientSocket, buf, sizeof(buf), MSG_DONTWAIT);
             if (n > 0) {
-//                buf[n] = '\0'; // 确保字符串结束
-//                LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
+                // buf[n] = '\0'; // 确保字符串结束
+                // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
 
-                 HandleTcpClientMessage(buf, n);
+                HandleTcpClientMessage(buf, n);
             } else if (n == 0) {
                 // 对端关闭连接（收到FIN）
                 LOG_DEBUG("[TCP] 对方关闭连接");
@@ -186,51 +185,50 @@ void WaitForSecondPlayerDialog::Update() {
 
     if (mIsJoiningRoom) {
         if (tcp_connected) {
-                char buf[1024];
-                while (true) {
-                    ssize_t n = recv(tcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);
-                    if (n > 0) {
-//                        buf[n] = '\0'; // 确保字符串结束
-//                        LOG_DEBUG("[TCP] 收到来自Server的数据: %s", buf);
-                        HandleTcpServerMessage(buf, n);
+            char buf[1024];
+            while (true) {
+                ssize_t n = recv(tcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);
+                if (n > 0) {
+                    // buf[n] = '\0'; // 确保字符串结束
+                    // LOG_DEBUG("[TCP] 收到来自Server的数据: %s", buf);
+                    HandleTcpServerMessage(buf, n);
 
-                    } else if (n == 0) {
-                        // 对端关闭连接（收到FIN）
-                        LOG_DEBUG("[TCP] 对方关闭连接");
+                } else if (n == 0) {
+                    // 对端关闭连接（收到FIN）
+                    LOG_DEBUG("[TCP] 对方关闭连接");
+                    close(tcpServerSocket);
+                    tcpServerSocket = -1;
+                    tcp_connecting = false;
+                    tcp_connected = false;
+                    break;
+                } else {
+                    if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                        // 没有更多数据可读，正常退出
+                        break;
+                    } else if (errno == EINTR) {
+                        // 被信号中断，重试
+                        continue;
+                    } else {
+                        LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
                         close(tcpServerSocket);
                         tcpServerSocket = -1;
                         tcp_connecting = false;
                         tcp_connected = false;
                         break;
-                    } else {
-                        if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                            // 没有更多数据可读，正常退出
-                            break;
-                        } else if (errno == EINTR) {
-                            // 被信号中断，重试
-                            continue;
-                        } else {
-                            LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
-                            close(tcpServerSocket);
-                            tcpServerSocket = -1;
-                            tcp_connecting = false;
-                            tcp_connected = false;
-                            break;
-                        }
                     }
                 }
+            }
         } else {
             TryTcpConnect();
         }
     }
 }
 
-void WaitForSecondPlayerDialog::HandleTcpClientMessage(void* buf,ssize_t bufSize) {
-
+void WaitForSecondPlayerDialog::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
 }
 
-void WaitForSecondPlayerDialog::HandleTcpServerMessage(void* buf,ssize_t bufSize) {
-    BaseEvent* event = (BaseEvent *)buf;
+void WaitForSecondPlayerDialog::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
+    BaseEvent *event = (BaseEvent *)buf;
     switch (event->type) {
         case EVENT_START_GAME:
             GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
@@ -276,12 +274,13 @@ void WaitForSecondPlayerDialog::CloseUdpScanSocket() {
         close(udpScanSocket);
         udpScanSocket = -1;
     }
-    //    scanned_server_count = 0;
+    // scanned_server_count = 0;
 }
 
-bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in& out_bcast, std::string* out_ifname) {
+bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in &out_bcast, std::string *out_ifname) {
     int fd = socket(AF_INET, SOCK_DGRAM, 0);
-    if (fd < 0) return false;
+    if (fd < 0)
+        return false;
 
     struct ifconf ifc;
     char buf[1024];
@@ -292,8 +291,8 @@ bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in& out_bcast, std::
         return false;
     }
 
-    struct ifreq* it = (struct ifreq*)buf;
-    struct ifreq* end = (struct ifreq*)(buf + ifc.ifc_len);
+    struct ifreq *it = (struct ifreq *)buf;
+    struct ifreq *end = (struct ifreq *)(buf + ifc.ifc_len);
 
     bool found_wifi = false;
     bool found_other = false;
@@ -314,14 +313,12 @@ bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in& out_bcast, std::
 
         // 获取广播地址
         if (ioctl(fd, SIOCGIFBRDADDR, &ifr) == 0) {
-            struct sockaddr_in* sin = (struct sockaddr_in*)&ifr.ifr_broadaddr;
+            struct sockaddr_in *sin = (struct sockaddr_in *)&ifr.ifr_broadaddr;
             if (sin->sin_family != AF_INET)
                 continue;
 
             // ✅ Wi-Fi / 热点接口优先（wlan*, ap*, en*）
-            if (strncasecmp(ifr.ifr_name, "wlan", 4) == 0 ||
-                strncasecmp(ifr.ifr_name, "ap", 2) == 0 ||
-                strncasecmp(ifr.ifr_name, "en", 2) == 0) {
+            if (strncasecmp(ifr.ifr_name, "wlan", 4) == 0 || strncasecmp(ifr.ifr_name, "ap", 2) == 0 || strncasecmp(ifr.ifr_name, "en", 2) == 0) {
                 wifi_bcast = *sin;
                 wifi_if = ifr.ifr_name;
                 found_wifi = true;
@@ -342,11 +339,13 @@ bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in& out_bcast, std::
 
     if (found_wifi) {
         out_bcast = wifi_bcast;
-        if (out_ifname) *out_ifname = wifi_if;
+        if (out_ifname)
+            *out_ifname = wifi_if;
         return true;
     } else if (found_other) {
         out_bcast = other_bcast;
-        if (out_ifname) *out_ifname = other_if;
+        if (out_ifname)
+            *out_ifname = other_if;
         return true;
     }
 
@@ -387,7 +386,7 @@ void WaitForSecondPlayerDialog::CreateRoom() {
     getsockname(tcpListenSocket, (struct sockaddr *)&addr, &addr_len);
     tcpPort = ntohs(addr.sin_port);
 
-    //    LOGD("TCP server listening on port %d...\n", tcpPort);
+    // LOGD("TCP server listening on port %d...\n", tcpPort);
 
     // 2. 创建UDP广播socket
     udpBroadcastSocket = socket(AF_INET, SOCK_DGRAM, 0);
@@ -494,7 +493,7 @@ void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
         if (sent > 0)
             LOG_DEBUG("[Send] msg: '{}', num: {}\n", message, tcpPort);
         else if (!(errno == EAGAIN || errno == EWOULDBLOCK))
-            LOG_DEBUG("sendto ERROR {}",errno);
+            LOG_DEBUG("sendto ERROR {}", errno);
     }
 }
 
@@ -514,11 +513,15 @@ bool WaitForSecondPlayerDialog::CheckTcpAccept() {
         return false;
     }
     int one = 1;
-    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));   // 禁用 Nagle 算法
-    int on = 1;  setsockopt(tcpClientSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
-    int idle = 30;     setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPIDLE,  &idle, sizeof(idle));
-    int intvl = 10;    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
-    int cnt = 3;       setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT,   &cnt,  sizeof(cnt));
+    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one)); // 禁用 Nagle 算法
+    int on = 1;
+    setsockopt(tcpClientSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
+    int idle = 30;
+    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
+    int intvl = 10;
+    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
+    int cnt = 3;
+    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
 
     int flags = fcntl(tcpClientSocket, F_GETFL, 0);
     fcntl(tcpClientSocket, F_SETFL, flags | O_NONBLOCK);
@@ -646,11 +649,15 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
         } else {
             // connect立即成功（本地可能直接成功）
             int one = 1;
-            setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));   // 禁用 Nagle 算法
-            int on = 1;  setsockopt(tcpClientSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
-            int idle = 30;     setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPIDLE,  &idle, sizeof(idle));
-            int intvl = 10;    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
-            int cnt = 3;       setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT,   &cnt,  sizeof(cnt));
+            setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one)); // 禁用 Nagle 算法
+            int on = 1;
+            setsockopt(tcpClientSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
+            int idle = 30;
+            setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
+            int intvl = 10;
+            setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
+            int cnt = 3;
+            setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
             tcp_connected = true;
             tcp_connecting = false;
             LOG_DEBUG("[Client] Connected immediately to {}:{}\n", target->ip, target->tcp_port);
@@ -679,11 +686,15 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
 
             if (err == 0) {
                 int one = 1;
-                setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));   // 禁用 Nagle 算法
-                int on = 1;  setsockopt(tcpClientSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
-                int idle = 30;     setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPIDLE,  &idle, sizeof(idle));
-                int intvl = 10;    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
-                int cnt = 3;       setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT,   &cnt,  sizeof(cnt));
+                setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one)); // 禁用 Nagle 算法
+                int on = 1;
+                setsockopt(tcpClientSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
+                int idle = 30;
+                setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
+                int intvl = 10;
+                setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
+                int cnt = 3;
+                setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
                 tcp_connected = true;
                 tcp_connecting = false;
                 LOG_DEBUG("[Client] Connected to {}:{}\n", target->ip, target->tcp_port);

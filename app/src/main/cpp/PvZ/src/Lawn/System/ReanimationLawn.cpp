@@ -37,9 +37,9 @@ void ReanimatorCache::LoadCachedImages() {
 void ReanimatorCache::UpdateReanimationForVariation(Reanimation *theReanim, DrawVariation theDrawVariation) {
     // 修复商店花盆不显示、修复花园花盆不显示、修复花园手套和推车预览不显示。原理就是Reanimation::Update。
     old_ReanimatorCache_UpdateReanimationForVariation(this, theReanim, theDrawVariation);
-    //    Reanimation_SetAnimRate(theReanim, 0.0f);
+    // Reanimation_SetAnimRate(theReanim, 0.0f);
     theReanim->Update();
-    //    Reanimation_SetAnimRate(theReanim, tmp);
+    // Reanimation_SetAnimRate(theReanim, tmp);
 }
 
 void ReanimatorCache::GetPlantImageSize(SeedType theSeedType, int &theOffsetX, int &theOffsetY, int &theWidth, int &theHeight) {
@@ -105,14 +105,14 @@ void ReanimatorCache::DrawCachedPlant(Graphics *graphics, float thePosX, float t
         float xScaled = graphics->mScaleX;
         float yScaled = graphics->mScaleY;
         // 修复关闭3D加速后SeedPacket上不显示植物
-        //        if (Sexy_SexyAppBase_Is3DAccelerated(a1->mApp)) {
+        // if (Sexy_SexyAppBase_Is3DAccelerated(a1->mApp)) {
         TodDrawImageScaledF(graphics, image, thePosX + xScaled * a, thePosY + yScaled * b, xScaled, yScaled);
-        //        } else {
-        //            if (xScaled == 1.0 && yScaled == 1.0) {
-        //                DrawImage(graphics, image, thePosX + a, thePosY + b);
-        //                return;
-        //            }
-        //        }
+        // } else {
+        // if (xScaled == 1.0 && yScaled == 1.0) {
+        // DrawImage(graphics, image, thePosX + a, thePosY + b);
+        // return;
+        // }
+        // }
     } else {
         return old_ReanimatorCache_DrawCachedPlant(this, graphics, thePosX, thePosY, theSeedType, theDrawVariation);
     }
@@ -130,7 +130,7 @@ void ReanimatorCache::DrawCachedZombie(Graphics *g, float thePosX, float thePosY
     }
 }
 
-MemoryImage*ReanimatorCache::MakeBlankMemoryImage(int theWidth, int theHeight) {
+MemoryImage *ReanimatorCache::MakeBlankMemoryImage(int theWidth, int theHeight) {
     MemoryImage *aImage = new MemoryImage();
 
     int aBitsCount = theWidth * theHeight;
@@ -242,19 +242,19 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
 
             ReanimationType aHeadType = ReanimationType::REANIM_WALLNUT;
 
-        Reanimation *aHeadReanim = mApp->AddReanimation(0, 0, 0, aHeadType);
-        aHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
+            Reanimation *aHeadReanim = mApp->AddReanimation(0, 0, 0, aHeadType);
+            aHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
 
-        ReanimatorTrackInstance *aTrackInstance = aReanim->GetTrackInstanceByName("Zombie_body");
-        AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aHeadReanim, 0.0f, 0.0f);
-        aReanim->mFrameBasePose = 0;
+            ReanimatorTrackInstance *aTrackInstance = aReanim->GetTrackInstanceByName("Zombie_body");
+            AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aHeadReanim, 0.0f, 0.0f);
+            aReanim->mFrameBasePose = 0;
 
-        TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 50.0f, 0.0f, 0.2f, -0.8f, 0.8f);
-        aHeadReanim->mColorOverride = Color(255, 64, 64);
+            TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 50.0f, 0.0f, 0.2f, -0.8f, 0.8f);
+            aHeadReanim->mColorOverride = Color(255, 64, 64);
 
-        SexyTransform2D aOverlayMatrix;
-        aReanim->GetAttachmentOverlayMatrix(aReanim->FindTrackIndex("Zombie_body"), aOverlayMatrix);
-        AttachmentUpdateAndSetMatrix(aTrackInstance->mAttachmentID, aOverlayMatrix);
+            SexyTransform2D aOverlayMatrix;
+            aReanim->GetAttachmentOverlayMatrix(aReanim->FindTrackIndex("Zombie_body"), aOverlayMatrix);
+            AttachmentUpdateAndSetMatrix(aTrackInstance->mAttachmentID, aOverlayMatrix);
 
             aReanim->Update();
             aReanim->Draw(&aMemoryGraphics);

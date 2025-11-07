@@ -20,7 +20,7 @@
 #ifndef HOMURA_FORMATION_H
 #define HOMURA_FORMATION_H
 
-//  常用的植物ID：
+// 常用的植物ID：
 // 16 荷叶
 // 14 冰菇
 // 42 曾哥

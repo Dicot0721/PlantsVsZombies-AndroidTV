@@ -224,9 +224,9 @@ public:
     void DrawMagnetItems(Sexy::Graphics *g) {
         reinterpret_cast<void (*)(Plant *, Sexy::Graphics *)>(Plant_DrawMagnetItemsAddr)(this, g);
     }
-//    Zombie *FindTargetZombie(int theRow, PlantWeapon thePlantWeapon) {
-//        return reinterpret_cast<Zombie *(*)(Plant *, int, PlantWeapon)>(Plant_FindTargetZombieAddr)(this, theRow, thePlantWeapon);
-//    }
+    // Zombie *FindTargetZombie(int theRow, PlantWeapon thePlantWeapon) {
+    // return reinterpret_cast<Zombie *(*)(Plant *, int, PlantWeapon)>(Plant_FindTargetZombieAddr)(this, theRow, thePlantWeapon);
+    // }
 
     void PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int a6);
     void Update();
@@ -320,7 +320,7 @@ inline Zombie *(*old_Plant_FindTargetZombie)(Plant *, int theRow, PlantWeapon th
 
 inline void (*old_Plant_UpdateProductionPlant)(Plant *);
 
-inline void (*old_Plant_Fire)(Plant *,Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *gridItem);
+inline void (*old_Plant_Fire)(Plant *, Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *gridItem);
 
 // inline void (*old_Plant_CobCannonFire)(Plant* plant, int x, int y);
 

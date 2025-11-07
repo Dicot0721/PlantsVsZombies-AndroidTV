@@ -83,7 +83,7 @@ void SeedPacket::UpdateSelected() {
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS || mApp->IsCoopMode()) {
         // 如果是双人模式关卡(对战或结盟)，则使用下面的逻辑来更新当前选中的卡片。用于修复1P和2P的卡片选择框同时出现在两个人各自的植物栏里(也就是植物栏一共出现四个选择框)的问题。
 
-        GamepadControls* theGamepad = GetPlayerIndex() ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1;
+        GamepadControls *theGamepad = GetPlayerIndex() ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1;
 
         mSelected = theGamepad->mSelectedSeedIndex == mIndex;
         mSelectedBy2P = theGamepad->mPlayerIndex1 == 1 && theGamepad->mSelectedSeedIndex == mIndex;
@@ -116,7 +116,7 @@ void SeedPacket::Draw(Sexy::Graphics *g) {
 }
 
 void SeedPacket_MouseDown(SeedPacket *seedPacket, int x, int y, int c, int unk) {
-    //    LOGD("SeedPacket_MouseDown:%d %d %d %d", x, y, c, unk);
+    // LOGD("SeedPacket_MouseDown:%d %d %d %d", x, y, c, unk);
     old_SeedPacket_MouseDown(seedPacket, x, y, c, unk);
 }
 
@@ -552,9 +552,9 @@ void DrawSeedPacket(Sexy::Graphics *g,
 
 
 void SeedPacket::WasPlanted(int player) {
-    old_SeedPacket_WasPlanted(this,player);
+    old_SeedPacket_WasPlanted(this, player);
     if (tcpClientSocket >= 0) {
         TwoCharDataEvent event = {{EventType::EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED}, (unsigned char)mIndex, mSeedBank == mBoard->mSeedBank1};
-        send(tcpClientSocket,&event,sizeof (TwoCharDataEvent),0);
+        send(tcpClientSocket, &event, sizeof(TwoCharDataEvent), 0);
     }
 }

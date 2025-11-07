@@ -24,11 +24,16 @@
 #include "PvZ/SexyAppFramework/Widget/Dialog.h"
 #include "PvZ/Symbols.h"
 
-enum StoreScreenTouchState { Prev, Next, Back, None };
+enum StoreScreenTouchState { Prev,
+                             Next,
+                             Back,
+                             None };
 
 class StoreScreen : public Sexy::Dialog {
 private:
-    enum { StoreScreen_Back = 100, StoreScreen_Prev = 101, StoreScreen_Next = 102 };
+    enum { StoreScreen_Back = 100,
+           StoreScreen_Prev = 101,
+           StoreScreen_Next = 102 };
 
 public:
     LawnApp *mApp;                    // 184

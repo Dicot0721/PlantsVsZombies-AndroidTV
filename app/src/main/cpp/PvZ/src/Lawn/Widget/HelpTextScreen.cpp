@@ -66,9 +66,9 @@ void HelpTextScreen_AddedToManager(HelpTextScreen *helpTextScreen, int *manager)
 }
 
 void HelpTextScreen::MouseDown(int x, int y, int theClickCount) {
-    //    LOGD("D%d %d", x, y);
-    //    prevPageButtonX = x;
-    //    prevPageButtonY = y;
+    // LOGD("D%d %d", x, y);
+    // prevPageButtonX = x;
+    // prevPageButtonY = y;
 
     int imageWidth = (*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr)->GetCelWidth();
     int imageHeight = (*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr)->GetHeight();

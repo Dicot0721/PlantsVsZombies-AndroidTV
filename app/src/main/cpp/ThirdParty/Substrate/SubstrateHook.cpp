@@ -25,9 +25,9 @@
 
 #include <sys/mman.h>
 
-#define _trace()                                                                                                                                                                                       \
-    do {                                                                                                                                                                                               \
-        MSLog(MSLogLevelNotice, "_trace(%u)", __LINE__);                                                                                                                                               \
+#define _trace()                                         \
+    do {                                                 \
+        MSLog(MSLogLevelNotice, "_trace(%u)", __LINE__); \
     } while (false)
 
 #if defined(__i386__) || defined(__x86_64__)

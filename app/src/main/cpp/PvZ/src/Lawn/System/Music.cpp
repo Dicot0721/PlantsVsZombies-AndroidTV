@@ -44,7 +44,7 @@ void __Music::PlayFromOffset(MusicFile theMusicFile, int theOffset, double theVo
     mMusicInterface->StopMusic(theMusicFile);
     SetupMusicFileForTune(theMusicFile, mCurMusicTune);
     mMusicInterface->PlayMusic(theMusicFile, theOffset, theMusicFile == MusicFile::MUSIC_FILE_CREDITS_ZOMBIES_ON_YOUR_LAWN);
-    //    Sexy_AudiereMusicInterface_SetSongVolume(music->mMusicInterface, theMusicFile, theVolume);
+    // Sexy_AudiereMusicInterface_SetSongVolume(music->mMusicInterface, theMusicFile, theVolume);
 
     if (theMusicFile == MusicFile::MUSIC_FILE_MAIN_MUSIC) {
         // 加90ms静音，用于去除莫名其妙的开头鼓点声

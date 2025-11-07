@@ -48,12 +48,10 @@ public:
 
 class TodParticleHolder {
 public:
-
 };
 
 class TodParticleEmitter {
 public:
-
 };
 
 class TodParticleSystem {

@@ -41,35 +41,35 @@ void StoreScreen::Update() {
 
 void StoreScreen::SetupPage() {
     old_StoreScreen_SetupPage(this);
-    //    for (int i = 0; i < 8; ++i) {
-    //        a::a StoreItemType = StoreScreen_GetStoreItemType(a, i);
-    //        if (StoreScreen_IsPottedPlant(a, StoreItemType)) {
-    //            Sexy::Image *theImage = *((Sexy::Image **) a + i + 217);
-    //            Sexy::Graphics g;
-    //            Sexy_Graphics_Graphics2(&g, theImage);
-    //            Sexy_Graphics_ClearRect(&g, 0, 0, 100, 70);
-    //            Sexy_Graphics_Translate(&g, -10, -50);
-    //            DrawImage(&g, addonImages.seed_cached_52, 0, 0);
-    //            Sexy_Graphics_Delete2(&g);
-    //        }
-    //    }
+    // for (int i = 0; i < 8; ++i) {
+    // a::a StoreItemType = StoreScreen_GetStoreItemType(a, i);
+    // if (StoreScreen_IsPottedPlant(a, StoreItemType)) {
+    // Sexy::Image *theImage = *((Sexy::Image **) a + i + 217);
+    // Sexy::Graphics g;
+    // Sexy_Graphics_Graphics2(&g, theImage);
+    // Sexy_Graphics_ClearRect(&g, 0, 0, 100, 70);
+    // Sexy_Graphics_Translate(&g, -10, -50);
+    // DrawImage(&g, addonImages.seed_cached_52, 0, 0);
+    // Sexy_Graphics_Delete2(&g);
+    // }
+    // }
 }
 
 void StoreScreen::DrawItem(Sexy::Graphics *g, int a3, StoreItem theStoreItem) {
-    //    if (StoreScreen_IsItemUnavailable(a1, item)) return;
-    //    if (StoreScreen_IsPottedPlant(a1, item)){
-    //        int theX = 0;
-    //        int theY = 0;
-    //        int theCount = 0;
-    //        Sexy::Image *theImage = nullptr;
-    //        StoreScreen_GetStoreItemInfo(a1, 0, item, &theImage, &theX, &theY, &theCount);
-    //        DrawImage(thePlayerIndex,addonImages.seed_cached_52,theX,theY);
-    //    }
+    // if (StoreScreen_IsItemUnavailable(a1, item)) return;
+    // if (StoreScreen_IsPottedPlant(a1, item)){
+    // int theX = 0;
+    // int theY = 0;
+    // int theCount = 0;
+    // Sexy::Image *theImage = nullptr;
+    // StoreScreen_GetStoreItemInfo(a1, 0, item, &theImage, &theX, &theY, &theCount);
+    // DrawImage(thePlayerIndex,addonImages.seed_cached_52,theX,theY);
+    // }
     old_StoreScreen_DrawItem(this, g, a3, theStoreItem);
 }
 
 void StoreScreen::ButtonDepress(int theId) {
-    //    if (!showHouse) return old_StoreScreen_ButtonDepress(storeScreen, buttonId);
+    // if (!showHouse) return old_StoreScreen_ButtonDepress(storeScreen, buttonId);
     StorePages newPageIndex;
     switch (theId) {
         case StoreScreen::StoreScreen_Back:
@@ -78,7 +78,7 @@ void StoreScreen::ButtonDepress(int theId) {
         case StoreScreen::StoreScreen_Prev:
             mHatchTimer = 50;
             unk197 = 1;
-            mApp->PlaySample( *Sexy_SOUND_HATCHBACK_CLOSE_Addr);
+            mApp->PlaySample(*Sexy_SOUND_HATCHBACK_CLOSE_Addr);
             mBubbleCountDown = 0;
             mApp->CrazyDaveStopTalking();
             EnableButtons(false);
@@ -98,7 +98,7 @@ void StoreScreen::ButtonDepress(int theId) {
         case StoreScreen::StoreScreen_Next:
             mHatchTimer = 50;
             unk197 = 2;
-            mApp->PlaySample( *Sexy_SOUND_HATCHBACK_CLOSE_Addr);
+            mApp->PlaySample(*Sexy_SOUND_HATCHBACK_CLOSE_Addr);
             mBubbleCountDown = 0;
             mApp->CrazyDaveStopTalking();
             EnableButtons(false);
@@ -202,7 +202,7 @@ void StoreScreen::MouseDown(int x, int y, int theClickCount) {
         }
     }
 
-    //    StoreScreen_PurchaseItem(storeScreen, a::STORE_ITEM_BLUEPRINT_CHANGE);
+    // StoreScreen_PurchaseItem(storeScreen, a::STORE_ITEM_BLUEPRINT_CHANGE);
 
     for (int i = 0; i < 8; i++) {
         StoreItem storeItemType = GetStoreItemType(i);
@@ -219,10 +219,10 @@ void StoreScreen::MouseDown(int x, int y, int theClickCount) {
                 theImageHeight = theImage->GetHeight();
             }
 
-            //            LOGD("i:%d storeItemType:%d theX:%d theY:%d x:%d y:%d theImageWidth:%d theImageHeight:%d", i, storeItemType, theX, theY, x, y, theImageWidth,
-            //                 theImageHeight);
-            //            int theImageWidth = 80;
-            //            int theImageHeight = 80;
+            // LOGD("i:%d storeItemType:%d theX:%d theY:%d x:%d y:%d theImageWidth:%d theImageHeight:%d", i, storeItemType, theX, theY, x, y, theImageWidth,
+            // theImageHeight);
+            // int theImageWidth = 80;
+            // int theImageHeight = 80;
             Sexy::Rect itemRect = {theX - theImageWidth / 2, theY - theImageHeight, theImageWidth, theImageHeight};
             if (TRect_Contains(&itemRect, x, y)) {
                 if (mSelectedStoreItemType != storeItemType) {

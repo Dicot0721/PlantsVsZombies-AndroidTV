@@ -32,14 +32,14 @@ int AGVideoOpen(const char *videoPath) {
     jobject videoPathUTF = env->functions->NewStringUTF(env, videoPath);
     jboolean result = env->CallBooleanMethod(activity, methodID, videoPathUTF);
     env->DeleteLocalRef(cls);
-    //    env->DeleteLocalRef(activity);
+    // env->DeleteLocalRef(activity);
     env->DeleteLocalRef(videoPathUTF);
     LOG_DEBUG("activity: {}, methodID {}", (void *)activity, (void *)methodID);
     return result ? 0 : -1;
 }
 
 bool AGVideoIsPlaying() {
-    //    LOGD("AGVideoIsPlaying");
+    // LOGD("AGVideoIsPlaying");
     Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
     JNIEnv *env = bridgeApp->getJNIEnv();
     jobject activity = bridgeApp->mNativeApp->getActivity();
@@ -47,7 +47,7 @@ bool AGVideoIsPlaying() {
     jmethodID methodID = env->GetMethodID(cls, "videoIsPlaying", "()Z");
     jboolean result = env->CallBooleanMethod(activity, methodID);
     env->DeleteLocalRef(cls);
-    //    env->DeleteLocalRef(activity);
+    // env->DeleteLocalRef(activity);
     return result;
 }
 

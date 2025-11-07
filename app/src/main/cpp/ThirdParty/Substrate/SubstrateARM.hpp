@@ -22,9 +22,43 @@
 #ifndef _SUBSTRATE_ARM_HPP_
 #define _SUBSTRATE_ARM_HPP_
 
-enum A$r { A$r0, A$r1, A$r2, A$r3, A$r4, A$r5, A$r6, A$r7, A$r8, A$r9, A$r10, A$r11, A$r12, A$r13, A$r14, A$r15, A$sp = A$r13, A$lr = A$r14, A$pc = A$r15 };
+enum A$r { A$r0,
+           A$r1,
+           A$r2,
+           A$r3,
+           A$r4,
+           A$r5,
+           A$r6,
+           A$r7,
+           A$r8,
+           A$r9,
+           A$r10,
+           A$r11,
+           A$r12,
+           A$r13,
+           A$r14,
+           A$r15,
+           A$sp = A$r13,
+           A$lr = A$r14,
+           A$pc = A$r15 };
 
-enum A$c { A$eq, A$ne, A$cs, A$cc, A$mi, A$pl, A$vs, A$vc, A$hi, A$ls, A$ge, A$lt, A$gt, A$le, A$al, A$hs = A$cs, A$lo = A$cc };
+enum A$c { A$eq,
+           A$ne,
+           A$cs,
+           A$cc,
+           A$mi,
+           A$pl,
+           A$vs,
+           A$vc,
+           A$hi,
+           A$ls,
+           A$ge,
+           A$lt,
+           A$gt,
+           A$le,
+           A$al,
+           A$hs = A$cs,
+           A$lo = A$cc };
 
 #define A$mrs_rm_cpsr(rd) /* mrs rd, cpsr */ (0xe10f0000 | ((rd) << 12))
 #define A$msr_cpsr_f_rm(rm) /* msr cpsr_f, rm */ (0xe128f000 | (rm))

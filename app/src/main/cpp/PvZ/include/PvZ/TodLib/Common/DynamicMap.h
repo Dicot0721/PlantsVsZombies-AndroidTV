@@ -11,14 +11,16 @@ public:
 
     bool Lookup(short x, short& out) const {
         auto it = mapping_.find(x);
-        if (it == mapping_.end()) return false;
+        if (it == mapping_.end())
+            return false;
         out = it->second;
         return true;
     }
 
     short Lookup(short x) {
         auto it = mapping_.find(x);
-        if (it == mapping_.end()) return it->second;
+        if (it == mapping_.end())
+            return it->second;
         return 0;
     }
 

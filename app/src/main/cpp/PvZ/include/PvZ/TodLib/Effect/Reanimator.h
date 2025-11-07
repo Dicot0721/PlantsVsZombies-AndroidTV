@@ -96,10 +96,10 @@ enum {
 
 class ReanimationHolder {
 public:
-    //    struct ReanimationLists {
-    //    public:
-    //        Reanimation list[1024];
-    //    }; // 225280个整数
+    // struct ReanimationLists {
+    // public:
+    // Reanimation list[1024];
+    // }; // 225280个整数
 public:
     DataArray<Reanimation> mReanimations; // 0
     int unk1;                             // 1
@@ -265,7 +265,7 @@ public:
         reinterpret_cast<void (*)(Reanimation *, const char *, int)>(Reanimation_AssignRenderGroupToPrefixAddr)(this, theTrackName, theRenderGroup);
     }
     void PropogateColorToAttachments() {
-        reinterpret_cast<void(*)(Reanimation *)>(Reanimation_PropogateColorToAttachmentsAddr)(this);
+        reinterpret_cast<void (*)(Reanimation *)>(Reanimation_PropogateColorToAttachmentsAddr)(this);
     }
 
     void Draw(Sexy::Graphics *g);

@@ -50,8 +50,7 @@ public:
     int mSize;
     TodAllocator* mpAllocator;
 
-    inline T RemoveHead()
-    {
+    inline T RemoveHead() {
         TodListNode<T>* aHead = mHead;
         TodListNode<T>* aSecNode = aHead->mNext;
         mHead = aSecNode;

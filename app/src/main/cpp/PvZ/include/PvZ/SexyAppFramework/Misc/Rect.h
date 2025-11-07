@@ -106,11 +106,11 @@ public:
         return (mX == theRect.mX) && (mY == theRect.mY) && (mWidth == theRect.mWidth) && (mHeight == theRect.mHeight);
     }
 
-    //        RECT					ToRECT() const
-    //        {
-    //            RECT aRect = {mX, mY, mX + mWidth, mY + mHeight};
-    //            return aRect;
-    //        }
+    // RECT					ToRECT() const
+    // {
+    // RECT aRect = {mX, mY, mX + mWidth, mY + mHeight};
+    // return aRect;
+    // }
 };
 
 using Rect = Sexy::TRect<int>;

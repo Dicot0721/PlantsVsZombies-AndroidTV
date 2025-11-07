@@ -46,10 +46,10 @@ public:
     int mTriangleCount;
     int mDrawMode;
 
-    //    TodTriangleGroup();
-    //    void                        DrawGroup(Sexy::Graphics* g);
-    //    void                        AddTriangle(Sexy::Graphics* g, Sexy::Image* theImage, const SexyMatrix3& theMatrix, const Rect& theClipRect, const Color& theColor, int theDrawMode, const Rect&
-    //    theSrcRect);
+    // TodTriangleGroup();
+    // void                        DrawGroup(Sexy::Graphics* g);
+    // void                        AddTriangle(Sexy::Graphics* g, Sexy::Image* theImage, const SexyMatrix3& theMatrix, const Rect& theClipRect, const Color& theColor, int theDrawMode, const Rect&
+    // theSrcRect);
 };
 
 class Reanimation;

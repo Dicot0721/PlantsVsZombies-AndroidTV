@@ -49,8 +49,8 @@ inline AttachEffect *AttachReanim(AttachmentID &theAttachmentID, Reanimation *th
     return reinterpret_cast<AttachEffect *(*)(AttachmentID &, Reanimation *, float, float)>(AttachReanimAddr)(theAttachmentID, theReanimation, theOffsetX, theOffsetY);
 }
 
-inline void AttachmentUpdateAndSetMatrix(AttachmentID& theAttachmentID, const Sexy::SexyTransform2D& theMatrix) {
-    reinterpret_cast<void(*)(AttachmentID&, const Sexy::SexyTransform2D&)>(AttachmentUpdateAndSetMatrixAddr)(theAttachmentID, theMatrix);
+inline void AttachmentUpdateAndSetMatrix(AttachmentID &theAttachmentID, const Sexy::SexyTransform2D &theMatrix) {
+    reinterpret_cast<void (*)(AttachmentID &, const Sexy::SexyTransform2D &)>(AttachmentUpdateAndSetMatrixAddr)(theAttachmentID, theMatrix);
 }
 
 inline void AttachmentDraw(AttachmentID theAttachmentID, Sexy::Graphics *g, bool theParentHidden) {
@@ -69,8 +69,8 @@ inline void AttachParticle(AttachmentID &theAttachmentID, TodParticleSystem *the
     reinterpret_cast<void (*)(AttachmentID &, TodParticleSystem *, float, float)>(AttachParticleAddr)(theAttachmentID, theParticleSystem, theOffsetX, theOffsetY);
 }
 
-inline void AttachmentDetachCrossFadeParticleType(AttachmentID& theAttachmentID, ParticleEffect theParticleEffect, const char* theCrossFadeName) {
-    reinterpret_cast<void (*)(AttachmentID &, ParticleEffect, const char*)>(AttachmentDetachCrossFadeParticleTypeAddr)(theAttachmentID, theParticleEffect, theCrossFadeName);
+inline void AttachmentDetachCrossFadeParticleType(AttachmentID &theAttachmentID, ParticleEffect theParticleEffect, const char *theCrossFadeName) {
+    reinterpret_cast<void (*)(AttachmentID &, ParticleEffect, const char *)>(AttachmentDetachCrossFadeParticleTypeAddr)(theAttachmentID, theParticleEffect, theCrossFadeName);
 }
 
 class AttachmentHolder {};

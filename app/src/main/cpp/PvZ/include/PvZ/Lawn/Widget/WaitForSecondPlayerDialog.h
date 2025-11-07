@@ -68,6 +68,7 @@ public:
     void CloseUdpScanSocket();
     void LeaveRoom();
     void ExitRoom();
+
 protected:
     friend void InitHookFunction();
 
@@ -104,13 +105,9 @@ inline struct sockaddr_in broadcast_addr;
 inline std::string ifname;
 
 
-
-
-
-
 // 客户端需要
 #define MAX_SERVERS 3
-#define UDP_TIMEOUT 3  // 超时时间为3秒
+#define UDP_TIMEOUT 3 // 超时时间为3秒
 #define NAME_LENGTH 256
 
 // 全局变量，用于保存发现的服务端IP和时间戳
@@ -118,7 +115,7 @@ typedef struct {
     char ip[INET_ADDRSTRLEN];
     int tcp_port;
     char name[NAME_LENGTH];
-    time_t last_seen;  // 记录最后一次收到广播的时间
+    time_t last_seen; // 记录最后一次收到广播的时间
 } server_info;
 
 
@@ -283,15 +280,14 @@ public:
 };
 
 
-
 inline server_info servers[MAX_SERVERS];
-inline int scanned_server_count = 0;  // 已发现的服务端数量
+inline int scanned_server_count = 0; // 已发现的服务端数量
 inline int udpScanSocket = -1;
 
 
 // 客户端TCP socket
 inline int tcpServerSocket = -1;
-inline bool tcp_connecting = false;  // 正在尝试连接
+inline bool tcp_connecting = false; // 正在尝试连接
 inline bool tcp_connected = false;
 
 

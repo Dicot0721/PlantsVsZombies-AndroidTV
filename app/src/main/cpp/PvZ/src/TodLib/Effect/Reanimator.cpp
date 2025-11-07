@@ -90,8 +90,8 @@ void Reanimation_SetImageDefinition(Reanimation *reanim, const char *trackName, 
     // 和Reanimation_SetImageOrigin不一样的是，这个能对默认动画中没有贴图的生效。
     int theTrackIndex = reanim->FindTrackIndex(trackName);
     if (theTrackIndex != -1) {
-        //        ReanimatorFrameTime theFrameTime;
-        //        Reanimation_GetFrameTime(reanim, &theFrameTime);
+        // ReanimatorFrameTime theFrameTime;
+        // Reanimation_GetFrameTime(reanim, &theFrameTime);
         ReanimatorTrack *reanimatorTrack = reanim->mDefinition->mTracks + theTrackIndex;
         int mTransformCount = reanimatorTrack->mTransformCount;
         for (int i = 0; i < mTransformCount; ++i) {
@@ -291,15 +291,15 @@ void Reanimation_GetZombatarTrackIndex(Reanimation *zombatarReanim, int *indexAr
         return;
     }
     const char *stringArray[] = {"hats", "eyeWear"};
-    //    char *stringArray[] = {"hats","hair","facialHair","accessories","eyeWear","tidBits"};
+    // char *stringArray[] = {"hats","hair","facialHair","accessories","eyeWear","tidBits"};
     ReanimatorTrack *mTracks = mDefinition->mTracks;
     for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < mTrackCount; ++j) {
             const char *mName = (mTracks + j)->mName;
-            //            LOGD("%s",mName);
+            // LOGD("%s",mName);
             if (strstr(mName, stringArray[i]) != nullptr) {
                 ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + j;
-                //                LOGD("%d",reanimatorTrackInstance->mRenderGroup);
+                // LOGD("%d",reanimatorTrackInstance->mRenderGroup);
                 if (reanimatorTrackInstance->mRenderGroup != -1) {
                     indexArray[i] = j;
                     break;
@@ -318,11 +318,11 @@ int Reanimation::GetZombatarHatTrackIndex() {
     std::regex pattern(R"(hats_\d{2})");
 
 
-    //    char *stringArray[] = {"hats","hair","facialHair","accessories","eyeWear","tidBits"};
+    // char *stringArray[] = {"hats","hair","facialHair","accessories","eyeWear","tidBits"};
     ReanimatorTrack *mTracks = mDefinition->mTracks;
     for (int j = 0; j < mTrackCount; ++j) {
         const char *mName = (mTracks + j)->mName;
-        //        LOGD("%s,%d",mName,std::regex_match(mName, pattern));
+        // LOGD("%s,%d",mName,std::regex_match(mName, pattern));
         if (std::regex_match(mName, pattern)) {
             ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + j;
             if (reanimatorTrackInstance->mRenderGroup != -1) {
@@ -343,7 +343,7 @@ int Reanimation::GetZombatarEyeWearTrackIndex() {
     ReanimatorTrack *mTracks = mDefinition->mTracks;
     for (int j = 0; j < mTrackCount; ++j) {
         const char *mName = (mTracks + j)->mName;
-        //        LOGD("%s,%d",mName,std::regex_match(mName, pattern));
+        // LOGD("%s,%d",mName,std::regex_match(mName, pattern));
         if (std::regex_match(mName, pattern)) {
             ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + j;
             if (reanimatorTrackInstance->mRenderGroup != -1) {

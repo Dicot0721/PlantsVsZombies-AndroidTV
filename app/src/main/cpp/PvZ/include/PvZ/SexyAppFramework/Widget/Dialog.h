@@ -66,8 +66,9 @@ public:
     // 大小184个整数
 
     int WaitForResult(bool unk) {
-      return reinterpret_cast<int (*)(__Dialog *, bool)>(Sexy_Dialog_WaitForResultAddr)(this, unk);
+        return reinterpret_cast<int (*)(__Dialog *, bool)>(Sexy_Dialog_WaitForResultAddr)(this, unk);
     }
+
 protected:
     __Dialog() = default;
     ~__Dialog() = default;

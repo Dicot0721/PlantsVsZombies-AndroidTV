@@ -600,7 +600,6 @@ inline void *Plant_UpdateProductionPlantAddr;
 inline void *Plant_FireAddr;
 
 
-
 inline void *Projectile_UpdateAddr;
 inline void *Projectile_UpdateNormalMotionAddr;
 inline void *Projectile_ProjectileInitializeAddr;
@@ -1191,7 +1190,7 @@ inline int *SOUND_BALLOON_POP;
 inline int *SOUND_BOING;
 inline int *SOUND_BUZZER;
 inline int *SOUND_TAP;
-}
+} // namespace Sexy
 
 inline Sexy::Image **Sexy_IMAGE_SEEDPACKETFLASH_Addr;
 inline Sexy::Image **Sexy_IMAGE_ALMANAC_GROUNDDAY_Addr;
@@ -1490,7 +1489,6 @@ inline bool GetFunctionAddr() {
     SyncReanimationAddr = dlsym(handle, "_Z15SyncReanimationP5BoardP11ReanimationP15SaveGameContext");
     LawnSaveGameAddr = dlsym(handle, "_Z12LawnSaveGameP5BoardRKSs");
     LawnLoadGameAddr = dlsym(handle, "_Z12LawnLoadGameP5BoardP15SaveGameContext");
-
 
 
     CutScene_UpdateAddr = dlsym(handle, "_ZN8CutScene6UpdateEv");
@@ -1898,7 +1896,7 @@ inline bool GetFunctionAddr() {
 
 
     Projectile_UpdateAddr = dlsym(handle, "_ZN10Projectile6UpdateEv");
-    Projectile_UpdateNormalMotionAddr  = dlsym(handle, "_ZN10Projectile18UpdateNormalMotionEv");
+    Projectile_UpdateNormalMotionAddr = dlsym(handle, "_ZN10Projectile18UpdateNormalMotionEv");
     Projectile_ProjectileInitializeAddr = dlsym(handle, "_ZN10Projectile20ProjectileInitializeEiiii14ProjectileType");
     Projectile_ConvertToFireballAddr = dlsym(handle, "_ZN10Projectile17ConvertToFireballEi");
     Projectile_ConvertToPeaAddr = dlsym(handle, "_ZN10Projectile12ConvertToPeaEi");
@@ -1954,7 +1952,7 @@ inline bool GetFunctionAddr() {
     VSSetupMenu_PickRandomZombiesAddr = dlsym(handle, "_ZN11VSSetupMenu17PickRandomZombiesERSt6vectorI8SeedTypeSaIS1_EE");
     VSSetupMenu_PickRandomPlantsAddr = dlsym(handle, "_ZN11VSSetupMenu16PickRandomPlantsERSt6vectorI8SeedTypeSaIS1_EERKS3_");
     VSSetupMenu_OnPlayerPickedSeedAddr = dlsym(handle, "_ZN11VSSetupMenu18OnPlayerPickedSeedEi");
-    VSSetupMenu_GAMEPAD_X_POSITIONSAddr = (int*)dlsym(handle, "_ZN11VSSetupMenu19GAMEPAD_X_POSITIONSE");
+    VSSetupMenu_GAMEPAD_X_POSITIONSAddr = (int *)dlsym(handle, "_ZN11VSSetupMenu19GAMEPAD_X_POSITIONSE");
 
 
     VSResultsMenu_UpdateAddr = dlsym(handle, "_ZN13VSResultsMenu6UpdateEv");
@@ -2450,7 +2448,7 @@ inline bool GetFunctionAddr() {
     Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_FOOT2_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy36IMAGE_REANIM_ZOMBIE_GARGANTUAR_FOOT2E");
     Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy23IMAGE_OPTIONS_CHECKBOX0E");
     Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy23IMAGE_OPTIONS_CHECKBOX1E");
-    //    Sexy_IMAGE_BLANK_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy11IMAGE_BLANKE");
+    // Sexy_IMAGE_BLANK_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy11IMAGE_BLANKE");
     Sexy::IMAGE_BLANK = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy11IMAGE_BLANKE"));
     Sexy::IMAGE_SEEDCHOOSER_BACKGROUND2 = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy29IMAGE_SEEDCHOOSER_BACKGROUND2E"));
     Sexy::IMAGE_SEEDPACKETSILHOUETTE = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy26IMAGE_SEEDPACKETSILHOUETTEE"));

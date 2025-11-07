@@ -28,7 +28,8 @@ constexpr int plantPileHeight = 100;
 
 class TrashBin : public Sexy::__Widget {
 public:
-    enum TrashPileType { PLANT_PILE = 0, ZOMBIE_PILE = 1 };
+    enum TrashPileType { PLANT_PILE = 0,
+                         ZOMBIE_PILE = 1 };
 
     TrashPileType mTrashPileType; // 64
     float mTrashHeight;           // 65

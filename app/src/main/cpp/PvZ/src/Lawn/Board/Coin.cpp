@@ -45,7 +45,7 @@ void Coin::GamepadCursorOver(int thePlayerIndex) {
     }
 
 
-    //    old_Coin_GamepadCursorOver(this, thePlayerIndex);
+    // old_Coin_GamepadCursorOver(this, thePlayerIndex);
 
     if (mBoard && !mBoard->mPaused && mApp->mGameScene == SCENE_PLAYING && !mDead) {
         if (mType == COIN_USABLE_SEED_PACKET) {
@@ -178,10 +178,10 @@ void Coin::UpdateFallForAward() {
         mPosX += mVelX;
         if (mPosX > BOARD_WIDTH - mWidth && mCoinMotion != CoinMotion::COIN_MOTION_FROM_BOSS) {
             mPosX = BOARD_WIDTH - mWidth;
-            //            mVelX = -0.4f - RandRangeFloat(0.0f, 0.4f);
+            // mVelX = -0.4f - RandRangeFloat(0.0f, 0.4f);
         } else if (mPosX < 0.0f) {
             mPosX = 0.0f;
-            //            mVelX = 0.4f + RandRangeFloat(0.0f, 0.4f);
+            // mVelX = 0.4f + RandRangeFloat(0.0f, 0.4f);
         }
     } else {
         if (mNeedsBouncyArrow && !mHasBouncyArrow) {

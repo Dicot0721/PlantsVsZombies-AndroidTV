@@ -34,7 +34,7 @@ public:
     int unkMems6[13];               // 217 ~ 229
     // 大小230个整数
 
-    //    GameButton(int theId, ButtonListener *theListener) { Create(); }
+    // GameButton(int theId, ButtonListener *theListener) { Create(); }
     ~GameButton() {
         _destructor();
     }

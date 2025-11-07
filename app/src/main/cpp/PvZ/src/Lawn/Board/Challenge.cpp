@@ -18,7 +18,6 @@
  */
 
 #include "PvZ/Lawn/Board/Challenge.h"
-#include "PvZ/Lawn/Board/SeedBank.h"
 #include "Homura/Logger.h"
 #include "PvZ/Android/IntroVideo.h"
 #include "PvZ/Android/Native/NativeApp.h"
@@ -26,6 +25,7 @@
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/GridItem.h"
 #include "PvZ/Lawn/Board/Plant.h"
+#include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/Board/SeedPacket.h"
 #include "PvZ/Lawn/Board/Zombie.h"
 #include "PvZ/Lawn/LawnApp.h"
@@ -222,11 +222,11 @@ bool Challenge::IZombieEatBrain(Zombie* theZombie) {
         return false;
 
     theZombie->StartEating();
-    //    int mHealth = aBrain->mGridItemCounter - 1;
+    // int mHealth = aBrain->mGridItemCounter - 1;
     int mHealth = aBrain->mGridItemCounter - 2; // 一次吃掉脑子的两滴血
     aBrain->mGridItemCounter = mHealth;
     if (mHealth <= 0) {
-        mApp->PlaySample( *Sexy_SOUND_GULP_Addr);
+        mApp->PlaySample(*Sexy_SOUND_GULP_Addr);
         aBrain->GridItemDie();
         IZombieScoreBrain(aBrain);
     }
@@ -345,12 +345,11 @@ void Challenge::InitLevel() {
     }
 
     // 为结盟僵王的2P传送带补充开局的4个固定植物
-    if (mApp->mGameMode == GAMEMODE_TWO_PLAYER_COOP_BOSS)
-    {
-        mBoard->mSeedBank2->AddSeed(SeedType::SEED_CABBAGEPULT,false);
-        mBoard->mSeedBank2->AddSeed(SeedType::SEED_JALAPENO,false);
-        mBoard->mSeedBank2->AddSeed(SeedType::SEED_CABBAGEPULT,false);
-        mBoard->mSeedBank2->AddSeed(SeedType::SEED_ICESHROOM,false);
+    if (mApp->mGameMode == GAMEMODE_TWO_PLAYER_COOP_BOSS) {
+        mBoard->mSeedBank2->AddSeed(SeedType::SEED_CABBAGEPULT, false);
+        mBoard->mSeedBank2->AddSeed(SeedType::SEED_JALAPENO, false);
+        mBoard->mSeedBank2->AddSeed(SeedType::SEED_CABBAGEPULT, false);
+        mBoard->mSeedBank2->AddSeed(SeedType::SEED_ICESHROOM, false);
         mConveyorBeltCounter2 = 1000;
     }
 }
@@ -591,24 +590,24 @@ void Challenge::UpdateConveyorBelt(int playerIndex) {
 
 GridItem* Challenge::IZombieGetBrainTarget(Zombie* theZombie) {
     return old_Challenge_IZombieGetBrainTarget(this, theZombie);
-    //    if (theZombie->mZombieType == ZOMBIE_BUNGEE || theZombie->IsWalkingBackwards())
-    //        return nullptr;
+    // if (theZombie->mZombieType == ZOMBIE_BUNGEE || theZombie->IsWalkingBackwards())
+    // return nullptr;
     //
-    //    Rect aZombieRect = theZombie->GetZombieAttackRect();
-    //    if (theZombie->mZombiePhase == PHASE_POLEVAULTER_PRE_VAULT)
-    //    {
-    //        aZombieRect = Rect(50 + theZombie->mX, 0, 20, 115);
-    //    }
-    //    if (theZombie->mZombieType == ZOMBIE_BALLOON)
-    //    {
-    //        aZombieRect.mX += 25;
-    //    }
+    // Rect aZombieRect = theZombie->GetZombieAttackRect();
+    // if (theZombie->mZombiePhase == PHASE_POLEVAULTER_PRE_VAULT)
+    // {
+    // aZombieRect = Rect(50 + theZombie->mX, 0, 20, 115);
+    // }
+    // if (theZombie->mZombieType == ZOMBIE_BALLOON)
+    // {
+    // aZombieRect.mX += 25;
+    // }
     //
-    //    if (aZombieRect.mX > 20)
-    //        return nullptr;
+    // if (aZombieRect.mX > 20)
+    // return nullptr;
     //
-    //    GridItem* aBrain = mBoard->GetGridItemAt(GRIDITEM_IZOMBIE_BRAIN, 0, theZombie->mRow);
-    //    return (aBrain && aBrain->mGridItemState != GRIDITEM_STATE_BRAIN_SQUISHED) ? aBrain : nullptr;
+    // GridItem* aBrain = mBoard->GetGridItemAt(GRIDITEM_IZOMBIE_BRAIN, 0, theZombie->mRow);
+    // return (aBrain && aBrain->mGridItemState != GRIDITEM_STATE_BRAIN_SQUISHED) ? aBrain : nullptr;
 }
 
 void Challenge::IZombieSquishBrain(GridItem* theBrain) {

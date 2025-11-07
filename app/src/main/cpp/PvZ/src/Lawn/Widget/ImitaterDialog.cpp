@@ -59,11 +59,11 @@ void ImitaterDialog::MouseDown(int x, int y, int theCount) {
             aImitater.mImitaterType = aSeedType;
             aImitater.mSeedState = ChosenSeedState::SEED_IN_CHOOSER;
             aSeedChooser->GetSeedPositionInChooser(SeedType::SEED_IMITATER, aImitater.mX, aImitater.mY);
-            //        SeedChooserScreen_ClickedSeedInChooser(*(uint32_t *) (a[184] + 2244), aSeedChooser + 835, -1);//模仿者选种子闪退，就是因为这里参数为-1而不是0或者1
-            //        int mIsZombie = a[194];
+            // SeedChooserScreen_ClickedSeedInChooser(*(uint32_t *) (a[184] + 2244), aSeedChooser + 835, -1);//模仿者选种子闪退，就是因为这里参数为-1而不是0或者1
+            // int mIsZombie = a[194];
             aSeedChooser->ClickedSeedInChooser(aImitater, m1PChoosingSeeds ? 0 : 1);
             aSeedChooser->UpdateImitaterButton();
-            //        (*(void (**)(int, int)) (*(uint32_t *) a[184] + 428))(a[184], a[179]);
+            // (*(void (**)(int, int)) (*(uint32_t *) a[184] + 428))(a[184], a[179]);
             aSeedChooser->RemoveWidget(this);
             (*(void (**)(LawnApp *, Sexy::__Widget *))(*(uint32_t *)mApp + 188))(mApp, this);
             aSeedChooser->mImitaterDialogOpened = 0;

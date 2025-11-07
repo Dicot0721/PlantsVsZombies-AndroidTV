@@ -51,14 +51,14 @@ ProjectileDefinition gProjectileDefinition[] = {
     {ProjectileType::PROJECTILE_ZOMBIE_PEA, 0, 20},
 };
 
-ProjectileDefinition gNewProjectileDefinition[] {
+ProjectileDefinition gNewProjectileDefinition[]{
     {ProjectileType::PROJECTILE_ZOMBIE_FIREBALL, 0, 40},
     {ProjectileType::PROJCTILE_ZOMBIE_SOUL, 0, 0},
 };
 
 void Projectile::ProjectileInitialize(int theX, int theY, int theRenderOrder, int theRow, ProjectileType theProjectileType) {
-    //    projectile->mNewProjectileLastX = theX;
-    //    projectile->mNewProjectileLastY = theY;
+    // projectile->mNewProjectileLastX = theX;
+    // projectile->mNewProjectileLastY = theY;
     if (!isOnlyTouchFireWood) {
         // 僵尸子弹与加农炮子弹NULL
         if (theProjectileType == ProjectileType::PROJECTILE_COBBIG || theProjectileType == ProjectileType::PROJECTILE_ZOMBIE_PEA) {
@@ -289,7 +289,7 @@ void Projectile::UpdateNormalMotion() {
         mShadowY += mVelY;
         mRow = mBoard->PixelToGridYKeepOnBoard(mPosX, mPosY);
 
-//        CheckForCollision();
+        // CheckForCollision();
         return;
     }
 
@@ -381,7 +381,7 @@ void Projectile::DoImpact(Zombie* theZombie) {
         int aRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_GROUND, mCobTargetRow, 2);
         mApp->AddTodParticle(mPosX + 80.0f, mPosY + 40.0f, aRenderOrder, ParticleEffect::PARTICLE_BLASTMARK);
         mApp->AddTodParticle(mPosX + 80.0f, mPosY + 40.0f, mRenderOrder + 1, ParticleEffect::PARTICLE_POPCORNSPLASH);
-        mApp->PlaySample( *Sexy_SOUND_DOOMSHROOM_Addr);
+        mApp->PlaySample(*Sexy_SOUND_DOOMSHROOM_Addr);
         mBoard->ShakeBoard(3, -4);
     } else if (mProjectileType == ProjectileType::PROJECTILE_PEA) {
         aSplatPosX -= 15.0f;
@@ -490,10 +490,10 @@ void Projectile::CheckForCollision() {
         return;
     }
 
-    //        if (mProjectileType == ProjectileType::PROJECTILE_STAR && (mPosY > 600.0f || mPosY < 40.0f)) {
-    //        Die(projectile);
-    //        return;
-    //    }
+    // if (mProjectileType == ProjectileType::PROJECTILE_STAR && (mPosY > 600.0f || mPosY < 40.0f)) {
+    // Die(projectile);
+    // return;
+    // }
 
     if (mMotionType == ProjectileMotion::MOTION_STAR && (mPosY > 600.0f || mPosY < 40.0f)) {
         // 将判断条件从mProjectileType改为mMotionType，从而修复随机杨桃子弹在Y方向出界后不消失导致的闪退
@@ -563,9 +563,9 @@ void Projectile::CheckForCollision() {
         return;
     }
 
-    //    if ((mDamageRangeFlags & 1) == 0) { //TV的原版代码中存在这个，但是我这么写会导致仙人掌打不到气球。因此注释
-    //        return;
-    //    }
+    // if ((mDamageRangeFlags & 1) == 0) { //TV的原版代码中存在这个，但是我这么写会导致仙人掌打不到气球。因此注释
+    // return;
+    // }
 
     Zombie* aZombie = FindCollisionTarget();
     if (aZombie) {
@@ -633,8 +633,8 @@ void Projectile::Draw(Graphics* g) {
     }
 
     Graphics gProj(*g);
-//    gProj.SetColorizeImages(true);
-//    gProj.SetColor(mOverrideColor);
+    // gProj.SetColorizeImages(true);
+    // gProj.SetColor(mOverrideColor);
 
     const ProjectileDefinition& aProjectileDef = GetProjectileDef();
 

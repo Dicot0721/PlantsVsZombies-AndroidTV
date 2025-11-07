@@ -174,16 +174,16 @@ void TrashBin::Draw(Sexy::Graphics *g) {
         g->DrawImageMirror(mPileImage[i], mX, mHeight % thePileHeight - thePileHeight + mY - thePileHeight * i, mMirrorPile[i]);
     }
 
-    //    int holder[1];
-    //    int holder1[1];
-    //    TodStringTranslate(holder,"[TRASH_HEIGHT]");
-    //    TodReplaceNumberString(holder1,holder,"{HEIGHT}",(int)trashBin->mTrashHeight);
+    // int holder[1];
+    // int holder1[1];
+    // TodStringTranslate(holder,"[TRASH_HEIGHT]");
+    // TodReplaceNumberString(holder1,holder,"{HEIGHT}",(int)trashBin->mTrashHeight);
     //
-    //    if (mTrashPileType == ZOMBIE_TRASHCAN::PLANT_PILE) {
-    //        Rect theRect ={317,658,120,50};
-    //        Sexy::Font* theFont = *Sexy_FONT_CONTINUUMBOLD14_Addr;
-    //        TodDrawStringWrapped(g, holder1, &theRect, theFont, &yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
-    //    }else {
-    //        Sexy_Graphics_DrawImageF(g, addonImages.zombie_can, trashBin->mX, trashBin->mY);
-    //    }
+    // if (mTrashPileType == ZOMBIE_TRASHCAN::PLANT_PILE) {
+    // Rect theRect ={317,658,120,50};
+    // Sexy::Font* theFont = *Sexy_FONT_CONTINUUMBOLD14_Addr;
+    // TodDrawStringWrapped(g, holder1, &theRect, theFont, &yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
+    // }else {
+    // Sexy_Graphics_DrawImageF(g, addonImages.zombie_can, trashBin->mX, trashBin->mY);
+    // }
 }

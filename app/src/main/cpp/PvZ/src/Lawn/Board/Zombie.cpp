@@ -238,9 +238,9 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
             break;
 
         case ZombieType::ZOMBIE_IMP:
-            //            if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-            //                mBodyHealth = 70;
-            //            }
+            // if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+            // mBodyHealth = 70;
+            // }
             break;
 
         case ZombieType::ZOMBIE_TRASHCAN:
@@ -407,7 +407,7 @@ void Zombie::DoSpecial() {
         case ZombieType::ZOMBIE_JACKSON: {
             mZombiePhase = ZombiePhase::PHASE_JACKSON_SNAPPING_FINGERS;
             PlayZombieReanim("anim_point", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
-            //        mApp->PlayFoley(FoleyType::FOLEY_THRILLER);
+            // mApp->PlayFoley(FoleyType::FOLEY_THRILLER);
             mApp->PlaySample(addonSounds.thriller); // PlayFoley仅第一次播放生效，故暂时采用PlaySample
 
             mBoard->DisplayAdviceAgain("[RAISE_DEAD]", MessageStyle::MESSAGE_STYLE_HUGE_WAVE, AdviceType::ADVICE_HUGE_WAVE);
@@ -1215,7 +1215,7 @@ void Zombie::UpdateZombieJalapenoHead() {
         } else {
             Plant *aPlant = nullptr;
             while (mBoard->IteratePlants(aPlant)) {
-                //                Rect aPlantRect = aPlant->GetPlantRect(); // 原版代码遗留，但该变量并未被使用，故注释
+                // Rect aPlantRect = aPlant->GetPlantRect(); // 原版代码遗留，但该变量并未被使用，故注释
                 if (aPlant->mRow == mRow && !aPlant->NotOnGround()) {
                     mBoard->mPlantsEaten++;
                     aPlant->Die();
@@ -1667,11 +1667,11 @@ void Zombie::RiseFromGrave(int theGridX, int theGridY) {
     }
 
     if (mBoard->mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
-        //                if (old_ZombieTypeCanGoInPool(mZombieType)) {
+        // if (old_ZombieTypeCanGoInPool(mZombieType)) {
         DieNoLoot();
         mBoard->AddZombieInRow(mZombieType, theGridY, mBoard->mCurrentWave, 1);
         return;
-        //                }
+        // }
     }
 
     BackgroundType tmp = mBoard->mBackground;

@@ -265,11 +265,11 @@ void Plant::Update() {
         return;
     }
     // 为了不影响改so，这里不是完全重写，而是执行旧函数
-    //     Plant_UpdateAbilities(plant);
-    //     Plant_Animate(plant);
-    //     if (plant->mPlantHealth < 0)
-    //         Plant_Die(plant);
-    //     Plant_UpdateReanim(plant);
+    // Plant_UpdateAbilities(plant);
+    // Plant_Animate(plant);
+    // if (plant->mPlantHealth < 0)
+    // Plant_Die(plant);
+    // Plant_UpdateReanim(plant);
 
     old_Plant_Update(this);
 }
@@ -370,17 +370,17 @@ void Plant::Draw(Sexy::Graphics *g) {
     } else if (mBodyReanimID != 0) {
         Reanimation *reanimation2 = mApp->ReanimationTryToGet(mBodyReanimID);
         if (reanimation2 != nullptr) {
-            //            if (plant->mGloveGrabbed)
-            //            {
-            //                SetColorizeImages(g,true);
-            //                Color color = {150, 255, 150, 255};
-            //                SetColor(g,&color);
-            //            }
+            // if (plant->mGloveGrabbed)
+            // {
+            // SetColorizeImages(g,true);
+            // Color color = {150, 255, 150, 255};
+            // SetColor(g,&color);
+            // }
             reanimation2->DrawRenderGroup(g, 0);
-            //            if (plant->mGloveGrabbed)
-            //            {
-            //                SetColorizeImages(g,false);
-            //            }
+            // if (plant->mGloveGrabbed)
+            // {
+            // SetColorizeImages(g,false);
+            // }
         }
     } else {
         SeedType seedType = SeedType::SEED_NONE;
@@ -407,20 +407,20 @@ void Plant::Draw(Sexy::Graphics *g) {
         if (aImage != nullptr) {
             TodDrawImageCelF(g, aImage, aOffsetX, aOffsetY, theCelCol, theCelRow);
         }
-        //        if (mSeedType == a::Sprout)
-        //        {
-        //            if (plant->mGloveGrabbed)
-        //            {
-        //                SetColorizeImages(g,true);
-        //                Color color ={150, 255, 150, 255};
-        //                SetColor(g, &color);
-        //            }
-        //            TodDrawImageCelF(g, AtlasResources.IMAGE_CACHED_MARIGOLD, Constants.ZenGarden_Marigold_Sprout_Offset.X, Constants.ZenGarden_Marigold_Sprout_Offset.Y, 0, 0);
-        //            if (plant->mGloveGrabbed)
-        //            {
-        //                SetColorizeImages(g,false);
-        //            }
-        //        }
+        // if (mSeedType == a::Sprout)
+        // {
+        // if (plant->mGloveGrabbed)
+        // {
+        // SetColorizeImages(g,true);
+        // Color color ={150, 255, 150, 255};
+        // SetColor(g, &color);
+        // }
+        // TodDrawImageCelF(g, AtlasResources.IMAGE_CACHED_MARIGOLD, Constants.ZenGarden_Marigold_Sprout_Offset.X, Constants.ZenGarden_Marigold_Sprout_Offset.Y, 0, 0);
+        // if (plant->mGloveGrabbed)
+        // {
+        // SetColorizeImages(g,false);
+        // }
+        // }
         g->SetColorizeImages(false);
         if (mHighlighted) {
             g->SetDrawMode(Graphics::DRAWMODE_ADDITIVE);
@@ -596,8 +596,8 @@ void Plant::DoSpecial() {
 }
 
 // void Plant_CobCannonFire(Plant *plant, int x, int y) {
-//     LOGD("fire:%d %d",x,y);
-//     old_Plant_CobCannonFire(plant,x,y);
+// LOGD("fire:%d %d",x,y);
+// old_Plant_CobCannonFire(plant,x,y);
 // }
 
 void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *gridItem) {
@@ -614,10 +614,9 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
             event.data3.s.s2 = (short)thePlantWeapon;
             event.data4.s.s1 = gridItem == nullptr ? 0 : (short)gridItem->mGridItemID;
             send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
-
         }
     }
-    old_Plant_Fire(this,theTargetZombie, theRow, thePlantWeapon, gridItem);
+    old_Plant_Fire(this, theTargetZombie, theRow, thePlantWeapon, gridItem);
 }
 
 Zombie *Plant::FindTargetZombie(int theRow, PlantWeapon thePlantWeapon) {
@@ -775,22 +774,22 @@ GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
 }
 
 void Plant::Die() {
-    //    //某植物死亡触发辣椒效果（以双发为例）
-    //    if (mSeedType == SeedType::SEED_REPEATER) {
-    //        // 方法一：直接调用辣椒DoSpecial相关函数
-    //        mApp->PlayFoley(FoleyType::FOLEY_JALAPENO_IGNITE); // 播放音效
-    //        mApp->PlayFoley(FoleyType::FOLEY_JUICY);
+    // //某植物死亡触发辣椒效果（以双发为例）
+    // if (mSeedType == SeedType::SEED_REPEATER) {
+    // // 方法一：直接调用辣椒DoSpecial相关函数
+    // mApp->PlayFoley(FoleyType::FOLEY_JALAPENO_IGNITE); // 播放音效
+    // mApp->PlayFoley(FoleyType::FOLEY_JUICY);
     //
-    //        mBoard->DoFwoosh(mRow); // 生成火焰动画
-    //        mBoard->ShakeBoard(3, -4); // 屏幕震动
+    // mBoard->DoFwoosh(mRow); // 生成火焰动画
+    // mBoard->ShakeBoard(3, -4); // 屏幕震动
     //
-    //        BurnRow(mRow); // 点燃本行的僵尸，移除梯子、冰球
-    //        mBoard->mIceTimer[mRow] = 20; // 移除冰道
+    // BurnRow(mRow); // 点燃本行的僵尸，移除梯子、冰球
+    // mBoard->mIceTimer[mRow] = 20; // 移除冰道
     ///*******************************************************************************************************************************************/
-    //        // 方法二：召唤辣椒并瞬爆
-    //        Plant *aPlant = mBoard->AddPlant(mPlantCol, mRow, SeedType::SEED_JALAPENO, SeedType::SEED_NONE, 0, true); // 生成辣椒
-    //        aPlant->mDoSpecialCountdown = 1; // 辣椒爆炸倒计时
-    //    }
+    // // 方法二：召唤辣椒并瞬爆
+    // Plant *aPlant = mBoard->AddPlant(mPlantCol, mRow, SeedType::SEED_JALAPENO, SeedType::SEED_NONE, 0, true); // 生成辣椒
+    // aPlant->mDoSpecialCountdown = 1; // 辣椒爆炸倒计时
+    // }
 
     old_Plant_Die(this);
 }
@@ -893,7 +892,7 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
         }
         int aRefreshTime;
         if (gVSBalanceAdjustment) {
-            aRefreshTime =  GetRefreshTimeAdjusted(theSeedType);
+            aRefreshTime = GetRefreshTimeAdjusted(theSeedType);
         } else {
             if (Challenge::IsMPSeedType(theSeedType)) {
                 switch (theSeedType) {
@@ -962,8 +961,8 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
             }
         }
         if (gLawnApp->mBoard->mChallenge->IsMPSuddenDeath() && *Challenge_gVSSuddenDeathMode_Addr == 1) {
-            //sd不减冷却的卡片
-            switch (theSeedType) {  // 此处用switch-case替换旧的if-else，方便后续增删
+            // sd不减冷却的卡片
+            switch (theSeedType) { // 此处用switch-case替换旧的if-else，方便后续增删
                 // 墓碑和向日葵，sd用不到
                 case SeedType::SEED_ZOMBIE_GRAVESTONE:
                 case SeedType::SEED_SUNFLOWER:
@@ -1002,9 +1001,9 @@ int Plant::GetCostAdjusted(SeedType theSeedType) {
         case SeedType::SEED_ZOMBIE_IMP:
         case SeedType::SEED_ZOMBIE_SUNFLOWER_HEAD:
             return 25;
-        case SeedType::SEED_GRAVEBUSTER: // 75 -> 50
-        case SeedType::SEED_HYPNOSHROOM: // 75 -> 50
-        case SeedType::SEED_ICESHROOM: // 75 -> 50
+        case SeedType::SEED_GRAVEBUSTER:  // 75 -> 50
+        case SeedType::SEED_HYPNOSHROOM:  // 75 -> 50
+        case SeedType::SEED_ICESHROOM:    // 75 -> 50
         case SeedType::SEED_PUMPKINSHELL: // 125 -> 50
         case SeedType::SEED_ZOMBIE_GRAVESTONE:
         case SeedType::SEED_ZOMBIE_TRASHCAN:
@@ -1019,7 +1018,7 @@ int Plant::GetCostAdjusted(SeedType theSeedType) {
         case SeedType::SEED_KERNELPULT: // 100 -> 75
         case SeedType::SEED_SQUASH:
         case SeedType::SEED_GARLIC:
-        case SeedType::SEED_ZOMBIE_POLEVAULTER: // 100 -> 75
+        case SeedType::SEED_ZOMBIE_POLEVAULTER:     // 100 -> 75
         case SeedType::SEED_ZOMBIE_JACK_IN_THE_BOX: // 100 -> 75
         case SeedType::SEED_ZOMBIE_SNORKEL:
         case SeedType::SEED_ZOMBIE_TORCHWOOD_HEAD:
@@ -1057,14 +1056,14 @@ int Plant::GetCostAdjusted(SeedType theSeedType) {
         case SeedType::SEED_DOOMSHROOM: // 125 -> 175
         case SeedType::SEED_STARFRUIT:
             return 175;
-        case SeedType::SEED_MELONPULT: // 300 -> 200
-        case SeedType::SEED_ZOMBIE_FLAG: // 300 -> 200
-        case SeedType::SEED_ZOMBIE_POGO: // 225 -> 200
+        case SeedType::SEED_MELONPULT:         // 300 -> 200
+        case SeedType::SEED_ZOMBIE_FLAG:       // 300 -> 200
+        case SeedType::SEED_ZOMBIE_POGO:       // 225 -> 200
         case SeedType::SEED_ZOMBIE_GARGANTUAR: // 250 -> 200
             return 200;
         case SeedType::SEED_THREEPEATER: // 200 -> 225
             return 225;
-//            return 250;
+            // return 250;
         default:
             return GetPlantDefinition(theSeedType).mSeedCost;
     }
@@ -1119,14 +1118,14 @@ int Plant::GetRefreshTimeAdjusted(SeedType theSeedType) {
             case SeedType::SEED_DOOMSHROOM:
             case SeedType::SEED_JALAPENO:
             case SeedType::SEED_PUMPKINSHELL: // 30 -> 60
-            case SeedType::SEED_TALLNUT: // 30 -> 60
+            case SeedType::SEED_TALLNUT:      // 30 -> 60
                 return 6000;
             case SeedType::SEED_GRAVEBUSTER:
             case SeedType::SEED_SQUASH:
                 return 3000;
             case SeedType::SEED_PEASHOOTER: // 7.5 -> 15
-            case SeedType::SEED_SNOWPEA: // 7.5 -> 15
-            case SeedType::SEED_REPEATER: // 7.5 -> 15
+            case SeedType::SEED_SNOWPEA:    // 7.5 -> 15
+            case SeedType::SEED_REPEATER:   // 7.5 -> 15
             case SeedType::SEED_THREEPEATER:
             case SeedType::SEED_SPLITPEA: // 7.5 -> 15
             case SeedType::SEED_STARFRUIT:
@@ -1312,40 +1311,31 @@ void Plant::BurnRow(int theRow) {
 
 void Plant::UpdateProductionPlant() {
     if (mApp->mGameMode == GAMEMODE_MP_VS && (tcp_connected || tcpClientSocket >= 0)) {
-        if (!IsInPlay())
-        {
+        if (!IsInPlay()) {
             return;
         }
-        if (mApp->IsIZombieLevel() || mApp->mGameMode == GameMode::GAMEMODE_UPSELL || mApp->mGameMode == GameMode::GAMEMODE_INTRO)
-        {
+        if (mApp->IsIZombieLevel() || mApp->mGameMode == GameMode::GAMEMODE_UPSELL || mApp->mGameMode == GameMode::GAMEMODE_INTRO) {
             return;
         }
-        if (mBoard->HasLevelAwardDropped())
-        {
+        if (mBoard->HasLevelAwardDropped()) {
             return;
         }
-        if (mSeedType == SeedType::SEED_MARIGOLD && mBoard->mCurrentWave == mBoard->mNumWaves)
-        {
-            if (mState != PlantState::STATE_MARIGOLD_ENDING)
-            {
+        if (mSeedType == SeedType::SEED_MARIGOLD && mBoard->mCurrentWave == mBoard->mNumWaves) {
+            if (mState != PlantState::STATE_MARIGOLD_ENDING) {
                 mState = PlantState::STATE_MARIGOLD_ENDING;
                 mStateCountdown = 6000;
-            }
-            else if (mStateCountdown <= 0)
-            {
+            } else if (mStateCountdown <= 0) {
                 return;
             }
         }
-        if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mBoard->mChallenge->mChallengeState != ChallengeState::STATECHALLENGE_LAST_STAND_ONSLAUGHT)
-        {
+        if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mBoard->mChallenge->mChallengeState != ChallengeState::STATECHALLENGE_LAST_STAND_ONSLAUGHT) {
             return;
         }
-        //mLaunchCounter -= 3;
+        // mLaunchCounter -= 3;
         mLaunchCounter--;
-        if (mLaunchCounter <= 100)
-        {
+        if (mLaunchCounter <= 100) {
             int num = TodAnimateCurve(100, 0, mLaunchCounter, 0, 100, TodCurves::CURVE_LINEAR);
-            mEatenFlashCountdown = mEatenFlashCountdown > num ? mEatenFlashCountdown: num;
+            mEatenFlashCountdown = mEatenFlashCountdown > num ? mEatenFlashCountdown : num;
         }
         if (mLaunchCounter <= 0)
         // 生产
@@ -1359,45 +1349,31 @@ void Plant::UpdateProductionPlant() {
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
             }
             mApp->PlayFoley(FoleyType::FOLEY_SPAWN_SUN);
-            if (mSeedType == SeedType::SEED_SUNSHROOM)
-            {
-                if (mState == PlantState::STATE_SUNSHROOM_SMALL)
-                {
+            if (mSeedType == SeedType::SEED_SUNSHROOM) {
+                if (mState == PlantState::STATE_SUNSHROOM_SMALL) {
                     mBoard->AddCoin(mX, mY, CoinType::COIN_SMALLSUN, CoinMotion::COIN_MOTION_FROM_PLANT);
-                }
-                else
-                {
+                } else {
                     mBoard->AddCoin(mX, mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
                 }
-            }
-            else if (mSeedType == SeedType::SEED_SUNFLOWER)
-            {
+            } else if (mSeedType == SeedType::SEED_SUNFLOWER) {
                 mBoard->AddCoin(mX, mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
-            }
-            else if (mSeedType == SeedType::SEED_TWINSUNFLOWER)
-            {
+            } else if (mSeedType == SeedType::SEED_TWINSUNFLOWER) {
                 mBoard->AddCoin(mX, mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
                 mBoard->AddCoin(mX, mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
-            }
-            else if (mSeedType == SeedType::SEED_MARIGOLD)
-            {
+            } else if (mSeedType == SeedType::SEED_MARIGOLD) {
                 int num2 = Sexy::Rand(100);
                 CoinType theCoinType = CoinType::COIN_SILVER;
-                if (num2 < 10)
-                {
+                if (num2 < 10) {
                     theCoinType = CoinType::COIN_GOLD;
                 }
                 mBoard->AddCoin(mX, mY, theCoinType, CoinMotion::COIN_MOTION_COIN);
             }
-            if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BIG_TIME)
-            {
-                if (mSeedType == SeedType::SEED_SUNFLOWER)
-                {
+            if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BIG_TIME) {
+                if (mSeedType == SeedType::SEED_SUNFLOWER) {
                     mBoard->AddCoin(mX, mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
                     return;
                 }
-                if (mSeedType == SeedType::SEED_MARIGOLD)
-                {
+                if (mSeedType == SeedType::SEED_MARIGOLD) {
                     mBoard->AddCoin(mX, mY, CoinType::COIN_SILVER, CoinMotion::COIN_MOTION_COIN);
                 }
             }

@@ -29,9 +29,9 @@ public:
     int mRight;
     int mBottom;
 
-    //    Insets();
-    //    Insets(int theLeft, int theTop, int theRight, int theBottom);
-    //    Insets(const Insets& theInsets);
+    // Insets();
+    // Insets(int theLeft, int theTop, int theRight, int theBottom);
+    // Insets(const Insets& theInsets);
 };
 
 } // namespace Sexy

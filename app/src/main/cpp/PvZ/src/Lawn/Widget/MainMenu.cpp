@@ -130,7 +130,7 @@ void MainMenu::Update() {
             FoleyType aType = MainMenu_GetFoleyTypeByScene(mScene);
             if (gAchievementState == NOT_SHOWING) {
                 if (!mApp->mSoundSystem->IsFoleyPlaying(aType) && mExitCounter == 0) {
-                    //                    mApp->PlayFoley(aType);
+                    // mApp->PlayFoley(aType);
                     mApp->SetFoleyVolume(aType, 0);
                 }
                 if (mEnterReanimationCounter > 0) {
@@ -230,11 +230,11 @@ void MainMenu::ButtonPress(MainMenuButtonId theSelectedButton) {
         case ZEN_BUTTON:
         case ALMANAC_BUTTON:
         case MAIL_BUTTON:
-            //            LawnApp_PlaySample(lawnApp, *Sexy_SOUND_CERAMIC_Addr);
+            // LawnApp_PlaySample(lawnApp, *Sexy_SOUND_CERAMIC_Addr);
             gLawnApp->PlayFoley(FoleyType::FOLEY_CERAMIC);
             break;
         default:
-            gLawnApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
+            gLawnApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
             break;
     }
 }
@@ -337,10 +337,10 @@ void MainMenu::KeyDown(Sexy::KeyCode theKeyCode) {
         } else if (theKeyCode == Sexy::KEYCODE_UP || theKeyCode == Sexy::KEYCODE_DOWN) {
             if (gMainMenuAchievementKeyboardScrollCounter != 0) {
                 return;
-                //                int theNewY = gMainMenuAchievementsKeyboardScrollWidgetY -(gMainMenuAchievementKeyboardScrollDirection ? 192 : -192);
-                //                if (theNewY > gMainMenuHeight) theNewY = gMainMenuHeight;
-                //                if (theNewY < 720 +gMainMenuHeight - (gAchievementHoleLength + 1) * addonImages.hole->mHeight) theNewY =  720 +gMainMenuHeight - (gAchievementHoleLength + 1) *
-                //                addonImages.hole->mHeight; Sexy_Widget_Move(gMainMenuAchievementsWidget, gMainMenuAchievementsWidget->mX, theNewY);
+                // int theNewY = gMainMenuAchievementsKeyboardScrollWidgetY -(gMainMenuAchievementKeyboardScrollDirection ? 192 : -192);
+                // if (theNewY > gMainMenuHeight) theNewY = gMainMenuHeight;
+                // if (theNewY < 720 +gMainMenuHeight - (gAchievementHoleLength + 1) * addonImages.hole->mHeight) theNewY =  720 +gMainMenuHeight - (gAchievementHoleLength + 1) *
+                // addonImages.hole->mHeight; Sexy_Widget_Move(gMainMenuAchievementsWidget, gMainMenuAchievementsWidget->mX, theNewY);
             }
             gMainMenuAchievementKeyboardScrollCounter = gKeyboardScrollTime;
             gMainMenuAchievementsKeyboardScrollWidgetY = gMainMenuAchievementsWidget->mY;
@@ -378,7 +378,7 @@ void MainMenu::UpdateHouseReanim() {
 }
 
 void MainMenu::SyncProfile(bool a2) {
-    //    LOGD("MainMenu_SyncProfile");
+    // LOGD("MainMenu_SyncProfile");
     old_MainMenu_SyncProfile(this, a2);
     mApp->mNewIs3DAccelerated = mApp->mPlayerInfo == nullptr || !mApp->mPlayerInfo->mIs3DAcceleratedClosed;
 }
@@ -422,19 +422,19 @@ void MainMenu::EnableButtons() {
         }
     }
 
-    //    if (mainMenu->mPressedButtonId == UNLOCK_BUTTON) {
-    //        LOGD("123123213");
-    //        Reanimation *mainMenuReanim = ReanimationTryToGet(mainMenu->mApp, mainMenu->mMainMenuReanimID);
-    //        if (mainMenuReanim != nullptr) {
-    //            int index = Reanimation_FindTrackIndex(mainMenuReanim, "unlock");
-    //            ReanimatorTrack *reanimatorTrack = mainMenuReanim->mDefinition->mTracks + index;
-    //            int mTransformCount = reanimatorTrack->mTransformCount;
-    //            int theX = mZombatarButtonX + addonImages.SelectorScreen_WoodSign3->mWidth;
-    //            for (int j = 0; j < mTransformCount; ++j) {
-    //                reanimatorTrack->mTransforms[j].mTransX = theX;
-    //            }
-    //        }
-    //    }
+    // if (mainMenu->mPressedButtonId == UNLOCK_BUTTON) {
+    // LOGD("123123213");
+    // Reanimation *mainMenuReanim = ReanimationTryToGet(mainMenu->mApp, mainMenu->mMainMenuReanimID);
+    // if (mainMenuReanim != nullptr) {
+    // int index = Reanimation_FindTrackIndex(mainMenuReanim, "unlock");
+    // ReanimatorTrack *reanimatorTrack = mainMenuReanim->mDefinition->mTracks + index;
+    // int mTransformCount = reanimatorTrack->mTransformCount;
+    // int theX = mZombatarButtonX + addonImages.SelectorScreen_WoodSign3->mWidth;
+    // for (int j = 0; j < mTransformCount; ++j) {
+    // reanimatorTrack->mTransforms[j].mTransX = theX;
+    // }
+    // }
+    // }
 }
 
 void MainMenu::Enter() {
@@ -469,12 +469,12 @@ void MainMenu::OnExit() {
         mApp->ShowZombatarScreen();
     }
 
-    //    if (mPressedButtonId == VS_BUTTON) {
-    //        KillMainMenu(mApp);
+    // if (mPressedButtonId == VS_BUTTON) {
+    // KillMainMenu(mApp);
     ////        TODO:为对战添加选择场景
-    //        LawnApp_ShowChallengeScreen(mApp, CHALLENGE_PAGE_VS);
-    //        return;
-    //    }
+    // LawnApp_ShowChallengeScreen(mApp, CHALLENGE_PAGE_VS);
+    // return;
+    // }
 
     old_MainMenu_OnExit(this);
 }
@@ -517,8 +517,8 @@ void MainMenu::AddedToManager(int *a2) {
     if (!showHouse)
         return;
     Reanimation *reanimation = mApp->AddReanimation(0, 0, 0, ReanimationType::REANIM_LEADERBOARDS_HOUSE);
-    //    Reanimation *reanimation = LawnApp_AddReanimation(mainMenu->mApp, mainMenu->mCameraPositionX + theOffsetX,mainMenu->mCameraPositionY + theOffsetY, 0,
-    //    ReanimationType::REANIM_LEADERBOARDS_HOUSE);
+    // Reanimation *reanimation = LawnApp_AddReanimation(mainMenu->mApp, mainMenu->mCameraPositionX + theOffsetX,mainMenu->mCameraPositionY + theOffsetY, 0,
+    // ReanimationType::REANIM_LEADERBOARDS_HOUSE);
     reanimation->mCustomFilterEffectColor = {142, 146, 232, 92};
     reanimation->mFilterEffect = FilterEffect::FILTEREFFECT_CUSTOM;
 
@@ -659,9 +659,9 @@ void MainMenu::DrawOverlay(Sexy::Graphics *g) {
 void MainMenu::DrawFade(Sexy::Graphics *g) {
     // 修复主界面的退出动画在高帧率设备上的加速。原理是将计时器的更新从Draw移动至Update
     float num = mFadeCounterFloat;
-    //    if (mainMenu->mFadeCounterFloat < 0.992) {
-    //        mainMenu->mFadeCounterFloat -= 0.008;
-    //    }
+    // if (mainMenu->mFadeCounterFloat < 0.992) {
+    // mainMenu->mFadeCounterFloat -= 0.008;
+    // }
     old_MainMenu_DrawFade(this, g);
     mFadeCounterFloat = num;
 }
@@ -830,7 +830,7 @@ void ZombatarWidget::ButtonDepress(this ZombatarWidget &self, int id) {
         Graphics graphics = Graphics(reinterpret_cast<Image *>(aImage));
         TestMenuWidget_DrawPortrait(gMainMenuZombatarWidget, &graphics, 0, 0);
         aImage->WriteToPng("ZOMBATAR.PNG");
-        //        StringDelete(holder);
+        // StringDelete(holder);
         addonImages.zombatar_portrait = reinterpret_cast<Image *>(aImage);
         gMainMenuZombatarWidget->mShowExistingZombatarPortrait = true;
         gMainMenuZombatarWidget->mShowZombieTypeSelection = false;
@@ -2785,7 +2785,7 @@ void TestMenuWidget_DrawBackground(ZombatarWidget *zombatarWidget, Sexy::Graphic
 
     pvzstl::string str = StrFormat("PAGE %d/%d", zombatarWidget->mSelectedBackgroundPage + 1, 5);
     TodDrawString(g, str, 160 + 410, 525, *Sexy_FONT_BRIANNETOD16_Addr, black, DrawStringJustification::DS_ALIGN_CENTER);
-    //    StringDelete(holder);
+    // StringDelete(holder);
 }
 
 void TestMenuWidget_DrawPortrait(ZombatarWidget *zombatarWidget, Sexy::Graphics *g, int x, int y) {
@@ -3384,9 +3384,9 @@ void TestMenuWidget_MouseDownBackground(ZombatarWidget *zombatarWidget, int x, i
 void TestMenuWidget_MouseDown(ZombatarWidget *zombatarWidget, int x, int y) {
     xx = x;
     yy = y;
-    //    Sexy_Widget_Move(zombatarWidget->mBackButton,xx,yy);
-    //    zombatarWidget->mPreviewZombie->mX = x;
-    //    zombatarWidget->mPreviewZombie->mY = y;
+    // Sexy_Widget_Move(zombatarWidget->mBackButton,xx,yy);
+    // zombatarWidget->mPreviewZombie->mX = x;
+    // zombatarWidget->mPreviewZombie->mY = y;
     LOG_DEBUG("{} {}", x, y);
 
     if (gMainMenuZombatarWidget->mShowExistingZombatarPortrait) {
@@ -3436,9 +3436,9 @@ void TestMenuWidget_MouseDown(ZombatarWidget *zombatarWidget, int x, int y) {
 void TestMenuWidget_MouseDrag(ZombatarWidget *zombatarWidget, int x, int y) {
     xx = x;
     yy = y;
-    //    Sexy_Widget_Move(zombatarWidget->mBackButton,xx,yy);
-    //    zombatarWidget->mPreviewZombie->mX = x;
-    //    zombatarWidget->mPreviewZombie->mY = y;
+    // Sexy_Widget_Move(zombatarWidget->mBackButton,xx,yy);
+    // zombatarWidget->mPreviewZombie->mX = x;
+    // zombatarWidget->mPreviewZombie->mY = y;
     LOG_DEBUG("{} {}", x, y);
 }
 

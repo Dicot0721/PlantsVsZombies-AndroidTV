@@ -139,9 +139,9 @@ public:
     Reanimation *ReanimationTryToGet(ReanimationID theReanimationID) {
         return reinterpret_cast<Reanimation *(*)(LawnApp *, ReanimationID)>(LawnApp_ReanimationTryToGetAddr)(this, theReanimationID);
     }
-//    void ClearSecondPlayer() {
-//        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ClearSecondPlayerAddr)(this);
-//    }
+    // void ClearSecondPlayer() {
+    // reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ClearSecondPlayerAddr)(this);
+    // }
     bool CanShowStore() {
         return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_CanShowStoreAddr)(this);
     }
@@ -259,7 +259,7 @@ public:
         reinterpret_cast<void (*)(LawnApp *, FoleyType)>(LawnApp_PlayFoleyAddr)(this, theFoleyType);
     }
     void PlaySample(int theSoundNum) {
-        reinterpret_cast<void (*)(LawnApp *, int,bool unknown)>(LawnApp_PlaySampleAddr)(this, theSoundNum, true);
+        reinterpret_cast<void (*)(LawnApp *, int, bool unknown)>(LawnApp_PlaySampleAddr)(this, theSoundNum, true);
     }
     int PlayerToGamepadIndex(int thePlayerIndex) {
         return reinterpret_cast<int (*)(LawnApp *, int)>(LawnApp_PlayerToGamepadIndexAddr)(this, thePlayerIndex);

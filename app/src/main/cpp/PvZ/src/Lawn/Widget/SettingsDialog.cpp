@@ -67,7 +67,7 @@ void SettingsDialog_RemovedFromManager(SettingsDialog *settingsDialog, int *mana
 
 void SettingsDialog_Delete2(SettingsDialog *settingsDialog) {
     old_SettingsDialog_Delete2(settingsDialog);
-    //    Sexy_Checkbox_Delete(g3DAccleratedCheckbox); // 在安卓4.2上，这么Delete会闪退
+    // Sexy_Checkbox_Delete(g3DAccleratedCheckbox); // 在安卓4.2上，这么Delete会闪退
     (*((void (**)(Sexy::__Widget *))g3DAccleratedCheckbox->vTable + 1))(g3DAccleratedCheckbox); // Delete() ，用这种方式Delete在安卓4.2上就不会闪退，虽然我也不知道为什么会这样
     g3DAccleratedCheckbox = nullptr;
     (*((void (**)(Sexy::__Widget *))gVibrateCheckbox->vTable + 1))(gVibrateCheckbox); // Delete() ，用这种方式Delete在安卓4.2上就不会闪退，虽然我也不知道为什么会这样

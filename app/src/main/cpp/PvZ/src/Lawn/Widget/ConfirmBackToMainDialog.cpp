@@ -25,7 +25,7 @@
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 
 void ConfirmBackToMainDialog_MouseDrag(ConfirmBackToMainDialog *confirmBackToMainDialog, int x, int y) {
-    //  修复拖动此Dialog后按钮错位。为三个Button做Resize即可。
+    // 修复拖动此Dialog后按钮错位。为三个Button做Resize即可。
     old_ConfirmBackToMainDialog_MouseDrag(confirmBackToMainDialog, x, y);
     int theButtonXStart = (confirmBackToMainDialog->mWidth - 509) / 2;
     int mLawnYesButtonY = confirmBackToMainDialog->mLawnYesButton->mY;

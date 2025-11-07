@@ -46,20 +46,20 @@ void SeedBank::Draw(Sexy::Graphics *g) {
         return old_SeedBank_Draw(this, g);
     }
     g->PushState();
-    //    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-    //        g->mTransX = 0;
-    //        g->mTransY = 0;
-    //        int transform[12];
-    //        Sexy_SexyTransform2D_SexyTransform2D(transform);
-    //        Sexy_SexyTransform2D_Scale(transform, 0.9, 0.9);
-    //        int theOffsetX = *(uint8_t *) (*(uint32_t *) (*((uint32_t *) seedBank + 4) + 740) + 96) ? 240 : 80;
-    //        float theTranslateX = seedBank->mX + theOffsetX;
-    //        float theTranslateY = seedBank->mY + 60;
-    //        Sexy_SexyTransform2D_Translate(transform, theTranslateX, theTranslateY);
+    // if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+    // g->mTransX = 0;
+    // g->mTransY = 0;
+    // int transform[12];
+    // Sexy_SexyTransform2D_SexyTransform2D(transform);
+    // Sexy_SexyTransform2D_Scale(transform, 0.9, 0.9);
+    // int theOffsetX = *(uint8_t *) (*(uint32_t *) (*((uint32_t *) seedBank + 4) + 740) + 96) ? 240 : 80;
+    // float theTranslateX = seedBank->mX + theOffsetX;
+    // float theTranslateY = seedBank->mY + 60;
+    // Sexy_SexyTransform2D_Translate(transform, theTranslateX, theTranslateY);
     ////        Sexy_Graphics_PushTransform(g,transform, true);
     ////        Sexy_Image_PushTransform(g->mDestImage,transform,true);
-    //        (*(void (**)(uint32_t, int *, bool))(**((uint32_t **)g + 1) + 140))(*((uint32_t *)g + 1),transform,true);
-    //    }
+    // (*(void (**)(uint32_t, int *, bool))(**((uint32_t **)g + 1) + 140))(*((uint32_t *)g + 1),transform,true);
+    // }
     if (mApp->mGameScene != GameScenes::SCENE_PLAYING) {
         g->mTransX = g->mTransX - mBoard->mX;
         g->mTransY = g->mTransY - mBoard->mY;
@@ -210,11 +210,11 @@ void SeedBank::Draw(Sexy::Graphics *g) {
         g->mTransX = g->mTransX + mBoard->mX;
         g->mTransY = g->mTransY + mBoard->mY;
     }
-    //    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+    // if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
     ////        Sexy_Graphics_PopTransform(g);
     ////        Sexy_Image_PopTransform(g->mDestImage);
-    //        (*(void (**)(uint32_t))(**((uint32_t **)g + 1) + 144))(*((uint32_t *)g + 1));
-    //    }
+    // (*(void (**)(uint32_t))(**((uint32_t **)g + 1) + 144))(*((uint32_t *)g + 1));
+    // }
     g->PopState();
 }
 

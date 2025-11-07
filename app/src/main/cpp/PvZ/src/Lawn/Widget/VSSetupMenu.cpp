@@ -160,7 +160,8 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         if (tcp_connected)
             return;
         Sexy::Widget *theController1Widget = FindWidget(7);
-        int newController1Position = theController1Widget->mX > 400 ? 1 : theController1Widget->mX > 250 ? -1 : 0;
+        int newController1Position = theController1Widget->mX > 400 ? 1 : theController1Widget->mX > 250 ? -1
+                                                                                                         : 0;
         if (newController1Position == mController1Position) {
             GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
         }
@@ -174,7 +175,8 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         if (tcpClientSocket >= 0)
             return;
         Sexy::Widget *theController2Widget = FindWidget(8);
-        int newController2Position = theController2Widget->mX > 400 ? 1 : theController2Widget->mX > 250 ? -1 : 0;
+        int newController2Position = theController2Widget->mX > 400 ? 1 : theController2Widget->mX > 250 ? -1
+                                                                                                         : 0;
 
         if (newController2Position == mController2Position) {
             GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
@@ -228,8 +230,8 @@ void VSSetupMenu::Update() {
         while (true) {
             ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
             if (n > 0) {
-                //                buf[n] = '\0'; // 确保字符串结束
-                //                LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
+                // buf[n] = '\0'; // 确保字符串结束
+                // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
 
                 HandleTcpClientMessage(buf, n);
             } else if (n == 0) {
@@ -260,8 +262,8 @@ void VSSetupMenu::Update() {
         while (true) {
             ssize_t n = recv(tcpServerSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
             if (n > 0) {
-                //                buf[n] = '\0'; // 确保字符串结束
-                //                LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
+                // buf[n] = '\0'; // 确保字符串结束
+                // LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
                 HandleTcpServerMessage(buf, n);
 
             } else if (n == 0) {
@@ -298,15 +300,15 @@ void VSSetupMenu::PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
 
 void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds) {
     old_VSSetupMenu_PickRandomPlants(this, thePlantSeeds, theZombieSeeds);
-    //    for (int i = 0; i < thePlantSeeds.size(); ++i) {
-    //        SeedType type = thePlantSeeds[i];
-    //        LOG_DEBUG("1{} {}", i, (int)type);
-    //    }
+    // for (int i = 0; i < thePlantSeeds.size(); ++i) {
+    // SeedType type = thePlantSeeds[i];
+    // LOG_DEBUG("1{} {}", i, (int)type);
+    // }
     //
-    //    for (int i = 0; i < theZombieSeeds.size(); ++i) {
-    //        SeedType type = theZombieSeeds[i];
-    //        LOG_DEBUG("2{} {}", i, (int)type);
-    //    }
+    // for (int i = 0; i < theZombieSeeds.size(); ++i) {
+    // SeedType type = theZombieSeeds[i];
+    // LOG_DEBUG("2{} {}", i, (int)type);
+    // }
 
     if (tcpClientSocket >= 0) {
         TenShortDataEvent event;
@@ -330,9 +332,9 @@ std::vector<char> clientVSSetupMenuRecvBuffer;
 size_t VSSetupMenu::getClientEventSize(EventType type) {
     switch (type) {
         case EVENT_SEEDCHOOSER_SELECT_SEED:
-            return sizeof (TwoCharDataEvent);
+            return sizeof(TwoCharDataEvent);
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER:
-            return sizeof (SimpleShortEvent);
+            return sizeof(SimpleShortEvent);
         case EVENT_VSSETUPMENU_SET_CONTROLLER:
             return sizeof(SimpleShortEvent);
         default:
@@ -398,7 +400,6 @@ void VSSetupMenu::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
         clientVSSetupMenuRecvBuffer.erase(clientVSSetupMenuRecvBuffer.begin(), clientVSSetupMenuRecvBuffer.begin() + offset);
     }
 }
-
 
 
 std::vector<char> serverVSSetupMenuRecvBuffer;
@@ -496,15 +497,12 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
 }
 
 
-
-
-
 void VSSetupMenu::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
-    serverVSSetupMenuRecvBuffer.insert(serverVSSetupMenuRecvBuffer.end(), (char*)buf, (char*)buf + bufSize);
+    serverVSSetupMenuRecvBuffer.insert(serverVSSetupMenuRecvBuffer.end(), (char *)buf, (char *)buf + bufSize);
     size_t offset = 0;
 
     while (serverVSSetupMenuRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
-        BaseEvent* base = (BaseEvent*)&serverVSSetupMenuRecvBuffer[offset];
+        BaseEvent *base = (BaseEvent *)&serverVSSetupMenuRecvBuffer[offset];
         size_t eventSize = getServerEventSize(base->type);
         if (serverVSSetupMenuRecvBuffer.size() - offset < eventSize)
             break; // 不完整
@@ -574,18 +572,18 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
     if (!isKeyboardTwoPlayerMode && mState == VS_SETUP_SIDES) {
         // 自动分配阵营
-        //        GameButtonDown(ButtonCode::BUTTONCODE_LEFT, 0, 0);
-        //        GameButtonDown(ButtonCode::BUTTONCODE_RIGHT, 1, 0);
+        // GameButtonDown(ButtonCode::BUTTONCODE_LEFT, 0, 0);
+        // GameButtonDown(ButtonCode::BUTTONCODE_RIGHT, 1, 0);
         if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
             GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
             GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
         } else {
             return;
-            //            // 自动分配阵营
-            //            mController1Position = 0;
-            //            mController2Position = 1;
-            //            GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
-            //            GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+            // // 自动分配阵营
+            // mController1Position = 0;
+            // mController2Position = 1;
+            // GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+            // GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
         }
     }
 
@@ -630,28 +628,28 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 mApp->mBoard->mSeedBank1->mNumPackets = 6;
                 mApp->mBoard->mSeedBank2->mNumPackets = 6;
                 // 开启“额外开槽”后随机选卡会导致界面卡死
-                //                std::vector<SeedType> aZombieSeeds, aPlantSeeds, tmpZombieSeeds, tmpPlantSeeds;
+                // std::vector<SeedType> aZombieSeeds, aPlantSeeds, tmpZombieSeeds, tmpPlantSeeds;
                 //
-                //                PickRandomZombies(aZombieSeeds);
-                //                do {
-                //                    PickRandomZombies(tmpZombieSeeds);
-                //                } while (tmpZombieSeeds[4] == aZombieSeeds[4]);
-                //                aZombieSeeds.push_back(tmpZombieSeeds[4]);
+                // PickRandomZombies(aZombieSeeds);
+                // do {
+                // PickRandomZombies(tmpZombieSeeds);
+                // } while (tmpZombieSeeds[4] == aZombieSeeds[4]);
+                // aZombieSeeds.push_back(tmpZombieSeeds[4]);
                 //
-                //                PickRandomPlants(aPlantSeeds, aZombieSeeds);
-                //                do {
-                //                    PickRandomPlants(tmpPlantSeeds, aZombieSeeds);
-                //                } while (tmpPlantSeeds[4] == aPlantSeeds[4]);
-                //                aPlantSeeds.push_back(tmpPlantSeeds[4]);
+                // PickRandomPlants(aPlantSeeds, aZombieSeeds);
+                // do {
+                // PickRandomPlants(tmpPlantSeeds, aZombieSeeds);
+                // } while (tmpPlantSeeds[4] == aPlantSeeds[4]);
+                // aPlantSeeds.push_back(tmpPlantSeeds[4]);
                 //
-                //                aSeedBank2->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE, SeedType::SEED_NONE);
-                //                aSeedBank1->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
-                //                for (int i = 0; i < aZombieSeeds.size(); ++i) {
-                //                    aSeedBank2->mSeedPackets[i + 1].SetPacketType(aZombieSeeds[i], SeedType::SEED_NONE);
-                //                }
-                //                for (int i = 0; i < aPlantSeeds.size(); ++i) {
-                //                    aSeedBank2->mSeedPackets[i + 1].SetPacketType(aPlantSeeds[i], SeedType::SEED_NONE);
-                //                }
+                // aSeedBank2->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE, SeedType::SEED_NONE);
+                // aSeedBank1->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
+                // for (int i = 0; i < aZombieSeeds.size(); ++i) {
+                // aSeedBank2->mSeedPackets[i + 1].SetPacketType(aZombieSeeds[i], SeedType::SEED_NONE);
+                // }
+                // for (int i = 0; i < aPlantSeeds.size(); ++i) {
+                // aSeedBank2->mSeedPackets[i + 1].SetPacketType(aPlantSeeds[i], SeedType::SEED_NONE);
+                // }
             }
             break;
         case 1145: // 额外卡槽

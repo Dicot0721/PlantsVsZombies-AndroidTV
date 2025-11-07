@@ -61,7 +61,7 @@ void MailScreen::_constructor(LawnApp *theApp) {
 
 void MailScreen::AddedToManager(int *theWidgetManager) {
     old_MailScreen_AddedToManager(this, theWidgetManager);
-    //    Sexy_Widget_Resize(mailScreen, -240, -60, 1280, 720);
+    // Sexy_Widget_Resize(mailScreen, -240, -60, 1280, 720);
 }
 
 void MailScreen::RemovedFromManager(int *widgetManager) {

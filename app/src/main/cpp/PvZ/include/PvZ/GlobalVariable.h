@@ -48,10 +48,10 @@ inline bool showHouse;
 inline bool imitater;
 inline bool positionAutoFix; // 自动光标归位
 inline bool useXboxMusic;
-inline bool seedBankPin;    // 无尽置顶种子栏
-inline bool dynamicPreview; // 动态种植预览
-inline bool jumpLogo;       // 跳过加载界面的宝开Logo
-inline bool gMoreZombieSeeds;  // 解锁更多对战僵尸
+inline bool seedBankPin;          // 无尽置顶种子栏
+inline bool dynamicPreview;       // 动态种植预览
+inline bool jumpLogo;             // 跳过加载界面的宝开Logo
+inline bool gMoreZombieSeeds;     // 解锁更多对战僵尸
 inline bool gVSBalanceAdjustment; // 对战平衡调整
 inline bool heavyWeaponAccel;
 

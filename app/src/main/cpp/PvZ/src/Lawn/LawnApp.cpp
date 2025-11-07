@@ -113,11 +113,11 @@ void LawnApp::LoadAddonImages() {
     int addonImagesNum = (sizeof(AddonImages) / sizeof(Sexy::Image *));
     mCompletedLoadingThreadTasks += 9 * addonImagesNum;
 
-    //    for (int i = 0; i < addonImagesNum; ++i) {
-    //        if (*((Sexy::Image **) ((char *) &AddonImages + i * sizeof(Sexy::Image *))) == NULL){
-    //            LOGD("没成功%d",i);
-    //        }
-    //    }
+    // for (int i = 0; i < addonImagesNum; ++i) {
+    // if (*((Sexy::Image **) ((char *) &AddonImages + i * sizeof(Sexy::Image *))) == NULL){
+    // LOGD("没成功%d",i);
+    // }
+    // }
 }
 
 // 此处写明具体每个音频对应哪个文件.
@@ -147,7 +147,7 @@ void LawnApp::DoConfirmBackToMain(bool theIsSave) {
     // 实现在花园直接退出而不是弹窗退出；同时实现新版暂停菜单
     if (mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN) {
         mBoardResult = BoardResult::BOARDRESULT_QUIT;
-        //        if (theIsSave) Board_TryToSaveGame(lawnApp->mBoard);
+        // if (theIsSave) Board_TryToSaveGame(lawnApp->mBoard);
         DoBackToMain();
         return;
     }
@@ -159,7 +159,6 @@ void LawnApp::DoConfirmBackToMain(bool theIsSave) {
     (*(void (**)(LawnApp *, int, Sexy::__Widget *))(*(uint32_t *)this + 416))(this, Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN, aBackDialog);
     (*(void (**)(uint32_t, Sexy::__Widget *))(**((uint32_t **)this + 165) + 48))(*((uint32_t *)this + 165), aBackDialog);
 }
-
 
 
 void LawnApp::ClearSecondPlayer() {
@@ -319,30 +318,30 @@ void LawnApp::Load(const char *theGroupName) {
 }
 
 // void LawnApp::DoConvertImitaterImages() {
-//     for (int i = 0;; ++i) {
-//         int holder[1];
-//         int holder1[1];
-//         int holder2[1];
-//         StrFormat(holder, "convertImitaterImages/pic%d", i);
-//         StrFormat(holder1, "ImitaterNormalpic%d.png", i);
-//         StrFormat(holder2, "ImitaterLesspic%d.png", i);
-//         Image *imageFromFile = GetImage(reinterpret_cast<string &>(holder), true);
+// for (int i = 0;; ++i) {
+// int holder[1];
+// int holder1[1];
+// int holder2[1];
+// StrFormat(holder, "convertImitaterImages/pic%d", i);
+// StrFormat(holder1, "ImitaterNormalpic%d.png", i);
+// StrFormat(holder2, "ImitaterLesspic%d.png", i);
+// Image *imageFromFile = GetImage(reinterpret_cast<string &>(holder), true);
 //
-//         if (imageFromFile == nullptr) {
-//             break;
-//         }
-//         Image *imageImitater = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_WASHED_OUT);
-//         Image *imageImitaterLess = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_LESS_WASHED_OUT);
-//         reinterpret_cast<MemoryImage *>(imageImitater)->WriteToPng(holder1);
-//         reinterpret_cast<MemoryImage *>(imageImitaterLess)->WriteToPng(holder2);
-//         reinterpret_cast<MemoryImage *>(imageFromFile)->Delete();
-//         reinterpret_cast<MemoryImage *>(imageImitater)->Delete();
-//         reinterpret_cast<MemoryImage *>(imageImitaterLess)->Delete();
+// if (imageFromFile == nullptr) {
+// break;
+// }
+// Image *imageImitater = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_WASHED_OUT);
+// Image *imageImitaterLess = FilterEffectGetImage(imageFromFile, FilterEffect::FILTEREFFECT_LESS_WASHED_OUT);
+// reinterpret_cast<MemoryImage *>(imageImitater)->WriteToPng(holder1);
+// reinterpret_cast<MemoryImage *>(imageImitaterLess)->WriteToPng(holder2);
+// reinterpret_cast<MemoryImage *>(imageFromFile)->Delete();
+// reinterpret_cast<MemoryImage *>(imageImitater)->Delete();
+// reinterpret_cast<MemoryImage *>(imageImitaterLess)->Delete();
 //
-//         StringDelete(holder);
-//         StringDelete(holder1);
-//         StringDelete(holder2);
-//     }
+// StringDelete(holder);
+// StringDelete(holder1);
+// StringDelete(holder2);
+// }
 // }
 
 void LawnApp::LoadingThreadProc() {
@@ -351,7 +350,7 @@ void LawnApp::LoadingThreadProc() {
 
     LoadAddonImages();
     LoadAddonSounds();
-    //    LawnApp_DoConvertImitaterImages(lawnApp);
+    // LawnApp_DoConvertImitaterImages(lawnApp);
     TodStringListLoad("addonFiles/properties/AddonStrings.txt"); // 加载自定义字符串
 
     // 加载三个主界面背景白噪音Foley
@@ -360,14 +359,14 @@ void LawnApp::LoadingThreadProc() {
     gMenuCenterFoley.mSfxID[0] = Sexy_SOUND_MENU_C_ST_Addr;
     gMenuRightFoley.mSfxID[0] = Sexy_SOUND_MENU_R_ST_Addr;
 
-    //    //试图修复偶现的地图错位现象。不知道是否有效
-    //    LawnApp_Load(lawnApp,"DelayLoad_Background1");
-    //    LawnApp_Load(lawnApp,"DelayLoad_BackgroundUnsodded");
-    //    LawnApp_Load(lawnApp,"DelayLoad_Background2");
-    //    LawnApp_Load(lawnApp,"DelayLoad_Background3");
-    //    LawnApp_Load(lawnApp,"DelayLoad_Background4");
-    //    LawnApp_Load(lawnApp,"DelayLoad_Background5");
-    //    LawnApp_Load(lawnApp,"DelayLoad_Background6");
+    // //试图修复偶现的地图错位现象。不知道是否有效
+    // LawnApp_Load(lawnApp,"DelayLoad_Background1");
+    // LawnApp_Load(lawnApp,"DelayLoad_BackgroundUnsodded");
+    // LawnApp_Load(lawnApp,"DelayLoad_Background2");
+    // LawnApp_Load(lawnApp,"DelayLoad_Background3");
+    // LawnApp_Load(lawnApp,"DelayLoad_Background4");
+    // LawnApp_Load(lawnApp,"DelayLoad_Background5");
+    // LawnApp_Load(lawnApp,"DelayLoad_Background6");
 
     if (showHouse) {
         ReanimatorEnsureDefinitionLoaded(ReanimationType::REANIM_LEADERBOARDS_HOUSE, true);
@@ -393,11 +392,11 @@ int LawnApp::GetSeedsAvailable(bool theIsZombieChooser) {
 
 void LawnApp::HardwareInit() {
     old_LawnApp_HardwareInit(this);
-    //    if (useXboxMusic) {
-    //        Music2_Delete(lawnApp->mMusic);
-    //        lawnApp->mMusic = (Music2*) operator new(104u);
-    //        Music_Music(lawnApp->mMusic); // 使用Music而非Music2
-    //    }
+    // if (useXboxMusic) {
+    // Music2_Delete(lawnApp->mMusic);
+    // lawnApp->mMusic = (Music2*) operator new(104u);
+    // Music_Music(lawnApp->mMusic); // 使用Music而非Music2
+    // }
 }
 
 int LawnApp::GetNumPreloadingTasks() {
@@ -417,12 +416,12 @@ int LawnApp::GetNumPreloadingTasks() {
 bool LawnApp::GrantAchievement(AchievementId theAchievementId) {
     // 一些非Board的成就在这里处理
     if (!mPlayerInfo->mAchievements[theAchievementId]) {
-        PlaySample( addonSounds.achievement);
-        //    int holder[1];
-        //    StrFormat(holder,"一二三四五六 成就达成！");
-        //    ((CustomMessageWidget*)board->mAdvice)->mIcon = GetIconByAchievementId(theAchievementId);
-        //    Board_DisplayAdviceAgain(board, holder, a::MESSAGE_STYLE_ACHIEVEMENT, AdviceType::ADVICE_NEED_ACHIVEMENT_EARNED);
-        //    StringDelete(holder);
+        PlaySample(addonSounds.achievement);
+        // int holder[1];
+        // StrFormat(holder,"一二三四五六 成就达成！");
+        // ((CustomMessageWidget*)board->mAdvice)->mIcon = GetIconByAchievementId(theAchievementId);
+        // Board_DisplayAdviceAgain(board, holder, a::MESSAGE_STYLE_ACHIEVEMENT, AdviceType::ADVICE_NEED_ACHIVEMENT_EARNED);
+        // StringDelete(holder);
         mPlayerInfo->mAchievements[theAchievementId] = true;
         return true;
     }
@@ -475,13 +474,13 @@ void LawnApp::KillLeaderboards() {
         return;
 
     mWidgetManager->RemoveWidget(reinterpret_cast<Widget *>(gMainMenuLeaderboardsWidget));
-    (*((void (**)(LawnApp *, Sexy::__Widget *))vTable + 47))(this, gMainMenuLeaderboardsWidget);                // MSGBOX()
+    (*((void (**)(LawnApp *, Sexy::__Widget *))vTable + 47))(this, gMainMenuLeaderboardsWidget); // MSGBOX()
     gMainMenuLeaderboardsWidget = nullptr;
 }
 
 void LawnApp::ShowZombatarScreen() {
     gMainMenuZombatarWidget = new ZombatarWidget(this);
-    //    Sexy_Widget_Resize(gMainMenuZombatarWidget,-80,-60,960,720);
+    // Sexy_Widget_Resize(gMainMenuZombatarWidget,-80,-60,960,720);
     mWidgetManager->AddWidget(reinterpret_cast<Widget *>(gMainMenuZombatarWidget));
     mWidgetManager->SetFocus(reinterpret_cast<Widget *>(gMainMenuZombatarWidget));
 }
@@ -491,7 +490,7 @@ void LawnApp::KillZombatarScreen() {
         return;
 
     mWidgetManager->RemoveWidget(reinterpret_cast<Widget *>(gMainMenuZombatarWidget));
-    (*((void (**)(LawnApp *, Sexy::__Widget *))vTable + 47))(this, gMainMenuZombatarWidget);                // MSGBOX()
+    (*((void (**)(LawnApp *, Sexy::__Widget *))vTable + 47))(this, gMainMenuZombatarWidget); // MSGBOX()
     gMainMenuZombatarWidget = nullptr;
 }
 

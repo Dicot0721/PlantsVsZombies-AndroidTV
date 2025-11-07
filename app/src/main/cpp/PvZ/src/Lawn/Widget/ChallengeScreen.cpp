@@ -42,18 +42,18 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
         button->Resize(button->mX, button->mY, 0, 0);
     }
 
-    //    if (thePage == CHALLENGE_PAGE_VS) {
+    // if (thePage == CHALLENGE_PAGE_VS) {
     ////        SetUnlockChallengeIndex(thePage, false);
-    //        mUnlockState = UNLOCK_SHAKING;
-    //        mUnlockStateCounter = 100;
-    //        mUnlockChallengeIndex = 0;
+    // mUnlockState = UNLOCK_SHAKING;
+    // mUnlockStateCounter = 100;
+    // mUnlockChallengeIndex = 0;
     //
-    //        for (int aChallengeMode = 0; aChallengeMode < NUM_CHALLENGE_MODES; aChallengeMode++) {
-    //            ChallengeDefinition& aDef = GetChallengeDefinition(aChallengeMode);
-    //            if (aDef.mPage == thePage)
-    //                mUnlockChallengeIndex = aChallengeMode;
-    //        }
-    //    }
+    // for (int aChallengeMode = 0; aChallengeMode < NUM_CHALLENGE_MODES; aChallengeMode++) {
+    // ChallengeDefinition& aDef = GetChallengeDefinition(aChallengeMode);
+    // if (aDef.mPage == thePage)
+    // mUnlockChallengeIndex = aChallengeMode;
+    // }
+    // }
 }
 
 namespace {
@@ -72,20 +72,20 @@ ChallengeDefinition &GetChallengeDefinition(int theChallengeMode) {
     }
 
     // if (theChallengeMode + 2 == GameMode::GAMEMODE_CHALLENGE_POOL_PARTY) {
-    //     return gPoolPartyDef;
+    // return gPoolPartyDef;
     // }
 
-    //    if (theChallengeMode + 4 == GameMode::GAMEMODE_MP_VS) {
-    //        return gVSDayDef;
-    //    } else if (theChallengeMode + 3 == GameMode::GAMEMODE_MP_VS) {
-    //        return gVSNightDef;
-    //    } else if (theChallengeMode + 2 == GameMode::GAMEMODE_MP_VS) {
-    //        return gVSPoolDayDef;
-    //    } else if (theChallengeMode + 1 == GameMode::GAMEMODE_MP_VS) {
-    //        return gVSPoolNightDef;
-    //    } else if (theChallengeMode == GameMode::GAMEMODE_MP_VS) {
-    //        return gVSRoofDef;
-    //    }
+    // if (theChallengeMode + 4 == GameMode::GAMEMODE_MP_VS) {
+    // return gVSDayDef;
+    // } else if (theChallengeMode + 3 == GameMode::GAMEMODE_MP_VS) {
+    // return gVSNightDef;
+    // } else if (theChallengeMode + 2 == GameMode::GAMEMODE_MP_VS) {
+    // return gVSPoolDayDef;
+    // } else if (theChallengeMode + 1 == GameMode::GAMEMODE_MP_VS) {
+    // return gVSPoolNightDef;
+    // } else if (theChallengeMode == GameMode::GAMEMODE_MP_VS) {
+    // return gVSRoofDef;
+    // }
 
     return old_GetChallengeDefinition(theChallengeMode);
 }
@@ -193,16 +193,16 @@ void ChallengeScreen::MouseDown(int x, int y, int theClickCount) {
 
     gChallengeScreenGameIndex = mScreenTopChallengeIndex;
 
-    //    int totalGamesInThisPage = a[376];//如果这个值是33
-    //    int currentSelectedGameIndex = ChallengeScreen_GetCurrentSelectedGameIndex(
-    //            a);//这里取值就是0~32。种子雨是32。
+    // int totalGamesInThisPage = a[376];//如果这个值是33
+    // int currentSelectedGameIndex = ChallengeScreen_GetCurrentSelectedGameIndex(
+    // a);//这里取值就是0~32。种子雨是32。
 
-    //    int firstGameInPageIndex = a->mScreenTopChallengeIndex;
-    //    int firstGameInPageIndex2 = a[186];
-    //    a->mSelectedMode = a[currentSelectedGameIndex + 1 + 188];//向下移动绿色光标，不可循环滚动
-    //    a->mSelectedMode = a[currentSelectedGameIndex - 1 + 188];//向上移动绿色光标，不可循环滚动
+    // int firstGameInPageIndex = a->mScreenTopChallengeIndex;
+    // int firstGameInPageIndex2 = a[186];
+    // a->mSelectedMode = a[currentSelectedGameIndex + 1 + 188];//向下移动绿色光标，不可循环滚动
+    // a->mSelectedMode = a[currentSelectedGameIndex - 1 + 188];//向上移动绿色光标，不可循环滚动
 
-    //    LOGD("dOWN:%d %d %d %d", x, y, firstGameInPageIndex, firstGameInPageIndex2);
+    // LOGD("dOWN:%d %d %d %d", x, y, firstGameInPageIndex, firstGameInPageIndex2);
 }
 
 void ChallengeScreen::MouseDrag(int x, int y) {
@@ -215,14 +215,14 @@ void ChallengeScreen::MouseDrag(int x, int y) {
         gChallengeScreenTouchDownY -= triggerHeight;
         int gameIndexToScroll = gChallengeScreenGameIndex >= totalGamesInThisPage - 4 ? totalGamesInThisPage - 4 : gChallengeScreenGameIndex;
         SetScrollTarget(gameIndexToScroll);
-        //        ChallengeScreen_UpdateButtons(a);
+        // ChallengeScreen_UpdateButtons(a);
         gChallengeItemMoved = true;
     } else if (y - gChallengeScreenTouchDownY > triggerHeight) {
         gChallengeScreenGameIndex -= 1;
         gChallengeScreenTouchDownY += triggerHeight;
         int gameIndexToScroll = gChallengeScreenGameIndex <= 0 ? 0 : gChallengeScreenGameIndex;
         SetScrollTarget(gameIndexToScroll);
-        //        ChallengeScreen_UpdateButtons(a);
+        // ChallengeScreen_UpdateButtons(a);
         gChallengeItemMoved = true;
     }
 }
@@ -233,7 +233,7 @@ void ChallengeScreen::MouseUp(int x, int y) {
         if (mSelectedMode == mUnk1[gameIndex]) {
             KeyDown(Sexy::KEYCODE_ACCEPT);
         } else {
-            mApp->PlaySample( *Sexy_SOUND_BUTTONCLICK_Addr);
+            mApp->PlaySample(*Sexy_SOUND_BUTTONCLICK_Addr);
             mSelectedMode = mUnk1[gameIndex];
         }
     }

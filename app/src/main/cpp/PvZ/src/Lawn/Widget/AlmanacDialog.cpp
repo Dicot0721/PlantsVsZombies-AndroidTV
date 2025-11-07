@@ -77,7 +77,7 @@ void AlmanacDialog::_constructor(LawnApp *theApp) {
     AddWidget(gAlmanacCloseButton);
 
 
-    //   为泳池背景加入PoolEffect。这里挖空背景图，挖出一块透明方形
+    // 为泳池背景加入PoolEffect。这里挖空背景图，挖出一块透明方形
     Sexy::Image *gPlantBackImage = *Sexy_IMAGE_ALMANAC_PLANTBACK_Addr;
     Sexy::Image *gPoolBackImage = *Sexy_IMAGE_ALMANAC_GROUNDNIGHTPOOL_Addr;
     Sexy::Rect blankRect = {mAlmanacPlantRectX + 240, mAlmanacPlantRectY + 60, gPoolBackImage->mWidth, gPoolBackImage->mHeight};
@@ -132,9 +132,9 @@ void AlmanacDialog::MouseDown(int x, int y, int a4) {
     if (mOpenPage == 0) {
         // 如果当前的Page是Index Page
         if (mPlantButton->IsMouseOver())
-            mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
+            mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
         if (mZombieButton->IsMouseOver())
-            mApp->PlaySample( *Sexy_SOUND_GRAVEBUTTON_Addr);
+            mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
         return;
     } else if (TRect_Contains(&mTextRect, x, y)) {
         isTouchDownInTextRect = true;
@@ -145,13 +145,13 @@ void AlmanacDialog::MouseDown(int x, int y, int a4) {
     if (seedType != SeedType::SEED_NONE && seedType != mSelectedSeed) {
         mSelectedSeed = seedType;
         SetupPlant();
-        mApp->PlaySample( *Sexy_SOUND_TAP_Addr);
+        mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
     }
     ZombieType zombieType = ZombieHitTest(x, y);
     if (zombieType != -1 && zombieType != mSelectedZombie) {
         mSelectedZombie = zombieType;
         SetupZombie();
-        mApp->PlaySample( *Sexy_SOUND_TAP_Addr);
+        mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
     }
 }
 
@@ -294,27 +294,27 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
 }
 
 void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
-    //    return old_AlmanacDialog_DrawPlants(almanacDialog,g);
-    //   为泳池背景加入PoolEffect。此函数改变了原版绘制顺序，将背景图放在泳池的后面绘制
+    // return old_AlmanacDialog_DrawPlants(almanacDialog,g);
+    // 为泳池背景加入PoolEffect。此函数改变了原版绘制顺序，将背景图放在泳池的后面绘制
 
     if (Plant::IsAquatic(mSelectedSeed)) {
         if (Plant::IsNocturnal(mSelectedSeed)) {
             g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDNIGHTPOOL_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY + 10);
             if (mApp->Is3DAccelerated()) {
-                //                Sexy_Graphics_SetClipRect(g, 475, 0, 397, 500);
+                // Sexy_Graphics_SetClipRect(g, 475, 0, 397, 500);
                 g->mTransY = g->mTransY - 115;
                 mApp->mPoolEffect->PoolEffectDraw(g, true);
                 g->mTransY = g->mTransY + 115;
-                //                Sexy_Graphics_ClearClipRect(g);
+                // Sexy_Graphics_ClearClipRect(g);
             }
         } else {
             g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDPOOL_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY + 10);
             if (mApp->Is3DAccelerated()) {
-                //                Sexy_Graphics_SetClipRect(g, 475, 0, 397, 500);
+                // Sexy_Graphics_SetClipRect(g, 475, 0, 397, 500);
                 g->mTransY = g->mTransY - 115;
                 mApp->mPoolEffect->PoolEffectDraw(g, false);
                 g->mTransY = g->mTransY + 115;
-                //                Sexy_Graphics_ClearClipRect(g);
+                // Sexy_Graphics_ClearClipRect(g);
             }
         }
     } else if (Plant::IsNocturnal(mSelectedSeed) || mSelectedSeed == SeedType::SEED_GRAVEBUSTER || mSelectedSeed == SeedType::SEED_PLANTERN) {

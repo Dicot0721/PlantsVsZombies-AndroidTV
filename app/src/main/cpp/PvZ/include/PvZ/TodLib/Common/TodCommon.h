@@ -65,11 +65,13 @@ inline float RandRangeFloat(float theMin, float theMax) {
 }
 
 inline int ClampInt(int theNum, int theMin, int theMax) {
-    return theNum <= theMin ? theMin : theNum >= theMax ? theMax : theNum;
+    return theNum <= theMin ? theMin : theNum >= theMax ? theMax
+                                                        : theNum;
 }
 
 inline float ClampFloat(float theNum, float theMin, float theMax) {
-    return theNum <= theMin ? theMin : theNum >= theMax ? theMax : theNum;
+    return theNum <= theMin ? theMin : theNum >= theMax ? theMax
+                                                        : theNum;
 }
 
 inline float Distance2D(float x1, float y1, float x2, float y2) {
@@ -224,14 +226,13 @@ inline Sexy::Color GetFlashingColor(int theCounter, int theFlashTime) {
     return Sexy::Color(aGrayness, aGrayness, aGrayness, 255);
 }
 
-inline Sexy::Color ColorAdd(const Sexy::Color& theColor1, const Sexy::Color& theColor2)
-{
+inline Sexy::Color ColorAdd(const Sexy::Color &theColor1, const Sexy::Color &theColor2) {
     int r = theColor1.mRed + theColor2.mRed;
     int g = theColor1.mGreen + theColor2.mGreen;
     int b = theColor1.mBlue + theColor2.mBlue;
     int a = theColor1.mAlpha + theColor2.mAlpha;
 
-    return Sexy::Color(ClampInt(r, 0, 255), ClampInt(g, 0, 255), ClampInt(b, 0, 255), ClampInt(a, 0, 255));  // 线性减淡
+    return Sexy::Color(ClampInt(r, 0, 255), ClampInt(g, 0, 255), ClampInt(b, 0, 255), ClampInt(a, 0, 255)); // 线性减淡
 }
 
 inline bool FloatApproxEqual(float theFloatVal1, float theFloatVal2) {

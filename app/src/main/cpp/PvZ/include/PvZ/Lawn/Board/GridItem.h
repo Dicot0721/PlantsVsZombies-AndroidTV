@@ -61,7 +61,7 @@ public:
     MotionTrailFrame mMotionTrailFrames[12]; // 25 ~ 60
     int mMotionTrailCount;                   // 61
     bool unkBool;                            // 62 * 4
-    bool unkBool1;                            // 62 * 4 + 1
+    bool unkBool1;                           // 62 * 4 + 1
     int unkMems[3];                          // 63 ~ 65
     int mLaunchCounter;                      // 66
     int mLaunchRate;                         // 67
@@ -69,7 +69,7 @@ public:
     int mVSGraveStoneHealth;                 // 69
     int mVSTargetZombieHealth;               // 70
     int unkMems2[4];                         // 71 ~ 74
-    GridItemID mGridItemID;              // 75
+    GridItemID mGridItemID;                  // 75
     // 大小76个整数
 
     void GridItemDie() {

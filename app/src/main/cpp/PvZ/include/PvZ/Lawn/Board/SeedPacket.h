@@ -68,9 +68,9 @@ public:
     void Deactivate() {
         reinterpret_cast<void (*)(SeedPacket *)>(SeedPacket_DeactivateAddr)(this);
     }
-//    void WasPlanted(int thePlayerIndex) {
-//        reinterpret_cast<void (*)(SeedPacket *, int)>(SeedPacket_WasPlantedAddr)(this, thePlayerIndex);
-//    }
+    // void WasPlanted(int thePlayerIndex) {
+    // reinterpret_cast<void (*)(SeedPacket *, int)>(SeedPacket_WasPlantedAddr)(this, thePlayerIndex);
+    // }
 
     void Update();
     void UpdateSelected();

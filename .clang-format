@@ -199,7 +199,7 @@ PenaltyReturnTypeOnItsOwnLine: 60
 PointerAlignment: Right
 
 # 允许重新排版注释
-ReflowComments: true
+ReflowComments: IndentOnly
 
 # 允许排序 #include
 SortIncludes: CaseSensitive
@@ -215,6 +215,9 @@ SpaceBeforeParens: ControlStatements
 
 # 在空的圆括号中添加空格
 SpaceInEmptyParentheses: false
+
+# 一行注释的开头允许有多少个空格
+SpacesInLineCommentPrefix: { Minimum: 1, Maximum: 1 }
 
 # 在尾随的评论前添加的空格数 (只适用于 //)
 SpacesBeforeTrailingComments: 1

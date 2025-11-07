@@ -56,8 +56,8 @@ inline homura::Patcher whackAZombieNormalSpeed;     // 锤僵尸关卡的僵尸�
 inline homura::Patcher repairShopA;                 // 破解商店
 inline homura::Patcher repairShopB;                 // 破解商店
 inline homura::Patcher autoPickupSeedPacketDisable; // 禁止光标自动拾取植物卡片
-inline homura::Patcher drawMorePlantSeeds;     // 绘制对战植物选卡数量
-inline homura::Patcher drawMoreZombieSeeds;    // 绘制对战僵尸选卡数量
+inline homura::Patcher drawMorePlantSeeds;          // 绘制对战植物选卡数量
+inline homura::Patcher drawMoreZombieSeeds;         // 绘制对战僵尸选卡数量
 } // namespace game_patches
 
 inline void ApplyPatches() {

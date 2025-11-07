@@ -28,7 +28,7 @@
 using namespace Sexy;
 
 MemoryImage *FilterEffectCreateImage(Image *theImage, FilterEffect theFilterEffect) {
-    //    MemoryImage* aImage = new MemoryImage();
+    // MemoryImage* aImage = new MemoryImage();
     MemoryImage *aImage = (MemoryImage *)reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->CopyImage(theImage);
     aImage->mWidth = theImage->mWidth;
     aImage->mHeight = theImage->mHeight;
@@ -50,7 +50,7 @@ MemoryImage *FilterEffectCreateImage(Image *theImage, FilterEffect theFilterEffe
         default:
             break;
     }
-    //    ++memoryImage->mBitsChangedCount;
+    // ++memoryImage->mBitsChangedCount;
     aImage->BitsChanged();
     aImage->mNumCols = theImage->mNumCols;
     aImage->mNumRows = theImage->mNumRows;

@@ -87,8 +87,8 @@ public:
     int mSeedsIn2PBank;                   // 937
     ToolTipWidget *mToolTip1;             // 938
     ToolTipWidget *mToolTip2;             // 939
-    int mToolTipWidgetSeed1;             // 940
-    int mToolTipWidgetSeed2;             // 941
+    int mToolTipWidgetSeed1;              // 940
+    int mToolTipWidgetSeed2;              // 941
     int mCursorPositionX1;                // 942
     int mCursorPositionX2;                // 943
     int mCursorPositionY1;                // 944

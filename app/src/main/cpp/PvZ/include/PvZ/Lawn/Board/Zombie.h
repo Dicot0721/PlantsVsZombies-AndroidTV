@@ -254,11 +254,11 @@ public:
     void PlayDeathAnim(unsigned int theDamageFlags) {
         reinterpret_cast<void (*)(Zombie *, unsigned int)>(Zombie_PlayDeathAnimAddr)(this, theDamageFlags);
     }
-    void DrawBobsledReanim(Sexy::Graphics* g, ZombieDrawPosition& theDrawPos, bool theBeforeZombie) {
-        reinterpret_cast<void (*)(Zombie *, Sexy::Graphics*, ZombieDrawPosition&, bool)>(Zombie_DrawBobsledReanimAddr)(this, g, theDrawPos, theBeforeZombie);
+    void DrawBobsledReanim(Sexy::Graphics *g, ZombieDrawPosition &theDrawPos, bool theBeforeZombie) {
+        reinterpret_cast<void (*)(Zombie *, Sexy::Graphics *, ZombieDrawPosition &, bool)>(Zombie_DrawBobsledReanimAddr)(this, g, theDrawPos, theBeforeZombie);
     }
-    void DrawBungeeReanim(Sexy::Graphics* g, ZombieDrawPosition& theDrawPos) {
-        reinterpret_cast<void (*)(Zombie *, Sexy::Graphics*, ZombieDrawPosition&)>(Zombie_DrawBungeeReanimAddr)(this, g, theDrawPos);
+    void DrawBungeeReanim(Sexy::Graphics *g, ZombieDrawPosition &theDrawPos) {
+        reinterpret_cast<void (*)(Zombie *, Sexy::Graphics *, ZombieDrawPosition &)>(Zombie_DrawBungeeReanimAddr)(this, g, theDrawPos);
     }
     void EatZombie(Zombie *theZombie) {
         reinterpret_cast<void (*)(Zombie *, Zombie *)>(Zombie_EatZombieAddr)(this, theZombie);
@@ -411,7 +411,7 @@ extern ZombieDefinition gNewZombieDefs[];
 
 ZombieDefinition &GetZombieDefinition(ZombieType theZombieType);
 
-inline std::vector<ZombieType>gDeadFollowers;
+inline std::vector<ZombieType> gDeadFollowers;
 inline int gSetRowCount = 0;
 /***************************************************************************************************************/
 

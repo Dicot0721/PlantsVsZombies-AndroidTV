@@ -79,7 +79,7 @@ public:
     int mInt71;                           // 71
     int mInt72;                           // 72
     LawnApp *mApp;                        // 73
-    VSSetupState mState;                           // 74 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
+    VSSetupState mState;                  // 74 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
     int mInt75;                           // 75
     int mInt76;                           // 76
     int mController1Position;             // 77  // -1 0 1， 分别位于左 中 右
@@ -127,21 +127,21 @@ public:
     void CloseVSSetup(bool close) {
         reinterpret_cast<void (*)(VSSetupMenu *, bool)>(VSSetupMenu_CloseVSSetupAddr)(this, close);
     }
-//    void PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
-//        reinterpret_cast<void (*)(VSSetupMenu *, std::vector<SeedType> &)>(VSSetupMenu_PickRandomZombiesAddr)(this, theZombieSeeds);
-//    }
-//    void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds) {
-//        reinterpret_cast<void (*)(VSSetupMenu *, std::vector<SeedType> &, std::vector<SeedType> const &)>(VSSetupMenu_PickRandomPlantsAddr)(this, thePlantSeeds, theZombieSeeds);
-//    }
+    // void PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
+    // reinterpret_cast<void (*)(VSSetupMenu *, std::vector<SeedType> &)>(VSSetupMenu_PickRandomZombiesAddr)(this, theZombieSeeds);
+    // }
+    // void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds) {
+    // reinterpret_cast<void (*)(VSSetupMenu *, std::vector<SeedType> &, std::vector<SeedType> const &)>(VSSetupMenu_PickRandomPlantsAddr)(this, thePlantSeeds, theZombieSeeds);
+    // }
     void OnPlayerPickedSeed(int thePlayerIndex) {
         reinterpret_cast<void (*)(VSSetupMenu *, int)>(VSSetupMenu_OnPlayerPickedSeedAddr)(this, thePlayerIndex);
     }
-//    void PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
-//        reinterpret_cast<void (*)(VSSetupMenu *, std::vector<SeedType> &)>(VSSetupMenu_PickRandomZombiesAddr)(this, theZombieSeeds);
-//    }
-//    void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds) {
-//        reinterpret_cast<void (*)(VSSetupMenu *, std::vector<SeedType> &, std::vector<SeedType> const &)>(VSSetupMenu_PickRandomPlantsAddr)(this, thePlantSeeds, theZombieSeeds);
-//    }
+    // void PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
+    // reinterpret_cast<void (*)(VSSetupMenu *, std::vector<SeedType> &)>(VSSetupMenu_PickRandomZombiesAddr)(this, theZombieSeeds);
+    // }
+    // void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds) {
+    // reinterpret_cast<void (*)(VSSetupMenu *, std::vector<SeedType> &, std::vector<SeedType> const &)>(VSSetupMenu_PickRandomPlantsAddr)(this, thePlantSeeds, theZombieSeeds);
+    // }
 
     VSSetupMenu() {
         _constructor();
@@ -167,7 +167,7 @@ protected:
     void HandleTcpClientMessage(void *buf, ssize_t bufSize);
     void HandleTcpServerMessage(void *buf, ssize_t bufSize);
     void PickRandomZombies(std::vector<SeedType> &theZombieSeeds);
-    void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds) ;
+    void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds);
 
 
     void processServerEvent(void *buf, ssize_t bufSize);
@@ -198,9 +198,9 @@ inline void (*old_VSSetupMenu_ButtonPress)(VSSetupMenu *, int theId);
 
 inline void (*old_VSSetupMenu_ButtonDepress)(VSSetupMenu *, int theId);
 
-inline void (*old_VSSetupMenu_PickRandomZombies)(VSSetupMenu *,std::vector<SeedType> &theVector);
+inline void (*old_VSSetupMenu_PickRandomZombies)(VSSetupMenu *, std::vector<SeedType> &theVector);
 
-inline void (*old_VSSetupMenu_PickRandomPlants)(VSSetupMenu *,std::vector<SeedType> &theVector1, std::vector<SeedType> const &theVector2) ;
+inline void (*old_VSSetupMenu_PickRandomPlants)(VSSetupMenu *, std::vector<SeedType> &theVector1, std::vector<SeedType> const &theVector2);
 
 inline void (*old_VSSetupMenu_AddedToManager)(VSSetupMenu *, Sexy::WidgetManager *a2);
 

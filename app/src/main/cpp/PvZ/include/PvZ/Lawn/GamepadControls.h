@@ -98,7 +98,7 @@ public:
     // 铲子 49 1112
     // 锤子 50 1112
 
-//    GamepadControls(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2);
+    // GamepadControls(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2);
     void ButtonDownFireCobcannonTest();
     void InvalidatePreviewReanim();
     void Draw(Sexy::Graphics *g);

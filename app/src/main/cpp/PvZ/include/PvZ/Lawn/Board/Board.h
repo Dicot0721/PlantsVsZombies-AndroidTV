@@ -136,146 +136,146 @@ enum TouchPlayerIndex {
 
 class Board : public Sexy::__Widget {
 public:
-    Sexy::ButtonListener mButtonListener;       // 64
-    int unknownMembers1[4];                     // 65 ~ 68
-    LawnApp *mApp;                              // 69
-    DataArray<Zombie> mZombiesList;             // 70 ~ 76
-    DataArray<Plant> mPlantsList;               // 77 ~ 83
-    DataArray<Projectile> mProjectilesList;     // 84 ~ 90
-    DataArray<Coin> mCoinsList;                 // 91 ~ 97
-    DataArray<LawnMower> mLawnMowersList;       // 98 ~ 104
-    DataArray<GridItem> mGridItemsList;         // 105 ~ 111
-    PlantRbTree mTangleKelpTree;                // 112 ~ 117
-    PlantRbTree mFlowerPotTree;                 // 118 ~ 123
-    PlantRbTree mPumpkinTree;                   // 124 ~ 129
-    CustomMessageWidget *mAdvice;               // 130
-    SeedBank *mSeedBank1;                       // 131
-    SeedBank *mSeedBank2;                       // 132
-    int unknownMembers3[7];                     // 133 ~ 139
-    GamepadControls *mGamepadControls1;         // 140
-    GamepadControls *mGamepadControls2;         // 141
-    CursorObject *mCursorObject1;               // 142
-    CursorObject *mCursorObject2;               // 143
-    CursorPreview *mCursorPreview1;             // 144
-    CursorPreview *mCursorPreview2;             // 145
-    int *mToolTipWidget;                        // 146
-    int *mToolTipFont;                          // 147
-    CutScene *mCutScene;                        // 148
-    Challenge *mChallenge;                      // 149
-    bool unknownBool;                           // 600
-    bool mPaused;                               // 601
-    GridSquareType mGridSquareType[9][6];       // 151 ~ 204
-    int mGridCelLook[9][6];                     // 205 ~ 258
-    int mGridCelOffset[9][6][2];                // 259 ~ 366
-    int mGridCelFog[9][7];                      // 367 ~ 429
-    bool mEnableGraveStones;                    // 1720
-    int mSpecialGraveStoneX;                    // 431
-    int mSpecialGraveStoneY;                    // 432
-    float mFogOffset;                           // 433
-    int mOffsetMoved;                           // 434
-    ReanimationID mCoverLayerAnimIDs[7];        // 435 ~ 441
-    int mFogBlownCountDown;                     // 442
-    PlantRowType mPlantRow[6];                  // 443 ~ 448
-    int mWaveRowGotLawnMowered[6];              // 449 ~ 454
-    int mBonusLawnMowersRemaining;              // 455
-    int mIceMinX[6];                            // 456 ~ 461
-    int mIceTimer[6];                           // 462 ~ 467
-    ParticleSystemID mIceParticleID[6];         // 468 ~ 473
-    TodSmoothArray mRowPickingArray[6];         // 474 ~ 497
-    ZombieType mZombiesInWave[100][50];         // 498 ~ 5497
-    bool mZombieAllowed[100];                   // 5498 ~ 5522
-    int mSunCountDown;                          // 5523
-    int mNumSunsFallen;                         // 5524
-    int mShakeCounter;                          // 5525
-    int mShakeAmountX;                          // 5526
-    int mShakeAmountY;                          // 5527
-    BackgroundType mBackground;                 // 5528
-    int mLevel;                                 // 5529
-    int mSodPosition;                           // 5530
-    int mPrevMouseX;                            // 5531
-    int mPrevMouseY;                            // 5532
-    int mSunMoney1;                             // 5533
-    int mSunMoney2;                             // 5534
-    int mDeathMoney;                            // 5535
-    int mNumWaves;                              // 5536
-    int mMainCounter;                           // 5537
-    int mEffectCounter;                         // 5538
-    int mDrawCount;                             // 5539
-    int mRiseFromGraveCounter;                  // 5540
-    int mOutOfMoneyCounter;                     // 5541
-    int mCurrentWave;                           // 5542
-    int mTotalSpawnedWaves;                     // 5543
-    TutorialState mTutorialState;               // 5544
-    int *mTutorialParticleID;                   // 5545
-    int mTutorialTimer;                         // 5546
-    int mLastBungeeWave;                        // 5547
-    int mZombieHealthToNextWave;                // 5548
-    int mZombieHealthWaveStart;                 // 5549
-    int mZombieCountDown;                       // 5550
-    int mZombieCountDownStart;                  // 5551
-    int mHugeWaveCountDown;                     // 5552
-    bool mHelpDisplayed[72];                    // 5553 ~ 5570
-    AdviceType mHelpIndex;                      // 5571
-    bool mFinalBossKilled;                      // 22288
-    bool mShowShovel;                           // 22289
-    bool mShowButter;                           // 22290
-    bool mShowHammer;                           // 22291
-    int mCoinBankFadeCount;                     // 5573
-    DebugTextMode mDebugTextMode;               // 5574
-    bool mLevelComplete;                        // 22300
-    bool mNewWallNutAndSunFlowerAndChomperOnly; // 在对齐间隙插入成员，22301
-    char mNewPeaShooterCount;                   // 在对齐间隙插入成员，22302
-    int mBoardFadeOutCounter;                   // 5576
-    int mNextSurvivalStageCounter;              // 5577
-    int mScoreNextMowerCounter;                 // 5578
-    bool mLevelAwardSpawned;                    // 22316
-    int mProgressMeterWidth;                    // 5580
-    int mFlagRaiseCounter;                      // 5581
-    int mIceTrapCounter;                        // 5582
-    int mBoardRandSeed;                         // 5583
-    ParticleSystemID mPoolSparklyParticleID;    // 5584
-    ReanimationID mFwooshID[MAX_GRID_SIZE_Y][12];    // 5585 ~ 5656
-    int mFwooshCountDown;                       // 5657
-    int mTimeStopCounter;                       // 5658
-    bool mDroppedFirstCoin;                     // 22636
-    int mFinalWaveSoundCounter;                 // 5660
-    int mCobCannonCursorDelayCounter;           // 5661
-    int mCobCannonMouseX;                       // 5662
-    int mCobCannonMouseY;                       // 5663
-    bool mKilledYeti;                           // 22656
-    bool mMustacheMode;                         // 22657
-    bool mSuperMowerMode;                       // 22658
-    bool mFutureMode;                           // 22659
-    bool mPinataMode;                           // 22660
-    bool mDanceMode;                            // 22661
-    bool mDaisyMode;                            // 22662
-    bool mSukhbirMode;                          // 22663
-    int mPrevBoardResult;                       // 5666
-    int mTriggeredLawnMowers;                   // 5667
-    int mPlayTimeActiveLevel;                   // 5668
-    int mPlayTimeInactiveLevel;                 // 5669
-    int mMaxSunPlants;                          // 5670
-    int mStartDrawTime;                         // 5671
-    int mIntervalDrawTime;                      // 5672
-    int mIntervalDrawCountStart;                // 5673
-    float mMinFPS;                              // 5674
-    int mPreloadTime;                           // 5675
-    int mGameID;                                // 5676
-    int mGravesCleared;                         // 5677
-    int mPlantsEaten;                           // 5678
-    int mPlantsShoveled;                        // 5679
-    int mCoinsCollected;                        // 5680
-    int mDiamondsCollected;                     // 5681
-    int mPottedPlantsCollected;                 // 5682
-    int mChocolateCollected;                    // 5683
-    bool mPeaShooterUsed;                       // 22736
-    bool mCatapultPlantsUsed;                   // 22737
-    int mCollectedCoinStreak;                   // 5685
-    int mUnkIntSecondPlayer1;                   // 5686
-    bool mUnkBoolSecondPlayer;                  // 22748
-    int mUnkIntSecondPlayer2;                   // 5688
-    int *mStringSecondPlayer;                   // 5689
-    int unknownMembers[8];                      // 5690 ~ 5697
+    Sexy::ButtonListener mButtonListener;         // 64
+    int unknownMembers1[4];                       // 65 ~ 68
+    LawnApp *mApp;                                // 69
+    DataArray<Zombie> mZombiesList;               // 70 ~ 76
+    DataArray<Plant> mPlantsList;                 // 77 ~ 83
+    DataArray<Projectile> mProjectilesList;       // 84 ~ 90
+    DataArray<Coin> mCoinsList;                   // 91 ~ 97
+    DataArray<LawnMower> mLawnMowersList;         // 98 ~ 104
+    DataArray<GridItem> mGridItemsList;           // 105 ~ 111
+    PlantRbTree mTangleKelpTree;                  // 112 ~ 117
+    PlantRbTree mFlowerPotTree;                   // 118 ~ 123
+    PlantRbTree mPumpkinTree;                     // 124 ~ 129
+    CustomMessageWidget *mAdvice;                 // 130
+    SeedBank *mSeedBank1;                         // 131
+    SeedBank *mSeedBank2;                         // 132
+    int unknownMembers3[7];                       // 133 ~ 139
+    GamepadControls *mGamepadControls1;           // 140
+    GamepadControls *mGamepadControls2;           // 141
+    CursorObject *mCursorObject1;                 // 142
+    CursorObject *mCursorObject2;                 // 143
+    CursorPreview *mCursorPreview1;               // 144
+    CursorPreview *mCursorPreview2;               // 145
+    int *mToolTipWidget;                          // 146
+    int *mToolTipFont;                            // 147
+    CutScene *mCutScene;                          // 148
+    Challenge *mChallenge;                        // 149
+    bool unknownBool;                             // 600
+    bool mPaused;                                 // 601
+    GridSquareType mGridSquareType[9][6];         // 151 ~ 204
+    int mGridCelLook[9][6];                       // 205 ~ 258
+    int mGridCelOffset[9][6][2];                  // 259 ~ 366
+    int mGridCelFog[9][7];                        // 367 ~ 429
+    bool mEnableGraveStones;                      // 1720
+    int mSpecialGraveStoneX;                      // 431
+    int mSpecialGraveStoneY;                      // 432
+    float mFogOffset;                             // 433
+    int mOffsetMoved;                             // 434
+    ReanimationID mCoverLayerAnimIDs[7];          // 435 ~ 441
+    int mFogBlownCountDown;                       // 442
+    PlantRowType mPlantRow[6];                    // 443 ~ 448
+    int mWaveRowGotLawnMowered[6];                // 449 ~ 454
+    int mBonusLawnMowersRemaining;                // 455
+    int mIceMinX[6];                              // 456 ~ 461
+    int mIceTimer[6];                             // 462 ~ 467
+    ParticleSystemID mIceParticleID[6];           // 468 ~ 473
+    TodSmoothArray mRowPickingArray[6];           // 474 ~ 497
+    ZombieType mZombiesInWave[100][50];           // 498 ~ 5497
+    bool mZombieAllowed[100];                     // 5498 ~ 5522
+    int mSunCountDown;                            // 5523
+    int mNumSunsFallen;                           // 5524
+    int mShakeCounter;                            // 5525
+    int mShakeAmountX;                            // 5526
+    int mShakeAmountY;                            // 5527
+    BackgroundType mBackground;                   // 5528
+    int mLevel;                                   // 5529
+    int mSodPosition;                             // 5530
+    int mPrevMouseX;                              // 5531
+    int mPrevMouseY;                              // 5532
+    int mSunMoney1;                               // 5533
+    int mSunMoney2;                               // 5534
+    int mDeathMoney;                              // 5535
+    int mNumWaves;                                // 5536
+    int mMainCounter;                             // 5537
+    int mEffectCounter;                           // 5538
+    int mDrawCount;                               // 5539
+    int mRiseFromGraveCounter;                    // 5540
+    int mOutOfMoneyCounter;                       // 5541
+    int mCurrentWave;                             // 5542
+    int mTotalSpawnedWaves;                       // 5543
+    TutorialState mTutorialState;                 // 5544
+    int *mTutorialParticleID;                     // 5545
+    int mTutorialTimer;                           // 5546
+    int mLastBungeeWave;                          // 5547
+    int mZombieHealthToNextWave;                  // 5548
+    int mZombieHealthWaveStart;                   // 5549
+    int mZombieCountDown;                         // 5550
+    int mZombieCountDownStart;                    // 5551
+    int mHugeWaveCountDown;                       // 5552
+    bool mHelpDisplayed[72];                      // 5553 ~ 5570
+    AdviceType mHelpIndex;                        // 5571
+    bool mFinalBossKilled;                        // 22288
+    bool mShowShovel;                             // 22289
+    bool mShowButter;                             // 22290
+    bool mShowHammer;                             // 22291
+    int mCoinBankFadeCount;                       // 5573
+    DebugTextMode mDebugTextMode;                 // 5574
+    bool mLevelComplete;                          // 22300
+    bool mNewWallNutAndSunFlowerAndChomperOnly;   // 在对齐间隙插入成员，22301
+    char mNewPeaShooterCount;                     // 在对齐间隙插入成员，22302
+    int mBoardFadeOutCounter;                     // 5576
+    int mNextSurvivalStageCounter;                // 5577
+    int mScoreNextMowerCounter;                   // 5578
+    bool mLevelAwardSpawned;                      // 22316
+    int mProgressMeterWidth;                      // 5580
+    int mFlagRaiseCounter;                        // 5581
+    int mIceTrapCounter;                          // 5582
+    int mBoardRandSeed;                           // 5583
+    ParticleSystemID mPoolSparklyParticleID;      // 5584
+    ReanimationID mFwooshID[MAX_GRID_SIZE_Y][12]; // 5585 ~ 5656
+    int mFwooshCountDown;                         // 5657
+    int mTimeStopCounter;                         // 5658
+    bool mDroppedFirstCoin;                       // 22636
+    int mFinalWaveSoundCounter;                   // 5660
+    int mCobCannonCursorDelayCounter;             // 5661
+    int mCobCannonMouseX;                         // 5662
+    int mCobCannonMouseY;                         // 5663
+    bool mKilledYeti;                             // 22656
+    bool mMustacheMode;                           // 22657
+    bool mSuperMowerMode;                         // 22658
+    bool mFutureMode;                             // 22659
+    bool mPinataMode;                             // 22660
+    bool mDanceMode;                              // 22661
+    bool mDaisyMode;                              // 22662
+    bool mSukhbirMode;                            // 22663
+    int mPrevBoardResult;                         // 5666
+    int mTriggeredLawnMowers;                     // 5667
+    int mPlayTimeActiveLevel;                     // 5668
+    int mPlayTimeInactiveLevel;                   // 5669
+    int mMaxSunPlants;                            // 5670
+    int mStartDrawTime;                           // 5671
+    int mIntervalDrawTime;                        // 5672
+    int mIntervalDrawCountStart;                  // 5673
+    float mMinFPS;                                // 5674
+    int mPreloadTime;                             // 5675
+    int mGameID;                                  // 5676
+    int mGravesCleared;                           // 5677
+    int mPlantsEaten;                             // 5678
+    int mPlantsShoveled;                          // 5679
+    int mCoinsCollected;                          // 5680
+    int mDiamondsCollected;                       // 5681
+    int mPottedPlantsCollected;                   // 5682
+    int mChocolateCollected;                      // 5683
+    bool mPeaShooterUsed;                         // 22736
+    bool mCatapultPlantsUsed;                     // 22737
+    int mCollectedCoinStreak;                     // 5685
+    int mUnkIntSecondPlayer1;                     // 5686
+    bool mUnkBoolSecondPlayer;                    // 22748
+    int mUnkIntSecondPlayer2;                     // 5688
+    int *mStringSecondPlayer;                     // 5689
+    int unknownMembers[8];                        // 5690 ~ 5697
 
     Projectile *AddProjectile(int theX, int theY, int theRenderOrder, int theRow, ProjectileType theProjectileType) {
         return reinterpret_cast<Projectile *(*)(Board *, int, int, int, int, ProjectileType)>(Board_AddProjectileAddr)(this, theX, theY, theRenderOrder, theRow, theProjectileType);
@@ -392,9 +392,9 @@ public:
     bool CanInteractWithBoardButtons() {
         return reinterpret_cast<bool (*)(Board *)>(Board_CanInteractWithBoardButtonsAddr)(this);
     }
-//    Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion) {
-//        return reinterpret_cast<Coin *(*)(Board *, int, int, CoinType, CoinMotion)>(Board_AddCoinAddr)(this, theX, theY, theCoinType, theCoinMotion);
-//    }
+    // Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion) {
+    // return reinterpret_cast<Coin *(*)(Board *, int, int, CoinType, CoinMotion)>(Board_AddCoinAddr)(this, theX, theY, theCoinType, theCoinMotion);
+    // }
     bool CanTakeSunMoney(int theAmount, int thePlayerIndex) {
         return reinterpret_cast<bool (*)(Board *, int, int)>(Board_CanTakeSunMoneyAddr)(this, theAmount, thePlayerIndex);
     }
@@ -440,9 +440,9 @@ public:
     bool CanTakeDeathMoney(int theAmount) {
         return reinterpret_cast<bool (*)(Board *, int)>(Board_CanTakeDeathMoneyAddr)(this, theAmount);
     }
-//    int TakeDeathMoney(int theAmount) {
-//        return reinterpret_cast<int (*)(Board *, int)>(Board_TakeDeathMoneyAddr)(this, theAmount);
-//    }
+    // int TakeDeathMoney(int theAmount) {
+    // return reinterpret_cast<int (*)(Board *, int)>(Board_TakeDeathMoneyAddr)(this, theAmount);
+    // }
     void RemoveAllMowers() {
         reinterpret_cast<void (*)(Board *)>(Board_RemoveAllMowersAddr)(this);
     }
@@ -450,7 +450,7 @@ public:
         reinterpret_cast<void (*)(Board *)>(Board_ResetLawnMowersAddr)(this);
     }
     ZombieID ZombieGetID(Zombie *theZombie) {
-        return reinterpret_cast<ZombieID(*)(Board *, Zombie *)>(Board_ZombieGetIDAddr)(this, theZombie);
+        return reinterpret_cast<ZombieID (*)(Board *, Zombie *)>(Board_ZombieGetIDAddr)(this, theZombie);
     }
     void SetDanceMode(bool theEnableDance) {
         reinterpret_cast<void (*)(Board *, bool)>(Board_SetDanceModeAddr)(this, theEnableDance);
@@ -521,7 +521,7 @@ public:
     void InitLawnMowers();
     void PickZombieWaves();
     void DrawUITop(Sexy::Graphics *g);
-    //    void GetShovelButtonRect(Rect *rect);
+    // void GetShovelButtonRect(Rect *rect);
     void UpdateLevelEndSequence();
     void UpdateGridItems();
     void ShakeBoard(int theShakeAmountX, int theShakeAmountY);
@@ -577,9 +577,10 @@ public:
     void ButtonDepress(int theId);
     void KeyDown(Sexy::KeyCode theKey);
     Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion);
-    bool TakeDeathMoney(int theAmount) ;
+    bool TakeDeathMoney(int theAmount);
     GridItem *AddAGraveStone(int gridX, int gridY);
     bool TakeSunMoney(int theAmount, int thePlayer);
+
 protected:
     friend void InitHookFunction();
 
@@ -664,7 +665,7 @@ inline void (*old_FixBoardAfterLoad)(Board *board);
 
 inline int (*old_LawnSaveGame)(Board *a1, int *a2);
 
-inline int (*old_LawnLoadGame)(Board *a1, int* a2);
+inline int (*old_LawnLoadGame)(Board *a1, int *a2);
 
 inline void (*old_Board_UpdateGame)(Board *board);
 
@@ -770,7 +771,7 @@ inline int (*old_Board_GetNumSeedsInBank)(Board *, bool);
 
 inline void (*old_Board_Draw)(Board *, Sexy::Graphics *g);
 
-inline Coin* (*old_Board_AddCoin)(Board *board, int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion);
+inline Coin *(*old_Board_AddCoin)(Board *board, int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion);
 
 void FixBoardAfterLoad(Board *board);
 
@@ -790,7 +791,7 @@ bool Board_KeyUp(Board *board, int keyCode);
 
 void Board_DrawStartButton(Board *board, Sexy::Graphics *graphics, LawnApp *lawnApp);
 
-inline GridItem* (*old_Board_AddAGraveStone)(Board *board, int gridX, int gridY);
+inline GridItem *(*old_Board_AddAGraveStone)(Board *board, int gridX, int gridY);
 
 inline bool (*old_Board_TakeSunMoney)(Board *board, int amount, int player);
 

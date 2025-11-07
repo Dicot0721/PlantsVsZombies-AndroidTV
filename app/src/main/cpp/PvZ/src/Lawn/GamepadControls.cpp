@@ -38,8 +38,8 @@
 
 using namespace Sexy;
 
-//GamepadControls::GamepadControls(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2) {
-//    _constructor(theBoard, thePlayerIndex1, thePlayerIndex2);
+// GamepadControls::GamepadControls(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2) {
+// _constructor(theBoard, thePlayerIndex1, thePlayerIndex2);
 //}
 
 void GamepadControls::_constructor(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2) {
@@ -222,19 +222,19 @@ void GamepadControls::Update(float a2) {
 
     old_GamepadControls_Update(this, a2);
 
-    //    Reanimation *mCursorReanim = ReanimationTryToGet(gamepadControls->mGameObject.aApp, gamepadControls->mCursorReanimID);
-    //    LOGD("%d",mCursorReanim);
-    //    if (mCursorReanim != nullptr) {
-    //        if ((gamepadControls->mPlayerIndex2 == 0 &&(mIsZombie == TouchPlayerIndex::TOUCHPLAYER_PLAYER1 || gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER1)) ||
-    //        (gamepadControls->mPlayerIndex2 == 1
-    //        &&(mIsZombie == TouchPlayerIndex::TOUCHPLAYER_PLAYER2 || gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER2))) {
-    //            if (!Reanimation_IsAnimPlaying(mCursorReanim, "anim_depressed"))
-    //                Reanimation_PlayReanim(mCursorReanim, "anim_depressed", a::REANIM_LOOP, 0,12.0);
-    //            LOGD("456456");
-    //        } else if (!Reanimation_IsAnimPlaying(mCursorReanim, "anim_bounce")) {
-    //            Reanimation_PlayReanim(mCursorReanim, "anim_bounce", a::REANIM_LOOP, 0, 12.0);
-    //        }
-    //    }
+    // Reanimation *mCursorReanim = ReanimationTryToGet(gamepadControls->mGameObject.aApp, gamepadControls->mCursorReanimID);
+    // LOGD("%d",mCursorReanim);
+    // if (mCursorReanim != nullptr) {
+    // if ((gamepadControls->mPlayerIndex2 == 0 &&(mIsZombie == TouchPlayerIndex::TOUCHPLAYER_PLAYER1 || gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER1)) ||
+    // (gamepadControls->mPlayerIndex2 == 1
+    // &&(mIsZombie == TouchPlayerIndex::TOUCHPLAYER_PLAYER2 || gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER2))) {
+    // if (!Reanimation_IsAnimPlaying(mCursorReanim, "anim_depressed"))
+    // Reanimation_PlayReanim(mCursorReanim, "anim_depressed", a::REANIM_LOOP, 0,12.0);
+    // LOGD("456456");
+    // } else if (!Reanimation_IsAnimPlaying(mCursorReanim, "anim_bounce")) {
+    // Reanimation_PlayReanim(mCursorReanim, "anim_bounce", a::REANIM_LOOP, 0, 12.0);
+    // }
+    // }
 
     if (!isKeyboardTwoPlayerMode && !aApp->CanShopLevel() && mGamepadState == 6 && mIsInShopSeedBank) {
         mIsInShopSeedBank = false;
@@ -676,9 +676,9 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
     }
 
     if (mGameMode == GameMode::GAMEMODE_CHALLENGE_BIG_TIME && (mSelectedSeedType == SeedType::SEED_SUNFLOWER || mSelectedSeedType == SeedType::SEED_WALLNUT || mSelectedSeedType == SeedType::SEED_MARIGOLD)) {
-        //种大突破关卡 放大植物预览
+        // 种大突破关卡 放大植物预览
         g->SetScale(1.5, 1.5, 0, 0);
-        g->Translate( -15, -25);
+        g->Translate(-15, -25);
         return old_GamepadControls_DrawPreview(this, g);
     }
 

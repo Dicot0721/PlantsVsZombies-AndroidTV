@@ -173,13 +173,13 @@ int LawnSaveGame(Board *board, int *a2) {
             return result;
         }
     }
-    //    Zombie *zombie = NULL;
-    //    while (Board_IterateZombies(board, &zombie)) {
-    //        if (zombie->mZombieType == ZombieType::Flag) {
-    //            LawnApp_RemoveReanimation(zombie->mApp, zombie->mBossFireBallReanimID);
-    //            zombie->mBossFireBallReanimID = 0;
-    //        }
-    //    }
+    // Zombie *zombie = NULL;
+    // while (Board_IterateZombies(board, &zombie)) {
+    // if (zombie->mZombieType == ZombieType::Flag) {
+    // LawnApp_RemoveReanimation(zombie->mApp, zombie->mBossFireBallReanimID);
+    // zombie->mBossFireBallReanimID = 0;
+    // }
+    // }
     return old_LawnSaveGame(board, a2);
 }
 
@@ -632,87 +632,87 @@ void Board::UpdateZombieSpawning() {
             mZombieCountDownStart = mZombieCountDown;
         }
     }
-    //    int *lawnApp = (int *) this[69];
-    //    GameMode::GameMode mGameMode = (GameMode::GameMode)*(lawnApp + LAWNAPP_GAMEMODE_OFFSET);
-    //    if(mGameMode == GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN){
-    //        int mFinalWaveSoundCounter = this[5660];
-    //        if (mFinalWaveSoundCounter > 0) {
-    //            mFinalWaveSoundCounter--;
-    //            this[5660] = mFinalWaveSoundCounter;
-    //            if (mFinalWaveSoundCounter == 0) {
-    //                mApp->PlaySample(Sexy_SOUND_FINALWAVE_Addr);
-    //            }
-    //        }
-    //        if (Board_HasLevelAwardDropped(this)) {
-    //            return;
-    //        }
+    // int *lawnApp = (int *) this[69];
+    // GameMode::GameMode mGameMode = (GameMode::GameMode)*(lawnApp + LAWNAPP_GAMEMODE_OFFSET);
+    // if(mGameMode == GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN){
+    // int mFinalWaveSoundCounter = this[5660];
+    // if (mFinalWaveSoundCounter > 0) {
+    // mFinalWaveSoundCounter--;
+    // this[5660] = mFinalWaveSoundCounter;
+    // if (mFinalWaveSoundCounter == 0) {
+    // mApp->PlaySample(Sexy_SOUND_FINALWAVE_Addr);
+    // }
+    // }
+    // if (Board_HasLevelAwardDropped(this)) {
+    // return;
+    // }
     //
-    //        int mRiseFromGraveCounter = this[5540];
-    //        if (mRiseFromGraveCounter > 0) {
-    //            mRiseFromGraveCounter--;
-    //            this[5540] = mRiseFromGraveCounter;
-    //            if (mRiseFromGraveCounter == 0) {
-    //                Board_SpawnZombiesFromGraves(this);
-    //            }
-    //        }
+    // int mRiseFromGraveCounter = this[5540];
+    // if (mRiseFromGraveCounter > 0) {
+    // mRiseFromGraveCounter--;
+    // this[5540] = mRiseFromGraveCounter;
+    // if (mRiseFromGraveCounter == 0) {
+    // Board_SpawnZombiesFromGraves(this);
+    // }
+    // }
     //
-    //        int mHugeWaveCountDown = this[5552];
-    //        if (mHugeWaveCountDown > 0) {
-    //            mHugeWaveCountDown--;
-    //            this[5552] = mHugeWaveCountDown;
-    //            if (mHugeWaveCountDown == 0) {
-    //                Board_ClearAdvice(this, 42);
-    //                Board_NextWaveComing(this);
-    //                this[5550] = 1; //  mZombieCountDown = 1;
-    //            }else if(mHugeWaveCountDown == 725){
-    //                mApp->PlaySample(Sexy_SOUND_FINALWAVE_Addr);
-    //            }
-    //        }
+    // int mHugeWaveCountDown = this[5552];
+    // if (mHugeWaveCountDown > 0) {
+    // mHugeWaveCountDown--;
+    // this[5552] = mHugeWaveCountDown;
+    // if (mHugeWaveCountDown == 0) {
+    // Board_ClearAdvice(this, 42);
+    // Board_NextWaveComing(this);
+    // this[5550] = 1; //  mZombieCountDown = 1;
+    // }else if(mHugeWaveCountDown == 725){
+    // mApp->PlaySample(Sexy_SOUND_FINALWAVE_Addr);
+    // }
+    // }
     //
-    //        int mZombieCountDown = this[5550];
-    //        mZombieCountDown--; //  mZombieCountDown--;
-    //        this[5550] = mZombieCountDown;
+    // int mZombieCountDown = this[5550];
+    // mZombieCountDown--; //  mZombieCountDown--;
+    // this[5550] = mZombieCountDown;
     //
-    //        int mZombieCountDownStart = this[5551];
-    //        int mCurrentWave = this[5542];
-    //        int mZombieHealthToNextWave = this[5548];
-    //        int num2 = mZombieCountDownStart - mZombieCountDown;
-    //        if (mZombieCountDown > 5 && num2 > 400) {
-    //            int num3 = Board_TotalZombiesHealthInWave(this, mCurrentWave - 1);
-    //            if (num3 <= mZombieHealthToNextWave && mZombieCountDown > 200) {
-    //                this[5550] = 200;//  mZombieCountDown = 200;
-    //            }
-    //        }
+    // int mZombieCountDownStart = this[5551];
+    // int mCurrentWave = this[5542];
+    // int mZombieHealthToNextWave = this[5548];
+    // int num2 = mZombieCountDownStart - mZombieCountDown;
+    // if (mZombieCountDown > 5 && num2 > 400) {
+    // int num3 = Board_TotalZombiesHealthInWave(this, mCurrentWave - 1);
+    // if (num3 <= mZombieHealthToNextWave && mZombieCountDown > 200) {
+    // this[5550] = 200;//  mZombieCountDown = 200;
+    // }
+    // }
     //
-    //        if (mZombieCountDown == 5) {
-    //            if (IsFlagWave(this, mCurrentWave)) {
-    //                Board_ClearAdviceImmediately(this);
-    //                int holder[1];
-    //                StrFormat(holder,"[ADVICE_HUGE_WAVE]");
-    //                Board_DisplayAdviceAgain(this, holder, 15, 42);
-    //                StringDelete(holder);
-    //                mHugeWaveCountDown = 750;
-    //                return;
-    //            }
-    //            Board_NextWaveComing(this);
-    //        }
+    // if (mZombieCountDown == 5) {
+    // if (IsFlagWave(this, mCurrentWave)) {
+    // Board_ClearAdviceImmediately(this);
+    // int holder[1];
+    // StrFormat(holder,"[ADVICE_HUGE_WAVE]");
+    // Board_DisplayAdviceAgain(this, holder, 15, 42);
+    // StringDelete(holder);
+    // mHugeWaveCountDown = 750;
+    // return;
+    // }
+    // Board_NextWaveComing(this);
+    // }
     //
-    //        if (mZombieCountDown != 0) {
-    //            return;
-    //        }
-    //        Board_SpawnZombieWave(this);
-    //        this[5549] = Board_TotalZombiesHealthInWave(this, mCurrentWave -1);
-    //        //mZombieHealthWaveStart = Board_TotalZombiesHealthInWave(this,mCurrentWave - 1);
-    //        if (IsFlagWave(this, mCurrentWave)) {
-    //            this[5548] = 0;//  mZombieHealthToNextWave = 0;
-    //            this[5550] = 0;//  mZombieCountDown = 4500;
-    //        } else {
-    //            this[5548] = (int) (RandRangeFloat(0.5f, 0.65f) * this[5549]);
-    //            this[5550] = 750;//   mZombieCountDown = 750;
-    //        }
-    //        this[5551] = mZombieCountDown;
-    //        return;
-    //    }
+    // if (mZombieCountDown != 0) {
+    // return;
+    // }
+    // Board_SpawnZombieWave(this);
+    // this[5549] = Board_TotalZombiesHealthInWave(this, mCurrentWave -1);
+    // //mZombieHealthWaveStart = Board_TotalZombiesHealthInWave(this,mCurrentWave - 1);
+    // if (IsFlagWave(this, mCurrentWave)) {
+    // this[5548] = 0;//  mZombieHealthToNextWave = 0;
+    // this[5550] = 0;//  mZombieCountDown = 4500;
+    // } else {
+    // this[5548] = (int) (RandRangeFloat(0.5f, 0.65f) * this[5549]);
+    // this[5550] = 750;//   mZombieCountDown = 750;
+    // }
+    // this[5551] = mZombieCountDown;
+    // return;
+    // }
     return old_Board_UpdateZombieSpawning(this);
 }
 
@@ -763,7 +763,7 @@ void Board::DrawCoverLayer(Sexy::Graphics *g, int theRow) {
                 break;
             case BackgroundType::BACKGROUND_6_BOSS:
                 // 可在此处添加代码绘制月夜电线杆喔
-                //                if(LawnApp_IsFinalBossLevel(mApp))  return;
+                // if(LawnApp_IsFinalBossLevel(mApp))  return;
 
                 g->DrawImage(addonImages.trees_night, mOffsetMoved * 1.5f + 628, -60);
                 g->DrawImage(addonImages.pole_night, mOffsetMoved * 2.0f + 628, -60);
@@ -798,7 +798,7 @@ void Board::PickBackground() {
         mPlantRow[5] = PlantRowType::PLANTROW_NORMAL;
         InitCoverLayer();
         SetGrids();
-        //    } else if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+        // } else if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
 
     } else {
         switch (VSBackGround) {
@@ -942,7 +942,7 @@ bool Board::StageIsNight() {
 
 bool Board::StageHasPool() {
     // 关系到泳池特有的僵尸，如救生圈僵尸、海豚僵尸、潜水僵尸在本关出现与否。此处我们添加水族馆场景。
-    //    return mBackground == BackgroundType::Zombiquarium || old_Board_StageHasPool(this);
+    // return mBackground == BackgroundType::Zombiquarium || old_Board_StageHasPool(this);
     return (mBackground == BackgroundType::BACKGROUND_ZOMBIQUARIUM && mApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM) || mBackground == BackgroundType::BACKGROUND_3_POOL
         || mBackground == BackgroundType::BACKGROUND_4_FOG;
 }
@@ -999,7 +999,7 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
         if (tcp_connected)
             return nullptr;
 
-        Zombie* zombie = old_Board_AddZombieInRow(this, theZombieType, theRow, theFromWave, theIsRustle);
+        Zombie *zombie = old_Board_AddZombieInRow(this, theZombieType, theRow, theFromWave, theIsRustle);
         if (tcpClientSocket >= 0) {
             FourCharOneShortTwoIntDataEvent event;
             event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
@@ -1026,10 +1026,10 @@ Zombie *Board::AddZombie(ZombieType theZombieType, int theFromWave, bool theIsRu
 // void (*old_Board_UpdateCoverLayer)(Board *this);
 //
 // void Board_UpdateCoverLayer(Board *this) {
-//     if (requestPause) {
-//         return;
-//     }
-//     old_Board_UpdateCoverLayer(this);
+// if (requestPause) {
+// return;
+// }
+// old_Board_UpdateCoverLayer(this);
 // }
 
 void Board::SpeedUpUpdate() {
@@ -1037,7 +1037,7 @@ void Board::SpeedUpUpdate() {
     UpdateFwoosh();
     UpdateGame();
     UpdateFog();
-    //    Board_UpdateCoverLayer(this);
+    // Board_UpdateCoverLayer(this);
     mChallenge->Update();
 }
 
@@ -1083,7 +1083,7 @@ void Board::processClientEvent(void *buf, ssize_t bufSize) {
             TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
             MouseUpSecond(event1->data1, event1->data2, 0);
             GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-            CursorObject * clientCursorObject = mGamepadControls2->mPlayerIndex2 == 1 ? mCursorObject2 : mCursorObject1;
+            CursorObject *clientCursorObject = mGamepadControls2->mPlayerIndex2 == 1 ? mCursorObject2 : mCursorObject1;
             TwoCharDataEvent eventReply = {{EventType::EVENT_BOARD_TOUCH_UP_REPLY}, (unsigned char)clientGamepadControls->mGamepadState, (unsigned char)clientCursorObject->mCursorType};
             send(tcpClientSocket, &eventReply, sizeof(TwoCharDataEvent), 0);
         } break;
@@ -1098,11 +1098,11 @@ void Board::processClientEvent(void *buf, ssize_t bufSize) {
 
 void Board::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
 
-    clientRecvBuffer.insert(clientRecvBuffer.end(), (char*)buf, (char*)buf + bufSize);
+    clientRecvBuffer.insert(clientRecvBuffer.end(), (char *)buf, (char *)buf + bufSize);
     size_t offset = 0;
 
     while (clientRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
-        BaseEvent* base = (BaseEvent*)&clientRecvBuffer[offset];
+        BaseEvent *base = (BaseEvent *)&clientRecvBuffer[offset];
         size_t eventSize = getClientEventSize(base->type);
         if (clientRecvBuffer.size() - offset < eventSize)
             break; // 不完整
@@ -1117,13 +1117,11 @@ void Board::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
 }
 
 
-
 std::vector<char> serverRecvBuffer;
 DynamicMap serverPlantIDMap;
 DynamicMap serverZombieIDMap;
 DynamicMap serverCoinIDMap;
 DynamicMap serverGridItemIDMap;
-
 
 
 size_t Board::getServerEventSize(EventType type) {
@@ -1183,10 +1181,10 @@ size_t Board::getServerEventSize(EventType type) {
 
         // --- 未知类型或基础事件 ---
         case EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE:
-            return sizeof (TwoCharOneShortDataEvent);
+            return sizeof(TwoCharOneShortDataEvent);
 
         case EVENT_SERVER_BOARD_START_LEVEL:
-            return sizeof (NineShortDataEvent);
+            return sizeof(NineShortDataEvent);
 
         default:
             return sizeof(BaseEvent);
@@ -1217,7 +1215,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_BOARD_TOUCH_UP_REPLY: {
             TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
             GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-            CursorObject * clientCursorObject = mGamepadControls2->mPlayerIndex2 == 1 ? mCursorObject2 : mCursorObject1;
+            CursorObject *clientCursorObject = mGamepadControls2->mPlayerIndex2 == 1 ? mCursorObject2 : mCursorObject1;
             clientGamepadControls->mGamepadState = event1->data1;
             clientCursorObject->mCursorType = (CursorType)event1->data2;
         } break;
@@ -1242,7 +1240,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_TOUCH_UP: {
             TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
             GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-            CursorObject * serverCursorObject = mGamepadControls1->mPlayerIndex2 == 0 ? mCursorObject1 : mCursorObject2;
+            CursorObject *serverCursorObject = mGamepadControls1->mPlayerIndex2 == 0 ? mCursorObject1 : mCursorObject2;
             serverGamepadControls->mGamepadState = event1->data1;
             serverCursorObject->mCursorType = (CursorType)event1->data2;
         } break;
@@ -1298,7 +1296,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             gridItem->mLaunchCounter = event1->data4;
             gridItem->mVSGraveStoneHealth = 350;
             gridItem->unkBool1 = true;
-            serverGridItemIDMap.Add(event1->data3,(short)gridItem->mGridItemID);
+            serverGridItemIDMap.Add(event1->data3, (short)gridItem->mGridItemID);
         } break;
         case EVENT_SERVER_BOARD_PLANT_ANIMATION: {
             TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
@@ -1316,7 +1314,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             if (serverPlantIDMap.Lookup(event1->data1, clientPlantID)) {
                 Plant *plant = mPlantsList.DataArrayGet(clientPlantID);
                 Zombie *zombie = event1->data2 == 0 ? nullptr : mZombiesList.DataArrayGet(serverZombieIDMap.Lookup(event1->data2));
-                GridItem *gridItem = event1->data4.s.s1 == 0 ? nullptr : mGridItemsList.DataArrayGet(serverGridItemIDMap.Lookup(event1->data4.s.s1)) ;
+                GridItem *gridItem = event1->data4.s.s1 == 0 ? nullptr : mGridItemsList.DataArrayGet(serverGridItemIDMap.Lookup(event1->data4.s.s1));
                 tcp_connected = false;
                 plant->Fire(zombie, event1->data3.s.s1, (PlantWeapon)event1->data3.s.s2, gridItem);
                 tcp_connected = true;
@@ -1325,15 +1323,15 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_PLANT_ADD: {
             TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
             tcp_connected = false;
-            Plant* plant = AddPlant(event1->data1, event1->data2, (SeedType)event1->data3.s.s1, (SeedType)event1->data3.s.s2, 0, event1->data4.s.s2);
-            serverPlantIDMap.Add(event1->data4.s.s1,(short)plant->mPlantID);
+            Plant *plant = AddPlant(event1->data1, event1->data2, (SeedType)event1->data3.s.s1, (SeedType)event1->data3.s.s2, 0, event1->data4.s.s2);
+            serverPlantIDMap.Add(event1->data4.s.s1, (short)plant->mPlantID);
             tcp_connected = true;
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
             FourCharOneShortTwoIntDataEvent *event1 = (FourCharOneShortTwoIntDataEvent *)event;
             tcp_connected = false;
             Zombie *zombie = AddZombieInRow((ZombieType)event1->data1[0], event1->data1[1], event1->data1[2], event1->data1[3]);
-            LOG_DEBUG("serverZombieIDMap Add {} {}",event1->data2,(short)zombie->mZombieID);
+            LOG_DEBUG("serverZombieIDMap Add {} {}", event1->data2, (short)zombie->mZombieID);
             serverZombieIDMap.Add(event1->data2, (short)zombie->mZombieID);
             tcp_connected = true;
             zombie->mVelX = event1->data3[0].f;
@@ -1342,12 +1340,12 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE: {
             TwoCharOneShortDataEvent *event1 = (TwoCharOneShortDataEvent *)event;
-            LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE ID {}",event1->data3);
+            LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE ID {}", event1->data3);
             short clientZombieID;
             if (serverZombieIDMap.Lookup(event1->data3, clientZombieID)) {
-                LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE clientZombieID {}",clientZombieID);
-                Zombie* zombie = mZombiesList.DataArrayGet(clientZombieID);
-                zombie->RiseFromGrave(event1->data1,event1->data2);
+                LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE clientZombieID {}", clientZombieID);
+                Zombie *zombie = mZombiesList.DataArrayGet(clientZombieID);
+                zombie->RiseFromGrave(event1->data1, event1->data2);
             }
 
         } break;
@@ -1361,8 +1359,8 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED: {
             TwoCharDataEvent *event1 = (TwoCharDataEvent *)event;
-            SeedBank* theSeedBank = event1->data2 ? mSeedBank1 : mSeedBank2;
-            SeedPacket* seedPacket = &theSeedBank->mSeedPackets[event1->data1];
+            SeedBank *theSeedBank = event1->data2 ? mSeedBank1 : mSeedBank2;
+            SeedPacket *seedPacket = &theSeedBank->mSeedPackets[event1->data1];
             seedPacket->Deactivate();
             seedPacket->WasPlanted(0);
         } break;
@@ -1376,17 +1374,17 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             GridItem *gridItem = nullptr;
             while (IterateGridItems(gridItem)) {
                 if (gridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
-                    LOG_DEBUG("{} {} {}",gridItem->mGridY,event1->data[gridItem->mGridY],(short)gridItem->mGridItemID);
+                    LOG_DEBUG("{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], (short)gridItem->mGridItemID);
                     serverGridItemIDMap.Add(event1->data[gridItem->mGridY], (short)gridItem->mGridItemID);
                 }
                 if (gridItem->mGridItemType == GRIDITEM_GRAVESTONE) {
                     if (gridItem->mGridY == 1) {
-                        serverGridItemIDMap.Add(event1->data[5],(short)gridItem->mGridItemID);
-                        LOG_DEBUG("1{} {} {}",gridItem->mGridY,event1->data[gridItem->mGridY],(short)gridItem->mGridItemID);
+                        serverGridItemIDMap.Add(event1->data[5], (short)gridItem->mGridItemID);
+                        LOG_DEBUG("1{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], (short)gridItem->mGridItemID);
                     }
                     if (gridItem->mGridY >= 3) {
-                        serverGridItemIDMap.Add(event1->data[6],(short)gridItem->mGridItemID);
-                        LOG_DEBUG("3{} {} {}",gridItem->mGridY,event1->data[gridItem->mGridY],(short)gridItem->mGridItemID);
+                        serverGridItemIDMap.Add(event1->data[6], (short)gridItem->mGridItemID);
+                        LOG_DEBUG("3{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], (short)gridItem->mGridItemID);
                     }
                 }
             }
@@ -1394,10 +1392,10 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             Plant *plant = nullptr;
             while (IteratePlants(plant)) {
                 if (plant->mRow == 1) {
-                    serverPlantIDMap.Add(event1->data[7],(short)plant->mPlantID);
+                    serverPlantIDMap.Add(event1->data[7], (short)plant->mPlantID);
                 }
                 if (plant->mRow >= 3) {
-                    serverPlantIDMap.Add(event1->data[8],(short)plant->mPlantID);
+                    serverPlantIDMap.Add(event1->data[8], (short)plant->mPlantID);
                 }
             }
         } break;
@@ -1408,14 +1406,12 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
 }
 
 
-
-
 void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
-    serverRecvBuffer.insert(serverRecvBuffer.end(), (char*)buf, (char*)buf + bufSize);
+    serverRecvBuffer.insert(serverRecvBuffer.end(), (char *)buf, (char *)buf + bufSize);
     size_t offset = 0;
 
     while (serverRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
-        BaseEvent* base = (BaseEvent*)&serverRecvBuffer[offset];
+        BaseEvent *base = (BaseEvent *)&serverRecvBuffer[offset];
         size_t eventSize = getServerEventSize(base->type);
         if (serverRecvBuffer.size() - offset < eventSize)
             break; // 不完整
@@ -1436,10 +1432,10 @@ void Board::Update() {
         if (tcpClientSocket >= 0) {
             char buf[1024];
             while (true) {
-                ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) , MSG_DONTWAIT);
+                ssize_t n = recv(tcpClientSocket, buf, sizeof(buf), MSG_DONTWAIT);
                 if (n > 0) {
-                    //                buf[n] = '\0'; // 确保字符串结束
-                    //                    LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
+                    // buf[n] = '\0'; // 确保字符串结束
+                    // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
 
                     HandleTcpClientMessage(buf, n);
                 } else if (n == 0) {
@@ -1472,8 +1468,8 @@ void Board::Update() {
             while (true) {
                 ssize_t n = recv(tcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);
                 if (n > 0) {
-                    //                    buf[n] = '\0'; // 确保字符串结束
-                    //                    LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
+                    // buf[n] = '\0'; // 确保字符串结束
+                    // LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
                     HandleTcpServerMessage(buf, n);
 
                 } else if (n == 0) {
@@ -1534,7 +1530,7 @@ void Board::Update() {
             }
         }
     }
-    //    GameButton_Update(gBoardMenuButton);
+    // GameButton_Update(gBoardMenuButton);
     if (isKeyboardTwoPlayerMode) {
         mGamepadControls1->mIsInShopSeedBank = false;
         mGamepadControls2->mIsInShopSeedBank = false;
@@ -1585,10 +1581,10 @@ void Board::Update() {
         }
 
         // 为夜晚泳池场景补全泳池反射闪光特效
-        //        if ( this->mBackground == BackgroundType::BACKGROUND_4_FOG && this->mPoolSparklyParticleID == 0 && this->mDrawCount > 0 ){
-        //            TodParticleSystem * poolSparklyParticle = AddTodParticle(this->mApp, 450.0, 295.0, 220000, a::PARTICLE_POOL_SPARKLY);
-        //            this->mPoolSparklyParticleID = LawnApp_ParticleGetID(this->mApp, poolSparklyParticle);
-        //        }
+        // if ( this->mBackground == BackgroundType::BACKGROUND_4_FOG && this->mPoolSparklyParticleID == 0 && this->mDrawCount > 0 ){
+        // TodParticleSystem * poolSparklyParticle = AddTodParticle(this->mApp, 450.0, 295.0, 220000, a::PARTICLE_POOL_SPARKLY);
+        // this->mPoolSparklyParticleID = LawnApp_ParticleGetID(this->mApp, poolSparklyParticle);
+        // }
     }
 
     if (ClearAllPlant) {
@@ -1620,7 +1616,7 @@ void Board::Update() {
 
     if (recoverAllMowers) {
         if (mApp->mGameScene == GameScenes::SCENE_PLAYING) {
-            //            Board_RemoveAllMowers(this);
+            // Board_RemoveAllMowers(this);
             ResetLawnMowers();
         }
         recoverAllMowers = false;
@@ -2021,7 +2017,7 @@ void Board::DrawShovelButton(Sexy::Graphics *g, LawnApp *theApp) {
     // 实现玩家拿着铲子时不在ShovelBank中绘制铲子、实现在对战模式中添加铲子按钮
 
     if (theApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        //        LOGD("%d %d",rect[0],rect[1]);
+        // LOGD("%d %d",rect[0],rect[1]);
         // return;  原版游戏在此处就return了，所以对战中不绘制铲子按钮。
         if (keyboardMode)
             return;
@@ -2148,9 +2144,9 @@ void Board::PauseFromSecondPlayer(bool thePause) {
 
 
 void Board::Pause(bool thePause) {
-    //  能在这里得知游戏是否暂停
-    //    if (thePause) Music2_StopAllMusic((Music2*)this->mApp->mMusic);
-    //    else Music2_StartGameMusic((Music2*)this->mApp->mMusic, true);
+    // 能在这里得知游戏是否暂停
+    // if (thePause) Music2_StopAllMusic((Music2*)this->mApp->mMusic);
+    // else Music2_StartGameMusic((Music2*)this->mApp->mMusic, true);
     if (mApp->mGameMode == GAMEMODE_MP_VS && !mApp->mVSSetupScreen) {
         if (mPaused == thePause)
             return;
@@ -2172,8 +2168,8 @@ void Board::Pause(bool thePause) {
 void Board::AddSecondPlayer(int a2) {
     // 去除加入2P时的声音
 
-    //    (*(void (**)(int, int, int))(*(uint32_t *)this[69] + 680))(this[69], Sexy::SOUND_CHIME, 1);
-    //    ((void (*)(int *, const char *, int))loc_2F098C)(v2 + 25, "[P2_JOINED]", 11);
+    // (*(void (**)(int, int, int))(*(uint32_t *)this[69] + 680))(this[69], Sexy::SOUND_CHIME, 1);
+    // ((void (*)(int *, const char *, int))loc_2F098C)(v2 + 25, "[P2_JOINED]", 11);
     mUnkIntSecondPlayer1 = 3;
     mUnkBoolSecondPlayer = false;
     mUnkIntSecondPlayer2 = 0;
@@ -2242,14 +2238,14 @@ void Board::DoPlantingEffects(int theGridX, int theGridY, Plant *thePlant) {
     }
 
     mApp->PlayFoley(FoleyType::FOLEY_PLANT);
-    //    switch (mSeedType) {
-    //        case a::SEED_SUNFLOWER:
-    //            mApp->PlaySample( Addon_Sounds.achievement);
-    //            break;
-    //        default:
-    //            PlayFoley(mApp, FoleyType::Plant);
-    //            break;
-    //    }
+    // switch (mSeedType) {
+    // case a::SEED_SUNFLOWER:
+    // mApp->PlaySample( Addon_Sounds.achievement);
+    // break;
+    // default:
+    // PlayFoley(mApp, FoleyType::Plant);
+    // break;
+    // }
     mApp->AddTodParticle(num, num2, 400000, ParticleEffect::PARTICLE_PLANTING);
 }
 
@@ -2289,12 +2285,12 @@ void Board::PickZombieWaves() {
         mNumWaves = 20;
         ZombiePicker zombiePicker;
         ZombiePickerInit(&zombiePicker);
-        //        ZombieType introducedZombieType = Board_GetIntroducedZombieType(this);
+        // ZombieType introducedZombieType = Board_GetIntroducedZombieType(this);
         for (int i = 0; i < mNumWaves; i++) {
             ZombiePickerInitForWave(&zombiePicker);
             mZombiesInWave[i][0] = ZombieType::ZOMBIE_INVALID;
             bool isFlagWave = IsFlagWave(i);
-            //            bool isBeforeLastWave = i == mNumWaves - 1;
+            // bool isBeforeLastWave = i == mNumWaves - 1;
             int &aZombiePoints = zombiePicker.mZombiePoints;
             aZombiePoints = i * 4 / 5 + 1;
             if (isFlagWave) {
@@ -2319,12 +2315,12 @@ void Board::PickZombieWaves() {
         mNumWaves = 20;
         ZombiePicker zombiePicker;
         ZombiePickerInit(&zombiePicker);
-        //        ZombieType introducedZombieType = Board_GetIntroducedZombieType(this);
+        // ZombieType introducedZombieType = Board_GetIntroducedZombieType(this);
         for (int i = 0; i < mNumWaves; i++) {
             ZombiePickerInitForWave(&zombiePicker);
             mZombiesInWave[i][0] = ZombieType::ZOMBIE_INVALID;
             bool isFlagWave = IsFlagWave(i);
-            //            bool isBeforeLastWave = i == mNumWaves - 1;
+            // bool isBeforeLastWave = i == mNumWaves - 1;
             int &aZombiePoints = zombiePicker.mZombiePoints;
             aZombiePoints = i * 4 / 5 + 1;
             if (isFlagWave) {
@@ -2399,22 +2395,22 @@ void Board::MouseMove(int x, int y) {
     // 无用。鼠标指针移动、但左键未按下时调用
     // LOGD("Move%d %d", x, y);
     old_Board_MouseMove(this, x, y);
-    //    positionAutoFix = false;
-    //    LawnApp *mApp = this->mApp;
-    //    GameMode::GameMode mGameMode = mApp->mGameMode;
-    //    GamepadControls* gamepadControls1 = this->mGamepadControls1;
-    //    CursorObject* cursorObject = this->mCursorObject1;
-    //    CursorType::CursorType mCursorType = cursorObject->mCursorType;
-    //    if (mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST) {
-    //        gamepadControls1->mCursorPositionX = x - 40;
-    //        gamepadControls1->mCursorPositionY = y - 40;
-    //    } else if (mCursorType == CursorType::CURSOR_TYPE_WATERING_CAN && mApp->mPlayerInfo->mPurchases[a::STORE_ITEM_GOLD_WATERINGCAN] != 0) {
-    //        gamepadControls1->mCursorPositionX = x - 40;
-    //        gamepadControls1->mCursorPositionY = y - 40;
-    //    }else {
-    //        gamepadControls1->mCursorPositionX = x;
-    //        gamepadControls1->mCursorPositionY = y;
-    //    }
+    // positionAutoFix = false;
+    // LawnApp *mApp = this->mApp;
+    // GameMode::GameMode mGameMode = mApp->mGameMode;
+    // GamepadControls* gamepadControls1 = this->mGamepadControls1;
+    // CursorObject* cursorObject = this->mCursorObject1;
+    // CursorType::CursorType mCursorType = cursorObject->mCursorType;
+    // if (mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST) {
+    // gamepadControls1->mCursorPositionX = x - 40;
+    // gamepadControls1->mCursorPositionY = y - 40;
+    // } else if (mCursorType == CursorType::CURSOR_TYPE_WATERING_CAN && mApp->mPlayerInfo->mPurchases[a::STORE_ITEM_GOLD_WATERINGCAN] != 0) {
+    // gamepadControls1->mCursorPositionX = x - 40;
+    // gamepadControls1->mCursorPositionY = y - 40;
+    // }else {
+    // gamepadControls1->mCursorPositionX = x;
+    // gamepadControls1->mCursorPositionY = y;
+    // }
 }
 
 bool Board::MouseHitTest(int x, int y, HitResult *theHitResult, bool thePlayerIndex) {
@@ -2548,9 +2544,9 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
     mTouchDownY = y;
     mTouchLastX = x;
     mTouchLastY = y;
-    //    xx = x;
-    //    yy = y;
-    //    LOGD("%d %d",x,y);
+    // xx = x;
+    // yy = y;
+    // LOGD("%d %d",x,y);
     if (keyboardMode) {
         game_patches::autoPickupSeedPacketDisable.Modify();
     }
@@ -2737,15 +2733,15 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
         if (coin->mType == CoinType::COIN_USABLE_SEED_PACKET) {
             mTouchState = TouchState::TOUCHSTATE_USEFUL_SEED_PACKET;
             requestDrawShovelInCursor = false;
-            //            if (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
-            //                LOGD("5656565656");
-            //                GamepadControls_OnKeyDown(gamepadCon
-            //               trols1, 27, 1096);//放下手上的植物卡片
-            //                mSendKeyWhenTouchUp = false;
-            //            }
+            // if (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
+            // LOGD("5656565656");
+            // GamepadControls_OnKeyDown(gamepadCon
+            // trols1, 27, 1096);//放下手上的植物卡片
+            // mSendKeyWhenTouchUp = false;
+            // }
             RefreshSeedPacketFromCursor(0);
             old_Coin_GamepadCursorOver(coin, 0); // 捡起植物卡片
-            //            Coin_Collect((int) coin, 0);
+            // Coin_Collect((int) coin, 0);
         }
     }
 
@@ -2800,8 +2796,8 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
         mSendKeyWhenTouchUp = true;
     }
 
-    //    *(uint32_t *) (mGamepadControls1 + 152) = 0;//疑似用于设置该gamepadControls1属于玩家1。可能的取值：-1，0，1
-    //    其中，1P恒为0，2P禁用时为-1，2P启用时为1。
+    // *(uint32_t *) (mGamepadControls1 + 152) = 0;//疑似用于设置该gamepadControls1属于玩家1。可能的取值：-1，0，1
+    // 其中，1P恒为0，2P禁用时为-1，2P启用时为1。
 
     if (gPlayerIndex == TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
         if (mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST) {
@@ -2908,9 +2904,9 @@ void Board::MouseDrag(int x, int y) {
 void Board::__MouseDrag(int x, int y) {
     // Drag函数仅仅负责移动光标即可
     old_Board_MouseDrag(this, x, y);
-    //    xx = x;
-    //    yy = y;
-    //    LOGD("%d %d",x,y);
+    // xx = x;
+    // yy = y;
+    // LOGD("%d %d",x,y);
     if (mTouchState == TouchState::TOUCHSTATE_NONE)
         return;
 
@@ -3304,14 +3300,14 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
 
     CursorType mCursorType = mCursorObject1->mCursorType;
     CursorType mCursorType_2P = mCursorObject2->mCursorType;
-    //    if (mCursorType == CursorType::CURSOR_TYPE_WATERING_CAN || mCursorType == CursorType::CURSOR_TYPE_FERTILIZER ||
-    //        mCursorType == CursorType::CURSOR_TYPE_BUG_SPRAY || mCursorType == CursorType::OBJECT_TYPE_PHONOGRAPH ||
-    //        mCursorType == CursorType::OBJECT_TYPE_CHOCOLATE || mCursorType == CursorType::OBJECT_TYPE_GLOVE ||
-    //        mCursorType == CursorType::CURSOR_TYPE_MONEY_SIGN || mCursorType == CursorType::CURSOR_TYPE_WHEEELBARROW ||
-    //        mCursorType == CursorType::CURSOR_TYPE_TREE_FOOD) {
-    //        MouseDownWithTool(this, x, y, 0, mCursorType, false);
-    //        return;
-    //    }
+    // if (mCursorType == CursorType::CURSOR_TYPE_WATERING_CAN || mCursorType == CursorType::CURSOR_TYPE_FERTILIZER ||
+    // mCursorType == CursorType::CURSOR_TYPE_BUG_SPRAY || mCursorType == CursorType::OBJECT_TYPE_PHONOGRAPH ||
+    // mCursorType == CursorType::OBJECT_TYPE_CHOCOLATE || mCursorType == CursorType::OBJECT_TYPE_GLOVE ||
+    // mCursorType == CursorType::CURSOR_TYPE_MONEY_SIGN || mCursorType == CursorType::CURSOR_TYPE_WHEEELBARROW ||
+    // mCursorType == CursorType::CURSOR_TYPE_TREE_FOOD) {
+    // MouseDownWithTool(this, x, y, 0, mCursorType, false);
+    // return;
+    // }
 
     if (mObjectType == GameObjectType::OBJECT_TYPE_SHOVEL) {
         if (!useNewShovel) {
@@ -3403,15 +3399,15 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
         if (coin->mType == CoinType::COIN_USABLE_SEED_PACKET) {
             gTouchStateSecond = TouchState::TOUCHSTATE_USEFUL_SEED_PACKET;
             requestDrawShovelInCursor = false;
-            //            if (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
-            //                LOGD("5656565656");
-            //                GamepadControls_OnKeyDown(gamepadCon
-            //               trols1, 27, 1096);//放下手上的植物卡片
-            //                mSendKeyWhenTouchUp = false;
-            //            }
+            // if (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
+            // LOGD("5656565656");
+            // GamepadControls_OnKeyDown(gamepadCon
+            // trols1, 27, 1096);//放下手上的植物卡片
+            // mSendKeyWhenTouchUp = false;
+            // }
             RefreshSeedPacketFromCursor(0);
             old_Coin_GamepadCursorOver(coin, 0); // 捡起植物卡片
-            //            Coin_Collect((int) coin, 0);
+            // Coin_Collect((int) coin, 0);
         }
     }
 
@@ -3793,16 +3789,16 @@ void Board::StartLevel() {
             while (IterateGridItems(gridItem)) {
                 if (gridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
                     nineShortDataEvent.data[gridItem->mGridY] = (short)gridItem->mGridItemID;
-                    LOG_DEBUG("{} {}",gridItem->mGridY,(short)gridItem->mGridItemID);
+                    LOG_DEBUG("{} {}", gridItem->mGridY, (short)gridItem->mGridItemID);
                 }
                 if (gridItem->mGridItemType == GRIDITEM_GRAVESTONE) {
                     if (gridItem->mGridY == 1) {
                         nineShortDataEvent.data[5] = (short)gridItem->mGridItemID;
-                        LOG_DEBUG("1 {} {}",gridItem->mGridY,(short)gridItem->mGridItemID);
+                        LOG_DEBUG("1 {} {}", gridItem->mGridY, (short)gridItem->mGridItemID);
                     }
                     if (gridItem->mGridY >= 3) {
                         nineShortDataEvent.data[6] = (short)gridItem->mGridItemID;
-                        LOG_DEBUG("3 {} {}",gridItem->mGridY,(short)gridItem->mGridItemID);
+                        LOG_DEBUG("3 {} {}", gridItem->mGridY, (short)gridItem->mGridItemID);
                     }
                 }
             }
@@ -3847,9 +3843,9 @@ void Board::RemovedFromManager(WidgetManager *theManager) {
     RemoveWidget(gBoardMenuButton);
     RemoveWidget(gBoardStoreButton);
     gBoardMenuButton->~GameButton();
-    //    operator delete (gBoardMenuButton);
+    // operator delete (gBoardMenuButton);
     gBoardStoreButton->~GameButton();
-    //    operator delete (gBoardStoreButton);
+    // operator delete (gBoardStoreButton);
     gBoardMenuButton = nullptr;
     gBoardStoreButton = nullptr;
 
@@ -4069,16 +4065,19 @@ int Board::GetSeedBankExtraWidth() {
     }
 
     int aNumPackets = mSeedBank1->mNumPackets;
-    return aNumPackets <= 6 ? 0 : aNumPackets == 7 ? 60 : aNumPackets == 8 ? 76 : aNumPackets == 9 ? 112 : 153;
+    return aNumPackets <= 6 ? 0 : aNumPackets == 7 ? 60
+        : aNumPackets == 8                         ? 76
+        : aNumPackets == 9                         ? 112
+                                                   : 153;
 }
 
 Rect Board::GetShovelButtonRect() {
-    //    Rect aRect(GetSeedBankExtraWidth() + 456, 0, Sexy::IMAGE_SHOVELBANK->GetWidth(), Sexy::IMAGE_SEEDBANK->GetHeight());
-    //    if (mApp->IsSlotMachineLevel() || mApp->IsSquirrelLevel())
-    //    {
-    //        aRect.mX = 600;
-    //    }
-    //    return aRect;
+    // Rect aRect(GetSeedBankExtraWidth() + 456, 0, Sexy::IMAGE_SHOVELBANK->GetWidth(), Sexy::IMAGE_SEEDBANK->GetHeight());
+    // if (mApp->IsSlotMachineLevel() || mApp->IsSquirrelLevel())
+    // {
+    // aRect.mX = 600;
+    // }
+    // return aRect;
 
     return old_Board_GetShovelButtonRect(this);
 }
@@ -4087,9 +4086,9 @@ void Board::DrawBackdrop(Sexy::Graphics *g) {
     // 实现泳池动态效果、实现对战结盟分界线
     old_Board_DrawBackdrop(this, g);
 
-    //    if (mBackground == BackgroundType::BACKGROUND_3_POOL || mBackground == BackgroundType::BACKGROUND_4_FOG) {
-    //        PoolEffect_PoolEffectDraw(this->mApp->mPoolEffect, g, Board_StageIsNight(this));
-    //    }
+    // if (mBackground == BackgroundType::BACKGROUND_3_POOL || mBackground == BackgroundType::BACKGROUND_4_FOG) {
+    // PoolEffect_PoolEffectDraw(this->mApp->mPoolEffect, g, Board_StageIsNight(this));
+    // }
 
     GameMode mGameMode = mApp->mGameMode;
     if (mGameMode == GameMode::GAMEMODE_MP_VS) {
@@ -4164,7 +4163,7 @@ void Board::ShakeBoard(int theShakeAmountX, int theShakeAmountY) {
     jobject activity = bridgeApp->mNativeApp->getActivity();
     jclass cls = env->GetObjectClass(activity);
     jmethodID methodID = env->GetMethodID(cls, "vibrate", "(I)V");
-    //    env->CallVoidMethod(activity, methodID, 120);
+    // env->CallVoidMethod(activity, methodID, 120);
     env->CallVoidMethod(activity, methodID, (abs(theShakeAmountX) + abs(theShakeAmountY)) * 50);
     env->DeleteLocalRef(cls);
 }
@@ -4753,7 +4752,7 @@ GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
 GridItem *Board::AddAGraveStone(int gridX, int gridY) {
     GridItem *result = old_Board_AddAGraveStone(this, gridX, gridY);
     if (tcpClientSocket >= 0) {
-        TwoCharTwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE}, (unsigned char)gridX, (unsigned char)gridY,(short)result->mGridItemID,(short)result->mLaunchCounter};
+        TwoCharTwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE}, (unsigned char)gridX, (unsigned char)gridY, (short)result->mGridItemID, (short)result->mLaunchCounter};
         send(tcpClientSocket, &event, sizeof(TwoCharTwoShortDataEvent), 0);
     }
     return result;
@@ -4761,18 +4760,18 @@ GridItem *Board::AddAGraveStone(int gridX, int gridY) {
 
 
 bool Board::TakeSunMoney(int theAmount, int thePlayer) {
-    bool result = old_Board_TakeSunMoney(this,theAmount,thePlayer);
+    bool result = old_Board_TakeSunMoney(this, theAmount, thePlayer);
     if (tcpClientSocket >= 0) {
-        SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_TAKE_SUNMONEY},(short)mSunMoney1};
+        SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_TAKE_SUNMONEY}, (short)mSunMoney1};
         send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
     }
     return result;
 }
 
 bool Board::TakeDeathMoney(int theAmount) {
-    bool result = old_Board_TakeDeathMoney(this,theAmount);
+    bool result = old_Board_TakeDeathMoney(this, theAmount);
     if (tcpClientSocket >= 0) {
-        SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_TAKE_DEATHMONEY},(short)mDeathMoney};
+        SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_TAKE_DEATHMONEY}, (short)mDeathMoney};
         send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
     }
     return result;
