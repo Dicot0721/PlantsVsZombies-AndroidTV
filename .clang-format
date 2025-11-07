@@ -220,7 +220,7 @@ SpaceBeforeParens: ControlStatements
 SpaceInEmptyParentheses: false
 
 # 一行注释的开头允许有多少个空格
-SpacesInLineCommentPrefix: { Minimum: 1, Maximum: 1 }
+SpacesInLineCommentPrefix: { Minimum: 1, Maximum: 5 }
 
 # 在尾随的评论前添加的空格数 (只适用于 //)
 SpacesBeforeTrailingComments: 1
