@@ -13,38 +13,62 @@ A mod of _Plants vs. Zombies_ Android TV version.
 
 ## Build
 
-> [!NOTE]
-> If you need resource files, please contact the repository author.
+- Ensure the following is installed:
+    * Android SDK Platform 34
+    * NDK v27.2.12479018 (r27c)
+    * CMake v3.20+
 
-Use Android Studio or another IDE that supports Gradle, requiring the following to be installed:
+- Clone the repository.
+    ```shell
+    git clone https://github.com/Dicot0721/PlantsVsZombies-AndroidTV.git
+    ```
 
-- Android SDK Platform 34
-- NDK v27.2.12479018
-- CMake v3.20+
+- Copy assets files to the path `PlantsVsZombies-AndroidTV/app/src/main/assets/`.
+  > [!NOTE]
+  > If you need resource files, please contact the repository author.
 
-Signing configuration is specified in the file `keystore.properties` located in the project root directory (you must create this file yourself). The file content format is as follows:
+- Build with:
+    * Android Studio: Click on the build button.
+    * Command line: Run the following command:
+        ```shell
+        cd PlantsVsZombies-AndroidTV
+        ./gradlew assembleDebug
+        ```
 
-```properties
-storePassword=myStorePassword
-keyPassword=mykeyPassword
-keyAlias=myKeyAlias
-storeFile=myStoreFileLocation
-```
+- If release, configure signing using the file `keystore.properties` located in the project root directory (you must
+  create this file yourself). The file content format is as follows:
+    ```properties
+    storePassword=myStorePassword
+    keyPassword=mykeyPassword
+    keyAlias=myKeyAlias
+    storeFile=myStoreFileLocation
+    ```
 
-## Coding Style (C++)
+## Contributing
 
-### Name Convention
+### Coding Style (C++)
+
+**Name Convention**
 
 - Function / Type / Enum / Concept: `PascalCase`
 - Variable: `camelCase`
 - Namespace: `snake_case`
 - Macro / Constant / Enumerator / Non-type template parameter: `UPPER_CASE`
 
-### Format
+**Format**
+
+See the file `.clang-format` in the project root directory.
 
 > It is recommended to format the code using the IDE before each commit.
 
-See the `.clang-format` file in the project root directory.
+### Commit
+
+See
+_[AngularJS Commit Message Guidelines](https://github.com/angular/angular/blob/20.0.x/CONTRIBUTING.md#-commit-message-guidelines)_.
+
+### Pull Request (PR)
+
+Send the PR to branch `dev`.
 
 ## License
 

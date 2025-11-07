@@ -13,38 +13,61 @@
 
 ## 构建
 
-> [!NOTE]
-> 需要资源文件请联系仓库作者.
+- 确保已安装下列组件:
+    * Android SDK Platform 34
+    * NDK v27.2.12479018 (r27c)
+    * CMake v3.20+
 
-使用 Android Studio 或其他支持 gradle 的 IDE, 要求已安装:
+- 克隆仓库.
+    ```shell
+    git clone https://github.com/Dicot0721/PlantsVsZombies-AndroidTV.git
+    ```
 
-- Android SDK Platform 34
-- NDK v27.2.12479018
-- CMake v3.20+
+- 复制 assets 文件到路径 `PlantsVsZombies-AndroidTV/app/src/main/assets/` 下.
+  > [!NOTE]
+  > 需要资源文件请联系仓库作者.
 
-签名配置在位于项目根目录的 `keystore.properties` 文件中 (需要自行创建), 文件内容样式如下:
+- 构建方式:
+    * Android Studio: 点击构建按钮.
+    * 命令行: 运行以下命令:
+        ```shell
+        cd PlantsVsZombies-AndroidTV
+        ./gradlew assembleDebug
+        ```
 
-```properties
-storePassword=myStorePassword
-keyPassword=mykeyPassword
-keyAlias=myKeyAlias
-storeFile=myStoreFileLocation
-```
+- 如果要发布, 先在位于项目根目录的 `keystore.properties` 文件 (需要自行创建) 中配置签名. 文件内容样式如下:
+    ```properties
+    storePassword=myStorePassword
+    keyPassword=mykeyPassword
+    keyAlias=myKeyAlias
+    storeFile=myStoreFileLocation
+    ```
 
-## 编码风格 (C++)
+## 参与贡献
 
-### 命名约定
+### 编码风格 (C++)
+
+**命名约定**
 
 - 函数/类型/枚举/概念: `PascalCase`
 - 变量: `camelCase`
 - 命名空间: `snake_case`
 - 宏/常量/枚举成员/非类型模板参数: `UPPER_CASE`
 
-### 格式
-
-> 建议在每次提交更改前先用 IDE 对代码进行格式化.
+**格式**
 
 见项目根目录下的 `.clang-format` 文件.
+
+> 建议在每次提交前先用 IDE 对代码进行格式化.
+
+### 提交
+
+参考
+_[AngularJS 提交信息指南](https://github.com/angular/angular/blob/20.0.x/CONTRIBUTING.md#-commit-message-guidelines)_.
+
+### 拉取请求 (PR)
+
+发送 PR 到 `dev` 分支.
 
 ## 许可协议
 
