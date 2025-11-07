@@ -65,13 +65,11 @@ inline float RandRangeFloat(float theMin, float theMax) {
 }
 
 inline int ClampInt(int theNum, int theMin, int theMax) {
-    return theNum <= theMin ? theMin : theNum >= theMax ? theMax
-                                                        : theNum;
+    return theNum <= theMin ? theMin : theNum >= theMax ? theMax : theNum;
 }
 
 inline float ClampFloat(float theNum, float theMin, float theMax) {
-    return theNum <= theMin ? theMin : theNum >= theMax ? theMax
-                                                        : theNum;
+    return theNum <= theMin ? theMin : theNum >= theMax ? theMax : theNum;
 }
 
 inline float Distance2D(float x1, float y1, float x2, float y2) {

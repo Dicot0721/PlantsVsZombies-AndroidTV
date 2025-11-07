@@ -224,8 +224,7 @@ void WaitForSecondPlayerDialog::Update() {
     }
 }
 
-void WaitForSecondPlayerDialog::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
-}
+void WaitForSecondPlayerDialog::HandleTcpClientMessage(void *buf, ssize_t bufSize) {}
 
 void WaitForSecondPlayerDialog::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
     BaseEvent *event = (BaseEvent *)buf;

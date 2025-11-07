@@ -4065,10 +4065,7 @@ int Board::GetSeedBankExtraWidth() {
     }
 
     int aNumPackets = mSeedBank1->mNumPackets;
-    return aNumPackets <= 6 ? 0 : aNumPackets == 7 ? 60
-        : aNumPackets == 8                         ? 76
-        : aNumPackets == 9                         ? 112
-                                                   : 153;
+    return aNumPackets <= 6 ? 0 : aNumPackets == 7 ? 60 : aNumPackets == 8 ? 76 : aNumPackets == 9 ? 112 : 153;
 }
 
 Rect Board::GetShovelButtonRect() {

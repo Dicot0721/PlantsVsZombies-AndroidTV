@@ -338,8 +338,7 @@ void GamepadControls::UpdatePreviewReanim() {
             ZombieDefinition &theZombieDefinition = GetZombieDefinition(aZombieType);
             Reanimation *zombieReanim = aApp->AddReanimation(-20.0, -35 - theDrawHeightOffset, aRenderOrder + 1, theZombieDefinition.mReanimationType);
             Zombie::SetupReanimLayers(zombieReanim, aZombieType);
-            if (aZombieType == ZombieType::ZOMBIE_DOOR || aZombieType == ZombieType::ZOMBIE_TRASHCAN || aZombieType == ZombieType::ZOMBIE_NEWSPAPER
-                || aZombieType == ZombieType::ZOMBIE_LADDER) {
+            if (aZombieType == ZombieType::ZOMBIE_DOOR || aZombieType == ZombieType::ZOMBIE_TRASHCAN || aZombieType == ZombieType::ZOMBIE_NEWSPAPER || aZombieType == ZombieType::ZOMBIE_LADDER) {
                 Zombie::SetupShieldReanims(aZombieType, zombieReanim);
             }
             zombieReanim->mIsAttachment = true;
@@ -675,7 +674,8 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
         return;
     }
 
-    if (mGameMode == GameMode::GAMEMODE_CHALLENGE_BIG_TIME && (mSelectedSeedType == SeedType::SEED_SUNFLOWER || mSelectedSeedType == SeedType::SEED_WALLNUT || mSelectedSeedType == SeedType::SEED_MARIGOLD)) {
+    if (mGameMode == GameMode::GAMEMODE_CHALLENGE_BIG_TIME
+        && (mSelectedSeedType == SeedType::SEED_SUNFLOWER || mSelectedSeedType == SeedType::SEED_WALLNUT || mSelectedSeedType == SeedType::SEED_MARIGOLD)) {
         // 种大突破关卡 放大植物预览
         g->SetScale(1.5, 1.5, 0, 0);
         g->Translate(-15, -25);
@@ -707,12 +707,11 @@ void GamepadControls::OnButtonDown(ButtonCode theButton, int thePlayerIndex, uns
             ZombieType aZombieType = Challenge::IZombieSeedTypeToZombieType(aPacketType);
             if (mBoard->TakeDeathMoney(aCost)) {
                 if (aZombieType == ZombieType::ZOMBIE_DUCKY_TUBE || aZombieType == ZombieType::ZOMBIE_SNORKEL || aZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER
-                    || aZombieType == ZombieType::ZOMBIE_BALLOON || aZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR
-                    || aZombieType == ZombieType::ZOMBIE_BOBSLED) {
+                    || aZombieType == ZombieType::ZOMBIE_BALLOON || aZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || aZombieType == ZombieType::ZOMBIE_BOBSLED) {
                     mBoard->AddZombieInRow(aZombieType, aGridY, -5, true);
-                } else if (aZombieType == ZombieType::ZOMBIE_IMP || aZombieType == ZombieType::ZOMBIE_YETI || aZombieType == ZombieType::ZOMBIE_PEA_HEAD || aZombieType == ZombieType::ZOMBIE_WALLNUT_HEAD
-                           || aZombieType == ZombieType::ZOMBIE_JALAPENO_HEAD || aZombieType == ZombieType::ZOMBIE_GATLING_HEAD || aZombieType == ZombieType::ZOMBIE_SQUASH_HEAD
-                           || aZombieType == ZombieType::ZOMBIE_TALLNUT_HEAD) {
+                } else if (aZombieType == ZombieType::ZOMBIE_IMP || aZombieType == ZombieType::ZOMBIE_YETI || aZombieType == ZombieType::ZOMBIE_PEA_HEAD
+                           || aZombieType == ZombieType::ZOMBIE_WALLNUT_HEAD || aZombieType == ZombieType::ZOMBIE_JALAPENO_HEAD || aZombieType == ZombieType::ZOMBIE_GATLING_HEAD
+                           || aZombieType == ZombieType::ZOMBIE_SQUASH_HEAD || aZombieType == ZombieType::ZOMBIE_TALLNUT_HEAD) {
                     Zombie *aZombie = mBoard->AddZombie(aZombieType, -5, false);
                     if (aZombie)
                         aZombie->RiseFromGrave(aGridX, aGridY);

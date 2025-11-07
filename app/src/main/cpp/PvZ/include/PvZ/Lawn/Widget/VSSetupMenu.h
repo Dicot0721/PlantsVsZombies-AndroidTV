@@ -66,12 +66,7 @@ inline VSSetupWidget *gVSMorePacketsButton;
 
 class VSSetupMenu : public Sexy::__Widget {
 public:
-    enum VSSetupState {
-        VS_SETUP_CONTROLLERS = 0,
-        VS_SETUP_SIDES = 1,
-        VS_SELECT_BATTLE = 2,
-        VS_CUSTOM_BATTLE = 3
-    };
+    enum VSSetupState { VS_SETUP_CONTROLLERS = 0, VS_SETUP_SIDES = 1, VS_SELECT_BATTLE = 2, VS_CUSTOM_BATTLE = 3 };
 
     Sexy::ButtonListener mButtonListener; // 64
     int unkInt[5];                        // 65 ~ 69

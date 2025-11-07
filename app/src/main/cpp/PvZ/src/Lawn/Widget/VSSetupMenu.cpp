@@ -160,8 +160,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         if (tcp_connected)
             return;
         Sexy::Widget *theController1Widget = FindWidget(7);
-        int newController1Position = theController1Widget->mX > 400 ? 1 : theController1Widget->mX > 250 ? -1
-                                                                                                         : 0;
+        int newController1Position = theController1Widget->mX > 400 ? 1 : theController1Widget->mX > 250 ? -1 : 0;
         if (newController1Position == mController1Position) {
             GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
         }
@@ -175,8 +174,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         if (tcpClientSocket >= 0)
             return;
         Sexy::Widget *theController2Widget = FindWidget(8);
-        int newController2Position = theController2Widget->mX > 400 ? 1 : theController2Widget->mX > 250 ? -1
-                                                                                                         : 0;
+        int newController2Position = theController2Widget->mX > 400 ? 1 : theController2Widget->mX > 250 ? -1 : 0;
 
         if (newController2Position == mController2Position) {
             GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);

@@ -370,8 +370,7 @@ void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
                             goto LABEL_37;
                         if ((int)v53 < mX + g->mClipRect.mWidth && (mY = g->mClipRect.mY, theTriangleCelWidth >= mY) && theTriangleCelWidth < mY + g->mClipRect.mHeight) {
                             if (v44 && v44 != 15 && v45)
-                                v42->color = theIsNight ? 0x30FFFFFF : v44 <= 7 ? 0xC0FFFFFF
-                                                                                : 0x80FFFFFF;
+                                v42->color = theIsNight ? 0x30FFFFFF : v44 <= 7 ? 0xC0FFFFFF : 0x80FFFFFF;
                             else
                                 v42->color = 0x20FFFFFF;
                         } else {
