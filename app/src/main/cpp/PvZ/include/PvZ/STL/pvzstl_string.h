@@ -363,14 +363,12 @@ public:
         }
         _check_length(0, n, "basic_string::append");
         const size_type len = n + size();
-        if (len > capacity() || _get_rep()->_is_shared()) {
-            if (_disjunct(s)) {
-                reserve(len);
-            } else {
-                const size_type off = s - c_str();
-                reserve(len);
-                s = c_str() + off;
-            }
+        if (_disjunct(s)) {
+            reserve(len);
+        } else {
+            const size_type off = s - c_str();
+            reserve(len);
+            s = c_str() + off;
         }
         traits_type::copy(_dataplus + size(), s, n);
         _get_rep()->_set_size_and_sharable(len);
