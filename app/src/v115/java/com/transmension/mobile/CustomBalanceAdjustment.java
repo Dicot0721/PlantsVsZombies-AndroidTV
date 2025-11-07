@@ -19,8 +19,8 @@
 
  package com.transmension.mobile;
 
- import static com.transmension.mobile.Global.globalIsSelected;
  import static com.transmension.mobile.Global.currentSelectedSeed;
+ import static com.transmension.mobile.Global.globalIsSelected;
 
  import android.app.ActionBar;
  import android.app.Activity;
