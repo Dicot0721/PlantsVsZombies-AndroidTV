@@ -24,7 +24,6 @@
     ```
 
 - 复制 assets 文件到路径 `PlantsVsZombies-AndroidTV/app/src/main/assets/` 下.
-    > [!NOTE]
     > 需要资源文件请联系仓库作者.
 
 - 构建方式:

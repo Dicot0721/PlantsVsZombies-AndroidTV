@@ -24,7 +24,6 @@ A mod of _Plants vs. Zombies_ Android TV version.
     ```
 
 - Copy assets files to the path `PlantsVsZombies-AndroidTV/app/src/main/assets/`.
-    > [!NOTE]
     > If you need resource files, please contact the repository author.
 
 - Build with:
