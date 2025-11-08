@@ -14,6 +14,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - version: v111
+            version-name: v1.1.1
+            task-name: assembleV111Release
+          - version: v115
+            version-name: v1.1.5
+            task-name: assembleV115Release
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,19 +59,13 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease
+          ./gradlew ${{ matrix.task-name }}
 
-      - name: Upload v111 artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PvZ-TV-v1.1.1-release
-          path: app/build/outputs/apk/v111/release/*.apk
-
-      - name: Upload v115 artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: PvZ-TV-v1.1.5-release
-          path: app/build/outputs/apk/v115/release/*.apk
+          name: PvZ-TV-${{ matrix.version-name }}-release
+          path: app/build/outputs/apk/${{ matrix.version }}/release/*.apk
 
   release:
     needs: [ build ]
