@@ -23,15 +23,17 @@
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 #include <jni.h>
-#include <pthread.h>
+
+#include <condition_variable>
+#include <mutex>
 
 using namespace Native;
 
 namespace {
 
 // 同步机制变量
-pthread_mutex_t mutex;
-pthread_cond_t cond;
+std::mutex mtx;
+std::condition_variable cv;
 bool bufferConsumed;
 
 // OpenSL ES engine interfaces
@@ -54,24 +56,20 @@ SLAndroidSimpleBufferQueueItf playerBufferQueue;
 
 // Callback to handle buffer queue events
 static void playerCallback(SLAndroidSimpleBufferQueueItf bq, void *context) {
-    pthread_mutex_lock(&mutex);
-    bufferConsumed = true;
-    pthread_cond_signal(&cond); // 通知主线程
-    pthread_mutex_unlock(&mutex);
+    {
+        std::lock_guard lock{mtx};
+        bufferConsumed = true;
+    }
+    cv.notify_all(); // 通知主线程
 }
 
 static void waitForBufferConsumption() {
-    pthread_mutex_lock(&mutex);
-    while (!bufferConsumed) {
-        pthread_cond_wait(&cond, &mutex); // 阻塞等待
-    }
+    std::unique_lock lock{mtx};
+    cv.wait(lock, [] { return bufferConsumed; }); // 阻塞等待
     bufferConsumed = false;
-    pthread_mutex_unlock(&mutex);
 }
 
 static void setup(int sampleRate, int channels, int bits) {
-    pthread_mutex_init(&mutex, nullptr);
-    pthread_cond_init(&cond, nullptr);
     slCreateEngine(&engineObject, 0, nullptr, 0, nullptr, nullptr);
     (*engineObject)->Realize(engineObject, SL_BOOLEAN_FALSE);
     (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineEngine);
@@ -131,8 +129,6 @@ static void shutdown() {
         engineObject = nullptr;
         engineEngine = nullptr;
     }
-    pthread_mutex_destroy(&mutex);
-    pthread_cond_destroy(&cond);
 }
 
 // 写入音频数据到音频流
