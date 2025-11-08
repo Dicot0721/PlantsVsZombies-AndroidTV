@@ -33,24 +33,40 @@
  * 也可以输入 `adb logcat *:S [pvztv:D] [pvztv:I] [pvztv:W] [pvztv:E]` 控制输出级别 (`[]` 中为可选项).
  */
 
-namespace homura {
-
-constexpr android_LogPriority PVZ_LOG_LEVEL = ANDROID_LOG_DEBUG;
+namespace homura::log {
 
 constexpr const char *PVZ_LOG_TAG = "pvztv";
 
-template <android_LogPriority LEVEL, typename... Args>
-void Log(std::source_location location, std::format_string<Args...> format, Args &&...args) {
-    if constexpr (LEVEL >= PVZ_LOG_LEVEL) {
-        const std::string message = std::vformat(format.get(), std::make_format_args(args...));
-        __android_log_print(LEVEL, PVZ_LOG_TAG, "[%s] %s", location.function_name(), message.c_str());
-    }
+[[gnu::visibility("default")]] inline android_LogPriority _level = ANDROID_LOG_DEBUG;
+
+inline void SetLevel(android_LogPriority level) noexcept {
+    _level = level;
 }
 
-} // namespace homura
+[[nodiscard]] inline android_LogPriority GetLevel() noexcept {
+    return _level;
+}
 
-#ifdef PVZ_DEBUG
-#define LOG_IMPL(level, ...) homura::Log<level>(std::source_location::current(), __VA_ARGS__)
+template <typename... Args>
+void Log(const char *function_name, android_LogPriority level, std::format_string<Args...> format, Args &&...args) {
+    if (level < GetLevel()) {
+        return;
+    }
+    const std::string message = std::vformat(format.get(), std::make_format_args(args...));
+    __android_log_print(level, PVZ_LOG_TAG, "[%s] %s", function_name, message.c_str());
+}
+
+} // namespace homura::log
+
+
+// 可以用 `__func__`, 但 `std::source_location::function_name()` 生成的函数签名更完整.
+#define LOGGER_CALL(level, ...) homura::log::Log(std::source_location::current().function_name(), level, __VA_ARGS__)
+
+#define LOG_DEBUG(...) LOGGER_CALL(ANDROID_LOG_DEBUG, __VA_ARGS__)
+#define LOG_INFO(...) LOGGER_CALL(ANDROID_LOG_INFO, __VA_ARGS__)
+#define LOG_WARN(...) LOGGER_CALL(ANDROID_LOG_WARN, __VA_ARGS__)
+#define LOG_ERROR(...) LOGGER_CALL(ANDROID_LOG_ERROR, __VA_ARGS__)
+
 
 #define LOG_IF(logFunc, flag, ...) \
     do {                           \
@@ -59,6 +75,12 @@ void Log(std::source_location location, std::format_string<Args...> format, Args
         }                          \
     } while (0)
 
+#define LOG_DEBUG_IF(flag, ...) LOG_IF(LOG_DEBUG, flag, __VA_ARGS__)
+#define LOG_INFO_IF(flag, ...) LOG_IF(LOG_INFO, flag, __VA_ARGS__)
+#define LOG_WARN_IF(flag, ...) LOG_IF(LOG_WARN, flag, __VA_ARGS__)
+#define LOG_ERROR_IF(flag, ...) LOG_IF(LOG_ERROR, flag, __VA_ARGS__)
+
+
 #define LOG_ONCE(logFunc, ...)             \
     do {                                   \
         static std::atomic_flag isLogDone; \
@@ -66,22 +88,6 @@ void Log(std::source_location location, std::format_string<Args...> format, Args
             logFunc(__VA_ARGS__);          \
         }                                  \
     } while (0)
-
-#else // PVZ_DEBUG
-#define LOG_IMPL(level, ...) ((void)0)
-#define LOG_IF(log_func, flag, ...) ((void)0)
-#define LOG_ONCE(log_func, ...) ((void)0)
-#endif // PVZ_DEBUG
-
-#define LOG_DEBUG(...) LOG_IMPL(ANDROID_LOG_DEBUG, __VA_ARGS__)
-#define LOG_INFO(...) LOG_IMPL(ANDROID_LOG_INFO, __VA_ARGS__)
-#define LOG_WARN(...) LOG_IMPL(ANDROID_LOG_WARN, __VA_ARGS__)
-#define LOG_ERROR(...) LOG_IMPL(ANDROID_LOG_ERROR, __VA_ARGS__)
-
-#define LOG_DEBUG_IF(flag, ...) LOG_IF(LOG_DEBUG, flag, __VA_ARGS__)
-#define LOG_INFO_IF(flag, ...) LOG_IF(LOG_INFO, flag, __VA_ARGS__)
-#define LOG_WARN_IF(flag, ...) LOG_IF(LOG_WARN, flag, __VA_ARGS__)
-#define LOG_ERROR_IF(flag, ...) LOG_IF(LOG_ERROR, flag, __VA_ARGS__)
 
 #define LOG_DEBUG_ONCE(...) LOG_ONCE(LOG_DEBUG, __VA_ARGS__)
 #define LOG_INFO_ONCE(...) LOG_ONCE(LOG_INFO, __VA_ARGS__)
