@@ -59,7 +59,7 @@ void Log(const char *function_name, android_LogPriority level, std::format_strin
 } // namespace homura::log
 
 
-// 可以用 `__func__`, 但 `std::source_location::function_name()` 生成的函数签名更完整.
+// `__func__` 生成的函数签名不够完整.
 #define LOGGER_CALL(level, ...) homura::log::Log(std::source_location::current().function_name(), level, __VA_ARGS__)
 
 #define LOG_DEBUG(...) LOGGER_CALL(ANDROID_LOG_DEBUG, __VA_ARGS__)
@@ -83,8 +83,8 @@ void Log(const char *function_name, android_LogPriority level, std::format_strin
 
 #define LOG_ONCE(logFunc, ...)             \
     do {                                   \
-        static std::atomic_flag isLogDone; \
-        if (!isLogDone.test_and_set()) {   \
+        static std::atomic_flag hasLogged; \
+        if (!hasLogged.test_and_set()) {   \
             logFunc(__VA_ARGS__);          \
         }                                  \
     } while (0)
