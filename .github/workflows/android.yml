@@ -19,10 +19,8 @@ jobs:
       matrix:
         include:
           - version: v111
-            version-name: v1.1.1
             task-name: assembleV111Release
           - version: v115
-            version-name: v1.1.5
             task-name: assembleV115Release
 
     steps:
@@ -64,7 +62,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: PvZ-TV-${{ matrix.version-name }}-release
+          name: PvZ-TV-${{ matrix.version }}-release
           path: app/build/outputs/apk/${{ matrix.version }}/release/*.apk
 
   release:
@@ -78,13 +76,13 @@ jobs:
       - name: Download v111 artifact
         uses: actions/download-artifact@v4
         with:
-          name: PvZ-TV-v1.1.1-release
+          name: PvZ-TV-v111-release
           path: apks
 
       - name: Download v115 artifact
         uses: actions/download-artifact@v4
         with:
-          name: PvZ-TV-v1.1.5-release
+          name: PvZ-TV-v115-release
           path: apks
 
       - name: Release
