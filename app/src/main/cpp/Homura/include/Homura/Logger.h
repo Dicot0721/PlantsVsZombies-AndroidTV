@@ -22,6 +22,7 @@
 
 #include <android/log.h>
 
+#include <atomic>
 #include <format>
 #include <source_location>
 
@@ -51,20 +52,19 @@ void Log(std::source_location location, std::format_string<Args...> format, Args
 #ifdef PVZ_DEBUG
 #define LOG_IMPL(level, ...) homura::Log<level>(std::source_location::current(), __VA_ARGS__)
 
-#define LOG_IF(log_func, flag, ...) \
-    do {                            \
-        if (flag) {                 \
-            log_func(__VA_ARGS__);  \
-        }                           \
+#define LOG_IF(logFunc, flag, ...) \
+    do {                           \
+        if (flag) {                \
+            logFunc(__VA_ARGS__);  \
+        }                          \
     } while (0)
 
-#define LOG_ONCE(log_func, ...)      \
-    do {                             \
-        static bool firstLog = true; \
-        if (firstLog) {              \
-            log_func(__VA_ARGS__);   \
-            firstLog = false;        \
-        }                            \
+#define LOG_ONCE(logFunc, ...)             \
+    do {                                   \
+        static std::atomic_flag isLogDone; \
+        if (!isLogDone.test_and_set()) {   \
+            logFunc(__VA_ARGS__);          \
+        }                                  \
     } while (0)
 
 #else // PVZ_DEBUG
