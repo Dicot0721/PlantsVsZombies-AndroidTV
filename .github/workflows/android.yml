@@ -78,7 +78,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set Build Variables
+      - name: Set build variables
         run: |
           echo "GIT_DATE=$(git log --date=format:%y%m%d --pretty=format:'%cd' -n 1)" >> $GITHUB_ENV
           echo "GIT_COMMITS_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
@@ -104,7 +104,7 @@ jobs:
           title: Automatic CI builds
           files: apks/*.apk
 
-      - name: Archive build
+      - name: Archive builds
         uses: softprops/action-gh-release@v2
         with:
           repository: Dicot0721/PvZ-TV-builds
