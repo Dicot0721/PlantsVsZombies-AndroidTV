@@ -75,10 +75,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set Build Variables
         run: |
-          echo "GIT_DATE=$(git log --date=format:%Y%m%d --pretty=format:'%cd' -n 1)" >> $GITHUB_ENV
+          echo "GIT_DATE=$(git log --date=format:%y%m%d --pretty=format:'%cd' -n 1)" >> $GITHUB_ENV
           echo "GIT_COMMITS_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
 
       - name: Download v111 artifact
