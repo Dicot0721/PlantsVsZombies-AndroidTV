@@ -49,7 +49,7 @@ A mod of _Plants vs. Zombies_ Android TV version.
 
 **Name Convention**
 
-- Function / Type / Enum / Concept: `PascalCase`
+- Function / Type / Concept: `PascalCase`
 - Variable: `camelCase`
 - Namespace: `snake_case`
 - Macro / Constant / Enumerator / Non-type template parameter: `UPPER_CASE`

@@ -48,7 +48,7 @@
 
 **命名约定**
 
-- 函数/类型/枚举/概念: `PascalCase`
+- 函数/类型/概念: `PascalCase`
 - 变量: `camelCase`
 - 命名空间: `snake_case`
 - 宏/常量/枚举成员/非类型模板参数: `UPPER_CASE`
