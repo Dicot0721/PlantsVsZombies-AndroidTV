@@ -263,7 +263,7 @@ public:
     }
 
     [[nodiscard]] constexpr size_type max_size() const noexcept {
-        return _rep::_max_size;
+        return _rep::_max_size();
     }
 
     void reserve(size_type new_cap) {
@@ -557,14 +557,16 @@ public:
 
 protected:
     struct _rep {
-        // npos = sizeof(_rep) + (sizeof(CharT) * (m + 1))
-        // _max_size = m / 4
-        static constexpr size_type _max_size = (((npos - sizeof(_rep)) / sizeof(CharT)) - 1) / 4;
-
         size_type _size;                // 字符数
         size_type _capacity;            // 已分配存储空间中可以容纳的字符数
         std::atomic_int32_t _ref_count; // 引用计数 (小于等于 0 时释放内存)
         CharT _data[];                  // 作为字符存储的底层数组 (柔性数组成员)
+
+        [[nodiscard]] static consteval size_type _max_size() noexcept {
+            // npos = (m + 1) * sizeof(CharT) + sizeof(_rep)
+            // max_size = m / 4
+            return (((npos - sizeof(_rep)) / sizeof(CharT)) - 1) / 4;
+        }
 
         [[nodiscard]] static _rep &_empty_rep() noexcept {
 #ifdef PVZ_VERSION
@@ -578,7 +580,7 @@ protected:
         }
 
         [[nodiscard]] static _rep *_create(size_type cap, size_type old_cap) {
-            if (cap > _max_size) {
+            if (cap > _max_size()) {
                 throw std::length_error{"basic_string::_rep::_create"};
             }
             constexpr size_type pagesize = 0x1000;
@@ -591,12 +593,15 @@ protected:
             if (adj_size > pagesize && cap > old_cap) {
                 const size_type extra = pagesize - adj_size % pagesize;
                 cap += extra / sizeof(CharT);
-                if (cap > _max_size) {
-                    cap = _max_size;
+                if (cap > _max_size()) {
+                    cap = _max_size();
                 }
                 size = (cap + 1) * sizeof(CharT) + sizeof(_rep);
             }
-            return ::new (::operator new(size)) _rep{._capacity = cap, ._ref_count = 0};
+            void *place = ::operator new(size);
+            _rep *p = ::new (place) _rep;
+            p->_capacity = cap;
+            return p;
         }
 
         [[nodiscard]] CharT *_ref_copy() noexcept {
