@@ -20,25 +20,16 @@
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/HookInit.h"
 #include "PvZ/Lawn/Board/Board.h"
-#include "PvZ/Lawn/Board/Coin.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Symbols.h"
 
-#include <dlfcn.h>
 #include <jni.h>
-#include <pthread.h>
-#include <unistd.h>
 
-#include <cstring>
-
-#include <fstream>
-#include <iostream>
-#include <list>
-#include <thread>
-#include <vector>
+#include <map>
+#include <sstream>
 
 static_assert((sizeof(void *) == sizeof(int32_t)), "Unsupported non-32-bit architecture");
 
@@ -718,117 +709,60 @@ static jstring stringToJstring(JNIEnv *env, const std::string &str) {
     return charTojstring(env, str.c_str());
 }
 
-
-#define HASH_SIZE 100 // 哈希表大小
-
-// 定义一个结构体来表示键值对
-struct KeyValuePair {
-    int key;
-    int value;
-    struct KeyValuePair *next; // 链表中的下一个元素
-};
-
-// 计算哈希值
-static int hashFunction(int key) {
-    return key % HASH_SIZE;
-}
-
-// 插入键值对
-static void insertKeyValuePair(KeyValuePair *hashTable[], int key, int value) {
-    int index = hashFunction(key);
-
-    auto *newPair = new KeyValuePair;
-    newPair->key = key;
-    newPair->value = value;
-    newPair->next = nullptr;
-
-    if (hashTable[index] == nullptr) {
-        hashTable[index] = newPair;
-    } else if (hashTable[index]->key == key) {
-        // 将新的键值对添加到链表头部
-        newPair->next = hashTable[index];
-        hashTable[index] = newPair;
-    } else {
-        // 哈希冲突！
-        do {
-            index = hashFunction(index + 1); // 线性探测下一个位置
-        } while (hashTable[index] != nullptr && hashTable[index]->key != key);
-
-        if (hashTable[index] == nullptr)
-            hashTable[index] = newPair;
-        else {
-            newPair->next = hashTable[index];
-            hashTable[index] = newPair;
-        }
-    }
-}
-
 // 输出所有键值对
-static std::string printAllKeyValuePairs(KeyValuePair *hashTable[]) {
-    std::stringstream ss1; // 花盆荷叶
-    std::stringstream ss2; // 普通植物
-    std::stringstream ss3; // 南瓜
-    for (int i = 0; i < HASH_SIZE; i++) {
-        KeyValuePair *current = hashTable[i];
-        if (current != nullptr) {
+static std::string generateLineupStr(const std::multimap<int, int> &theMap) {
+    std::ostringstream ss1; // 花盆荷叶
+    std::ostringstream ss2; // 普通植物
+    std::ostringstream ss3; // 南瓜
 
-            int key = current->key;
-            int mSeedType = key & 0x3F;
-            std::stringstream *ss_ptr;
-            if (mSeedType == SeedType::SEED_LILYPAD || mSeedType == SeedType::SEED_FLOWERPOT) {
-                ss_ptr = &ss1;
-            } else if (mSeedType == SeedType::SEED_PUMPKINSHELL) {
-                ss_ptr = &ss3;
-            } else {
-                ss_ptr = &ss2;
-            }
-            bool wakeUp = (key >> 6) & 1;
-            bool imitaterMorphed = (key >> 7) & 1;
-            bool ladder = (key >> 8) & 1;
-            int value = current->value;
-            int mPlantCol = value & 0x0F;
-            int mRow = value >> 4;
-            *ss_ptr << mSeedType << " ";
-            if (wakeUp) {
-                *ss_ptr << "W";
-            }
-            if (imitaterMorphed) {
-                *ss_ptr << "I";
-            }
-            if (ladder) {
-                *ss_ptr << "L";
-            }
-            if (wakeUp || imitaterMorphed || ladder) {
-                *ss_ptr << " ";
-            }
-            *ss_ptr << mPlantCol << "," << mRow;
-            current = current->next;
-            while (current != nullptr) {
-                int value = current->value;
-                int mPlantCol = value & 0x0F;
-                int mRow = value >> 4;
-                *ss_ptr << " " << mPlantCol << "," << mRow;
-                current = current->next;
-            }
-            *ss_ptr << " ; ";
+    auto it = theMap.cbegin();
+    auto end = theMap.cend();
+    while (it != end) {
+        const auto &[key, value] = *it;
+        int aSeedType = key & 0x3F;
+        std::ostringstream *ssPtr;
+        switch (aSeedType) {
+            case SeedType::SEED_LILYPAD:
+            case SeedType::SEED_FLOWERPOT:
+                ssPtr = &ss1;
+                break;
+            case SeedType::SEED_PUMPKINSHELL:
+                ssPtr = &ss3;
+                break;
+            default:
+                ssPtr = &ss2;
+                break;
         }
+        bool wakeUp = (key >> 6) & 1;
+        bool imitaterMorphed = (key >> 7) & 1;
+        bool ladder = (key >> 8) & 1;
+        int aPlantCol = value & 0x0F;
+        int aRow = value >> 4;
+        *ssPtr << aSeedType << ' ';
+        if (wakeUp) {
+            *ssPtr << 'W';
+        }
+        if (imitaterMorphed) {
+            *ssPtr << 'I';
+        }
+        if (ladder) {
+            *ssPtr << 'L';
+        }
+        if (wakeUp || imitaterMorphed || ladder) {
+            *ssPtr << ' ';
+        }
+        *ssPtr << aPlantCol << ',' << aRow;
+        while ((++it != end) && (it->first == key)) {
+            int v = it->second;
+            int col = v & 0x0F;
+            int row = v >> 4;
+            *ssPtr << ' ' << col << ',' << row;
+        }
+        *ssPtr << " ; ";
     }
 
-    ss1 << ss2.str() << ss3.str();
-    return ss1.str();
-}
-
-// 释放哈希表内存
-static void freeMap(KeyValuePair *hashTable[]) {
-    for (int i = 0; i < HASH_SIZE; i++) {
-        KeyValuePair *current = hashTable[i];
-        while (current != nullptr) {
-            KeyValuePair *next = current->next;
-            free(current);
-            current = next;
-        }
-        hashTable[i] = nullptr;
-    }
+    ss1 << ss2.view() << ss3.view();
+    return std::move(ss1).str();
 }
 
 extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCurrentFormation(JNIEnv *env, jobject thiz) {
@@ -838,37 +772,30 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCu
         return charTojstring(env, "");
     }
 
-    KeyValuePair *hashTable[HASH_SIZE] = {nullptr};
-
-    Plant *plant = nullptr;
-    while (board->IteratePlants(plant)) {
-        if (plant->mDead)
+    std::multimap<int, int> map;
+    for (Plant *plant = nullptr; board->IteratePlants(plant);) {
+        if (plant->mDead) {
             continue;
-        SeedType mSeedType = plant->mSeedType;
-        SeedType mImitaterType = plant->mImitaterType;
-        if (mSeedType == SeedType::SEED_IMITATER) {
-            mSeedType = mImitaterType;
         }
-        int mPlantCol = plant->mPlantCol;
-        int mRow = plant->mRow;
-        bool mIsAsleep = plant->mIsAsleep;
-        bool canHaveLadder = mSeedType == SeedType::SEED_WALLNUT || mSeedType == SeedType::SEED_TALLNUT || mSeedType == SeedType::SEED_PUMPKINSHELL;
-        bool canBeAsleep = Plant::IsNocturnal(mSeedType);
-        bool wakeUp = canBeAsleep && !mIsAsleep;
-        bool imitaterMorphed = mSeedType == SeedType::SEED_IMITATER || mImitaterType == SeedType::SEED_IMITATER;
-        bool ladder = canHaveLadder && board->GetLadderAt(mPlantCol, mRow) != nullptr;
-        int key = mSeedType | (wakeUp << 6) | (imitaterMorphed << 7) | (ladder << 8);
-        int value = mPlantCol | (mRow << 4);
+        SeedType aSeedType = plant->mSeedType;
+        SeedType aImitaterType = plant->mImitaterType;
+        if (aSeedType == SeedType::SEED_IMITATER) {
+            aSeedType = aImitaterType;
+        }
+        int aPlantCol = plant->mPlantCol;
+        int aRow = plant->mRow;
+        bool aIsAsleep = plant->mIsAsleep;
+        bool canHaveLadder = aSeedType == SeedType::SEED_WALLNUT || aSeedType == SeedType::SEED_TALLNUT || aSeedType == SeedType::SEED_PUMPKINSHELL;
+        bool canBeAsleep = Plant::IsNocturnal(aSeedType);
+        bool wakeUp = canBeAsleep && !aIsAsleep;
+        bool imitaterMorphed = aSeedType == SeedType::SEED_IMITATER || aImitaterType == SeedType::SEED_IMITATER;
+        bool ladder = canHaveLadder && (board->GetLadderAt(aPlantCol, aRow) != nullptr);
 
-        insertKeyValuePair(hashTable, key, value);
+        int key = aSeedType | (wakeUp << 6) | (imitaterMorphed << 7) | (ladder << 8);
+        int value = aPlantCol | (aRow << 4);
+        map.emplace(key, value);
     }
-
-    // 输出键值对
-    std::string str = printAllKeyValuePairs(hashTable);
-
-    freeMap(hashTable);
-
-    return stringToJstring(env, str);
+    return stringToJstring(env, generateLineupStr(map));
 }
 
 
