@@ -726,21 +726,15 @@ protected:
         return (s < c_str()) || (c_str() + size() < s);
     }
 
-    void _leak_hard() {
-        if (_get_rep() == &_rep::_empty_rep()) {
+    // for use in begin() & non-const op[]
+    void _leak() {
+        if (_get_rep()->_is_leaked() || _get_rep() == &_rep::_empty_rep()) {
             return;
         }
         if (_get_rep()->_is_shared()) {
             reserve(capacity());
         }
         _get_rep()->_set_leaked();
-    }
-
-    // for use in begin() & non-const op[]
-    void _leak() {
-        if (!_get_rep()->_is_leaked()) {
-            _leak_hard();
-        }
     }
 
     // 清空范围 [ `begin() + pos`, `begin() + pos + len1` ) 中的字符,
