@@ -199,6 +199,14 @@ public:
         return c_str()[pos];
     }
 
+    [[nodiscard]] CharT &at(size_type pos) {
+        if (pos >= size()) {
+            throw std::out_of_range{"basic_string::at"};
+        }
+        _leak();
+        return _dataplus[pos];
+    }
+
     [[nodiscard]] const CharT &operator[](size_type pos) const noexcept {
         assert((pos <= size()) && "string index out of bounds");
         return c_str()[pos];
@@ -259,6 +267,10 @@ public:
     }
 
     [[nodiscard]] size_type size() const noexcept {
+        return _get_rep()->_size;
+    }
+
+    [[nodiscard]] size_type length() const noexcept {
         return _get_rep()->_size;
     }
 
@@ -562,6 +574,7 @@ protected:
         std::atomic_int32_t _ref_count; // 引用计数 (小于等于 0 时释放内存)
         CharT _data[];                  // 作为字符存储的底层数组 (柔性数组成员)
 
+        // `_rep` 在自身的成员函数中才保证是完整类型, 故不定义为非静态成员变量.
         [[nodiscard]] static consteval size_type _max_size() noexcept {
             // npos = (m + 1) * sizeof(CharT) + sizeof(_rep)
             // max_size = m / 4
@@ -630,14 +643,16 @@ protected:
             }
         }
 
-        // 调用非 const 限定的 operator[]/at/begin 等不明确是否修改的函数后,
-        // 底层数据会变为不可共享状态.
         [[nodiscard]] bool _is_leaked() const noexcept {
             return _ref_count < 0;
         }
 
         [[nodiscard]] bool _is_shared() const noexcept {
             return _ref_count > 0;
+        }
+
+        void _set_leaked() noexcept {
+            _ref_count = -1;
         }
 
         void _set_sharable() noexcept {
@@ -709,6 +724,23 @@ protected:
 
     [[nodiscard]] bool _disjunct(const CharT *s) const noexcept {
         return (s < c_str()) || (c_str() + size() < s);
+    }
+
+    void _leak_hard() {
+        if (_get_rep() == &_rep::_empty_rep()) {
+            return;
+        }
+        if (_get_rep()->_is_shared()) {
+            reserve(capacity());
+        }
+        _get_rep()->_set_leaked();
+    }
+
+    // for use in begin() & non-const op[]
+    void _leak() {
+        if (!_get_rep()->_is_leaked()) {
+            _leak_hard();
+        }
     }
 
     // 清空范围 [ `begin() + pos`, `begin() + pos + len1` ) 中的字符,
