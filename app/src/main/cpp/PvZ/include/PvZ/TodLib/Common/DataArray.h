@@ -100,8 +100,7 @@ public:
     }
 
     uint32_t DataArrayGetID(T *theItem) const noexcept {
-        auto *aItem = reinterpret_cast<DataArrayItem *>(theItem);
-        return aItem->mID;
+        return reinterpret_cast<DataArrayItem *>(theItem)->mID;
     }
 
     bool IterateNext(T *&theItem) const noexcept {
@@ -139,8 +138,7 @@ public:
         }
         ++mSize;
 
-        new (aNewItem) T();
-        return reinterpret_cast<T *>(aNewItem);
+        return new (aNewItem) T();
     }
 
     T *DataArrayTryToGet(uint32_t theId) noexcept {
