@@ -68,7 +68,7 @@ public:
         mName = theName;
     }
 
-    void DataArrayDispose() {
+    void DataArrayDispose() noexcept {
         if (mBlock != nullptr) {
             DataArrayFreeAll();
             operator delete(mBlock);
