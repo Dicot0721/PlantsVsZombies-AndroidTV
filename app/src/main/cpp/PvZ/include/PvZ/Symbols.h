@@ -1894,7 +1894,7 @@ inline bool GetFunctionAddr() {
     Plant_PlayBodyReanimAddr = dlsym(handle, "_ZN5Plant14PlayBodyReanimEPKc14ReanimLoopTypeif");
     Plant_UpdateProductionPlantAddr = dlsym(handle, "_ZN5Plant21UpdateProductionPlantEv");
     Plant_FireAddr = dlsym(handle, "_ZN5Plant4FireEP6Zombiei11PlantWeaponP8GridItem");
-    Plant_RemoveEffectsAddr= dlsym(handle, "_ZN5Plant13RemoveEffectsEv");
+    Plant_RemoveEffectsAddr = dlsym(handle, "_ZN5Plant13RemoveEffectsEv");
 
 
     Projectile_UpdateAddr = dlsym(handle, "_ZN10Projectile6UpdateEv");
