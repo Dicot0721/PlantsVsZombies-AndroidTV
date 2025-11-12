@@ -301,7 +301,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Plant_FindTargetZombieAddr, &Plant::FindTargetZombie, &old_Plant_FindTargetZombie);
     homura::HookFunction(Plant_FindTargetGridItemAddr, &Plant::FindTargetGridItem, nullptr);
     homura::HookFunction(Plant_GetCostAddr, &Plant::GetCost, &old_Plant_GetCost);
-    homura::HookFunction(Plant_DieAddr, &Plant::Die, &old_Plant_Die);
+    homura::HookFunction(Plant_DieAddr, &Plant::Die, nullptr);
     homura::HookFunction(Plant_PlayBodyReanimAddr, &Plant::PlayBodyReanim, &old_Plant_PlayBodyReanim);
     homura::HookFunction(Plant_UpdateProductionPlantAddr, &Plant::UpdateProductionPlant, &old_Plant_UpdateProductionPlant);
     homura::HookFunction(Plant_FireAddr, &Plant::Fire, &old_Plant_Fire);

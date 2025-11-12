@@ -1171,9 +1171,11 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_ADD:
             return sizeof(FourCharOneShortTwoIntDataEvent);
 
-        // --- 金钱类 ---
+        // --- 金钱类、植物和僵尸死亡 ---
         case EVENT_SERVER_BOARD_TAKE_SUNMONEY:
         case EVENT_SERVER_BOARD_TAKE_DEATHMONEY:
+        case EVENT_SERVER_BOARD_PLANT_DIE:
+        case EVENT_SERVER_BOARD_ZOMBIE_DIE:
             return sizeof(SimpleShortEvent);
 
         // --- 种子包被种下 ---
@@ -1329,12 +1331,24 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             tcp_connected = true;
         } break;
         case EVENT_SERVER_BOARD_PLANT_DIE: {
-            SimpleShortEvent *event1 = (SimpleShortEvent *)event;
+            SimpleShortEvent *eventPlantDie = reinterpret_cast<SimpleShortEvent *>(event);
+            short serverPlantID = eventPlantDie->data;
             short clientPlantID;
-            if (serverPlantIDMap.Lookup(event1->data, clientPlantID)) {
+            if (serverPlantIDMap.Lookup(serverPlantID, clientPlantID)) {
                 Plant *aPlant = mPlantsList.DataArrayGet(clientPlantID);
                 tcp_connected = false;
                 aPlant->Die();
+                tcp_connected = true;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_DIE: {
+            SimpleShortEvent *eventZombieDie = reinterpret_cast<SimpleShortEvent *>(event);
+            short serverZombieID = eventZombieDie->data;
+            short clientZombieID;
+            if (serverZombieIDMap.Lookup(serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombiesList.DataArrayGet(clientZombieID);
+                tcp_connected = false;
+                aZombie->DieNoLoot();
                 tcp_connected = true;
             }
         } break;

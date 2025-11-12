@@ -2023,6 +2023,16 @@ void Zombie::DieWithLoot() {
 }
 
 void Zombie::DieNoLoot() {
+    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
+        if (tcp_connected)
+            return;
+
+        if (tcpClientSocket >= 0) {
+            SimpleShortEvent event = {EventType::EVENT_SERVER_BOARD_ZOMBIE_DIE, (short)mZombieID};
+            send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
+        }
+    }
+
     if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR && mBoard != nullptr && mApp->mGameScene == GameScenes::SCENE_PLAYING) {
         mBoard->GrantAchievement(AchievementId::ACHIEVEMENT_GARG, true);
     }

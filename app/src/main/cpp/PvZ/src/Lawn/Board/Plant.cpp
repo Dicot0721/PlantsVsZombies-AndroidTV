@@ -785,7 +785,31 @@ void Plant::Die() {
         }
     }
 
-    old_Plant_Die(this);
+    if (IsOnBoard() && mSeedType == SeedType::SEED_TANGLEKELP) {
+        Zombie *aZombie = mBoard->ZombieTryToGet(mTargetZombieID);
+        if (aZombie) {
+            aZombie->DieWithLoot();
+        }
+    }
+
+    mDead = true;
+    RemoveEffects();
+
+    if (!Plant::IsFlying(mSeedType) && IsOnBoard()) {
+        GridItem *aLadder = mBoard->GetLadderAt(mPlantCol, mRow);
+        if (aLadder) {
+            aLadder->GridItemDie();
+        }
+    }
+
+    if (IsOnBoard()) {
+        Plant *aTopPlant = mBoard->GetTopPlantAt(mPlantCol, mRow, PlantPriority::TOPPLANT_BUNGEE_ORDER);
+        Plant *aFlowerPot = mBoard->GetFlowerPotAt(mPlantCol, mRow);
+        if (aFlowerPot && aTopPlant == aFlowerPot) {
+            Reanimation *aPotReanim = mApp->ReanimationGet(aFlowerPot->mBodyReanimID);
+            aPotReanim->mAnimRate = RandRangeFloat(10.0f, 15.0f);
+        }
+    }
 }
 
 PlantDefinition &GetPlantDefinition(SeedType theSeedType) {

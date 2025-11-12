@@ -9,6 +9,14 @@ public:
         mapping_[x] = y; // 覆盖或新增
     }
 
+    void Remove(short serverID) {
+        auto it = mapping_.find(serverID);
+        if (it != mapping_.end()) {
+            mapping_.erase(it->second);
+            mapping_.erase(it);
+        }
+    }
+
     bool Lookup(short x, short& out) const {
         auto it = mapping_.find(x);
         if (it == mapping_.end())

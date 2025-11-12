@@ -189,7 +189,7 @@ public:
     float mShakeOffsetX;                       // 52
     float mShakeOffsetY;                       // 53
     MagnetItem mMagnetItems[MAX_MAGNET_ITEMS]; // 54 ~ 78
-    int mTargetZombieID;                       // 79
+    ZombieID mTargetZombieID;                  // 79
     int mWakeUpCounter;                        // 80
     PlantOnBungeeState mOnBungeeState;         // 81
     SeedType mImitaterType;                    // 82
@@ -224,9 +224,9 @@ public:
     void DrawMagnetItems(Sexy::Graphics *g) {
         reinterpret_cast<void (*)(Plant *, Sexy::Graphics *)>(Plant_DrawMagnetItemsAddr)(this, g);
     }
-    // Zombie *FindTargetZombie(int theRow, PlantWeapon thePlantWeapon) {
-    // return reinterpret_cast<Zombie *(*)(Plant *, int, PlantWeapon)>(Plant_FindTargetZombieAddr)(this, theRow, thePlantWeapon);
-    // }
+    void RemoveEffects() {
+        reinterpret_cast<void (*)(Plant *)>(Plant_RemoveEffectsAddr)(this);
+    }
 
     void PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int a6);
     void Update();
@@ -311,8 +311,6 @@ inline void (*old_Plant_DoSpecial)(Plant *plant);
 inline void (*old_Plant_PlantInitialize)(Plant *plant, int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int a6);
 
 inline bool (*old_Plant_IsUpgrade)(SeedType theSeedType);
-
-inline void (*old_Plant_Die)(Plant *this_);
 
 inline void (*old_Plant_PlayBodyReanim)(Plant *, const char *theTrackName, ReanimLoopType theLoopType, int theBlendTime, float theAnimRate);
 
