@@ -371,6 +371,7 @@ public:
     int GetShieldDamageIndex();
     bool IsFireResistant();
     void PickRandomSpeed();
+    void ApplySyncedSpeed(float theVelX, short theAnimTicks);
     float ZombieTargetLeadX(float theTime);
     void ApplyBurn();
     bool ZombieNotWalking();

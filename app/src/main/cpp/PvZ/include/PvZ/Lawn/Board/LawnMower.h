@@ -47,13 +47,12 @@ public:
     MowerHeight mMowerHeight;   //+0x3C
     int mLastPortalX;           //+0x40
 
-    void StartMower() {
-        reinterpret_cast<void (*)(LawnMower*)>(LawnMower_StartMowerAddr)(this);
-    }
-
+    void StartMower();
     void Update();
 };
 
 inline void (*old_LawnMower_Update)(LawnMower* lawnMover);
+
+inline void (*old_LawnMower_StartMower)(LawnMower*);
 
 #endif // PVZ_LAWN_BOARD_LAWN_MOWER_H

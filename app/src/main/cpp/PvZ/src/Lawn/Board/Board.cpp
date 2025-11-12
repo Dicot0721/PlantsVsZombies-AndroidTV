@@ -1171,11 +1171,12 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_ADD:
             return sizeof(FourCharOneShortTwoIntDataEvent);
 
-        // --- 金钱类、植物和僵尸死亡 ---
+        // --- 金钱类、植物和僵尸死亡、小推车启动 ---
         case EVENT_SERVER_BOARD_TAKE_SUNMONEY:
         case EVENT_SERVER_BOARD_TAKE_DEATHMONEY:
         case EVENT_SERVER_BOARD_PLANT_DIE:
         case EVENT_SERVER_BOARD_ZOMBIE_DIE:
+        case EVENT_SERVER_BOARD_LAWNMOWER_STRART:
             return sizeof(SimpleShortEvent);
 
         // --- 种子包被种下 ---
@@ -1353,15 +1354,15 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
-            FourCharOneShortTwoIntDataEvent *event1 = (FourCharOneShortTwoIntDataEvent *)event;
+            FourCharOneShortTwoIntDataEvent *eventZombieAdd = (FourCharOneShortTwoIntDataEvent *)event;
             tcp_connected = false;
-            Zombie *zombie = AddZombieInRow((ZombieType)event1->data1[0], event1->data1[1], event1->data1[2], event1->data1[3]);
-            LOG_DEBUG("serverZombieIDMap Add {} {}", event1->data2, (short)zombie->mZombieID);
-            serverZombieIDMap.Add(event1->data2, (short)zombie->mZombieID);
+            Zombie *aZombie = AddZombieInRow((ZombieType)eventZombieAdd->data1[0], eventZombieAdd->data1[1], eventZombieAdd->data1[2], eventZombieAdd->data1[3]);
+            LOG_DEBUG("serverZombieIDMap Add {} {}", eventZombieAdd->data2, (short)aZombie->mZombieID);
+            serverZombieIDMap.Add(eventZombieAdd->data2, (short)aZombie->mZombieID);
             tcp_connected = true;
-            zombie->mVelX = event1->data3[0].f;
-            zombie->UpdateAnimSpeed();
-            zombie->mPosX = event1->data3[1].f;
+            float aVelX = eventZombieAdd->data3[0].f;
+            aZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
+            aZombie->mPosX = eventZombieAdd->data3[1].f;
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE: {
             TwoCharOneShortDataEvent *event1 = (TwoCharOneShortDataEvent *)event;
@@ -1372,19 +1373,31 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 Zombie *zombie = mZombiesList.DataArrayGet(clientZombieID);
                 zombie->RiseFromGrave(event1->data1, event1->data2);
             }
-
         } break;
-        case  EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED: {
+        case EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED: {
             TwoShortTwoIntDataEvent *eventPickSpeed = reinterpret_cast<TwoShortTwoIntDataEvent *>(event);
+            short serverZombieID = eventPickSpeed->data1;
             short clientZombieID;
-            if (serverZombieIDMap.Lookup(eventPickSpeed->data2, clientZombieID)) {
+            if (serverZombieIDMap.Lookup(serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombiesList.DataArrayGet(clientZombieID);
-                aZombie->mVelX = eventPickSpeed->data3.f;
-                aZombie->mAnimTicksPerFrame = eventPickSpeed->data1;
-                aZombie->UpdateAnimSpeed();
-                aZombie->mPosX = eventPickSpeed->data4.f;
+                tcp_connected = false;
+                float aVelX = eventPickSpeed->data3.f;
+                short anAnimTicks = eventPickSpeed->data2;
+                aZombie->ApplySyncedSpeed(aVelX, anAnimTicks);
+                tcp_connected = true;
             }
         } break;
+        case EVENT_SERVER_BOARD_LAWNMOWER_STRART: {
+            SimpleShortEvent *eventLawnMowerStart = reinterpret_cast<SimpleShortEvent *>(event);
+            tcp_connected = false;
+            short aRow = eventLawnMowerStart->data;
+            LawnMower *aLawnMower = nullptr;
+            while (IterateLawnMowers(aLawnMower)) {
+                if (aLawnMower && aLawnMower->mRow == aRow)
+                    aLawnMower->StartMower();
+            }
+            tcp_connected = true;
+        }
         case EVENT_SERVER_BOARD_TAKE_SUNMONEY: {
             SimpleShortEvent *event1 = (SimpleShortEvent *)event;
             mSunMoney1 = event1->data;

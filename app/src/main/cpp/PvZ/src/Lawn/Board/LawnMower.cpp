@@ -19,9 +19,24 @@
 
 #include "PvZ/Lawn/Board/LawnMower.h"
 #include "PvZ/GlobalVariable.h"
+#include "PvZ/Lawn/LawnApp.h"
 
 void LawnMower::Update() {
     if (!requestPause) {
         old_LawnMower_Update(this);
     }
+}
+
+void LawnMower::StartMower() {
+    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
+        if (tcp_connected)
+            return;
+
+        if (tcpClientSocket >= 0) {
+            SimpleShortEvent event = {EventType::EVENT_SERVER_BOARD_LAWNMOWER_STRART, (short)mRow};
+            send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
+        }
+    }
+
+    old_LawnMower_StartMower(this);
 }
