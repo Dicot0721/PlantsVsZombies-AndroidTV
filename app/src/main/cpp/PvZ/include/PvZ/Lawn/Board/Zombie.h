@@ -188,8 +188,7 @@ public:
     int mLastPortalX;                                 // 89
     bool mBloated;                                    // 360
     int unkMems[6];                                   // 91 ~ 96
-    ZombieID mZombieID;                               // 97
-    // 大小98个整数
+    // 大小96个整数
 
     void RemoveColdEffects() {
         reinterpret_cast<void (*)(Zombie *)>(Zombie_RemoveColdEffectsAddr)(this);

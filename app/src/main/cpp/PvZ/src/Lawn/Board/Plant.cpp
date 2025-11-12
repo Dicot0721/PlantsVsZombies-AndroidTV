@@ -608,11 +608,11 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
             TwoShortTwoIntDataEvent event;
 
             event.type = EventType::EVENT_SERVER_BOARD_PLANT_FIRE;
-            event.data1 = (short)mPlantID;
-            event.data2 = theTargetZombie == nullptr ? 0 : (short)theTargetZombie->mZombieID;
+            event.data1 = short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(this)->mID);
+            event.data2 = theTargetZombie == nullptr ? 0 : short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(theTargetZombie)->mID);
             event.data3.s.s1 = (short)theRow;
             event.data3.s.s2 = (short)thePlantWeapon;
-            event.data4.s.s1 = gridItem == nullptr ? 0 : (short)gridItem->mGridItemID;
+            event.data4.s.s1 = gridItem == nullptr ? 0 : short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID);
             send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
         }
     }
@@ -780,7 +780,7 @@ void Plant::Die() {
             return;
 
         if (tcpClientSocket >= 0) {
-            SimpleShortEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_DIE, (short)mPlantID};
+            SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_DIE}, short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(this)->mID)};
             send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
         }
     }
@@ -1363,7 +1363,7 @@ void Plant::UpdateProductionPlant() {
             }
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if (tcpClientSocket >= 0) {
-                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, (short)mPlantID, (short)mLaunchCounter};
+                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(this)->mID), (short)mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
             }
             mApp->PlayFoley(FoleyType::FOLEY_SPAWN_SUN);

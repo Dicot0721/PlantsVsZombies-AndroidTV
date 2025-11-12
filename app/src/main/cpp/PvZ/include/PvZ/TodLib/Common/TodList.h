@@ -23,13 +23,13 @@
 constexpr int MAX_GLOBAL_ALLOCATORS = 128;
 
 struct TodAllocator {
-    void* mFreeList;
-    void* mBlockList;
+    void *mFreeList;
+    void *mBlockList;
     int mGrowCount;
     int mTotalItems;
     int mItemSize;
 
-    void Free(void* theItem, int theItemSize);
+    void Free(void *theItem, int theItemSize);
 };
 extern int gNumGlobalAllocators;
 extern TodAllocator gGlobalAllocators[MAX_GLOBAL_ALLOCATORS];
@@ -38,21 +38,21 @@ template <typename T>
 class TodListNode {
 public:
     T mValue;
-    TodListNode<T>* mNext;
-    TodListNode<T>* mPrev;
+    TodListNode<T> *mNext;
+    TodListNode<T> *mPrev;
 };
 
 template <typename T>
 class TodList {
 public:
-    TodListNode<T>* mHead;
-    TodListNode<T>* mTail;
+    TodListNode<T> *mHead;
+    TodListNode<T> *mTail;
     int mSize;
-    TodAllocator* mpAllocator;
+    TodAllocator *mpAllocator;
 
     inline T RemoveHead() {
-        TodListNode<T>* aHead = mHead;
-        TodListNode<T>* aSecNode = aHead->mNext;
+        TodListNode<T> *aHead = mHead;
+        TodListNode<T> *aSecNode = aHead->mNext;
         mHead = aSecNode;
         if (aSecNode)
             aSecNode->mPrev = nullptr;

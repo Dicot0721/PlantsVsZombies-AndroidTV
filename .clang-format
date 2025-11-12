@@ -126,7 +126,7 @@ ContinuationIndentWidth: 4
 Cpp11BracedListStyle: true
 
 # 继承最常用的指针和引用的对齐方式
-DerivePointerAlignment: true
+DerivePointerAlignment: false
 
 # 关闭格式化
 DisableFormat: false

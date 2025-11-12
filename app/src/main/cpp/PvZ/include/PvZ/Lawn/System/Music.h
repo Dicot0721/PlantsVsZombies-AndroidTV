@@ -70,10 +70,10 @@ enum MusicDrumsState {
 
 class __Music { // 加载XBOX版xm格式音乐时用。优：音质好、有鼓点。缺：鼓点BUG多，xm格式难以修改
 public:
-    int* vTable;                           // 0
+    int *vTable;                           // 0
     int unkMems[3];                        // 1 ~ 3
-    LawnApp* mApp;                         // 4
-    Sexy::MusicInterface* mMusicInterface; // 5
+    LawnApp *mApp;                         // 4
+    Sexy::MusicInterface *mMusicInterface; // 5
     MusicTune mCurMusicTune;               // 6
     MusicTune mLastMusicTune;              // 7
     MusicFile mCurMusicFileMain;           // 8
@@ -98,13 +98,13 @@ public:
     // 大小26个整数
 
     void StopAllMusic() {
-        reinterpret_cast<void (*)(__Music*)>(Music_StopAllMusicAddr)(this);
+        reinterpret_cast<void (*)(__Music *)>(Music_StopAllMusicAddr)(this);
     }
     unsigned long GetMusicOrder(MusicFile theMusicFile) {
-        return reinterpret_cast<unsigned long (*)(__Music*, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile);
+        return reinterpret_cast<unsigned long (*)(__Music *, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile);
     }
     void SetupMusicFileForTune(MusicFile theMusicFile, MusicTune theMusicTune) {
-        reinterpret_cast<void (*)(__Music*, MusicFile, MusicTune)>(Music_SetupMusicFileForTuneAddr)(this, theMusicFile, theMusicTune);
+        reinterpret_cast<void (*)(__Music *, MusicFile, MusicTune)>(Music_SetupMusicFileForTuneAddr)(this, theMusicFile, theMusicTune);
     }
 
     void PlayMusic(MusicTune theMusicTune, int theOffset, int theDrumsOffset);
@@ -122,7 +122,7 @@ protected:
     ~__Music() = default;
 
     void _constructor() {
-        reinterpret_cast<void (*)(__Music*)>(Music_MusicAddr)(this);
+        reinterpret_cast<void (*)(__Music *)>(Music_MusicAddr)(this);
     }
 };
 
@@ -148,22 +148,22 @@ protected:
 
     void _constructor();
     void _destructor() {
-        reinterpret_cast<void (*)(Music2*)>(Music2_DeleteAddr)(this);
+        reinterpret_cast<void (*)(Music2 *)>(Music2_DeleteAddr)(this);
     };
 };
 
-inline void (*old_Music_StartGameMusic)(__Music* music, bool a2);
+inline void (*old_Music_StartGameMusic)(__Music *music, bool a2);
 
-inline void (*old_Music_UpdateMusicBurst)(__Music* music);
+inline void (*old_Music_UpdateMusicBurst)(__Music *music);
 
-inline void (*old_Music2_Music2)(Music2* music);
+inline void (*old_Music2_Music2)(Music2 *music);
 
-inline void (*old_Music2_StopAllMusic)(Music2* music);
+inline void (*old_Music2_StopAllMusic)(Music2 *music);
 
-inline void (*old_Music2_StartGameMusic)(Music2* music, bool start);
+inline void (*old_Music2_StartGameMusic)(Music2 *music, bool start);
 
-inline void (*old_Music2_GameMusicPause)(Music2* music, bool pause);
+inline void (*old_Music2_GameMusicPause)(Music2 *music, bool pause);
 
-inline void (*old_Music2_FadeOut)(Music2* music, int aFadeOutDuration);
+inline void (*old_Music2_FadeOut)(Music2 *music, int aFadeOutDuration);
 
 #endif // PVZ_LAWN_SYSTEM_MUSIC_H

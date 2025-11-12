@@ -33,7 +33,7 @@ void LawnMower::StartMower() {
             return;
 
         if (tcpClientSocket >= 0) {
-            SimpleShortEvent event = {EventType::EVENT_SERVER_BOARD_LAWNMOWER_STRART, (short)mRow};
+            SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_LAWNMOWER_STRART}, (short)mRow};
             send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
         }
     }

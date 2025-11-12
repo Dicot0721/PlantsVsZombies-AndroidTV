@@ -62,8 +62,7 @@ public:
     int mAutoCollectAge;           // 48
     bool unk7;                     // 196
     bool unk8;                     // 197
-    int unkInt;                    // 50
-    // 大小51个整数
+    // 大小50个整数
 
     void MouseDown(int x, int y, int theClickCount) {
         reinterpret_cast<void (*)(Coin *, int, int, int)>(Coin_MouseDownAddr)(this, x, y, theClickCount);

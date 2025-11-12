@@ -37,7 +37,7 @@
 
 using namespace Sexy;
 
-void GridItem::DrawScaryPot(Sexy::Graphics* g) {
+void GridItem::DrawScaryPot(Sexy::Graphics *g) {
     // 修复路灯花照透罐子
 
     int aImageCol = mGridItemState - GridItemState::GRIDITEM_STATE_SCARY_POT_QUESTION;
@@ -49,7 +49,7 @@ void GridItem::DrawScaryPot(Sexy::Graphics* g) {
     if (mTransparentCounter > 0) { // 如果罐子要被照透(透明度不为0)
         g->DrawImageCel(*Sexy_IMAGE_SCARY_POT_Addr, aXPos, aYPos, aImageCol, 0);
 
-        Graphics* aInsideGraphics = new Graphics(*g);
+        Graphics *aInsideGraphics = new Graphics(*g);
         if (mScaryPotType == ScaryPotType::SCARYPOT_SEED) {
             aInsideGraphics->mScaleX = 0.7f;
             aInsideGraphics->mScaleY = 0.7f;
@@ -138,7 +138,7 @@ void GridItem::Update() {
             int num = TodAnimateCurve(100, 0, mLaunchCounter, 0, 100, TodCurves::CURVE_LINEAR);
             mBeatenFlashCountdown = mBeatenFlashCountdown > num ? mBeatenFlashCountdown : num;
         }
-        Reanimation* reanimation = mApp->ReanimationTryToGet(mGridItemReanimID);
+        Reanimation *reanimation = mApp->ReanimationTryToGet(mGridItemReanimID);
         if (mBeatenFlashCountdown <= 0) {
             reanimation->mEnableExtraAdditiveDraw = false;
         } else {
@@ -161,7 +161,7 @@ void GridItem::Update() {
             }
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if (tcpClientSocket >= 0) {
-                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, (short)mGridItemID, (short)mLaunchCounter};
+                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(this)->mID), (short)mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
             }
             mBoard->AddCoin(mBoard->GridToPixelX(mGridX, mGridY), mBoard->GridToPixelY(mGridX, mGridY), CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_FROM_GRAVE);
@@ -182,11 +182,11 @@ void GridItem::UpdateScaryPot() {
     }
 }
 
-void GridItem::DrawStinky(Sexy::Graphics* g) {
+void GridItem::DrawStinky(Sexy::Graphics *g) {
     // 在玩家选取巧克力时，高亮显示光标下方且没喂巧克力的Stinky。
     // 从而修复Stinky无法在醒着时喂巧克力、修复Stinky在喂过巧克力后还能继续喂巧克力。
     // 因为游戏通过Stinky是否高亮来判断是否能喂Stinky。这个机制是为鼠标操作而生，但渡维不加改动地将其用于按键操作，导致无法在Stinky醒着时喂它。
-    GamepadControls* aGamePad = mBoard->mGamepadControls1;
+    GamepadControls *aGamePad = mBoard->mGamepadControls1;
     int aCursorX = aGamePad->mCursorPositionX;
     int aCursorY = aGamePad->mCursorPositionY;
     int aCursorGridX = mBoard->PixelToGridX(aCursorX, aCursorY);
@@ -199,7 +199,7 @@ void GridItem::DrawStinky(Sexy::Graphics* g) {
         return old_GridItem_DrawStinky(this, g);
     }
     // 如果Stinky在光标位置处
-    CursorObject* aCursorObject = mBoard->mCursorObject1;
+    CursorObject *aCursorObject = mBoard->mCursorObject1;
     CursorType aCursorType = aCursorObject->mCursorType;
     if (aCursorType == CursorType::CURSOR_TYPE_CHOCOLATE) {
         // 如果光标类型为巧克力
@@ -210,7 +210,7 @@ void GridItem::DrawStinky(Sexy::Graphics* g) {
     return old_GridItem_DrawStinky(this, g);
 }
 
-void GridItem::DrawSquirrel(Sexy::Graphics* g) {
+void GridItem::DrawSquirrel(Sexy::Graphics *g) {
     // 绘制松鼠
     float aXPos = mBoard->GridToPixelX(mGridX, mGridY);
     float aYPos = mBoard->GridToPixelY(mGridX, mGridY);
@@ -237,7 +237,7 @@ void GridItem::DrawSquirrel(Sexy::Graphics* g) {
     g->DrawImage(addonImages.squirrel, aXPos, aYPos);
 }
 
-void GridItem::DrawCrater(Sexy::Graphics* g) {
+void GridItem::DrawCrater(Sexy::Graphics *g) {
     // 绘制屋顶月夜弹坑
     float aXPos = mBoard->GridToPixelX(mGridX, mGridY) - 8.0f;
     float aYPos = mBoard->GridToPixelY(mGridX, mGridY) + 40.0f;
@@ -249,7 +249,7 @@ void GridItem::DrawCrater(Sexy::Graphics* g) {
     }
 
     bool fading = mGridItemCounter < 9000;
-    Sexy::Image* aImage = *Sexy_IMAGE_CRATER_Addr;
+    Sexy::Image *aImage = *Sexy_IMAGE_CRATER_Addr;
     int theCelCol = 0;
 
     if (mBoard->IsPoolSquare(mGridX, mGridY)) {

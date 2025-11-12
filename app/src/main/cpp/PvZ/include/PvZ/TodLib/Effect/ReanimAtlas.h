@@ -33,7 +33,7 @@ public:
     int mY;
     int mWidth;
     int mHeight;
-    Sexy::Image* mOriginalImage;
+    Sexy::Image *mOriginalImage;
 
     ReanimAtlasImage()
         : mX(0)
@@ -45,8 +45,8 @@ public:
 
 class ReanimAtlas {
 public:
-    ReanimAtlasImage* GetEncodedReanimAtlas(Sexy::Image* theImage) {
-        return reinterpret_cast<ReanimAtlasImage* (*)(ReanimAtlas*, Sexy::Image*)>(ReanimAtlas_GetEncodedReanimAtlasAddr)(this, theImage);
+    ReanimAtlasImage *GetEncodedReanimAtlas(Sexy::Image *theImage) {
+        return reinterpret_cast<ReanimAtlasImage *(*)(ReanimAtlas *, Sexy::Image *)>(ReanimAtlas_GetEncodedReanimAtlasAddr)(this, theImage);
     }
 };
 

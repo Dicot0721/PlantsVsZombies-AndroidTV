@@ -34,11 +34,11 @@ static SpecialGridPlacement gMushroomGridPlacement[] = {{110, 441, 0, 0}, {237, 
 
 static SpecialGridPlacement gAquariumGridPlacement[] = {{113, 185, 0, 0}, {306, 120, 1, 0}, {356, 270, 2, 0}, {622, 120, 3, 0}, {669, 270, 4, 0}, {122, 355, 5, 0}, {365, 458, 6, 0}, {504, 417, 7, 0}};
 
-void ZenGarden::DrawBackdrop(Graphics* g) {
+void ZenGarden::DrawBackdrop(Graphics *g) {
     old_ZenGarden_DrawBackdrop(this, g);
 }
 
-SpecialGridPlacement* ZenGarden::GetSpecialGridPlacements(int& theCount) {
+SpecialGridPlacement *ZenGarden::GetSpecialGridPlacements(int &theCount) {
     if (mBoard->mBackground == BackgroundType::BACKGROUND_MUSHROOM_GARDEN) {
         theCount = std::size(gMushroomGridPlacement);
         return gMushroomGridPlacement;
@@ -57,9 +57,9 @@ SpecialGridPlacement* ZenGarden::GetSpecialGridPlacements(int& theCount) {
 
 int ZenGarden::GridToPixelX(int theGridX, int theGridY) {
     int aCount;
-    SpecialGridPlacement* aSpecialGrids = GetSpecialGridPlacements(aCount);
+    SpecialGridPlacement *aSpecialGrids = GetSpecialGridPlacements(aCount);
     for (int i = 0; i < aCount; i++) {
-        SpecialGridPlacement& aGrid = aSpecialGrids[i];
+        SpecialGridPlacement &aGrid = aSpecialGrids[i];
         if (theGridX == aGrid.mGridX && theGridY == aGrid.mGridY) {
             return aGrid.mPixelX;
         }
@@ -69,9 +69,9 @@ int ZenGarden::GridToPixelX(int theGridX, int theGridY) {
 
 int ZenGarden::GridToPixelY(int theGridX, int theGridY) {
     int aCount;
-    SpecialGridPlacement* aSpecialGrids = GetSpecialGridPlacements(aCount);
+    SpecialGridPlacement *aSpecialGrids = GetSpecialGridPlacements(aCount);
     for (int i = 0; i < aCount; i++) {
-        SpecialGridPlacement& aGrid = aSpecialGrids[i];
+        SpecialGridPlacement &aGrid = aSpecialGrids[i];
         if (theGridX == aGrid.mGridX && theGridY == aGrid.mGridY) {
             return aGrid.mPixelY;
         }
@@ -79,8 +79,8 @@ int ZenGarden::GridToPixelY(int theGridX, int theGridY) {
     return -1;
 }
 
-GridItem* ZenGarden::GetStinky() {
-    GridItem* aGridItem = nullptr;
+GridItem *ZenGarden::GetStinky() {
+    GridItem *aGridItem = nullptr;
     while (mBoard->IterateGridItems(aGridItem)) {
         if (aGridItem->mGridItemType == GridItemType::GRIDITEM_STINKY) {
             return aGridItem;

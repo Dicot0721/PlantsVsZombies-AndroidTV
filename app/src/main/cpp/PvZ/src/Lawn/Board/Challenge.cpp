@@ -138,7 +138,7 @@ void Challenge::HeavyWeaponFire(float a2, float a3) {
 }
 
 void Challenge::HeavyWeaponReanimUpdate() {
-    Reanimation* heavyWeaponReanim = mApp->ReanimationTryToGet(mReanimHeavyWeaponID2);
+    Reanimation *heavyWeaponReanim = mApp->ReanimationTryToGet(mReanimHeavyWeaponID2);
     if (heavyWeaponReanim == nullptr)
         return;
 
@@ -161,10 +161,10 @@ void Challenge::HeavyWeaponUpdate() {
     }
 }
 
-void Challenge::IZombieDrawPlant(Sexy::Graphics* g, Plant* thePlant) {
+void Challenge::IZombieDrawPlant(Sexy::Graphics *g, Plant *thePlant) {
     // 参照PC内测版源代码，在IZ模式绘制植物的函数开始前额外绘制纸板效果。
 
-    Reanimation* mBodyReanim = mApp->ReanimationTryToGet(thePlant->mBodyReanimID);
+    Reanimation *mBodyReanim = mApp->ReanimationTryToGet(thePlant->mBodyReanimID);
     if (mBodyReanim != nullptr) {
         IZombieSetPlantFilterEffect(thePlant, FilterEffect::FILTEREFFECT_WHITE);
         float aOffsetX = g->mTransX;
@@ -215,9 +215,9 @@ void Challenge::IZombieDrawPlant(Sexy::Graphics* g, Plant* thePlant) {
     }
 }
 
-bool Challenge::IZombieEatBrain(Zombie* theZombie) {
+bool Challenge::IZombieEatBrain(Zombie *theZombie) {
     // 修复IZ脑子血量太高
-    GridItem* aBrain = IZombieGetBrainTarget(theZombie);
+    GridItem *aBrain = IZombieGetBrainTarget(theZombie);
     if (aBrain == nullptr)
         return false;
 
@@ -233,7 +233,7 @@ bool Challenge::IZombieEatBrain(Zombie* theZombie) {
     return true;
 }
 
-void Challenge::DrawArtChallenge(Sexy::Graphics* g) {
+void Challenge::DrawArtChallenge(Sexy::Graphics *g) {
     // 绘制坚果的两只大眼睛
     g->SetColorizeImages(true);
     Color theColor = {255, 255, 255, 100};
@@ -283,7 +283,7 @@ PlantingReason Challenge::CanPlantAt(int theGridX, int theGridY, SeedType theSee
         }
         if (theSeedType == SeedType::SEED_ZOMBIE_BUNGEE) {
             if (theGridX < num) {
-                Zombie* aZombie = nullptr;
+                Zombie *aZombie = nullptr;
                 while (mBoard->IterateZombies(aZombie)) {
                     if (aZombie->mZombieType == ZombieType::ZOMBIE_BUNGEE) {
                         int aGridX = mBoard->PixelToGridX(aZombie->mX, aZombie->mY);
@@ -358,8 +358,8 @@ void Challenge::StartLevel() {
     old_Challenge_StartLevel(this);
 
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON && heavyWeaponAccel) {
-        Native::BridgeApp* bridgeApp = Native::BridgeApp::getSingleton();
-        JNIEnv* env = bridgeApp->getJNIEnv();
+        Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
+        JNIEnv *env = bridgeApp->getJNIEnv();
         jobject activity = bridgeApp->mNativeApp->getActivity();
         jclass cls = env->GetObjectClass(activity);
         jmethodID methodID = env->GetMethodID(cls, "startOrientationListener", "()V");
@@ -393,7 +393,7 @@ void Challenge::TreeOfWisdomFertilize() {
     old_Challenge_TreeOfWisdomFertilize(this);
 
     // 检查智慧树成就
-    PlayerInfo* playerInfo = mApp->mPlayerInfo;
+    PlayerInfo *playerInfo = mApp->mPlayerInfo;
     if (playerInfo->mChallengeRecords[GameMode::GAMEMODE_TREE_OF_WISDOM - 2] >= 99) {
         mBoard->GrantAchievement(AchievementId::ACHIEVEMENT_TREE, true);
     }
@@ -427,11 +427,11 @@ int Challenge::IsZombieSeedType(SeedType theSeedType) {
     return theSeedType >= SEED_ZOMBIE_GRAVESTONE && theSeedType < NUM_ZOMBIE_SEED_TYPES;
 }
 
-void Challenge::IZombieSetPlantFilterEffect(Plant* thePlant, FilterEffect theFilterEffect) {
-    Reanimation* aBodyReanim = mApp->ReanimationTryToGet(thePlant->mBodyReanimID);
-    Reanimation* aHeadReanim = mApp->ReanimationTryToGet(thePlant->mHeadReanimID);
-    Reanimation* aHeadReanim2 = mApp->ReanimationTryToGet(thePlant->mHeadReanimID2);
-    Reanimation* aHeadReanim3 = mApp->ReanimationTryToGet(thePlant->mHeadReanimID3);
+void Challenge::IZombieSetPlantFilterEffect(Plant *thePlant, FilterEffect theFilterEffect) {
+    Reanimation *aBodyReanim = mApp->ReanimationTryToGet(thePlant->mBodyReanimID);
+    Reanimation *aHeadReanim = mApp->ReanimationTryToGet(thePlant->mHeadReanimID);
+    Reanimation *aHeadReanim2 = mApp->ReanimationTryToGet(thePlant->mHeadReanimID2);
+    Reanimation *aHeadReanim3 = mApp->ReanimationTryToGet(thePlant->mHeadReanimID3);
     if (aBodyReanim)
         aBodyReanim->mFilterEffect = theFilterEffect;
     if (aHeadReanim)
@@ -527,7 +527,7 @@ ZombieType Challenge::IZombieSeedTypeToZombieType(SeedType theSeedType) {
 }
 
 void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int theGridY) {
-    Zombie* aZombie = mBoard->AddZombieInRow(theZombieType, theGridY, 0, 0);
+    Zombie *aZombie = mBoard->AddZombieInRow(theZombieType, theGridY, 0, 0);
     if (theZombieType == ZOMBIE_BUNGEE) {
         aZombie->mTargetCol = theGridX;
         aZombie->SetRow(theGridX);
@@ -539,7 +539,7 @@ void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int t
     }
 }
 
-void Challenge::DrawHeavyWeapon(Sexy::Graphics* g) {
+void Challenge::DrawHeavyWeapon(Sexy::Graphics *g) {
     // 修复僵尸进家后重型武器关卡长草露馅
     g->DrawImage(*Sexy_IMAGE_HEAVY_WEAPON_OVERLAY_Addr, -73, 559);
 }
@@ -552,10 +552,10 @@ bool Challenge::UpdateZombieSpawning() {
     return old_Challenge_UpdateZombieSpawning(this);
 }
 
-void Challenge::HeavyWeaponPacketClicked(SeedPacket* theSeedPacket) {
+void Challenge::HeavyWeaponPacketClicked(SeedPacket *theSeedPacket) {
     // 修复疯狂点击毁灭菇导致GridItem数量超出上限而闪退
     if (theSeedPacket->mPacketType == SeedType::SEED_DOOMSHROOM) {
-        GridItem* aGridItem = nullptr;
+        GridItem *aGridItem = nullptr;
         while (mBoard->IterateGridItems(aGridItem)) {
             if (aGridItem->mGridItemType == GridItemType::GRIDITEM_CRATER) {
                 aGridItem->GridItemDie();
@@ -570,8 +570,8 @@ void Challenge::_destructor() {
     old_Challenge_Delete(this);
 
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON && heavyWeaponAccel) {
-        Native::BridgeApp* bridgeApp = Native::BridgeApp::getSingleton();
-        JNIEnv* env = bridgeApp->getJNIEnv();
+        Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
+        JNIEnv *env = bridgeApp->getJNIEnv();
         jobject activity = bridgeApp->mNativeApp->getActivity();
         jclass cls = env->GetObjectClass(activity);
         jmethodID methodID = env->GetMethodID(cls, "stopOrientationListener", "()V");
@@ -580,7 +580,7 @@ void Challenge::_destructor() {
     }
 }
 
-void Challenge::ScaryPotterOpenPot(GridItem* theScaryPot) {
+void Challenge::ScaryPotterOpenPot(GridItem *theScaryPot) {
     return old_Challenge_ScaryPotterOpenPot(this, theScaryPot);
 }
 
@@ -588,7 +588,7 @@ void Challenge::UpdateConveyorBelt(int playerIndex) {
     old_Challenge_UpdateConveyorBelt(this, playerIndex);
 }
 
-GridItem* Challenge::IZombieGetBrainTarget(Zombie* theZombie) {
+GridItem *Challenge::IZombieGetBrainTarget(Zombie *theZombie) {
     return old_Challenge_IZombieGetBrainTarget(this, theZombie);
     // if (theZombie->mZombieType == ZOMBIE_BUNGEE || theZombie->IsWalkingBackwards())
     // return nullptr;
@@ -610,11 +610,11 @@ GridItem* Challenge::IZombieGetBrainTarget(Zombie* theZombie) {
     // return (aBrain && aBrain->mGridItemState != GRIDITEM_STATE_BRAIN_SQUISHED) ? aBrain : nullptr;
 }
 
-void Challenge::IZombieSquishBrain(GridItem* theBrain) {
+void Challenge::IZombieSquishBrain(GridItem *theBrain) {
     return old_Challenge_IZombieSquishBrain(this, theBrain);
 }
 
-int Challenge::ScaryPotterCountSunInPot(GridItem* theScaryPot) {
+int Challenge::ScaryPotterCountSunInPot(GridItem *theScaryPot) {
     return theScaryPot->mSunCount;
 }
 
@@ -632,17 +632,17 @@ SeedType Challenge::GetArtChallengeSeed(int theGridX, int theGridY) {
     return SEED_NONE;
 }
 
-void Challenge::InitZombieWavesFromList(ZombieType* theZombieList, int theListLength) {
+void Challenge::InitZombieWavesFromList(ZombieType *theZombieList, int theListLength) {
     for (int i = 0; i < theListLength; i++) {
         mBoard->mZombieAllowed[(int)theZombieList[i]] = true;
     }
 }
 
-void Challenge::IZombieSetupPlant(Plant* thePlant) {
-    Reanimation* aBodyReanim = mApp->ReanimationTryToGet(thePlant->mBodyReanimID);
-    Reanimation* aHeadReanim = mApp->ReanimationTryToGet(thePlant->mHeadReanimID);
-    Reanimation* aHeadReanim2 = mApp->ReanimationTryToGet(thePlant->mHeadReanimID2);
-    Reanimation* aHeadReanim3 = mApp->ReanimationTryToGet(thePlant->mHeadReanimID3);
+void Challenge::IZombieSetupPlant(Plant *thePlant) {
+    Reanimation *aBodyReanim = mApp->ReanimationTryToGet(thePlant->mBodyReanimID);
+    Reanimation *aHeadReanim = mApp->ReanimationTryToGet(thePlant->mHeadReanimID);
+    Reanimation *aHeadReanim2 = mApp->ReanimationTryToGet(thePlant->mHeadReanimID2);
+    Reanimation *aHeadReanim3 = mApp->ReanimationTryToGet(thePlant->mHeadReanimID3);
     if (aBodyReanim)
         aBodyReanim->mAnimRate = 0;
     if (aHeadReanim)

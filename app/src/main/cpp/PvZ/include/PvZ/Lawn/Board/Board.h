@@ -27,6 +27,7 @@
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/DataArray.h"
+#include "PvZ/TodLib/Common/TodCommon.h"
 
 #include "Coin.h"
 #include "GridItem.h"

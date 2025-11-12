@@ -460,7 +460,7 @@ Plant *Board::AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedTyp
             event.data2 = (short)theGridY;
             event.data3.s.s1 = (short)theSeedType;
             event.data3.s.s2 = (short)theImitaterType;
-            event.data4.s.s1 = (short)aPlant->mPlantID;
+            event.data4.s.s1 = short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(aPlant)->mID);
             event.data4.s.s2 = theIsDoEffect;
             send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
         }
@@ -1008,7 +1008,7 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
             event.data1[2] = (unsigned char)theFromWave;
             event.data1[3] = (unsigned char)theIsRustle;
 
-            event.data2 = (short)zombie->mZombieID;
+            event.data2 = short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(zombie)->mID);
             event.data3[0].f = zombie->mVelX;
             event.data3[1].f = zombie->mPosX;
             send(tcpClientSocket, &event, sizeof(FourCharOneShortTwoIntDataEvent), 0);
@@ -1300,7 +1300,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             gridItem->mLaunchCounter = event1->data4;
             gridItem->mVSGraveStoneHealth = 350;
             gridItem->unkBool1 = true;
-            serverGridItemIDMap.Add(event1->data3, (short)gridItem->mGridItemID);
+            serverGridItemIDMap.Add(event1->data3, short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID));
         } break;
         case EVENT_SERVER_BOARD_PLANT_ANIMATION: {
             TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
@@ -1328,7 +1328,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
             tcp_connected = false;
             Plant *plant = AddPlant(event1->data1, event1->data2, (SeedType)event1->data3.s.s1, (SeedType)event1->data3.s.s2, 0, event1->data4.s.s2);
-            serverPlantIDMap.Add(event1->data4.s.s1, (short)plant->mPlantID);
+            serverPlantIDMap.Add(event1->data4.s.s1, short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(plant)->mID));
             tcp_connected = true;
         } break;
         case EVENT_SERVER_BOARD_PLANT_DIE: {
@@ -1357,8 +1357,8 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             FourCharOneShortTwoIntDataEvent *eventZombieAdd = (FourCharOneShortTwoIntDataEvent *)event;
             tcp_connected = false;
             Zombie *aZombie = AddZombieInRow((ZombieType)eventZombieAdd->data1[0], eventZombieAdd->data1[1], eventZombieAdd->data1[2], eventZombieAdd->data1[3]);
-            LOG_DEBUG("serverZombieIDMap Add {} {}", eventZombieAdd->data2, (short)aZombie->mZombieID);
-            serverZombieIDMap.Add(eventZombieAdd->data2, (short)aZombie->mZombieID);
+            LOG_DEBUG("serverZombieIDMap Add {} {}", eventZombieAdd->data2, short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(aZombie)->mID));
+            serverZombieIDMap.Add(eventZombieAdd->data2, short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(aZombie)->mID));
             tcp_connected = true;
             float aVelX = eventZombieAdd->data3[0].f;
             aZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
@@ -1423,17 +1423,17 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             GridItem *gridItem = nullptr;
             while (IterateGridItems(gridItem)) {
                 if (gridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
-                    LOG_DEBUG("{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], (short)gridItem->mGridItemID);
-                    serverGridItemIDMap.Add(event1->data[gridItem->mGridY], (short)gridItem->mGridItemID);
+                    LOG_DEBUG("{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID));
+                    serverGridItemIDMap.Add(event1->data[gridItem->mGridY], short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID));
                 }
                 if (gridItem->mGridItemType == GRIDITEM_GRAVESTONE) {
                     if (gridItem->mGridY == 1) {
-                        serverGridItemIDMap.Add(event1->data[5], (short)gridItem->mGridItemID);
-                        LOG_DEBUG("1{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], (short)gridItem->mGridItemID);
+                        serverGridItemIDMap.Add(event1->data[5], short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID));
+                        LOG_DEBUG("1{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID));
                     }
                     if (gridItem->mGridY >= 3) {
-                        serverGridItemIDMap.Add(event1->data[6], (short)gridItem->mGridItemID);
-                        LOG_DEBUG("3{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], (short)gridItem->mGridItemID);
+                        serverGridItemIDMap.Add(event1->data[6], short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID));
+                        LOG_DEBUG("3{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID));
                     }
                 }
             }
@@ -1441,10 +1441,10 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             Plant *plant = nullptr;
             while (IteratePlants(plant)) {
                 if (plant->mRow == 1) {
-                    serverPlantIDMap.Add(event1->data[7], (short)plant->mPlantID);
+                    serverPlantIDMap.Add(event1->data[7], short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(plant)->mID));
                 }
                 if (plant->mRow >= 3) {
-                    serverPlantIDMap.Add(event1->data[8], (short)plant->mPlantID);
+                    serverPlantIDMap.Add(event1->data[8], short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(plant)->mID));
                 }
             }
         } break;
@@ -2900,7 +2900,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                     SeedBank *seedBank = mGamepadControls1->GetSeedBank();
                     seedBank->mSeedPackets[newSeedPacketIndex].mLastSelectedTime = 0.0f; // 动画效果专用
                 }
-                if (mGamepadControls2->mIsCobCannonSelected && mGamepadControls2->mCobCannonPlantIndexInList == plant->mPlantID) {
+                if (mGamepadControls2->mIsCobCannonSelected && mGamepadControls2->mCobCannonPlantIndexInList == reinterpret_cast<DataArray<Plant>::DataArrayItem *>(plant)->mID) {
                     // 不能同时选同一个加农炮！
                     mTouchState = TouchState::TOUCHSTATE_NONE;
                     return;
@@ -2916,7 +2916,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                     SeedBank *seedBank_2P = mGamepadControls2->GetSeedBank();
                     seedBank_2P->mSeedPackets[newSeedPacketIndex_2P].mLastSelectedTime = 0.0f; // 动画效果专用
                 }
-                if (mGamepadControls1->mIsCobCannonSelected && mGamepadControls1->mCobCannonPlantIndexInList == plant->mPlantID) {
+                if (mGamepadControls1->mIsCobCannonSelected && mGamepadControls1->mCobCannonPlantIndexInList == reinterpret_cast<DataArray<Plant>::DataArrayItem *>(plant)->mID) {
                     // 不能同时选同一个加农炮！
                     mTouchState = TouchState::TOUCHSTATE_NONE;
                     return;
@@ -3544,7 +3544,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
                 mGamepadControls2->mCursorPositionY = y;
                 mGamepadControls1->mCursorPositionX = tmpX1;
                 mGamepadControls1->mCursorPositionY = tmpY1;
-                if (mGamepadControls1->mIsCobCannonSelected && mGamepadControls1->mCobCannonPlantIndexInList == plant->mPlantID) {
+                if (mGamepadControls1->mIsCobCannonSelected && mGamepadControls1->mCobCannonPlantIndexInList == reinterpret_cast<DataArray<Plant>::DataArrayItem *>(plant)->mID) {
                     // 不能同时选同一个加农炮！
                     gTouchStateSecond = TouchState::TOUCHSTATE_NONE;
                     return;
@@ -3837,17 +3837,17 @@ void Board::StartLevel() {
             GridItem *gridItem = nullptr;
             while (IterateGridItems(gridItem)) {
                 if (gridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
-                    nineShortDataEvent.data[gridItem->mGridY] = (short)gridItem->mGridItemID;
-                    LOG_DEBUG("{} {}", gridItem->mGridY, (short)gridItem->mGridItemID);
+                    nineShortDataEvent.data[gridItem->mGridY] = short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID);
+                    LOG_DEBUG("{} {}", gridItem->mGridY, short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID));
                 }
                 if (gridItem->mGridItemType == GRIDITEM_GRAVESTONE) {
                     if (gridItem->mGridY == 1) {
-                        nineShortDataEvent.data[5] = (short)gridItem->mGridItemID;
-                        LOG_DEBUG("1 {} {}", gridItem->mGridY, (short)gridItem->mGridItemID);
+                        nineShortDataEvent.data[5] = short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID);
+                        LOG_DEBUG("1 {} {}", gridItem->mGridY, short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID));
                     }
                     if (gridItem->mGridY >= 3) {
-                        nineShortDataEvent.data[6] = (short)gridItem->mGridItemID;
-                        LOG_DEBUG("3 {} {}", gridItem->mGridY, (short)gridItem->mGridItemID);
+                        nineShortDataEvent.data[6] = short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID);
+                        LOG_DEBUG("3 {} {}", gridItem->mGridY, short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID));
                     }
                 }
             }
@@ -3855,10 +3855,10 @@ void Board::StartLevel() {
             Plant *plant = nullptr;
             while (IteratePlants(plant)) {
                 if (plant->mRow == 1) {
-                    nineShortDataEvent.data[7] = (short)plant->mPlantID;
+                    nineShortDataEvent.data[7] = short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(plant)->mID);
                 }
                 if (plant->mRow >= 3) {
-                    nineShortDataEvent.data[8] = (short)plant->mPlantID;
+                    nineShortDataEvent.data[8] = short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(plant)->mID);
                 }
             }
 
@@ -3866,17 +3866,18 @@ void Board::StartLevel() {
 
             gridItem = nullptr;
             while (IterateGridItems(gridItem)) {
-                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, (short)gridItem->mGridItemID, (short)gridItem->mLaunchCounter};
+                TwoShortDataEvent event = {
+                    {EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID), (short)gridItem->mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
             }
 
             plant = nullptr;
             while (IteratePlants(plant)) {
-                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, (short)plant->mPlantID, (short)plant->mLaunchCounter};
+                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(plant)->mID), (short)plant->mLaunchCounter};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
                 TwoShortTwoIntDataEvent event1;
                 event1.type = EventType::EVENT_SERVER_BOARD_PLANT_ANIMATION;
-                event1.data1 = (short)plant->mPlantID;
+                event1.data1 = short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(plant)->mID);
                 event1.data2 = (short)plant->mFrameLength;
                 event1.data3.i = plant->mAnimCounter;
                 event1.data4.f = mApp->ReanimationGet(plant->mBodyReanimID)->mAnimRate;
@@ -4798,7 +4799,11 @@ GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
 GridItem *Board::AddAGraveStone(int gridX, int gridY) {
     GridItem *result = old_Board_AddAGraveStone(this, gridX, gridY);
     if (tcpClientSocket >= 0) {
-        TwoCharTwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE}, (unsigned char)gridX, (unsigned char)gridY, (short)result->mGridItemID, (short)result->mLaunchCounter};
+        TwoCharTwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE},
+                                          (unsigned char)gridX,
+                                          (unsigned char)gridY,
+                                          short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(result)->mID),
+                                          (short)result->mLaunchCounter};
         send(tcpClientSocket, &event, sizeof(TwoCharTwoShortDataEvent), 0);
     }
     return result;

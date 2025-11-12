@@ -45,9 +45,9 @@ public:
     Color(int theColor, int theAlpha);
     Color(int theRed, int theGreen, int theBlue);
     Color(int theRed, int theGreen, int theBlue, int theAlpha);
-    Color(const SexyRGBA& theColor);
-    Color(const uchar* theElements);
-    Color(const int* theElements);
+    Color(const SexyRGBA &theColor);
+    Color(const uchar *theElements);
+    Color(const int *theElements);
 
     int GetRed() const;
     int GetGreen() const;
@@ -56,12 +56,12 @@ public:
     ulong ToInt() const;
     SexyRGBA ToRGBA() const;
 
-    int& operator[](int theIdx);
+    int &operator[](int theIdx);
     int operator[](int theIdx) const;
 };
 
-bool operator==(const Color& theColor1, const Color& theColor2);
-bool operator!=(const Color& theColor1, const Color& theColor2);
+bool operator==(const Color &theColor1, const Color &theColor2);
+bool operator!=(const Color &theColor1, const Color &theColor2);
 
 } // namespace Sexy
 

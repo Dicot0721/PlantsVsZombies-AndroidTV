@@ -29,8 +29,8 @@ protected:
     pvzstl::string mRecentTyping;
 
 public:
-    void SetPhrase(const pvzstl::string& thePhrase) {
-        reinterpret_cast<void (*)(const pvzstl::string&)>(TypingCheck_SetPhraseAddr)(thePhrase);
+    void SetPhrase(const pvzstl::string &thePhrase) {
+        reinterpret_cast<void (*)(const pvzstl::string &)>(TypingCheck_SetPhraseAddr)(thePhrase);
     }
 };
 

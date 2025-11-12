@@ -87,15 +87,15 @@ void Projectile::ProjectileInitialize(int theX, int theY, int theRenderOrder, in
     old_Projectile_ProjectileInitialize(this, theX, theY, theRenderOrder, theRow, theProjectileType);
 
     if (mProjectileType == ProjectileType::PROJCTILE_ZOMBIE_SOUL) {
-        TodParticleSystem* aParticle = mApp->AddTodParticle(mPosX + 13.0f, mPosY + 13.0f, 400000, ParticleEffect::PARTICLE_PUFFSHROOM_TRAIL);
+        TodParticleSystem *aParticle = mApp->AddTodParticle(mPosX + 13.0f, mPosY + 13.0f, 400000, ParticleEffect::PARTICLE_PUFFSHROOM_TRAIL);
         AttachParticle(mAttachmentID, aParticle, 13.0f, 13.0f);
     }
 }
 
-Plant* Projectile::FindCollisionTargetPlant() {
+Plant *Projectile::FindCollisionTargetPlant() {
     Rect aProjectileRect = GetProjectileRect();
 
-    Plant* aPlant = nullptr;
+    Plant *aPlant = nullptr;
     while (mBoard->IteratePlants(aPlant)) {
         if (aPlant->mRow != mRow)
             continue;
@@ -126,7 +126,7 @@ bool Projectile::PeaAboutToHitTorchwood() {
     if (mProjectileType != ProjectileType::PROJECTILE_PEA && mProjectileType != ProjectileType::PROJECTILE_SNOWPEA)
         return false;
 
-    Plant* aPlant = nullptr;
+    Plant *aPlant = nullptr;
     while (mBoard->IteratePlants(aPlant)) {
         if (aPlant->mSeedType == SeedType::SEED_TORCHWOOD && aPlant->mRow == mRow && !aPlant->NotOnGround() && mHitTorchwoodGridX != aPlant->mPlantCol) {
             Rect aPlantAttackRect = aPlant->GetPlantAttackRect(PlantWeapon::WEAPON_PRIMARY);
@@ -142,15 +142,15 @@ bool Projectile::PeaAboutToHitTorchwood() {
     return false;
 }
 
-Zombie* Projectile::FindCollisionTarget() {
+Zombie *Projectile::FindCollisionTarget() {
     if (PeaAboutToHitTorchwood()) // “卡火炬”的原理，这段代码在两版内测版中均不存在
         return nullptr;
 
     Rect aProjectileRect = GetProjectileRect();
-    Zombie* aBestZombie = nullptr;
+    Zombie *aBestZombie = nullptr;
     int aMinX = 0;
 
-    Zombie* aZombie = nullptr;
+    Zombie *aZombie = nullptr;
     while (mBoard->IterateZombies(aZombie)) {
         if ((aZombie->mZombieType == ZombieType::ZOMBIE_BOSS || aZombie->mRow == mRow) && aZombie->EffectedByDamage((unsigned int)mDamageRangeFlags)) {
             if (aZombie->mZombiePhase == ZombiePhase::PHASE_SNORKEL_WALKING_IN_POOL && mPosZ >= 45.0f) {
@@ -211,7 +211,7 @@ void Projectile::ConvertToFireball(int theGridX) {
 
     float aOffsetX = -25.0f;
     float aOffsetY = -25.0f;
-    Reanimation* aFirePeaReanim = mApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_FIRE_PEA);
+    Reanimation *aFirePeaReanim = mApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_FIRE_PEA);
     if (mMotionType == ProjectileMotion::MOTION_BACKWARDS) {
         aFirePeaReanim->OverrideScale(-1.0f, 1.0f);
         aOffsetX += 80.0f;
@@ -229,7 +229,7 @@ void Projectile::ConvertToZombieFireball() {
 
     float aOffsetX = -25.0f;
     float aOffsetY = -25.0f;
-    Reanimation* aFirePeaReanim = mApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_FIRE_PEA);
+    Reanimation *aFirePeaReanim = mApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_FIRE_PEA);
     if (mMotionType == ProjectileMotion::MOTION_BACKWARDS) {
         aFirePeaReanim->OverrideScale(-1.0f, 1.0f);
         aOffsetX += 80.0f;
@@ -266,7 +266,7 @@ void Projectile::Update() {
 
 void Projectile::UpdateNormalMotion() {
     if (mProjectileType == ProjectileType::PROJCTILE_ZOMBIE_SOUL) {
-        Zombie* aZombie = mBoard->ZombieTryToGet(mTargetZombieID);
+        Zombie *aZombie = mBoard->ZombieTryToGet(mTargetZombieID);
         if (aZombie) {
             Rect aZombieRect = aZombie->GetZombieRect();
             int aOffsetCenter = RandRangeInt(-40, 40);
@@ -297,7 +297,7 @@ void Projectile::UpdateNormalMotion() {
 }
 
 
-void Projectile::PlayImpactSound(Zombie* theZombie) {
+void Projectile::PlayImpactSound(Zombie *theZombie) {
     bool aPlayHelmSound = true;
     bool aPlaySplatSound = true;
     if (mProjectileType == ProjectileType::PROJECTILE_KERNEL) {
@@ -330,7 +330,7 @@ void Projectile::PlayImpactSound(Zombie* theZombie) {
     }
 }
 
-void Projectile::DoImpact(Zombie* theZombie) {
+void Projectile::DoImpact(Zombie *theZombie) {
     if (theZombie) {
         if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
             if (theZombie->IsFlying()) {
@@ -391,7 +391,7 @@ void Projectile::DoImpact(Zombie* theZombie) {
         aEffect = ParticleEffect::PARTICLE_SNOWPEA_SPLAT;
     } else if (mProjectileType == ProjectileType::PROJECTILE_FIREBALL) {
         if (IsSplashDamage(theZombie)) {
-            Reanimation* aFireReanim = mApp->AddReanimation(mPosX + 38.0f, mPosY - 20.0f, mRenderOrder + 1, ReanimationType::REANIM_JALAPENO_FIRE);
+            Reanimation *aFireReanim = mApp->AddReanimation(mPosX + 38.0f, mPosY - 20.0f, mRenderOrder + 1, ReanimationType::REANIM_JALAPENO_FIRE);
             aFireReanim->mAnimTime = 0.25f;
             aFireReanim->mAnimRate = 24.0f;
             aFireReanim->OverrideScale(0.7f, 0.4f);
@@ -444,10 +444,10 @@ void Projectile::DoImpact(Zombie* theZombie) {
     }
 }
 
-Zombie* Projectile::FindCollisionMindControlledTarget() {
+Zombie *Projectile::FindCollisionMindControlledTarget() {
     // 豌豆僵尸的子弹专用的寻敌函数，寻找被魅惑的僵尸。
-    Zombie* aZombie = nullptr;
-    Zombie* aBestZombie = nullptr;
+    Zombie *aZombie = nullptr;
+    Zombie *aBestZombie = nullptr;
     int aMinX = 0;
 
     Sexy::Rect aProjectileRect = GetProjectileRect();
@@ -478,7 +478,7 @@ void Projectile::CheckForCollision() {
     }
 
     if (mMotionType == ProjectileMotion::MOTION_HOMING) {
-        Zombie* aZombie = mBoard->ZombieTryToGet(mTargetZombieID);
+        Zombie *aZombie = mBoard->ZombieTryToGet(mTargetZombieID);
         if (aZombie && aZombie->EffectedByDamage(mDamageRangeFlags)) {
             Sexy::Rect aProjectileRect = GetProjectileRect();
             Sexy::Rect aZombieRect = aZombie->GetZombieRect();
@@ -516,9 +516,9 @@ void Projectile::CheckForCollision() {
     }
 
     if (mProjectileType == ProjectileType::PROJECTILE_ZOMBIE_PEA) {
-        Plant* aPlant = FindCollisionTargetPlant();
+        Plant *aPlant = FindCollisionTargetPlant();
         if (aPlant) {
-            const ProjectileDefinition& aProjectileDef = GetProjectileDef();
+            const ProjectileDefinition &aProjectileDef = GetProjectileDef();
             aPlant->mPlantHealth -= aProjectileDef.mDamage;
             aPlant->mEatenFlashCountdown = std::max(aPlant->mEatenFlashCountdown, 25);
 
@@ -527,7 +527,7 @@ void Projectile::CheckForCollision() {
             Die();
             return;
         }
-        Zombie* aZombie = FindCollisionMindControlledTarget();
+        Zombie *aZombie = FindCollisionMindControlledTarget();
         if (aZombie) {
             if (aZombie->mOnHighGround && CantHitHighGround()) {
                 return;
@@ -537,21 +537,21 @@ void Projectile::CheckForCollision() {
         }
         return;
     } else if (mProjectileType == ProjectileType::PROJECTILE_ZOMBIE_FIREBALL) {
-        Plant* aPlant = FindCollisionTargetPlant();
+        Plant *aPlant = FindCollisionTargetPlant();
         if (aPlant) {
-            const ProjectileDefinition& aProjectileDef = GetProjectileDef();
+            const ProjectileDefinition &aProjectileDef = GetProjectileDef();
             aPlant->mPlantHealth -= aProjectileDef.mDamage;
             aPlant->mEatenFlashCountdown = std::max(aPlant->mEatenFlashCountdown, 25);
 
             mApp->PlayFoley(FoleyType::FOLEY_IGNITE);
-            Reanimation* aFireReanim = mApp->AddReanimation(mPosX - 38.0f, mPosY - 20.0f, mRenderOrder + 1, ReanimationType::REANIM_JALAPENO_FIRE);
+            Reanimation *aFireReanim = mApp->AddReanimation(mPosX - 38.0f, mPosY - 20.0f, mRenderOrder + 1, ReanimationType::REANIM_JALAPENO_FIRE);
             aFireReanim->mAnimTime = 0.25f;
             aFireReanim->mAnimRate = 24.0f;
             aFireReanim->OverrideScale(0.7f, 0.4f);
             Die();
             return;
         }
-        Zombie* aZombie = FindCollisionMindControlledTarget();
+        Zombie *aZombie = FindCollisionMindControlledTarget();
         if (aZombie) {
             if (aZombie->mOnHighGround && CantHitHighGround()) {
                 return;
@@ -567,14 +567,14 @@ void Projectile::CheckForCollision() {
     // return;
     // }
 
-    Zombie* aZombie = FindCollisionTarget();
+    Zombie *aZombie = FindCollisionTarget();
     if (aZombie) {
         if (aZombie->mOnHighGround && CantHitHighGround()) {
             return;
         }
         DoImpact(aZombie);
     } else if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        GridItem* aGridItem = FindCollisionTargetGridItem();
+        GridItem *aGridItem = FindCollisionTargetGridItem();
         if (aGridItem) {
             DoImpactGridItem(aGridItem);
         }
@@ -590,14 +590,14 @@ bool Projectile::CantHitHighGround() {
         && !mOnHighGround;
 }
 
-bool Projectile::IsSplashDamage(Zombie* theZombie) {
+bool Projectile::IsSplashDamage(Zombie *theZombie) {
     if (mProjectileType && theZombie && theZombie->IsFireResistant())
         return false;
 
     return mProjectileType == ProjectileType::PROJECTILE_MELON || mProjectileType == ProjectileType::PROJECTILE_WINTERMELON || mProjectileType == ProjectileType::PROJECTILE_FIREBALL;
 }
 
-unsigned int Projectile::GetDamageFlags(Zombie* theZombie) {
+unsigned int Projectile::GetDamageFlags(Zombie *theZombie) {
     unsigned int aDamageFlags = 0U;
 
     if (IsSplashDamage(theZombie)) {
@@ -615,9 +615,9 @@ unsigned int Projectile::GetDamageFlags(Zombie* theZombie) {
     return aDamageFlags;
 }
 
-ProjectileDefinition& Projectile::GetProjectileDef() {
-    ProjectileDefinition& aProjectileDef = gProjectileDefinition[(int)mProjectileType];
-    ProjectileDefinition& aNewProjectileDef = gNewProjectileDefinition[(int)mProjectileType - NUM_PROJECTILES - 1];
+ProjectileDefinition &Projectile::GetProjectileDef() {
+    ProjectileDefinition &aProjectileDef = gProjectileDefinition[(int)mProjectileType];
+    ProjectileDefinition &aNewProjectileDef = gNewProjectileDefinition[(int)mProjectileType - NUM_PROJECTILES - 1];
 
     if (mProjectileType < ProjectileType::NUM_PROJECTILES) {
         return aProjectileDef;
@@ -626,7 +626,7 @@ ProjectileDefinition& Projectile::GetProjectileDef() {
     }
 }
 
-void Projectile::Draw(Graphics* g) {
+void Projectile::Draw(Graphics *g) {
     if (mProjectileType < NUM_PROJECTILES) {
         old_Projectile_Draw(this, g);
         return;
@@ -636,9 +636,9 @@ void Projectile::Draw(Graphics* g) {
     // gProj.SetColorizeImages(true);
     // gProj.SetColor(mOverrideColor);
 
-    const ProjectileDefinition& aProjectileDef = GetProjectileDef();
+    const ProjectileDefinition &aProjectileDef = GetProjectileDef();
 
-    Image* aImage = nullptr;
+    Image *aImage = nullptr;
     float aScaleX = 1.0f;
     float aScaleY = 1.0f;
 
@@ -680,7 +680,7 @@ void Projectile::Draw(Graphics* g) {
     }
 }
 
-void Projectile::DrawShadow(Graphics* g) {
+void Projectile::DrawShadow(Graphics *g) {
     int aCelCol = 0;
     float aScale = 1.0f;
     float aStretch = 1.0f;

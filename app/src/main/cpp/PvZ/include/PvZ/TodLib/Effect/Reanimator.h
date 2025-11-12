@@ -189,8 +189,7 @@ public:
     ReanimatorTransform *mReanimatorTransforms; // 51
     bool unkBool;                               // 208
     float unkFloatWithInitialValue_1;           // 53
-    int mReanimationID;                         // 54
-    // 大小55个整数
+    // 大小54个整数
 
     Reanimation() {
         _constructor();

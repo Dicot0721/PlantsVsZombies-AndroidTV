@@ -69,8 +69,7 @@ public:
     int mVSGraveStoneHealth;                 // 69
     int mVSTargetZombieHealth;               // 70
     int unkMems2[4];                         // 71 ~ 74
-    GridItemID mGridItemID;                  // 75
-    // 大小76个整数
+    // 大小75个整数
 
     void GridItemDie() {
         reinterpret_cast<void (*)(GridItem *)>(GridItem_GridItemDieAddr)(this);

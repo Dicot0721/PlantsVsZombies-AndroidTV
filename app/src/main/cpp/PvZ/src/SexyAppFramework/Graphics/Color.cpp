@@ -57,19 +57,19 @@ Color::Color(int theRed, int theGreen, int theBlue, int theAlpha)
     , mBlue(theBlue)
     , mAlpha(theAlpha) {}
 
-Color::Color(const SexyRGBA& theColor)
+Color::Color(const SexyRGBA &theColor)
     : mRed(theColor.r)
     , mGreen(theColor.g)
     , mBlue(theColor.b)
     , mAlpha(theColor.a) {}
 
-Color::Color(const uchar* theElements)
+Color::Color(const uchar *theElements)
     : mRed(theElements[0])
     , mGreen(theElements[1])
     , mBlue(theElements[2])
     , mAlpha(0xFF) {}
 
-Color::Color(const int* theElements)
+Color::Color(const int *theElements)
     : mRed(theElements[0])
     , mGreen(theElements[1])
     , mBlue(theElements[2])
@@ -91,7 +91,7 @@ int Color::GetAlpha() const {
     return mAlpha;
 }
 
-int& Color::operator[](int theIdx) {
+int &Color::operator[](int theIdx) {
     static int aJunk = 0;
 
     switch (theIdx) {
@@ -137,10 +137,10 @@ SexyRGBA Color::ToRGBA() const {
     return anRGBA;
 }
 
-bool Sexy::operator==(const Color& theColor1, const Color& theColor2) {
+bool Sexy::operator==(const Color &theColor1, const Color &theColor2) {
     return (theColor1.mRed == theColor2.mRed) && (theColor1.mGreen == theColor2.mGreen) && (theColor1.mBlue == theColor2.mBlue) && (theColor1.mAlpha == theColor2.mAlpha);
 }
 
-bool Sexy::operator!=(const Color& theColor1, const Color& theColor2) {
+bool Sexy::operator!=(const Color &theColor1, const Color &theColor2) {
     return (theColor1.mRed != theColor2.mRed) || (theColor1.mGreen != theColor2.mGreen) || (theColor1.mBlue != theColor2.mBlue) || (theColor1.mAlpha != theColor2.mAlpha);
 }

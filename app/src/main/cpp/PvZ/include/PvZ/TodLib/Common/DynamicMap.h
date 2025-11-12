@@ -17,7 +17,7 @@ public:
         }
     }
 
-    bool Lookup(short x, short& out) const {
+    bool Lookup(short x, short &out) const {
         auto it = mapping_.find(x);
         if (it == mapping_.end())
             return false;

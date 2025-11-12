@@ -203,8 +203,7 @@ public:
     bool mInFlowerPot;                         // 342
     bool mGloveGrabbed;                        // 343
     int unk;                                   // 86
-    PlantID mPlantID;                          // 87
-    // 大小88个整数
+    // 大小86个整数
 
     void UpdateAbilities() {
         reinterpret_cast<void (*)(Plant *)>(Plant_UpdateAbilitiesAddr)(this);
