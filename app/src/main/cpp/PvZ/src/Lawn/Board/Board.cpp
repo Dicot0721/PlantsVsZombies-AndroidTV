@@ -1160,10 +1160,11 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER:
             return sizeof(TwoShortDataEvent);
 
-        // --- 动画、开火、植物添加 ---
+        // --- 动画、开火、植物添加、僵尸移速更新 ---
         case EVENT_SERVER_BOARD_PLANT_ANIMATION:
         case EVENT_SERVER_BOARD_PLANT_FIRE:
         case EVENT_SERVER_BOARD_PLANT_ADD:
+        case EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED:
             return sizeof(TwoShortTwoIntDataEvent);
 
         // --- 僵尸添加 ---
@@ -1327,6 +1328,16 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             serverPlantIDMap.Add(event1->data4.s.s1, (short)plant->mPlantID);
             tcp_connected = true;
         } break;
+        case EVENT_SERVER_BOARD_PLANT_DIE: {
+            SimpleShortEvent *event1 = (SimpleShortEvent *)event;
+            short clientPlantID;
+            if (serverPlantIDMap.Lookup(event1->data, clientPlantID)) {
+                Plant *aPlant = mPlantsList.DataArrayGet(clientPlantID);
+                tcp_connected = false;
+                aPlant->Die();
+                tcp_connected = true;
+            }
+        } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
             FourCharOneShortTwoIntDataEvent *event1 = (FourCharOneShortTwoIntDataEvent *)event;
             tcp_connected = false;
@@ -1348,6 +1359,17 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 zombie->RiseFromGrave(event1->data1, event1->data2);
             }
 
+        } break;
+        case  EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED: {
+            TwoShortTwoIntDataEvent *eventPickSpeed = reinterpret_cast<TwoShortTwoIntDataEvent *>(event);
+            short clientZombieID;
+            if (serverZombieIDMap.Lookup(eventPickSpeed->data2, clientZombieID)) {
+                Zombie *aZombie = mZombiesList.DataArrayGet(clientZombieID);
+                aZombie->mVelX = eventPickSpeed->data3.f;
+                aZombie->mAnimTicksPerFrame = eventPickSpeed->data1;
+                aZombie->UpdateAnimSpeed();
+                aZombie->mPosX = eventPickSpeed->data4.f;
+            }
         } break;
         case EVENT_SERVER_BOARD_TAKE_SUNMONEY: {
             SimpleShortEvent *event1 = (SimpleShortEvent *)event;

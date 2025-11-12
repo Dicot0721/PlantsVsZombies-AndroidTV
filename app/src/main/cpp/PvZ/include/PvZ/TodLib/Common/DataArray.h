@@ -25,7 +25,13 @@
 #include "TodCommon.h"
 #include "TodDebug.h"
 
-enum { DATA_ARRAY_INDEX_MASK = 65535, DATA_ARRAY_KEY_MASK = -65536, DATA_ARRAY_KEY_SHIFT = 16, DATA_ARRAY_MAX_SIZE = 65536, DATA_ARRAY_KEY_FIRST = 1 };
+enum {
+    DATA_ARRAY_INDEX_MASK = 65535,
+    DATA_ARRAY_KEY_MASK = -65536,
+    DATA_ARRAY_KEY_SHIFT = 16,
+    DATA_ARRAY_MAX_SIZE = 65536,
+    DATA_ARRAY_KEY_FIRST = 1,
+};
 
 template <typename T>
 class DataArray {

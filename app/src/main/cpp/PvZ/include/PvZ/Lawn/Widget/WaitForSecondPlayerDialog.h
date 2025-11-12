@@ -162,10 +162,12 @@ enum EventType : unsigned char {
     EVENT_SERVER_BOARD_PLANT_ANIMATION, // 效果不佳，后续再想办法
     EVENT_SERVER_BOARD_PLANT_FIRE,
     EVENT_SERVER_BOARD_PLANT_ADD,
+    EVENT_SERVER_BOARD_PLANT_DIE,
 
 
     EVENT_SERVER_BOARD_ZOMBIE_ADD,
     EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE,
+    EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED,
 
     EVENT_SERVER_BOARD_TAKE_SUNMONEY,
     EVENT_SERVER_BOARD_TAKE_DEATHMONEY,
@@ -203,6 +205,7 @@ class SimpleEvent : public BaseEvent {
 public:
     unsigned char data;
 };
+
 class SimpleShortEvent : public BaseEvent {
 public:
     short data;

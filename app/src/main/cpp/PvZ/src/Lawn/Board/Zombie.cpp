@@ -3188,6 +3188,14 @@ void Zombie::PickRandomSpeed() {
     }
 
     UpdateAnimSpeed();
+
+    TwoShortTwoIntDataEvent event;
+    event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED;
+    event.data1 = short(mAnimTicksPerFrame);
+    event.data2 = short(mZombieID);
+    event.data3.f = mVelX;
+    event.data4.f = mPosX;
+    send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
 }
 
 float Zombie::ZombieTargetLeadX(float theTime) {
@@ -3501,10 +3509,11 @@ ZombiePhase Zombie::GetDancerPhase() {
 }
 
 ZombieID Zombie::SummonBackupDancer(int theRow, int thePosX) {
-    if (!mBoard->RowCanHaveZombieType(theRow, ZombieType::ZOMBIE_BACKUP_DANCER2))
+    ZombieType aZombieType = (mZombieType == ZOMBIE_DANCER) ? ZOMBIE_BACKUP_DANCER : ZOMBIE_BACKUP_DANCER2;
+    if (!mBoard->RowCanHaveZombieType(theRow, aZombieType))
         return ZombieID::ZOMBIEID_NULL;
 
-    Zombie *aZombie = mBoard->AddZombie(ZombieType::ZOMBIE_BACKUP_DANCER2, mFromWave, false);
+    Zombie *aZombie = mBoard->AddZombie(aZombieType, mFromWave, false);
     if (aZombie == nullptr)
         return ZombieID::ZOMBIEID_NULL;
 

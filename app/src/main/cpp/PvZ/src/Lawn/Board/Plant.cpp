@@ -616,6 +616,7 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
             send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
         }
     }
+
     old_Plant_Fire(this, theTargetZombie, theRow, thePlantWeapon, gridItem);
 }
 
@@ -774,22 +775,15 @@ GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
 }
 
 void Plant::Die() {
-    // //某植物死亡触发辣椒效果（以双发为例）
-    // if (mSeedType == SeedType::SEED_REPEATER) {
-    // // 方法一：直接调用辣椒DoSpecial相关函数
-    // mApp->PlayFoley(FoleyType::FOLEY_JALAPENO_IGNITE); // 播放音效
-    // mApp->PlayFoley(FoleyType::FOLEY_JUICY);
-    //
-    // mBoard->DoFwoosh(mRow); // 生成火焰动画
-    // mBoard->ShakeBoard(3, -4); // 屏幕震动
-    //
-    // BurnRow(mRow); // 点燃本行的僵尸，移除梯子、冰球
-    // mBoard->mIceTimer[mRow] = 20; // 移除冰道
-    ///*******************************************************************************************************************************************/
-    // // 方法二：召唤辣椒并瞬爆
-    // Plant *aPlant = mBoard->AddPlant(mPlantCol, mRow, SeedType::SEED_JALAPENO, SeedType::SEED_NONE, 0, true); // 生成辣椒
-    // aPlant->mDoSpecialCountdown = 1; // 辣椒爆炸倒计时
-    // }
+    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
+        if (tcp_connected)
+            return;
+
+        if (tcpClientSocket >= 0) {
+            SimpleShortEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_DIE, (short)mPlantID};
+            send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
+        }
+    }
 
     old_Plant_Die(this);
 }
@@ -1380,5 +1374,6 @@ void Plant::UpdateProductionPlant() {
         }
         return;
     }
-    return old_Plant_UpdateProductionPlant(this);
+
+    old_Plant_UpdateProductionPlant(this);
 }
