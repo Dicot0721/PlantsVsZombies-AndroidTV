@@ -31,7 +31,16 @@
 #include <map>
 #include <sstream>
 
-static_assert((sizeof(void *) == sizeof(int32_t)), "Unsupported non-32-bit architecture");
+static jstring StringToJString(JNIEnv *env, std::string_view sv) {
+    return env->NewStringUTF(sv.data());
+}
+
+static std::string JStringToString(JNIEnv *env, jstring str) {
+    const char *buffer = env->GetStringUTFChars(str, nullptr);
+    std::string result(buffer);
+    env->ReleaseStringUTFChars(str, buffer);
+    return result;
+}
 
 /**
  * @brief Homura 模块的初始化函数.
@@ -57,12 +66,9 @@ static_assert((sizeof(void *) == sizeof(int32_t)), "Unsupported non-32-bit archi
     ApplyPatches();
 }
 
-
 // jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 // return JNI_VERSION_1_6;
 // }
-
-using namespace Sexy;
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeDisableShop(JNIEnv *env, jclass clazz) {
     disableShop = true;
@@ -77,7 +83,6 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     angle1 = cos(radian);
     angle2 = sin(radian);
 }
-
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native1PButtonDown(JNIEnv *env, jclass clazz, jint code) {
     LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
@@ -102,7 +107,6 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeEnableNewOptionsDialog(JNIEnv *env, jclass clazz) {
     enableNewOptionsDialog = true;
 }
-
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeGaoJiPause(JNIEnv *env, jclass clazz, jboolean enable) {
     if (isMainMenu) {
@@ -164,6 +168,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
             break;
     }
 }
+
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeEnableNewShovel(JNIEnv *env, jclass clazz) {
     useNewShovel = true;
 }
@@ -176,18 +181,9 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     showHouse = true;
 }
 
-
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeUseNewCobCannon(JNIEnv *env, jclass clazz) {
     useNewCobCannon = true;
 }
-
-static std::string jstring2string(JNIEnv *env, jstring jStr) {
-    const char *cstr = env->GetStringUTFChars(jStr, nullptr);
-    std::string str = std::string(cstr);
-    env->ReleaseStringUTFChars(jStr, cstr);
-    return str;
-}
-
 
 extern "C" JNIEXPORT void JNICALL Java_com_android_support_Preferences_Changes(JNIEnv *env, jclass clazz, jobject con, jint featNum, jstring featName, jint value, jboolean boolean, jstring str) {
     switch (featNum) {
@@ -378,7 +374,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_android_support_Preferences_Changes(J
             // case 123:
             // break; // 复制阵型代码
         case 124:
-            customFormation = jstring2string(env, str); // 粘贴阵型代码
+            customFormation = JStringToString(env, str); // 粘贴阵型代码
             break;
         case 125:
             layPastedFormation = boolean; // 布置粘贴阵型
@@ -688,28 +684,7 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
     return ret;
 }
 
-// 将char *转为jstring
-static jstring charTojstring(JNIEnv *env, const char *pat) {
-    // 定义java String类 strClass
-    jclass strClass = (env)->FindClass("java/lang/String");
-    // 获取String(byte[],String)的构造器,用于将本地byte[]数组转换为一个新String
-    jmethodID ctorID = (env)->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V");
-    // 建立byte数组
-    jbyteArray bytes = (env)->NewByteArray(strlen(pat));
-    // 将char* 转换为byte数组
-    (env)->SetByteArrayRegion(bytes, 0, strlen(pat), (jbyte *)pat);
-    // 设置String, 保存语言类型,用于byte数组转换至String时的参数
-    jstring encoding = (env)->NewStringUTF("GB2312");
-    // 将byte数组转换为java String,并输出
-    return (jstring)(env)->NewObject(strClass, ctorID, bytes, encoding);
-}
-
-// 先将string转为char *，再将char *转为jstring
-static jstring stringToJstring(JNIEnv *env, const std::string &str) {
-    return charTojstring(env, str.c_str());
-}
-
-// 输出所有键值对
+// 生成阵型代码字符串
 static std::string generateLineupStr(const std::multimap<int, int> &theMap) {
     std::ostringstream ss1; // 花盆荷叶
     std::ostringstream ss2; // 普通植物
@@ -769,7 +744,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCu
     LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
     Board *board = lawnApp->mBoard;
     if (board == nullptr) {
-        return charTojstring(env, "");
+        return StringToJString(env, "");
     }
 
     std::multimap<int, int> map;
@@ -795,7 +770,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCu
         int value = aPlantCol | (aRow << 4);
         map.emplace(key, value);
     }
-    return stringToJstring(env, generateLineupStr(map));
+    return StringToJString(env, generateLineupStr(map));
 }
 
 
@@ -821,11 +796,11 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivi
     Board *board = lawnApp->mBoard;
     auto *mWidgetManager = lawnApp->mWidgetManager;
     auto *mFocusWidget = mWidgetManager->mFocusWidget;
-    if (board != nullptr && mFocusWidget == reinterpret_cast<Widget *>(board)) {
+    if (board != nullptr && mFocusWidget == reinterpret_cast<Sexy::Widget *>(board)) {
         return true;
     }
     SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
-    if (lawnApp->IsCoopMode() && seedChooserScreen && mFocusWidget == reinterpret_cast<Widget *>(seedChooserScreen)) {
+    if (lawnApp->IsCoopMode() && seedChooserScreen && mFocusWidget == reinterpret_cast<Sexy::Widget *>(seedChooserScreen)) {
         return true;
     }
 
@@ -845,7 +820,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     Board *board = lawnApp->mBoard;
     auto *mWidgetManager = lawnApp->mWidgetManager;
     auto *mFocusWidget = mWidgetManager->mFocusWidget;
-    if (board != nullptr && mFocusWidget == reinterpret_cast<Widget *>(board)) {
+    if (board != nullptr && mFocusWidget == reinterpret_cast<Sexy::Widget *>(board)) {
         GamepadControls *gamepadControls = playerIndex ? board->mGamepadControls2 : board->mGamepadControls1;
         if (!playerIndex) {
             if (is_key_down) {
@@ -925,7 +900,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
         return;
     }
     SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
-    if (is_key_down && lawnApp->IsCoopMode() && seedChooserScreen && mFocusWidget == reinterpret_cast<Widget *>(seedChooserScreen)) {
+    if (is_key_down && lawnApp->IsCoopMode() && seedChooserScreen && mFocusWidget == reinterpret_cast<Sexy::Widget *>(seedChooserScreen)) {
         seedChooserScreen->GameButtonDown(buttonCode, playerIndex);
         return;
     }
