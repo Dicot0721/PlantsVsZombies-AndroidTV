@@ -158,7 +158,7 @@ int Plant::GetDamageRangeFlags(PlantWeapon thePlantWeapon) {
 }
 
 void Plant::PlayBodyReanim(const char *theTrackName, ReanimLoopType theLoopType, int theBlendTime, float theAnimRate) {
-    return old_Plant_PlayBodyReanim(this, theTrackName, theLoopType, theBlendTime, theAnimRate);
+    old_Plant_PlayBodyReanim(this, theTrackName, theLoopType, theBlendTime, theAnimRate);
 }
 
 void Plant::SpikeweedAttack() {
@@ -600,24 +600,240 @@ void Plant::DoSpecial() {
 // old_Plant_CobCannonFire(plant,x,y);
 // }
 
-void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *gridItem) {
+void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem) {
     if (mApp->mGameMode == GAMEMODE_MP_VS) {
         if (tcp_connected)
             return;
+
         if (tcpClientSocket >= 0) {
             TwoShortTwoIntDataEvent event;
 
             event.type = EventType::EVENT_SERVER_BOARD_PLANT_FIRE;
             event.data1 = short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(this)->mID);
-            event.data2 = theTargetZombie == nullptr ? 0 : short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(theTargetZombie)->mID);
-            event.data3.s.s1 = (short)theRow;
-            event.data3.s.s2 = (short)thePlantWeapon;
-            event.data4.s.s1 = gridItem == nullptr ? 0 : short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(gridItem)->mID);
+            event.data2 = theTargetZombie == nullptr ? short(ZOMBIEID_NULL) : short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(theTargetZombie)->mID);
+            event.data3.s.s1 = short(theRow);
+            event.data3.s.s2 = short(thePlantWeapon);
+            event.data4.s.s1 = theTargetGridItem == nullptr ? short(GRIDITEMID_NULL) : short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(theTargetGridItem)->mID);
             send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
         }
     }
 
-    old_Plant_Fire(this, theTargetZombie, theRow, thePlantWeapon, gridItem);
+    if (mSeedType == SeedType::SEED_FUMESHROOM) {
+        DoRowAreaDamage(20, 2U);
+        mApp->PlayFoley(FoleyType::FOLEY_FUME);
+        return;
+    }
+    if (mSeedType == SeedType::SEED_GLOOMSHROOM) {
+        DoRowAreaDamage(20, 2U);
+        return;
+    }
+    if (mSeedType == SeedType::SEED_STARFRUIT) {
+        StarFruitFire();
+        return;
+    }
+
+    ProjectileType aProjectileType;
+    switch (mSeedType) {
+        case SeedType::SEED_PEASHOOTER:
+        case SeedType::SEED_REPEATER:
+        case SeedType::SEED_THREEPEATER:
+        case SeedType::SEED_SPLITPEA:
+        case SeedType::SEED_GATLINGPEA:
+        case SeedType::SEED_LEFTPEATER:
+            aProjectileType = ProjectileType::PROJECTILE_PEA;
+            break;
+        case SeedType::SEED_SNOWPEA:
+            aProjectileType = ProjectileType::PROJECTILE_SNOWPEA;
+            break;
+        case SeedType::SEED_PUFFSHROOM:
+        case SeedType::SEED_SCAREDYSHROOM:
+        case SeedType::SEED_SEASHROOM:
+            aProjectileType = ProjectileType::PROJECTILE_PUFF;
+            break;
+        case SeedType::SEED_CACTUS:
+        case SeedType::SEED_CATTAIL:
+            aProjectileType = ProjectileType::PROJECTILE_SPIKE;
+            break;
+        case SeedType::SEED_CABBAGEPULT:
+            aProjectileType = ProjectileType::PROJECTILE_CABBAGE;
+            break;
+        case SeedType::SEED_KERNELPULT:
+            aProjectileType = ProjectileType::PROJECTILE_KERNEL;
+            break;
+        case SeedType::SEED_MELONPULT:
+            aProjectileType = ProjectileType::PROJECTILE_MELON;
+            break;
+        case SeedType::SEED_WINTERMELON:
+            aProjectileType = ProjectileType::PROJECTILE_WINTERMELON;
+            break;
+        case SeedType::SEED_COBCANNON:
+            aProjectileType = ProjectileType::PROJECTILE_COBBIG;
+            break;
+        default:
+            break;
+    }
+    if (mSeedType == SeedType::SEED_KERNELPULT && thePlantWeapon == PlantWeapon::WEAPON_SECONDARY) {
+        aProjectileType = ProjectileType::PROJECTILE_BUTTER;
+    }
+
+    mApp->PlayFoley(FoleyType::FOLEY_THROW);
+    if (mSeedType == SeedType::SEED_SNOWPEA || mSeedType == SeedType::SEED_WINTERMELON) {
+        mApp->PlayFoley(FoleyType::FOLEY_SNOW_PEA_SPARKLES);
+    } else if (mSeedType == SeedType::SEED_PUFFSHROOM || mSeedType == SeedType::SEED_SCAREDYSHROOM || mSeedType == SeedType::SEED_SEASHROOM) {
+        mApp->PlayFoley(FoleyType::FOLEY_PUFF);
+    }
+
+    int aOriginX, aOriginY;
+    if (mSeedType == SeedType::SEED_PUFFSHROOM) {
+        aOriginX = mX + 40;
+        aOriginY = mY + 40;
+    } else if (mSeedType == SeedType::SEED_SEASHROOM) {
+        aOriginX = mX + 45;
+        aOriginY = mY + 63;
+    } else if (mSeedType == SeedType::SEED_CABBAGEPULT) {
+        aOriginX = mX + 5;
+        aOriginY = mY - 12;
+    } else if (mSeedType == SeedType::SEED_MELONPULT || mSeedType == SeedType::SEED_WINTERMELON) {
+        aOriginX = mX + 25;
+        aOriginY = mY - 46;
+    } else if (mSeedType == SeedType::SEED_CATTAIL) {
+        aOriginX = mX + 20;
+        aOriginY = mY - 3;
+    } else if (mSeedType == SeedType::SEED_KERNELPULT && thePlantWeapon == PlantWeapon::WEAPON_PRIMARY) {
+        aOriginX = mX + 19;
+        aOriginY = mY - 37;
+    } else if (mSeedType == SeedType::SEED_KERNELPULT && thePlantWeapon == PlantWeapon::WEAPON_SECONDARY) {
+        aOriginX = mX + 12;
+        aOriginY = mY - 56;
+    } else if (mSeedType == SeedType::SEED_PEASHOOTER || mSeedType == SeedType::SEED_SNOWPEA || mSeedType == SeedType::SEED_REPEATER) {
+        int aOffsetX, aOffsetY;
+        GetPeaHeadOffset(aOffsetX, aOffsetY);
+        aOriginX = mX + aOffsetX + 24;
+        aOriginY = mY + aOffsetY - 33;
+    } else if (mSeedType == SeedType::SEED_LEFTPEATER) {
+        int aOffsetX, aOffsetY;
+        GetPeaHeadOffset(aOffsetX, aOffsetY);
+        aOriginX = mX + aOffsetX + 27;
+        aOriginY = mY + aOffsetY - 33;
+    } else if (mSeedType == SeedType::SEED_GATLINGPEA) {
+        int aOffsetX, aOffsetY;
+        GetPeaHeadOffset(aOffsetX, aOffsetY);
+        aOriginX = mX + aOffsetX + 34;
+        aOriginY = mY + aOffsetY - 33;
+    } else if (mSeedType == SeedType::SEED_SPLITPEA) {
+        int aOffsetX, aOffsetY;
+        GetPeaHeadOffset(aOffsetX, aOffsetY);
+        aOriginY = mY + aOffsetY - 33;
+
+        if (thePlantWeapon == PlantWeapon::WEAPON_SECONDARY) {
+            aOriginX = mX + aOffsetX - 64;
+        } else {
+            aOriginX = mX + aOffsetX + 24;
+        }
+    } else if (mSeedType == SeedType::SEED_THREEPEATER) {
+        aOriginX = mX + 45;
+        aOriginY = mY + 10;
+    } else if (mSeedType == SeedType::SEED_SCAREDYSHROOM) {
+        aOriginX = mX + 29;
+        aOriginY = mY + 21;
+    } else if (mSeedType == SeedType::SEED_CACTUS) {
+        if (thePlantWeapon == PlantWeapon::WEAPON_PRIMARY) {
+            aOriginX = mX + 93;
+            aOriginY = mY - 50;
+        } else {
+            aOriginX = mX + 70;
+            aOriginY = mY + 23;
+        }
+    } else if (mSeedType == SeedType::SEED_COBCANNON) {
+        aOriginX = mX - 44;
+        aOriginY = mY - 184;
+    } else {
+        aOriginX = mX + 10;
+        aOriginY = mY + 5;
+    }
+    if (mBoard->GetFlowerPotAt(mPlantCol, mRow)) {
+        aOriginY -= 5;
+    }
+
+    if (mSeedType == SeedType::SEED_SNOWPEA) {
+        int aRenderPosition = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_LAWN_MOWER, mRow, 1);
+        mApp->AddTodParticle(aOriginX + 8, aOriginY + 13, aRenderPosition, ParticleEffect::PARTICLE_SNOWPEA_PUFF);
+    } else if (mSeedType == SeedType::SEED_PUFFSHROOM) {
+        int aRenderPosition = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_LAWN_MOWER, mRow, 1);
+        mApp->AddTodParticle(aOriginX + 18, aOriginY + 13, aRenderPosition, ParticleEffect::PARTICLE_PUFFSHROOM_MUZZLE);
+    } else if (mSeedType == SeedType::SEED_SCAREDYSHROOM) {
+        int aRenderPosition = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_LAWN_MOWER, mRow, 1);
+        mApp->AddTodParticle(aOriginX + 27, aOriginY + 13, aRenderPosition, ParticleEffect::PARTICLE_PUFFSHROOM_MUZZLE);
+    }
+
+    Projectile *aProjectile = mBoard->AddProjectile(aOriginX, aOriginY, mRenderOrder - 1, theRow, aProjectileType);
+    aProjectile->mDamageRangeFlags = GetDamageRangeFlags(thePlantWeapon);
+
+    if (mSeedType == SeedType::SEED_CABBAGEPULT || mSeedType == SeedType::SEED_KERNELPULT || mSeedType == SeedType::SEED_MELONPULT || mSeedType == SeedType::SEED_WINTERMELON) {
+        float aRangeX, aRangeY;
+        if (theTargetZombie) {
+            Rect aZombieRect = theTargetZombie->GetZombieRect();
+            aRangeX = theTargetZombie->ZombieTargetLeadX(50.0f) - aOriginX - 30.0f;
+            aRangeY = aZombieRect.mY - aOriginY;
+
+            if (theTargetZombie->mZombiePhase == ZombiePhase::PHASE_DOLPHIN_RIDING) {
+                aRangeX -= 60.0f;
+            }
+            if (theTargetZombie->mZombieType == ZombieType::ZOMBIE_POGO && theTargetZombie->mHasObject) {
+                aRangeX -= 60.0f;
+            }
+            if (theTargetZombie->mZombiePhase == ZombiePhase::PHASE_SNORKEL_WALKING_IN_POOL) {
+                aRangeX -= 40.0f;
+            }
+            if (theTargetZombie->mZombieType == ZombieType::ZOMBIE_BOSS) {
+                aRangeY = mBoard->GridToPixelY(8, mRow) - aOriginY;
+            }
+        } else if (theTargetGridItem) {
+            aRangeX = mBoard->GridToPixelX(theTargetGridItem->mGridX, theTargetGridItem->mGridY) - aOriginX;
+            aRangeY = (float(mBoard->GridToPixelY(theTargetGridItem->mGridX, theTargetGridItem->mGridY)) - aOriginY) * 0.0083333 - 7.0;
+        } else {
+            aRangeX = 700.0f - aOriginX;
+            aRangeY = 0.0f;
+        }
+        if (aRangeX < 40.0f) {
+            aRangeX = 40.0f;
+        }
+
+        aProjectile->mMotionType = ProjectileMotion::MOTION_LOBBED;
+        aProjectile->mVelX = aRangeX / 120.0f;
+        aProjectile->mVelY = 0.0f;
+        aProjectile->mVelZ = aRangeY / 120.0f - 7.0f;
+        aProjectile->mAccZ = 0.115f;
+    } else if (mSeedType == SeedType::SEED_THREEPEATER) {
+        if (theRow < mRow) {
+            aProjectile->mMotionType = ProjectileMotion::MOTION_THREEPEATER;
+            aProjectile->mVelY = -3.0f;
+            aProjectile->mShadowY += 80.0f;
+        } else if (theRow > mRow) {
+            aProjectile->mMotionType = ProjectileMotion::MOTION_THREEPEATER;
+            aProjectile->mVelY = 3.0f;
+            aProjectile->mShadowY -= 80.0f;
+        }
+    } else if (mSeedType == SeedType::SEED_PUFFSHROOM || mSeedType == SeedType::SEED_SEASHROOM) {
+        aProjectile->mMotionType = ProjectileMotion::MOTION_PUFF;
+    } else if (mSeedType == SeedType::SEED_SPLITPEA && thePlantWeapon == PlantWeapon::WEAPON_SECONDARY) {
+        aProjectile->mMotionType = ProjectileMotion::MOTION_BACKWARDS;
+    } else if (mSeedType == SeedType::SEED_LEFTPEATER) {
+        aProjectile->mMotionType = ProjectileMotion::MOTION_BACKWARDS;
+    } else if (mSeedType == SeedType::SEED_CATTAIL) {
+        aProjectile->mVelX = 2.0f;
+        aProjectile->mMotionType = ProjectileMotion::MOTION_HOMING;
+        aProjectile->mTargetZombieID = mBoard->ZombieGetID(theTargetZombie);
+    } else if (mSeedType == SeedType::SEED_COBCANNON) {
+        aProjectile->mVelX = 0.001f;
+        aProjectile->mDamageRangeFlags = GetDamageRangeFlags(PlantWeapon::WEAPON_PRIMARY);
+        aProjectile->mMotionType = ProjectileMotion::MOTION_LOBBED;
+        aProjectile->mVelY = 0.0f;
+        aProjectile->mAccZ = 0.0f;
+        aProjectile->mVelZ = -8.0f;
+        aProjectile->mCobTargetX = mTargetX - 40;
+        aProjectile->mCobTargetRow = mBoard->PixelToGridYKeepOnBoard(mTargetX, mTargetY);
+    }
 }
 
 Zombie *Plant::FindTargetZombie(int theRow, PlantWeapon thePlantWeapon) {
@@ -730,48 +946,51 @@ Zombie *Plant::FindTargetZombie(int theRow, PlantWeapon thePlantWeapon) {
 GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
     // 对战模式专用，植物索敌僵尸墓碑和靶子僵尸。
     // 原版函数BUG：植物还会索敌梯子和毁灭菇弹坑，故重写以修复BUG。
-    GridItem *aGridItem = nullptr;
-    GridItem *aTargetGridItem = nullptr;
     int aLastGridX = 0;
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) { // 如果是对战模式(关卡ID为76)
-        int mRow = mStartRow;
-        while (mBoard->IterateGridItems(aGridItem)) { // 遍历场上的所有GridItem
+    GridItem *aBestGridItem = nullptr;
 
-            GridItemType mGridItemType = aGridItem->mGridItemType;
-            if (mGridItemType != GridItemType::GRIDITEM_GRAVESTONE && mGridItemType != GridItemType::GRIDITEM_VS_TARGET_ZOMBIE) {
+    GridItem *aGridItem = nullptr;
+    if (mApp->IsVSMode()) { // 如果是对战模式
+        int aRow = mStartRow;
+        while (mBoard->IterateGridItems(aGridItem)) { // 遍历场上的所有GridItem
+            int aGridX = aGridItem->mGridX;
+            int aGridY = aGridItem->mGridY;
+            GridItemType aGridItemType = aGridItem->mGridItemType;
+
+            if (aGridItemType != GridItemType::GRIDITEM_GRAVESTONE && aGridItemType != GridItemType::GRIDITEM_VS_TARGET_ZOMBIE) {
                 // 修复植物们攻击核坑和梯子
                 continue;
             }
-            int mGridX = aGridItem->mGridX;
-            int mGridY = aGridItem->mGridY;
-            if (mSeedType == SeedType::SEED_THREEPEATER ? abs(mGridY - mRow) > 1 : mGridY != mRow) {
+
+            if (mSeedType == SeedType::SEED_THREEPEATER ? abs(aGridY - aRow) > 1 : aGridY != aRow) {
                 // 如果是三线射手，则索敌三行; 反之，索敌一行
                 // 注释掉此行，就会发现投手能够命中三格内的靶子了，但会导致很多其他BUG。尚不清楚原因。
                 continue;
             }
 
-
-            if (aTargetGridItem == nullptr || mGridX < aLastGridX) {
-                if (mSeedType == SeedType::SEED_FUMESHROOM && mGridX - mPlantCol > 3) {
+            if (aBestGridItem == nullptr || aGridX < aLastGridX) {
+                if (mSeedType == SeedType::SEED_FUMESHROOM && aGridX - mPlantCol > 3) {
                     // 如果是大喷菇，则索敌三格以内的靶子或墓碑
                     continue;
                 }
                 if (mSeedType == SeedType::SEED_PUFFSHROOM || mSeedType == SeedType::SEED_SEASHROOM) {
                     // 如果是小喷菇或水兵菇，则索敌三格以内的墓碑
-                    if (mGridX - mPlantCol > 3) {
+                    if (aGridX - mPlantCol > 3) {
                         continue;
                     }
                     // 不主动攻击靶子
-                    if (mGridItemType == GridItemType::GRIDITEM_VS_TARGET_ZOMBIE) {
+                    if (aGridItemType == GridItemType::GRIDITEM_VS_TARGET_ZOMBIE) {
                         continue;
                     }
                 }
-                aTargetGridItem = aGridItem;
-                aLastGridX = mGridX;
+
+                aBestGridItem = aGridItem;
+                aLastGridX = aGridX;
             }
         }
     }
-    return aTargetGridItem;
+
+    return aBestGridItem;
 }
 
 void Plant::Die() {
@@ -1400,4 +1619,181 @@ void Plant::UpdateProductionPlant() {
     }
 
     old_Plant_UpdateProductionPlant(this);
+}
+
+void Plant::UpdateShooting() {
+    if (NotOnGround() || mShootingCounter == 0)
+        return;
+
+    mShootingCounter--;
+
+    if (mSeedType == SeedType::SEED_FUMESHROOM && mShootingCounter == 15) {
+        int aRenderPosition = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PARTICLE, mRow, 0);
+        AddAttachedParticle(mX + 85, mY + 31, aRenderPosition, ParticleEffect::PARTICLE_FUMECLOUD);
+    }
+
+    if (mSeedType == SeedType::SEED_GLOOMSHROOM) {
+        if (mShootingCounter == 136 || mShootingCounter == 108 || mShootingCounter == 80 || mShootingCounter == 52) {
+            int aRenderPosition = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PARTICLE, mRow, 0);
+            AddAttachedParticle(mX + 40, mY + 40, aRenderPosition, ParticleEffect::PARTICLE_GLOOMCLOUD);
+        }
+        if (mShootingCounter == 126 || mShootingCounter == 98 || mShootingCounter == 70 || mShootingCounter == 42) {
+            Fire(nullptr, mRow, PlantWeapon::WEAPON_PRIMARY, nullptr);
+        }
+    } else if (mSeedType == SeedType::SEED_GATLINGPEA) {
+        if (mShootingCounter == 18 || mShootingCounter == 35 || mShootingCounter == 51 || mShootingCounter == 68) {
+            Fire(nullptr, mRow, PlantWeapon::WEAPON_PRIMARY, nullptr);
+        }
+    } else if (mSeedType == SeedType::SEED_CATTAIL) {
+        if (mShootingCounter == 19) {
+            Zombie *aZombie = FindTargetZombie(mRow, PlantWeapon::WEAPON_PRIMARY);
+            if (aZombie) {
+                Fire(aZombie, mRow, PlantWeapon::WEAPON_PRIMARY, nullptr);
+            }
+        }
+    } else if (mShootingCounter == 1) {
+        if (mSeedType == SeedType::SEED_THREEPEATER) {
+            int rowAbove = mRow - 1;
+            int rowBelow = mRow + 1;
+            Reanimation *aHeadReanim2 = mApp->ReanimationGet(mHeadReanimID2);
+            Reanimation *aHeadReanim3 = mApp->ReanimationGet(mHeadReanimID3);
+            Reanimation *aHeadReanim1 = mApp->ReanimationGet(mHeadReanimID);
+
+            if (aHeadReanim1->mLoopType == ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD) {
+                Fire(nullptr, rowBelow, PlantWeapon::WEAPON_PRIMARY, nullptr);
+            }
+            if (aHeadReanim2->mLoopType == ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD) {
+                Fire(nullptr, mRow, PlantWeapon::WEAPON_PRIMARY, nullptr);
+            }
+            if (aHeadReanim3->mLoopType == ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD) {
+                Fire(nullptr, rowAbove, PlantWeapon::WEAPON_PRIMARY, nullptr);
+            }
+        } else if (mSeedType == SeedType::SEED_SPLITPEA) {
+            Reanimation *aHeadBackReanim = mApp->ReanimationTryToGet(mHeadReanimID2);
+            Reanimation *aHeadFrontReanim = mApp->ReanimationTryToGet(mHeadReanimID);
+            if (aHeadFrontReanim->mLoopType == ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD) {
+                Fire(nullptr, mRow, PlantWeapon::WEAPON_PRIMARY, nullptr);
+            }
+            if (aHeadBackReanim->mLoopType == ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD) {
+                Fire(nullptr, mRow, PlantWeapon::WEAPON_SECONDARY, nullptr);
+            }
+        } else if (mState == PlantState::STATE_CACTUS_LOW) {
+            Fire(nullptr, mRow, PlantWeapon::WEAPON_SECONDARY, nullptr);
+        } else if (mSeedType == SeedType::SEED_CABBAGEPULT || mSeedType == SeedType::SEED_KERNELPULT || mSeedType == SeedType::SEED_MELONPULT || mSeedType == SeedType::SEED_WINTERMELON) {
+            PlantWeapon aPlantWeapon = PlantWeapon::WEAPON_PRIMARY;
+            if (mState == PlantState::STATE_KERNELPULT_BUTTER) {
+                Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+                aBodyReanim->AssignRenderGroupToPrefix("Cornpult_butter", RENDER_GROUP_HIDDEN);
+                aBodyReanim->AssignRenderGroupToPrefix("Cornpult_kernal", RENDER_GROUP_NORMAL);
+                mState = PlantState::STATE_NOTREADY;
+                aPlantWeapon = PlantWeapon::WEAPON_SECONDARY;
+            }
+
+            Zombie *aZombie = FindTargetZombie(mRow, aPlantWeapon);
+            GridItem *aGridItem = FindTargetGridItem(aPlantWeapon);
+            Fire(aZombie, mRow, aPlantWeapon, aGridItem);
+        } else {
+            Fire(nullptr, mRow, PlantWeapon::WEAPON_PRIMARY, nullptr);
+        }
+
+        return;
+    }
+
+    if (mShootingCounter != 0)
+        return;
+
+    Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+    Reanimation *aHeadReanim = mApp->ReanimationTryToGet(mHeadReanimID);
+    if (mSeedType == SeedType::SEED_THREEPEATER) {
+        Reanimation *aHeadReanim2 = mApp->ReanimationGet(mHeadReanimID2);
+        Reanimation *aHeadReanim3 = mApp->ReanimationGet(mHeadReanimID3);
+
+        if (aHeadReanim2->mLoopCount > 0) {
+            if (aHeadReanim->mLoopType == ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD) {
+                aHeadReanim->StartBlend(20);
+                aHeadReanim->mLoopType = ReanimLoopType::REANIM_LOOP;
+                aHeadReanim->SetFramesForLayer("anim_head_idle1");
+                aHeadReanim->mAnimRate = aBodyReanim->mAnimRate;
+                aHeadReanim->mAnimTime = aBodyReanim->mAnimTime;
+            }
+
+            aHeadReanim2->StartBlend(20);
+            aHeadReanim2->mLoopType = ReanimLoopType::REANIM_LOOP;
+            aHeadReanim2->SetFramesForLayer("anim_head_idle2");
+            aHeadReanim2->mAnimRate = aBodyReanim->mAnimRate;
+            aHeadReanim2->mAnimTime = aBodyReanim->mAnimTime;
+
+            if (aHeadReanim3->mLoopType == ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD) {
+                aHeadReanim3->StartBlend(20);
+                aHeadReanim3->mLoopType = ReanimLoopType::REANIM_LOOP;
+                aHeadReanim3->SetFramesForLayer("anim_head_idle3");
+                aHeadReanim3->mAnimRate = aBodyReanim->mAnimRate;
+                aHeadReanim3->mAnimTime = aBodyReanim->mAnimTime;
+            }
+
+            return;
+        }
+    } else if (mSeedType == SeedType::SEED_SPLITPEA) {
+        Reanimation *aHeadReanim2 = mApp->ReanimationGet(mHeadReanimID2);
+
+        if (aHeadReanim->mLoopCount > 0) {
+            aHeadReanim->StartBlend(20);
+            aHeadReanim->mLoopType = ReanimLoopType::REANIM_LOOP;
+            aHeadReanim->SetFramesForLayer("anim_head_idle");
+            aHeadReanim->mAnimRate = aBodyReanim->mAnimRate;
+            aHeadReanim->mAnimTime = aBodyReanim->mAnimTime;
+        }
+
+        if (aHeadReanim2->mLoopCount > 0) {
+            aHeadReanim2->StartBlend(20);
+            aHeadReanim2->mLoopType = ReanimLoopType::REANIM_LOOP;
+            aHeadReanim2->SetFramesForLayer("anim_splitpea_idle");
+            aHeadReanim2->mAnimRate = aBodyReanim->mAnimRate;
+            aHeadReanim2->mAnimTime = aBodyReanim->mAnimTime;
+        }
+
+        return;
+    } else if (mState == PlantState::STATE_CACTUS_HIGH) {
+        if (aBodyReanim->mLoopCount > 0) {
+            PlayBodyReanim("anim_idlehigh", ReanimLoopType::REANIM_LOOP, 20, 0.0f);
+
+            aBodyReanim->mAnimRate = aBodyReanim->mDefinition->mFPS;
+            if (mApp->IsIZombieLevel()) {
+                aBodyReanim->mAnimRate = 0.0f;
+            }
+
+            return;
+        }
+    } else if (aHeadReanim) {
+        if (aHeadReanim->mLoopCount > 0) {
+            aHeadReanim->StartBlend(20);
+            aHeadReanim->mLoopType = ReanimLoopType::REANIM_LOOP;
+            aHeadReanim->SetFramesForLayer("anim_head_idle");
+            aHeadReanim->mAnimRate = aBodyReanim->mAnimRate;
+            aHeadReanim->mAnimTime = aBodyReanim->mAnimTime;
+            return;
+        }
+    } else if (mSeedType == SeedType::SEED_COBCANNON) {
+        if (aBodyReanim->mLoopCount > 0) {
+            mState = PlantState::STATE_COBCANNON_ARMING;
+            mStateCountdown = 3000;
+            PlayBodyReanim("anim_unarmed_idle", ReanimLoopType::REANIM_LOOP, 20, aBodyReanim->mDefinition->mFPS);
+            return;
+        }
+    } else if (aBodyReanim && aBodyReanim->mLoopCount > 0) {
+        PlayIdleAnim(aBodyReanim->mDefinition->mFPS);
+        return;
+    }
+
+    mShootingCounter = 1;
+}
+
+void Plant::PlayIdleAnim(float theRate) {
+    Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+    if (aBodyReanim) {
+        PlayBodyReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 20, theRate);
+        if (mApp->IsIZombieLevel()) {
+            aBodyReanim->mAnimRate = 0.0f;
+        }
+    }
 }

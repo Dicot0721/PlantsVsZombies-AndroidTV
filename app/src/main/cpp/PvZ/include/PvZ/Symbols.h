@@ -599,6 +599,11 @@ inline void *Plant_PlayBodyReanimAddr;
 inline void *Plant_UpdateProductionPlantAddr;
 inline void *Plant_FireAddr;
 inline void *Plant_RemoveEffectsAddr;
+inline void *Plant_DoRowAreaDamageAddr;
+inline void *Plant_StarFruitFireAddr;
+inline void *Plant_GetPeaHeadOffsetAddr;
+inline void *Plant_AddAttachedParticleAddr;
+inline void *Plant_UpdateShootingAddr;
 
 
 inline void *Projectile_UpdateAddr;
@@ -761,6 +766,7 @@ inline void *Reanimation_GetTrackMatrixAddr;
 inline void *Reanimation_GetAttachmentOverlayMatrixAddr;
 inline void *Reanimation_AssignRenderGroupToPrefixAddr;
 inline void *Reanimation_PropogateColorToAttachmentsAddr;
+inline void *Reanimation_StartBlendAddr;
 
 
 inline void *Sexy_GamepadApp_CheckGamepadAddr;
@@ -1895,6 +1901,11 @@ inline bool GetFunctionAddr() {
     Plant_UpdateProductionPlantAddr = dlsym(handle, "_ZN5Plant21UpdateProductionPlantEv");
     Plant_FireAddr = dlsym(handle, "_ZN5Plant4FireEP6Zombiei11PlantWeaponP8GridItem");
     Plant_RemoveEffectsAddr = dlsym(handle, "_ZN5Plant13RemoveEffectsEv");
+    Plant_DoRowAreaDamageAddr = dlsym(handle, "_ZN5Plant15DoRowAreaDamageEij");
+    Plant_StarFruitFireAddr = dlsym(handle, "_ZN5Plant13StarFruitFireEv");
+    Plant_GetPeaHeadOffsetAddr = dlsym(handle, "_ZN5Plant16GetPeaHeadOffsetERiS0_");
+    Plant_AddAttachedParticleAddr = dlsym(handle, "_ZN5Plant19AddAttachedParticleEiii14ParticleEffect");
+    Plant_UpdateShootingAddr = dlsym(handle, "_ZN5Plant14UpdateShootingEv");
 
 
     Projectile_UpdateAddr = dlsym(handle, "_ZN10Projectile6UpdateEv");
@@ -2058,6 +2069,7 @@ inline bool GetFunctionAddr() {
     Reanimation_GetAttachmentOverlayMatrixAddr = dlsym(handle, "_ZN11Reanimation26GetAttachmentOverlayMatrixEiRN4Sexy15SexyTransform2DE");
     Reanimation_AssignRenderGroupToPrefixAddr = dlsym(handle, "_ZN11Reanimation25AssignRenderGroupToPrefixEPKci");
     Reanimation_PropogateColorToAttachmentsAddr = dlsym(handle, "_ZN11Reanimation27PropogateColorToAttachmentsEv");
+    Reanimation_StartBlendAddr = dlsym(handle, "_ZN11Reanimation10StartBlendEi");
 
 
     ZenGarden_GetStinkyAddr = dlsym(handle, "_ZN9ZenGarden9GetStinkyEv");

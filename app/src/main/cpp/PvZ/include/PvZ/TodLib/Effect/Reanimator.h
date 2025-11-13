@@ -266,6 +266,9 @@ public:
     void PropogateColorToAttachments() {
         reinterpret_cast<void (*)(Reanimation *)>(Reanimation_PropogateColorToAttachmentsAddr)(this);
     }
+    void StartBlend(int theBlendTime) {
+        reinterpret_cast<void (*)(Reanimation *, int)>(Reanimation_StartBlendAddr)(this, theBlendTime);
+    }
 
     void Draw(Sexy::Graphics *g);
     bool DrawTrack(Sexy::Graphics *g, int theTrackIndex, int theRenderGroup, TodTriangleGroup *theTriangleGroup);

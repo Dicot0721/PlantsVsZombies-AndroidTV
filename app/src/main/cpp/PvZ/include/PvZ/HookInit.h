@@ -298,13 +298,14 @@ inline void InitHookFunction() {
     homura::HookFunction(Plant_PlantInitializeAddr, &Plant::PlantInitialize, &old_Plant_PlantInitialize);
     homura::HookFunction(Plant_SetSleepingAddr, &Plant::SetSleeping, &old_Plant_SetSleeping);
     homura::HookFunction(Plant_UpdateReanimColorAddr, &Plant::UpdateReanimColor, &old_Plant_UpdateReanimColor);
-    homura::HookFunction(Plant_FindTargetZombieAddr, &Plant::FindTargetZombie, &old_Plant_FindTargetZombie);
+    homura::HookFunction(Plant_FindTargetZombieAddr, &Plant::FindTargetZombie, nullptr);
     homura::HookFunction(Plant_FindTargetGridItemAddr, &Plant::FindTargetGridItem, nullptr);
     homura::HookFunction(Plant_GetCostAddr, &Plant::GetCost, &old_Plant_GetCost);
     homura::HookFunction(Plant_DieAddr, &Plant::Die, nullptr);
     homura::HookFunction(Plant_PlayBodyReanimAddr, &Plant::PlayBodyReanim, &old_Plant_PlayBodyReanim);
     homura::HookFunction(Plant_UpdateProductionPlantAddr, &Plant::UpdateProductionPlant, &old_Plant_UpdateProductionPlant);
-    homura::HookFunction(Plant_FireAddr, &Plant::Fire, &old_Plant_Fire);
+    homura::HookFunction(Plant_FireAddr, &Plant::Fire, nullptr);
+    homura::HookFunction(Plant_UpdateShootingAddr, &Plant::UpdateShooting, nullptr);
 
     // MSHookFunction(Plant_CobCannonFireAddr, (void *) Plant_CobCannonFire, (void **) &old_Plant_CobCannonFire);
     // MSHookFunction(Plant_UpdateReanimAddr, (void *) Plant_UpdateReanim, (void **) &old_Plant_UpdateReanim);

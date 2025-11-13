@@ -3160,10 +3160,8 @@ void Zombie::SetupLostArmReanim() {
 }
 
 void Zombie::PickRandomSpeed() {
-    if (mApp->IsVSMode()) {
-        if (tcp_connected)
-            return;
-    }
+    if (mApp->IsVSMode() && tcp_connected)
+        return;
 
     if (mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING_IN_POOL) {
         mVelX = 0.3f;
@@ -3205,15 +3203,13 @@ void Zombie::PickRandomSpeed() {
 
     UpdateAnimSpeed();
 
-    if (mApp->IsVSMode()) {
-        if (tcpClientSocket >= 0) {
-            TwoShortTwoIntDataEvent event;
-            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED;
-            event.data1 = short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(this)->mID);
-            event.data2 = short(mAnimTicksPerFrame);
-            event.data3.f = mVelX;
-            send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
-        }
+    if (mApp->IsVSMode() && tcpClientSocket >= 0) {
+        TwoShortTwoIntDataEvent event;
+        event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED;
+        event.data1 = short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(this)->mID);
+        event.data2 = short(mAnimTicksPerFrame);
+        event.data3.f = mVelX;
+        send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
     }
 }
 

@@ -1313,14 +1313,19 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_PLANT_FIRE: {
-            TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
+            TwoShortTwoIntDataEvent *eventPlantFire = reinterpret_cast<TwoShortTwoIntDataEvent *>(event);
+            short serverPlantID = eventPlantFire->data1;
             short clientPlantID;
-            if (serverPlantIDMap.Lookup(event1->data1, clientPlantID)) {
-                Plant *plant = mPlantsList.DataArrayGet(clientPlantID);
-                Zombie *zombie = event1->data2 == 0 ? nullptr : mZombiesList.DataArrayGet(serverZombieIDMap.Lookup(event1->data2));
-                GridItem *gridItem = event1->data4.s.s1 == 0 ? nullptr : mGridItemsList.DataArrayGet(serverGridItemIDMap.Lookup(event1->data4.s.s1));
+            if (serverPlantIDMap.Lookup(serverPlantID, clientPlantID)) {
+                short aZombieID = eventPlantFire->data2;
+                short aGridItemID = eventPlantFire->data4.s.s1;
+                short aRow = eventPlantFire->data3.s.s1;
+                short aPlantWeapon = eventPlantFire->data3.s.s2;
+                Plant *aPlant = mPlantsList.DataArrayGet(clientPlantID);
+                Zombie *aZombie = aZombieID == ZOMBIEID_NULL ? nullptr : mZombiesList.DataArrayGet(serverZombieIDMap.Lookup(aZombieID));
+                GridItem *aGridItem = aGridItemID == GRIDITEMID_NULL ? nullptr : mGridItemsList.DataArrayGet(serverGridItemIDMap.Lookup(aGridItemID));
                 tcp_connected = false;
-                plant->Fire(zombie, event1->data3.s.s1, (PlantWeapon)event1->data3.s.s2, gridItem);
+                aPlant->Fire(aZombie, aRow, PlantWeapon(aPlantWeapon), aGridItem);
                 tcp_connected = true;
             }
         } break;
@@ -1379,10 +1384,10 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             short serverZombieID = eventPickSpeed->data1;
             short clientZombieID;
             if (serverZombieIDMap.Lookup(serverZombieID, clientZombieID)) {
-                Zombie *aZombie = mZombiesList.DataArrayGet(clientZombieID);
-                tcp_connected = false;
                 float aVelX = eventPickSpeed->data3.f;
                 short anAnimTicks = eventPickSpeed->data2;
+                Zombie *aZombie = mZombiesList.DataArrayGet(clientZombieID);
+                tcp_connected = false;
                 aZombie->ApplySyncedSpeed(aVelX, anAnimTicks);
                 tcp_connected = true;
             }

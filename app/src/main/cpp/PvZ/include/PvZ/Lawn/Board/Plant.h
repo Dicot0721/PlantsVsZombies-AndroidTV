@@ -150,6 +150,7 @@ public:
 
 class Zombie;
 class GridItem;
+class TodParticleSystem;
 
 class Plant : public __GameObject {
 public:
@@ -226,6 +227,18 @@ public:
     void RemoveEffects() {
         reinterpret_cast<void (*)(Plant *)>(Plant_RemoveEffectsAddr)(this);
     }
+    void DoRowAreaDamage(int theDamage, unsigned int theDamageFlags) {
+        reinterpret_cast<void (*)(Plant *, int, unsigned int)>(Plant_DoRowAreaDamageAddr)(this, theDamage, theDamageFlags);
+    }
+    void StarFruitFire() {
+        reinterpret_cast<void (*)(Plant *)>(Plant_StarFruitFireAddr)(this);
+    }
+    void GetPeaHeadOffset(int &theOffsetX, int &theOffsetY) {
+        reinterpret_cast<void (*)(Plant *, int &, int &)>(Plant_GetPeaHeadOffsetAddr)(this, theOffsetX, theOffsetY);
+    }
+    TodParticleSystem *AddAttachedParticle(int thePosX, int thePosY, int theRenderPosition, ParticleEffect theEffect) {
+        return reinterpret_cast<TodParticleSystem *(*)(Plant *, int, int, int, ParticleEffect)>(Plant_AddAttachedParticleAddr)(this, thePosX, thePosY, theRenderPosition, theEffect);
+    }
 
     void PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int a6);
     void Update();
@@ -260,7 +273,9 @@ public:
     void SetImitaterFilterEffect();
     void BurnRow(int theRow);
     void UpdateProductionPlant();
-    void Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *gridItem);
+    void UpdateShooting();
+    void Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem);
+    void PlayIdleAnim(float theRate);
 };
 
 inline float PlantDrawHeightOffset(Board *theBoard, Plant *thePlant, SeedType theSeedType, int theCol, int theRow) {
@@ -313,11 +328,7 @@ inline bool (*old_Plant_IsUpgrade)(SeedType theSeedType);
 
 inline void (*old_Plant_PlayBodyReanim)(Plant *, const char *theTrackName, ReanimLoopType theLoopType, int theBlendTime, float theAnimRate);
 
-inline Zombie *(*old_Plant_FindTargetZombie)(Plant *, int theRow, PlantWeapon thePlantWeapon);
-
 inline void (*old_Plant_UpdateProductionPlant)(Plant *);
-
-inline void (*old_Plant_Fire)(Plant *, Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *gridItem);
 
 // inline void (*old_Plant_CobCannonFire)(Plant* plant, int x, int y);
 
