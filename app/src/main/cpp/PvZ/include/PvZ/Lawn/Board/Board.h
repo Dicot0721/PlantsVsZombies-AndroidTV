@@ -140,12 +140,12 @@ public:
     Sexy::ButtonListener mButtonListener;         // 64
     int unknownMembers1[4];                       // 65 ~ 68
     LawnApp *mApp;                                // 69
-    DataArray<Zombie> mZombiesList;               // 70 ~ 76
-    DataArray<Plant> mPlantsList;                 // 77 ~ 83
-    DataArray<Projectile> mProjectilesList;       // 84 ~ 90
-    DataArray<Coin> mCoinsList;                   // 91 ~ 97
-    DataArray<LawnMower> mLawnMowersList;         // 98 ~ 104
-    DataArray<GridItem> mGridItemsList;           // 105 ~ 111
+    DataArray<Zombie> mZombies;                   // 70 ~ 76
+    DataArray<Plant> mPlants;                     // 77 ~ 83
+    DataArray<Projectile> mProjectiles;           // 84 ~ 90
+    DataArray<Coin> mCoins;                       // 91 ~ 97
+    DataArray<LawnMower> mLawnMowers;             // 98 ~ 104
+    DataArray<GridItem> mGridItems;               // 105 ~ 111
     PlantRbTree mTangleKelpTree;                  // 112 ~ 117
     PlantRbTree mFlowerPotTree;                   // 118 ~ 123
     PlantRbTree mPumpkinTree;                     // 124 ~ 129

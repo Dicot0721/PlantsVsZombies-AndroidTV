@@ -609,11 +609,11 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
             TwoShortTwoIntDataEvent event;
 
             event.type = EventType::EVENT_SERVER_BOARD_PLANT_FIRE;
-            event.data1 = short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(this)->mID);
-            event.data2 = theTargetZombie == nullptr ? short(ZOMBIEID_NULL) : short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(theTargetZombie)->mID);
+            event.data1 = short(mBoard->mPlants.DataArrayGetID(this));
+            event.data2 = theTargetZombie == nullptr ? short(ZOMBIEID_NULL) : short(mBoard->mZombies.DataArrayGetID(theTargetZombie));
             event.data3.s.s1 = short(theRow);
             event.data3.s.s2 = short(thePlantWeapon);
-            event.data4.s.s1 = theTargetGridItem == nullptr ? short(GRIDITEMID_NULL) : short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(theTargetGridItem)->mID);
+            event.data4.s.s1 = theTargetGridItem == nullptr ? short(GRIDITEMID_NULL) : short(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
             send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
         }
     }
@@ -999,7 +999,7 @@ void Plant::Die() {
             return;
 
         if (tcpClientSocket >= 0) {
-            SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_DIE}, short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(this)->mID)};
+            SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_DIE}, short(mBoard->mPlants.DataArrayGetID(this))};
             send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
         }
     }
@@ -1582,7 +1582,7 @@ void Plant::UpdateProductionPlant() {
             }
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if (tcpClientSocket >= 0) {
-                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, short(reinterpret_cast<DataArray<Plant>::DataArrayItem *>(this)->mID), (short)mLaunchCounter};
+                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, short(mBoard->mPlants.DataArrayGetID(this)), short(mLaunchCounter)};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
             }
             mApp->PlayFoley(FoleyType::FOLEY_SPAWN_SUN);

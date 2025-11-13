@@ -99,8 +99,8 @@ public:
         mMaxUsedCount = 0U;
     }
 
-    uint32_t DataArrayGetID(T *theItem) const noexcept {
-        return reinterpret_cast<DataArrayItem *>(theItem)->mID;
+    uint32_t DataArrayGetID(const T *theItem) const noexcept {
+        return reinterpret_cast<const DataArrayItem *>(theItem)->mID;
     }
 
     bool IterateNext(T *&theItem) const noexcept {

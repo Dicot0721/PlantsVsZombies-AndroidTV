@@ -1679,8 +1679,7 @@ void Zombie::RiseFromGrave(int theGridX, int theGridY) {
     old_Zombie_RiseFromGrave(this, theGridX, theGridY);
     mBoard->mBackground = tmp;
 
-    TwoCharOneShortDataEvent event = {
-        {EventType::EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE}, (unsigned char)theGridX, (unsigned char)theGridY, short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(this)->mID)};
+    TwoCharOneShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE}, (unsigned char)theGridX, (unsigned char)theGridY, short(mBoard->mZombies.DataArrayGetID(this))};
     send(tcpClientSocket, &event, sizeof(TwoCharOneShortDataEvent), 0);
 }
 
@@ -2029,7 +2028,7 @@ void Zombie::DieNoLoot() {
             return;
 
         if (tcpClientSocket >= 0) {
-            SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_DIE}, short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(this)->mID)};
+            SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_DIE}, short(mBoard->mZombies.DataArrayGetID(this))};
             send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
         }
     }
@@ -2362,7 +2361,7 @@ bool Zombie::IsTangleKelpTarget() {
     }
     Plant *aPlant = nullptr;
     while (mBoard->IteratePlants(aPlant)) {
-        if (!aPlant->mDead && aPlant->mSeedType == SeedType::SEED_TANGLEKELP && aPlant->mTargetZombieID == reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(this)->mID) {
+        if (!aPlant->mDead && aPlant->mSeedType == SeedType::SEED_TANGLEKELP && aPlant->mTargetZombieID == mBoard->mZombies.DataArrayGetID(this)) {
             return true;
         }
     }
@@ -3206,7 +3205,7 @@ void Zombie::PickRandomSpeed() {
     if (mApp->IsVSMode() && tcpClientSocket >= 0) {
         TwoShortTwoIntDataEvent event;
         event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED;
-        event.data1 = short(reinterpret_cast<DataArray<Zombie>::DataArrayItem *>(this)->mID);
+        event.data1 = short(mBoard->mZombies.DataArrayGetID(this));
         event.data2 = short(mAnimTicksPerFrame);
         event.data3.f = mVelX;
         send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
