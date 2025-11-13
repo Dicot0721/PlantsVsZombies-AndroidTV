@@ -604,6 +604,10 @@ inline void *Plant_StarFruitFireAddr;
 inline void *Plant_GetPeaHeadOffsetAddr;
 inline void *Plant_AddAttachedParticleAddr;
 inline void *Plant_UpdateShootingAddr;
+inline void *Plant_UpdateShooterAddr;
+inline void *Plant_LaunchThreepeaterAddr;
+inline void *Plant_LaunchStarFruitAddr;
+inline void *Plant_FindTargetAndFireAddr;
 
 
 inline void *Projectile_UpdateAddr;
@@ -1910,6 +1914,10 @@ inline bool GetFunctionAddr() {
     Plant_GetPeaHeadOffsetAddr = dlsym(handle, "_ZN5Plant16GetPeaHeadOffsetERiS0_");
     Plant_AddAttachedParticleAddr = dlsym(handle, "_ZN5Plant19AddAttachedParticleEiii14ParticleEffect");
     Plant_UpdateShootingAddr = dlsym(handle, "_ZN5Plant14UpdateShootingEv");
+    Plant_UpdateShooterAddr = dlsym(handle, "_ZN5Plant13UpdateShooterEv");
+    Plant_LaunchThreepeaterAddr = dlsym(handle, "_ZN5Plant17LaunchThreepeaterEv");
+    Plant_LaunchStarFruitAddr = dlsym(handle, "_ZN5Plant15LaunchStarFruitEv");
+    Plant_FindTargetAndFireAddr = dlsym(handle, "_ZN5Plant17FindTargetAndFireEi11PlantWeapon");
 
 
     Projectile_UpdateAddr = dlsym(handle, "_ZN10Projectile6UpdateEv");

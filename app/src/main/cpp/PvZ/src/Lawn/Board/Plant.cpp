@@ -99,6 +99,21 @@ void Plant::PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, Se
     old_Plant_PlantInitialize(this, theGridX, theGridY, theSeedType, theImitaterType, a6);
     UpdateReanim();
 
+    if (mApp->IsVSMode()) {
+        //        if (mLaunchRate > 0) {
+        //            if (MakesSun())
+        //                mLaunchCounter = RandRangeInt(300, mLaunchRate / 2);
+        //            else
+        //                mLaunchCounter = RandRangeInt(0, mLaunchRate);
+        //        } else
+        //            mLaunchCounter = 0;
+
+        if (tcpClientSocket >= 0) {
+            TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, short(mBoard->mPlants.DataArrayGetID(this)), short(mLaunchCounter)};
+            send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+        }
+    }
+
     // 在对战模式修改指定植物的血量
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         switch (theSeedType) {
@@ -1546,6 +1561,10 @@ void Plant::BurnRow(int theRow) {
     }
 }
 
+bool Plant::MakesSun() {
+    return mSeedType == SeedType::SEED_SUNFLOWER || mSeedType == SeedType::SEED_TWINSUNFLOWER || mSeedType == SeedType::SEED_SUNSHROOM;
+}
+
 void Plant::UpdateProductionPlant() {
     if (mApp->mGameMode == GAMEMODE_MP_VS && (tcp_connected || tcpClientSocket >= 0)) {
         if (!IsInPlay()) {
@@ -1786,6 +1805,47 @@ void Plant::UpdateShooting() {
     }
 
     mShootingCounter = 1;
+}
+
+void Plant::UpdateShooter() {
+    mLaunchCounter--;
+    if (mLaunchCounter <= 0) {
+        if (!(mApp->IsVSMode() && tcp_connected)) {
+            mLaunchCounter = mLaunchRate - Sexy::Rand(15);
+        }
+        if (tcpClientSocket >= 0) {
+            TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, short(mBoard->mPlants.DataArrayGetID(this)), short(mLaunchCounter)};
+            send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+        }
+
+        if (mSeedType == SeedType::SEED_THREEPEATER) {
+            LaunchThreepeater();
+        } else if (mSeedType == SeedType::SEED_STARFRUIT) {
+            LaunchStarFruit();
+        } else if (mSeedType == SeedType::SEED_SPLITPEA) {
+            FindTargetAndFire(mRow, PlantWeapon::WEAPON_SECONDARY);
+        } else if (mSeedType == SeedType::SEED_CACTUS) {
+            if (mState == PlantState::STATE_CACTUS_HIGH) {
+                FindTargetAndFire(mRow, PlantWeapon::WEAPON_PRIMARY);
+            } else if (mState == PlantState::STATE_CACTUS_LOW) {
+                FindTargetAndFire(mRow, PlantWeapon::WEAPON_SECONDARY);
+            }
+        } else {
+            FindTargetAndFire(mRow, PlantWeapon::WEAPON_PRIMARY);
+        }
+    }
+
+    if (mLaunchCounter == 50 && mSeedType == SeedType::SEED_CATTAIL) {
+        FindTargetAndFire(mRow, PlantWeapon::WEAPON_PRIMARY);
+    }
+    if (mLaunchCounter == 25) {
+        if (mSeedType == SeedType::SEED_REPEATER || mSeedType == SeedType::SEED_LEFTPEATER) {
+            FindTargetAndFire(mRow, PlantWeapon::WEAPON_PRIMARY);
+        } else if (mSeedType == SeedType::SEED_SPLITPEA) {
+            FindTargetAndFire(mRow, PlantWeapon::WEAPON_PRIMARY);
+            FindTargetAndFire(mRow, PlantWeapon::WEAPON_SECONDARY);
+        }
+    }
 }
 
 void Plant::PlayIdleAnim(float theRate) {

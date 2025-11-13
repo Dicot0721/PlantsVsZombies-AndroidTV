@@ -239,6 +239,15 @@ public:
     TodParticleSystem *AddAttachedParticle(int thePosX, int thePosY, int theRenderPosition, ParticleEffect theEffect) {
         return reinterpret_cast<TodParticleSystem *(*)(Plant *, int, int, int, ParticleEffect)>(Plant_AddAttachedParticleAddr)(this, thePosX, thePosY, theRenderPosition, theEffect);
     }
+    void LaunchThreepeater() {
+        reinterpret_cast<void (*)(Plant *)>(Plant_LaunchThreepeaterAddr)(this);
+    }
+    void LaunchStarFruit() {
+        reinterpret_cast<void (*)(Plant *)>(Plant_LaunchStarFruitAddr)(this);
+    }
+    void FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
+        reinterpret_cast<void (*)(Plant *, int, PlantWeapon)>(Plant_FindTargetAndFireAddr)(this, theRow, thePlantWeapon);
+    }
 
     void PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int a6);
     void Update();
@@ -272,8 +281,10 @@ public:
     bool DrawMagnetItemsOnTop();
     void SetImitaterFilterEffect();
     void BurnRow(int theRow);
+    bool MakesSun();
     void UpdateProductionPlant();
     void UpdateShooting();
+    void UpdateShooter();
     void Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem);
     void PlayIdleAnim(float theRate);
 };
