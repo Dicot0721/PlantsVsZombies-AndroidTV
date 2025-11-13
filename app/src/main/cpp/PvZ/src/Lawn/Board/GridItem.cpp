@@ -32,6 +32,7 @@
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
+#include "PvZ/TodLib/Effect/TodParticle.h"
 
 #include <numbers>
 
@@ -129,45 +130,51 @@ void GridItem::Update() {
     if (requestPause) {
         return; // 高级暂停
     }
-    if (mGridItemType == GRIDITEM_GRAVESTONE && mApp->mGameMode == GAMEMODE_MP_VS && mApp->mGameScene == SCENE_PLAYING) {
 
-        if (mBeatenFlashCountdown > 0)
-            mBeatenFlashCountdown--;
+    if (mGridItemType == GRIDITEM_GRAVESTONE && mApp->mGameMode == GAMEMODE_MP_VS && mApp->mGameScene == SCENE_PLAYING) {
+        Reanimation *aReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+        if (aReanim)
+            aReanim->Update();
+
+        TodParticleSystem *aParticle = mApp->ParticleTryToGet(mGridItemParticleID);
+        if (aParticle)
+            aParticle->Update();
+
+        if (mJustGotShotCounter > 0)
+            mJustGotShotCounter--;
+
         mLaunchCounter--;
+
         if (mLaunchCounter <= 100) {
-            int num = TodAnimateCurve(100, 0, mLaunchCounter, 0, 100, TodCurves::CURVE_LINEAR);
-            mBeatenFlashCountdown = mBeatenFlashCountdown > num ? mBeatenFlashCountdown : num;
+            int aFlashCountdown = TodAnimateCurve(100, 0, mLaunchCounter, 0, 100, TodCurves::CURVE_LINEAR);
+            mJustGotShotCounter = std::max(mJustGotShotCounter, aFlashCountdown);
         }
-        Reanimation *reanimation = mApp->ReanimationTryToGet(mGridItemReanimID);
-        if (mBeatenFlashCountdown <= 0) {
-            reanimation->mEnableExtraAdditiveDraw = false;
-        } else {
-            int v13 = 3 * mBeatenFlashCountdown;
-            int v11;
-            if (v13 <= 254) {
-                v11 = v13 / 2;
+
+        if (aReanim) {
+            if (mJustGotShotCounter <= 0) {
+                aReanim->mEnableExtraAdditiveDraw = false;
             } else {
-                v13 = 255;
-                v11 = 127;
+                int aGrayness = std::min(mJustGotShotCounter * 3, 255);
+                int aGrayness2 = (aGrayness == 255) ? 127 : (aGrayness / 2);
+                aReanim->mExtraAdditiveColor = Color(aGrayness, aGrayness2, aGrayness, 255);
+                aReanim->mEnableExtraAdditiveDraw = true;
             }
-            reanimation->mExtraAdditiveColor = Color(v13, v11, v13, 255);
-            reanimation->mEnableExtraAdditiveDraw = true;
         }
-        if (mLaunchCounter <= 0)
-        // 生产
-        {
+
+        if (mLaunchCounter <= 0) { // 生产
             if (tcp_connected) {
                 return;
             }
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if (tcpClientSocket >= 0) {
-                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(this)->mID), (short)mLaunchCounter};
+                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, short(reinterpret_cast<DataArray<GridItem>::DataArrayItem *>(this)->mID), short(mLaunchCounter)};
                 send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
             }
             mBoard->AddCoin(mBoard->GridToPixelX(mGridX, mGridY), mBoard->GridToPixelY(mGridX, mGridY), CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_FROM_GRAVE);
         }
         return;
     }
+
     old_GridItem_Update(this);
 }
 

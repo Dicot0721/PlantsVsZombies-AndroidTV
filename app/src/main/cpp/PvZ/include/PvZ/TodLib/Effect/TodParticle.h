@@ -82,6 +82,9 @@ public:
     void ParticleSystemDie() {
         reinterpret_cast<void (*)(TodParticleSystem *)>(TodParticleSystem_ParticleSystemDieAddr)(this);
     }
+    void Update() {
+        reinterpret_cast<void (*)(TodParticleSystem *)>(TodParticleSystem_UpdateAddr)(this);
+    }
 
     ~TodParticleSystem() {
         _destructor();

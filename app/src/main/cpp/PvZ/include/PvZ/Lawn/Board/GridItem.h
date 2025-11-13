@@ -51,7 +51,7 @@ public:
     float mGoalX;                            // 15
     float mGoalY;                            // 16
     ReanimationID mGridItemReanimID;         // 17
-    int *mGridItemParticleID;                // 18
+    ParticleSystemID mGridItemParticleID;    // 18
     ZombieType mZombieType;                  // 19
     SeedType mSeedType;                      // 20
     ScaryPotType mScaryPotType;              // 21
@@ -65,7 +65,7 @@ public:
     int unkMems[3];                          // 63 ~ 65
     int mLaunchCounter;                      // 66
     int mLaunchRate;                         // 67
-    int mBeatenFlashCountdown;               // 68
+    int mJustGotShotCounter;                 // 68
     int mVSGraveStoneHealth;                 // 69
     int mVSTargetZombieHealth;               // 70
     int unkMems2[4];                         // 71 ~ 74
@@ -73,6 +73,9 @@ public:
 
     void GridItemDie() {
         reinterpret_cast<void (*)(GridItem *)>(GridItem_GridItemDieAddr)(this);
+    }
+    void UpdateBurialMound() {
+        reinterpret_cast<void (*)(GridItem *)>(GridItem_UpdateBurialMoundAddr)(this);
     }
 
     void DrawScaryPot(Sexy::Graphics *g);

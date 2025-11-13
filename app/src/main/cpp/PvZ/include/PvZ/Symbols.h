@@ -959,6 +959,9 @@ inline void *TodParticleSystem_OverrideColorAddr;
 inline void *TodParticleSystem_OverrideImageAddr;
 inline void *TodParticleSystem_Delete2Addr;
 inline void *TodParticleSystem_ParticleSystemDieAddr;
+inline void *TodParticleSystem_UpdateAddr;
+
+
 inline void *DrawCheckboxTextAddr;
 inline void *Sexy_Checkbox_CheckBoxAddr;
 inline void *Sexy_Checkbox_DeleteAddr;
@@ -1011,6 +1014,7 @@ inline void *GridItem_DrawCraterAddr;
 inline void *GridItem_DrawStinkyAddr;
 inline void *GridItem_DrawSquirrelAddr;
 inline void *GridItem_GridItemDieAddr;
+inline void *GridItem_UpdateBurialMoundAddr;
 
 
 inline void *TodDrawImageCelCenterScaledFAddr;
@@ -2094,6 +2098,7 @@ inline bool GetFunctionAddr() {
     GridItem_DrawSquirrelAddr = dlsym(handle, "_ZN8GridItem12DrawSquirrelEPN4Sexy8GraphicsE");
     GridItem_DrawCraterAddr = dlsym(handle, "_ZN8GridItem10DrawCraterEPN4Sexy8GraphicsE");
     GridItem_GridItemDieAddr = dlsym(handle, "_ZN8GridItem11GridItemDieEv");
+    GridItem_UpdateBurialMoundAddr = dlsym(handle, "_ZN8GridItem17UpdateBurialMoundEv");
 
 
     Sexy_GamepadApp_CheckGamepadAddr = dlsym(handle, "_ZN4Sexy10GamepadApp12CheckGamepadEv");
@@ -2245,6 +2250,9 @@ inline bool GetFunctionAddr() {
     TodParticleSystem_OverrideImageAddr = dlsym(handle, "_ZN17TodParticleSystem13OverrideImageEPKcPN4Sexy5ImageE");
     TodParticleSystem_Delete2Addr = dlsym(handle, "_ZN17TodParticleSystemD2Ev");
     TodParticleSystem_ParticleSystemDieAddr = dlsym(handle, "_ZN17TodParticleSystem17ParticleSystemDieEv");
+    TodParticleSystem_UpdateAddr = dlsym(handle, "_ZN17TodParticleSystem6UpdateEv");
+
+
     DrawCheckboxTextAddr = dlsym(handle, "_Z16DrawCheckboxTextPN4Sexy8GraphicsERKSsPNS_6WidgetEPKc");
     Sexy_Checkbox_CheckBoxAddr = dlsym(handle, "_ZN4Sexy8CheckboxC2EPNS_5ImageES2_iPNS_16CheckboxListenerE");
     Sexy_Checkbox_DeleteAddr = dlsym(handle, "_ZN4Sexy8CheckboxD0Ev");
