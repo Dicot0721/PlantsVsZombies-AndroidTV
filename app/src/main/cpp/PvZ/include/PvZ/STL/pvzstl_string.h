@@ -169,7 +169,7 @@ public:
         if (_disjunct(s) || _get_rep()->_is_shared()) {
             return _replace_safe(0, size(), s, n);
         }
-        const size_type pos = s - c_str();
+        const size_type pos = static_cast<size_type>(s - c_str());
         if (pos >= n) {
             traits_type::copy(_dataplus, s, n);
         } else if (pos > 0) {
@@ -317,7 +317,7 @@ public:
         if (_disjunct(s) || _get_rep()->_is_shared()) {
             return _replace_safe(pos, 0, s, n);
         }
-        const size_type off = s - c_str();
+        const size_type off = static_cast<size_type>(s - c_str());
         _mutate(pos, 0, n);
         s = c_str() + off;
         CharT *p = _dataplus + pos;
@@ -378,7 +378,7 @@ public:
         if (_disjunct(s)) {
             reserve(len);
         } else {
-            const size_type off = s - c_str();
+            const size_type off = static_cast<size_type>(s - c_str());
             reserve(len);
             s = c_str() + off;
         }
@@ -442,7 +442,7 @@ public:
         if (_disjunct(s) || _get_rep()->_is_shared()) {
             return _replace_safe(pos, n1, s, n2);
         } else if ((left = (s + n2 <= c_str() + pos)) || (c_str() + pos + n1 <= s)) {
-            size_type off = s - c_str();
+            size_type off = static_cast<size_type>(s - c_str());
             if (!left) {
                 off += n2 - n1;
             }
@@ -511,10 +511,52 @@ public:
 
     [[nodiscard]] size_type find(CharT c, size_type pos = 0) const noexcept {
         const size_type sz = size();
-        if (pos < sz) {
-            const CharT *p = traits_type::find(c_str() + pos, sz - pos, c);
-            if (p != nullptr) {
-                return p - c_str();
+        if (pos >= sz) {
+            return npos;
+        }
+        const CharT *const p = traits_type::find(c_str() + pos, sz - pos, c);
+        if (p == nullptr) {
+            return npos;
+        }
+        return static_cast<size_type>(p - c_str());
+    }
+
+    [[nodiscard]] size_type rfind(const basic_string &str, size_type pos = npos) const noexcept {
+        return rfind(_self_view{str}, pos);
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    [[nodiscard]] size_type rfind(const SV &t, size_type pos = npos) const noexcept(std::is_nothrow_convertible_v<const SV &, _self_view>) {
+        const _self_view sv = t;
+        const auto xpos = _self_view{*this}.rfind(sv, pos);
+        if constexpr (_self_view::npos == npos) {
+            return xpos;
+        } else {
+            return (xpos != _self_view::npos) ? static_cast<size_type>(xpos) : npos;
+        }
+    }
+
+    [[nodiscard]] size_type rfind(const CharT *s, size_type pos, size_type n) const {
+        assert((s != nullptr || n == 0) && "basic_string::rfind received nullptr");
+        return rfind(_self_view{s, n}, pos);
+    }
+
+    [[nodiscard]] size_type rfind(const CharT *s, size_type pos = npos) const {
+        assert((s != nullptr) && "basic_string::rfind received nullptr");
+        return rfind(_self_view{s}, pos);
+    }
+
+    [[nodiscard]] size_type rfind(CharT c, size_type pos = npos) const noexcept {
+        const size_type sz = size();
+        if (sz == 0) {
+            return npos;
+        }
+        for (const CharT *ps = c_str() + std::min(pos, sz - 1);; --ps) {
+            if (traits_type::eq(*ps, c)) {
+                return static_cast<size_type>(ps - c_str());
+            }
+            if (ps == c_str()) {
+                break;
             }
         }
         return npos;
@@ -530,7 +572,7 @@ public:
     }
 
     [[nodiscard]] bool starts_with(CharT c) const noexcept {
-        return !empty() && (front() == c);
+        return !empty() && traits_type::eq(front(), c);
     }
 
     [[nodiscard]] bool ends_with(_self_view sv) const noexcept {
@@ -543,7 +585,7 @@ public:
     }
 
     [[nodiscard]] bool ends_with(CharT c) const noexcept {
-        return !empty() && (back() == c);
+        return !empty() && traits_type::eq(back(), c);
     }
 
     [[nodiscard]] bool contains(_self_view sv) const noexcept {
