@@ -53,9 +53,12 @@
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Effect/TodParticle.h"
 
+#include <unistd.h>
+
 #include <cstddef>
 #include <cstdio>
-#include <unistd.h>
+
+#include <unordered_map>
 
 using namespace Sexy;
 using IdMap = std::unordered_map<short, short>;

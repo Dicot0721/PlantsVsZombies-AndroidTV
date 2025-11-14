@@ -20,21 +20,32 @@
 #ifndef HOMURA_CONTAINER_H
 #define HOMURA_CONTAINER_H
 
+#include <concepts>
+#include <iterator>
 #include <optional>
-#include <unordered_map>
+#include <type_traits>
 
 namespace homura {
 
-template <typename Key, typename T>
-std::optional<T> FindInMap(const std::unordered_map<Key, T> &map, const Key &key) {
+template <template <typename...> typename Map, typename Key, typename T>
+concept IsMap = std::same_as<typename std::iterator_traits<typename Map<Key, T>::const_iterator>::value_type, std::pair<const Key, T>> //
+    && requires(const Map<Key, T> &map, const Key &key) {
+           { map.find(key) } -> std::same_as<typename Map<Key, T>::const_iterator>;
+           { map.end() } -> std::same_as<typename Map<Key, T>::const_iterator>;
+       };
+
+template <template <typename...> typename Map, typename Key, typename T>
+    requires IsMap<Map, Key, T>
+std::optional<T> FindInMap(const Map<Key, T> &map, const Key &key) {
     auto it = map.find(key);
-    return (it != map.cend()) ? std::optional<T>{it->second} : std::nullopt;
+    return (it != map.end()) ? std::optional<T>{it->second} : std::nullopt;
 }
 
-template <typename Key, typename T>
-bool FindInMap(const std::unordered_map<Key, T> &map, const Key &key, T &output) {
+template <template <typename...> typename Map, typename Key, typename T>
+    requires IsMap<Map, Key, T>
+bool FindInMap(const Map<Key, T> &map, const Key &key, T &output) {
     auto it = map.find(key);
-    if (it == map.cend()) {
+    if (it == map.end()) {
         return false;
     }
     output = it->second;
