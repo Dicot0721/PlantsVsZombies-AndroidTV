@@ -1281,7 +1281,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER: {
             TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
             short clientPlantID;
-            if (homura::FindInHashMap(serverPlantIDMap, event1->data1, clientPlantID)) {
+            if (homura::FindInMap(serverPlantIDMap, event1->data1, clientPlantID)) {
                 Plant *plant = mPlants.DataArrayGet(clientPlantID);
                 plant->mLaunchCounter = event1->data2;
             }
@@ -1289,7 +1289,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER: {
             TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
             short clientGridItemID;
-            if (homura::FindInHashMap(serverGridItemIDMap, event1->data1, clientGridItemID)) {
+            if (homura::FindInMap(serverGridItemIDMap, event1->data1, clientGridItemID)) {
                 GridItem *gridItem = mGridItems.DataArrayGet(clientGridItemID);
                 gridItem->mLaunchCounter = event1->data2;
             }
@@ -1305,7 +1305,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_PLANT_ANIMATION: {
             TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
             short clientPlantID;
-            if (homura::FindInHashMap(serverPlantIDMap, event1->data1, clientPlantID)) {
+            if (homura::FindInMap(serverPlantIDMap, event1->data1, clientPlantID)) {
                 Plant *plant = mPlants.DataArrayGet(clientPlantID);
                 plant->mFrameLength = event1->data2;
                 plant->mAnimCounter = event1->data3.i;
@@ -1316,14 +1316,14 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             TwoShortTwoIntDataEvent *eventPlantFire = reinterpret_cast<TwoShortTwoIntDataEvent *>(event);
             short serverPlantID = eventPlantFire->data1;
             short clientPlantID;
-            if (homura::FindInHashMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
+            if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
                 short aZombieID = eventPlantFire->data2;
                 short aGridItemID = eventPlantFire->data4.s.s1;
                 short aRow = eventPlantFire->data3.s.s1;
                 short aPlantWeapon = eventPlantFire->data3.s.s2;
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
-                Zombie *aZombie = aZombieID == ZOMBIEID_NULL ? nullptr : mZombies.DataArrayGet(homura::FindInHashMap(serverZombieIDMap, aZombieID).value_or(0));
-                GridItem *aGridItem = aGridItemID == GRIDITEMID_NULL ? nullptr : mGridItems.DataArrayGet(homura::FindInHashMap(serverGridItemIDMap, aGridItemID).value_or(0));
+                Zombie *aZombie = aZombieID == ZOMBIEID_NULL ? nullptr : mZombies.DataArrayGet(homura::FindInMap(serverZombieIDMap, aZombieID).value_or(0));
+                GridItem *aGridItem = aGridItemID == GRIDITEMID_NULL ? nullptr : mGridItems.DataArrayGet(homura::FindInMap(serverGridItemIDMap, aGridItemID).value_or(0));
                 tcp_connected = false;
                 aPlant->Fire(aZombie, aRow, PlantWeapon(aPlantWeapon), aGridItem);
                 tcp_connected = true;
@@ -1340,7 +1340,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             SimpleShortEvent *eventPlantDie = reinterpret_cast<SimpleShortEvent *>(event);
             short serverPlantID = eventPlantDie->data;
             short clientPlantID;
-            if (homura::FindInHashMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
+            if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
                 tcp_connected = false;
                 aPlant->Die();
@@ -1351,7 +1351,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             SimpleShortEvent *eventZombieDie = reinterpret_cast<SimpleShortEvent *>(event);
             short serverZombieID = eventZombieDie->data;
             short clientZombieID;
-            if (homura::FindInHashMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 tcp_connected = false;
                 aZombie->DieNoLoot();
@@ -1373,7 +1373,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             TwoCharOneShortDataEvent *event1 = (TwoCharOneShortDataEvent *)event;
             LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE ID {}", event1->data3);
             short clientZombieID;
-            if (homura::FindInHashMap(serverZombieIDMap, event1->data3, clientZombieID)) {
+            if (homura::FindInMap(serverZombieIDMap, event1->data3, clientZombieID)) {
                 LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE clientZombieID {}", clientZombieID);
                 Zombie *zombie = mZombies.DataArrayGet(clientZombieID);
                 zombie->RiseFromGrave(event1->data1, event1->data2);
@@ -1383,7 +1383,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             TwoShortTwoIntDataEvent *eventPickSpeed = reinterpret_cast<TwoShortTwoIntDataEvent *>(event);
             short serverZombieID = eventPickSpeed->data1;
             short clientZombieID;
-            if (homura::FindInHashMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 float aVelX = eventPickSpeed->data3.f;
                 short anAnimTicks = eventPickSpeed->data2;
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);

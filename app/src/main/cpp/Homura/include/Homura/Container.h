@@ -26,13 +26,13 @@
 namespace homura {
 
 template <typename Key, typename T>
-std::optional<T> FindInHashMap(const std::unordered_map<Key, T> &map, const Key &key) {
+std::optional<T> FindInMap(const std::unordered_map<Key, T> &map, const Key &key) {
     auto it = map.find(key);
     return (it != map.cend()) ? std::optional<T>{it->second} : std::nullopt;
 }
 
 template <typename Key, typename T>
-bool FindInHashMap(const std::unordered_map<Key, T> &map, const Key &key, T &output) {
+bool FindInMap(const std::unordered_map<Key, T> &map, const Key &key, T &output) {
     auto it = map.find(key);
     if (it == map.cend()) {
         return false;
