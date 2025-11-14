@@ -49,11 +49,11 @@ public:
 
     DataArray() noexcept {
         mBlock = nullptr;
-        mMaxUsedCount = 0U;
-        mMaxSize = 0U;
-        mFreeListHead = 0U;
-        mSize = 0U;
-        mNextKey = 1U;
+        mMaxUsedCount = 0u;
+        mMaxSize = 0u;
+        mFreeListHead = 0u;
+        mSize = 0u;
+        mNextKey = 1u;
         mName = nullptr;
     }
 
@@ -64,7 +64,7 @@ public:
     void DataArrayInitialize(uint32_t theMaxSize, const char *theName) {
         mBlock = reinterpret_cast<DataArrayItem *>(operator new(sizeof(DataArrayItem) * theMaxSize));
         mMaxSize = theMaxSize;
-        mNextKey = 1001U;
+        mNextKey = 1001u;
         mName = theName;
     }
 
@@ -73,10 +73,10 @@ public:
             DataArrayFreeAll();
             operator delete(mBlock);
             mBlock = nullptr;
-            mMaxUsedCount = 0U;
-            mMaxSize = 0U;
-            mFreeListHead = 0U;
-            mSize = 0U;
+            mMaxUsedCount = 0u;
+            mMaxSize = 0u;
+            mFreeListHead = 0u;
+            mSize = 0u;
             mName = nullptr;
         }
     }
@@ -87,12 +87,11 @@ public:
         uint32_t anId = aItem->mID & DATA_ARRAY_INDEX_MASK;
         aItem->mID = mFreeListHead;
         mFreeListHead = anId;
-        mSize--;
+        --mSize;
     }
 
     void DataArrayFreeAll() noexcept {
-        T *aItem = nullptr;
-        while (IterateNext(aItem)) {
+        for (T *aItem = nullptr; IterateNext(aItem);) {
             DataArrayFree(aItem);
         }
         mFreeListHead = 0U;
@@ -110,13 +109,12 @@ public:
         } else {
             ++aItem;
         }
-        DataArrayItem *aLast = &mBlock[mMaxUsedCount];
-        while (uintptr_t(aItem) < uintptr_t(aLast)) {
+        const DataArrayItem *aLast = &mBlock[mMaxUsedCount];
+        for (; aItem < aLast; ++aItem) {
             if (aItem->mID & DATA_ARRAY_KEY_MASK) {
                 theItem = reinterpret_cast<T *>(aItem);
                 return true;
             }
-            ++aItem;
         }
         return false;
     }
@@ -127,7 +125,7 @@ public:
             mFreeListHead = ++mMaxUsedCount;
         } else {
             aNext = mFreeListHead;
-            mFreeListHead = mBlock[mFreeListHead].mID;
+            mFreeListHead = mBlock[aNext].mID;
         }
 
         DataArrayItem *aNewItem = &mBlock[aNext];
@@ -142,11 +140,11 @@ public:
     }
 
     T *DataArrayTryToGet(uint32_t theId) noexcept {
-        if (!theId || (theId & DATA_ARRAY_INDEX_MASK) >= mMaxSize) {
+        if (theId == 0 || (theId & DATA_ARRAY_INDEX_MASK) >= mMaxSize) {
             return nullptr;
         }
         DataArrayItem *aBlock = &mBlock[theId & DATA_ARRAY_INDEX_MASK];
-        return aBlock->mID == theId ? &aBlock->mItem : nullptr;
+        return (aBlock->mID == theId) ? &aBlock->mItem : nullptr;
     }
 
     T *DataArrayGet(uint32_t theId) noexcept {
