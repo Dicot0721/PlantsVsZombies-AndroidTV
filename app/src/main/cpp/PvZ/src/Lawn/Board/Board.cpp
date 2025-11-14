@@ -18,6 +18,7 @@
  */
 
 #include "PvZ/Lawn/Board/Board.h"
+#include "Homura/Container.h"
 #include "Homura/Formation.h"
 #include "Homura/Logger.h"
 #include "PvZ/Android/IntroVideo.h"
@@ -48,7 +49,6 @@
 #include "PvZ/SexyAppFramework/GamepadApp.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
-#include "PvZ/TodLib/Common/DynamicMap.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Effect/TodParticle.h"
@@ -58,6 +58,7 @@
 #include <unistd.h>
 
 using namespace Sexy;
+using IdMap = std::unordered_map<short, short>;
 
 Board::Board(LawnApp *theApp) {
     _constructor(theApp);
@@ -1045,8 +1046,7 @@ bool TRect_Contains(Rect *rect, int x, int y) {
     return rect->mX < x && rect->mY < y && rect->mX + rect->mWidth > x && rect->mY + rect->mHeight > y;
 }
 
-std::vector<char> clientRecvBuffer;
-
+static std::vector<char> clientRecvBuffer;
 
 size_t Board::getClientEventSize(EventType type) {
     switch (type) {
@@ -1116,13 +1116,13 @@ void Board::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
     }
 }
 
-
+namespace {
 std::vector<char> serverRecvBuffer;
-DynamicMap serverPlantIDMap;
-DynamicMap serverZombieIDMap;
-DynamicMap serverCoinIDMap;
-DynamicMap serverGridItemIDMap;
-
+IdMap serverPlantIDMap;
+IdMap serverZombieIDMap;
+IdMap serverCoinIDMap;
+IdMap serverGridItemIDMap;
+} // namespace
 
 size_t Board::getServerEventSize(EventType type) {
     switch (type) {
@@ -1281,7 +1281,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER: {
             TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
             short clientPlantID;
-            if (serverPlantIDMap.Lookup(event1->data1, clientPlantID)) {
+            if (homura::FindInHashMap(serverPlantIDMap, event1->data1, clientPlantID)) {
                 Plant *plant = mPlants.DataArrayGet(clientPlantID);
                 plant->mLaunchCounter = event1->data2;
             }
@@ -1289,7 +1289,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER: {
             TwoShortDataEvent *event1 = (TwoShortDataEvent *)event;
             short clientGridItemID;
-            if (serverGridItemIDMap.Lookup(event1->data1, clientGridItemID)) {
+            if (homura::FindInHashMap(serverGridItemIDMap, event1->data1, clientGridItemID)) {
                 GridItem *gridItem = mGridItems.DataArrayGet(clientGridItemID);
                 gridItem->mLaunchCounter = event1->data2;
             }
@@ -1300,12 +1300,12 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             gridItem->mLaunchCounter = event1->data4;
             gridItem->mVSGraveStoneHealth = 350;
             gridItem->unkBool1 = true;
-            serverGridItemIDMap.Add(event1->data3, short(mGridItems.DataArrayGetID(gridItem)));
+            serverGridItemIDMap.emplace(event1->data3, short(mGridItems.DataArrayGetID(gridItem)));
         } break;
         case EVENT_SERVER_BOARD_PLANT_ANIMATION: {
             TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
             short clientPlantID;
-            if (serverPlantIDMap.Lookup(event1->data1, clientPlantID)) {
+            if (homura::FindInHashMap(serverPlantIDMap, event1->data1, clientPlantID)) {
                 Plant *plant = mPlants.DataArrayGet(clientPlantID);
                 plant->mFrameLength = event1->data2;
                 plant->mAnimCounter = event1->data3.i;
@@ -1316,14 +1316,14 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             TwoShortTwoIntDataEvent *eventPlantFire = reinterpret_cast<TwoShortTwoIntDataEvent *>(event);
             short serverPlantID = eventPlantFire->data1;
             short clientPlantID;
-            if (serverPlantIDMap.Lookup(serverPlantID, clientPlantID)) {
+            if (homura::FindInHashMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
                 short aZombieID = eventPlantFire->data2;
                 short aGridItemID = eventPlantFire->data4.s.s1;
                 short aRow = eventPlantFire->data3.s.s1;
                 short aPlantWeapon = eventPlantFire->data3.s.s2;
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
-                Zombie *aZombie = aZombieID == ZOMBIEID_NULL ? nullptr : mZombies.DataArrayGet(serverZombieIDMap.Lookup(aZombieID));
-                GridItem *aGridItem = aGridItemID == GRIDITEMID_NULL ? nullptr : mGridItems.DataArrayGet(serverGridItemIDMap.Lookup(aGridItemID));
+                Zombie *aZombie = aZombieID == ZOMBIEID_NULL ? nullptr : mZombies.DataArrayGet(homura::FindInHashMap(serverZombieIDMap, aZombieID).value_or(0));
+                GridItem *aGridItem = aGridItemID == GRIDITEMID_NULL ? nullptr : mGridItems.DataArrayGet(homura::FindInHashMap(serverGridItemIDMap, aGridItemID).value_or(0));
                 tcp_connected = false;
                 aPlant->Fire(aZombie, aRow, PlantWeapon(aPlantWeapon), aGridItem);
                 tcp_connected = true;
@@ -1333,14 +1333,14 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             TwoShortTwoIntDataEvent *event1 = (TwoShortTwoIntDataEvent *)event;
             tcp_connected = false;
             Plant *plant = AddPlant(event1->data1, event1->data2, (SeedType)event1->data3.s.s1, (SeedType)event1->data3.s.s2, 0, event1->data4.s.s2);
-            serverPlantIDMap.Add(event1->data4.s.s1, short(mPlants.DataArrayGetID(plant)));
+            serverPlantIDMap.emplace(event1->data4.s.s1, short(mPlants.DataArrayGetID(plant)));
             tcp_connected = true;
         } break;
         case EVENT_SERVER_BOARD_PLANT_DIE: {
             SimpleShortEvent *eventPlantDie = reinterpret_cast<SimpleShortEvent *>(event);
             short serverPlantID = eventPlantDie->data;
             short clientPlantID;
-            if (serverPlantIDMap.Lookup(serverPlantID, clientPlantID)) {
+            if (homura::FindInHashMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
                 tcp_connected = false;
                 aPlant->Die();
@@ -1351,7 +1351,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             SimpleShortEvent *eventZombieDie = reinterpret_cast<SimpleShortEvent *>(event);
             short serverZombieID = eventZombieDie->data;
             short clientZombieID;
-            if (serverZombieIDMap.Lookup(serverZombieID, clientZombieID)) {
+            if (homura::FindInHashMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 tcp_connected = false;
                 aZombie->DieNoLoot();
@@ -1363,7 +1363,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             tcp_connected = false;
             Zombie *aZombie = AddZombieInRow((ZombieType)eventZombieAdd->data1[0], eventZombieAdd->data1[1], eventZombieAdd->data1[2], eventZombieAdd->data1[3]);
             LOG_DEBUG("serverZombieIDMap Add {} {}", eventZombieAdd->data2, short(mZombies.DataArrayGetID(aZombie)));
-            serverZombieIDMap.Add(eventZombieAdd->data2, short(mZombies.DataArrayGetID(aZombie)));
+            serverZombieIDMap.emplace(eventZombieAdd->data2, short(mZombies.DataArrayGetID(aZombie)));
             tcp_connected = true;
             float aVelX = eventZombieAdd->data3[0].f;
             aZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
@@ -1373,7 +1373,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             TwoCharOneShortDataEvent *event1 = (TwoCharOneShortDataEvent *)event;
             LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE ID {}", event1->data3);
             short clientZombieID;
-            if (serverZombieIDMap.Lookup(event1->data3, clientZombieID)) {
+            if (homura::FindInHashMap(serverZombieIDMap, event1->data3, clientZombieID)) {
                 LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE clientZombieID {}", clientZombieID);
                 Zombie *zombie = mZombies.DataArrayGet(clientZombieID);
                 zombie->RiseFromGrave(event1->data1, event1->data2);
@@ -1383,7 +1383,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             TwoShortTwoIntDataEvent *eventPickSpeed = reinterpret_cast<TwoShortTwoIntDataEvent *>(event);
             short serverZombieID = eventPickSpeed->data1;
             short clientZombieID;
-            if (serverZombieIDMap.Lookup(serverZombieID, clientZombieID)) {
+            if (homura::FindInHashMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 float aVelX = eventPickSpeed->data3.f;
                 short anAnimTicks = eventPickSpeed->data2;
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
@@ -1420,24 +1420,24 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_BOARD_START_LEVEL: {
             NineShortDataEvent *event1 = (NineShortDataEvent *)event;
-            serverPlantIDMap.ClearAll();
-            serverZombieIDMap.ClearAll();
-            serverCoinIDMap.ClearAll();
-            serverGridItemIDMap.ClearAll();
+            serverPlantIDMap.clear();
+            serverZombieIDMap.clear();
+            serverCoinIDMap.clear();
+            serverGridItemIDMap.clear();
 
             GridItem *gridItem = nullptr;
             while (IterateGridItems(gridItem)) {
                 if (gridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
                     LOG_DEBUG("{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], short(mGridItems.DataArrayGetID(gridItem)));
-                    serverGridItemIDMap.Add(event1->data[gridItem->mGridY], short(mGridItems.DataArrayGetID(gridItem)));
+                    serverGridItemIDMap.emplace(event1->data[gridItem->mGridY], short(mGridItems.DataArrayGetID(gridItem)));
                 }
                 if (gridItem->mGridItemType == GRIDITEM_GRAVESTONE) {
                     if (gridItem->mGridY == 1) {
-                        serverGridItemIDMap.Add(event1->data[5], short(mGridItems.DataArrayGetID(gridItem)));
+                        serverGridItemIDMap.emplace(event1->data[5], short(mGridItems.DataArrayGetID(gridItem)));
                         LOG_DEBUG("1{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], short(mGridItems.DataArrayGetID(gridItem)));
                     }
                     if (gridItem->mGridY >= 3) {
-                        serverGridItemIDMap.Add(event1->data[6], short(mGridItems.DataArrayGetID(gridItem)));
+                        serverGridItemIDMap.emplace(event1->data[6], short(mGridItems.DataArrayGetID(gridItem)));
                         LOG_DEBUG("3{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], short(mGridItems.DataArrayGetID(gridItem)));
                     }
                 }
@@ -1446,10 +1446,10 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             Plant *plant = nullptr;
             while (IteratePlants(plant)) {
                 if (plant->mRow == 1) {
-                    serverPlantIDMap.Add(event1->data[7], short(mPlants.DataArrayGetID(plant)));
+                    serverPlantIDMap.emplace(event1->data[7], short(mPlants.DataArrayGetID(plant)));
                 }
                 if (plant->mRow >= 3) {
-                    serverPlantIDMap.Add(event1->data[8], short(mPlants.DataArrayGetID(plant)));
+                    serverPlantIDMap.emplace(event1->data[8], short(mPlants.DataArrayGetID(plant)));
                 }
             }
         } break;
