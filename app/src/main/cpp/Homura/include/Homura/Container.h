@@ -20,10 +20,8 @@
 #ifndef HOMURA_CONTAINER_H
 #define HOMURA_CONTAINER_H
 
-#include <concepts>
 #include <iterator>
 #include <optional>
-#include <type_traits>
 
 namespace homura {
 
