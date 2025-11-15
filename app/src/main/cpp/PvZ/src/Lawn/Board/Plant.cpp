@@ -109,8 +109,8 @@ void Plant::PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, Se
         //            mLaunchCounter = 0;
 
         if (tcpClientSocket >= 0) {
-            TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, short(mBoard->mPlants.DataArrayGetID(this)), short(mLaunchCounter)};
-            send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+            U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
+            send(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
         }
     }
 
@@ -621,15 +621,15 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
             return;
 
         if (tcpClientSocket >= 0) {
-            TwoShortTwoIntDataEvent event;
+            U16U16Buf32Buf32_Event event;
 
             event.type = EventType::EVENT_SERVER_BOARD_PLANT_FIRE;
-            event.data1 = short(mBoard->mPlants.DataArrayGetID(this));
-            event.data2 = theTargetZombie == nullptr ? short(ZOMBIEID_NULL) : short(mBoard->mZombies.DataArrayGetID(theTargetZombie));
-            event.data3.s.s1 = short(theRow);
-            event.data3.s.s2 = short(thePlantWeapon);
-            event.data4.s.s1 = theTargetGridItem == nullptr ? short(GRIDITEMID_NULL) : short(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
-            send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
+            event.data1 = uint16_t(mBoard->mPlants.DataArrayGetID(this));
+            event.data2 = theTargetZombie == nullptr ? uint16_t(ZOMBIEID_NULL) : uint16_t(mBoard->mZombies.DataArrayGetID(theTargetZombie));
+            event.data3.u16x2.u16_1 = uint16_t(theRow);
+            event.data3.u16x2.u16_2 = uint16_t(thePlantWeapon);
+            event.data4.u16x2.u16_1 = theTargetGridItem == nullptr ? uint16_t(GRIDITEMID_NULL) : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
+            send(tcpClientSocket, &event, sizeof(U16U16Buf32Buf32_Event), 0);
         }
     }
 
@@ -1014,8 +1014,8 @@ void Plant::Die() {
             return;
 
         if (tcpClientSocket >= 0) {
-            SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_DIE}, short(mBoard->mPlants.DataArrayGetID(this))};
-            send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
+            U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_DIE}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
+            send(tcpClientSocket, &event, sizeof(U16_Event), 0);
         }
     }
 
@@ -1601,8 +1601,8 @@ void Plant::UpdateProductionPlant() {
             }
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if (tcpClientSocket >= 0) {
-                TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, short(mBoard->mPlants.DataArrayGetID(this)), short(mLaunchCounter)};
-                send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+                U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
+                send(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
             }
             mApp->PlayFoley(FoleyType::FOLEY_SPAWN_SUN);
             if (mSeedType == SeedType::SEED_SUNSHROOM) {
@@ -1814,8 +1814,8 @@ void Plant::UpdateShooter() {
             mLaunchCounter = mLaunchRate - Sexy::Rand(15);
         }
         if (tcpClientSocket >= 0) {
-            TwoShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, short(mBoard->mPlants.DataArrayGetID(this)), short(mLaunchCounter)};
-            send(tcpClientSocket, &event, sizeof(TwoShortDataEvent), 0);
+            U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
+            send(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
         }
 
         if (mSeedType == SeedType::SEED_THREEPEATER) {

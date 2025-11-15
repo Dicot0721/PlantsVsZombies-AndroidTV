@@ -548,7 +548,7 @@ void GamepadControls::UpdatePreviewReanim() {
                 int mTrackCount = mPreviewReanim4->mDefinition->mTrackCount;
                 for (int i = 0; i < mTrackCount; i++) {
                     ReanimatorTrackInstance *reanimatorTrackInstance = mPreviewReanim4->mTrackInstances + i;
-                    unsigned short mAttachmentID = reanimatorTrackInstance->mAttachmentID;
+                    uint16_t mAttachmentID = reanimatorTrackInstance->mAttachmentID;
                     if (mAttachmentID == 0)
                         continue;
                     Attachment **attachmentSystem = *(Attachment ***)(*gEffectSystem_Addr + 12);

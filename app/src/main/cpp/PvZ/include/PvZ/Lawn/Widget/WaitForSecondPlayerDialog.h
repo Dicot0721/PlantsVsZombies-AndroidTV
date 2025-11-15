@@ -24,8 +24,11 @@
 #include "PvZ/Lawn/Widget/GameButton.h"
 #include "PvZ/Lawn/Widget/LawnDialog.h"
 #include "PvZ/Symbols.h"
+
 #include <linux/in.h>
 #include <netinet/in.h>
+
+#include <cstdint>
 
 class WaitForSecondPlayerDialog : public __LawnDialog {
 public:
@@ -119,7 +122,7 @@ typedef struct {
 } server_info;
 
 
-enum EventType : unsigned char {
+enum EventType : uint8_t {
     EVENT_NULL,
 
     EVENT_START_GAME,
@@ -177,110 +180,106 @@ enum EventType : unsigned char {
     EVENT_SERVER_BOARD_START_LEVEL,
 };
 
-struct TwoShort {
-    short s1;
-    short s2;
-};
+union Buffer32Bit {
+    struct {
+        uint8_t u8_1;
+        uint8_t u8_2;
+        uint8_t u8_3;
+        uint8_t u8_4;
+    } u8x4;
 
-struct FourChar {
-    unsigned char c1;
-    unsigned char c2;
-    unsigned char c3;
-    unsigned char c4;
-};
+    struct {
+        uint16_t u16_1;
+        uint16_t u16_2;
+    } u16x2;
 
-union IntFloatShortChar {
-    int i;
-    float f;
-    TwoShort s;
-    FourChar c;
+    uint32_t u32;
+    float f32;
 };
-
 
 class BaseEvent {
 public:
     EventType type;
 };
 
-class SimpleEvent : public BaseEvent {
+class U8_Event : public BaseEvent {
 public:
-    unsigned char data;
+    uint8_t data;
 };
 
-class SimpleShortEvent : public BaseEvent {
+class U16_Event : public BaseEvent {
 public:
-    short data;
+    uint16_t data;
 };
 
-class TwoCharDataEvent : public BaseEvent {
+class U8U8_Event : public BaseEvent {
 public:
-    unsigned char data1;
-    unsigned char data2;
+    uint8_t data1;
+    uint8_t data2;
 };
 
-class TwoCharOneShortDataEvent : public BaseEvent {
+class U8U8U16_Event : public BaseEvent {
 public:
-    unsigned char data1;
-    unsigned char data2;
-    short data3;
+    uint8_t data1;
+    uint8_t data2;
+    uint16_t data3;
 };
 
-
-class TwoShortDataEvent : public BaseEvent {
+class U16U16_Event : public BaseEvent {
 public:
-    short data1;
-    short data2;
+    uint16_t data1;
+    uint16_t data2;
 };
 
-class TwoCharTwoShortDataEvent : public BaseEvent {
+class U8U8U16U16_Event : public BaseEvent {
 public:
-    unsigned char data1;
-    unsigned char data2;
-    short data3;
-    short data4;
+    uint8_t data1;
+    uint8_t data2;
+    uint16_t data3;
+    uint16_t data4;
 };
 
-class FourCharDataEvent : public BaseEvent {
+class U8U8U8U8_Event : public BaseEvent {
 public:
-    unsigned char data1;
-    unsigned char data2;
-    unsigned char data3;
-    unsigned char data4;
+    uint8_t data1;
+    uint8_t data2;
+    uint8_t data3;
+    uint8_t data4;
 };
 
-class FourShortDataEvent : public BaseEvent {
+class U16U16U16U16_Event : public BaseEvent {
 public:
-    short data1;
-    short data2;
-    short data3;
-    short data4;
+    uint16_t data1;
+    uint16_t data2;
+    uint16_t data3;
+    uint16_t data4;
 };
 
-class NineShortDataEvent : public BaseEvent {
+class U16x9_Event : public BaseEvent {
 public:
-    short data[9];
-};
-
-
-class TenShortDataEvent : public BaseEvent {
-public:
-    short data[10];
+    uint16_t data[9];
 };
 
 
-class TwoShortTwoIntDataEvent : public BaseEvent {
+class U16x10_Event : public BaseEvent {
 public:
-    short data1;
-    short data2;
-    IntFloatShortChar data3;
-    IntFloatShortChar data4;
+    uint16_t data[10];
 };
 
-class FourCharOneShortTwoIntDataEvent : public BaseEvent {
+
+class U16U16Buf32Buf32_Event : public BaseEvent {
 public:
-    unsigned char data1[4];
-    short data2;
-    IntFloatShortChar data3[2];
+    uint16_t data1;
+    uint16_t data2;
+    Buffer32Bit data3;
+    Buffer32Bit data4;
+};
+
+class U8x4U16Buf32x2_Event : public BaseEvent {
+public:
+    uint8_t data1[4];
+    uint16_t data2;
+    Buffer32Bit data3[2];
 };
 
 

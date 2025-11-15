@@ -1679,8 +1679,8 @@ void Zombie::RiseFromGrave(int theGridX, int theGridY) {
     old_Zombie_RiseFromGrave(this, theGridX, theGridY);
     mBoard->mBackground = tmp;
 
-    TwoCharOneShortDataEvent event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE}, (unsigned char)theGridX, (unsigned char)theGridY, short(mBoard->mZombies.DataArrayGetID(this))};
-    send(tcpClientSocket, &event, sizeof(TwoCharOneShortDataEvent), 0);
+    U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE}, uint8_t(theGridX), uint8_t(theGridY), uint16_t(mBoard->mZombies.DataArrayGetID(this))};
+    send(tcpClientSocket, &event, sizeof(U8U8U16_Event), 0);
 }
 
 void Zombie::CheckForBoardEdge() {
@@ -2028,8 +2028,8 @@ void Zombie::DieNoLoot() {
             return;
 
         if (tcpClientSocket >= 0) {
-            SimpleShortEvent event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_DIE}, short(mBoard->mZombies.DataArrayGetID(this))};
-            send(tcpClientSocket, &event, sizeof(SimpleShortEvent), 0);
+            U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_DIE}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};
+            send(tcpClientSocket, &event, sizeof(U16_Event), 0);
         }
     }
 
@@ -3203,12 +3203,12 @@ void Zombie::PickRandomSpeed() {
     UpdateAnimSpeed();
 
     if (mApp->IsVSMode() && tcpClientSocket >= 0) {
-        TwoShortTwoIntDataEvent event;
+        U16U16Buf32Buf32_Event event;
         event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED;
-        event.data1 = short(mBoard->mZombies.DataArrayGetID(this));
-        event.data2 = short(mAnimTicksPerFrame);
-        event.data3.f = mVelX;
-        send(tcpClientSocket, &event, sizeof(TwoShortTwoIntDataEvent), 0);
+        event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+        event.data2 = uint16_t(mAnimTicksPerFrame);
+        event.data3.f32 = mVelX;
+        send(tcpClientSocket, &event, sizeof(U16U16Buf32Buf32_Event), 0);
     }
 }
 
