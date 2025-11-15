@@ -607,7 +607,8 @@ void Plant::DoSpecial() {
         }
         return;
     }
-    return old_Plant_DoSpecial(this);
+
+    old_Plant_DoSpecial(this);
 }
 
 // void Plant_CobCannonFire(Plant *plant, int x, int y) {
@@ -628,7 +629,12 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
             event.data2 = theTargetZombie == nullptr ? uint16_t(ZOMBIEID_NULL) : uint16_t(mBoard->mZombies.DataArrayGetID(theTargetZombie));
             event.data3.u16x2.u16_1 = uint16_t(theRow);
             event.data3.u16x2.u16_2 = uint16_t(thePlantWeapon);
-            event.data4.u16x2.u16_1 = theTargetGridItem == nullptr ? uint16_t(GRIDITEMID_NULL) : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
+            // 如果同时传入有效的 theTargetZombie 和 theTargetGridItem 会导致投手弹道计算错误
+            if (theTargetZombie) { // 存在僵尸目标时传入空的场地物 ID
+                event.data4.u16x2.u16_1 = uint16_t(GRIDITEMID_NULL);
+            } else {
+                event.data4.u16x2.u16_1 = theTargetGridItem == nullptr ? uint16_t(GRIDITEMID_NULL) : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
+            }
             send(tcpClientSocket, &event, sizeof(U16U16Buf32Buf32_Event), 0);
         }
     }
