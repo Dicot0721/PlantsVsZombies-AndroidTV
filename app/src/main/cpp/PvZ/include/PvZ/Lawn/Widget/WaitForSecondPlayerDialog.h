@@ -95,7 +95,7 @@ inline void (*old_WaitForSecondPlayerDialog_ButtonDepress)(Sexy::ButtonListener 
 inline void (*old_WaitForSecondPlayerDialog_Delete)(WaitForSecondPlayerDialog *dialog);
 
 // 双方都需要
-#define UDP_PORT 8888
+constexpr int UDP_PORT = 8888;
 
 
 // 主机端需要
@@ -104,22 +104,22 @@ inline int tcpListenSocket = -1;
 inline int tcpClientSocket = -1;
 inline int tcpPort = 0;
 inline int lastBroadcastTime = 0;
-inline struct sockaddr_in broadcast_addr;
+inline sockaddr_in broadcast_addr;
 inline std::string ifname;
 
 
 // 客户端需要
-#define MAX_SERVERS 3
-#define UDP_TIMEOUT 3 // 超时时间为3秒
-#define NAME_LENGTH 256
+constexpr int MAX_SERVERS = 3;
+constexpr int UDP_TIMEOUT = 3; // 超时时间为3秒
+constexpr int NAME_LENGTH = 256;
 
 // 全局变量，用于保存发现的服务端IP和时间戳
-typedef struct {
+struct server_info {
     char ip[INET_ADDRSTRLEN];
     int tcp_port;
     char name[NAME_LENGTH];
     time_t last_seen; // 记录最后一次收到广播的时间
-} server_info;
+};
 
 
 enum EventType : uint8_t {
