@@ -26,6 +26,8 @@
 #include <dlfcn.h>
 #include <jni.h>
 
+#include <memory>
+
 namespace Sexy {
 class Image;
 class Font;
@@ -1333,13 +1335,12 @@ inline void *j_AGVideoResumeAddr;
 inline void *j_AGVideoStopAddr;
 inline void *j_AGVideoCloseAddr;
 
-
-inline bool GetFunctionAddr() {
-    static constexpr char libGameMain[] = "libGameMain.so";
-    void *handle = dlopen(libGameMain, RTLD_NOLOAD);
-    if (handle == nullptr) {
+inline bool LoadGameMain() {
+    static std::unique_ptr<void, decltype(&dlclose)> libGameMainPtr{dlopen("libGameMain.so", RTLD_NOLOAD), &dlclose};
+    if (!libGameMainPtr) {
         return false;
     }
+    void *handle = libGameMainPtr.get();
 
     Board_UpdateAddr = dlsym(handle, "_ZN5Board6UpdateEv");
     Board_BoardAddr = dlsym(handle, "_ZN5BoardC2EP7LawnApp");
@@ -2611,15 +2612,20 @@ inline bool GetFunctionAddr() {
     vTableForWaitForSecondPlayerDialogAddr = dlsym(handle, "_ZTV25WaitForSecondPlayerDialog");
     vTableForSexy_SexyAppBaseAddr = dlsym(handle, "_ZTI7LawnApp");
 
+    return true;
+}
 
-    void *handle1 = dlopen("libnative_code.so", RTLD_NOLOAD);
-    if (handle == nullptr) {
+inline bool LoadNativeCode() {
+    static std::unique_ptr<void, decltype(&dlclose)> nativeCodeptr{dlopen("libnative_code.so", RTLD_NOLOAD), &dlclose};
+    if (!nativeCodeptr) {
         return false;
     }
+    void *handle1 = nativeCodeptr.get();
+
     Native_AudioOutput_setupAddr = dlsym(handle1, "_ZN6Native11AudioOutput5setupEiii");
     Native_AudioOutput_shutdownAddr = dlsym(handle1, "_ZN6Native11AudioOutput8shutdownEv");
     Native_AudioOutput_writeAddr = dlsym(handle1, "_ZN6Native11AudioOutput5writeEPKvi");
-    j_AGAudioWriteAddr = (void *)((uintptr_t)Board_UpdateAddr - (uintptr_t)BOARD_UPDATE_ADDR_RELATIVE + (uintptr_t)J_AUDIOWRITE_ADDR_RELATIVE);
+    j_AGAudioWriteAddr = (void *)(uintptr_t(Board_UpdateAddr) - uintptr_t(BOARD_UPDATE_ADDR_RELATIVE) + uintptr_t(J_AUDIOWRITE_ADDR_RELATIVE));
 
     Native_BridgeApp_getJNIEnvAddr = dlsym(handle1, "_ZN6Native9BridgeApp9getJNIEnvEv");
     Native_NativeApp_getActivityAddr = dlsym(handle1, "_ZNK6Native9NativeApp11getActivityEv");
@@ -2637,6 +2643,11 @@ inline bool GetFunctionAddr() {
     j_AGVideoCloseAddr = dlsym(handle1, "AGVideoClose");
 
     return true;
+}
+
+inline void GetFunctionAddr() {
+    LoadGameMain();
+    LoadNativeCode();
 }
 
 #endif // PVZ_SYMBOLS_H
