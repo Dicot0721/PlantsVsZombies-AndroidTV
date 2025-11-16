@@ -28,7 +28,10 @@
 
 #include <jni.h>
 
+#include <cmath>
+
 #include <map>
+#include <numbers>
 #include <sstream>
 
 static jstring StringToJString(JNIEnv *env, std::string_view sv) {
@@ -79,29 +82,25 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeSetHeavyWeaponAngle(JNIEnv *env, jclass clazz, jint i) {
-    float radian = i * M_PI / 180.0f;
-    angle1 = cos(radian);
-    angle2 = sin(radian);
+    double radian = i * std::numbers::pi / 180;
+    angle1 = float(std::cos(radian));
+    angle2 = float(std::sin(radian));
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native1PButtonDown(JNIEnv *env, jclass clazz, jint code) {
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-    Board *board = lawnApp->mBoard;
-    if (board == nullptr) {
+    Board *aBoard = reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->mBoard;
+    if (aBoard == nullptr) {
         return;
     }
-    GamepadControls *gamePad = board->mGamepadControls1;
-    gamePad->OnButtonDown((ButtonCode)code, 0, 0);
+    aBoard->mGamepadControls1->OnButtonDown(ButtonCode(code), 0, 0);
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native2PButtonDown(JNIEnv *env, jclass clazz, jint code) {
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-    Board *board = lawnApp->mBoard;
-    if (board == nullptr) {
+    Board *aBoard = reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->mBoard;
+    if (aBoard == nullptr) {
         return;
     }
-    GamepadControls *gamePad_2P = board->mGamepadControls2;
-    gamePad_2P->OnButtonDown((ButtonCode)code, 0, 0);
+    aBoard->mGamepadControls2->OnButtonDown(ButtonCode(code), 0, 0);
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeEnableNewOptionsDialog(JNIEnv *env, jclass clazz) {
@@ -113,7 +112,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
         return;
     }
     requestPause = enable;
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+    LawnApp *lawnApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
 
     // if (lawnApp->mPlayerInfo != nullptr){
     // lawnApp->mPlayerInfo->mChallengeRecords[GameMode::ChallengeButteredPopcorn - 2] = 0;
@@ -147,22 +146,22 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeSendSecondTouch(JNIEnv *env, jclass clazz, jint x, jint y, jint action) {
-    if (tcp_connected || tcpClientSocket >= 0)
+    if (tcp_connected || tcpClientSocket >= 0) {
         return;
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-    Board *board = lawnApp->mBoard;
-    if (board == nullptr) {
+    }
+    Board *aBoard = reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->mBoard;
+    if (aBoard == nullptr) {
         return;
     }
     switch (action) {
         case 0:
-            board->MouseDownSecond(x, y, 0);
+            aBoard->MouseDownSecond(x, y, 0);
             break;
         case 1:
-            board->MouseDragSecond(x, y);
+            aBoard->MouseDragSecond(x, y);
             break;
         case 2:
-            board->MouseUpSecond(x, y, 0);
+            aBoard->MouseUpSecond(x, y, 0);
             break;
         default:
             break;
@@ -495,7 +494,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_android_support_Preferences_Changes(J
 }
 
 extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_GetFeatureList(JNIEnv *env, jobject thiz) {
-    constexpr const char *features[] = {
+    static constexpr const char *features[] = {
         "Collapse_常用功能",
         "1_CollapseAdd_Toggle_无限阳光",
         "42_CollapseAdd_Toggle_自由种植",
@@ -609,16 +608,22 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
         "101_CollapseAdd_Toggle_种下南瓜自动搭梯",
         "105_CollapseAdd_Spinner_<font color='yellow'>放置横坐标：_第1列,第2列,第3列,第4列,第5列,第6列,第7列,第8列,第9列,所有列,僵尸出生点",
         "106_CollapseAdd_Spinner_<font color='yellow'>放置纵坐标：_第1行,第2行,第3行,第4行,第5行,第6行,所有行",
-        "103_CollapseAdd_Spinner_<font "
-        "color='green'>植物类型：_未选择,豌豆射手,向日葵,樱桃炸弹,坚果,土豆地雷,寒冰射手,大嘴花,双重射手,小喷菇,阳光菇,大喷菇,咬咬碑,迷惑菇,胆小菇,冰川菇,末日菇,莲叶,窝瓜,三重射手,缠绕水草,火爆辣椒,"
-        "地刺,火炬树桩,高坚果,水兵菇,路灯花,仙人掌,三叶草,双向射手,星星果,南瓜头,磁力菇,卷心菜投手,花盆,玉米投手,咖啡豆,大蒜,叶子保护伞,金盏花,西瓜投手,机枪射手,双胞向日葵,多嘴小蘑菇,猫尾草,冰西瓜,"
-        "吸金磁,钢地刺,玉米加农炮,爆炸坚果,巨型坚果,幼苗,反向双重射手",
+        "103_CollapseAdd_Spinner_<font color='green'>植物类型：_"
+        "未选择,豌豆射手,向日葵,樱桃炸弹,坚果,土豆地雷,寒冰射手,大嘴花,双重射手,"
+        "小喷菇,阳光菇,大喷菇,咬咬碑,迷惑菇,胆小菇,冰川菇,末日菇,"
+        "莲叶,窝瓜,三重射手,缠绕水草,火爆辣椒,"
+        "地刺,火炬树桩,高坚果,水兵菇,路灯花,仙人掌,三叶草,双向射手,星星果,南瓜头,磁力菇,"
+        "卷心菜投手,花盆,玉米投手,咖啡豆,大蒜,叶子保护伞,金盏花,西瓜投手,"
+        "机枪射手,双胞向日葵,多嘴小蘑菇,猫尾草,冰西瓜,吸金磁,钢地刺,玉米加农炮,"
+        "爆炸坚果,巨型坚果,幼苗,反向双重射手",
         "107_CollapseAdd_CheckBox_模仿者植物",
         "108_CollapseAdd_OnceCheckBox_种植植物",
         "104_CollapseAdd_Spinner_<font "
-        "color='green'>僵尸类型：_未选择,普通僵尸,旗帜僵尸,路障僵尸,撑杆僵尸,铁桶僵尸,报纸僵尸,铁网门僵尸,橄榄球僵尸,舞者僵尸,伴舞僵尸,鸭子救生圈僵尸,潜水僵尸,雪橇车僵尸,雪橇车僵尸小队,海豚骑士僵尸,"
-        "玩偶匣僵尸,气球僵尸,矿工僵尸,蹦蹦僵尸,僵尸雪人,蹦极僵尸,梯子僵尸,投石车僵尸,白眼巨人僵尸,小鬼僵尸,僵王博士,垃圾桶僵尸,豌豆射手僵尸,坚果僵尸,火爆辣椒僵尸,机枪射手僵尸,窝瓜僵尸,高坚果僵尸,"
-        "红眼巨人僵尸",
+        "color='green'>僵尸类型：_"
+        "未选择,普通僵尸,旗帜僵尸,路障僵尸,撑杆僵尸,铁桶僵尸,报纸僵尸,铁网门僵尸,橄榄球僵尸,"
+        "舞者僵尸,伴舞僵尸,鸭子救生圈僵尸,潜水僵尸,雪橇车僵尸,雪橇车僵尸小队,海豚骑士僵尸,玩偶匣僵尸,气球僵尸,"
+        "矿工僵尸,蹦蹦僵尸,僵尸雪人,蹦极僵尸,梯子僵尸,投石车僵尸,白眼巨人僵尸,小鬼僵尸,僵王博士,"
+        "垃圾桶僵尸,豌豆射手僵尸,坚果僵尸,火爆辣椒僵尸,机枪射手僵尸,窝瓜僵尸,高坚果僵尸,红眼巨人僵尸",
         "109_CollapseAdd_OnceCheckBox_放置僵尸",
         "CollapseAdd_RichTextView_<font color='green'>其他类型:",
         "114_CollapseAdd_OnceCheckBox_放置墓碑",
@@ -637,18 +642,22 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
 
         "Collapse_一键布阵",
         "121_CollapseAdd_Spinner_<font "
-        "color='green'>选择泳池无尽阵型：_未选择,[0]电波钟无炮,[1]最简无炮,[2]伪无伤无炮,[3]自然控丑无炮,[4]火焰无炮,[5]分裂火焰无炮,[6]后退无炮,[7]超前置无炮,[8]王子无炮,[9]机械钟无炮,[10]神之无炮,["
-        "11]石英钟无炮,[12]靠天无炮,[13]方块无神无炮,[14]56加速无神无炮,[15]压制一炮,[16]小二炮,[17]火焰二炮,[18]核武二炮,[19]分裂二炮,[20]方正二炮,[21]经典二炮,[22]冲关三炮,[23]太极四炮,[24]"
-        "全金属四炮,[25]方块四炮,[26]青四炮,[27]水路无植物四炮,[28]方四炮,[29]神之四炮,[30]双核底线四炮,[31]经典四炮,[32]火焰四炮,[33]底线四炮,[34]传统四炮,[35]半场无植物五炮,[36]散炸五炮,[37]心五炮,"
-        "[38]陆路无植物六炮,[39]水路无植物六炮,[40]青苔六炮,[41]禅房花木深,[42]神之六炮,[43]玉米六炮,[44]空炸六炮,[45]超后置六炮,[46]方六炮,[47]蝶韵,[48]一勺汤圆,[49]间隔无植物七炮,[50]玉兔茕茕,[51]"
-        "无保护八炮,[52]树八炮,[53]全对称树八炮,[54]矩形八炮,[55]神之八炮,[56]阴阳八炮,[57]浮萍八炮,[58]后置八炮,[59]饲养海豚,[60]玉米八炮,[61]经典八炮,[62]花海八炮,[63]C2八炮,[64]分离八炮,[65]"
-        "全对称八炮,[66]3C八炮,[67]灯台八炮,[68]⑨炮,[69]方块九炮,[70]C6i九炮,[71]心九炮,[72]轮炸九炮,[73]②炮,[74]六芒星十炮,[75]六边形十炮,[76]方块十炮,[77]斜方十炮,[78]简化十炮,[79]后置十炮,[80]"
-        "经典十炮,[81]六线囚尸,[82]斜十炮,[83]魔方十炮,[84]戴夫的小汉堡,[85]鸡尾酒,[86]一勺汤圆十二炮,[87]玉壶春十二炮,[88]半场十二炮,[89]简化十二炮,[90]经典十二炮,[91]火焰十二炮,[92]冰雨十二炮·改,["
-        "93]冰雨十二炮•改改,[94]单紫卡十二炮,[95]神柱十二炮,[96]神之十二炮,[97]水路无植物十二炮,[98]纯白悬空十二炮,[99]后花园十二炮,[100]玉米十二炮,[101]两路暴狂,[102]九列十二炮,[103]梯曾十二炮,[104]"
-        "君海十二炮,[105]箜篌引,[106]梅花十三,[107]最后之作,[108]冰心灯,[109]太极十四炮,[110]真·四炮,[111]神棍十四炮,[112]神之十四炮,[113]穿越十四炮,[114]钻石十五炮,[115]神之十五炮,[116]真·二炮,[117]"
-        "冰箱灯,[118]炮环十二花,[119]单冰十六炮,[120]对称十六炮,[121]神之十六炮,[122]裸奔十六炮,[123]双冰十六炮,[124]超前置十六炮,[125]火焰十六炮,[126]经典十六炮,[127]折线十六炮,[128]肺十八炮(极限),["
-        "129]纯十八炮,[130]真·十八炮,[131]冰魄十八炮,[132]尾炸十八炮,[133]经典十八炮,[134]纯二十炮,[135]空炸二十炮,[136]钉耙二十炮,[137]新二十炮,[138]无冰瓜二十炮,[139]绝望之路,[140]二十一炮,[141]"
-        "新二十二炮,[142]二十二炮,[143]无冰瓜二十二炮,[144]九列二十二炮,[145]二十四炮,[146]垫材二十四炮,[147]胆守(极限)",
+        "color='green'>选择泳池无尽阵型：_未选择,"
+        "[0]电波钟无炮,[1]最简无炮,[2]伪无伤无炮,[3]自然控丑无炮,[4]火焰无炮,[5]分裂火焰无炮,[6]后退无炮,[7]超前置无炮,[8]王子无炮,[9]机械钟无炮,"
+        "[10]神之无炮,[11]石英钟无炮,[12]靠天无炮,[13]方块无神无炮,[14]56加速无神无炮,[15]压制一炮,[16]小二炮,[17]火焰二炮,[18]核武二炮,[19]分裂二炮,"
+        "[20]方正二炮,[21]经典二炮,[22]冲关三炮,[23]太极四炮,[24]全金属四炮,[25]方块四炮,[26]青四炮,[27]水路无植物四炮,[28]方四炮,[29]神之四炮,"
+        "[30]双核底线四炮,[31]经典四炮,[32]火焰四炮,[33]底线四炮,[34]传统四炮,[35]半场无植物五炮,[36]散炸五炮,[37]心五炮,[38]陆路无植物六炮,[39]水路无植物六炮,"
+        "[40]青苔六炮,[41]禅房花木深,[42]神之六炮,[43]玉米六炮,[44]空炸六炮,[45]超后置六炮,[46]方六炮,[47]蝶韵,[48]一勺汤圆,[49]间隔无植物七炮,"
+        "[50]玉兔茕茕,[51]无保护八炮,[52]树八炮,[53]全对称树八炮,[54]矩形八炮,[55]神之八炮,[56]阴阳八炮,[57]浮萍八炮,[58]后置八炮,[59]饲养海豚,"
+        "[60]玉米八炮,[61]经典八炮,[62]花海八炮,[63]C2八炮,[64]分离八炮,[65]全对称八炮,[66]3C八炮,[67]灯台八炮,[68]⑨炮,[69]方块九炮,"
+        "[70]C6i九炮,[71]心九炮,[72]轮炸九炮,[73]②炮,[74]六芒星十炮,[75]六边形十炮,[76]方块十炮,[77]斜方十炮,[78]简化十炮,[79]后置十炮,"
+        "[80]经典十炮,[81]六线囚尸,[82]斜十炮,[83]魔方十炮,[84]戴夫的小汉堡,[85]鸡尾酒,[86]一勺汤圆十二炮,[87]玉壶春十二炮,[88]半场十二炮,[89]简化十二炮,"
+        "[90]经典十二炮,[91]火焰十二炮,[92]冰雨十二炮·改,[93]冰雨十二炮•改改,[94]单紫卡十二炮,[95]神柱十二炮,[96]神之十二炮,[97]水路无植物十二炮,[98]纯白悬空十二炮,[99]后花园十二炮,"
+        "[100]玉米十二炮,[101]两路暴狂,[102]九列十二炮,[103]梯曾十二炮,[104]君海十二炮,[105]箜篌引,[106]梅花十三,[107]最后之作,[108]冰心灯,[109]太极十四炮,"
+        "[110]真·四炮,[111]神棍十四炮,[112]神之十四炮,[113]穿越十四炮,[114]钻石十五炮,[115]神之十五炮,[116]真·二炮,[117]冰箱灯,[118]炮环十二花,[119]单冰十六炮,"
+        "[120]对称十六炮,[121]神之十六炮,[122]裸奔十六炮,[123]双冰十六炮,[124]超前置十六炮,[125]火焰十六炮,[126]经典十六炮,[127]折线十六炮,[128]肺十八炮(极限),[129]纯十八炮,"
+        "[130]真·十八炮,[131]冰魄十八炮,[132]尾炸十八炮,[133]经典十八炮,[134]纯二十炮,[135]空炸二十炮,[136]钉耙二十炮,[137]新二十炮,[138]无冰瓜二十炮,[139]绝望之路,"
+        "[140]二十一炮,[141]新二十二炮,[142]二十二炮,[143]无冰瓜二十二炮,[144]九列二十二炮,[145]二十四炮,[146]垫材二十四炮,[147]胆守(极限)",
         "122_CollapseAdd_OnceCheckBox_布置已选阵型",
         "CollapseAdd_RichTextView_<font color='green'>阵型导出/导入:",
         "123_CollapseAdd_FormationCopy_复制阵型代码",
@@ -660,16 +669,15 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
     };
 
     int featuresCount = std::size(features);
-    auto ret = (jobjectArray)env->NewObjectArray(featuresCount, env->FindClass("java/lang/String"), env->NewStringUTF(""));
-
-    for (int i = 0; i < featuresCount; i++)
-        env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
-
+    jobjectArray ret = env->NewObjectArray(featuresCount, env->FindClass("java/lang/String"), nullptr);
+    for (int i = 0; i < featuresCount; ++i) {
+        env->SetObjectArrayElement(ret, i, StringToJString(env, features[i]));
+    }
     return ret;
 }
 
 extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_SettingsList(JNIEnv *env, jobject thiz) {
-    const char *features[] = {
+    static constexpr const char *features[] = {
         "Category_菜单设置",
         "-1_Toggle_退出时保存设置", //-1 is checked on Preferences.java
         "Category_更多",
@@ -677,9 +685,9 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
     };
 
     int featuresCount = std::size(features);
-    auto ret = (jobjectArray)env->NewObjectArray(featuresCount, env->FindClass("java/lang/String"), env->NewStringUTF(""));
-    for (int i = 0; i < featuresCount; i++) {
-        env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
+    jobjectArray ret = env->NewObjectArray(featuresCount, env->FindClass("java/lang/String"), nullptr);
+    for (int i = 0; i < featuresCount; ++i) {
+        env->SetObjectArrayElement(ret, i, StringToJString(env, features[i]));
     }
     return ret;
 }
@@ -741,30 +749,29 @@ static std::string generateLineupStr(const std::multimap<int, int> &theMap) {
 }
 
 extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCurrentFormation(JNIEnv *env, jobject thiz) {
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-    Board *board = lawnApp->mBoard;
-    if (board == nullptr) {
+    Board *aBoard = reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->mBoard;
+    if (aBoard == nullptr) {
         return StringToJString(env, "");
     }
 
     std::multimap<int, int> map;
-    for (Plant *plant = nullptr; board->IteratePlants(plant);) {
-        if (plant->mDead) {
+    for (Plant *aPlant = nullptr; aBoard->IteratePlants(aPlant);) {
+        if (aPlant->mDead) {
             continue;
         }
-        SeedType aSeedType = plant->mSeedType;
-        SeedType aImitaterType = plant->mImitaterType;
+        SeedType aSeedType = aPlant->mSeedType;
+        SeedType aImitaterType = aPlant->mImitaterType;
         if (aSeedType == SeedType::SEED_IMITATER) {
             aSeedType = aImitaterType;
         }
-        int aPlantCol = plant->mPlantCol;
-        int aRow = plant->mRow;
-        bool aIsAsleep = plant->mIsAsleep;
+        int aPlantCol = aPlant->mPlantCol;
+        int aRow = aPlant->mRow;
+        bool aIsAsleep = aPlant->mIsAsleep;
         bool canHaveLadder = aSeedType == SeedType::SEED_WALLNUT || aSeedType == SeedType::SEED_TALLNUT || aSeedType == SeedType::SEED_PUMPKINSHELL;
         bool canBeAsleep = Plant::IsNocturnal(aSeedType);
         bool wakeUp = canBeAsleep && !aIsAsleep;
         bool imitaterMorphed = aSeedType == SeedType::SEED_IMITATER || aImitaterType == SeedType::SEED_IMITATER;
-        bool ladder = canHaveLadder && (board->GetLadderAt(aPlantCol, aRow) != nullptr);
+        bool ladder = canHaveLadder && (aBoard->GetLadderAt(aPlantCol, aRow) != nullptr);
 
         int key = aSeedType | (wakeUp << 6) | (imitaterMorphed << 7) | (ladder << 8);
         int value = aPlantCol | (aRow << 4);
@@ -775,35 +782,32 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCu
 
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeSwitchTwoPlayerMode(JNIEnv *env, jclass clazz, jboolean is_on) {
-    isKeyboardTwoPlayerMode = is_on;
-    doKeyboardTwoPlayerDialog = is_on;
-    if (!is_on) {
-        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-        if (lawnApp->IsCoopMode() || lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS)
-            return;
-        lawnApp->ClearSecondPlayer();
-        Board *board = lawnApp->mBoard;
-        if (board != nullptr) {
-            GamepadControls *gamepadControls2 = board->mGamepadControls2;
-            gamepadControls2->mPlayerIndex2 = -1;
-        }
-        lawnApp->mTwoPlayerState = -1;
+    isKeyboardTwoPlayerMode = doKeyboardTwoPlayerDialog = is_on;
+    if (is_on) {
+        return;
     }
+    LawnApp *lawnApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
+    if (lawnApp->IsCoopMode() || lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+        return;
+    }
+    lawnApp->ClearSecondPlayer();
+    if (lawnApp->mBoard != nullptr) {
+        lawnApp->mBoard->mGamepadControls2->mPlayerIndex2 = -1;
+    }
+    lawnApp->mTwoPlayerState = -1;
 }
 
 extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIsInGame(JNIEnv *env, jclass clazz) {
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-    Board *board = lawnApp->mBoard;
-    auto *mWidgetManager = lawnApp->mWidgetManager;
-    auto *mFocusWidget = mWidgetManager->mFocusWidget;
-    if (board != nullptr && mFocusWidget == reinterpret_cast<Sexy::Widget *>(board)) {
+    LawnApp *lawnApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
+    Board *aBoard = lawnApp->mBoard;
+    auto *aFocusWidget = lawnApp->mWidgetManager->mFocusWidget;
+    if (aBoard != nullptr && aFocusWidget == reinterpret_cast<Sexy::Widget *>(aBoard)) {
         return true;
     }
     SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
-    if (lawnApp->IsCoopMode() && seedChooserScreen && mFocusWidget == reinterpret_cast<Sexy::Widget *>(seedChooserScreen)) {
+    if (lawnApp->IsCoopMode() && seedChooserScreen && (aFocusWidget == reinterpret_cast<Sexy::Widget *>(seedChooserScreen))) {
         return true;
     }
-
     if (lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS && lawnApp->mVSSetupScreen && (lawnApp->mVSSetupScreen->mState == 1 || lawnApp->mVSSetupScreen->mState == 3)) {
         return true;
     }
@@ -813,104 +817,67 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivi
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeSendButtonEvent(JNIEnv *env, jclass clazz, jboolean is_key_down, jint button_code) {
     bool playerIndex = button_code >= 256;
-    ButtonCode buttonCode = (ButtonCode)(playerIndex ? button_code - 256 : button_code);
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+    ButtonCode buttonCode = ButtonCode(playerIndex ? button_code - 256 : button_code);
+    LawnApp *lawnApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
+    Board *aBoard = lawnApp->mBoard;
+    auto *aFocusWidget = lawnApp->mWidgetManager->mFocusWidget;
 
+    if (aBoard == nullptr || aFocusWidget != reinterpret_cast<Sexy::Widget *>(aBoard)) {
+        SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
+        if (is_key_down && lawnApp->IsCoopMode() && seedChooserScreen && aFocusWidget == reinterpret_cast<Sexy::Widget *>(seedChooserScreen)) {
+            seedChooserScreen->GameButtonDown(buttonCode, playerIndex);
+            return;
+        }
 
-    Board *board = lawnApp->mBoard;
-    auto *mWidgetManager = lawnApp->mWidgetManager;
-    auto *mFocusWidget = mWidgetManager->mFocusWidget;
-    if (board != nullptr && mFocusWidget == reinterpret_cast<Sexy::Widget *>(board)) {
-        GamepadControls *gamepadControls = playerIndex ? board->mGamepadControls2 : board->mGamepadControls1;
-        if (!playerIndex) {
-            if (is_key_down) {
-                switch (buttonCode) {
-                    case ButtonCode::BUTTONCODE_B:
-                        gamepadControls->OnKeyDown(Sexy::KeyCode::KEYCODE_SHOVEL, 1112);
-                        gamepadControls->mGamepadState = 7;
-                        break;
-                    case ButtonCode::BUTTONCODE_UP:
-                        GamepadVelocityYOfPlayer1 = -400;
-                        break;
-                    case ButtonCode::BUTTONCODE_DOWN:
-                        GamepadVelocityYOfPlayer1 = 400;
-                        break;
-                    case ButtonCode::BUTTONCODE_LEFT:
-                        GamepadVelocityXOfPlayer1 = -400;
-                        break;
-                    case ButtonCode::BUTTONCODE_RIGHT:
-                        GamepadVelocityXOfPlayer1 = 400;
-                        break;
-                    default:
-                        gamepadControls->OnButtonDown(buttonCode, playerIndex, 0);
-                        break;
-                }
-            } else {
-                switch (buttonCode) {
-                    case ButtonCode::BUTTONCODE_UP:
-                    case ButtonCode::BUTTONCODE_DOWN:
-                        GamepadVelocityYOfPlayer1 = 0;
-                        break;
-                    case ButtonCode::BUTTONCODE_LEFT:
-                    case ButtonCode::BUTTONCODE_RIGHT:
-                        GamepadVelocityXOfPlayer1 = 0;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        } else {
-            if (is_key_down) {
-                switch (buttonCode) {
-                    case ButtonCode::BUTTONCODE_B:
-                        gamepadControls->OnKeyDown(Sexy::KeyCode::KEYCODE_SHOVEL, 1112);
-                        gamepadControls->mGamepadState = 7;
-                        break;
-                    case ButtonCode::BUTTONCODE_UP:
-                        GamepadVelocityYOfPlayer2 = -400;
-                        break;
-                    case ButtonCode::BUTTONCODE_DOWN:
-                        GamepadVelocityYOfPlayer2 = 400;
-                        break;
-                    case ButtonCode::BUTTONCODE_LEFT:
-                        GamepadVelocityXOfPlayer2 = -400;
-                        break;
-                    case ButtonCode::BUTTONCODE_RIGHT:
-                        GamepadVelocityXOfPlayer2 = 400;
-                        break;
-                    default:
-                        gamepadControls->OnButtonDown(buttonCode, playerIndex, 0);
-                        break;
-                }
-            } else {
-                switch (buttonCode) {
-                    case ButtonCode::BUTTONCODE_UP:
-                    case ButtonCode::BUTTONCODE_DOWN:
-                        GamepadVelocityYOfPlayer2 = 0;
-                        break;
-                    case ButtonCode::BUTTONCODE_LEFT:
-                    case ButtonCode::BUTTONCODE_RIGHT:
-                        GamepadVelocityXOfPlayer2 = 0;
-                        break;
-                    default:
-                        break;
-                }
-            }
+        VSSetupMenu *aVSSetupScreen = lawnApp->mVSSetupScreen;
+        if (is_key_down && lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS && aVSSetupScreen && (aVSSetupScreen->mState == 1 || aVSSetupScreen->mState == 3)) {
+            aVSSetupScreen->GameButtonDown(buttonCode, playerIndex, 0);
+            return;
         }
         return;
     }
-    SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
-    if (is_key_down && lawnApp->IsCoopMode() && seedChooserScreen && mFocusWidget == reinterpret_cast<Sexy::Widget *>(seedChooserScreen)) {
-        seedChooserScreen->GameButtonDown(buttonCode, playerIndex);
-        return;
-    }
 
-    VSSetupMenu *theVSSetupScreen = lawnApp->mVSSetupScreen;
-    if (is_key_down && lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS && theVSSetupScreen && (theVSSetupScreen->mState == 1 || theVSSetupScreen->mState == 3)) {
-        theVSSetupScreen->GameButtonDown(buttonCode, playerIndex, 0);
-        return;
+    GamepadControls *gamepadControls = (playerIndex == 0) ? aBoard->mGamepadControls1 : aBoard->mGamepadControls2;
+    int &aX = (playerIndex == 0) ? GamepadVelocityXOfPlayer1 : GamepadVelocityXOfPlayer2;
+    int &aY = (playerIndex == 0) ? GamepadVelocityYOfPlayer1 : GamepadVelocityYOfPlayer2;
+    if (is_key_down) {
+        switch (buttonCode) {
+            case ButtonCode::BUTTONCODE_B:
+                gamepadControls->OnKeyDown(Sexy::KeyCode::KEYCODE_SHOVEL, 1112);
+                gamepadControls->mGamepadState = 7;
+                break;
+            case ButtonCode::BUTTONCODE_UP:
+                aY = -400;
+                break;
+            case ButtonCode::BUTTONCODE_DOWN:
+                aY = 400;
+                break;
+            case ButtonCode::BUTTONCODE_LEFT:
+                aX = -400;
+                break;
+            case ButtonCode::BUTTONCODE_RIGHT:
+                aX = 400;
+                break;
+            default:
+                gamepadControls->OnButtonDown(buttonCode, playerIndex, 0);
+                break;
+        }
+    } else {
+        switch (buttonCode) {
+            case ButtonCode::BUTTONCODE_UP:
+            case ButtonCode::BUTTONCODE_DOWN:
+                aY = 0;
+                break;
+            case ButtonCode::BUTTONCODE_LEFT:
+            case ButtonCode::BUTTONCODE_RIGHT:
+                aX = 0;
+                break;
+            default:
+                break;
+        }
     }
 }
+
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeAutoFixPosition(JNIEnv *env, jclass clazz) {
     positionAutoFix = true;
 }
@@ -942,9 +909,12 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIntroVideoCompleted(JNIEnv *env, jclass clazz) {
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
-    lawnApp->mTitleScreen->mVideoCompleted = true;
+    TitleScreen *aTitleScreen = reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->mTitleScreen;
+    if (aTitleScreen != nullptr) {
+        aTitleScreen->mVideoCompleted = true;
+    }
 }
+
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeHeavyWeaponAccel(JNIEnv *env, jclass clazz) {
     heavyWeaponAccel = true;
 }
