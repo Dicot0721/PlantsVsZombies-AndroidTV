@@ -84,13 +84,13 @@ jobs:
           echo "GIT_COMMITS_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
 
       - name: Download v111 artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: PvZ-TV-v111-release
           path: artifact
 
       - name: Download v115 artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: PvZ-TV-v115-release
           path: artifact
