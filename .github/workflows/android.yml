@@ -25,17 +25,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Checkout assets
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ secrets.ASSETS_REPO }}
           path: app/src/main/assets
           token: ${{ secrets.ASSETS_TOKEN }}
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v5
         with:
           java-version: 17
           distribution: temurin
@@ -60,7 +60,7 @@ jobs:
           ./gradlew ${{ matrix.task-name }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: PvZ-TV-${{ matrix.version }}-release
           path: app/build/outputs/apk/${{ matrix.version }}/release/*.apk
@@ -74,7 +74,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -87,22 +87,22 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: PvZ-TV-v111-release
-          path: apks
+          path: artifact
 
       - name: Download v115 artifact
         uses: actions/download-artifact@v4
         with:
           name: PvZ-TV-v115-release
-          path: apks
+          path: artifact
 
       - name: Release
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: true
-          automatic_release_tag: continous
-          title: Automatic CI builds
-          files: apks/*.apk
+          automatic_release_tag: latest
+          title: Nightly Build
+          files: artifact/*.apk
 
       - name: Archive builds
         uses: softprops/action-gh-release@v2
@@ -113,4 +113,4 @@ jobs:
           make_latest: true
           tag_name: ${{ env.GIT_DATE }}-${{ env.GIT_COMMITS_COUNT }}
           body: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
-          files: apks/*.apk
+          files: artifact/*.apk
