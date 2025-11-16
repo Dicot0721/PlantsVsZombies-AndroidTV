@@ -51,21 +51,16 @@ static std::string JStringToString(JNIEnv *env, jstring str) {
  * Java 层已指定模块加载顺序: 先 libGameMain.so, 后 libHomura.so.
  */
 [[gnu::constructor]] static void lib_main() {
-
-    // Target lib here
-    static constexpr char targetLibName[] = "libGameMain.so";
-
     // 获取符号地址
     GetFunctionAddr();
 
     // 部分安卓4设备无法获取到基址，暂不清楚原因, 但仅影响 Patch 而不影响Hook, 影响不大.
-    uintptr_t baseAddr = ((Board_UpdateAddr != nullptr) && (uintptr_t(Board_UpdateAddr) > BOARD_UPDATE_ADDR_RELATIVE + 1)) ? (uintptr_t(Board_UpdateAddr) - BOARD_UPDATE_ADDR_RELATIVE - 1) : 0;
-    gLibBaseOffset = baseAddr;
+    gLibBaseOffset = ((Board_UpdateAddr != nullptr) && (uintptr_t(Board_UpdateAddr) > BOARD_UPDATE_ADDR_RELATIVE + 1)) ? (uintptr_t(Board_UpdateAddr) - BOARD_UPDATE_ADDR_RELATIVE - 1) : 0;
 
     // Hook
     CallHook();
 
-    homura::Patcher::UpdateBaseAddrMap(targetLibName, baseAddr);
+    homura::Patcher::UpdateBaseAddrMap("libGameMain.so", gLibBaseOffset);
     ApplyPatches();
 }
 
