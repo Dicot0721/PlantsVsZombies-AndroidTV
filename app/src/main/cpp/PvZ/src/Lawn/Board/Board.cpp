@@ -513,7 +513,7 @@ static void ParseFormationSegment(Board *theBoard, std::string_view theSegment) 
     }
 
     // Move cursor to the next position after the parsed integer
-    while (*cursor != '\0') {
+    for (const char *end = theSegment.data() + theSegment.size(); cursor < end; ++cursor) {
         if (*cursor == 'W') {
             wakeUp = true;
         } else if (*cursor == 'I') {
@@ -527,7 +527,9 @@ static void ParseFormationSegment(Board *theBoard, std::string_view theSegment) 
         } else if (std::isdigit(*cursor)) {
             // Parse coordinates
             int x = 0, y = 0;
-            if (std::sscanf(cursor, "%d,%d", &x, &y) != 2) {
+            if (int n; std::sscanf(cursor, "%d,%d%n", &x, &y, &n) == 2) {
+                cursor += n; // Skip to next coordinate
+            } else {
                 continue;
             }
             Plant *plant = old_Board_AddPlant(theBoard, x, y, seedType, imitaterMorphed ? SeedType::SEED_IMITATER : SeedType::SEED_NONE, 1, false);
@@ -546,13 +548,7 @@ static void ParseFormationSegment(Board *theBoard, std::string_view theSegment) 
             if (isIZombieLevel) {
                 theBoard->mChallenge->IZombieSetupPlant(plant);
             }
-            // Skip to next coordinate
-            while (*cursor != ' ' && *cursor != '\0') {
-                ++cursor;
-            }
-            continue;
         }
-        ++cursor;
     }
 }
 
