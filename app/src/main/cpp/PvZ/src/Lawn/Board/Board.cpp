@@ -58,6 +58,7 @@
 #include <cstddef>
 #include <cstdio>
 
+#include <sstream>
 #include <unordered_map>
 
 using namespace Sexy;
@@ -492,21 +493,26 @@ Plant *Board::AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedTyp
 }
 
 // 布阵用
-void Board::ParseFormationSegment(char *theSegment) {
-    SeedType seedType = SeedType::SEED_PEASHOOTER;
-    bool isIZombieLevel = mApp->IsIZombieLevel();
+static void ParseFormationSegment(Board *theBoard, std::string_view theSegment) {
+    bool isIZombieLevel = theBoard->mApp->IsIZombieLevel();
     bool wakeUp = false;
     bool imitaterMorphed = false;
     bool addLadder = false;
     int damageState = 0;
-    int offset = 0;
 
-    if (sscanf(theSegment, "%d%n", &seedType, &offset) != 1) {
-        return; // Failed to parse
+    SeedType seedType;
+    const char *cursor;
+    {
+        errno = 0;
+        char *end;
+        seedType = SeedType(std::strtol(theSegment.data(), &end, 10));
+        if ((theSegment.data() == end) || (errno == ERANGE)) {
+            return; // Failed to parse
+        }
+        cursor = end;
     }
 
     // Move cursor to the next position after the parsed integer
-    const char *cursor = theSegment + offset;
     while (*cursor != '\0') {
         if (*cursor == 'W') {
             wakeUp = true;
@@ -515,50 +521,47 @@ void Board::ParseFormationSegment(char *theSegment) {
         } else if (*cursor == 'L') {
             addLadder = true;
         } else if (*cursor == 'D') {
-            damageState++;
-            if (damageState > 2) {
+            if (++damageState > 2) {
                 damageState = 2;
             }
-        } else if (*cursor >= '0' && *cursor <= '9') {
+        } else if (std::isdigit(*cursor)) {
             // Parse coordinates
             int x = 0, y = 0;
-            if (!sscanf(cursor, "%d,%d", &x, &y)) {
+            if (std::sscanf(cursor, "%d,%d", &x, &y) != 2) {
                 continue;
             }
-            Plant *plant = old_Board_AddPlant(this, x, y, seedType, imitaterMorphed ? SeedType::SEED_IMITATER : SeedType::SEED_NONE, 1, false);
+            Plant *plant = old_Board_AddPlant(theBoard, x, y, seedType, imitaterMorphed ? SeedType::SEED_IMITATER : SeedType::SEED_NONE, 1, false);
             if (imitaterMorphed) {
                 plant->SetImitaterFilterEffect();
             }
             if (wakeUp) {
                 plant->SetSleeping(false);
             }
-            if (addLadder && GetLadderAt(x, y) == nullptr) {
-                AddALadder(x, y);
+            if (addLadder && theBoard->GetLadderAt(x, y) == nullptr) {
+                theBoard->AddALadder(x, y);
             }
             if (damageState > 0) {
                 plant->mPlantHealth = (plant->mPlantMaxHealth * (3 - damageState) / 3) - 1;
             }
             if (isIZombieLevel) {
-                mChallenge->IZombieSetupPlant(plant);
+                theBoard->mChallenge->IZombieSetupPlant(plant);
             }
             // Skip to next coordinate
             while (*cursor != ' ' && *cursor != '\0') {
-                cursor++;
+                ++cursor;
             }
             continue;
         }
-        cursor++;
+        ++cursor;
     }
 }
 
 // 布阵用
-void Board::LoadFormation(char *theFormation) {
-    RemoveAllPlants();
-    const char *segmentDelimiters = ";";
-    char *aSegment = strtok(theFormation, segmentDelimiters);
-    while (aSegment != nullptr) {
-        ParseFormationSegment(aSegment);
-        aSegment = strtok(nullptr, segmentDelimiters);
+static void LoadFormation(Board *theBoard, std::string_view theFormation) {
+    theBoard->RemoveAllPlants();
+    std::istringstream iss(theFormation.data());
+    for (std::string aSegment; std::getline(iss, aSegment, ';');) {
+        ParseFormationSegment(theBoard, aSegment);
     }
 }
 
@@ -1696,15 +1699,13 @@ void Board::Update() {
     }
 
     if (freezeAllZombies) {
-        for (Zombie *aZombie = nullptr; IterateZombies(aZombie); aZombie->HitIceTrap())
-            ;
+        for (Zombie *aZombie = nullptr; IterateZombies(aZombie); aZombie->HitIceTrap()) {}
         freezeAllZombies = false;
     }
 
     if (startAllMowers) {
         if (mApp->mGameScene == GameScenes::SCENE_PLAYING)
-            for (LawnMower *alawnMower = nullptr; IterateLawnMowers(alawnMower); alawnMower->StartMower())
-                ;
+            for (LawnMower *alawnMower = nullptr; IterateLawnMowers(alawnMower); alawnMower->StartMower()) {}
         startAllMowers = false;
     }
 
@@ -1735,19 +1736,16 @@ void Board::Update() {
     // 布置选择阵型
     if (layChoseFormation) // 用按钮触发, 防止进入游戏时自动布阵
     {
-        if (formationId != -1) {
-            const char *formation = GetFormationByIndex(formationId);
-            char *copiedStr = strdup(formation);
-            LoadFormation(copiedStr);
+        if (formationId >= 0) {
+            LoadFormation(this, lineup::GetLineup(formationId));
         }
         layChoseFormation = false;
     }
 
     // 布置粘贴阵型
     if (layPastedFormation) {
-        if (customFormation != "") {
-            char *copiedStr = strdup(customFormation.c_str());
-            LoadFormation(copiedStr);
+        if (!customFormation.empty()) {
+            LoadFormation(this, customFormation);
         }
         layPastedFormation = false;
     }

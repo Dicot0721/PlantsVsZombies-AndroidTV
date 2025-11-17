@@ -543,8 +543,6 @@ public:
     void DoPlantingAchievementCheck(SeedType theSeedType);
     bool GrantAchievement(AchievementId theAchievementId, bool theIsShow);
     int CountPlantByType(SeedType theSeedType);
-    void ParseFormationSegment(char *theSegment);
-    void LoadFormation(char *theFormation);
     bool ZenGardenItemNumIsZero(CursorType theCursorType);
     int GetSeedBankExtraWidth();
     Sexy::Rect GetShovelButtonRect();
