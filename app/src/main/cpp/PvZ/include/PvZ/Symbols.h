@@ -610,6 +610,7 @@ inline void *Plant_UpdateShooterAddr;
 inline void *Plant_LaunchThreepeaterAddr;
 inline void *Plant_LaunchStarFruitAddr;
 inline void *Plant_FindTargetAndFireAddr;
+inline void *Plant_IceZombiesAddr;
 
 
 inline void *Projectile_UpdateAddr;
@@ -1919,6 +1920,7 @@ inline bool LoadGameMain() {
     Plant_LaunchThreepeaterAddr = dlsym(handle, "_ZN5Plant17LaunchThreepeaterEv");
     Plant_LaunchStarFruitAddr = dlsym(handle, "_ZN5Plant15LaunchStarFruitEv");
     Plant_FindTargetAndFireAddr = dlsym(handle, "_ZN5Plant17FindTargetAndFireEi11PlantWeapon");
+    Plant_IceZombiesAddr = dlsym(handle, "_ZN5Plant10IceZombiesEv");
 
 
     Projectile_UpdateAddr = dlsym(handle, "_ZN10Projectile6UpdateEv");

@@ -38,24 +38,12 @@ using namespace Sexy;
 
 namespace {
 
-constexpr int theBackId = 110;
-constexpr int theCloseId = 111;
-
-// ButtonX和ButtonY是按钮的左上角坐标.
-constexpr int mAlmanacBackButtonX = -170;
-constexpr int mAlmanacBackButtonY = 520;
-constexpr int mAlmanacCloseButtonX = 800;
-constexpr int mAlmanacCloseButtonY = 520;
-
-// 按钮长度和宽度为150和50，两个按钮都读取此长宽.
-constexpr int mAlmanacButtonWidth = 170;
-constexpr int mAlmanacButtonHeight = 50;
-
-constexpr int mAlmanacPlantRectX = 521 - 8;
-constexpr int mAlmanacPlantRectY = 107 + 20;
-
 GameButton *gAlmanacBackButton;
 GameButton *gAlmanacCloseButton;
+
+int gAlmanacDialogTouchDownY;
+bool gTouchDownInTextRect;
+Rect ALMANAC_RECT_TEXT = Rect(482, 360, 258, 173);
 
 } // namespace
 
@@ -64,15 +52,13 @@ void AlmanacDialog::_constructor(LawnApp *theApp) {
 
     old_AlmanacDialog_AlmanacDialog(this, theApp);
 
-    pvzstl::string str = TodStringTranslate("[ALMANAC_INDEX]");
-    gAlmanacBackButton = MakeButton(theBackId, &this->mButtonListener, this, str);
+    gAlmanacBackButton = MakeButton(ALMANAC_BUTTON_BACK, &mButtonListener, this, TodStringTranslate("[ALMANAC_INDEX]"));
     gAlmanacBackButton->Resize(0, 0, 0, 0);
     gAlmanacBackButton->mBtnNoDraw = true;
     gAlmanacBackButton->mDisabled = true;
 
-    pvzstl::string str1 = TodStringTranslate("[CLOSE]");
-    gAlmanacCloseButton = MakeButton(theCloseId, &this->mButtonListener, this, str1);
-    gAlmanacCloseButton->Resize(mAlmanacCloseButtonX, mAlmanacCloseButtonY, mAlmanacButtonWidth, mAlmanacButtonHeight);
+    gAlmanacCloseButton = MakeButton(ALMANAC_BUTTON_CLOSE, &mButtonListener, this, TodStringTranslate("[CLOSE]"));
+    gAlmanacCloseButton->Resize(ALMANAC_BUTTON_CLOSE_X, ALMANAC_BUTTON_CLOSE_Y, ALMANAC_BUTTON_WIDTH, ALMANAC_BUTTON_HEIGHT);
     AddWidget(gAlmanacBackButton);
     AddWidget(gAlmanacCloseButton);
 
@@ -80,8 +66,8 @@ void AlmanacDialog::_constructor(LawnApp *theApp) {
     // 为泳池背景加入PoolEffect。这里挖空背景图，挖出一块透明方形
     Sexy::Image *gPlantBackImage = *Sexy_IMAGE_ALMANAC_PLANTBACK_Addr;
     Sexy::Image *gPoolBackImage = *Sexy_IMAGE_ALMANAC_GROUNDNIGHTPOOL_Addr;
-    Sexy::Rect blankRect = {mAlmanacPlantRectX + 240, mAlmanacPlantRectY + 60, gPoolBackImage->mWidth, gPoolBackImage->mHeight};
-    reinterpret_cast<MemoryImage *>(gPlantBackImage)->ClearRect(blankRect);
+    Sexy::Rect aBlankRect = Rect(ALMANAC_RECT_PLANT_X + 240, ALMANAC_RECT_PLANT_Y + 60, gPoolBackImage->mWidth, gPoolBackImage->mHeight);
+    reinterpret_cast<MemoryImage *>(gPlantBackImage)->ClearRect(aBlankRect);
 }
 
 void AlmanacDialog::_destructor() {
@@ -98,7 +84,7 @@ void AlmanacDialog::SetPage(AlmanacPage thePage) {
     if (thePage != AlmanacPage::ALMANAC_PAGE_INDEX) {
         // 在前往其他图鉴页面时，显示返回按钮
         if (gAlmanacBackButton != nullptr) {
-            gAlmanacBackButton->Resize(mAlmanacBackButtonX, mAlmanacBackButtonY, mAlmanacButtonWidth, mAlmanacButtonHeight);
+            gAlmanacBackButton->Resize(ALMANAC_BUTTON_BACK_X, ALMANAC_BUTTON_BACK_Y, ALMANAC_BUTTON_WIDTH, ALMANAC_BUTTON_HEIGHT);
             gAlmanacBackButton->mBtnNoDraw = false;
             gAlmanacBackButton->mDisabled = false;
         }
@@ -120,14 +106,7 @@ void AlmanacDialog::SetPage(AlmanacPage thePage) {
     return old_AlmanacDialog_SetPage(this, thePage);
 }
 
-
-namespace {
-int mAlmanacDialogTouchDownY;
-bool isTouchDownInTextRect;
-Sexy::Rect mTextRect = {482, 360, 258, 173};
-} // namespace
-
-void AlmanacDialog::MouseDown(int x, int y, int a4) {
+void AlmanacDialog::MouseDown(int x, int y, int theClickCount) {
     // 修复点击气球僵尸进植物图鉴、点击介绍文字进植物图鉴
     if (mOpenPage == 0) {
         // 如果当前的Page是Index Page
@@ -136,38 +115,38 @@ void AlmanacDialog::MouseDown(int x, int y, int a4) {
         if (mZombieButton->IsMouseOver())
             mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
         return;
-    } else if (TRect_Contains(&mTextRect, x, y)) {
-        isTouchDownInTextRect = true;
-        mAlmanacDialogTouchDownY = y;
+    } else if (ALMANAC_RECT_TEXT.Contains(x, y)) {
+        gTouchDownInTextRect = true;
+        gAlmanacDialogTouchDownY = y;
     }
 
-    SeedType seedType = SeedHitTest(x, y);
-    if (seedType != SeedType::SEED_NONE && seedType != mSelectedSeed) {
-        mSelectedSeed = seedType;
+    SeedType aSeedType = SeedHitTest(x, y);
+    if (aSeedType != SeedType::SEED_NONE && aSeedType != mSelectedSeed) {
+        mSelectedSeed = aSeedType;
         SetupPlant();
-        mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
+        mApp->PlaySample(*SOUND_TAP);
     }
-    ZombieType zombieType = ZombieHitTest(x, y);
-    if (zombieType != -1 && zombieType != mSelectedZombie) {
-        mSelectedZombie = zombieType;
+    ZombieType aZombieType = ZombieHitTest(x, y);
+    if (aZombieType != -1 && aZombieType != mSelectedZombie) {
+        mSelectedZombie = aZombieType;
         SetupZombie();
-        mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
+        mApp->PlaySample(*SOUND_TAP);
     }
 }
 
 void AlmanacDialog::MouseDrag(int x, int y) {
     // 滚动图鉴文字
 
-    if (isTouchDownInTextRect && mAlmanacDialogTouchDownY != y) {
+    if (gTouchDownInTextRect && gAlmanacDialogTouchDownY != y) {
         (*(void (**)(Sexy::__Widget *, uint32_t, double))(*(uint32_t *)mScrollTextView + 500))(
-            (Widget *)mScrollTextView, *(uint32_t *)(*(uint32_t *)mScrollTextView + 500), *((double *)mScrollTextView + 35) + 0.6 * (mAlmanacDialogTouchDownY - y));
-        mAlmanacDialogTouchDownY = y;
+            (Widget *)mScrollTextView, *(uint32_t *)(*(uint32_t *)mScrollTextView + 500), *((double *)mScrollTextView + 35) + 0.6 * (gAlmanacDialogTouchDownY - y));
+        gAlmanacDialogTouchDownY = y;
     }
 }
 
 void AlmanacDialog::MouseUp(int x, int y, int theClickCount) {
     // 空函数替换，修复点击图鉴Index界面中任何位置都会跳转植物图鉴的问题
-    isTouchDownInTextRect = false;
+    gTouchDownInTextRect = false;
 }
 
 void AlmanacDialog::RemovedFromManager(WidgetManager *theWidgetManager) {
@@ -183,9 +162,9 @@ void AlmanacDialog::ButtonDepress(int theId) {
         SetPage(AlmanacPage::ALMANAC_PAGE_PLANTS);
     } else if (theId == 1) {
         SetPage(AlmanacPage::ALMANAC_PAGE_ZOMBIES);
-    } else if (theId == theBackId) {
+    } else if (theId == ALMANAC_BUTTON_BACK) {
         KeyDown(KeyCode::KEYCODE_ESCAPE);
-    } else if (theId == theCloseId) {
+    } else if (theId == ALMANAC_BUTTON_CLOSE) {
         mApp->KillAlmanacDialog();
     }
 }
@@ -235,7 +214,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
 
     if (Plant::IsAquatic(mSelectedSeed)) {
         if (Plant::IsNocturnal(mSelectedSeed)) {
-            g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDNIGHTPOOL_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY);
+            g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDNIGHTPOOL_Addr, ALMANAC_RECT_PLANT_X, ALMANAC_RECT_PLANT_Y);
             if (mApp->Is3DAccelerated()) {
                 g->SetClipRect(475, 0, 397, 500);
                 g->mTransY = g->mTransY - 145.0f;
@@ -244,7 +223,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
                 g->ClearClipRect();
             }
         } else {
-            g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDPOOL_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY);
+            g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDPOOL_Addr, ALMANAC_RECT_PLANT_X, ALMANAC_RECT_PLANT_Y);
             if (mApp->Is3DAccelerated()) {
                 g->SetClipRect(475, 0, 397, 500);
                 g->mTransY = g->mTransY - 145.0f;
@@ -254,11 +233,11 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
             }
         }
     } else if (Plant::IsNocturnal(mSelectedSeed) || mSelectedSeed == SeedType::SEED_GRAVEBUSTER || mSelectedSeed == SeedType::SEED_PLANTERN) {
-        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDNIGHT_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY);
+        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDNIGHT_Addr, ALMANAC_RECT_PLANT_X, ALMANAC_RECT_PLANT_Y);
     } else if (mSelectedSeed == SeedType::SEED_FLOWERPOT) {
-        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDROOF_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY);
+        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDROOF_Addr, ALMANAC_RECT_PLANT_X, ALMANAC_RECT_PLANT_Y);
     } else {
-        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDDAY_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY);
+        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDDAY_Addr, ALMANAC_RECT_PLANT_X, ALMANAC_RECT_PLANT_Y);
     }
 
 
@@ -299,7 +278,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
 
     if (Plant::IsAquatic(mSelectedSeed)) {
         if (Plant::IsNocturnal(mSelectedSeed)) {
-            g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDNIGHTPOOL_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY + 10);
+            g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDNIGHTPOOL_Addr, ALMANAC_RECT_PLANT_X, ALMANAC_RECT_PLANT_Y + 10);
             if (mApp->Is3DAccelerated()) {
                 // Sexy_Graphics_SetClipRect(g, 475, 0, 397, 500);
                 g->mTransY = g->mTransY - 115;
@@ -308,7 +287,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
                 // Sexy_Graphics_ClearClipRect(g);
             }
         } else {
-            g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDPOOL_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY + 10);
+            g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDPOOL_Addr, ALMANAC_RECT_PLANT_X, ALMANAC_RECT_PLANT_Y + 10);
             if (mApp->Is3DAccelerated()) {
                 // Sexy_Graphics_SetClipRect(g, 475, 0, 397, 500);
                 g->mTransY = g->mTransY - 115;
@@ -318,56 +297,51 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
             }
         }
     } else if (Plant::IsNocturnal(mSelectedSeed) || mSelectedSeed == SeedType::SEED_GRAVEBUSTER || mSelectedSeed == SeedType::SEED_PLANTERN) {
-        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDNIGHT_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY);
+        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDNIGHT_Addr, ALMANAC_RECT_PLANT_X, ALMANAC_RECT_PLANT_Y);
     } else if (mSelectedSeed == SeedType::SEED_FLOWERPOT) {
-        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDROOF_Addr, mAlmanacPlantRectX + 10, mAlmanacPlantRectY + 12);
+        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDROOF_Addr, ALMANAC_RECT_PLANT_X + 10, ALMANAC_RECT_PLANT_Y + 12);
     } else {
-        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDDAY_Addr, mAlmanacPlantRectX, mAlmanacPlantRectY);
+        g->DrawImage(*Sexy_IMAGE_ALMANAC_GROUNDDAY_Addr, ALMANAC_RECT_PLANT_X, ALMANAC_RECT_PLANT_Y);
     }
 
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTBACK_Addr, -240, -60);
     pvzstl::string aHeaderText = TodStringTranslate("[SUBURBAN_ALMANAC_PLANTS]");
-    Color aHeaderColor = {213, 159, 43, 255};
-    TodDrawString(g, aHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, aHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
+    TodDrawString(g, aHeaderText, BOARD_WIDTH / 2, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, Color(213, 159, 43), DrawStringJustification::DS_ALIGN_CENTER);
 
-    int theAlpha = sin((mUpdateCnt % 100) * 0.01 * std::numbers::pi) * 255.0;
-    int x, y;
-    for (SeedType aSeedType = SeedType::SEED_PEASHOOTER; aSeedType < SeedType::NUM_SEEDS_IN_CHOOSER; aSeedType = (SeedType)(aSeedType + 1)) {
-        GetSeedPosition(aSeedType, x, y);
-        if (aSeedType == SeedType::SEED_IMITATER) {
-            bool tmp = g->GetColorizeImages();
-            g->SetColorizeImages(true);
-            if (mSelectedSeed == SeedType::SEED_IMITATER) {
-                Color v39 = {255, 255, 0, theAlpha};
-                g->SetColor(v39);
-            } else {
-                Color v39 = {255, 255, 255, 64};
-                g->SetColor(v39);
-            }
-            g->DrawImage(*Sexy_IMAGE_ALMANAC_IMITATER_Addr, 18, 20);
-            g->SetColor(white);
-            g->SetColorizeImages(tmp);
-        } else {
-            if (mSelectedSeed == aSeedType) {
-                g->SetScale(1.1, 1.1, x, y);
-                DrawSeedPacket(g, x - 2, y - 4, mSelectedSeed, SeedType::SEED_NONE, 0.0, 255, true, false, false, true);
-                bool tmp = g->GetColorizeImages();
+    int aAlpha = sin((mUpdateCnt % 100) * 0.01 * std::numbers::pi) * 255.0;
+    for (SeedType aSeedType = SeedType::SEED_PEASHOOTER; aSeedType < NUM_ALMANAC_SEEDS; aSeedType = (SeedType)(aSeedType + 1)) {
+        int aPosX, aPosY;
+        GetSeedPosition(aSeedType, aPosX, aPosY);
+        if (mApp->HasSeedType(aSeedType, 0)) {
+            if (aSeedType == SeedType::SEED_IMITATER) {
                 g->SetColorizeImages(true);
-                Color v39 = {255, 255, 0, theAlpha};
-                g->SetColor(v39);
-                g->DrawImage(*Sexy_IMAGE_SEEDPACKETFLASH_Addr, x - 3, y - 5);
+                if (mSelectedSeed == SeedType::SEED_IMITATER) {
+                    g->SetColor(Color(255, 255, 0, aAlpha));
+                } else {
+                    g->SetColor(Color(255, 255, 255, 64));
+                }
+                g->DrawImage(*Sexy_IMAGE_ALMANAC_IMITATER_Addr, 18, 20);
                 g->SetColor(white);
-                g->SetColorizeImages(tmp);
-                g->SetScale(1.0, 1.0, 0.0, 0.0);
+                g->SetColorizeImages(g->GetColorizeImages());
             } else {
-                DrawSeedPacket(g, x, y, (SeedType)aSeedType, SeedType::SEED_NONE, 0.0, 255, true, false, false, true);
+                if (mSelectedSeed == aSeedType) {
+                    g->SetScale(1.1, 1.1, aPosX, aPosY);
+                    DrawSeedPacket(g, aPosX - 2, aPosY - 4, mSelectedSeed, SeedType::SEED_NONE, 0.0, 255, true, false, false, true);
+                    g->SetColorizeImages(true);
+                    g->SetColor(Color(255, 255, 0, aAlpha));
+                    g->DrawImage(*Sexy_IMAGE_SEEDPACKETFLASH_Addr, aPosX - 3, aPosY - 5);
+                    g->SetColor(white);
+                    g->SetColorizeImages(g->GetColorizeImages());
+                    g->SetScale(1.0, 1.0, 0.0, 0.0);
+                } else {
+                    DrawSeedPacket(g, aPosX, aPosY, aSeedType, SeedType::SEED_NONE, 0.0, 255, true, false, false, true);
+                }
             }
         }
     }
 
-    if (mPlant != nullptr) {
+    if (mPlant) {
         g->PushState();
-        ;
         g->mTransX = g->mTransX + mPlant->mX;
         g->mTransY = g->mTransY + mPlant->mY;
         mPlant->Draw(g);
@@ -375,9 +349,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     }
 
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTCARD_Addr, 459, 80);
-
-    Color color = {213, 159, 43, 255};
-    TodDrawString(g, mNameString, 617, 108, *Sexy_FONT_DWARVENTODCRAFT18_Addr, color, DrawStringJustification::DS_ALIGN_CENTER);
+    TodDrawString(g, mNameString, 617, 108, *Sexy_FONT_DWARVENTODCRAFT18_Addr, Color(213, 159, 43, 255), DrawStringJustification::DS_ALIGN_CENTER);
 
     if (mSelectedSeed != SeedType::SEED_IMITATER) {
         TodDrawStringWrapped(g, mCostString, mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_LEFT, false);
@@ -385,14 +357,12 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     }
 
     g->PushState();
-    ;
     g->ClipRect(mDescriptionRect.mX, mDescriptionRect.mY - 14, mDescriptionRect.mWidth, mDescriptionRect.mHeight + 8);
     float v22 = mScrollTextView->mValue * 0.01 * mDescriptionRect.mY;
     float v23 = g->mTransY + 2.0 - v22;
     *(float *)unk2 = -v22;
     g->mTransY = v23;
-    Color v39 = {143, 67, 27, 255};
-    TodDrawStringWrappedHelper(g, mDescriptionString, mDescriptionRect, *Sexy_FONT_BRIANNETOD16_Addr, v39, DrawStringJustification::DS_ALIGN_LEFT, true, true);
+    TodDrawStringWrappedHelper(g, mDescriptionString, mDescriptionRect, *Sexy_FONT_BRIANNETOD16_Addr, Color(143, 67, 27, 255), DrawStringJustification::DS_ALIGN_LEFT, true, true);
     g->PopState();
 }
 

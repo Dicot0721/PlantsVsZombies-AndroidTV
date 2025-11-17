@@ -291,10 +291,6 @@ void LawnApp::TryHelpTextScreen(int theScreenPage) {
     // 空函数替换，去除初次进入对战结盟模式时的操作提示。
 }
 
-void LawnApp_PlaySample(LawnApp *lawnApp, int soundAddr) {
-    (*(void (**)(LawnApp *, int, int))(*(uint32_t *)lawnApp + LAWNAPP_PLAYSAMPLE_OFFSET))(lawnApp, soundAddr, 1);
-}
-
 void LawnApp::_constructor() {
     old_LawnApp_LawnApp(this);
 

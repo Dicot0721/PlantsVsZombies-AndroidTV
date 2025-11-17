@@ -1164,6 +1164,25 @@ void Zombie::BossDestroyIceballInRow(int theRow) {
     }
 }
 
+void Zombie::BossDestroyFireball() {
+    Reanimation *aFireBallReanim = mApp->ReanimationTryToGet(mBossFireBallReanimID);
+    if (aFireBallReanim && mIsFireBall) {
+        float aPosX = aFireBallReanim->mOverlayMatrix.m02 + 80.0f;
+        float aPosY = aFireBallReanim->mOverlayMatrix.m12 + 40.0f;
+        for (int i = 0; i < 6; i++) {
+            float aAngle = 2 * PI * i / 6 + PI / 2;
+            Reanimation *aReanim = mApp->AddReanimation(aPosX + 60.0f * sin(aAngle), aPosY + 60.0f * cos(aAngle), 400000, ReanimationType::REANIM_JALAPENO_FIRE);
+            aReanim->mAnimTime = 0.2f;
+            aReanim->mLoopType = ReanimLoopType::REANIM_PLAY_ONCE_FULL_LAST_FRAME;
+            aReanim->mAnimRate = RandRangeFloat(20.0f, 25.0f);
+        }
+
+        aFireBallReanim->ReanimationDie();
+        mBossFireBallReanimID = ReanimationID::REANIMATIONID_NULL;
+        mBoard->RemoveParticleByType(ParticleEffect::PARTICLE_FIREBALL_TRAIL);
+    }
+}
+
 void Zombie::BurnRow(int theRow) {
     // 辣椒僵尸被魅惑后的爆炸函数
 

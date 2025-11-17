@@ -287,6 +287,7 @@ public:
     void UpdateShooter();
     void Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem);
     void PlayIdleAnim(float theRate);
+    void IceZombies();
 };
 
 inline float PlantDrawHeightOffset(Board *theBoard, Plant *thePlant, SeedType theSeedType, int theCol, int theRow) {

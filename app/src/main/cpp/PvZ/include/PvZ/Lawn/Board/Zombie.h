@@ -305,6 +305,7 @@ public:
     void UpdateZombieRiseFromGrave();
     void UpdateDamageStates(unsigned int theDamageFlags);
     void BossDestroyIceballInRow(int theRow);
+    void BossDestroyFireball();
     int GetDancerFrame();
     void RiseFromGrave(int theGridX, int theGridY);
     void EatPlant(Plant *thePlant);

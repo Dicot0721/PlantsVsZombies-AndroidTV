@@ -264,6 +264,9 @@ public:
     int PlayerToGamepadIndex(int thePlayerIndex) {
         return reinterpret_cast<int (*)(LawnApp *, int)>(LawnApp_PlayerToGamepadIndexAddr)(this, thePlayerIndex);
     }
+    bool HasSeedType(SeedType theSeedType, int thePlayerIndex) {
+        return reinterpret_cast<int (*)(LawnApp *, SeedType, int)>(LawnApp_HasSeedTypeAddr)(this, theSeedType, thePlayerIndex);
+    }
 
     LawnApp() {
         _constructor();
@@ -382,10 +385,5 @@ inline bool (*old_LawnApp_IsNight)(LawnApp *lawnApp);
 inline bool (*old_LawnApp_HasSeedType)(LawnApp *lawnApp, SeedType theSeedType, int playerIndex);
 
 inline void (*old_LawnApp_DoNewOptions)(LawnApp *lawnApp, bool a2, unsigned int a3);
-
-
-void LawnApp_PlaySample(LawnApp *lawnApp, int soundId);
-
-bool LawnApp_HasSeedType(LawnApp *lawnApp, SeedType theSeedType, int playerIndex);
 
 #endif // PVZ_LAWN_LAWN_APP_H

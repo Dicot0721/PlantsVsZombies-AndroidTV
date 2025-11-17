@@ -33,6 +33,7 @@
 #include "PvZ/SexyAppFramework/Misc/SexyVector.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
+#include "PvZ/TodLib/Effect/TodParticle.h"
 
 #include <algorithm>
 
@@ -1860,6 +1861,26 @@ void Plant::PlayIdleAnim(float theRate) {
         PlayBodyReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 20, theRate);
         if (mApp->IsIZombieLevel()) {
             aBodyReanim->mAnimRate = 0.0f;
+        }
+    }
+}
+
+void Plant::IceZombies() {
+    Zombie *aZombie = nullptr;
+    while (mBoard->IterateZombies(aZombie)) {
+        aZombie->HitIceTrap();
+    }
+
+    mBoard->mIceTrapCounter = 300;
+    TodParticleSystem *aPoolSparklyParticle = mApp->ParticleTryToGet(mBoard->mPoolSparklyParticleID);
+    if (aPoolSparklyParticle) {
+        aPoolSparklyParticle->mDontUpdate = false;
+    }
+
+    Zombie *aBossZombie = nullptr;
+    while (mBoard->IterateZombies(aBossZombie)) {
+        if (aBossZombie->mZombieType == ZOMBIE_BOSS) {
+            aBossZombie->BossDestroyFireball();
         }
     }
 }

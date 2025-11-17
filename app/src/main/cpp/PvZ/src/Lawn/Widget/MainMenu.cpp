@@ -230,7 +230,6 @@ void MainMenu::ButtonPress(MainMenuButtonId theSelectedButton) {
         case ZEN_BUTTON:
         case ALMANAC_BUTTON:
         case MAIL_BUTTON:
-            // LawnApp_PlaySample(lawnApp, *Sexy_SOUND_CERAMIC_Addr);
             gLawnApp->PlayFoley(FoleyType::FOLEY_CERAMIC);
             break;
         default:

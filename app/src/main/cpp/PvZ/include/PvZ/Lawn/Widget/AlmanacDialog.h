@@ -25,15 +25,31 @@
 
 #include "LawnDialog.h"
 
-namespace Sexy {
-class WidgetManager;
-// class CustomScrollbarWidget;
-} // namespace Sexy
+constexpr int NUM_ALMANAC_SEEDS = 49;
+constexpr int NUM_ALMANAC_ZOMBIES = 26;
+
+// ButtonX和ButtonY是按钮的左上角坐标.
+constexpr const int ALMANAC_BUTTON_BACK_X = -170;
+constexpr const int ALMANAC_BUTTON_BACK_Y = 520;
+constexpr const int ALMANAC_BUTTON_CLOSE_X = 800;
+constexpr const int ALMANAC_BUTTON_CLOSE_Y = 520;
+
+// 按钮长度和宽度为150和50，两个按钮都读取此长宽.
+constexpr const int ALMANAC_BUTTON_WIDTH = 170;
+constexpr const int ALMANAC_BUTTON_HEIGHT = 50;
+
+constexpr const int ALMANAC_RECT_PLANT_X = 513;
+constexpr const int ALMANAC_RECT_PLANT_Y = 127;
 
 class Plant;
 class Zombie;
-
 class AlmanacDialog : public __LawnDialog {
+private:
+    enum {
+        ALMANAC_BUTTON_BACK = 110,
+        ALMANAC_BUTTON_CLOSE = 111,
+    };
+
 public:
     int *mScrollListener;                           // 191
     LawnApp *mApp;                                  // 192
