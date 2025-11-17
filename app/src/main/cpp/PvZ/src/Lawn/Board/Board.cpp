@@ -1398,6 +1398,18 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 tcp_connected = true;
             }
         } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP: {
+            U16U16_Event *eventIceTrap = reinterpret_cast<U16U16_Event *>(event);
+            uint16_t serverZombieID = eventIceTrap->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                uint16_t aIceTrapCounter = eventIceTrap->data2;
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                tcp_connected = false;
+                aZombie->mIceTrapCounter = aIceTrapCounter;
+                tcp_connected = true;
+            }
+        } break;
         case EVENT_SERVER_BOARD_LAWNMOWER_STRART: {
             U16_Event *eventLawnMowerStart = reinterpret_cast<U16_Event *>(event);
             tcp_connected = false;

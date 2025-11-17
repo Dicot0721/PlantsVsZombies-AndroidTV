@@ -3351,6 +3351,63 @@ void Zombie::ApplyBurn() {
     }
 }
 
+void Zombie::ApplyChill(bool theIsIceTrap) {
+    if (!CanBeChilled())
+        return;
+
+    if (mChilledCounter == 0) {
+        mApp->PlayFoley(FoleyType::FOLEY_FROZEN);
+    }
+
+    int aChillTime = 1000;
+    if (theIsIceTrap) {
+        aChillTime = 2000;
+    }
+    mChilledCounter = std::max(aChillTime, mChilledCounter);
+
+    UpdateAnimSpeed();
+}
+
+void Zombie::HitIceTrap() {
+    bool cold = false;
+    if (mChilledCounter > 0 || mIceTrapCounter != 0) {
+        cold = true;
+    }
+
+    ApplyChill(true);
+    if (!CanBeFrozen())
+        return;
+
+    if (mInPool) {
+        mIceTrapCounter = 300;
+    } else if (cold) {
+        if (!(mApp->IsVSMode() && tcp_connected))
+            mIceTrapCounter = RandRangeInt(300, 400);
+    } else {
+        if (!(mApp->IsVSMode() && tcp_connected))
+            mIceTrapCounter = RandRangeInt(400, 600);
+    }
+
+    if (mApp->IsVSMode() && tcpClientSocket >= 0) {
+        U16U16_Event event;
+        event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP;
+        event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+        event.data2 = uint16_t(mIceTrapCounter);
+        send(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
+    }
+
+    StopZombieSound();
+    if (mZombieType == ZombieType::ZOMBIE_BALLOON) {
+        BalloonPropellerHatSpin(false);
+    }
+    if (mZombiePhase == ZombiePhase::PHASE_BOSS_HEAD_SPIT) {
+        mBoard->RemoveParticleByType(ParticleEffect::PARTICLE_ZOMBIE_BOSS_FIREBALL);
+    }
+
+    TakeDamage(20, 1U);
+    UpdateAnimSpeed();
+}
+
 bool Zombie::ZombieNotWalking() {
     if (mIsEating || IsImmobilizied()) {
         return true;

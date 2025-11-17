@@ -387,6 +387,7 @@ inline void InitHookFunction() {
     homura::HookFunction(Zombie_ApplyBurnAddr, &Zombie::ApplyBurn, &old_Zombie_ApplyBurn);
     homura::HookFunction(Zombie_CheckIfPreyCaughtAddr, &Zombie::CheckIfPreyCaught, nullptr);
     homura::HookFunction(Zombie_CanTargetPlantAddr, &Zombie::CanTargetPlant, nullptr);
+    homura::HookFunction(Zombie_HitIceTrapAddr, &Zombie::HitIceTrap, nullptr);
 
 
     homura::HookFunction(Sexy_Dialog_AddedToManagerWidgetManagerAddr, &SexyDialog_AddedToManager, &old_SexyDialog_AddedToManager);

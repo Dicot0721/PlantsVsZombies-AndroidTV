@@ -226,9 +226,6 @@ public:
     void UpdateAnimSpeed() {
         reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateAnimSpeedAddr)(this);
     }
-    void HitIceTrap() {
-        reinterpret_cast<void (*)(Zombie *)>(Zombie_HitIceTrapAddr)(this);
-    }
     void UpdateZombiePosition() {
         reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateZombiePositionAddr)(this);
     };
@@ -373,6 +370,8 @@ public:
     void ApplySyncedSpeed(float theVelX, short theAnimTicks);
     float ZombieTargetLeadX(float theTime);
     void ApplyBurn();
+    void ApplyChill(bool theIsIceTrap);
+    void HitIceTrap();
     bool ZombieNotWalking();
     bool IsMovingAtChilledSpeed();
     void UpdateZombieWalking();
