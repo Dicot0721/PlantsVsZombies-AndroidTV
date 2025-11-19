@@ -470,7 +470,7 @@ void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
     lastBroadcastTime = 0;
     if (udpBroadcastSocket < 0)
         return;
-    LawnApp *lawnApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
+    LawnApp *lawnApp = *gLawnApp_Addr;
     if (!lawnApp || !lawnApp->mPlayerInfo || !lawnApp->mPlayerInfo->mName)
         return;
 

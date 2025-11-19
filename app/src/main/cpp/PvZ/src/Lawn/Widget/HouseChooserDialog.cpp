@@ -25,7 +25,7 @@
 #include "PvZ/Symbols.h"
 
 bool HouseChooserDialog::IsHouseAvaliable(HouseType houseType) {
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+    LawnApp *lawnApp = *gLawnApp_Addr;
     return houseType == 0 || lawnApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_BLUEPRINT_BLING + int(houseType)] > 0;
 }
 

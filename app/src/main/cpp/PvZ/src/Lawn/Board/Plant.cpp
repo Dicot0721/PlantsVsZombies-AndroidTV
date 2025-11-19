@@ -534,7 +534,7 @@ void Plant::DrawSeedType(Sexy::Graphics *g, SeedType theSeedType, SeedType theIm
                 break;
         }
     }
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+    LawnApp *lawnApp = *gLawnApp_Addr;
     float v24, v25;
     if (lawnApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BIG_TIME
         && (theSeedType2 == SeedType::SEED_SUNFLOWER || theSeedType2 == SeedType::SEED_WALLNUT || theSeedType2 == SeedType::SEED_MARIGOLD)) {
@@ -1058,7 +1058,7 @@ PlantDefinition &GetPlantDefinition(SeedType theSeedType) {
 }
 
 int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
-    auto *gLawnApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
+    LawnApp *gLawnApp = *gLawnApp_Addr;
     if (gLawnApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         if (theSeedType == SeedType::SEED_IMITATER && theImitaterType != SeedType::SEED_NONE) {
             theSeedType = theImitaterType;
@@ -1144,7 +1144,7 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
         return 0;
     }
 
-    auto *gLawnApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
+    LawnApp *gLawnApp = *gLawnApp_Addr;
     if (gLawnApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         if (theSeedType == SeedType::SEED_IMITATER && theImitaterType != SeedType::SEED_NONE) {
             theSeedType = theImitaterType;
@@ -1414,7 +1414,7 @@ bool Plant::IsFlying(SeedType theSeedtype) {
 bool Plant::IsUpgrade(SeedType theSeedType) {
     // 修复机枪射手在SeedBank光标移动到shop栏后变为绿卡。
     if (theSeedType == SeedType::SEED_GATLINGPEA) {
-        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+        LawnApp *lawnApp = *gLawnApp_Addr;
         Board *board = lawnApp->mBoard;
         if (board == nullptr) {
             return old_Plant_IsUpgrade(theSeedType); // 等价于直接return true;但方便改版修改所以返回旧函数

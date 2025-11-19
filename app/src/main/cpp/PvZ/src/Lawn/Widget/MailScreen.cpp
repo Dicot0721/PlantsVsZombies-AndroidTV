@@ -89,7 +89,7 @@ void MailScreen::ButtonPress(int theId) {
 }
 
 void MailScreen::ButtonDepress(int theId) {
-    mApp = (LawnApp *)*gLawnApp_Addr;
+    mApp = *gLawnApp_Addr;
     MailScreen *aRealMailScreen = (MailScreen *)mApp->GetDialog(Dialogs::DIALOG_MAIL);
     if (theId == 1002) {
         aRealMailScreen->KeyDown(Sexy::KEYCODE_ACCEPT, 0, 0);

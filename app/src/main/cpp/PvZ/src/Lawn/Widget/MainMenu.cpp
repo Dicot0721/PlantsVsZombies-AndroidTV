@@ -214,7 +214,7 @@ void MainMenu::Update() {
 
 void MainMenu::ButtonPress(MainMenuButtonId theSelectedButton) {
     // 按下按钮的声音
-    LawnApp *gLawnApp = (LawnApp *)*gLawnApp_Addr;
+    LawnApp *gLawnApp = *gLawnApp_Addr;
     if (gLawnApp->mGameSelector->InTransition())
         return;
 
@@ -805,14 +805,14 @@ void ZombatarWidget_SetDefault(ZombatarWidget *zombatarWidget) {
 
 void ZombatarWidget::ButtonDepress(this ZombatarWidget &self, int id) {
     if (id == 1000) {
-        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+        LawnApp *lawnApp = *gLawnApp_Addr;
         lawnApp->KillZombatarScreen();
         lawnApp->ShowMainMenuScreen();
         return;
     }
 
     if (id == 1001) {
-        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+        LawnApp *lawnApp = *gLawnApp_Addr;
         if (lawnApp->LawnMessageBox(
                 Dialogs::DIALOG_MESSAGE, "[ZOMBATAR_FINISHED_WARNING_HEADER]", "[ZOMBATAR_FINISHED_WARNING_TEXT]", "[ZOMBATAR_FINISHED_BUTTON_TEXT]", "[ZOMBATAR_BACK_BUTTON_TEXT]", 1)
             == 1001)
@@ -869,7 +869,7 @@ void ZombatarWidget::ButtonDepress(this ZombatarWidget &self, int id) {
     }
 
     if (id == 1004) {
-        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+        LawnApp *lawnApp = *gLawnApp_Addr;
         if (lawnApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[ZOMBATAR_DELETE_HEADER]", "[ZOMBATAR_DELETE_BODY]", "[BUTTON_OK]", "[BUTTON_CANCEL]", 1) == 1001)
             return;
         gMainMenuZombatarWidget->mShowExistingZombatarPortrait = false;
@@ -3445,7 +3445,7 @@ void TestMenuWidget_MouseUp(ZombatarWidget *zombatarWidget, int x, int y) {}
 
 void TestMenuWidget_KeyDown(ZombatarWidget *zombatarWidget, int keyCode) {
     if (keyCode == Sexy::KEYCODE_ESCAPE || keyCode == Sexy::KEYCODE_ESCAPE2) {
-        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+        LawnApp *lawnApp = *gLawnApp_Addr;
         lawnApp->KillZombatarScreen();
         lawnApp->ShowMainMenuScreen();
         return;

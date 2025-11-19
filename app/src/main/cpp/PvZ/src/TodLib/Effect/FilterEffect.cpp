@@ -29,7 +29,7 @@ using namespace Sexy;
 
 MemoryImage *FilterEffectCreateImage(Image *theImage, FilterEffect theFilterEffect) {
     // MemoryImage* aImage = new MemoryImage();
-    MemoryImage *aImage = (MemoryImage *)reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->CopyImage(theImage);
+    MemoryImage *aImage = reinterpret_cast<MemoryImage *>((*gLawnApp_Addr)->CopyImage(theImage));
     aImage->mWidth = theImage->mWidth;
     aImage->mHeight = theImage->mHeight;
     FixPixelsOnAlphaEdgeForBlending(reinterpret_cast<Image *>(aImage));

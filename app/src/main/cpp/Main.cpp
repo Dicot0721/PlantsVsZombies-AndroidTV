@@ -83,7 +83,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native1PButtonDown(JNIEnv *env, jclass clazz, jint code) {
-    Board *aBoard = reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->mBoard;
+    Board *aBoard = (*gLawnApp_Addr)->mBoard;
     if (aBoard == nullptr) {
         return;
     }
@@ -91,7 +91,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native2PButtonDown(JNIEnv *env, jclass clazz, jint code) {
-    Board *aBoard = reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->mBoard;
+    Board *aBoard = (*gLawnApp_Addr)->mBoard;
     if (aBoard == nullptr) {
         return;
     }
@@ -107,7 +107,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
         return;
     }
     requestPause = enable;
-    LawnApp *lawnApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
+    LawnApp *lawnApp = *gLawnApp_Addr;
 
     // if (lawnApp->mPlayerInfo != nullptr){
     // lawnApp->mPlayerInfo->mChallengeRecords[GameMode::ChallengeButteredPopcorn - 2] = 0;
@@ -144,7 +144,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     if (tcp_connected || tcpClientSocket >= 0) {
         return;
     }
-    Board *aBoard = reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->mBoard;
+    Board *aBoard = (*gLawnApp_Addr)->mBoard;
     if (aBoard == nullptr) {
         return;
     }
@@ -744,7 +744,7 @@ static std::string generateLineupStr(const std::multimap<int, int> &theMap) {
 }
 
 extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCurrentFormation(JNIEnv *env, jobject thiz) {
-    Board *aBoard = reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->mBoard;
+    Board *aBoard = (*gLawnApp_Addr)->mBoard;
     if (aBoard == nullptr) {
         return StringToJString(env, "");
     }
@@ -781,7 +781,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     if (is_on) {
         return;
     }
-    LawnApp *lawnApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
+    LawnApp *lawnApp = *gLawnApp_Addr;
     if (lawnApp->IsCoopMode() || lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         return;
     }
@@ -793,7 +793,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 }
 
 extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIsInGame(JNIEnv *env, jclass clazz) {
-    LawnApp *lawnApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
+    LawnApp *lawnApp = *gLawnApp_Addr;
     Board *aBoard = lawnApp->mBoard;
     auto *aFocusWidget = lawnApp->mWidgetManager->mFocusWidget;
     if (aBoard != nullptr && aFocusWidget == reinterpret_cast<Sexy::Widget *>(aBoard)) {
@@ -813,7 +813,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivi
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeSendButtonEvent(JNIEnv *env, jclass clazz, jboolean is_key_down, jint button_code) {
     bool playerIndex = button_code >= 256;
     ButtonCode buttonCode = ButtonCode(playerIndex ? button_code - 256 : button_code);
-    LawnApp *lawnApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
+    LawnApp *lawnApp = *gLawnApp_Addr;
     Board *aBoard = lawnApp->mBoard;
     auto *aFocusWidget = lawnApp->mWidgetManager->mFocusWidget;
 
@@ -904,7 +904,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIntroVideoCompleted(JNIEnv *env, jclass clazz) {
-    TitleScreen *aTitleScreen = reinterpret_cast<LawnApp *>(*gLawnApp_Addr)->mTitleScreen;
+    TitleScreen *aTitleScreen = (*gLawnApp_Addr)->mTitleScreen;
     if (aTitleScreen != nullptr) {
         aTitleScreen->mVideoCompleted = true;
     }

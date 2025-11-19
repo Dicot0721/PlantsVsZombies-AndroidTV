@@ -46,7 +46,7 @@ void CreditScreen_Delete2(Sexy::__Widget *creditScreen) {
 
 void CreditScreen::ButtonDepress(int theId) {
     if (theId == 1000) {
-        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+        LawnApp *lawnApp = *gLawnApp_Addr;
         lawnApp->mCreditScreen->PauseCredits();
     }
 }

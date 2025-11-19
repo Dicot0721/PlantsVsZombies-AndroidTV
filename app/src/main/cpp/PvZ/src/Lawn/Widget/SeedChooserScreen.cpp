@@ -425,7 +425,7 @@ void SeedChooserScreen::DrawPacket(
 }
 
 void SeedChooserScreen::ButtonPress(int theId) {
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+    LawnApp *lawnApp = *gLawnApp_Addr;
     lawnApp->mSeedChooserScreen->mFocusedChildWidget = nullptr; // 修复点击菜单后无法按键选取植物卡片
 }
 

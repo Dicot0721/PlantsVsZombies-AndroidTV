@@ -37,7 +37,7 @@ Sexy::Checkbox *gVibrateCheckbox;
 
 void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, int *manager) {
     old_SettingsDialog_AddedToManager(settingsDialog, manager);
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+    LawnApp *lawnApp = *gLawnApp_Addr;
     Sexy::__Widget *mSoundSlider = settingsDialog->mSoundSlider;
     Sexy::__Widget *mBackButton = settingsDialog->mBackButton;
 
@@ -106,11 +106,11 @@ void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g) {
 void SettingsDialog_CheckboxChecked(SettingsDialog *settingsDialog, int id, bool isChecked) {
     switch (id) {
         case 1024: {
-            LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+            LawnApp *lawnApp = *gLawnApp_Addr;
             lawnApp->Set3DAccelerated(isChecked);
         } break;
         case 1025: {
-            LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+            LawnApp *lawnApp = *gLawnApp_Addr;
             lawnApp->mPlayerInfo->mIsVibrateClosed = !isChecked;
         } break;
     }

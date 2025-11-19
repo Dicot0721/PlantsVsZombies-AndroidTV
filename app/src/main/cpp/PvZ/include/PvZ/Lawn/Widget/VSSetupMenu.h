@@ -36,7 +36,7 @@ class DefaultPlayerInfo;
 
 class VSSetupWidget {
 public:
-    LawnApp *mApp = reinterpret_cast<LawnApp *>(*gLawnApp_Addr);
+    LawnApp *mApp = *gLawnApp_Addr;
     Sexy::ButtonWidget *mMoreSeedsButton = nullptr;
     Sexy::ButtonWidget *mMorePacketsButton = nullptr;
     Sexy::Image *mCheckboxImage = nullptr;

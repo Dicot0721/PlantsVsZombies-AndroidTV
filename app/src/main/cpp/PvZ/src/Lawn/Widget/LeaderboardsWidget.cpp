@@ -214,7 +214,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
 
 void LeaderboardsWidget::ButtonDepress(this LeaderboardsWidget &self, int id) {
     if (id == 1000) {
-        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+        LawnApp *lawnApp = *gLawnApp_Addr;
         lawnApp->KillLeaderboards();
         lawnApp->ShowMainMenuScreen();
     }

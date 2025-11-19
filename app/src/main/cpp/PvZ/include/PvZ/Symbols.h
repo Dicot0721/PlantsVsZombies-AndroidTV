@@ -33,6 +33,7 @@ class Image;
 class Font;
 } // namespace Sexy
 
+class LawnApp;
 class ReanimatorDefinition;
 
 inline void *Board_UpdateAddr;
@@ -1265,7 +1266,7 @@ inline Sexy::Image **Sexy_IMAGE_CRATER_ROOF_CENTER_Addr;
 inline Sexy::Image **Sexy_IMAGE_ESRB_RATING_Addr;
 
 inline char **ReanimTrackId_anim_head1_Addr;
-inline int *gLawnApp_Addr;
+inline LawnApp **gLawnApp_Addr;
 inline ReanimatorDefinition **gReanimatorDefArray_Addr;
 inline int *gEffectSystem_Addr;
 inline int *gFoleyParamArraySizeAddr;
@@ -2554,7 +2555,7 @@ inline bool LoadGameMain() {
     Sexy_IMAGE_CRATER_ROOF_CENTER_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy24IMAGE_CRATER_ROOF_CENTERE");
     Sexy_IMAGE_ESRB_RATING_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy17IMAGE_ESRB_RATINGE");
     ReanimTrackId_anim_head1_Addr = (char **)dlsym(handle, "ReanimTrackId_anim_head1");
-    gLawnApp_Addr = (int *)dlsym(handle, "gLawnApp");
+    gLawnApp_Addr = reinterpret_cast<LawnApp **>(dlsym(handle, "gLawnApp"));
     gReanimatorDefArray_Addr = (ReanimatorDefinition **)dlsym(handle, "gReanimatorDefArray");
     gEffectSystem_Addr = (int *)dlsym(handle, "gEffectSystem");
     gFoleyParamArraySizeAddr = (int *)dlsym(handle, "gFoleyParamArraySize");

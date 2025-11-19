@@ -3937,7 +3937,7 @@ void Board::UpdateButtons() {
 
 void Board::ButtonDepress(int theId) {
     if (theId == 1000) {
-        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+        LawnApp *lawnApp = *gLawnApp_Addr;
         if (lawnApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || lawnApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
             lawnApp->DoBackToMain();
             return;
@@ -3946,7 +3946,7 @@ void Board::ButtonDepress(int theId) {
         lawnApp->DoNewOptions(false, 0);
         return;
     } else if (theId == 1001) {
-        LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+        LawnApp *lawnApp = *gLawnApp_Addr;
         if (lawnApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND) {
             Board *mBoard = lawnApp->mBoard;
             mBoard->mChallenge->mChallengeState = ChallengeState::STATECHALLENGE_LAST_STAND_ONSLAUGHT;

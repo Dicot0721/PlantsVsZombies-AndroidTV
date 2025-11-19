@@ -1655,7 +1655,7 @@ bool Zombie::IsZombotany(ZombieType theZombieType) {
 
 bool Zombie::ZombieTypeCanGoInPool(ZombieType theZombieType) {
     // 修复泳池对战的僵尸们走水路时不攻击植物
-    LawnApp *lawnApp = (LawnApp *)*gLawnApp_Addr;
+    LawnApp *lawnApp = *gLawnApp_Addr;
     if (lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS && (VSBackGround == 3 || VSBackGround == 4 || VSBackGround == 9)) {
         return true;
     }
