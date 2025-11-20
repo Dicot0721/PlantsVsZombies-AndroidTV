@@ -1835,8 +1835,8 @@ void Plant::UpdateShooter() {
             LaunchStarFruit();
         } else if (mSeedType == SeedType::SEED_SPLITPEA) {
             FindTargetAndFire(mRow, PlantWeapon::WEAPON_SECONDARY);
-            Reanimation*aHeadReanim = mApp->ReanimationGet(mHeadReanimID);
-            Reanimation*aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+            Reanimation *aHeadReanim = mApp->ReanimationGet(mHeadReanimID);
+            Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
             aHeadReanim->StartBlend(20);
             aHeadReanim->mLoopType = ReanimLoopType::REANIM_LOOP;
             aHeadReanim->SetFramesForLayer("anim_head_idle");
