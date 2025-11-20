@@ -1835,6 +1835,13 @@ void Plant::UpdateShooter() {
             LaunchStarFruit();
         } else if (mSeedType == SeedType::SEED_SPLITPEA) {
             FindTargetAndFire(mRow, PlantWeapon::WEAPON_SECONDARY);
+            Reanimation*aHeadReanim = mApp->ReanimationGet(mHeadReanimID);
+            Reanimation*aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+            aHeadReanim->StartBlend(20);
+            aHeadReanim->mLoopType = ReanimLoopType::REANIM_LOOP;
+            aHeadReanim->SetFramesForLayer("anim_head_idle");
+            aHeadReanim->SetAnimRate(aBodyReanim->mAnimRate);
+            aHeadReanim->mAnimTime = aBodyReanim->mAnimTime;
         } else if (mSeedType == SeedType::SEED_CACTUS) {
             if (mState == PlantState::STATE_CACTUS_HIGH) {
                 FindTargetAndFire(mRow, PlantWeapon::WEAPON_PRIMARY);
