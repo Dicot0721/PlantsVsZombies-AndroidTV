@@ -193,14 +193,13 @@ void SeedChooserScreen::RebuildHelpbar() {
         Resize(mX, mY, mWidth, 600);
     }
 
-    return old_SeedChooserScreen_RebuildHelpbar(this);
+    old_SeedChooserScreen_RebuildHelpbar(this);
 }
 
 
 void SeedChooserScreen::Update() {
     // 记录当前1P选卡是否选满
-    GameMode mGameMode = mApp->mGameMode;
-    if (mGameMode >= GameMode::GAMEMODE_TWO_PLAYER_COOP_DAY && mGameMode <= GameMode::GAMEMODE_TWO_PLAYER_COOP_ENDLESS) {
+    if (mApp->IsCoopMode()) {
         m1PChoosingSeeds = mSeedsIn1PBank < 4;
     }
 
@@ -218,36 +217,46 @@ void SeedChooserScreen::EnableStartButton(int theIsEnabled) {
         return;
     }
 
-    return old_SeedChooserScreen_EnableStartButton(this, theIsEnabled);
+    old_SeedChooserScreen_EnableStartButton(this, theIsEnabled);
 }
 
 void SeedChooserScreen::OnStartButton() {
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         // 如果是对战模式，则直接关闭种子选择界面。用于修复对战模式选卡完毕后点击开始按钮导致的闪退
-        return CloseSeedChooser();
+        CloseSeedChooser();
+        return;
     }
 
-    return old_SeedChooserScreen_OnStartButton(this);
+    old_SeedChooserScreen_OnStartButton(this);
 }
 
 bool SeedChooserScreen::SeedNotAllowedToPick(SeedType theSeedType) {
     // 解除更多对战场地中的某些植物不能选取的问题，如泳池对战不能选荷叶，屋顶对战不能选花盆
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && VSBackGround > 1) {
-        // 直接在其他对战场景解锁全部植物即可
-        return false;
-    }
-    // 此处添加一些逻辑，就可以自定义Ban卡
-    // 此处Ban卡仅对植物方生效，theSeedType取值范围是0~39。
-
-    if (gMoreZombieSeeds) {
-        if (theSeedType == SeedType::SEED_BLOVER) {
+    if (mApp->IsVSMode()) {
+        if (theSeedType == gVSSetupWidget->mBannedSeed[theSeedType].mSeedType) {
+            return true;
+        }
+        if (gVSSetupWidget->mBanMode && theSeedType == SeedType::SEED_INSTANT_COFFEE) {
+            return true;
+        }
+        if (mBoard->StageHasPool()) {
+            if (theSeedType == SeedType::SEED_LILYPAD || theSeedType == SeedType::SEED_TANGLEKELP || theSeedType == SeedType::SEED_SEASHROOM) {
+                return false;
+            }
+            if (mBoard->StageIsNight() && theSeedType == SeedType::SEED_PLANTERN) {
+                return false;
+            }
+        } else {
+            if (theSeedType == SeedType::SEED_ZOMBIE_DUCKY_TUBE || theSeedType == SeedType::SEED_ZOMBIE_SNORKEL || theSeedType == SeedType::SEED_ZOMBIE_DOLPHIN_RIDER) {
+                return true;
+            }
+        }
+        if (mBoard->StageHasRoof() && theSeedType == SeedType::SEED_FLOWERPOT) {
             return false;
         }
-    }
-
-    if (!mBoard->StageHasPool()) {
-        if (theSeedType == SeedType::SEED_ZOMBIE_DUCKY_TUBE || theSeedType == SeedType::SEED_ZOMBIE_SNORKEL || theSeedType == SeedType::SEED_ZOMBIE_DOLPHIN_RIDER)
-            return true;
+        if (gMoreZombieSeeds && theSeedType == SeedType::SEED_BLOVER) {
+            return false;
+        }
     }
 
     return old_SeedChooserScreen_SeedNotAllowedToPick(this, theSeedType);
@@ -266,96 +275,154 @@ ZombieType SeedChooserScreen::GetZombieType(ZombieType theZombieType) {
     return theZombieType >= NUM_ZOMBIE_TYPES ? ZOMBIE_INVALID : theZombieType;
 }
 
+int SeedChooserScreen::GetSeedPacketIndex(int theSeedIndex) {
+    if (mIsZombieChooser)
+        return theSeedIndex - SEED_ZOMBIE_GRAVESTONE;
+    else
+        return theSeedIndex;
+}
+
+void SeedChooserScreen::OnPlayerPickedSeed(int thePlayerIndex) {
+    VSSetupMenu *aVSSetupScreen = mApp->mVSSetupScreen;
+    if (aVSSetupScreen)
+        aVSSetupScreen->OnPlayerPickedSeed(thePlayerIndex);
+}
+
 void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int thePlayerIndex) {
     // 实现1P结盟选卡选满后自动转换为2P选卡
     if (mApp->IsCoopMode())
         thePlayerIndex = !m1PChoosingSeeds;
 
-    old_SeedChooserScreen_ClickedSeedInChooser(this, theChosenSeed, thePlayerIndex);
+    int aGamepadIndex = mApp->PlayerToGamepadIndex(thePlayerIndex);
 
-    // int seedsInBank;
-    // VSSetupMenu *aVSSetupScreen;
-    // int aPlayerIndex;
-    // int seedsInFlight;
-    //
-    // int aGamepadIndex = mApp->PlayerToGamepadIndex(thePlayerIndex);
-    // if ( mApp->IsCoopMode() )
-    // {
-    // if ( mSeedsInBothBank > 8 )
-    // return;
-    // LABEL_3:
-    // goto LABEL_9;
-    // }
-    // if ( mSeedsInBothBank == mSeedBank1->mNumPackets )
-    // return;
-    // if ( mApp->IsVSMode() )
-    // {
-    // if ( !CanPickNow() )
-    // {
-    // mApp->PlaySample(*SOUND_BUZZER);
-    // return;
-    // }
-    // goto LABEL_3;
-    // }
-    // LABEL_9:
-    // if ( !mApp->IsCoopMode() || *(&mSeedsIn1PBank + thePlayerIndex) <= 3 )
-    // {
-    // if ( mApp->IsCoopMode() && thePlayerIndex == 1 )
-    // seedsInBank = mSeedsIn2PBank;
-    // else
-    // seedsInBank = mSeedsIn1PBank;
-    // theChosenSeed.mStartX = theChosenSeed.mX;
-    // theChosenSeed.mStartY = theChosenSeed.mY;
-    // theChosenSeed.mTimeStartMotion = mSeedChooserAge;
-    // theChosenSeed.mTimeEndMotion = mSeedChooserAge + 25;
-    // if ( mApp->IsAdventureMode() )
-    // {
-    // aPlayerIndex = 0;
-    // theChosenSeed.mChosenPlayerIndex = 0;
-    // }
-    // else
-    // {
-    // if ( mApp->IsVSMode() )
-    // {
-    // aVSSetupScreen = mApp->mVSSetupScreen;
-    // }
-    // else
-    // {
-    // aPlayerIndex = thePlayerIndex;
-    // theChosenSeed.mChosenPlayerIndex = thePlayerIndex;
-    // }
-    // if ( mApp->IsVSMode() )
-    // {
-    // aPlayerIndex = (thePlayerIndex == 1) ? aVSSetupScreen->mPlayerIndex2 : aVSSetupScreen->mPlayerIndex1;
-    // theChosenSeed.mChosenPlayerIndex = aPlayerIndex;
-    // }
-    // }
-    // GetSeedPositionInBank(seedsInBank, theChosenSeed.mEndX, theChosenSeed.mEndY, aPlayerIndex);
-    // seedsInFlight = mSeedsInFlight + 1;
-    // theChosenSeed.mSeedIndexInBank = seedsInBank;
-    // theChosenSeed.mSeedState = SEED_FLYING_TO_BANK;
-    // mSeedsInFlight = seedsInFlight;
-    // mSeedsInBothBank = mSeedsInBothBank + 1;
-    // if ( mApp->IsCoopMode() && thePlayerIndex == 1 )
-    // ++seedsInBank;
-    // else
-    // ++mSeedsIn1PBank;
-    // RemoveToolTip(thePlayerIndex);
-    // mApp->PlaySample(*SOUND_TAP);
-    // if ( mSeedsInBothBank == mSeedBank1->mNumPackets && !mApp->IsCoopMode() )
-    // EnableStartButton(1);
-    // if ( mApp->IsCoopMode()
-    // && mSeedsInBothBank == mSeedBank2->mNumPackets + mSeedBank1->mNumPackets )
-    // {
-    // EnableStartButton(1);
-    // }
-    // if (mApp->IsVSMode())
-    // {
-    // aVSSetupScreen = mApp->mVSSetupScreen;
-    // if (aVSSetupScreen)
-    // aVSSetupScreen->OnPlayerPickedSeed(aGamepadIndex);
-    // }
-    // }
+    // 检查是否允许选择种子
+    bool canPickSeed = true;
+
+    // 合作模式检查
+    if (mApp->IsCoopMode()) {
+        if (mSeedsInBothBank > 8) {
+            canPickSeed = false;
+        }
+    }
+    // 非合作模式检查
+    else if (mSeedsInBothBank == mSeedBank1->mNumPackets) {
+        canPickSeed = false;
+    }
+
+    // VS模式检查
+    if (mApp->IsVSMode() && !CanPickNow()) {
+        mApp->PlaySample(*SOUND_BUZZER);
+        canPickSeed = false;
+    }
+
+    // 检查玩家种子栏容量
+    if (mApp->IsCoopMode()) {
+        int *aNumSeedsInBank = (&mSeedsIn1PBank + thePlayerIndex);
+        if (*aNumSeedsInBank > 3) {
+            canPickSeed = false;
+        }
+    }
+
+    if (!canPickSeed) {
+        return;
+    }
+
+    // 禁选模式（BP）
+    if (mApp->IsVSMode() && gVSSetupWidget->mBanMode) {
+        int x = (aGamepadIndex == 1) ? mCursorPositionX2 : mCursorPositionX1;
+        int y = (aGamepadIndex == 1) ? mCursorPositionY2 : mCursorPositionY1;
+        SeedType aSeedType = SeedHitTest(x, y);
+        if (aSeedType != SEED_NONE && !SeedNotAllowedToPick(aSeedType)) {
+            BannedSeed &aBannedSeed = gVSSetupWidget->mBannedSeed[aSeedType];
+            aBannedSeed.mSeedType = theChosenSeed.mSeedType;
+
+            int aSeedBanned = aBannedSeed.mSeedType;
+
+            gVSSetupWidget->mBannedSeed[aSeedBanned].mX = theChosenSeed.mX;
+            gVSSetupWidget->mBannedSeed[aSeedBanned].mY = theChosenSeed.mY;
+            gVSSetupWidget->mBannedSeed[aSeedBanned].mSeedState = BannedSeedState::SEED_BANNED;
+            if (mIsZombieChooser)
+                gVSSetupWidget->mBannedSeed[aSeedBanned].mChosenPlayerIndex = 1;
+
+            gVSSetupWidget->mSeedsInBothBanned++;
+            if (gVSSetupWidget->mSeedsInBothBanned == gVSSetupWidget->mNumBanPackets) {
+                gVSSetupWidget->mBanMode = false;
+            }
+
+            OnPlayerPickedSeed(aGamepadIndex);
+        }
+        return;
+    }
+
+    // 确定种子栏
+    int aSeedsInBank;
+    if (mApp->IsCoopMode() && thePlayerIndex == 1) {
+        aSeedsInBank = mSeedsIn2PBank;
+    } else {
+        aSeedsInBank = mSeedsIn1PBank;
+    }
+
+    // 设置种子动画参数
+    theChosenSeed.mStartX = theChosenSeed.mX;
+    theChosenSeed.mStartY = theChosenSeed.mY;
+    theChosenSeed.mTimeStartMotion = mSeedChooserAge;
+    theChosenSeed.mTimeEndMotion = mSeedChooserAge + 25;
+
+    // 确定实际玩家索引
+    int aActualPlayerIndex;
+    if (mApp->IsAdventureMode()) {
+        aActualPlayerIndex = 0;
+        theChosenSeed.mChosenPlayerIndex = 0;
+    } else {
+        if (mApp->IsVSMode()) {
+            VSSetupMenu *aVSSetupScreen = mApp->mVSSetupScreen;
+            aActualPlayerIndex = (thePlayerIndex == 1) ? aVSSetupScreen->mController2Position : aVSSetupScreen->mController1Position;
+            theChosenSeed.mChosenPlayerIndex = aActualPlayerIndex;
+        } else {
+            aActualPlayerIndex = thePlayerIndex;
+            theChosenSeed.mChosenPlayerIndex = thePlayerIndex;
+        }
+    }
+
+    // 获取种子在种子栏中的位置
+    GetSeedPositionInBank(aSeedsInBank, theChosenSeed.mEndX, theChosenSeed.mEndY, aActualPlayerIndex);
+
+    // 更新种子状态和计数
+    theChosenSeed.mSeedIndexInBank = aSeedsInBank;
+    theChosenSeed.mSeedState = SEED_FLYING_TO_BANK;
+
+    mSeedsInFlight++;
+    mSeedsInBothBank++;
+
+    if (mApp->IsCoopMode() && thePlayerIndex == 1) {
+        mSeedsIn2PBank++;
+    } else {
+        mSeedsIn1PBank++;
+    }
+
+    // 播放音效并更新UI
+    RemoveToolTip(thePlayerIndex);
+    mApp->PlaySample(*SOUND_TAP);
+
+    // 检查是否启用开始按钮
+    if (!mApp->IsCoopMode() && mSeedsInBothBank == mSeedBank1->mNumPackets) {
+        EnableStartButton(true);
+    }
+
+    if (mApp->IsCoopMode() && mSeedsInBothBank == (mSeedBank2->mNumPackets + mSeedBank1->mNumPackets)) {
+        EnableStartButton(true);
+    }
+
+    // VS模式特殊处理
+    if (mApp->IsVSMode()) {
+        OnPlayerPickedSeed(aGamepadIndex);
+
+        if (gVSSetupWidget && gVSSetupWidget->mSeedsInBothBanned > 0 && mSeedsIn1PBank == 4 && !mIsZombieChooser) {
+            gVSSetupWidget->mBanMode = true;
+            gVSSetupWidget->mSeedsInBothBanned = 0;
+            gVSSetupWidget->mNumBanPackets = 2;
+        }
+    }
 }
 
 void SeedChooserScreen::CrazyDavePickSeeds() {
@@ -416,11 +483,24 @@ void SeedChooserScreen::DrawPacket(
     // int theConvertedGrayness = ((theColor->mRed + theColor->mGreen + theColor->mBlue) / 3 + theGrayness) / 2;
     // 此算法用于在对战模式将非选卡的一方的卡片整体变暗。但这种算法下，55亮度会变成155亮度，115亮度会变成185亮度，严重影响非对战模式的选卡体验。所以需要修复。
 
-    int theConvertedGrayness = (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) ? ((theColor->mRed + theColor->mGreen + theColor->mBlue) / 3 + theGrayness) / 2 : theGrayness;
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && !mBoard->StageHasPool()) {
-        if (theSeedType == SeedType::SEED_ZOMBIE_DUCKY_TUBE || theSeedType == SeedType::SEED_ZOMBIE_SNORKEL || theSeedType == SeedType::SEED_ZOMBIE_DOLPHIN_RIDER)
-            theConvertedGrayness = 155;
+    int theConvertedGrayness = (mApp->IsVSMode()) ? ((theColor->mRed + theColor->mGreen + theColor->mBlue) / 3 + theGrayness) / 2 : theGrayness;
+    if (mApp->IsVSMode()) {
+        if (mIsZombieChooser && SeedNotAllowedToPick(theSeedType)) {
+            if (CanPickNow())
+                theConvertedGrayness = 115;
+            else
+                theConvertedGrayness = 55;
+        }
+
+        if (gVSSetupWidget && gVSSetupWidget->mBanMode) {
+            for (int i = 0; i < NUM_SEEDS_IN_CHOOSER; i++) {
+                if (mChosenSeeds[i].mSeedType == theSeedType && mChosenSeeds[i].mSeedState == ChosenSeedState::SEED_IN_BANK) {
+                    theConvertedGrayness = 115;
+                }
+            }
+        }
     }
+
     DrawSeedPacket(g, x, y, theSeedType, theImitaterType, thePercentDark, theConvertedGrayness, theDrawCost, false, mIsZombieChooser, theUseCurrentCost);
 }
 
@@ -501,8 +581,18 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
     bool is2P = thePlayerIndex == 1 ? true : false;
     ToolTipWidget *aTolTip = is2P ? mToolTip2 : mToolTip1;
 
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && mIsZombieChooser) {
-        if (mApp->IsVSMode() && mIsZombieChooser) {
+    if (mApp->IsVSMode()) {
+        for (int i = 0; i < NUM_ZOMBIE_SEED_TYPES; ++i) {
+            int aGamepadIndex = mApp->PlayerToGamepadIndex(thePlayerIndex);
+            int x = (aGamepadIndex == 1) ? mCursorPositionX2 : mCursorPositionX1;
+            int y = (aGamepadIndex == 1) ? mCursorPositionY2 : mCursorPositionY1;
+            SeedType aSeedType = SeedHitTest(x, y);
+            if (gVSSetupWidget && aSeedType == gVSSetupWidget->mBannedSeed[i].mSeedType) {
+                aTolTip->SetWarningText("本轮已禁用");
+            }
+        }
+
+        if (mIsZombieChooser) {
             SeedType aSeedType = SeedHitTest(mCursorPositionX2, mCursorPositionY2);
             if (mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_GRAVESTONE].mSeedState == ChosenSeedState::SEED_IN_BANK && mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_GRAVESTONE].mCrazyDavePicked) {
                 bool seedIsGrave = (mToolTipWidgetSeed1 == SeedType::SEED_ZOMBIE_GRAVESTONE || mToolTipWidgetSeed2 == SeedType::SEED_ZOMBIE_GRAVESTONE) ? true : false;
@@ -570,6 +660,15 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
                 }
                 aTolTip->SetTitle(aTitle);
                 aTolTip->SetLabel(aLabel);
+            }
+        } else {
+            if (gVSSetupWidget && gVSSetupWidget->mBanMode) {
+                SeedType aSeedType = SeedHitTest(mCursorPositionX1, mCursorPositionY1);
+                if (mChosenSeeds[aSeedType].mSeedState == ChosenSeedState::SEED_IN_CHOOSER) {
+                    bool seedIsCoffee = (mToolTipWidgetSeed1 == SeedType::SEED_INSTANT_COFFEE || mToolTipWidgetSeed2 == SeedType::SEED_INSTANT_COFFEE) ? true : false;
+                    pvzstl::string str = seedIsCoffee ? "此阶段不允许" : "";
+                    aTolTip->SetWarningText(str);
+                }
             }
         }
     }
@@ -853,6 +952,29 @@ int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, int thePlayerIndex) {
 }
 
 void SeedChooserScreen::Draw(Graphics *g) {
+    old_SeedChooserScreen_Draw(this, g);
+
+    if (gVSSetupWidget) {
+        if (gVSSetupWidget->mBanMode) {
+            Graphics aBanGraphics(*g);
+            aBanGraphics.mTransX = 0;
+            aBanGraphics.mTransY = 0;
+            aBanGraphics.SetColor(Color(205, 0, 0, 255));
+            aBanGraphics.SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+            aBanGraphics.DrawString("禁            用                            阶            段", 440, 110);
+        }
+
+        for (int i = 0; i < NUM_ZOMBIE_SEED_TYPES; i++) {
+            if (gVSSetupWidget->mBannedSeed[i].mSeedState == BannedSeedState::SEED_BANNED) {
+                if ((mIsZombieChooser && gVSSetupWidget->mBannedSeed[i].mChosenPlayerIndex == 1) || (!mIsZombieChooser && gVSSetupWidget->mBannedSeed[i].mChosenPlayerIndex == 0)) {
+                    int x = gVSSetupWidget->mBannedSeed[i].mX;
+                    int y = gVSSetupWidget->mBannedSeed[i].mY;
+                    g->DrawImage(*IMAGE_MP_TARGETS_X, x + 5, y + 5);
+                }
+            }
+        }
+    }
+
     // if (mIsZombieChooser) {
     // if (mApp->GetDialog(DIALOG_STORE) || mApp->GetDialog(DIALOG_ALMANAC))
     // return;
@@ -947,6 +1069,4 @@ void SeedChooserScreen::Draw(Graphics *g) {
     // }
     // return;
     // }
-
-    old_SeedChooserScreen_Draw(this, g);
 }

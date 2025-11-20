@@ -74,42 +74,42 @@ private:
     };
 
 public:
-    Sexy::ButtonListener mButtonListener; // 64
-    int unkMem1;                          // 65
-    GameButton *mImitaterButton;          // 66
-    ChosenSeed mChosenSeeds[54];          // 67 ~ 930
-    LawnApp *mApp;                        // 931
-    Board *mBoard;                        // 932
-    int mSeedChooserAge;                  // 933
-    int mSeedsInFlight;                   // 934
-    int mSeedsInBothBank;                 // 935
-    int mSeedsIn1PBank;                   // 936
-    int mSeedsIn2PBank;                   // 937
-    ToolTipWidget *mToolTip1;             // 938
-    ToolTipWidget *mToolTip2;             // 939
-    int mToolTipWidgetSeed1;              // 940
-    int mToolTipWidgetSeed2;              // 941
-    int mCursorPositionX1;                // 942
-    int mCursorPositionX2;                // 943
-    int mCursorPositionY1;                // 944
-    int mCursorPositionY2;                // 945
-    SeedChooserState mChooseState;        // 946
-    int mViewLawnTime;                    // 947
-    bool unkBool;                         // 3792
-    int mPlayerIndex;                     // 949
-    SeedType mSeedType1;                  // 950
-    SeedType mSeedType2;                  // 951
-    float unkF;                           // 952
-    bool mIsZombieChooser;                // 3812
-    SeedBank *mSeedBank1;                 // 954
-    SeedBank *mSeedBank2;                 // 955
-    int unkCounter;                       // 956
-    int mImitaterDialogOpened;            // 957
-    GameButton *mViewLawnButton;          // 958
-    GameButton *mStoreButton;             // 959
-    GameButton *mStartButton;             // 960
-    GameButton *mAlmanacButton;           // 961
-    int unkMems3[4];                      // 962 ~ 965
+    Sexy::ButtonListener mButtonListener;    // 64
+    int unkMem1;                             // 65
+    GameButton *mImitaterButton;             // 66
+    ChosenSeed mChosenSeeds[NUM_SEED_TYPES]; // 67 ~ 930
+    LawnApp *mApp;                           // 931
+    Board *mBoard;                           // 932
+    int mSeedChooserAge;                     // 933
+    int mSeedsInFlight;                      // 934
+    int mSeedsInBothBank;                    // 935
+    int mSeedsIn1PBank;                      // 936
+    int mSeedsIn2PBank;                      // 937
+    ToolTipWidget *mToolTip1;                // 938
+    ToolTipWidget *mToolTip2;                // 939
+    int mToolTipWidgetSeed1;                 // 940
+    int mToolTipWidgetSeed2;                 // 941
+    int mCursorPositionX1;                   // 942
+    int mCursorPositionX2;                   // 943
+    int mCursorPositionY1;                   // 944
+    int mCursorPositionY2;                   // 945
+    SeedChooserState mChooseState;           // 946
+    int mViewLawnTime;                       // 947
+    bool unkBool;                            // 3792
+    int mPlayerIndex;                        // 949
+    SeedType mSeedType1;                     // 950
+    SeedType mSeedType2;                     // 951
+    float unkF;                              // 952
+    bool mIsZombieChooser;                   // 3812
+    SeedBank *mSeedBank1;                    // 954
+    SeedBank *mSeedBank2;                    // 955
+    int unkCounter;                          // 956
+    int mImitaterDialogOpened;               // 957
+    GameButton *mViewLawnButton;             // 958
+    GameButton *mStoreButton;                // 959
+    GameButton *mStartButton;                // 960
+    GameButton *mAlmanacButton;              // 961
+    int unkMems3[4];                         // 962 ~ 965
     // 大小966个整数
 
     void CloseSeedChooser() {
@@ -154,6 +154,8 @@ public:
     void RebuildHelpbar();
     SeedType GetZombieSeedType(SeedType theSeedType);
     ZombieType GetZombieType(ZombieType theZombieType);
+    int GetSeedPacketIndex(int theSeedIndex);
+    void OnPlayerPickedSeed(int thePlayerIndex);
     void ClickedSeedInChooser(ChosenSeed &theChosenSeed, int thePlayerIndex);
     void CrazyDavePickSeeds();
     void OnStartButton();

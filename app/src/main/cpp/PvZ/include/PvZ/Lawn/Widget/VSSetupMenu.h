@@ -26,6 +26,13 @@
 #include "PvZ/Symbols.h"
 #include "WaitForSecondPlayerDialog.h"
 
+constexpr int VS_BUTTON_MORE_PACKETS_X = 800;
+constexpr int VS_BUTTON_MORE_PACKETS_Y = 200;
+constexpr int VS_BUTTON_BAN_MODE_X = 800;
+constexpr int VS_BUTTON_BAN_MODE_Y = 240;
+constexpr int NUM_VS_BUTTONS = 2;
+constexpr int NUM_VS_BAN_PACKETS = 4;
+
 namespace Sexy {
 class ButtonWidget;
 }
@@ -34,14 +41,34 @@ class LawnApp;
 class Board;
 class DefaultPlayerInfo;
 
+class BannedSeed {
+public:
+    int mX = 0;
+    int mY = 0;
+    int mChosenPlayerIndex = 0;
+    SeedType mSeedType = SEED_NONE;
+    BannedSeedState mSeedState = SEED_NOT_BANNED;
+};
+
 class VSSetupWidget {
+private:
+    enum {
+        VS_BUTTON_PACKETS = 1145,
+        VS_BUTTON_BAN = 1146,
+    };
+
 public:
     LawnApp *mApp = *gLawnApp_Addr;
     Sexy::ButtonWidget *mMoreSeedsButton = nullptr;
     Sexy::ButtonWidget *mMorePacketsButton = nullptr;
-    Sexy::Image *mCheckboxImage = nullptr;
-    Sexy::Image *mCheckboxImagePress = nullptr;
-    bool mIsMorePackets = false;
+    Sexy::ButtonWidget *mBanModeButton = nullptr;
+    Sexy::Image *mCheckboxImage[NUM_VS_BUTTONS] = {nullptr};
+    Sexy::Image *mCheckboxImagePress[NUM_VS_BUTTONS] = {nullptr};
+    bool mMorePackets = false;
+    bool mBanMode = false;
+    int mNumBanPackets = NUM_VS_BAN_PACKETS;
+    int mSeedsInBothBanned = 0;
+    BannedSeed mBannedSeed[NUM_ZOMBIE_SEED_TYPES];
     bool mDrawString = false;
 
     VSSetupWidget();
@@ -59,14 +86,17 @@ private:
     static inline Sexy::ButtonListener sButtonListener{&sButtonListenerVtable};
 };
 
-constexpr const int MORE_PACKETS_BUTTON_X = 800;
-constexpr const int MORE_PACKETS_BUTTON_Y = 200;
-inline VSSetupWidget *gVSMorePacketsButton;
+inline VSSetupWidget *gVSSetupWidget;
 
 
 class VSSetupMenu : public Sexy::__Widget {
 public:
-    enum VSSetupState { VS_SETUP_CONTROLLERS = 0, VS_SETUP_SIDES = 1, VS_SELECT_BATTLE = 2, VS_CUSTOM_BATTLE = 3 };
+    enum VSSetupState {
+        VS_SETUP_CONTROLLERS = 0,
+        VS_SETUP_SIDES = 1,
+        VS_SELECT_BATTLE = 2,
+        VS_CUSTOM_BATTLE = 3,
+    };
 
     Sexy::ButtonListener mButtonListener; // 64
     int unkInt[5];                        // 65 ~ 69

@@ -25,6 +25,7 @@
 #include "PvZ/Lawn/Board/SeedPacket.h"
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -60,6 +61,12 @@ void SeedBank::Draw(Sexy::Graphics *g) {
     ////        Sexy_Image_PushTransform(g->mDestImage,transform,true);
     // (*(void (**)(uint32_t, int *, bool))(**((uint32_t **)g + 1) + 140))(*((uint32_t *)g + 1),transform,true);
     // }
+
+    if (gVSSetupWidget && gVSSetupWidget->mBanMode) {
+        g->SetColorizeImages(true);
+        g->SetColor(Color(155, 155, 155));
+    }
+
     if (mApp->mGameScene != GameScenes::SCENE_PLAYING) {
         g->mTransX = g->mTransX - mBoard->mX;
         g->mTransY = g->mTransY - mBoard->mY;

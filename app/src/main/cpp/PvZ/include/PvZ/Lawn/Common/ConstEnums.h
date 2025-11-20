@@ -161,6 +161,10 @@ enum ChosenSeedState {
     SEED_IN_CHOOSER = 3,
     SEED_PACKET_HIDDEN = 4,
 };
+enum BannedSeedState {
+    SEED_NOT_BANNED,
+    SEED_BANNED,
+};
 enum CoinMotion {
     COIN_MOTION_FROM_SKY = 0,
     COIN_MOTION_FROM_SKY_SLOW = 1,

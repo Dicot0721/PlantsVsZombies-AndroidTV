@@ -2157,39 +2157,29 @@ void Board::DrawShovel(Sexy::Graphics *g) {
 void Board::Draw(Sexy::Graphics *g) {
     old_Board_Draw(this, g);
 
-    if (mApp->mGameMode == GAMEMODE_MP_VS) {
-        if (tcp_connected) {
-            Color aColor = Color(0, 205, 0, 255);
-            g->SetColor(aColor);
-            g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-
-            pvzstl::string morePackets = StrFormat("房间中");
-            g->DrawString(morePackets, 370, -20);
-        } else if (tcpClientSocket >= 0) {
-            Color aColor = Color(0, 205, 0, 255);
-            g->SetColor(aColor);
-            g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-
-            pvzstl::string morePackets = StrFormat("房主");
-            g->DrawString(morePackets, 380, -20);
-        } else {
-            Color aColor = Color(0, 205, 0, 255);
-            g->SetColor(aColor);
-            g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-
-            pvzstl::string morePackets = StrFormat("本地游戏");
-            g->DrawString(morePackets, 360, -20);
-        }
-    }
-
-
-    if (gVSMorePacketsButton && gVSMorePacketsButton->mDrawString) {
+    if (mApp->IsVSMode()) {
         Color aColor = Color(0, 205, 0, 255);
         g->SetColor(aColor);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        if (tcp_connected) {
+            g->DrawString("房间中", 370, -20);
+        } else if (tcpClientSocket >= 0) {
+            g->DrawString("房主", 380, -20);
+        } else {
+            g->DrawString("本地游戏", 360, -20);
+        }
 
-        pvzstl::string morePackets = StrFormat("额外卡槽");
-        g->DrawString(morePackets, MORE_PACKETS_BUTTON_X + 40, MORE_PACKETS_BUTTON_Y + 25);
+        if (gVSSetupWidget) {
+            if (gVSSetupWidget->mDrawString) {
+                g->DrawString("额外卡槽", VS_BUTTON_MORE_PACKETS_X + 40, VS_BUTTON_MORE_PACKETS_Y + 25);
+                g->DrawString("禁选模式", VS_BUTTON_BAN_MODE_X + 40, VS_BUTTON_BAN_MODE_Y + 25);
+
+                if (gVSSetupWidget->mBanMode) {
+                    g->SetColor(Color(205, 0, 0, 255));
+                    g->DrawString("禁            用                            阶            段", 200, 45);
+                }
+            }
+        }
     }
 }
 
@@ -4231,7 +4221,7 @@ void Board::ShakeBoard(int theShakeAmountX, int theShakeAmountY) {
 int Board::GetNumSeedsInBank(bool thePlayerIndex) {
     // 对战额外卡槽
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        if (gVSMorePacketsButton != nullptr && gVSMorePacketsButton->mIsMorePackets)
+        if (gVSSetupWidget != nullptr && gVSSetupWidget->mMorePackets)
             return 7;
     }
 
