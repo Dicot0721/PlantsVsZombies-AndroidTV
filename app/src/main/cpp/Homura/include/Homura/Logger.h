@@ -33,7 +33,7 @@
  * 也可以输入 `adb logcat *:S [pvztv:D] [pvztv:I] [pvztv:W] [pvztv:E]` 控制输出级别 (`[]` 中为可选项).
  */
 
-namespace homura::log {
+namespace homura::logger {
 
 constexpr const char *PVZ_LOG_TAG = "pvztv";
 
@@ -48,19 +48,19 @@ inline void SetLevel(android_LogPriority level) noexcept {
 }
 
 template <typename... Args>
-void Log(const char *function_name, android_LogPriority level, std::format_string<Args...> format, Args &&...args) {
-    if (level < GetLevel()) {
+void Log(const char *funcName, android_LogPriority level, std::format_string<Args...> format, Args &&...args) {
+    if (level < _level) {
         return;
     }
     const std::string message = std::vformat(format.get(), std::make_format_args(args...));
-    __android_log_print(level, PVZ_LOG_TAG, "[%s] %s", function_name, message.c_str());
+    __android_log_print(level, PVZ_LOG_TAG, "[%s] %s", funcName, message.c_str());
 }
 
-} // namespace homura::log
+} // namespace homura::logger
 
 
 // `__func__` 生成的函数签名不够完整.
-#define LOGGER_CALL(level, ...) homura::log::Log(std::source_location::current().function_name(), level, __VA_ARGS__)
+#define LOGGER_CALL(level, ...) homura::logger::Log(std::source_location::current().function_name(), level, __VA_ARGS__)
 
 #define LOG_DEBUG(...) LOGGER_CALL(ANDROID_LOG_DEBUG, __VA_ARGS__)
 #define LOG_INFO(...) LOGGER_CALL(ANDROID_LOG_INFO, __VA_ARGS__)
