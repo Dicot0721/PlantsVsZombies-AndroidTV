@@ -178,44 +178,43 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
 }
 
 void GamepadControls::Update(float a2) {
-
-
     LawnApp *aApp = mGameObject.mApp;
-    int theGridX = mBoard->PixelToGridXKeepOnBoard(mCursorPositionX, mCursorPositionY);
-    int theGridY = mBoard->PixelToGridYKeepOnBoard(mCursorPositionX, mCursorPositionY);
-    int mGridCenterPositionX = mBoard->GridToPixelX(theGridX, theGridY) + mBoard->GridCellWidth(theGridX, theGridY) / 2;
-    int mGridCenterPositionY = mBoard->GridToPixelY(theGridX, theGridY) + mBoard->GridCellHeight(theGridX, theGridY) / 2;
+    int aGridX = mBoard->PixelToGridXKeepOnBoard(mCursorPositionX, mCursorPositionY);
+    int aGridY = mBoard->PixelToGridYKeepOnBoard(mCursorPositionX, mCursorPositionY);
+    int aGridCenterPosX = mBoard->GridToPixelX(aGridX, aGridY) + mBoard->GridCellWidth(aGridX, aGridY) / 2;
+    int aGridCenterPosY = mBoard->GridToPixelY(aGridX, aGridY) + mBoard->GridCellHeight(aGridX, aGridY) / 2;
     // 键盘双人模式 平滑移动光标
     if (isKeyboardTwoPlayerMode) {
-        if (mPlayerIndex2 == 0) {
-            mGamepadVelocityLeftX = GamepadVelocityXOfPlayer1;
-            mGamepadVelocityLeftY = GamepadVelocityYOfPlayer1;
-            if (GamepadVelocityXOfPlayer1 == 0) {
-                mCursorPositionX += (mGridCenterPositionX - mCursorPositionX) / 10;
+        int aGamepadIndex = mGameObject.mApp->PlayerToGamepadIndex(mPlayerIndex1);
+        if (aGamepadIndex == 0) {
+            mGamepadVelocityLeftX = gGamepadP1VelX;
+            mGamepadVelocityLeftY = gGamepadP1VelY;
+            if (gGamepadP1VelX == 0) {
+                mCursorPositionX += (aGridCenterPosX - mCursorPositionX) / 10;
             }
-            if (GamepadVelocityYOfPlayer1 == 0) {
-                mCursorPositionY += (mGridCenterPositionY - mCursorPositionY) / 10;
+            if (gGamepadP1VelY == 0) {
+                mCursorPositionY += (aGridCenterPosY - mCursorPositionY) / 10;
             }
-        } else if (mPlayerIndex2 == 1) {
-            mGamepadVelocityLeftX = GamepadVelocityXOfPlayer2;
-            mGamepadVelocityLeftY = GamepadVelocityYOfPlayer2;
-            if (GamepadVelocityXOfPlayer2 == 0) {
-                mCursorPositionX += (mGridCenterPositionX - mCursorPositionX) / 10;
+        } else if (aGamepadIndex == 1) {
+            mGamepadVelocityLeftX = gGamepadP2VelX;
+            mGamepadVelocityLeftY = gGamepadP2VelY;
+            if (gGamepadP2VelX == 0) {
+                mCursorPositionX += (aGridCenterPosX - mCursorPositionX) / 10;
             }
-            if (GamepadVelocityYOfPlayer2 == 0) {
-                mCursorPositionY += (mGridCenterPositionY - mCursorPositionY) / 10;
+            if (gGamepadP2VelY == 0) {
+                mCursorPositionY += (aGridCenterPosY - mCursorPositionY) / 10;
             }
         }
     }
 
     if (positionAutoFix && !aApp->IsWhackAZombieLevel() && aApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM && tcpServerSocket == -1) {
         if (this == mBoard->mGamepadControls1 && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER1 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
-            mCursorPositionX += (mGridCenterPositionX - mCursorPositionX) / 10;
-            mCursorPositionY += (mGridCenterPositionY - mCursorPositionY) / 10;
+            mCursorPositionX += (aGridCenterPosX - mCursorPositionX) / 10;
+            mCursorPositionY += (aGridCenterPosY - mCursorPositionY) / 10;
         }
         if (this == mBoard->mGamepadControls2 && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER2 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER2) {
-            mCursorPositionX += (mGridCenterPositionX - mCursorPositionX) / 10;
-            mCursorPositionY += (mGridCenterPositionY - mCursorPositionY) / 10;
+            mCursorPositionX += (aGridCenterPosX - mCursorPositionX) / 10;
+            mCursorPositionY += (aGridCenterPosY - mCursorPositionY) / 10;
         }
     }
 

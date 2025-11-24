@@ -1959,7 +1959,7 @@ void Board::Update() {
     }
 
     UpdateButtons();
-    return old_Board_Update(this);
+    old_Board_Update(this);
 }
 
 int Board::GetNumWavesPerFlag() {
@@ -3906,7 +3906,48 @@ void Board::RemovedFromManager(WidgetManager *theManager) {
 }
 
 void Board::UpdateButtons() {
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+    SeedChooserScreen *aSeedChooser = mApp->mSeedChooserScreen;
+    VSSetupMenu *aVSSetup = mApp->mVSSetupScreen;
+    GamepadControls *aGamepad = (gGamePlayerIndex == 1) ? mGamepadControls2 : mGamepadControls1;
+    // Todo: 修复对战模式 P1,P2 的选取与实际 Gamepad 不对应的问题
+    if (gKeyDown) {
+        aGamepad->OnKeyDown(KeyCode::KEYCODE_SHOVEL, 1112);
+        aGamepad->mGamepadState = 7;
+        gKeyDown = false;
+        gGamePlayerIndex = -1;
+    }
+    if (gButtonDown) {
+        aGamepad->OnButtonDown(gButtonCode, gGamePlayerIndex, 0);
+        gButtonDown = false;
+        gButtonCode = ButtonCode::BUTTONCODE_NONE;
+        gGamePlayerIndex = -1;
+    }
+    if (gButtonDownP1) {
+        mGamepadControls1->OnButtonDown(gButtonCodeP1, 0, 0);
+        gButtonDownP1 = false;
+        gButtonCodeP1 = ButtonCode::BUTTONCODE_NONE;
+    }
+    if (gButtonDownP2) {
+        mGamepadControls2->OnButtonDown(gButtonCodeP2, 0, 0);
+        gButtonDownP2 = false;
+        gButtonCodeP2 = ButtonCode::BUTTONCODE_NONE;
+    }
+    if (gButtonDownSeedChooser) {
+        aSeedChooser->GameButtonDown(gButtonCode, gGamePlayerIndex);
+        gButtonDownSeedChooser = false;
+        gButtonCode = ButtonCode::BUTTONCODE_NONE;
+        gGamePlayerIndex = -1;
+    }
+    if (gButtonDownVSSetup) {
+        if (gButtonCode != ButtonCode::BUTTONCODE_B) { // 修复对战选卡阶段按下 B 键崩溃
+            aVSSetup->GameButtonDown(gButtonCode, gGamePlayerIndex, 0);
+        }
+        gButtonDownVSSetup = false;
+        gButtonCode = ButtonCode::BUTTONCODE_NONE;
+        gGamePlayerIndex = -1;
+    }
+
+    if (mApp->IsVSMode()) {
         gBoardMenuButton->mBtnNoDraw = false;
         gBoardMenuButton->mDisabled = false;
     } else {
@@ -3918,6 +3959,7 @@ void Board::UpdateButtons() {
             gBoardMenuButton->mDisabled = true;
         }
     }
+
     if (mBoardFadeOutCounter > 0) {
         gBoardMenuButton->mBtnNoDraw = true;
         gBoardMenuButton->mDisabled = true;
@@ -4807,7 +4849,6 @@ GridItem *Board::AddAGraveStone(int gridX, int gridY) {
     }
     return result;
 }
-
 
 bool Board::TakeSunMoney(int theAmount, int thePlayer) {
     bool result = old_Board_TakeSunMoney(this, theAmount, thePlayer);

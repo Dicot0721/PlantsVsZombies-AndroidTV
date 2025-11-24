@@ -82,22 +82,6 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     angle2 = float(std::sin(radian));
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native1PButtonDown(JNIEnv *env, jclass clazz, jint code) {
-    Board *aBoard = (*gLawnApp_Addr)->mBoard;
-    if (aBoard == nullptr) {
-        return;
-    }
-    aBoard->mGamepadControls1->OnButtonDown(ButtonCode(code), 0, 0);
-}
-
-extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native2PButtonDown(JNIEnv *env, jclass clazz, jint code) {
-    Board *aBoard = (*gLawnApp_Addr)->mBoard;
-    if (aBoard == nullptr) {
-        return;
-    }
-    aBoard->mGamepadControls2->OnButtonDown(ButtonCode(code), 0, 0);
-}
-
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeEnableNewOptionsDialog(JNIEnv *env, jclass clazz) {
     enableNewOptionsDialog = true;
 }
@@ -775,71 +759,92 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCu
     return StringToJString(env, generateLineupStr(map));
 }
 
+extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native1PButtonDown(JNIEnv *env, jclass clazz, jint code) {
+    Board *aBoard = (*gLawnApp_Addr)->mBoard;
+    if (aBoard) {
+        gButtonDownP1 = true;
+        gButtonCodeP1 = ButtonCode(code);
+    }
+}
+
+extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native2PButtonDown(JNIEnv *env, jclass clazz, jint code) {
+    Board *aBoard = (*gLawnApp_Addr)->mBoard;
+    if (aBoard) {
+        gButtonDownP2 = true;
+        gButtonCodeP2 = ButtonCode(code);
+    }
+}
+
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeSwitchTwoPlayerMode(JNIEnv *env, jclass clazz, jboolean is_on) {
     isKeyboardTwoPlayerMode = doKeyboardTwoPlayerDialog = is_on;
     if (is_on) {
         return;
     }
-    LawnApp *lawnApp = *gLawnApp_Addr;
-    if (lawnApp->IsCoopMode() || lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+    LawnApp *gLawnApp = *gLawnApp_Addr;
+    Board *aBoard = gLawnApp->mBoard;
+    if (gLawnApp->IsCoopMode() || gLawnApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         return;
     }
-    lawnApp->ClearSecondPlayer();
-    if (lawnApp->mBoard != nullptr) {
-        lawnApp->mBoard->mGamepadControls2->mPlayerIndex2 = -1;
+    gLawnApp->ClearSecondPlayer();
+    if (aBoard) {
+        aBoard->mGamepadControls2->mPlayerIndex2 = -1;
     }
-    lawnApp->mTwoPlayerState = -1;
+    gLawnApp->mTwoPlayerState = -1;
 }
 
 extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIsInGame(JNIEnv *env, jclass clazz) {
-    LawnApp *lawnApp = *gLawnApp_Addr;
-    Board *aBoard = lawnApp->mBoard;
-    auto *aFocusWidget = lawnApp->mWidgetManager->mFocusWidget;
-    if (aBoard != nullptr && aFocusWidget == reinterpret_cast<Sexy::Widget *>(aBoard)) {
+    LawnApp *gLawnApp = *gLawnApp_Addr;
+    Board *aBoard = gLawnApp->mBoard;
+    auto *aFocusWidget = gLawnApp->mWidgetManager->mFocusWidget;
+    if (aBoard && aFocusWidget == reinterpret_cast<Sexy::Widget *>(aBoard)) {
         return true;
     }
-    SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
-    if (lawnApp->IsCoopMode() && seedChooserScreen && (aFocusWidget == reinterpret_cast<Sexy::Widget *>(seedChooserScreen))) {
+    SeedChooserScreen *aSeedChooser = gLawnApp->mSeedChooserScreen;
+    if (gLawnApp->IsCoopMode() && aSeedChooser && (aFocusWidget == reinterpret_cast<Sexy::Widget *>(aSeedChooser))) {
         return true;
     }
-    if (lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS && lawnApp->mVSSetupScreen && (lawnApp->mVSSetupScreen->mState == 1 || lawnApp->mVSSetupScreen->mState == 3)) {
+    if (gLawnApp->IsVSMode() && gLawnApp->mVSSetupScreen && (gLawnApp->mVSSetupScreen->mState == VSSetupMenu::VS_SETUP_SIDES || gLawnApp->mVSSetupScreen->mState == VSSetupMenu::VS_CUSTOM_BATTLE)) {
         return true;
     }
+
     return false;
 }
 
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeSendButtonEvent(JNIEnv *env, jclass clazz, jboolean is_key_down, jint button_code) {
-    bool playerIndex = button_code >= 256;
-    ButtonCode buttonCode = ButtonCode(playerIndex ? button_code - 256 : button_code);
-    LawnApp *lawnApp = *gLawnApp_Addr;
-    Board *aBoard = lawnApp->mBoard;
-    auto *aFocusWidget = lawnApp->mWidgetManager->mFocusWidget;
+    bool aIsPlayer2 = button_code >= 256;
+    ButtonCode aButtonCode = ButtonCode(aIsPlayer2 ? button_code - 256 : button_code);
+    LawnApp *gLawnApp = *gLawnApp_Addr;
+    Board *aBoard = gLawnApp->mBoard;
+    auto *aFocusWidget = gLawnApp->mWidgetManager->mFocusWidget;
 
-    if (aBoard == nullptr || aFocusWidget != reinterpret_cast<Sexy::Widget *>(aBoard)) {
-        SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
-        if (is_key_down && lawnApp->IsCoopMode() && seedChooserScreen && aFocusWidget == reinterpret_cast<Sexy::Widget *>(seedChooserScreen)) {
-            seedChooserScreen->GameButtonDown(buttonCode, playerIndex);
+    if (!aBoard || aFocusWidget != reinterpret_cast<Sexy::Widget *>(aBoard)) {
+        SeedChooserScreen *aSeedChooser = gLawnApp->mSeedChooserScreen;
+        if (is_key_down && gLawnApp->IsCoopMode() && aSeedChooser && aFocusWidget == reinterpret_cast<Sexy::Widget *>(aSeedChooser)) {
+            gButtonDownSeedChooser = true;
+            gButtonCode = aButtonCode;
+            gGamePlayerIndex = aIsPlayer2 ? 1 : 0;
             return;
         }
 
-        VSSetupMenu *aVSSetupScreen = lawnApp->mVSSetupScreen;
-        if (is_key_down && lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS && aVSSetupScreen && (aVSSetupScreen->mState == 1 || aVSSetupScreen->mState == 3)) {
-            aVSSetupScreen->GameButtonDown(buttonCode, playerIndex, 0);
+        VSSetupMenu *aVSSetup = gLawnApp->mVSSetupScreen;
+        if (is_key_down && gLawnApp->IsVSMode() && aVSSetup && (aVSSetup->mState == VSSetupMenu::VS_SETUP_SIDES || aVSSetup->mState == VSSetupMenu::VS_CUSTOM_BATTLE)) {
+            gButtonDownVSSetup = true;
+            gButtonCode = aButtonCode;
+            gGamePlayerIndex = aIsPlayer2 ? 1 : 0;
             return;
         }
         return;
     }
 
-    GamepadControls *gamepadControls = (playerIndex == 0) ? aBoard->mGamepadControls1 : aBoard->mGamepadControls2;
-    int &aX = (playerIndex == 0) ? GamepadVelocityXOfPlayer1 : GamepadVelocityXOfPlayer2;
-    int &aY = (playerIndex == 0) ? GamepadVelocityYOfPlayer1 : GamepadVelocityYOfPlayer2;
+    float &aX = (aIsPlayer2 == true) ? gGamepadP2VelX : gGamepadP1VelX;
+    float &aY = (aIsPlayer2 == true) ? gGamepadP2VelY : gGamepadP1VelY;
     if (is_key_down) {
-        switch (buttonCode) {
+        switch (aButtonCode) {
             case ButtonCode::BUTTONCODE_B:
-                gamepadControls->OnKeyDown(Sexy::KeyCode::KEYCODE_SHOVEL, 1112);
-                gamepadControls->mGamepadState = 7;
+                gKeyDown = true;
+                gGamePlayerIndex = aIsPlayer2 ? 1 : 0;
                 break;
             case ButtonCode::BUTTONCODE_UP:
                 aY = -400;
@@ -854,11 +859,13 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
                 aX = 400;
                 break;
             default:
-                gamepadControls->OnButtonDown(buttonCode, playerIndex, 0);
+                gButtonDown = true;
+                gButtonCode = aButtonCode;
+                gGamePlayerIndex = aIsPlayer2 ? 1 : 0;
                 break;
         }
     } else {
-        switch (buttonCode) {
+        switch (aButtonCode) {
             case ButtonCode::BUTTONCODE_UP:
             case ButtonCode::BUTTONCODE_DOWN:
                 aY = 0;

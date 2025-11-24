@@ -46,7 +46,8 @@ enum ButtonCode {
     BUTTONCODE_UP = 16,     // 上 16
     BUTTONCODE_DOWN = 17,   // 下 17
     BUTTONCODE_LEFT = 18,   // 左 18
-    BUTTONCODE_RIGHT = 19   // 右 19
+    BUTTONCODE_RIGHT = 19,  // 右 19
+    BUTTONCODE_NONE = -1
 };
 
 class Zombie;

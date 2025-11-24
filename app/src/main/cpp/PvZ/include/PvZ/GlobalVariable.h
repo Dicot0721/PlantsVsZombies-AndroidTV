@@ -55,6 +55,17 @@ inline bool gMoreZombieSeeds;     // 解锁更多对战僵尸
 inline bool gVSBalanceAdjustment; // 对战平衡调整
 inline bool heavyWeaponAccel;
 
+inline bool gKeyDown = false;
+inline bool gButtonDown = false;
+inline bool gButtonDownP1 = false;
+inline bool gButtonDownP2 = false;
+inline bool gButtonDownSeedChooser = false;
+inline bool gButtonDownVSSetup = false;
+inline ButtonCode gButtonCode = ButtonCode::BUTTONCODE_NONE;
+inline ButtonCode gButtonCodeP1 = ButtonCode::BUTTONCODE_NONE;
+inline ButtonCode gButtonCodeP2 = ButtonCode::BUTTONCODE_NONE;
+inline int gGamePlayerIndex = -1;
+
 inline int speedUpMode;
 inline int speedUpCounter;
 
@@ -62,10 +73,10 @@ inline int speedUpCounter;
 inline float angle1 = 0;
 inline float angle2 = 1;
 
-inline int GamepadVelocityXOfPlayer1;
-inline int GamepadVelocityYOfPlayer1;
-inline int GamepadVelocityXOfPlayer2;
-inline int GamepadVelocityYOfPlayer2;
+inline float gGamepadP1VelX;
+inline float gGamepadP1VelY;
+inline float gGamepadP2VelX;
+inline float gGamepadP2VelY;
 
 inline TouchPlayerIndex gPlayerIndex = TouchPlayerIndex::TOUCHPLAYER_NONE;
 inline TouchPlayerIndex gPlayerIndexSecond = TouchPlayerIndex::TOUCHPLAYER_NONE;
