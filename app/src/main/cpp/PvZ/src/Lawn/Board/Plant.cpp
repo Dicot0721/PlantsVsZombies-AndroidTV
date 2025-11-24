@@ -1186,6 +1186,7 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
                     case SeedType::SEED_ZOMBIE_SCREEN_DOOR:
                     case SeedType::SEED_ZOMBIE_YETI:
                     case SeedType::SEED_ZOMBIE_SQUASH_HEAD:
+                    case SeedType::SEED_ZOMBIE_SUNFLOWER_HEAD:
                     case SeedType::SEED_ZOMBIE_SUPER_FAN_IMP:
                         aRefreshTime = 1500;
                         break;
@@ -1369,6 +1370,7 @@ int Plant::GetRefreshTimeAdjusted(SeedType theSeedType) {
             case SeedType::SEED_ZOMBIE_JACK_IN_THE_BOX: // 30 -> 15
             case SeedType::SEED_ZOMBIE_YETI:
             case SeedType::SEED_ZOMBIE_SQUASH_HEAD:
+            case SeedType::SEED_ZOMBIE_SUNFLOWER_HEAD:
             case SeedType::SEED_ZOMBIE_SUPER_FAN_IMP:
                 return 1500;
             default:

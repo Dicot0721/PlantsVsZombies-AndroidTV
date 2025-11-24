@@ -91,6 +91,12 @@ inline VSSetupWidget *gVSSetupWidget;
 
 class VSSetupMenu : public Sexy::__Widget {
 public:
+    enum {
+        VSSetupMenu_Quick_Play = 9,     // 快速游戏
+        VSSetupMenu_Custom_Battle = 10, // 自定义战场
+        VSSetupMenu_Random_Battle = 11, // 随机战场
+    };
+
     enum VSSetupState {
         VS_SETUP_CONTROLLERS = 0,
         VS_SETUP_SIDES = 1,
@@ -105,12 +111,12 @@ public:
     int mInt72;                           // 72
     LawnApp *mApp;                        // 73
     VSSetupState mState;                  // 74 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
-    int mInt75;                           // 75
-    int mInt76;                           // 76
+    int mController1Index;                // 75 // 0:手柄1, 1:手柄2
+    int mController2Index;                // 76 // 0:手柄1, 1:手柄2
     int mController1Position;             // 77  // -1 0 1， 分别位于左 中 右
     int mController2Position;             // 78  // -1 0 1， 分别位于左 中 右
     int unkInt79;                         // 79
-    int mInt80;                           // 80
+    int mNextFirstPick;                   // 80
     int mInt81;                           // 81
     int mInt82;                           // 82
     int unkInt83[85];                     // 83 ~ 167
@@ -146,7 +152,7 @@ public:
     void SetSecondPlayerIndex(int thePlayerIndex) {
         reinterpret_cast<void (*)(VSSetupMenu *, int)>(VSSetupMenu_SetSecondPlayerIndexAddr)(this, thePlayerIndex);
     }
-    void GoToState(int theState) {
+    void GoToState(VSSetupState theState) {
         reinterpret_cast<void (*)(VSSetupMenu *, int)>(VSSetupMenu_GoToStateAddr)(this, theState);
     }
     void CloseVSSetup(bool close) {

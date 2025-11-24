@@ -138,7 +138,6 @@ void VSSetupMenu::AddedToManager(Sexy::WidgetManager *a2) {
 
 void VSSetupMenu::MouseDown(int x, int y, int theCount) {
     if (mState == VS_SETUP_SIDES) {
-
         Sexy::Widget *theController1Widget = FindWidget(7);
         Sexy::Widget *theController2Widget = FindWidget(8);
         if (x > theController1Widget->mX && x < theController1Widget->mX + 170 && y > theController1Widget->mY && y < theController1Widget->mY + 122) {
@@ -449,7 +448,7 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             U8_Event *event1 = (U8_Event *)event;
             int theId = event1->data;
             LOG_DEBUG("theId={}", theId);
-            if (theId == 11 && mState == VS_SELECT_BATTLE) { // 随机战场
+            if (theId == VSSetupMenu_Random_Battle && mState == VS_SELECT_BATTLE) { // 随机战场
                 break;
             }
             tcp_connected = false;
@@ -553,16 +552,16 @@ void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
 
 void VSSetupMenu::OnStateEnter(int theState) {
     if (theState == 0) {
-        mInt76 = -1;
+        mController2Index = -1;
         auto *aWaitDialog = new WaitForSecondPlayerDialog(mApp);
         mApp->AddDialog(aWaitDialog);
 
-        int buttonId = aWaitDialog->WaitForResult(true);
-        if (buttonId == 1000) {
+        int aButtonId = aWaitDialog->WaitForResult(true);
+        if (aButtonId == 1000) {
             SetSecondPlayerIndex(mApp->mTwoPlayerState);
-            GoToState(1);
-        } else if (buttonId == 1001) {
-            CloseVSSetup(1);
+            GoToState(VSSetupState::VS_SETUP_SIDES);
+        } else if (aButtonId == 1001) {
+            CloseVSSetup(true);
             mApp->KillBoard();
             mApp->ShowGameSelector();
         }
@@ -573,6 +572,10 @@ void VSSetupMenu::OnStateEnter(int theState) {
     }
 
     old_VSSetupMenu_OnStateEnter(this, theState);
+
+    //    if (mState == VS_CUSTOM_BATTLE) {
+    //    mNextFirstPick = msNextFirstPick; // 0:植物先选,1:僵尸先选
+    //    }
 }
 
 void VSSetupMenu::ButtonPress(int theId) {
@@ -622,7 +625,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
     aSeedBank2->mNumPackets = aNumPackets;
 
     switch (theId) {
-        case 9: // 快速游戏
+        case VSSetupMenu_Quick_Play:
             if (aNumPackets == 7) {
                 aSeedBank1->mSeedPackets[3].SetPacketType(SeedType::SEED_TORCHWOOD, SeedType::SEED_NONE);
                 aSeedBank1->mSeedPackets[4].SetPacketType(SeedType::SEED_POTATOMINE, SeedType::SEED_NONE);
@@ -633,12 +636,12 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 aSeedBank2->mSeedPackets[6].SetPacketType(SeedType::SEED_ZOMBIE_FLAG, SeedType::SEED_NONE);
             }
             break;
-        case 10: // 自定义战场
+        case VSSetupMenu_Custom_Battle:
             if (mState == VS_CUSTOM_BATTLE) {
                 gVSSetupWidget->SetDisable();
             }
             break;
-        case 11: // 随机战场
+        case VSSetupMenu_Random_Battle:
             if (aNumPackets == 7) {
                 mApp->mBoard->mSeedBank1->mNumPackets = 6;
                 mApp->mBoard->mSeedBank2->mNumPackets = 6;

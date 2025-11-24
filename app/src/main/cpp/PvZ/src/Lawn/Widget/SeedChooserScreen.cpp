@@ -349,6 +349,7 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
                 gVSSetupWidget->mBanMode = false;
             }
 
+            mApp->PlaySample(*SOUND_TAP);
             OnPlayerPickedSeed(aGamepadIndex);
         }
         return;

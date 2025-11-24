@@ -3797,11 +3797,11 @@ void Zombie::JacksonDie() {
 }
 
 bool Zombie::CanDance() {
-    return mZombieType == ZombieType::ZOMBIE_NORMAL || mZombieType == ZombieType::ZOMBIE_TRAFFIC_CONE || mZombieType == ZombieType::ZOMBIE_PAIL;
+    return mZombieType == ZombieType::ZOMBIE_NORMAL || mZombieType == ZombieType::ZOMBIE_TRAFFIC_CONE || mZombieType == ZombieType::ZOMBIE_PAIL || mZombieType == ZombieType::ZOMBIE_BACKUP_DANCER2;
 }
 
 void Zombie::SetDanceRow() {
-    if (!CanDance() || mIsEating)
+    if (!CanDance() || mIsEating || !mHasHead || IsDeadOrDying())
         return;
 
     StartWalkAnim(20);
