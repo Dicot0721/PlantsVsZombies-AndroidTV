@@ -456,9 +456,6 @@ void Zombie::UpdateZombieGigaFootball() {
         }
     }
 
-    float aScaleSquare = mScaleZombie * mScaleZombie;
-    int aMindCtrlIndex = mMindControlled ? -1 : 1;
-
     if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING) {
         Zombie *aZombie = FindZombieTarget();
         if (aZombie) {
@@ -499,22 +496,12 @@ void Zombie::UpdateZombieGigaFootball() {
             aPlant->mPlantHealth -= 4500;
         }
     } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_TACKLE) {
-        mVelX = 0.0f;
-        UpdateAnimSpeed();
-        if (mPhaseCounter >= 75) {
-            mPosX += aScaleSquare * aMindCtrlIndex;
-            mAltitude += aScaleSquare;
-        }
-        if (mPhaseCounter == 75) {
-            PlayZombieReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 12.0f);
-        }
-
         if (mPhaseCounter == 0) {
             mZombiePhase = ZombiePhase::PHASE_FOOTBALL_WALKING;
             mPhaseCounter = RandRangeInt(1000, 1500);
             Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW);
             if (!aPlant) {
-                StartWalkAnim(0);
+                StartWalkAnim(20);
             }
         }
     } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_WALKING) {
@@ -536,6 +523,7 @@ void Zombie::UpdateZombieGigaFootball() {
 
     Zombie *aZombie = FindZombieTarget();
     Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW);
+    int aMindCtrlIndex = mMindControlled ? -1 : 1;
     bool doCrash = false;
     if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING) {
         if (aZombie || aPlant) {
@@ -546,14 +534,12 @@ void Zombie::UpdateZombieGigaFootball() {
     }
     if (doCrash) {
         mZombiePhase = ZombiePhase::PHASE_FOOTBALL_TACKLE;
-        mPhaseCounter = 100;
+        mPhaseCounter = 150;
 
         float aOffsetX = mMindControlled ? 80 : 0;
         mApp->AddTodParticle(mPosX + aOffsetX, mPosY + 100, RenderLayer::RENDER_LAYER_TOP, ParticleEffect::PARTICLE_POW);
         mBoard->ShakeBoard(-4 * aMindCtrlIndex, 1);
-        mPosX -= 25 * aScaleSquare * aMindCtrlIndex;
-        mAltitude -= 25 * aScaleSquare;
-        PlayZombieReanim("anim_walk", ReanimLoopType::REANIM_PLAY_ONCE, 0, 0.0f); // 用walk的第一帧模拟撞击动画
+        PlayZombieReanim("anim_tackle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 30.0f);
     }
 }
 

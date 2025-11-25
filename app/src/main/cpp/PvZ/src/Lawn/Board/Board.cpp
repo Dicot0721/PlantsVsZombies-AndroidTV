@@ -3909,7 +3909,6 @@ void Board::UpdateButtons() {
     SeedChooserScreen *aSeedChooser = mApp->mSeedChooserScreen;
     VSSetupMenu *aVSSetup = mApp->mVSSetupScreen;
     GamepadControls *aGamepad = (gGamePlayerIndex == 1) ? mGamepadControls2 : mGamepadControls1;
-    // Todo: 修复对战模式 P1,P2 的选取与实际 Gamepad 不对应的问题
     if (gKeyDown) {
         aGamepad->OnKeyDown(KeyCode::KEYCODE_SHOVEL, 1112);
         aGamepad->mGamepadState = 7;
@@ -4866,4 +4865,10 @@ bool Board::TakeDeathMoney(int theAmount) {
         send(tcpClientSocket, &event, sizeof(U16_Event), 0);
     }
     return result;
+}
+
+void Board::SwitchGamepadControls() {
+    GamepadControls *aGamepad = mGamepadControls1;
+    mGamepadControls1 = mGamepadControls2;
+    mGamepadControls2 = aGamepad;
 }

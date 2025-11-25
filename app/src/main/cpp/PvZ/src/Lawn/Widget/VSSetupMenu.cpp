@@ -235,10 +235,10 @@ void VSSetupMenu::Update() {
     if (mState == VS_SETUP_SIDES && !tcp_connected && tcpClientSocket == -1 && !isKeyboardTwoPlayerMode) {
         // 本地游戏
         // 自动分配阵营
-        mController1Position = 0;
-        mController2Position = 1;
-        GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
-        GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+        //        mController1Position = 0;
+        //        mController2Position = 1;
+        //        GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+        //        GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
         return;
     }
 
@@ -550,8 +550,8 @@ void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
     old_VSSetupMenu_KeyDown(this, theKey);
 }
 
-void VSSetupMenu::OnStateEnter(int theState) {
-    if (theState == 0) {
+void VSSetupMenu::OnStateEnter(VSSetupState theState) {
+    if (theState == VSSetupState::VS_SETUP_CONTROLLERS) {
         mController2Index = -1;
         auto *aWaitDialog = new WaitForSecondPlayerDialog(mApp);
         mApp->AddDialog(aWaitDialog);
@@ -566,6 +566,8 @@ void VSSetupMenu::OnStateEnter(int theState) {
             mApp->ShowGameSelector();
         }
         return;
+    } else if (theState == VSSetupState::VS_SELECT_BATTLE) {
+        gGamepad1ToPlayerIndex = mController1Position;
     } else if (tcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_VSSETUPMENU_ENTER_STATE}, uint8_t(theState)};
         send(tcpClientSocket, &event, sizeof(U8_Event), 0);
@@ -639,6 +641,9 @@ void VSSetupMenu::ButtonDepress(int theId) {
         case VSSetupMenu_Custom_Battle:
             if (mState == VS_CUSTOM_BATTLE) {
                 gVSSetupWidget->SetDisable();
+            }
+            if (gVSSetupWidget && gVSSetupWidget->mBanMode) { // 禁选模式下交换双方控制权
+                mApp->mBoard->SwitchGamepadControls();
             }
             break;
         case VSSetupMenu_Random_Battle:

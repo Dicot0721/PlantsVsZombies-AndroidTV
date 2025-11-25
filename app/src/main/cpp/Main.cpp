@@ -781,30 +781,30 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     if (is_on) {
         return;
     }
-    LawnApp *gLawnApp = *gLawnApp_Addr;
-    Board *aBoard = gLawnApp->mBoard;
-    if (gLawnApp->IsCoopMode() || gLawnApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+    LawnApp *anApp = *gLawnApp_Addr;
+    Board *aBoard = anApp->mBoard;
+    if (anApp->IsCoopMode() || anApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         return;
     }
-    gLawnApp->ClearSecondPlayer();
+    anApp->ClearSecondPlayer();
     if (aBoard) {
         aBoard->mGamepadControls2->mPlayerIndex2 = -1;
     }
-    gLawnApp->mTwoPlayerState = -1;
+    anApp->mTwoPlayerState = -1;
 }
 
 extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIsInGame(JNIEnv *env, jclass clazz) {
-    LawnApp *gLawnApp = *gLawnApp_Addr;
-    Board *aBoard = gLawnApp->mBoard;
-    auto *aFocusWidget = gLawnApp->mWidgetManager->mFocusWidget;
+    LawnApp *anApp = *gLawnApp_Addr;
+    Board *aBoard = anApp->mBoard;
+    auto *aFocusWidget = anApp->mWidgetManager->mFocusWidget;
     if (aBoard && aFocusWidget == reinterpret_cast<Sexy::Widget *>(aBoard)) {
         return true;
     }
-    SeedChooserScreen *aSeedChooser = gLawnApp->mSeedChooserScreen;
-    if (gLawnApp->IsCoopMode() && aSeedChooser && (aFocusWidget == reinterpret_cast<Sexy::Widget *>(aSeedChooser))) {
+    SeedChooserScreen *aSeedChooser = anApp->mSeedChooserScreen;
+    if (anApp->IsCoopMode() && aSeedChooser && (aFocusWidget == reinterpret_cast<Sexy::Widget *>(aSeedChooser))) {
         return true;
     }
-    if (gLawnApp->IsVSMode() && gLawnApp->mVSSetupScreen && (gLawnApp->mVSSetupScreen->mState == VSSetupMenu::VS_SETUP_SIDES || gLawnApp->mVSSetupScreen->mState == VSSetupMenu::VS_CUSTOM_BATTLE)) {
+    if (anApp->IsVSMode() && anApp->mVSSetupScreen && (anApp->mVSSetupScreen->mState == VS_SETUP_SIDES || anApp->mVSSetupScreen->mState == VS_CUSTOM_BATTLE)) {
         return true;
     }
 
@@ -814,22 +814,24 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivi
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeSendButtonEvent(JNIEnv *env, jclass clazz, jboolean is_key_down, jint button_code) {
     bool aIsPlayer2 = button_code >= 256;
+    bool aGamepad1Is2P = gGamepad1ToPlayerIndex == 1;
     ButtonCode aButtonCode = ButtonCode(aIsPlayer2 ? button_code - 256 : button_code);
-    LawnApp *gLawnApp = *gLawnApp_Addr;
-    Board *aBoard = gLawnApp->mBoard;
-    auto *aFocusWidget = gLawnApp->mWidgetManager->mFocusWidget;
+
+    LawnApp *anApp = *gLawnApp_Addr;
+    Board *aBoard = anApp->mBoard;
+    auto *aFocusWidget = anApp->mWidgetManager->mFocusWidget;
 
     if (!aBoard || aFocusWidget != reinterpret_cast<Sexy::Widget *>(aBoard)) {
-        SeedChooserScreen *aSeedChooser = gLawnApp->mSeedChooserScreen;
-        if (is_key_down && gLawnApp->IsCoopMode() && aSeedChooser && aFocusWidget == reinterpret_cast<Sexy::Widget *>(aSeedChooser)) {
+        SeedChooserScreen *aSeedChooser = anApp->mSeedChooserScreen;
+        if (is_key_down && anApp->IsCoopMode() && aSeedChooser && aFocusWidget == reinterpret_cast<Sexy::Widget *>(aSeedChooser)) {
             gButtonDownSeedChooser = true;
             gButtonCode = aButtonCode;
             gGamePlayerIndex = aIsPlayer2 ? 1 : 0;
             return;
         }
 
-        VSSetupMenu *aVSSetup = gLawnApp->mVSSetupScreen;
-        if (is_key_down && gLawnApp->IsVSMode() && aVSSetup && (aVSSetup->mState == VSSetupMenu::VS_SETUP_SIDES || aVSSetup->mState == VSSetupMenu::VS_CUSTOM_BATTLE)) {
+        VSSetupMenu *aVSSetup = anApp->mVSSetupScreen;
+        if (is_key_down && anApp->IsVSMode() && aVSSetup && (aVSSetup->mState == VS_SETUP_SIDES || aVSSetup->mState == VS_CUSTOM_BATTLE)) {
             gButtonDownVSSetup = true;
             gButtonCode = aButtonCode;
             gGamePlayerIndex = aIsPlayer2 ? 1 : 0;
@@ -861,7 +863,11 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
             default:
                 gButtonDown = true;
                 gButtonCode = aButtonCode;
-                gGamePlayerIndex = aIsPlayer2 ? 1 : 0;
+                if (aGamepad1Is2P) {
+                    gGamePlayerIndex = aIsPlayer2 ? 0 : 1;
+                } else {
+                    gGamePlayerIndex = aIsPlayer2 ? 1 : 0;
+                }
                 break;
         }
     } else {

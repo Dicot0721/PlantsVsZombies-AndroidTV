@@ -33,6 +33,13 @@ constexpr int VS_BUTTON_BAN_MODE_Y = 240;
 constexpr int NUM_VS_BUTTONS = 2;
 constexpr int NUM_VS_BAN_PACKETS = 4;
 
+enum VSSetupState {
+    VS_SETUP_CONTROLLERS = 0,
+    VS_SETUP_SIDES = 1,
+    VS_SELECT_BATTLE = 2,
+    VS_CUSTOM_BATTLE = 3,
+};
+
 namespace Sexy {
 class ButtonWidget;
 }
@@ -59,7 +66,6 @@ private:
 
 public:
     LawnApp *mApp = *gLawnApp_Addr;
-    Sexy::ButtonWidget *mMoreSeedsButton = nullptr;
     Sexy::ButtonWidget *mMorePacketsButton = nullptr;
     Sexy::ButtonWidget *mBanModeButton = nullptr;
     Sexy::Image *mCheckboxImage[NUM_VS_BUTTONS] = {nullptr};
@@ -95,13 +101,6 @@ public:
         VSSetupMenu_Quick_Play = 9,     // 快速游戏
         VSSetupMenu_Custom_Battle = 10, // 自定义战场
         VSSetupMenu_Random_Battle = 11, // 随机战场
-    };
-
-    enum VSSetupState {
-        VS_SETUP_CONTROLLERS = 0,
-        VS_SETUP_SIDES = 1,
-        VS_SELECT_BATTLE = 2,
-        VS_CUSTOM_BATTLE = 3,
     };
 
     Sexy::ButtonListener mButtonListener; // 64
@@ -171,7 +170,7 @@ public:
     void Draw(Sexy::Graphics *g);
     void Update();
     void KeyDown(Sexy::KeyCode theKey);
-    void OnStateEnter(int theState);
+    void OnStateEnter(VSSetupState theState);
     void ButtonPress(int theId);
     void ButtonDepress(int theId);
     void MouseDown(int x, int y, int theCount);
@@ -211,7 +210,7 @@ inline void (*old_VSSetupMenu_Update)(VSSetupMenu *a);
 
 inline void (*old_VSSetupMenu_KeyDown)(VSSetupMenu *a, Sexy::KeyCode a2);
 
-inline void (*old_VSSetupMenu_OnStateEnter)(VSSetupMenu *menu, int theState);
+inline void (*old_VSSetupMenu_OnStateEnter)(VSSetupMenu *menu, VSSetupState theState);
 
 inline void (*old_VSSetupMenu_ButtonPress)(VSSetupMenu *, int theId);
 

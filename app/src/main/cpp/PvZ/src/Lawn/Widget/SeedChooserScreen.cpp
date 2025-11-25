@@ -347,6 +347,7 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
             gVSSetupWidget->mSeedsInBothBanned++;
             if (gVSSetupWidget->mSeedsInBothBanned == gVSSetupWidget->mNumBanPackets) {
                 gVSSetupWidget->mBanMode = false;
+                mBoard->SwitchGamepadControls();
             }
 
             mApp->PlaySample(*SOUND_TAP);
@@ -422,6 +423,7 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
             gVSSetupWidget->mBanMode = true;
             gVSSetupWidget->mSeedsInBothBanned = 0;
             gVSSetupWidget->mNumBanPackets = 2;
+            mBoard->SwitchGamepadControls();
         }
     }
 }
@@ -445,7 +447,7 @@ void SeedChooserScreen::ClickedSeedInBank(ChosenSeed *theChosenSeed, unsigned in
 
 void SeedChooserScreen::GameButtonDown(ButtonCode theButton, unsigned int thePlayerIndex) {
     // 修复结盟2P无法选择模仿者
-    if (mApp->IsCoopMode() && theButton == 6) {
+    if (mApp->IsCoopMode() && theButton == ButtonCode::BUTTONCODE_A) {
         if (mChooseState == SeedChooserState::CHOOSE_VIEW_LAWN) {
             return old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
         }
@@ -454,21 +456,21 @@ void SeedChooserScreen::GameButtonDown(ButtonCode theButton, unsigned int thePla
             return;
 
         SeedType aSeedType = thePlayerIndex ? mSeedType2 : mSeedType1;
-        int mSeedsInBank = mSeedsInBothBank;
+        int aSeedsInBank = mSeedsInBothBank;
         // 此处将判定条件改为选满8个种子时无法选取模仿者。原版游戏中此处是选满4个则无法选取，导致模仿者选取出现问题。
-        if (aSeedType == SeedType::SEED_IMITATER && mSeedsInBank < 8) {
+        if (aSeedType == SeedType::SEED_IMITATER && aSeedsInBank < 8) {
             if (mChosenSeeds[SeedType::SEED_IMITATER].mSeedState != ChosenSeedState::SEED_IN_BANK) {
                 // 先将已选种子数改为0，然后执行旧函数，这样模仿者选取界面就被打开了。
                 mSeedsInBothBank = 0;
                 old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
                 // 然后再恢复已选种子数即可。
-                mSeedsInBothBank = mSeedsInBank;
+                mSeedsInBothBank = aSeedsInBank;
                 return;
             }
         }
     }
 
-    if (tcpClientSocket >= 0 && mApp->mGameMode == GAMEMODE_MP_VS) {
+    if (tcpClientSocket >= 0 && mApp->IsVSMode()) {
         U8U8_Event event = {{EventType::EVENT_SEEDCHOOSER_SELECT_SEED}, uint8_t(mIsZombieChooser ? mSeedType2 : mSeedType1), mIsZombieChooser};
         send(tcpClientSocket, &event, sizeof(U8U8_Event), 0);
     }

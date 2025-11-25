@@ -65,6 +65,7 @@ inline ButtonCode gButtonCode = ButtonCode::BUTTONCODE_NONE;
 inline ButtonCode gButtonCodeP1 = ButtonCode::BUTTONCODE_NONE;
 inline ButtonCode gButtonCodeP2 = ButtonCode::BUTTONCODE_NONE;
 inline int gGamePlayerIndex = -1;
+inline int gGamepad1ToPlayerIndex = -1;
 
 inline int speedUpMode;
 inline int speedUpCounter;

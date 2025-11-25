@@ -579,6 +579,7 @@ public:
     bool TakeDeathMoney(int theAmount);
     GridItem *AddAGraveStone(int gridX, int gridY);
     bool TakeSunMoney(int theAmount, int thePlayer);
+    void SwitchGamepadControls();
 
 protected:
     friend void InitHookFunction();
