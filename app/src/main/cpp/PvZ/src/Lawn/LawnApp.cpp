@@ -183,18 +183,18 @@ void LawnApp::ClearSecondPlayer() {
         close(udpBroadcastSocket);
         udpBroadcastSocket = -1;
     }
-    return old_LawnApp_ClearSecondPlayer(this);
+    old_LawnApp_ClearSecondPlayer(this);
 }
 
 void LawnApp::DoBackToMain() {
     // 实现每次退出游戏后都清空2P
     ClearSecondPlayer();
 
-    return old_LawnApp_DoBackToMain(this);
+    old_LawnApp_DoBackToMain(this);
 }
 
 void LawnApp::DoNewOptions(bool theFromGameSelector, unsigned int a3) {
-    return old_LawnApp_DoNewOptions(this, theFromGameSelector, a3);
+    old_LawnApp_DoNewOptions(this, theFromGameSelector, a3);
 }
 
 void LawnApp::OnSessionTaskFailed() {
@@ -242,12 +242,12 @@ void LawnApp::UpdateApp() {
 
 void LawnApp::ShowAwardScreen(AwardType theAwardType) {
     // 记录当前游戏状态
-    return old_LawnApp_ShowAwardScreen(this, theAwardType);
+    old_LawnApp_ShowAwardScreen(this, theAwardType);
 }
 
 void LawnApp::KillAwardScreen() {
     // 记录当前游戏状态
-    return old_LawnApp_KillAwardScreen(this);
+    old_LawnApp_KillAwardScreen(this);
 }
 
 bool LawnApp::CanShopLevel() {
@@ -276,7 +276,7 @@ void LawnApp::ShowCreditScreen(bool theIsFromMainMenu) {
         KillDialog(Dialogs::DIALOG_HELPOPTIONS);
     }
 
-    return old_LawnApp_ShowCreditScreen(this, theIsFromMainMenu);
+    old_LawnApp_ShowCreditScreen(this, theIsFromMainMenu);
 }
 
 void LawnApp::LoadLevelConfiguration(int a2, int a3) {

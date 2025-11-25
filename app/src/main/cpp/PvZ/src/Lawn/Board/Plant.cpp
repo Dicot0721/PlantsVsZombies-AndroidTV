@@ -135,7 +135,7 @@ void Plant::SetSleeping(bool theIsAsleep) {
         theIsAsleep = false;
     }
 
-    return old_Plant_SetSleeping(this, theIsAsleep);
+    old_Plant_SetSleeping(this, theIsAsleep);
 }
 
 int Plant::GetDamageRangeFlags(PlantWeapon thePlantWeapon) {

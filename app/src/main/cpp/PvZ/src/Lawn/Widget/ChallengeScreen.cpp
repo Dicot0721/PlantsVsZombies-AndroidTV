@@ -129,12 +129,12 @@ void ChallengeScreen::AddedToManager(int *theWidgetManager) {
     gChallengeScreenCloseButton->Resize(800, 520, 170, 50);
     AddWidget(gChallengeScreenCloseButton);
 
-    return old_ChallengeScreen_AddedToManager(this, theWidgetManager);
+    old_ChallengeScreen_AddedToManager(this, theWidgetManager);
 }
 
 void ChallengeScreen::Update() {
     // 记录当前游戏状态
-    return old_ChallengeScreen_Update(this);
+    old_ChallengeScreen_Update(this);
 }
 
 void ChallengeScreen::RemovedFromManager(int *theWidgetManager) {

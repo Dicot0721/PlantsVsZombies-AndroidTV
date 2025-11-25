@@ -107,5 +107,5 @@ void HelpTextScreen_ButtonDepress(HelpTextScreen *helpTextScreen, int id) {
         LawnApp *gLawnApp = *gLawnApp_Addr;
         gLawnApp->KillHelpTextScreen();
     } else
-        return old_HelpTextScreen_ButtonDepress(helpTextScreen, id);
+        old_HelpTextScreen_ButtonDepress(helpTextScreen, id);
 }

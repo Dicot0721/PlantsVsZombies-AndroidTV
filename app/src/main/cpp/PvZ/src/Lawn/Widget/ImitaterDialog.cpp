@@ -27,14 +27,14 @@
 
 void ImitaterDialog_ImitaterDialog(ImitaterDialog *instance, int playerIndex) {
     // 记录当前游戏状态
-    return old_ImitaterDialog_ImitaterDialog(instance, playerIndex);
+    old_ImitaterDialog_ImitaterDialog(instance, playerIndex);
 }
 
 void ImitaterDialog_ShowToolTip(ImitaterDialog *instance) {
     // 在触控模式下不显示ToolTip
     if (!keyboardMode)
         return;
-    return old_ImitaterDialog_ShowToolTip(instance);
+    old_ImitaterDialog_ShowToolTip(instance);
 }
 
 bool ImitaterDialog_KeyDown(ImitaterDialog *a, int a2) {

@@ -430,14 +430,15 @@ bool Board::PlantingRequirementsMet(SeedType theSeedType) {
 
 void Board::ZombiesWon(Zombie *theZombie) {
     if (theZombie == nullptr) { // 如果是IZ或者僵尸水族馆，第二个参数是NULL，此时就返回原函数。否则闪退
-        return old_BoardZombiesWon(this, theZombie);
+        old_BoardZombiesWon(this, theZombie);
+        return;
     }
     if (ZombieCanNotWon) {
         theZombie->ApplyBurn();
         theZombie->DieNoLoot();
         return;
     }
-    return old_BoardZombiesWon(this, theZombie);
+    old_BoardZombiesWon(this, theZombie);
 }
 
 int Board::CountPlantByType(SeedType theSeedType) {
@@ -579,7 +580,7 @@ bool Board::ZenGardenItemNumIsZero(CursorType theCursorType) {
 }
 
 void Board::DrawZenButtons(Sexy::Graphics *g) {
-    return old_Board_DrawZenButtons(this, g);
+    old_Board_DrawZenButtons(this, g);
 }
 
 void Board::DrawGameObjects(Graphics *g) {
@@ -596,7 +597,7 @@ void Board::KeyDown(KeyCode theKey) {
         requestDrawShovelInCursor = false;
     }
 
-    return old_Board_KeyDown(this, theKey);
+    old_Board_KeyDown(this, theKey);
 }
 
 Coin *Board::AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion) {
@@ -619,7 +620,7 @@ void Board::UpdateSunSpawning() {
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && tcp_connected) {
         return;
     }
-    return old_Board_UpdateSunSpawning(this);
+    old_Board_UpdateSunSpawning(this);
 }
 
 void Board::UpdateZombieSpawning() {
@@ -716,7 +717,7 @@ void Board::UpdateZombieSpawning() {
     // this[5551] = mZombieCountDown;
     // return;
     // }
-    return old_Board_UpdateZombieSpawning(this);
+    old_Board_UpdateZombieSpawning(this);
 }
 
 void Board::UpdateIce() {
@@ -725,7 +726,7 @@ void Board::UpdateIce() {
         return;
     }
 
-    return old_Board_UpdateIce(this);
+    old_Board_UpdateIce(this);
 }
 
 void Board::DrawCoverLayer(Sexy::Graphics *g, int theRow) {
@@ -2138,7 +2139,8 @@ void Board::DrawShovel(Sexy::Graphics *g) {
         return;
 
     if (mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM || mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN) { // 如果是花园或智慧树
-        return DrawZenButtons(g);
+        DrawZenButtons(g);
+        return;
     }
 
     if (mShowHammer) { // 绘制锤子按钮
@@ -2310,7 +2312,7 @@ void Board::InitLawnMowers() {
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN)
         return;
 
-    return old_Board_InitLawnMowers(this);
+    old_Board_InitLawnMowers(this);
 }
 
 void ZombiePickerInitForWave(ZombiePicker *theZombiePicker) {
@@ -2392,7 +2394,7 @@ void Board::PickZombieWaves() {
         return;
     }
 
-    return old_Board_PickZombieWaves(this);
+    old_Board_PickZombieWaves(this);
 }
 
 int Board::GetLiveGargantuarCount() {
@@ -2434,14 +2436,14 @@ void Board::UpdateLevelEndSequence() {
     if (requestPause)
         return;
 
-    return old_Board_UpdateLevelEndSequence(this);
+    old_Board_UpdateLevelEndSequence(this);
 }
 
 void Board::UpdateGridItems() {
     if (requestPause)
         return;
 
-    return old_Board_UpdateGridItems(this);
+    old_Board_UpdateGridItems(this);
 }
 
 void Board::MouseMove(int x, int y) {
@@ -2561,7 +2563,8 @@ Rect slotMachineRect = {250, 0, 320, 100};
 void Board::MouseDown(int x, int y, int theClickCount) {
 
     if (mApp->mGameMode != GAMEMODE_MP_VS) {
-        return __MouseDown(x, y, theClickCount);
+        __MouseDown(x, y, theClickCount);
+        return;
     }
 
     bool isRightSide = PixelToGridX(x, y) > 5 || mSeedBank2->ContainsPoint(x, y);
@@ -2939,7 +2942,8 @@ void Board::MouseDrag(int x, int y) {
     // Drag函数仅仅负责移动光标即可
 
     if (mApp->mGameMode != GAMEMODE_MP_VS) {
-        return __MouseDrag(x, y);
+        __MouseDrag(x, y);
+        return;
     }
     if (tcp_connected) {
         U16U16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_DRAG}, uint16_t(x), uint16_t(y)};
@@ -3115,7 +3119,8 @@ void Board::__MouseDrag(int x, int y) {
 
 void Board::MouseUp(int x, int y, int theClickCount) {
     if (mApp->mGameMode != GAMEMODE_MP_VS) {
-        return __MouseUp(x, y, theClickCount);
+        __MouseUp(x, y, theClickCount);
+        return;
     }
     if (tcp_connected) {
         U16U16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_UP}, uint16_t(x), uint16_t(y)};
@@ -3938,7 +3943,7 @@ void Board::UpdateButtons() {
         gGamePlayerIndex = -1;
     }
     if (gButtonDownVSSetup) {
-        if (gButtonCode != ButtonCode::BUTTONCODE_B) { // 修复对战选卡阶段按下 B 键崩溃
+        if (!(aVSSetup->mState == VSSetupState::VS_CUSTOM_BATTLE && gButtonCode == ButtonCode::BUTTONCODE_B)) { // 修复对战选卡阶段按下 B 键崩溃
             aVSSetup->GameButtonDown(gButtonCode, gGamePlayerIndex, 0);
         }
         gButtonDownVSSetup = false;

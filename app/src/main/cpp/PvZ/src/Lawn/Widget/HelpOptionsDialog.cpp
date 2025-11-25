@@ -43,7 +43,7 @@ void HelpOptionsDialog_ButtonDepress(HelpOptionsDialog *a, int a2) {
     // }
     // return;
     // }
-    return old_HelpOptionsDialog_ButtonDepress(a, a2);
+    old_HelpOptionsDialog_ButtonDepress(a, a2);
 }
 
 void HelpOptionsDialog_HelpOptionsDialog(HelpOptionsDialog *a, LawnApp *a2) {

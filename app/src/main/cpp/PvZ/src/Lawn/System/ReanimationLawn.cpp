@@ -114,7 +114,7 @@ void ReanimatorCache::DrawCachedPlant(Graphics *graphics, float thePosX, float t
         // }
         // }
     } else {
-        return old_ReanimatorCache_DrawCachedPlant(this, graphics, thePosX, thePosY, theSeedType, theDrawVariation);
+        old_ReanimatorCache_DrawCachedPlant(this, graphics, thePosX, thePosY, theSeedType, theDrawVariation);
     }
 }
 

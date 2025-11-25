@@ -44,7 +44,8 @@ void SeedBank::_constructor(bool thePlayerIndex) {
 void SeedBank::Draw(Sexy::Graphics *g) {
     // 在对战模式取消0.9倍缩放
     if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS) {
-        return old_SeedBank_Draw(this, g);
+        old_SeedBank_Draw(this, g);
+        return;
     }
     g->PushState();
     // if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {

@@ -76,7 +76,8 @@ void Coin::Update() {
     }
 
     if (mType == CoinType::COIN_VS_PLANT_TROPHY || mType == CoinType::COIN_VS_ZOMBIE_TROPHY) {
-        return old_Coin_Update(this);
+        old_Coin_Update(this);
+        return;
     }
 
     if (enableManualCollect) {
@@ -253,10 +254,11 @@ void Coin::UpdateFallForAward() {
 void Coin::UpdateFall() {
     // 去除关卡掉落物在关卡结束后的自动收集。
     if ((mType >= CoinType::COIN_AWARD_MONEY_BAG && mType <= CoinType::COIN_AWARD_GOLD_SUNFLOWER) || mType == CoinType::COIN_FINAL_SEED_PACKET) {
-        return UpdateFallForAward();
+        UpdateFallForAward();
+        return;
     }
 
-    return old_Coin_UpdateFall(this);
+    old_Coin_UpdateFall(this);
 }
 
 bool Coin::MouseHitTest(int theX, int theY, int **theHitResult, int thePlayerIndex) {

@@ -125,7 +125,7 @@ void Challenge::Update() {
         return;
     }
 
-    return old_Challenge_Update(this);
+    old_Challenge_Update(this);
 }
 
 void Challenge::HeavyWeaponFire(float a2, float a3) {
@@ -134,7 +134,7 @@ void Challenge::HeavyWeaponFire(float a2, float a3) {
         a2 = angle1;
         a3 = angle2;
     }
-    return old_Challenge_HeavyWeaponFire(this, a2, a3);
+    old_Challenge_HeavyWeaponFire(this, a2, a3);
 }
 
 void Challenge::HeavyWeaponReanimUpdate() {
@@ -581,7 +581,7 @@ void Challenge::_destructor() {
 }
 
 void Challenge::ScaryPotterOpenPot(GridItem *theScaryPot) {
-    return old_Challenge_ScaryPotterOpenPot(this, theScaryPot);
+    old_Challenge_ScaryPotterOpenPot(this, theScaryPot);
 }
 
 void Challenge::UpdateConveyorBelt(int playerIndex) {
@@ -611,7 +611,7 @@ GridItem *Challenge::IZombieGetBrainTarget(Zombie *theZombie) {
 }
 
 void Challenge::IZombieSquishBrain(GridItem *theBrain) {
-    return old_Challenge_IZombieSquishBrain(this, theBrain);
+    old_Challenge_IZombieSquishBrain(this, theBrain);
 }
 
 int Challenge::ScaryPotterCountSunInPot(GridItem *theScaryPot) {

@@ -28,15 +28,15 @@
 using namespace Sexy;
 
 void StoreScreen::AddedToManager(int a2) {
-    return old_StoreScreen_AddedToManager(this, a2);
+    old_StoreScreen_AddedToManager(this, a2);
 }
 
 void StoreScreen::RemovedFromManager(int a2) {
-    return old_StoreScreen_RemovedFromManager(this, a2);
+    old_StoreScreen_RemovedFromManager(this, a2);
 }
 
 void StoreScreen::Update() {
-    return old_StoreScreen_Update(this);
+    old_StoreScreen_Update(this);
 }
 
 void StoreScreen::SetupPage() {

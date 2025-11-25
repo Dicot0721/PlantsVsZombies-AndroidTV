@@ -110,7 +110,8 @@ static ReanimationParams gNewReanimationParamArray[] = {
 
 void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int theReanimationParamArraySize) {
     if (theReanimationParamArraySize == 0) {
-        return old_ReanimatorLoadDefinitions(theReanimationParamArray, theReanimationParamArraySize);
+        old_ReanimatorLoadDefinitions(theReanimationParamArray, theReanimationParamArraySize);
+        return;
     }
     int newReanimationArraySize = std::size(gNewReanimationParamArray);
     ReanimationParams *newReanimationParamArray = (ReanimationParams *)malloc((theReanimationParamArraySize + newReanimationArraySize) * sizeof(ReanimationParams));
@@ -124,7 +125,7 @@ void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int 
         newReanimationParamArray[i + theReanimationParamArraySize].mReanimFileName = gNewReanimationParamArray[i].mReanimFileName;
         newReanimationParamArray[i + theReanimationParamArraySize].mReanimParamFlags = gNewReanimationParamArray[i].mReanimParamFlags;
     }
-    return old_ReanimatorLoadDefinitions(newReanimationParamArray, theReanimationParamArraySize + newReanimationArraySize);
+    old_ReanimatorLoadDefinitions(newReanimationParamArray, theReanimationParamArraySize + newReanimationArraySize);
 }
 
 void Reanimation_SetZombatarReanim(Reanimation *zombatarReanim) {
@@ -360,7 +361,7 @@ void DefinitionGetCompiledFilePathFromXMLFilePath(pvzstl::string &absPath, const
         std::construct_at(&absPath, defPathString + ".compiled");
         return;
     }
-    return old_DefinitionGetCompiledFilePathFromXMLFilePath(absPath, defPathString);
+    old_DefinitionGetCompiledFilePathFromXMLFilePath(absPath, defPathString);
 }
 
 bool Reanimation::ShouldTriggerTimedEvent(float theEventTime) {

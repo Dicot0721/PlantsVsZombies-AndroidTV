@@ -103,7 +103,7 @@ void AlmanacDialog::SetPage(AlmanacPage thePage) {
         mZombieButton->Resize(487, 345, 210, 48);
     }
 
-    return old_AlmanacDialog_SetPage(this, thePage);
+    old_AlmanacDialog_SetPage(this, thePage);
 }
 
 void AlmanacDialog::MouseDown(int x, int y, int theClickCount) {

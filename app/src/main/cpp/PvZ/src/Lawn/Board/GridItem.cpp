@@ -203,7 +203,8 @@ void GridItem::DrawStinky(Sexy::Graphics *g) {
     if (aStinkyGridX != aCursorGridX || aStinkyGridY != aCursorGridY) {
         // 如果Stinky不在光标位置处，则取消高亮。
         mHighlighted = false;
-        return old_GridItem_DrawStinky(this, g);
+        old_GridItem_DrawStinky(this, g);
+        return;
     }
     // 如果Stinky在光标位置处
     CursorObject *aCursorObject = mBoard->mCursorObject1;
@@ -214,7 +215,7 @@ void GridItem::DrawStinky(Sexy::Graphics *g) {
         mHighlighted = !isStinkyHighOnChocolate; // 为没喂巧克力的Stinky加入高亮效果
     }
 
-    return old_GridItem_DrawStinky(this, g);
+    old_GridItem_DrawStinky(this, g);
 }
 
 void GridItem::DrawSquirrel(Sexy::Graphics *g) {

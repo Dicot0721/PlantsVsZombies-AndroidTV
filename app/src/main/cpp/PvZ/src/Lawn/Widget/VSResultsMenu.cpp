@@ -22,11 +22,11 @@
 
 void VSResultsMenu_Update(int *a) {
     // 记录当前游戏状态
-    return old_VSResultsMenu_Update(a);
+    old_VSResultsMenu_Update(a);
 }
 
 void VSResultsMenu_OnExit(int *a) {
-    return old_VSResultsMenu_OnExit(a);
+    old_VSResultsMenu_OnExit(a);
 }
 
 void VSResultsMenu_ButtonDepress(int *vsResultsScreen, int buttonId) {

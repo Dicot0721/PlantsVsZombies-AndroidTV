@@ -24,5 +24,5 @@ bool CursorObject::BeginDraw(Sexy::Graphics *g) {
 }
 
 void CursorObject::EndDraw(Sexy::Graphics *g) {
-    return old_CursorObject_EndDraw(this, g);
+    old_CursorObject_EndDraw(this, g);
 }

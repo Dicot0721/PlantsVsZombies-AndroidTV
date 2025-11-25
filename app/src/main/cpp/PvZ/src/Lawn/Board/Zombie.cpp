@@ -330,7 +330,7 @@ void Zombie::Update() {
             reanimation->Update();
     }
 
-    return old_Zombie_Update(this);
+    old_Zombie_Update(this);
 }
 
 void Zombie::UpdateActions() {
@@ -870,7 +870,7 @@ void Zombie::UpdateImpGettingTackle() {
 }
 
 void Zombie::SquishAllInSquare(int theX, int theY, ZombieAttackType theAttackType) {
-    return old_Zombie_SquishAllInSquare(this, theX, theY, theAttackType);
+    old_Zombie_SquishAllInSquare(this, theX, theY, theAttackType);
 }
 
 void Zombie::UpdateZombieJackInTheBox() {
@@ -1668,7 +1668,8 @@ Rect Zombie::GetZombieRect() {
 void Zombie::RiseFromGrave(int theGridX, int theGridY) {
     // 修复对战切换场地为泳池后的闪退BUG。但是仅仅是修复闪退，泳池对战还谈不上能玩的程度
     if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS) {
-        return old_Zombie_RiseFromGrave(this, theGridX, theGridY);
+        old_Zombie_RiseFromGrave(this, theGridX, theGridY);
+        return;
     }
 
     if (mBoard->mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
@@ -1789,7 +1790,7 @@ void Zombie::EatPlant(Plant *thePlant) {
         }
         return;
     }
-    return old_Zombie_EatPlant(this, thePlant);
+    old_Zombie_EatPlant(this, thePlant);
 }
 
 void Zombie::DetachShield() {

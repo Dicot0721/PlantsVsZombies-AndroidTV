@@ -209,7 +209,7 @@ void MainMenu::Update() {
         return;
     }
 
-    return old_MainMenu_Update(this);
+    old_MainMenu_Update(this);
 }
 
 void MainMenu::ButtonPress(MainMenuButtonId theSelectedButton) {
@@ -479,7 +479,7 @@ void MainMenu::OnExit() {
 }
 
 void MainMenu::OnScene(int theScene) {
-    return old_MainMenu_OnScene(this, theScene);
+    old_MainMenu_OnScene(this, theScene);
 }
 
 void MainMenu::SyncButtons() {
@@ -553,8 +553,10 @@ void MainMenu::__Destructor2() {
 
 void MainMenu::Draw(Sexy::Graphics *g) {
     // 实现绘制房子
-    if (!showHouse)
-        return old_MainMenu_Draw(this, g);
+    if (!showHouse) {
+        old_MainMenu_Draw(this, g);
+        return;
+    }
 
     if (mWidgetManager == nullptr)
         return;
@@ -652,7 +654,7 @@ void MainMenu::DrawOverlay(Sexy::Graphics *g) {
     if (gMainMenuAchievementsWidget != nullptr) {
         return;
     }
-    return old_MainMenu_DrawOverlay(this, g);
+    old_MainMenu_DrawOverlay(this, g);
 }
 
 void MainMenu::DrawFade(Sexy::Graphics *g) {

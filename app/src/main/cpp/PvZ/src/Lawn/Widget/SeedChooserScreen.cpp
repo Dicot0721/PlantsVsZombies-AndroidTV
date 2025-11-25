@@ -449,7 +449,8 @@ void SeedChooserScreen::GameButtonDown(ButtonCode theButton, unsigned int thePla
     // 修复结盟2P无法选择模仿者
     if (mApp->IsCoopMode() && theButton == ButtonCode::BUTTONCODE_A) {
         if (mChooseState == SeedChooserState::CHOOSE_VIEW_LAWN) {
-            return old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
+            old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
+            return;
         }
 
         if (mApp->mTwoPlayerState == -1 && mPlayerIndex != thePlayerIndex)
