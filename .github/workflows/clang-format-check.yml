@@ -3,6 +3,7 @@ name: clang-format Check
 on:
   push:
     paths:
+      - '.clang-format'
       - 'app/src/main/cpp/**'
 
 jobs:
