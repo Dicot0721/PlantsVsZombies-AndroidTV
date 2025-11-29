@@ -2,7 +2,10 @@ name: Android CI
 
 on:
   push:
-    branches: [ main, dev ]
+    paths-ignore:
+      - '**/*.md'
+      - '.clang-format'
+  pull_request:
     paths-ignore:
       - '**/*.md'
       - '.clang-format'

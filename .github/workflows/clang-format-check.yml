@@ -5,6 +5,10 @@ on:
     paths:
       - '.clang-format'
       - 'app/src/main/cpp/**'
+  pull_request:
+    paths:
+      - '.clang-format'
+      - 'app/src/main/cpp/**'
 
 jobs:
   formatting-check:
