@@ -426,46 +426,6 @@ void GamepadControls::UpdatePreviewReanim() {
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aSquashHeadReanim, 0.0f, 0.0f);
                     zombieReanim->mFrameBasePose = 0;
                     TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 55.0f, -15.0f, 0.2f, -0.75f, 0.75f);
-                } else if (aZombieType == ZombieType::ZOMBIE_SUNFLOWER_HEAD) {
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_head", true);
-                    zombieReanim->SetFramesForLayer("anim_walk2");
-                    ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("zombie_body");
-                    Reanimation *aHeadReanim = anApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_SUNFLOWER);
-                    aHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
-                    AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aHeadReanim, 0.0f, 0.0f);
-                    zombieReanim->mFrameBasePose = 0;
-                    TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 65.0f, -10.0f, 0.2f, -1.0f, 1.0f);
-                    aHeadReanim->AssignRenderGroupToTrack("frontleaf_left_tip", RENDER_GROUP_HIDDEN);
-                    aHeadReanim->AssignRenderGroupToTrack("frontleaf_right_tip", RENDER_GROUP_HIDDEN);
-                    aHeadReanim->AssignRenderGroupToTrack("frontleaf", RENDER_GROUP_HIDDEN);
-                    aHeadReanim->AssignRenderGroupToTrack("stalk_bottom", RENDER_GROUP_HIDDEN);
-                    aHeadReanim->AssignRenderGroupToTrack("backleaf_right_tip", RENDER_GROUP_HIDDEN);
-                    aHeadReanim->AssignRenderGroupToTrack("backleaf_left_tip", RENDER_GROUP_HIDDEN);
-                    aHeadReanim->AssignRenderGroupToTrack("backleaf", RENDER_GROUP_HIDDEN);
-                } else if (aZombieType == ZombieType::ZOMBIE_TORCHWOOD_HEAD) {
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_head", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "Zombie_tie", true);
-                    zombieReanim->SetFramesForLayer("anim_walk2");
-                    ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("zombie_body");
-                    Reanimation *aHeadReanim = anApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_TORCHWOOD);
-                    aHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
-                    AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aHeadReanim, 0.0f, 0.0f);
-                    zombieReanim->mFrameBasePose = 0;
-                    TodScaleRotateTransformMatrix(aAttachEffect->mOffset, 65.0f, -10.0f, 0.2f, -0.9f, 0.9f);
-                } else if (aZombieType == ZombieType::ZOMBIE_EXPLODE_O_NUT_HEAD) {
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_head", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "Zombie_tie", true);
-                    zombieReanim->SetFramesForLayer("anim_walk2");
-                    ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("zombie_body");
-                    Reanimation *aWallnutHeadReanim = anApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_WALLNUT);
-                    aWallnutHeadReanim->mColorOverride = Color(255, 64, 64);
-                    aWallnutHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
-                    AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aWallnutHeadReanim, 0.0f, 0.0f);
-                    zombieReanim->mFrameBasePose = 0;
-                    TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 50.0f, 0.0f, 0.2f, -0.8f, 0.8f);
                 }
                 zombieReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 12.0);
             }
@@ -716,26 +676,6 @@ void GamepadControls::OnButtonDown(GamepadButton theButton, int thePlayerIndex, 
                     Zombie *aZombie = mBoard->AddZombie(aZombieType, -5, false);
                     if (aZombie)
                         aZombie->RiseFromGrave(aGridX, aGridY);
-                } else if (aZombieType == ZombieType::ZOMBIE_SUNFLOWER_HEAD || aZombieType == ZombieType::ZOMBIE_TORCHWOOD_HEAD || aZombieType == ZombieType::ZOMBIE_EXPLODE_O_NUT_HEAD) {
-                    Zombie *aZombie = mBoard->AddZombie(aZombieType, -5, false);
-                    if (aZombie)
-                        aZombie->RiseFromGrave(aGridX, aGridY);
-                } else if (aZombieType == ZombieType::ZOMBIE_JACKSON) {
-                    mBoard->AddZombieInRow(aZombieType, aGridY, -5, true);
-                    aSeedPacket->SetPacketType(SeedType::SEED_ZOMBIE_BACKUP_DANCER2, SeedType::SEED_NONE);
-                    return;
-                } else if (aZombieType == ZombieType::ZOMBIE_BACKUP_DANCER2) {
-                    Zombie *aZombie = mBoard->GetLiveZombieByType(ZombieType::ZOMBIE_JACKSON);
-                    if (aZombie)
-                        aZombie->DoSpecial();
-                } else if (aZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL) {
-                    mBoard->AddZombieInRow(aZombieType, aGridY, -5, true);
-                    aSeedPacket->SetPacketType(SeedType::SEED_ZOMBIE_SUPER_FAN_IMP, SeedType::SEED_NONE);
-                    return;
-                } else if (aZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP) {
-                    Zombie *aZombie = mBoard->GetLiveZombieByType(ZombieType::ZOMBIE_GIGA_FOOTBALL);
-                    if (aZombie)
-                        aZombie->DoSpecial();
                 }
                 aSeedPacket->Deactivate();
                 aSeedPacket->WasPlanted(mPlayerIndex2);

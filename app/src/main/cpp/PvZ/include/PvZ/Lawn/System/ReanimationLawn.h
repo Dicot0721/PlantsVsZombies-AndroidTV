@@ -71,8 +71,6 @@ public:
     Sexy::MemoryImage *MakeBlankMemoryImage(int theWidth, int theHeight);
 };
 
-inline Sexy::MemoryImage *gNewZombieImages[NUM_NEW_ZOMBIE_TYPES - NUM_CACHED_ZOMBIE_TYPES];
-
 
 inline void (*old_ReanimatorCache_LoadCachedImages)(ReanimatorCache *a1);
 

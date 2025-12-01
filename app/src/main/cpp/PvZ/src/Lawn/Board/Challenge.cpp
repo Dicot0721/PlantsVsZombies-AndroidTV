@@ -505,20 +505,6 @@ ZombieType Challenge::IZombieSeedTypeToZombieType(SeedType theSeedType) {
             return ZOMBIE_SQUASH_HEAD; // 窝瓜僵尸
         case SEED_ZOMBIE_TALLNUT_HEAD:
             return ZOMBIE_TALLNUT_HEAD; // 高坚果僵尸
-        case SEED_ZOMBIE_SUNFLOWER_HEAD:
-            return ZOMBIE_SUNFLOWER_HEAD;
-        case SEED_ZOMBIE_TORCHWOOD_HEAD:
-            return ZOMBIE_TORCHWOOD_HEAD;
-        case SEED_ZOMBIE_EXPLODE_O_NUT_HEAD:
-            return ZOMBIE_EXPLODE_O_NUT_HEAD;
-        case SEED_ZOMBIE_JACKSON:
-            return ZOMBIE_JACKSON;
-        case SEED_ZOMBIE_BACKUP_DANCER2:
-            return ZOMBIE_BACKUP_DANCER2;
-        case SEED_ZOMBIE_GIGA_FOOTBALL:
-            return ZOMBIE_GIGA_FOOTBALL;
-        case SEED_ZOMBIE_SUPER_FAN_IMP:
-            return ZOMBIE_SUPER_FAN_IMP;
         case SEED_ZOMBIE_BOBSLED:
             return ZOMBIE_BOBSLED; // 雪橇车小队
         default:

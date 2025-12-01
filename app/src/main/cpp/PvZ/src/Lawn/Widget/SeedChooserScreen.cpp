@@ -281,7 +281,6 @@ ZombieType SeedChooserScreen::GetZombieType(ZombieType theZombieType) {
 }
 
 int SeedChooserScreen::GetSeedPacketIndex(int theSeedIndex) {
-    int aSeedOffset = (gSeedChooserPage->GetPage() == 1) ? 30 : 0;
     if (mIsZombieChooser)
         return theSeedIndex - SEED_ZOMBIE_GRAVESTONE;
     else
@@ -390,7 +389,7 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
     theChosenSeed.mStartY = theChosenSeed.mY;
     theChosenSeed.mTimeStartMotion = mSeedChooserAge;
     theChosenSeed.mTimeEndMotion = mSeedChooserAge + 25;
-    if (mIsZombieChooser && gSeedChooserPage->GetPage() == 1)
+    if (mIsZombieChooser && gMoreZombieSeeds && gSeedChooserPage->GetPage() == 1)
         theChosenSeed.mStartY -= 6 * SEED_PACKET_HEIGHT;
 
     // 确定实际玩家索引
@@ -674,26 +673,6 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
                         aTitle = TodStringTranslate("[TALLNUT_HEAD_ZOMBIE]");
                         aLabel = TodStringTranslate("[TALLNUT_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
                         break;
-                    case SeedType::SEED_ZOMBIE_SUNFLOWER_HEAD: // 向日葵僵尸
-                        aTitle = TodStringTranslate("[SUNFLOWER_HEAD_ZOMBIE]");
-                        aLabel = TodStringTranslate("[SUNFLOWER_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
-                        break;
-                    case SeedType::SEED_ZOMBIE_TORCHWOOD_HEAD: // 火炬树桩僵尸
-                        aTitle = TodStringTranslate("[TORCHWOOD_HEAD_ZOMBIE]");
-                        aLabel = TodStringTranslate("[TORCHWOOD_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
-                        break;
-                    case SeedType::SEED_ZOMBIE_EXPLODE_O_NUT_HEAD: // 爆炸坚果僵尸
-                        aTitle = TodStringTranslate("[EXPLODE_O_NUT_HEAD_ZOMBIE]");
-                        aLabel = TodStringTranslate("[EXPLODE_O_NUT_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
-                        break;
-                    case SeedType::SEED_ZOMBIE_GIGA_FOOTBALL:
-                        aTitle = TodStringTranslate("[GIGA_FOOTBALL_ZOMBIE]");
-                        aLabel = TodStringTranslate("[GIGA_FOOTBALL_ZOMBIE_DESCRIPTION_HEADER]");
-                        break;
-                    case SeedType::SEED_ZOMBIE_JACKSON:
-                        aTitle = TodStringTranslate("[JACKSON_ZOMBIE]");
-                        aLabel = TodStringTranslate("[JACKSON_ZOMBIE_DESCRIPTION_HEADER]");
-                        break;
                     default:
                         return;
                 }
@@ -703,14 +682,14 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
         } else {
             if (gVSSetupWidget && gVSSetupWidget->mBanMode) {
                 if (mChosenSeeds[aSeedType].mSeedState == ChosenSeedState::SEED_IN_CHOOSER) {
-                    bool seedIsCoffee = (mToolTipSeed1 == SeedType::SEED_INSTANT_COFFEE || mToolTipSeed2 == SeedType::SEED_INSTANT_COFFEE) ? true : false;
-                    pvzstl::string str = seedIsCoffee ? "此阶段不允许" : "";
+                    bool aCanNotBanned = (mToolTipSeed1 == SeedType::SEED_INSTANT_COFFEE || mToolTipSeed2 == SeedType::SEED_INSTANT_COFFEE) ? true : false;
+                    pvzstl::string str = aCanNotBanned ? "此阶段不允许" : "";
                     aTolTip->SetWarningText(str);
                 }
             }
         }
 
-        if (mSeedsInFlight <= 0 && mIsZombieChooser && gSeedChooserPage->GetPage() == 1) {
+        if (mSeedsInFlight <= 0 && mIsZombieChooser && gMoreZombieSeeds && gSeedChooserPage->GetPage() == 1) {
             int aSeedX, aSeedY;
             SeedType aZombieSeedType = GetZombieIndexBySeedType(aSeedType);
             GetSeedPositionInChooser(aZombieSeedType, aSeedX, aSeedY);
@@ -731,7 +710,10 @@ void SeedChooserScreen::MouseMove(int x, int y) {
     }
 
     if (mIsZombieChooser) {
-        int aChooserPage = gSeedChooserPage->GetPage();
+        int aChooserPage = 0;
+        if (gMoreZombieSeeds) {
+            aChooserPage = gSeedChooserPage->GetPage();
+        }
         if ((aChooserPage == 0 && aSeedType > SeedType::SEED_ZOMBIE_TALLNUT_HEAD) || (aChooserPage == 1 && aSeedType >= SeedType::NUM_ZOMBIE_SEED_IN_CHOOSER))
             return;
 
@@ -842,7 +824,10 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
     }
 
     if (mIsZombieChooser) {
-        int aChooserPage = gSeedChooserPage->GetPage();
+        int aChooserPage = 0;
+        if (gMoreZombieSeeds) {
+            aChooserPage = gSeedChooserPage->GetPage();
+        }
         if ((aChooserPage == 0 && aSeedType > SeedType::SEED_ZOMBIE_TALLNUT_HEAD) || (aChooserPage == 1 && aSeedType >= SeedType::NUM_ZOMBIE_SEED_IN_CHOOSER))
             return;
 
@@ -879,7 +864,10 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
             return;
         }
         if (mIsZombieChooser) {
-            int aChooserPage = gSeedChooserPage->GetPage();
+            int aChooserPage = 0;
+            if (gMoreZombieSeeds) {
+                aChooserPage = gSeedChooserPage->GetPage();
+            }
             if ((aChooserPage == 0 && aSeedType > SeedType::SEED_ZOMBIE_TALLNUT_HEAD) || (aChooserPage == 1 && aSeedType >= SeedType::NUM_ZOMBIE_SEED_IN_CHOOSER))
                 return;
 
@@ -1047,23 +1035,15 @@ void SeedChooserScreen::Draw(Graphics *g) {
         int aStringX = *(reinterpret_cast<int *>(aBackgroundImage) + 9) / 2;
         TodDrawString(g, aChooserStr, aStringX, 114, *Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
 
-        int aNumSeeds = SEED_ZOMBIE_SUNFLOWER_HEAD - SEED_ZOMBIE_GRAVESTONE;
-        int aChooserPage = gSeedChooserPage->GetPage();
-        if (aChooserPage == 1) {
-            aNumSeeds += NUM_ZOMBIE_SEED_IN_CHOOSER - SEED_ZOMBIE_SUNFLOWER_HEAD;
-        }
+        int aNumSeeds = SEED_ZOMBIE_TALLNUT_HEAD - SEED_ZOMBIE_GRAVESTONE + 1;
         for (SeedType aSeedShadow = SEED_PEASHOOTER; aSeedShadow < aNumSeeds; aSeedShadow = SeedType(aSeedShadow + 1)) {
             int x, y;
             GetSeedPositionInChooser(aSeedShadow, x, y);
-            if (aChooserPage == 1)
-                y -= 6 * SEED_PACKET_HEIGHT;
 
             if (HasPacket(aSeedShadow, mIsZombieChooser)) {
                 ChosenSeed &aChosenSeed = mChosenSeeds[GetSeedPacketIndex(aSeedShadow)];
 
                 SeedType aZombieSeedType = GetZombieSeedType(aSeedShadow);
-                if (aChooserPage == 1 && aZombieSeedType < SEED_ZOMBIE_SUNFLOWER_HEAD)
-                    continue;
 
                 if (aChosenSeed.mSeedState != SEED_IN_CHOOSER) {
                     DrawPacket(g, x, y, aZombieSeedType, SEED_NONE, 0, 55, &Color::White, true, true);
@@ -1114,15 +1094,6 @@ void SeedChooserScreen::Draw(Graphics *g) {
                     GetSeedPositionInBank(aSeedIndexInBank, aPosX, aPosY, aChosenPlayerIndex);
                 } else {
                     GetSeedPositionInChooser(GetSeedPacketIndex(aSeedType), aPosX, aPosY);
-                    if (aChooserPage == 0 && aSeedType >= SEED_ZOMBIE_SUNFLOWER_HEAD)
-                        continue;
-
-                    if (aChooserPage == 1) {
-                        if (aSeedType < SEED_ZOMBIE_SUNFLOWER_HEAD)
-                            continue;
-                        else
-                            aPosY -= 6 * SEED_PACKET_HEIGHT;
-                    }
                 }
 
                 if (mSeedType1 == aSeedType && mBoard->mGamepadControls1->mPlayerIndex2 != -1 && aChosenSeed.mSeedState == SEED_IN_CHOOSER) {
@@ -1211,7 +1182,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
 SeedType SeedChooserScreen::SeedHitTest(int x, int y) {
     SeedType aSeedType = old_SeedChooserScreen_SeedHitTest(this, x, y);
     SeedType aTargetSeedType = aSeedType;
-    if (mIsZombieChooser) {
+    if (mIsZombieChooser && gMoreZombieSeeds) {
         int aChooserPage = gSeedChooserPage->GetPage();
         int aSeedTypeOffset = 0;
         if (aChooserPage == 1) {

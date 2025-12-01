@@ -48,8 +48,6 @@ constexpr const int POGO_BOUNCE_TIME = 80;
 constexpr const int DOLPHIN_JUMP_TIME = 120;
 constexpr const int JackInTheBoxZombieRadius = 115;
 constexpr const int JackInTheBoxPlantRadius = 90;
-constexpr const int SuperFanImpZombieRadius = 35;
-constexpr const int SuperFanImpPlantRadius = 20;
 constexpr const int BOBSLED_CRASH_TIME = 150;
 constexpr const int ZOMBIE_BACKUP_DANCER_RISE_HEIGHT = -200;
 constexpr const int BOSS_FLASH_HEALTH_FRACTION = 10;
@@ -60,7 +58,6 @@ constexpr const float CHILLED_SPEED_FACTOR = 0.4f;
 constexpr const float CLIP_HEIGHT_LIMIT = -100.0f;
 constexpr const float CLIP_HEIGHT_OFF = -200.0f;
 const Sexy::Color ZOMBIE_MINDCONTROLLED_COLOR = Sexy::Color(128, 0, 192, 255);
-const Sexy::Color ZOMBIE_REVIVED_COLOR = Sexy::Color(135, 206, 250, 180);
 
 enum ZombieAttackType {
     ATTACKTYPE_CHEW,
@@ -131,7 +128,6 @@ public:
     int mPhaseCounter;                                // 30
     int mFromWave;                                    // 31
     bool mDroppedLoot;                                // 128
-    bool mIsRevived;                                  // 新增成员，用于新增僵尸MJ
     int mZombieFade;                                  // 33
     bool mFlatTires;                                  // 136
     int mUseLadderCol;                                // 35
@@ -284,15 +280,10 @@ public:
     void StopZombieSound();
     void Update();
     void UpdateActions();
-    void DoSpecial();
-    void UpdateZombieGigaFootball();
-    void UpdateZombieBackupDancer();
-    void UpdateZombieJackson();
     void LandFlyer(unsigned int theDamageFlags);
     void UpdateZombieFlyer();
     void UpdateYeti();
     void UpdateZombieImp();
-    void UpdateImpGettingTackle();
     void UpdateZombieJackInTheBox();
     void UpdateZombieGargantuar();
     void UpdateZombiePeaHead();
@@ -300,8 +291,6 @@ public:
     void BurnRow(int theRow);
     void UpdateZombieJalapenoHead();
     void UpdateZombieSquashHead();
-    void UpdateZombieSunflowerHead();
-    void UpdateZombieTorchwoodHead();
     void UpdateZombieRiseFromGrave();
     void UpdateDamageStates(unsigned int theDamageFlags);
     void BossDestroyIceballInRow(int theRow);
@@ -325,8 +314,6 @@ public:
     void DropArm(unsigned int theDamageFlags);
     Sexy::Rect GetZombieAttackRect();
     Plant *FindPlantTarget(ZombieAttackType theAttackType);
-    Plant *FindPlantTargetInNextGrid(ZombieAttackType theAttackType);
-    Zombie *FindZombieGigaFootball();
     bool CanTargetPlant(Plant *thePlant, ZombieAttackType theAttackType);
     Zombie *FindZombieTarget();
     void TakeDamage(int theDamage, unsigned int theDamageFlags);
@@ -379,15 +366,7 @@ public:
     ZombiePhase GetDancerPhase();
     ZombieID SummonBackupDancer(int theRow, int thePosX);
     void SummonBackupDancers();
-    void RaiseDeadZombie(ZombieType theZombieType, int theRow, int thePosX);
-    void RaiseDeadZombies();
     bool NeedsMoreBackupDancers();
-    bool CanDropSoul();
-    void DropSoul();
-    static bool IsUpgrade(SeedType theSeedType);
-    void JacksonDie();
-    bool CanDance();
-    void SetDanceRow();
 
 protected:
     void _constructor() {
@@ -407,12 +386,8 @@ public:
 };
 extern ZombieDefinition gZombieDefs[NUM_ZOMBIE_TYPES];
 inline ZombieDefinition gZombieTrashBinDef = {ZombieType::ZOMBIE_TRASHCAN, ReanimationType::REANIM_ZOMBIE, 1, 99, 1, 4000, "TRASHCAN_ZOMBIE"};
-extern ZombieDefinition gNewZombieDefs[];
 
 ZombieDefinition &GetZombieDefinition(ZombieType theZombieType);
-
-inline std::vector<ZombieType> gDeadFollowers;
-inline int gSetRowCount = 0;
 /***************************************************************************************************************/
 
 inline bool zombieBloated;

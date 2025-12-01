@@ -57,25 +57,6 @@ void SeedPacket::Update() {
         }
     }
 
-    for (int i = 0; i < SEEDBANK_MAX; ++i) {
-        SeedPacket *aSeedPacket = &mSeedBank->mSeedPackets[i];
-        SeedType aPacketType = aSeedPacket->mPacketType;
-        if (aPacketType == SeedType::SEED_ZOMBIE_BACKUP_DANCER2) {
-            if (!mBoard->GetLiveZombieByType(ZombieType::ZOMBIE_JACKSON)) {
-                aSeedPacket->SetPacketType(SeedType::SEED_ZOMBIE_JACKSON, SeedType::SEED_NONE);
-                aSeedPacket->Deactivate();
-                aSeedPacket->WasPlanted(1);
-            }
-        }
-        if (aPacketType == SeedType::SEED_ZOMBIE_SUPER_FAN_IMP) {
-            if (!mBoard->GetLiveZombieByType(ZombieType::ZOMBIE_GIGA_FOOTBALL)) {
-                aSeedPacket->SetPacketType(SeedType::SEED_ZOMBIE_GIGA_FOOTBALL, SeedType::SEED_NONE);
-                aSeedPacket->Deactivate();
-                aSeedPacket->WasPlanted(1);
-            }
-        }
-    }
-
     old_SeedPacket_Update(this);
 }
 
@@ -173,21 +154,6 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
                     mActive = true;
                 }
                 break;
-            case SEED_ZOMBIE_SUNFLOWER_HEAD:
-                mRefreshTime = 1000;
-                mRefreshing = true;
-                mActive = false;
-                break;
-            case SEED_ZOMBIE_SUPER_FAN_IMP:
-                mRefreshTime = 500;
-                mRefreshing = true;
-                mActive = false;
-                break;
-            case SEED_ZOMBIE_BACKUP_DANCER2:
-                mRefreshTime = 1000;
-                mRefreshing = true;
-                mActive = false;
-                break;
             default:
                 break;
         }
@@ -220,7 +186,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
     int celToDraw;
     if (theSeedType == SeedType::SEED_IMITATER) {
         celToDraw = 0;
-    } else if (Plant::IsUpgrade(realSeedType) || Zombie::IsUpgrade(theSeedType)) {
+    } else if (Plant::IsUpgrade(realSeedType)) {
         celToDraw = 1;
     } else if (theSeedType == SeedType::SEED_BEGHOULED_BUTTON_CRATER) {
         celToDraw = 3;
@@ -248,11 +214,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
             }
         } else if (isZombieSeed) {
             float heightOffset = g->mScaleX > 1.2 ? -1.5f : 0.0f;
-            if (Zombie::IsUpgrade(theSeedType)) {
-                TodDrawImageCelScaledF(g, *Sexy_IMAGE_SEEDS_Addr, x, y + heightOffset, celToDraw, 0, g->mScaleX, g->mScaleY);
-            } else {
-                TodDrawImageScaledF(g, *Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr, x, y + heightOffset, g->mScaleX, g->mScaleY);
-            }
+            TodDrawImageScaledF(g, *Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr, x, y + heightOffset, g->mScaleX, g->mScaleY);
         } else {
             TodDrawImageCelScaledF(g, *Sexy_IMAGE_SEEDS_Addr, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
         }
@@ -374,8 +336,6 @@ void DrawSeedPacket(Sexy::Graphics *g,
         case SeedType::SEED_ZOMBIE_TRAFFIC_CONE:
         case SeedType::SEED_ZOMBIE_PAIL:
         case SeedType::SEED_ZOMBIE_DANCER:
-        case SeedType::SEED_ZOMBIE_JACKSON:
-        case SeedType::SEED_ZOMBIE_BACKUP_DANCER2:
             offsetY = -7.0;
             offsetX = -3.0;
             theDrawScale = 0.35;
@@ -407,7 +367,6 @@ void DrawSeedPacket(Sexy::Graphics *g,
             theDrawScale = 0.3;
             break;
         case SeedType::SEED_ZOMBIE_FOOTBALL:
-        case SeedType::SEED_ZOMBIE_GIGA_FOOTBALL:
             offsetY = -9.0;
             offsetX = -7.0;
             theDrawScale = 0.33;
@@ -418,7 +377,6 @@ void DrawSeedPacket(Sexy::Graphics *g,
             theDrawScale = 0.35;
             break;
         case SeedType::SEED_ZOMBIE_IMP:
-        case SeedType::SEED_ZOMBIE_SUPER_FAN_IMP:
             offsetY = -17.0;
             offsetX = -12.0;
             theDrawScale = 0.4;
@@ -455,9 +413,6 @@ void DrawSeedPacket(Sexy::Graphics *g,
         case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD:
         case SeedType::SEED_ZOMBIE_SQUASH_HEAD:
         case SeedType::SEED_ZOMBIE_TALLNUT_HEAD:
-        case SeedType::SEED_ZOMBIE_SUNFLOWER_HEAD:
-        case SeedType::SEED_ZOMBIE_TORCHWOOD_HEAD:
-        case SeedType::SEED_ZOMBIE_EXPLODE_O_NUT_HEAD:
             offsetY = -7.0;
             offsetX = -3.0;
             theDrawScale = 0.35;
@@ -501,11 +456,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
         aPlantG.ClipRect(x, y, g->mScaleX * 50.0f, coolDownHeight * g->mScaleY);
         if (isSeedPacketSelected) {
             if (Challenge::IsMPSeedType(theSeedType)) {
-                if (Zombie::IsUpgrade(theSeedType)) {
-                    TodDrawImageCelScaledF(&aPlantG, *Sexy_IMAGE_SEEDS_Addr, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
-                } else {
-                    TodDrawImageScaledF(&aPlantG, *Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr, x, y, g->mScaleX, g->mScaleY);
-                }
+                TodDrawImageScaledF(&aPlantG, *Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr, x, y, g->mScaleX, g->mScaleY);
             } else {
                 TodDrawImageCelScaledF(&aPlantG, *Sexy_IMAGE_SEEDS_Addr, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
             }

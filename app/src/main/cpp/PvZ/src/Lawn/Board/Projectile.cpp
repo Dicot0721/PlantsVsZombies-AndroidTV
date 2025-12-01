@@ -341,12 +341,6 @@ void Projectile::DoImpact(Zombie *theZombie) {
                 }
             }
         }
-
-        if (theZombie->mZombieType == ZombieType::ZOMBIE_TORCHWOOD_HEAD && theZombie->mHasObject == false) {
-            if (mProjectileType == ProjectileType::PROJECTILE_FIREBALL) {
-                theZombie->mHasObject = true; // 重新点燃火炬
-            }
-        }
     }
 
 

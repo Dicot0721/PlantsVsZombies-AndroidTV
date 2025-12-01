@@ -56,8 +56,6 @@ inline homura::Patcher whackAZombieNormalSpeed;     // 锤僵尸关卡的僵尸�
 inline homura::Patcher repairShopA;                 // 破解商店
 inline homura::Patcher repairShopB;                 // 破解商店
 inline homura::Patcher autoPickupSeedPacketDisable; // 禁止光标自动拾取植物卡片
-inline homura::Patcher drawMorePlantSeeds;          // 绘制对战植物选卡数量
-inline homura::Patcher drawMoreZombieSeeds;         // 绘制对战僵尸选卡数量
 } // namespace game_patches
 
 inline void ApplyPatches() {
@@ -73,8 +71,6 @@ inline void ApplyPatches() {
     game_patches::repairShopA = homura::Patcher::CreateWithStr(libGameMain, 0x1C1BB6, true, "05 E0");
     game_patches::repairShopB = homura::Patcher::CreateWithStr(libGameMain, 0x1C1D1C, true, "06 E0");
     game_patches::autoPickupSeedPacketDisable = homura::Patcher::CreateWithStr(libGameMain, 0x1C4114, true, "16");
-    game_patches::drawMorePlantSeeds = homura::Patcher::CreateWithStr(libGameMain, 0x150576, true, "30");
-    game_patches::drawMoreZombieSeeds = homura::Patcher::CreateWithStr(libGameMain, 0x14FC7E, true, "23");
 #endif // PVZ_VERSION
 
     game_patches::whackAZombieNormalSpeed.Modify();
