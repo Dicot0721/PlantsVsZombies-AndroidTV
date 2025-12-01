@@ -36,8 +36,6 @@ public:
 };
 extern ProjectileDefinition gProjectileDefinition[NUM_PROJECTILES];
 
-extern ProjectileDefinition gNewProjectileDefinition[];
-
 class Projectile : public __GameObject {
 public:
     int mFrame;                     // 13
@@ -86,7 +84,6 @@ public:
 
     void ProjectileInitialize(int theX, int theY, int theRenderOrder, int theRow, ProjectileType theProjectileType);
     void ConvertToFireball(int theGridX);
-    void ConvertToZombieFireball();
     void ConvertToPea(int theGridX);
     void Update();
     void UpdateNormalMotion();

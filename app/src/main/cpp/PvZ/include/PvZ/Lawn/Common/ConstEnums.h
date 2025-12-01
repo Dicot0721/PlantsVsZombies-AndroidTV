@@ -836,8 +836,6 @@ enum ProjectileType {
     PROJECTILE_BUTTER = 12,     // 黄油
     PROJECTILE_ZOMBIE_PEA = 13, // 僵尸豌豆
     NUM_PROJECTILES = 14,
-    PROJECTILE_ZOMBIE_FIREBALL,
-    PROJCTILE_ZOMBIE_SOUL
 };
 enum ReanimationType {
     REANIM_NONE = -1,
