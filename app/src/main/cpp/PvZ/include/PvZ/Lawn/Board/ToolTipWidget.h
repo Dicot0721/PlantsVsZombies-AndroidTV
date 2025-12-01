@@ -23,8 +23,20 @@
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
 
+namespace Sexy {
+class Graphics;
+}
+
 class ToolTipWidget {
 public:
+    pvzstl::string mTitle;       // 0
+    pvzstl::string mLabel;       // 1
+    pvzstl::string mWarningText; // 2
+    int mX;                      // 3
+    int mY;                      // 4
+    int mWidth;                  // 5
+    int mHeight;                 // 6
+
     void SetWarningText(const pvzstl::string &theWarningText) {
         reinterpret_cast<void (*)(ToolTipWidget *, const pvzstl::string &)>(ToolTipWidget_SetWarningTextAddr)(this, theWarningText);
     }
@@ -33,6 +45,9 @@ public:
     }
     void SetLabel(const pvzstl::string &theLabel) {
         reinterpret_cast<void (*)(ToolTipWidget *, const pvzstl::string &)>(ToolTipWidget_SetLabelAddr)(this, theLabel);
+    }
+    void Draw(Sexy::Graphics *g) {
+        reinterpret_cast<void (*)(ToolTipWidget *, Sexy::Graphics *)>(ToolTipWidget_DrawAddr)(this, g);
     }
 };
 

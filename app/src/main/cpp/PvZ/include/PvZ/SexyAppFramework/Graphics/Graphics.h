@@ -130,6 +130,9 @@ public:
     void DrawImage(Image *theImage, int theX, int theY, const Rect &theSrcRect) {
         reinterpret_cast<void (*)(Graphics *, Image *, int, int, const Rect &)>(Sexy_Graphics_DrawImage2Addr)(this, theImage, theX, theY, theSrcRect);
     }
+    void DrawImage(Image *theImage, int theX, int theY, int theX2, int theY2) {
+        reinterpret_cast<void (*)(Graphics *, Image *, int, int, int, int)>(Sexy_Graphics_DrawImage3Addr)(this, theImage, theX, theY, theX2, theY2);
+    }
     void DrawImageF(Image *theImage, float theX, float theY) {
         reinterpret_cast<void (*)(Graphics *, Image *, float, float)>(Sexy_Graphics_DrawImageFAddr)(this, theImage, theX, theY);
     }

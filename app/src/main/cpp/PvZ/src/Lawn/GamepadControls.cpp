@@ -686,14 +686,14 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
     old_GamepadControls_DrawPreview(this, g);
 }
 
-void GamepadControls::OnButtonDown(ButtonCode theButton, int thePlayerIndex, unsigned int unk) {
+void GamepadControls::OnButtonDown(GamepadButton theButton, int thePlayerIndex, unsigned int unk) {
     old_GamepadControls_OnButtonDown(this, theButton, thePlayerIndex, unk);
 
     SeedBank *aSeedBank = GetSeedBank();
     SeedPacket *aSeedPacket = &aSeedBank->mSeedPackets[mSelectedSeedIndex];
     SeedType aPacketType = aSeedPacket->mPacketType;
     int aCost = mBoard->GetCurrentPlantCost(aSeedPacket->mPacketType, SeedType::SEED_NONE);
-    if (mGameObject.mApp->mGameMode == GameMode::GAMEMODE_MP_VS && theButton == ButtonCode::BUTTONCODE_A) {
+    if (mGameObject.mApp->mGameMode == GameMode::GAMEMODE_MP_VS && theButton == GamepadButton::BUTTONCODE_A) {
 
         if (mIsZombie) {
             if (aPacketType == SeedType::SEED_ZOMBIE_GRAVESTONE)

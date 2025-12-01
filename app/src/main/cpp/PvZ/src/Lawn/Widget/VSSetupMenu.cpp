@@ -29,9 +29,9 @@
 using namespace Sexy;
 
 VSSetupWidget::VSSetupWidget() {
-    if (gMoreZombieSeeds) {
-        game_patches::drawMoreZombieSeeds.Modify();
-    }
+    //    if (gMoreZombieSeeds) {
+    //        game_patches::drawMoreZombieSeeds.Modify();
+    //    }
 }
 
 VSSetupWidget::~VSSetupWidget() {
@@ -182,7 +182,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         Sexy::Widget *theController1Widget = FindWidget(7);
         int newController1Position = theController1Widget->mX > 400 ? 1 : theController1Widget->mX > 250 ? -1 : 0;
         if (newController1Position == mController1Position) {
-            GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+            GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
         }
         mController1Position = newController1Position;
         if (tcpClientSocket >= 0) {
@@ -197,7 +197,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         int newController2Position = theController2Widget->mX > 400 ? 1 : theController2Widget->mX > 250 ? -1 : 0;
 
         if (newController2Position == mController2Position) {
-            GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+            GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
         }
         mController2Position = newController2Position;
         if (tcpServerSocket >= 0) {
@@ -208,8 +208,8 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
     }
     touchingOnWhichController = 0;
     if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
-        GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
-        GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+        GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
+        GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
     }
 }
 
@@ -237,8 +237,8 @@ void VSSetupMenu::Update() {
         // 自动分配阵营
         //        mController1Position = 0;
         //        mController2Position = 1;
-        //        GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
-        //        GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+        //        GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
+        //        GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
         return;
     }
 
@@ -374,7 +374,7 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX1, screen->mCursorPositionY1);
             screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX2, screen->mCursorPositionY2);
             (mIsZombieChooser ? screen->mSeedType2 : screen->mSeedType1) = theSeedType;
-            screen->GameButtonDown(ButtonCode::BUTTONCODE_A, screen->mPlayerIndex);
+            screen->GameButtonDown(GamepadButton::BUTTONCODE_A, screen->mPlayerIndex);
         } break;
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
             U16_Event *event1 = (U16_Event *)event;
@@ -385,13 +385,13 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
         case EVENT_VSSETUPMENU_SET_CONTROLLER: {
             U16_Event *event1 = (U16_Event *)event;
             if (mController2Position == event1->data) {
-                GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+                GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
             }
             mController2Position = event1->data;
             is2PControllerMoving = false;
             if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
-                GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
-                GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+                GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
+                GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
             }
         } break;
         default:
@@ -470,7 +470,7 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX1, screen->mCursorPositionY1);
             screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX2, screen->mCursorPositionY2);
             (mIsZombieChooser ? screen->mSeedType2 : screen->mSeedType1) = theSeedType;
-            screen->GameButtonDown(ButtonCode::BUTTONCODE_A, screen->mPlayerIndex);
+            screen->GameButtonDown(GamepadButton::BUTTONCODE_A, screen->mPlayerIndex);
         } break;
         case EVENT_VSSETUPMENU_RANDOM_PICK: {
             U16x10_Event *event1 = (U16x10_Event *)event;
@@ -497,13 +497,13 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_VSSETUPMENU_SET_CONTROLLER: {
             U16_Event *event1 = (U16_Event *)event;
             if (mController1Position == event1->data) {
-                GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+                GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
             }
             mController1Position = event1->data;
             is1PControllerMoving = false;
             if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
-                GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
-                GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+                GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
+                GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
             }
         } break;
         default:
@@ -592,18 +592,18 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
     if (!isKeyboardTwoPlayerMode && mState == VS_SETUP_SIDES) {
         // 自动分配阵营
-        // GameButtonDown(ButtonCode::BUTTONCODE_LEFT, 0, 0);
-        // GameButtonDown(ButtonCode::BUTTONCODE_RIGHT, 1, 0);
+        // GameButtonDown(GamepadButton::BUTTONCODE_LEFT, 0, 0);
+        // GameButtonDown(GamepadButton::BUTTONCODE_RIGHT, 1, 0);
         if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
-            GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
-            GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+            GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
+            GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
         } else {
             return;
             // // 自动分配阵营
             // mController1Position = 0;
             // mController2Position = 1;
-            // GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
-            // GameButtonDown(ButtonCode::BUTTONCODE_A, 1, 0);
+            // GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
+            // GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
         }
     }
 

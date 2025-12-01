@@ -26,7 +26,7 @@
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 
 // buttonCode 是按键键值，对应关系如下：
-enum ButtonCode {
+enum GamepadButton {
     BUTTONCODE_LUP = 0,     // 左摇杆上 0
     BUTTONCODE_LDOWN = 1,   // 左摇杆下 1
     BUTTONCODE_LLEFT = 2,   // 左摇杆左 2
@@ -82,8 +82,8 @@ public:
     SeedBank *GetSeedBank() {
         return reinterpret_cast<SeedBank *(*)(GamepadControls *)>(GamepadControls_GetSeedBankAddr)(this);
     }
-    void OnButtonUp(ButtonCode theButton, int theGamepadIndex, unsigned int a4) {
-        reinterpret_cast<void (*)(GamepadControls *, ButtonCode, int, unsigned int)>(GamepadControls_OnButtonUpAddr)(this, theButton, theGamepadIndex, a4);
+    void OnButtonUp(GamepadButton theButton, int theGamepadIndex, unsigned int a4) {
+        reinterpret_cast<void (*)(GamepadControls *, GamepadButton, int, unsigned int)>(GamepadControls_OnButtonUpAddr)(this, theButton, theGamepadIndex, a4);
     }
     // theGamepadIndex 根据手柄决定是0还是1
     // a4 恒定为0
@@ -106,7 +106,7 @@ public:
     void Update(float a2);
     void DrawPreview(Sexy::Graphics *g);
     void UpdatePreviewReanim();
-    void OnButtonDown(ButtonCode theButton, int thePlayerIndex, unsigned int unk);
+    void OnButtonDown(GamepadButton theButton, int thePlayerIndex, unsigned int unk);
 
 protected:
     friend void InitHookFunction();
@@ -137,7 +137,7 @@ inline void (*old_GamepadControls_UpdatePreviewReanim)(GamepadControls *gamePad)
 
 inline void (*old_GamepadControls_DrawPreview)(GamepadControls *gamePad, Sexy::Graphics *graphics);
 
-inline void (*old_GamepadControls_OnButtonDown)(GamepadControls *, ButtonCode theButton, int thePlayerIndex, unsigned int unk);
+inline void (*old_GamepadControls_OnButtonDown)(GamepadControls *, GamepadButton theButton, int thePlayerIndex, unsigned int unk);
 
 inline void (*old_ZenGardenControls_Update)(ZenGardenControls *a1, float a2);
 

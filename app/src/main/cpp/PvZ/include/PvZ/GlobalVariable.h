@@ -61,9 +61,9 @@ inline bool gButtonDownP1 = false;
 inline bool gButtonDownP2 = false;
 inline bool gButtonDownSeedChooser = false;
 inline bool gButtonDownVSSetup = false;
-inline ButtonCode gButtonCode = ButtonCode::BUTTONCODE_NONE;
-inline ButtonCode gButtonCodeP1 = ButtonCode::BUTTONCODE_NONE;
-inline ButtonCode gButtonCodeP2 = ButtonCode::BUTTONCODE_NONE;
+inline GamepadButton gButtonCode = GamepadButton::BUTTONCODE_NONE;
+inline GamepadButton gButtonCodeP1 = GamepadButton::BUTTONCODE_NONE;
+inline GamepadButton gButtonCodeP2 = GamepadButton::BUTTONCODE_NONE;
 inline int gGamePlayerIndex = -1;
 inline int gGamepad1ToPlayerIndex = -1;
 

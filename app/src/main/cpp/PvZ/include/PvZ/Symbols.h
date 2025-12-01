@@ -468,6 +468,7 @@ inline void *SeedChooserScreen_DrawAddr;
 inline void *SeedChooserScreen_SeedNotRecommendedToPickAddr;
 inline void *SeedChooserScreen_SeedNotAllowedDuringTrialAddr;
 inline void *SeedChooserScreen_CanPickNowAddr;
+inline void *SeedChooserScreen_ShouldDisplayCursorAddr;
 
 
 inline void *Coin_CoinInitializeAddr;
@@ -738,6 +739,7 @@ inline void *Sexy_Graphics_DrawImageAddr;
 inline void *Sexy_Graphics_DrawImageFAddr;
 inline void *Sexy_Graphics_DrawImageF2Addr;
 inline void *Sexy_Graphics_DrawImage2Addr;
+inline void *Sexy_Graphics_DrawImage3Addr;
 inline void *Sexy_Graphics_DrawImageMirrorAddr;
 inline void *Sexy_Graphics_DrawImageMirror2Addr;
 inline void *Sexy_Graphics_SetLinearBlendAddr;
@@ -1012,7 +1014,7 @@ inline void *Sexy_ResourceManager_GetSoundThrowAddr;
 inline void *ToolTipWidget_SetWarningTextAddr;
 inline void *ToolTipWidget_SetTitleAddr;
 inline void *ToolTipWidget_SetLabelAddr;
-
+inline void *ToolTipWidget_DrawAddr;
 
 inline void *GridItem_UpdateAddr;
 inline void *GridItem_UpdateBrainAddr;
@@ -1189,8 +1191,16 @@ inline Sexy::Image **Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
 
 namespace Sexy {
 inline Image **IMAGE_BLANK;
+inline Image **IMAGE_SEEDCHOOSER_BACKGROUND;
 inline Image **IMAGE_SEEDCHOOSER_BACKGROUND2;
+inline Image **IMAGE_SEEDCHOOSER_IMITATERADDON;
 inline Image **IMAGE_SEEDPACKETSILHOUETTE;
+inline Image **IMAGE_SEED_SELECTOR;
+inline Image **IMAGE_SEED_SELECTOR_BLUE;
+inline Image **IMAGE_CURSOR_ARROW_P1;
+inline Image **IMAGE_CURSOR_ARROW_P2;
+inline Image **IMAGE_CURSOR_P1_TEXT;
+inline Image **IMAGE_CURSOR_P2_TEXT;
 inline Image **IMAGE_PUFFSHROOM_PUFF1;
 inline Image **IMAGE_REANIM_WALLNUT_CRACKED1;
 inline Image **IMAGE_REANIM_WALLNUT_CRACKED2;
@@ -1778,6 +1788,7 @@ inline bool LoadGameMain() {
     SeedChooserScreen_SeedNotRecommendedToPickAddr = dlsym(handle, "_ZN17SeedChooserScreen24SeedNotRecommendedToPickE8SeedType");
     SeedChooserScreen_SeedNotAllowedDuringTrialAddr = dlsym(handle, "_ZN17SeedChooserScreen25SeedNotAllowedDuringTrialE8SeedType");
     SeedChooserScreen_CanPickNowAddr = dlsym(handle, "_ZN17SeedChooserScreen10CanPickNowEv");
+    SeedChooserScreen_ShouldDisplayCursorAddr = dlsym(handle, "_ZN17SeedChooserScreen19ShouldDisplayCursorEi");
 
 
     Coin_CoinInitializeAddr = dlsym(handle, "_ZN4Coin14CoinInitializeEii8CoinType10CoinMotion");
@@ -2052,6 +2063,7 @@ inline bool LoadGameMain() {
     Sexy_Graphics_DrawImageMirrorAddr = dlsym(handle, "_ZN4Sexy8Graphics15DrawImageMirrorEPNS_5ImageEiib");
     Sexy_Graphics_DrawImageMirror2Addr = dlsym(handle, "_ZN4Sexy8Graphics15DrawImageMirrorEPNS_5ImageERKNS_5TRectIiEES6_b");
     Sexy_Graphics_DrawImage2Addr = dlsym(handle, "_ZN4Sexy8Graphics9DrawImageEPNS_5ImageEiiRKNS_5TRectIiEE");
+    Sexy_Graphics_DrawImage3Addr = dlsym(handle, "_ZN4Sexy8Graphics9DrawImageEPNS_5ImageEiiii");
     Sexy_Graphics_SetLinearBlendAddr = dlsym(handle, "_ZN4Sexy8Graphics14SetLinearBlendEb");
     Sexy_Graphics_PushStateAddr = dlsym(handle, "_ZN4Sexy8Graphics9PushStateEv");
     Sexy_Graphics_PopStateAddr = dlsym(handle, "_ZN4Sexy8Graphics8PopStateEv");
@@ -2308,7 +2320,7 @@ inline bool LoadGameMain() {
     ToolTipWidget_SetWarningTextAddr = dlsym(handle, "_ZN13ToolTipWidget14SetWarningTextERKSs");
     ToolTipWidget_SetTitleAddr = dlsym(handle, "_ZN13ToolTipWidget8SetTitleERKSs");
     ToolTipWidget_SetLabelAddr = dlsym(handle, "_ZN13ToolTipWidget8SetLabelERKSs");
-
+    ToolTipWidget_DrawAddr = dlsym(handle, "_ZN13ToolTipWidget4DrawEPN4Sexy8GraphicsE");
 
     TodDrawImageCelCenterScaledFAddr = dlsym(handle, "_Z28TodDrawImageCelCenterScaledFPN4Sexy8GraphicsEPNS_5ImageEffiff");
     TodDrawImageCelFAddr = dlsym(handle, "_Z16TodDrawImageCelFPN4Sexy8GraphicsEPNS_5ImageEffii");
@@ -2485,8 +2497,16 @@ inline bool LoadGameMain() {
     Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy23IMAGE_OPTIONS_CHECKBOX1E");
     // Sexy_IMAGE_BLANK_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy11IMAGE_BLANKE");
     Sexy::IMAGE_BLANK = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy11IMAGE_BLANKE"));
+    Sexy::IMAGE_SEEDCHOOSER_BACKGROUND = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy28IMAGE_SEEDCHOOSER_BACKGROUNDE"));
     Sexy::IMAGE_SEEDCHOOSER_BACKGROUND2 = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy29IMAGE_SEEDCHOOSER_BACKGROUND2E"));
+    Sexy::IMAGE_SEEDCHOOSER_IMITATERADDON = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy31IMAGE_SEEDCHOOSER_IMITATERADDONE"));
     Sexy::IMAGE_SEEDPACKETSILHOUETTE = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy26IMAGE_SEEDPACKETSILHOUETTEE"));
+    Sexy::IMAGE_SEED_SELECTOR = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy19IMAGE_SEED_SELECTORE"));
+    Sexy::IMAGE_SEED_SELECTOR_BLUE = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy24IMAGE_SEED_SELECTOR_BLUEE"));
+    Sexy::IMAGE_CURSOR_ARROW_P1 = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy21IMAGE_CURSOR_ARROW_P1E"));
+    Sexy::IMAGE_CURSOR_ARROW_P2 = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy21IMAGE_CURSOR_ARROW_P2E"));
+    Sexy::IMAGE_CURSOR_P1_TEXT = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy20IMAGE_CURSOR_P1_TEXTE"));
+    Sexy::IMAGE_CURSOR_P2_TEXT = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy20IMAGE_CURSOR_P2_TEXTE"));
     Sexy::IMAGE_PUFFSHROOM_PUFF1 = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy22IMAGE_PUFFSHROOM_PUFF1E"));
     Sexy::IMAGE_REANIM_WALLNUT_CRACKED1 = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy29IMAGE_REANIM_WALLNUT_CRACKED1E"));
     Sexy::IMAGE_REANIM_WALLNUT_CRACKED2 = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy29IMAGE_REANIM_WALLNUT_CRACKED2E"));

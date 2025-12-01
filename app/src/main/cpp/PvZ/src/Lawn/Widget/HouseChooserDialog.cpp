@@ -46,10 +46,10 @@ void HouseChooserDialog::MouseDown(int x, int y, int theClickCount) {
         return;
     int currentHouseType = mSelectedHouseType;
     if (currentHouseType == houseIdToSelect) {
-        GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+        GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
     } else {
         while (mSelectedHouseType != houseIdToSelect) {
-            GameButtonDown(ButtonCode::BUTTONCODE_LLEFT, 0, 0);
+            GameButtonDown(GamepadButton::BUTTONCODE_LLEFT, 0, 0);
         }
     }
 }
@@ -59,19 +59,19 @@ void HouseChooserDialog::KeyDown(Sexy::KeyCode keyCode) {
 
     switch (keyCode) {
         case 37:
-            return GameButtonDown(ButtonCode::BUTTONCODE_LLEFT, 0, 0);
+            return GameButtonDown(GamepadButton::BUTTONCODE_LLEFT, 0, 0);
         case 38:
-            return GameButtonDown(ButtonCode::BUTTONCODE_LUP, 0, 0);
+            return GameButtonDown(GamepadButton::BUTTONCODE_LUP, 0, 0);
         case 39:
-            return GameButtonDown(ButtonCode::BUTTONCODE_LRIGHT, 0, 0);
+            return GameButtonDown(GamepadButton::BUTTONCODE_LRIGHT, 0, 0);
         case 40:
-            return GameButtonDown(ButtonCode::BUTTONCODE_LDOWN, 0, 0);
+            return GameButtonDown(GamepadButton::BUTTONCODE_LDOWN, 0, 0);
         case 27:
         case 305:
-            return GameButtonDown(ButtonCode::BUTTONCODE_B, 0, 0);
+            return GameButtonDown(GamepadButton::BUTTONCODE_B, 0, 0);
         case 13:
         case 304:
-            return GameButtonDown(ButtonCode::BUTTONCODE_A, 0, 0);
+            return GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
         default:
             break;
     }

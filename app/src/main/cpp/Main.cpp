@@ -763,7 +763,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     Board *aBoard = (*gLawnApp_Addr)->mBoard;
     if (aBoard) {
         gButtonDownP1 = true;
-        gButtonCodeP1 = ButtonCode(code);
+        gButtonCodeP1 = GamepadButton(code);
     }
 }
 
@@ -771,7 +771,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     Board *aBoard = (*gLawnApp_Addr)->mBoard;
     if (aBoard) {
         gButtonDownP2 = true;
-        gButtonCodeP2 = ButtonCode(code);
+        gButtonCodeP2 = GamepadButton(code);
     }
 }
 
@@ -815,7 +815,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivi
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeSendButtonEvent(JNIEnv *env, jclass clazz, jboolean is_key_down, jint button_code) {
     bool aIsPlayer2 = button_code >= 256;
     bool aGamepad1Is2P = gGamepad1ToPlayerIndex == 1;
-    ButtonCode aButtonCode = ButtonCode(aIsPlayer2 ? button_code - 256 : button_code);
+    GamepadButton aButtonCode = GamepadButton(aIsPlayer2 ? button_code - 256 : button_code);
 
     LawnApp *anApp = *gLawnApp_Addr;
     Board *aBoard = anApp->mBoard;
@@ -844,20 +844,20 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     float &aY = (aIsPlayer2 == true) ? gGamepadP2VelY : gGamepadP1VelY;
     if (is_key_down) {
         switch (aButtonCode) {
-            case ButtonCode::BUTTONCODE_B:
+            case GamepadButton::BUTTONCODE_B:
                 gKeyDown = true;
                 gGamePlayerIndex = aIsPlayer2 ? 1 : 0;
                 break;
-            case ButtonCode::BUTTONCODE_UP:
+            case GamepadButton::BUTTONCODE_UP:
                 aY = -400;
                 break;
-            case ButtonCode::BUTTONCODE_DOWN:
+            case GamepadButton::BUTTONCODE_DOWN:
                 aY = 400;
                 break;
-            case ButtonCode::BUTTONCODE_LEFT:
+            case GamepadButton::BUTTONCODE_LEFT:
                 aX = -400;
                 break;
-            case ButtonCode::BUTTONCODE_RIGHT:
+            case GamepadButton::BUTTONCODE_RIGHT:
                 aX = 400;
                 break;
             default:
@@ -872,12 +872,12 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
         }
     } else {
         switch (aButtonCode) {
-            case ButtonCode::BUTTONCODE_UP:
-            case ButtonCode::BUTTONCODE_DOWN:
+            case GamepadButton::BUTTONCODE_UP:
+            case GamepadButton::BUTTONCODE_DOWN:
                 aY = 0;
                 break;
-            case ButtonCode::BUTTONCODE_LEFT:
-            case ButtonCode::BUTTONCODE_RIGHT:
+            case GamepadButton::BUTTONCODE_LEFT:
+            case GamepadButton::BUTTONCODE_RIGHT:
                 aX = 0;
                 break;
             default:

@@ -3167,7 +3167,7 @@ void Board::__MouseUp(int x, int y, int theClickCount) {
                 } else if ((mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mChallenge->mChallengeState == ChallengeState::STATECHALLENGE_NORMAL
                             && mApp->mGameScene == GameScenes::SCENE_PLAYING)
                            || mGameMode == GameMode::GAMEMODE_MP_VS) {
-                    mGamepadControls1->OnButtonDown(ButtonCode::BUTTONCODE_A, mGamepadControls1->mPlayerIndex1, 0);
+                    mGamepadControls1->OnButtonDown(GamepadButton::BUTTONCODE_A, mGamepadControls1->mPlayerIndex1, 0);
                 } else {
                     mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
                 }
@@ -3204,7 +3204,7 @@ void Board::__MouseUp(int x, int y, int theClickCount) {
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
                 } else if ((mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mChallengeState == ChallengeState::STATECHALLENGE_NORMAL && mApp->mGameScene == GameScenes::SCENE_PLAYING)
                            || mGameMode == GameMode::GAMEMODE_MP_VS) {
-                    mGamepadControls2->OnButtonDown(ButtonCode::BUTTONCODE_A, mGamepadControls2->mPlayerIndex1, 0);
+                    mGamepadControls2->OnButtonDown(GamepadButton::BUTTONCODE_A, mGamepadControls2->mPlayerIndex1, 0);
                 } else {
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
                 }
@@ -3780,7 +3780,7 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
                     mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
                 } else if ((aGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && aChallengeState == ChallengeState::STATECHALLENGE_NORMAL && aGameScene == GameScenes::SCENE_PLAYING)
                            || aGameMode == GameMode::GAMEMODE_MP_VS) {
-                    mGamepadControls1->OnButtonDown(ButtonCode::BUTTONCODE_A, mGamepadControls1->mPlayerIndex1, 0);
+                    mGamepadControls1->OnButtonDown(GamepadButton::BUTTONCODE_A, mGamepadControls1->mPlayerIndex1, 0);
                 } else {
                     mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
                 }
@@ -3806,7 +3806,7 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
                 } else if ((aGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && aChallengeState == ChallengeState::STATECHALLENGE_NORMAL && aGameScene == GameScenes::SCENE_PLAYING)
                            || aGameMode == GameMode::GAMEMODE_MP_VS) {
-                    mGamepadControls2->OnButtonDown(ButtonCode::BUTTONCODE_A, mGamepadControls2->mPlayerIndex1, 0);
+                    mGamepadControls2->OnButtonDown(GamepadButton::BUTTONCODE_A, mGamepadControls2->mPlayerIndex1, 0);
                 } else {
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
                 }
@@ -3923,31 +3923,31 @@ void Board::UpdateButtons() {
     if (gButtonDown) {
         aGamepad->OnButtonDown(gButtonCode, gGamePlayerIndex, 0);
         gButtonDown = false;
-        gButtonCode = ButtonCode::BUTTONCODE_NONE;
+        gButtonCode = GamepadButton::BUTTONCODE_NONE;
         gGamePlayerIndex = -1;
     }
     if (gButtonDownP1) {
         mGamepadControls1->OnButtonDown(gButtonCodeP1, 0, 0);
         gButtonDownP1 = false;
-        gButtonCodeP1 = ButtonCode::BUTTONCODE_NONE;
+        gButtonCodeP1 = GamepadButton::BUTTONCODE_NONE;
     }
     if (gButtonDownP2) {
         mGamepadControls2->OnButtonDown(gButtonCodeP2, 0, 0);
         gButtonDownP2 = false;
-        gButtonCodeP2 = ButtonCode::BUTTONCODE_NONE;
+        gButtonCodeP2 = GamepadButton::BUTTONCODE_NONE;
     }
     if (gButtonDownSeedChooser) {
         aSeedChooser->GameButtonDown(gButtonCode, gGamePlayerIndex);
         gButtonDownSeedChooser = false;
-        gButtonCode = ButtonCode::BUTTONCODE_NONE;
+        gButtonCode = GamepadButton::BUTTONCODE_NONE;
         gGamePlayerIndex = -1;
     }
     if (gButtonDownVSSetup) {
-        if (!(aVSSetup->mState == VSSetupState::VS_CUSTOM_BATTLE && gButtonCode == ButtonCode::BUTTONCODE_B)) { // 修复对战选卡阶段按下 B 键崩溃
+        if (!(aVSSetup->mState == VSSetupState::VS_CUSTOM_BATTLE && gButtonCode == GamepadButton::BUTTONCODE_B)) { // 修复对战选卡阶段按下 B 键崩溃
             aVSSetup->GameButtonDown(gButtonCode, gGamePlayerIndex, 0);
         }
         gButtonDownVSSetup = false;
-        gButtonCode = ButtonCode::BUTTONCODE_NONE;
+        gButtonCode = GamepadButton::BUTTONCODE_NONE;
         gGamePlayerIndex = -1;
     }
 

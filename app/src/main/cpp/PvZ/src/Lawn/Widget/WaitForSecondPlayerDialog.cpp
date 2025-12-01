@@ -38,8 +38,8 @@ using namespace Sexy;
 void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(this, theApp);
 
-    // GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
-    // GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
+    // GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+    // GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
 
     // 解决此Dialog显示时背景僵尸全部聚集、且草丛大块空缺的问题
     if (theApp->mBoard != nullptr) {
@@ -230,8 +230,8 @@ void WaitForSecondPlayerDialog::HandleTcpServerMessage(void *buf, ssize_t bufSiz
     BaseEvent *event = (BaseEvent *)buf;
     switch (event->type) {
         case EVENT_START_GAME:
-            GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
-            GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
+            GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+            GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
             break;
         default:
             break;
@@ -722,8 +722,8 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
     auto *dialog = reinterpret_cast<WaitForSecondPlayerDialog *>((uint32_t(listener) - offsetof(WaitForSecondPlayerDialog, mButtonListener)));
     if (id == 1000) {
         // 2P手柄按两下A
-        dialog->GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
-        dialog->GameButtonDown(ButtonCode::BUTTONCODE_A, 1);
+        dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+        dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
 
         if (tcpClientSocket >= 0) {
             BaseEvent event = {EventType::EVENT_START_GAME};
