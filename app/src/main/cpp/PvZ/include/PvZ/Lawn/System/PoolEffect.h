@@ -23,8 +23,8 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Graphics/Image.h"
 
-constexpr const int CAUSTIC_IMAGE_WIDTH = 128;
-constexpr const int CAUSTIC_IMAGE_HEIGHT = 64;
+constexpr int CAUSTIC_IMAGE_WIDTH = 128;
+constexpr int CAUSTIC_IMAGE_HEIGHT = 64;
 
 namespace Sexy {
 class MemoryImage;

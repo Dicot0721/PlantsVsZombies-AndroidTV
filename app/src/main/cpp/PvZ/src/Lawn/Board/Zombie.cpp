@@ -34,7 +34,9 @@
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Effect/TodParticle.h"
 
-#include <string.h>
+#include <cstring>
+
+#include <numbers>
 
 using namespace Sexy;
 
@@ -620,7 +622,7 @@ void Zombie::BossDestroyFireball() {
         float aPosX = aFireBallReanim->mOverlayMatrix.m02 + 80.0f;
         float aPosY = aFireBallReanim->mOverlayMatrix.m12 + 40.0f;
         for (int i = 0; i < 6; i++) {
-            float aAngle = 2 * PI * i / 6 + PI / 2;
+            float aAngle = 2 * std::numbers::pi * i / 6 + std::numbers::pi / 2;
             Reanimation *aReanim = mApp->AddReanimation(aPosX + 60.0f * sin(aAngle), aPosY + 60.0f * cos(aAngle), 400000, ReanimationType::REANIM_JALAPENO_FIRE);
             aReanim->mAnimTime = 0.2f;
             aReanim->mLoopType = ReanimLoopType::REANIM_PLAY_ONCE_FULL_LAST_FRAME;

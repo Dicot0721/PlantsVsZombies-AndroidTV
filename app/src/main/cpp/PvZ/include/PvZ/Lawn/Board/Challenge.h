@@ -30,14 +30,14 @@ constexpr int BEGHOULED_MAX_GRIDSIZEY = 5;
 constexpr int ART_CHALLEGE_SIZE_X = 8;
 constexpr int MAX_PICK_GRID_SIZE = 50;
 
-constexpr const int BEGHOULED_WINNING_SCORE = 75;
-constexpr const int SLOT_MACHINE_WINNING_SCORE = 2000;
-constexpr const int ZOMBIQUARIUM_WINNING_SCORE = 1000;
-constexpr const int I_ZOMBIE_WINNING_SCORE = 5;
-constexpr const int MAX_PORTALS = 4;
-constexpr const int MAX_SQUIRRELS = 7;
-constexpr const int MAX_SCARY_POTS = 54;
-constexpr const int STORM_FLASH_TIME = 150;
+constexpr int BEGHOULED_WINNING_SCORE = 75;
+constexpr int SLOT_MACHINE_WINNING_SCORE = 2000;
+constexpr int ZOMBIQUARIUM_WINNING_SCORE = 1000;
+constexpr int I_ZOMBIE_WINNING_SCORE = 5;
+constexpr int MAX_PORTALS = 4;
+constexpr int MAX_SQUIRRELS = 7;
+constexpr int MAX_SCARY_POTS = 54;
+constexpr int STORM_FLASH_TIME = 150;
 
 class LawnApp;
 class Board;
