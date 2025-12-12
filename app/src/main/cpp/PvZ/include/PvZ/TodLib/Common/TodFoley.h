@@ -154,7 +154,7 @@ public:
     FoleyType mFoleyType;
     float mPitchRange;
     int *mSfxID[10];
-    uint mFoleyFlags;
+    unsigned int mFoleyFlags;
 };
 
 FoleyParams *LookupFoley(FoleyType theFoleyType);

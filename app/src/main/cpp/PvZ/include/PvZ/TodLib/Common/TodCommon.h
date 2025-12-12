@@ -237,13 +237,13 @@ inline bool FloatApproxEqual(float theFloatVal1, float theFloatVal2) {
     return fabs(theFloatVal1 - theFloatVal2) < FLT_EPSILON;
 }
 
-inline void SetBit(uint &theNum, int theIdx, bool theValue = true) {
+inline void SetBit(unsigned int &theNum, int theIdx, bool theValue = true) {
     if (theValue)
         theNum |= 1 << theIdx;
     else
         theNum &= ~(1 << theIdx);
 }
-inline bool TestBit(uint theNum, int theIdx) {
+inline bool TestBit(unsigned int theNum, int theIdx) {
     return theNum & (1 << theIdx);
 }
 

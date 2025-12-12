@@ -24,7 +24,7 @@
 
 namespace Sexy {
 
-const ulong MEMORYCHECK_ID = 0x4BEEFADE;
+const unsigned long MEMORYCHECK_ID = 0x4BEEFADE;
 
 class SexyMatrix3;
 
@@ -32,7 +32,7 @@ class MemoryImage : public __Image {
 public:
     LawnApp *mApp;         // 28
     int unkMems4;          // 29
-    ulong *mBits;          // 30
+    unsigned long *mBits;  // 30
     int mBitsChangedCount; // 31
     int unk1[4];           // 32 ~ 35
     bool mUnkModeRelated;  // 144
@@ -50,8 +50,8 @@ public:
         _destructor();
     }
 
-    ulong *GetBits() {
-        return reinterpret_cast<ulong *(*)(MemoryImage *)>(Sexy_MemoryImage_GetBitsAddr)(this);
+    unsigned long *GetBits() {
+        return reinterpret_cast<unsigned long *(*)(MemoryImage *)>(Sexy_MemoryImage_GetBitsAddr)(this);
     }
     void Create(int theWidth, int theHeight) {
         reinterpret_cast<void (*)(MemoryImage *, int, int)>(Sexy_MemoryImage_CreateAddr)(this, theWidth, theHeight);

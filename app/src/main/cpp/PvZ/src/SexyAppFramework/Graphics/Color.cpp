@@ -63,7 +63,7 @@ Color::Color(const SexyRGBA &theColor)
     , mBlue(theColor.b)
     , mAlpha(theColor.a) {}
 
-Color::Color(const uchar *theElements)
+Color::Color(const unsigned char *theElements)
     : mRed(theElements[0])
     , mGreen(theElements[1])
     , mBlue(theElements[2])
@@ -123,7 +123,7 @@ int Color::operator[](int theIdx) const {
     }
 }
 
-ulong Color::ToInt() const {
+unsigned long Color::ToInt() const {
     return (mAlpha << 24) | (mRed << 16) | (mGreen << 8) | (mBlue);
 }
 

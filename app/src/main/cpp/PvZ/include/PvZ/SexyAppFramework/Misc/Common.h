@@ -31,11 +31,6 @@
 #include <string>
 #include <vector>
 
-using uchar = unsigned char;
-using ushort = unsigned short;
-using uint = unsigned int;
-using ulong = unsigned long;
-
 enum PixelFormat {
     kPixelFormat_None = -1,
     kPixelFormat_Automatic,

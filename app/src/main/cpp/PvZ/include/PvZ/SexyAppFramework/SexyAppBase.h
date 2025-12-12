@@ -24,6 +24,7 @@
 #include "Graphics/MemoryImage.h"
 #include "Misc/Common.h"
 #include "Misc/Rect.h"
+#include "PvZ/MagicAddr.h"
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/SexyAppFramework/Widget/WidgetManager.h"
 #include "PvZ/Symbols.h"

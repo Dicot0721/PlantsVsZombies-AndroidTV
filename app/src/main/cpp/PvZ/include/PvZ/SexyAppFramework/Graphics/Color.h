@@ -46,14 +46,14 @@ public:
     Color(int theRed, int theGreen, int theBlue);
     Color(int theRed, int theGreen, int theBlue, int theAlpha);
     Color(const SexyRGBA &theColor);
-    Color(const uchar *theElements);
+    Color(const unsigned char *theElements);
     Color(const int *theElements);
 
     int GetRed() const;
     int GetGreen() const;
     int GetBlue() const;
     int GetAlpha() const;
-    ulong ToInt() const;
+    unsigned long ToInt() const;
     SexyRGBA ToRGBA() const;
 
     int &operator[](int theIdx);
