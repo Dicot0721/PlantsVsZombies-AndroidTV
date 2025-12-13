@@ -10,9 +10,6 @@ on:
       - '**/*.md'
       - '.clang-format'
 
-permissions:
-  contents: write
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -69,11 +66,16 @@ jobs:
           path: app/build/outputs/apk/${{ matrix.version }}/release/*.apk
 
   release:
+    permissions:
+      contents: write
     needs: [ build ]
-    runs-on: ubuntu-latest
     if: >
       github.ref == 'refs/heads/main' &&
       github.repository == 'Dicot0721/PlantsVsZombies-AndroidTV'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release
+      cancel-in-progress: false
 
     steps:
       - name: Checkout
@@ -82,9 +84,10 @@ jobs:
           fetch-depth: 0
 
       - name: Set build variables
+        id: build-var
         run: |
-          echo "GIT_DATE=$(git log --date=format:%y%m%d --pretty=format:'%cd' -n 1)" >> $GITHUB_ENV
-          echo "GIT_COMMITS_COUNT=$(git rev-list --count HEAD)" >> $GITHUB_ENV
+          echo "date=$(git log --date=format:%y%m%d --pretty=format:'%cd' -n 1)" >> "$GITHUB_OUTPUT"
+          echo "commits-count=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Download v111 artifact
         uses: actions/download-artifact@v5
@@ -114,6 +117,6 @@ jobs:
           token: ${{ secrets.BUILDS_TOKEN }}
           prerelease: false
           make_latest: true
-          tag_name: ${{ env.GIT_DATE }}-${{ env.GIT_COMMITS_COUNT }}
+          tag_name: ${{ steps.build-var.outputs.date }}-${{ steps.build-var.outputs.commits-count }}
           body: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
           files: artifact/*.apk
