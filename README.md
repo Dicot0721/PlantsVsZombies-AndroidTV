@@ -2,7 +2,7 @@
 
 # PlantsVsZombies AndroidTV
 
-**English** | **[简体中文](./README.zh-cn.md)**
+**English** | **[简体中文](README.zh-cn.md)**
 
 [![license](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)][GPL-3.0]
 [![Android CI](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml/badge.svg)](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml "Android CI")
@@ -19,7 +19,7 @@ A mod of _Plants vs. Zombies_ Android TV version.
     * CMake v3.20+
 
 - Clone the repository.
-    ```shell
+    ```sh
     git clone https://github.com/Dicot0721/PlantsVsZombies-AndroidTV.git
     ```
 
@@ -29,13 +29,13 @@ A mod of _Plants vs. Zombies_ Android TV version.
 - Build with:
     * Android Studio: Click on the build button.
     * Command line: Run the following command:
-        ```shell
+        ```sh
         cd PlantsVsZombies-AndroidTV
         ./gradlew assembleDebug
         ```
 
 - If release, configure signing using the file `keystore.properties` located in the project root directory (you must
-  create this file yourself). The file content format is as follows:
+    create this file yourself). The file content format is as follows:
     ```properties
     storePassword=myStorePassword
     keyPassword=mykeyPassword
@@ -47,22 +47,22 @@ A mod of _Plants vs. Zombies_ Android TV version.
 
 ### Coding Style (C++)
 
-**Name Convention**
+#### Name Convention
 
-- Function / Type / Concept: `PascalCase`
-- Variable: `camelCase`
-- Namespace: `snake_case`
-- Macro / Constant / Enumerator / Non-type template parameter: `UPPER_CASE`
+- Functions / types / concepts: `PascalCase`
+- Variables: `camelCase`
+- Namespaces: `snake_case`
+- Macros / constants / enumerators / non-type template parameters: `UPPER_CASE`
 
-**Format**
+#### Format
 
-See the file `.clang-format` in the project root directory.
+See [`.clang-format`](.clang-format).
 
 > It is recommended to format the code using the IDE before each commit.
 
 ### Commit
 
-See _[AngularJS Commit Message Guidelines](https://github.com/angular/angular/blob/20.0.x/CONTRIBUTING.md#-commit-message-guidelines)_.
+See _[Conventional Commits](https://www.conventionalcommits.org/)_.
 
 ### Pull Request (PR)
 

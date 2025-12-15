@@ -2,7 +2,7 @@
 
 # PlantsVsZombies AndroidTV
 
-**[English](./README.md)** | **简体中文**
+**[English](README.md)** | **简体中文**
 
 [![license](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)][GPL-3.0]
 [![Android CI](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml/badge.svg)](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml "Android CI")
@@ -19,7 +19,7 @@
     * CMake v3.20+
 
 - 克隆仓库.
-    ```shell
+    ```sh
     git clone https://github.com/Dicot0721/PlantsVsZombies-AndroidTV.git
     ```
 
@@ -29,7 +29,7 @@
 - 构建方式:
     * Android Studio: 点击构建按钮.
     * 命令行: 运行以下命令:
-        ```shell
+        ```sh
         cd PlantsVsZombies-AndroidTV
         ./gradlew assembleDebug
         ```
@@ -46,22 +46,22 @@
 
 ### 编码风格 (C++)
 
-**命名约定**
+#### 命名约定
 
 - 函数/类型/概念: `PascalCase`
 - 变量: `camelCase`
 - 命名空间: `snake_case`
 - 宏/常量/枚举成员/非类型模板参数: `UPPER_CASE`
 
-**格式**
+#### 格式
 
-见项目根目录下的 `.clang-format` 文件.
+见 [`.clang-format`](.clang-format).
 
 > 建议在每次提交前先用 IDE 对代码进行格式化.
 
 ### 提交
 
-参考 _[AngularJS 提交信息指南](https://github.com/angular/angular/blob/20.0.x/CONTRIBUTING.md#-commit-message-guidelines)_.
+参考 _[约定式提交](https://www.conventionalcommits.org/)_.
 
 ### 拉取请求 (PR)
 
