@@ -1341,6 +1341,7 @@ bool LoadNativeCode() {
 
     Native_BridgeApp_getJNIEnvAddr = dlsym(handle1, "_ZN6Native9BridgeApp9getJNIEnvEv");
     Native_NativeApp_getActivityAddr = dlsym(handle1, "_ZNK6Native9NativeApp11getActivityEv");
+    Native_NativeApp_getViewAddr = dlsym(handle1, "_ZNK6Native9NativeApp7getViewEv");
     Native_BridgeApp_getSingletonAddr = dlsym(handle1, "_ZN6Native9BridgeApp12getSingletonEv");
     Native_NativeApp_getPackageNameAddr = dlsym(handle1, "_ZN6Native9NativeApp14getPackageNameEv");
 

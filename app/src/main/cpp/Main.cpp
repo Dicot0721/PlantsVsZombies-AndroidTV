@@ -926,3 +926,15 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeHeavyWeaponAccel(JNIEnv *env, jclass clazz) {
     heavyWeaponAccel = true;
 }
+
+
+extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_NativeView_onTextInputNative2(JNIEnv *env, jobject thiz, jlong j, jstring str) {
+
+    // ✅ 必须先判空
+    if (str == nullptr) {
+        gInputString = "";
+        return;
+    }
+
+    gInputString = JStringToString(env,str);
+}

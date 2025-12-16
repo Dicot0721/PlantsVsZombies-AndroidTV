@@ -16,9 +16,11 @@
  * You should have received a copy of the GNU General Public License along with
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+#include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "Homura/Logger.h"
+#include "PvZ/Android/Native/BridgeApp.h"
+#include "PvZ/Android/Native/NativeApp.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include <arpa/inet.h>
@@ -83,12 +85,24 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     InitUdpScanSocket();
     mIsCreatingRoom = false;
     mIsJoiningRoom = false;
+
+    mSelectedServerIndex = 0;
+     mUseManualTarget = false;
+     mManualIp[INET_ADDRSTRLEN] = {0};
+    mManualPort = 0;
+
+    // 连接按钮
+    mDirectConnectButton = MakeButton(1004, &mButtonListener, this, "[CONNECT_IP]");
+    mDirectConnectButton->mX = 300;
+    mDirectConnectButton->mY = 350;
+    mDirectConnectButton->mWidth = 180;
+    mDirectConnectButton->mHeight = 40;
+    AddWidget(mDirectConnectButton);
 }
 
 void WaitForSecondPlayerDialog::_destructor() {
     old_WaitForSecondPlayerDialog_Delete(this);
 }
-
 void WaitForSecondPlayerDialog::Draw(Graphics *g) {
     old_WaitForSecondPlayerDialog_Draw(this, g);
 
@@ -106,31 +120,186 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
 
         pvzstl::string str3 = tcpClientSocket == -1 ? StrFormat("对方未加入...") : StrFormat("对方已加入！");
         g->DrawString(str3, 260, 300);
+        return;
+    }
 
-    } else if (mIsJoiningRoom) {
-        pvzstl::string str = tcp_connected ? StrFormat("已加入至: %s的房间", servers[0].name) : StrFormat("正在加入: %s的房间", servers[0].name);
-        g->DrawString(str, 280, 150);
-        pvzstl::string str1 = StrFormat("IP: %s:%d", servers[0].ip, servers[0].tcp_port);
-        g->DrawString(str1, 280, 200);
-    } else if (scanned_server_count == 0) {
+    // ===== joining 状态：支持手动 & 选中房间 =====
+    if (mIsJoiningRoom) {
+        if (mUseManualTarget) {
+            // 手动连接
+            pvzstl::string str = tcp_connected
+                ? StrFormat("已加入至: 手动连接")
+                : StrFormat("正在加入: 手动连接");
+            g->DrawString(str, 280, 150);
+
+            pvzstl::string str1 = StrFormat("IP: %s:%d", mManualIp, mManualPort);
+            g->DrawString(str1, 280, 200);
+
+        } else {
+            // 扫描列表连接：用当前选中项，而不是 servers[0]
+            int idx = mSelectedServerIndex;
+            if (idx < 0) idx = 0;
+            if (idx >= scanned_server_count) idx = scanned_server_count - 1;
+
+            if (scanned_server_count <= 0) {
+                pvzstl::string str1 = StrFormat("正在加入: (无可用房间)");
+                g->DrawString(str1, 280, 150);
+            } else {
+                pvzstl::string str = tcp_connected
+                    ? StrFormat("已加入至: %s的房间", servers[idx].name)
+                    : StrFormat("正在加入: %s的房间", servers[idx].name);
+                g->DrawString(str, 280, 150);
+
+                pvzstl::string str1 = StrFormat("IP: %s:%d", servers[idx].ip, servers[idx].tcp_port);
+                g->DrawString(str1, 280, 200);
+            }
+        }
+        return;
+    }
+
+    // ===== 非 joining/creating：显示扫描状态或列表 =====
+    if (scanned_server_count == 0) {
         pvzstl::string str1 = udpScanSocket >= 0 ? StrFormat("查找房间中...") : StrFormat("无法查找房间");
         g->DrawString(str1, 340, 200);
-    } else {
-        int yPos = 180;
-        for (int i = 0; i < scanned_server_count; i++) {
-            pvzstl::string str = StrFormat("%s的房间 %s:%d", servers[i].name, servers[i].ip, servers[i].tcp_port);
-            g->DrawString(str, 230, yPos);
-            yPos += 30;
-        }
+        return;
     }
+
+    // 列表：高亮 mSelectedServerIndex（绿色），支持选择其他房间
+    int idx = mSelectedServerIndex;
+    if (idx < 0) idx = 0;
+    if (idx >= scanned_server_count) idx = scanned_server_count - 1;
+    mSelectedServerIndex = idx;
+
+    int yPos = 180;
+    Sexy::Color oldColor = g->mColor;
+
+    for (int i = 0; i < scanned_server_count; i++) {
+        if (i == mSelectedServerIndex) {
+            g->SetColor(Sexy::Color(0, 255, 0)); // 绿色高亮
+        } else {
+            g->SetColor(oldColor);              // 恢复默认
+        }
+
+        pvzstl::string line = StrFormat("%s的房间 %s:%d", servers[i].name, servers[i].ip, servers[i].tcp_port);
+        g->DrawString(line, 230, yPos);
+        yPos += 50; // 你想更稀疏就改成 50
+    }
+
+    g->SetColor(oldColor);
 }
 
+
+bool WaitForSecondPlayerDialog::ManualIpConnect() {
+    // 1) 没有新输入就直接返回
+    if (gInputString.empty()) return false;
+
+    // 2) 取走输入并清空（避免重复触发）
+    std::string input = gInputString;
+    gInputString.clear();
+
+    LOG_DEBUG("[ManualIpConnect] raw input='{}'", input.c_str());
+
+    // ====== 内联 Trim ======
+    auto Trim = [](const std::string& s) -> std::string {
+        const char* ws = " \t\r\n";
+        size_t a = s.find_first_not_of(ws);
+        if (a == std::string::npos) return "";
+        size_t b = s.find_last_not_of(ws);
+        return s.substr(a, b - a + 1);
+    };
+
+    // ====== 解析 IP / IP:PORT（PORT 可缺省） ======
+    std::string t = Trim(input);
+    if (t.empty()) {
+        LOG_DEBUG("[ManualIpConnect] empty input");
+        return false;
+    }
+
+    std::string ip = t;
+    int port = 0;
+
+    size_t pos = t.find(':');
+    if (pos != std::string::npos) {
+        ip = Trim(t.substr(0, pos));
+        std::string p = Trim(t.substr(pos + 1));
+        if (!p.empty()) {
+            port = atoi(p.c_str());
+            if (port <= 0 || port > 65535) {
+                LOG_DEBUG("[ManualIpConnect] invalid port in '{}'", t.c_str());
+                return false;
+            }
+        }else{
+            LOG_DEBUG("[ManualIpConnect] port is null");
+            return false;
+        }
+    }
+
+    // 校验 IP
+    in_addr addr{};
+    if (inet_pton(AF_INET, ip.c_str(), &addr) != 1) {
+        LOG_DEBUG("[ManualIpConnect] invalid ip '{}'", ip.c_str());
+        return false;
+    }
+
+    // 3) 保存为手动目标
+    std::memset(mManualIp, 0, sizeof(mManualIp));
+    std::strncpy(mManualIp, ip.c_str(), INET_ADDRSTRLEN - 1);
+    mManualPort = port;
+    mUseManualTarget = true;
+
+    LOG_DEBUG("[ManualIpConnect] target {}:{}", mManualIp, mManualPort);
+
+    // 4) 切换到 joining 状态，重置连接状态（避免旧状态干扰）
+    mIsJoiningRoom = true;
+    CloseUdpScanSocket();
+
+    mCreateButton->mDisabled = true;
+    mJoinButton->SetLabel("[LEAVE_ROOM_BUTTON]");
+
+    mLawnYesButton->mDisabled = true;
+    mLawnYesButton->SetLabel("[PLAY_ONLINE]");
+
+    if (tcpServerSocket >= 0) {
+        shutdown(tcpServerSocket, SHUT_RDWR);
+        close(tcpServerSocket);
+        tcpServerSocket = -1;
+    }
+    tcp_connecting = false;
+    tcp_connected = false;
+
+    // 5) 关闭扫描 socket（避免 scan 模式逻辑干扰）
+    CloseUdpScanSocket();
+
+    // （可选）如果你希望这里同步更新按钮状态/文字，也可以放在这里
+
+    return true;
+}
 
 void WaitForSecondPlayerDialog::Update() {
     // mJoinButton->mDisabled = server_count == 0;
 
-    if (!mIsCreatingRoom && !mIsJoiningRoom) {
+    bool inScanMode = (!mIsCreatingRoom && !mIsJoiningRoom);
+    if (inScanMode) {
         mJoinButton->mDisabled = scanned_server_count == 0;
+        // 扫描列表从 0 -> >0 时，默认选中第一个
+        if (scanned_server_count > 0 && mSelectedServerIndex < 0) {
+            mSelectedServerIndex = 0;
+        }
+        // 越界修正
+        if (mSelectedServerIndex >= scanned_server_count) {
+            mSelectedServerIndex = scanned_server_count - 1;
+        }
+        if (mSelectedServerIndex < 0) mSelectedServerIndex = 0;
+
+        if (!gInputString.empty()) {
+            mUseManualTarget = true;
+            ManualIpConnect();
+        }
+    }
+
+    if (mDirectConnectButton) {
+        mDirectConnectButton->mVisible = inScanMode;
+        mDirectConnectButton->mDisabled = !inScanMode;
     }
 
     if (mIsCreatingRoom) {
@@ -464,6 +633,11 @@ void WaitForSecondPlayerDialog::LeaveRoom() {
         tcp_connecting = false;
         tcp_connected = false;
     }
+
+    mUseManualTarget = false;
+    mManualIp[0] = '\0';
+    mManualPort = 0;
+
 }
 
 void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
@@ -594,72 +768,108 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
     time_t current_time = time(NULL);
     for (int i = 0; i < scanned_server_count;) {
         if (difftime(current_time, servers[i].last_seen) > UDP_TIMEOUT) {
-            LOG_DEBUG("[Scan] Server timeout:{}:{} ({})\n", servers[i].ip, servers[i].tcp_port, servers[i].name);
 
-            // 删除该服务端，将最后一个移到当前位置
-            servers[i] = servers[scanned_server_count - 1];
+            // 如果选中的是最后一个，而我们要把最后一个删掉
+            int last = scanned_server_count - 1;
+
+            // 1) 如果选中项就是被删除的 i：
+            //    删除后，当前位置会被 last 覆盖，所以让选中保持在 i（继续指向“被搬过来的那一项”）
+            if (mSelectedServerIndex == i) {
+                // 选中保持 i，不变
+            }
+            // 2) 如果选中项是 last，而 last 要被搬到 i：
+            //    选中项应该跟着搬到 i（否则你会“莫名丢选中”）
+            else if (mSelectedServerIndex == last) {
+                mSelectedServerIndex = i;
+            }
+            // 3) 其他情况不用改
+
+            servers[i] = servers[last];
             scanned_server_count--;
+
+            // 删除后防越界
+            if (scanned_server_count <= 0) {
+                mSelectedServerIndex = 0;
+            } else if (mSelectedServerIndex >= scanned_server_count) {
+                mSelectedServerIndex = scanned_server_count - 1;
+            }
+
             continue;
         }
         i++;
     }
+
 }
 
-
 void WaitForSecondPlayerDialog::TryTcpConnect() {
-    if (tcp_connected)
-        return; // 已连接成功
-    if (scanned_server_count == 0)
-        return; // 没有可连接的服务器
+    if (tcp_connected) return;
 
-    server_info *target = &servers[0]; // 第一个服务端
+    // 既不是手动目标，也没有扫描到房间，就没法连
+    if (!mUseManualTarget && scanned_server_count == 0) return;
+
+    // 统一得到目标 ip/port（用于 connect + 日志）
+    char target_ip[INET_ADDRSTRLEN] = {0};
+    int  target_port = 0;
+
+    if (mUseManualTarget) {
+        strncpy(target_ip, mManualIp, INET_ADDRSTRLEN - 1);
+        target_port = mManualPort;
+    } else {
+        int idx = mSelectedServerIndex;
+        if (idx < 0) idx = 0;
+        if (idx >= scanned_server_count) idx = scanned_server_count - 1;
+
+        strncpy(target_ip, servers[idx].ip, INET_ADDRSTRLEN - 1);
+        target_port = servers[idx].tcp_port;
+    }
+
+    // 组装 sockaddr
+    sockaddr_in server_addr{};
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(target_port);
+    inet_pton(AF_INET, target_ip, &server_addr.sin_addr);
 
     if (!tcp_connecting) {
-        // 第一次尝试连接
         tcpServerSocket = socket(AF_INET, SOCK_STREAM, 0);
         if (tcpServerSocket < 0) {
-            LOG_DEBUG("[Client] socket ERROR");
+            LOG_DEBUG("[Client] socket ERROR errno={}", errno);
             return;
         }
 
-        // 设置非阻塞
+        // 非阻塞
         int flags = fcntl(tcpServerSocket, F_GETFL, 0);
         fcntl(tcpServerSocket, F_SETFL, flags | O_NONBLOCK);
 
-        // 目标地址
-        sockaddr_in server_addr{};
-        server_addr.sin_family = AF_INET;
-        server_addr.sin_port = htons(target->tcp_port);
-        inet_pton(AF_INET, target->ip, &server_addr.sin_addr);
-
-        // 发起非阻塞connect
-        int ret = connect(tcpServerSocket, (sockaddr *)&server_addr, sizeof(server_addr));
+        // 发起非阻塞 connect
+        int ret = connect(tcpServerSocket, (sockaddr*)&server_addr, sizeof(server_addr));
         if (ret < 0) {
             if (errno == EINPROGRESS) {
-                tcp_connecting = true; // 正在连接
-                LOG_DEBUG("[Client] Connecting to {}:{} ...\n", target->ip, target->tcp_port);
+                tcp_connecting = true;
+                LOG_DEBUG("[Client] Connecting to {}:{} ...", target_ip, target_port);
             } else {
-                LOG_DEBUG("[Client] connect ERROR");
+                LOG_DEBUG("[Client] connect ERROR errno={}", errno);
                 close(tcpServerSocket);
                 tcpServerSocket = -1;
                 tcp_connecting = false;
                 tcp_connected = false;
             }
         } else {
-            // connect立即成功（本地可能直接成功）
+            // 立即连接成功
             int one = 1;
-            setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one)); // 禁用 Nagle 算法
+            setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+
             int on = 1;
-            setsockopt(tcpClientSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
+            setsockopt(tcpServerSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
             int idle = 30;
-            setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
+            setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
             int intvl = 10;
-            setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
+            setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
             int cnt = 3;
-            setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
+            setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
+
             tcp_connected = true;
             tcp_connecting = false;
-            LOG_DEBUG("[Client] Connected immediately to {}:{}\n", target->ip, target->tcp_port);
+            LOG_DEBUG("[Client] Connected immediately to {}:{}", target_ip, target_port);
         }
 
     } else {
@@ -668,14 +878,13 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
         FD_ZERO(&writefds);
         FD_SET(tcpServerSocket, &writefds);
 
-        timeval tv{0, 0}; // 非阻塞
+        timeval tv{0, 0};
         int ret = select(tcpServerSocket + 1, nullptr, &writefds, nullptr, &tv);
         if (ret > 0 && FD_ISSET(tcpServerSocket, &writefds)) {
-            // 检查错误
             int err = 0;
             socklen_t len = sizeof(err);
             if (getsockopt(tcpServerSocket, SOL_SOCKET, SO_ERROR, &err, &len) < 0) {
-                LOG_DEBUG("[Client] getsockopt ERROR");
+                LOG_DEBUG("[Client] getsockopt ERROR errno={}", errno);
                 close(tcpServerSocket);
                 tcpServerSocket = -1;
                 tcp_connecting = false;
@@ -685,29 +894,32 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
 
             if (err == 0) {
                 int one = 1;
-                setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one)); // 禁用 Nagle 算法
+                setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+
                 int on = 1;
-                setsockopt(tcpClientSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
+                setsockopt(tcpServerSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
                 int idle = 30;
-                setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
+                setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
                 int intvl = 10;
-                setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
+                setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
                 int cnt = 3;
-                setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
+                setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
+
                 tcp_connected = true;
                 tcp_connecting = false;
-                LOG_DEBUG("[Client] Connected to {}:{}\n", target->ip, target->tcp_port);
+                LOG_DEBUG("[Client] Connected to {}:{}", target_ip, target_port);
             } else {
-                LOG_DEBUG("[Client] Connect failed, err={}", err);
+                LOG_DEBUG("[Client] Connect failed to {}:{} err={}", target_ip, target_port, err);
                 close(tcpServerSocket);
                 tcpServerSocket = -1;
                 tcp_connecting = false;
                 tcp_connected = false;
             }
         }
-        // 如果select返回0，说明连接还在进行中，下次Update再检查
+        // select==0 表示还在连接中，下次 Update 再检查
     }
 }
+
 
 void WaitForSecondPlayerDialog::StopUdpBroadcastRoom() {
     if (udpBroadcastSocket >= 0) {
@@ -716,6 +928,95 @@ void WaitForSecondPlayerDialog::StopUdpBroadcastRoom() {
     }
     LOG_DEBUG("[UDP] Broadcast closed\n");
 }
+
+
+void WaitForSecondPlayerDialog::ShowIpInputDialog() {
+
+    LOG_DEBUG("[ShowIpInputDialog] enter");
+
+    Native::BridgeApp* bridgeApp = Native::BridgeApp::getSingleton();
+    if (!bridgeApp) {
+        LOG_DEBUG("[ShowIpInputDialog] BridgeApp is null");
+        return;
+    }
+
+    if (!bridgeApp->mNativeApp) {
+        LOG_DEBUG("[ShowIpInputDialog] mNativeApp is null");
+        return;
+    }
+
+    JNIEnv* env = bridgeApp->getJNIEnv();
+    if (!env) {
+        LOG_DEBUG("[ShowIpInputDialog] JNIEnv is null");
+        return;
+    }
+
+    jobject view = bridgeApp->mNativeApp->getView();
+    if (!view) {
+        LOG_DEBUG("[ShowIpInputDialog] NativeView is null");
+        return;
+    }
+
+    LOG_DEBUG("[ShowIpInputDialog] NativeView obtained");
+
+    // view 是 com.transmension.mobile.NativeView
+    jclass viewCls = env->GetObjectClass(view);
+    if (!viewCls) {
+        LOG_DEBUG("[ShowIpInputDialog] GetObjectClass(view) failed");
+        return;
+    }
+
+    LOG_DEBUG("[ShowIpInputDialog] NativeView class obtained");
+
+    // 方法签名：void showTextInputDialog2(int mode, String title, String hint, String initial)
+    jmethodID mid = env->GetMethodID(
+        viewCls,
+        "showTextInputDialog2",
+        "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
+    );
+    if (!mid) {
+        LOG_DEBUG("[ShowIpInputDialog] GetMethodID(showTextInputDialog2) failed");
+        env->DeleteLocalRef(viewCls);
+        if (env->ExceptionCheck()) {
+            env->ExceptionDescribe();
+            env->ExceptionClear();
+        }
+        return;
+    }
+
+    LOG_DEBUG("[ShowIpInputDialog] Method showTextInputDialog2 found");
+
+    jstring jTitle   = env->NewStringUTF("加入此IP的房间:");
+    jstring jHint    = env->NewStringUTF("IP:PORT");
+    jstring jInitial = env->NewStringUTF("");
+
+    if (!jTitle || !jHint || !jInitial) {
+        LOG_DEBUG("[ShowIpInputDialog] Failed to create jstring");
+        env->DeleteLocalRef(viewCls);
+        return;
+    }
+
+    LOG_DEBUG("[ShowIpInputDialog] Calling showTextInputDialog2");
+
+    env->CallVoidMethod(view, mid, 0, jTitle, jHint, jInitial);
+
+    if (env->ExceptionCheck()) {
+        LOG_DEBUG("[ShowIpInputDialog] Java exception occurred during CallVoidMethod");
+        env->ExceptionDescribe();   // 调试期建议保留
+        env->ExceptionClear();
+    } else {
+        LOG_DEBUG("[ShowIpInputDialog] showTextInputDialog2 call succeeded");
+    }
+
+    env->DeleteLocalRef(jTitle);
+    env->DeleteLocalRef(jHint);
+    env->DeleteLocalRef(jInitial);
+    env->DeleteLocalRef(viewCls);
+
+    LOG_DEBUG("[ShowIpInputDialog] exit");
+}
+
+
 
 
 void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int id) {
@@ -780,9 +1081,31 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
             dialog->mLawnYesButton->mDisabled = true;
             dialog->mLawnYesButton->SetLabel("[PLAY_ONLINE]");
         }
+    }else if (id == 1004) {
+        dialog->ShowIpInputDialog();
     }
 
     old_WaitForSecondPlayerDialog_ButtonDepress(listener, id);
 }
 
 void WaitForSecondPlayerDialog::Resize(int theX, int theY, int theWidth, int theHeight) {}
+
+
+void WaitForSecondPlayerDialog::MouseDown(int x, int y, int clicks) {
+    if (mIsCreatingRoom || mIsJoiningRoom) return;
+    if (scanned_server_count <= 0) return;
+
+    // 列表绘制起点和行高要与你 Draw 保持一致
+    const int listX = 230;
+    const int listY = 180 - 30;
+    const int lineH = 50;
+
+    // 简单判定：只用 y 命中即可
+    if (y >= listY && y < listY + scanned_server_count * lineH) {
+        int idx = (y - listY) / lineH;
+        if (idx >= 0 && idx < scanned_server_count) {
+            mSelectedServerIndex = idx;
+        }
+    }
+}
+

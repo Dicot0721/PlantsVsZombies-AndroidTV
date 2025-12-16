@@ -45,6 +45,17 @@ public:
     GameButton *mCreateButton;
     bool mIsCreatingRoom;
     bool mIsJoiningRoom;
+
+    int mSelectedServerIndex;
+
+    // 手动直连 UI
+    GameButton* mDirectConnectButton;
+
+    // 手动直连目标
+    bool mUseManualTarget = false;
+    char mManualIp[INET_ADDRSTRLEN];
+    int mManualPort;
+
     // 115：192，111：194。自roomName1起的成员为我新增的成员，我Hook了构造函数调用方，为构造时分配了更多内存，因此可以为WaitForSecondPlayerDialog任意地新增成员。
 
     void GameButtonDown(GamepadButton theButton, unsigned int thePlayerIndex) {
@@ -60,6 +71,7 @@ public:
     void Update();
     void Draw(Sexy::Graphics *g);
     void Resize(int theX, int theY, int theWidth, int theHeight);
+    void MouseDown(int x, int y,int count);
     void CreateRoom();
     void JoinRoom();
     void UdpBroadcastRoom();
@@ -71,6 +83,8 @@ public:
     void CloseUdpScanSocket();
     void LeaveRoom();
     void ExitRoom();
+bool ManualIpConnect();
+    void ShowIpInputDialog();
 
 protected:
     friend void InitHookFunction();

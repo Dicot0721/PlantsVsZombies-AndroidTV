@@ -102,6 +102,9 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
 
     protected native void onWindowFocusChangedNative(long j, boolean z);
 
+    protected native void onTextInputNative2(long j, String str);
+
+
     void setActivity(NativeActivity activity) {
         this.mActivity = activity;
         this.mTextInputManager = activity.createTextInputManager(this);
@@ -401,12 +404,174 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
         }
     }
 
-    public void showTextInputDialog(int mode, String title, String hint, String initial) {
-        Log.i(TAG, "showTextInputDialog()");
-        if (this.mTextInputManager != null) {
-            this.mTextInputManager.showTextInputDialog(mode, title, hint, initial);
-        }
+    public void showTextInputDialog2(final int mode, final String title, final String hint, final String initial) {
+        Log.i(TAG, "showTextInputDialog2()");
+
+        // 保证在 UI 线程
+        post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (mActivity == null) {
+                        Log.e(TAG, "showTextInputDialog2: mActivity is null");
+                        return;
+                    }
+
+                    // 如果已经有一个 dialog，先关掉
+                    if (mTextInputDialog != null) {
+                        try { mTextInputDialog.dismiss(); } catch (Throwable ignored) {}
+                        mTextInputDialog = null;
+                    }
+
+                    final EditText edit = new EditText(mActivity);
+                    edit.setSingleLine(true);
+
+                    if (hint != null) edit.setHint(hint);
+                    if (initial != null) edit.setText(initial);
+
+                    // 根据 mode 设定输入类型（可按需再调）
+                    int inputType = android.text.InputType.TYPE_CLASS_TEXT;
+                    switch (mode) {
+                        case TextInputManager.KEYBOARD_PASSWORD:
+                            inputType = android.text.InputType.TYPE_CLASS_TEXT
+                                    | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD;
+                            break;
+                        case TextInputManager.KEYBOARD_EMAIL:
+                            inputType = android.text.InputType.TYPE_CLASS_TEXT
+                                    | android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
+                            break;
+                        case TextInputManager.KEYBOARD_URL:
+                            inputType = android.text.InputType.TYPE_CLASS_TEXT
+                                    | android.text.InputType.TYPE_TEXT_VARIATION_URI;
+                            break;
+                        case TextInputManager.KEYBOARD_USERNAME:
+                            inputType = android.text.InputType.TYPE_CLASS_TEXT
+                                    | android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
+                            break;
+                        case TextInputManager.KEYBOARD_NORMAL:
+                        default:
+                            inputType = android.text.InputType.TYPE_CLASS_TEXT;
+                            break;
+                    }
+                    edit.setInputType(inputType);
+
+                    // 把光标放到末尾
+                    try {
+                        edit.setSelection(edit.getText() != null ? edit.getText().length() : 0);
+                    } catch (Throwable ignored) {}
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
+                    builder.setTitle(title != null ? title : "");
+                    builder.setView(edit);
+                    builder.setCancelable(true);
+
+                    builder.setPositiveButton("OK", (dialog, which) -> {
+                        try {
+                            String text = (edit.getText() != null) ? edit.getText().toString() : null;
+                            Log.i(TAG, "showTextInputDialog2: OK text=" + text);
+                            if (isAlive()) {
+                                onTextInputNative2(getNativeHandle(), text);
+                            }
+                        } catch (Throwable t) {
+                            Log.e(TAG, "showTextInputDialog2: OK exception", t);
+                        }
+                    });
+
+                    builder.setNegativeButton("Cancel", (dialog, which) -> {
+                        Log.i(TAG, "showTextInputDialog2: Cancel");
+                        if (isAlive()) {
+                            onTextInputNative2(getNativeHandle(), null);
+                        }
+                    });
+
+                    mTextInputDialog = builder.create();
+
+                    // 用户点返回键/点外部取消
+                    mTextInputDialog.setOnCancelListener(d -> {
+                        Log.i(TAG, "showTextInputDialog2: onCancel");
+                        if (isAlive()) {
+                            onTextInputNative2(getNativeHandle(), null);
+                        }
+                    });
+
+                    mTextInputDialog.setOnDismissListener(d -> {
+                        Log.i(TAG, "showTextInputDialog2: onDismiss");
+                        mTextInputDialog = null;
+                    });
+
+                    mTextInputDialog.show();
+
+                    // 自动弹出键盘
+                    edit.requestFocus();
+                    edit.postDelayed(() -> {
+                        try {
+                            android.view.inputmethod.InputMethodManager imm =
+                                    (android.view.inputmethod.InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (imm != null) imm.showSoftInput(edit, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+                        } catch (Throwable t) {
+                            Log.e(TAG, "showTextInputDialog2: showSoftInput exception", t);
+                        }
+                    }, 100);
+
+                } catch (Throwable t) {
+                    Log.e(TAG, "showTextInputDialog2: exception", t);
+                    if (isAlive()) {
+                        // 出错也回传一次 null，避免 native 等待
+                        onTextInputNative2(getNativeHandle(), null);
+                    }
+                }
+            }
+        });
     }
+
+    public void hideTextInputDialog2() {
+        Log.i(TAG, "hideTextInputDialog2()");
+        post(() -> {
+            try {
+                if (mTextInputDialog != null) {
+                    mTextInputDialog.dismiss();
+                    mTextInputDialog = null;
+                }
+            } catch (Throwable t) {
+                Log.e(TAG, "hideTextInputDialog2: exception", t);
+            }
+        });
+    }
+
+    public void showTextInputDialog(final int mode, final String title, final String hint, final String initial) {
+        Log.i(TAG, "showTextInputDialog()");
+
+        // 统一切到 UI 线程执行，避免 CalledFromWrongThread / Looper 等问题
+        post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (mActivity == null) {
+                        Log.e(TAG, "showTextInputDialog: mActivity is null");
+                        return;
+                    }
+                    if (mTextInputManager == null) {
+                        Log.e(TAG, "showTextInputDialog: mTextInputManager is null");
+                        return;
+                    }
+
+                    Log.i(TAG, "showTextInputDialog: calling TextInputManager.showTextInputDialog"
+                            + " mode=" + mode
+                            + " title=" + title
+                            + " hint=" + hint
+                            + " initial=" + initial);
+
+                    mTextInputManager.showTextInputDialog(mode, title, hint, initial);
+
+                    Log.i(TAG, "showTextInputDialog: call finished");
+                } catch (Throwable t) {
+                    // 关键：把异常和堆栈打印出来
+                    Log.e(TAG, "showTextInputDialog: exception", t);
+                }
+            }
+        });
+    }
+
 
     public void hideTextInputDialog() {
         Log.i(TAG, "hideTextInputDialog()");

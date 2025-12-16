@@ -1076,6 +1076,7 @@ inline void *TodFoley_PlayFoleyAddr;
 
 inline void *Native_BridgeApp_getJNIEnvAddr;
 inline void *Native_NativeApp_getActivityAddr;
+inline void *Native_NativeApp_getViewAddr;
 inline void *Native_BridgeApp_getSingletonAddr;
 inline void *Native_NativeApp_getPackageNameAddr;
 

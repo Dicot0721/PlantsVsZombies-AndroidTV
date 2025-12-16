@@ -29,6 +29,10 @@ public:
     jobject getActivity() {
         return reinterpret_cast<jobject (*)(NativeApp *)>(Native_NativeApp_getActivityAddr)(this);
     }
+    jobject getView() {
+        return reinterpret_cast<jobject (*)(NativeApp *)>(Native_NativeApp_getViewAddr)(this);
+    }
+
     char *getPackageName() {
         return reinterpret_cast<char *(*)(NativeApp *)>(Native_NativeApp_getPackageNameAddr)(this);
     }
