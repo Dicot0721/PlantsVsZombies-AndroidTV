@@ -70,7 +70,7 @@ inline int gGamepad1ToPlayerIndex = -1;
 inline int speedUpMode;
 inline int speedUpCounter;
 
-inline std::string gInputString = "";
+inline std::string gInputString;
 
 // 重型武器角度设定
 inline float angle1 = 0;

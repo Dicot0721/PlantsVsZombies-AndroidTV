@@ -49,7 +49,7 @@ public:
     int mSelectedServerIndex;
 
     // 手动直连 UI
-    GameButton* mDirectConnectButton;
+    GameButton *mDirectConnectButton;
 
     // 手动直连目标
     bool mUseManualTarget = false;
@@ -71,7 +71,7 @@ public:
     void Update();
     void Draw(Sexy::Graphics *g);
     void Resize(int theX, int theY, int theWidth, int theHeight);
-    void MouseDown(int x, int y,int count);
+    void MouseDown(int x, int y, int count);
     void CreateRoom();
     void JoinRoom();
     void UdpBroadcastRoom();
@@ -83,7 +83,7 @@ public:
     void CloseUdpScanSocket();
     void LeaveRoom();
     void ExitRoom();
-bool ManualIpConnect();
+    bool ManualIpConnect();
     void ShowIpInputDialog();
 
 protected:

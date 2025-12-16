@@ -929,12 +929,9 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_NativeView_onTextInputNative2(JNIEnv *env, jobject thiz, jlong j, jstring str) {
-
-    // ✅ 必须先判空
     if (str == nullptr) {
-        gInputString = "";
+        gInputString.clear();
         return;
     }
-
-    gInputString = JStringToString(env,str);
+    gInputString = JStringToString(env, str);
 }
