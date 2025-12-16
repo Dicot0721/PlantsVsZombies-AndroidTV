@@ -16,6 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        version: [ v111, v115 ]
         build_type: [ Release ]
         include:
           - version: v111
