@@ -4,11 +4,10 @@ on:
   push:
     paths-ignore:
       - '**/*.md'
-      - '.clang-format'
+
   pull_request:
     paths-ignore:
       - '**/*.md'
-      - '.clang-format'
 
 jobs:
   build:
@@ -17,11 +16,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        build_type: [ Release ]
         include:
           - version: v111
-            task-name: assembleV111Release
+            version_pascal_case: V111
           - version: v115
-            task-name: assembleV115Release
+            version_pascal_case: V115
 
     steps:
       - name: Checkout
@@ -42,6 +42,7 @@ jobs:
           cache: gradle
 
       - name: Decode keystore
+        if: matrix.build_type == 'Release'
         env:
           KEYSTORE_ENCODED: ${{ secrets.KEYSTORE }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -57,7 +58,7 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x gradlew
-          ./gradlew ${{ matrix.task-name }}
+          ./gradlew assemble${{ matrix.version_pascal_case }}${{ matrix.build_type }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v5
