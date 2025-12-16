@@ -1861,20 +1861,12 @@ void Zombie::DropHead(unsigned int theDamageFlags) {
             return;
         }
 
-        int aRenderOrder = mRenderOrder + 1;
         ZombieDrawPosition aDrawPos;
         GetDrawPos(aDrawPos);
         float aPosX = mPosX + aDrawPos.mImageOffsetX + aDrawPos.mHeadX + 11.0f;
         float aPosY = mPosY + aDrawPos.mImageOffsetY + aDrawPos.mHeadY + aDrawPos.mBodyY + 21.0f;
         if (mBodyReanimID != ReanimationID::REANIMATIONID_NULL) {
             GetTrackPosition("anim_head1", aPosX, aPosY);
-        }
-
-        ParticleEffect aEffect = ParticleEffect::PARTICLE_ZOMBIE_HEAD;
-        if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_MOWERED) {
-            aEffect = ParticleEffect::PARTICLE_MOWERED_ZOMBIE_HEAD;
-        } else if (mInPool) {
-            aEffect = ParticleEffect::PARTICLE_ZOMBIE_HEAD_POOL;
         }
     }
 

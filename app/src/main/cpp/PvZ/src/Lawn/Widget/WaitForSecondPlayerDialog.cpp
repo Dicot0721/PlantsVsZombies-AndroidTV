@@ -88,7 +88,7 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
 
     mSelectedServerIndex = 0;
     mUseManualTarget = false;
-    mManualIp[INET_ADDRSTRLEN] = {0};
+    mManualIp[INET_ADDRSTRLEN - 1] = '\0';
     mManualPort = 0;
 
     // 连接按钮
