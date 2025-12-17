@@ -16,13 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [ v111, v115 ]
+        version: [ V111, V115 ]
         build_type: [ Release ]
-        include:
-          - version: v111
-            version_pascal_case: V111
-          - version: v115
-            version_pascal_case: V115
 
     steps:
       - name: Checkout
@@ -59,13 +54,13 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x gradlew
-          ./gradlew assemble${{ matrix.version_pascal_case }}${{ matrix.build_type }}
+          ./gradlew assemble${{ matrix.version }}${{ matrix.build_type }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v5
         with:
-          name: PvZ-TV-${{ matrix.version }}-release
-          path: app/build/outputs/apk/${{ matrix.version }}/release/*.apk
+          name: PvZ-TV-${{ matrix.version }}-${{ matrix.build_type }}
+          path: app/build/outputs/apk/**/*.apk
 
   release:
     permissions:
@@ -95,19 +90,14 @@ jobs:
           echo "date=$(git log --date=format:%y%m%d --pretty=format:'%cd' -n 1)" >> "$GITHUB_OUTPUT"
           echo "commits_count=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
 
-      - name: Download v111 artifact
+      - name: Download artifact
         uses: actions/download-artifact@v5
         with:
-          name: PvZ-TV-v111-release
           path: artifact
+          pattern: PvZ-TV-*-Release
+          merge-multiple: true
 
-      - name: Download v115 artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: PvZ-TV-v115-release
-          path: artifact
-
-      - name: Release
+      - name: Publish release
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
