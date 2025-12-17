@@ -18,7 +18,10 @@ endif ()
 
 add_subdirectory(ThirdParty)
 
-file(GLOB_RECURSE SRC_FILES "Homura/src/*.cpp" "PvZ/src/*.cpp") # 查找源文件(递归子目录)
+file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
+        "Homura/src/*.cpp"
+        "PvZ/src/*.cpp"
+)
 add_library(Homura SHARED Main.cpp ${SRC_FILES})
 
 target_include_directories(Homura PRIVATE Homura/include PvZ/include)

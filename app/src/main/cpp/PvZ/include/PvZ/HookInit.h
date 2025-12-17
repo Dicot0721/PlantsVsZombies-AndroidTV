@@ -53,6 +53,7 @@
 #include "PvZ/Lawn/Widget/ImitaterDialog.h"
 #include "PvZ/Lawn/Widget/MailScreen.h"
 #include "PvZ/Lawn/Widget/MainMenu.h"
+#include "PvZ/Lawn/Widget/NewOptionsDialog.h"
 #include "PvZ/Lawn/Widget/SeedChooserScreen.h"
 #include "PvZ/Lawn/Widget/SettingsDialog.h"
 #include "PvZ/Lawn/Widget/StoreScreen.h"
@@ -92,6 +93,7 @@ inline void InitHookFunction() {
     homura::HookFunction(LawnApp_GetSeedsAvailableAddr, &LawnApp::GetSeedsAvailable, &old_LawnApp_GetSeedsAvailable);
     homura::HookFunction(LawnApp_ClearSecondPlayerAddr, &LawnApp::ClearSecondPlayer, &old_LawnApp_ClearSecondPlayer);
     // homura::HookFunction(LawnApp_HasSeedTypeAddr, &LawnApp_HasSeedType, &old_LawnApp_HasSeedType);
+    homura::HookFunction(LawnApp_UpdateFramesAddr, &LawnApp::UpdateFrames, &old_LawnApp_UpdateFrames);
 
 
     homura::HookFunction(Board_DrawAddr, &Board::Draw, &old_Board_Draw);
@@ -422,10 +424,10 @@ inline void InitHookFunction() {
     homura::HookFunction(VSSetupMenu_PickRandomPlantsAddr, &VSSetupMenu::PickRandomPlants, &old_VSSetupMenu_PickRandomPlants);
 
 
-    homura::HookFunction(VSResultsMenu_UpdateAddr, &VSResultsMenu_Update, &old_VSResultsMenu_Update);
-    homura::HookFunction(VSResultsMenu_OnExitAddr, &VSResultsMenu_OnExit, &old_VSResultsMenu_OnExit);
-    homura::HookFunction(VSResultsMenu_DrawInfoBoxAddr, &VSResultsMenu_DrawInfoBox, &old_VSResultsMenu_DrawInfoBox);
-    homura::HookFunction(VSResultsMenu_ButtonDepressAddr, &VSResultsMenu_ButtonDepress, nullptr);
+    homura::HookFunction(VSResultsMenu_UpdateAddr, &VSResultsMenu::Update, &old_VSResultsMenu_Update);
+    homura::HookFunction(VSResultsMenu_OnExitAddr, &VSResultsMenu::OnExit, &old_VSResultsMenu_OnExit);
+    homura::HookFunction(VSResultsMenu_DrawInfoBoxAddr, &VSResultsMenu::DrawInfoBox, &old_VSResultsMenu_DrawInfoBox);
+    homura::HookFunction(VSResultsMenu_ButtonDepressAddr, &VSResultsMenu::ButtonDepress, nullptr);
 
 
     homura::HookFunction(ImitaterDialog_ImitaterDialogAddr, &ImitaterDialog_ImitaterDialog, &old_ImitaterDialog_ImitaterDialog);
@@ -453,6 +455,8 @@ inline void InitHookFunction() {
     homura::HookFunction(CutScene_ShowShovelAddr, &CutScene::ShowShovel, &old_CutScene_ShowShovel);
     homura::HookFunction(CutScene_UpdateAddr, &CutScene::Update, &old_CutScene_Update);
 
+
+    homura::HookFunction(NewOptionsDialog_ButtonDepressAddr, &NewOptionsDialog::ButtonDepress, &old_NewOptionsDialog_ButtonDepress);
 
     homura::HookFunction(BaseGamepadControls_GetGamepadVelocityAddr, &__BaseGamepadControls::GetGamepadVelocity, nullptr);
 
@@ -528,6 +532,7 @@ inline void InitHookFunction() {
     homura::HookFunction(TrashBin_TrashBinAddr, &TrashBin::_constructor, &old_TrashBin_TrashBin);
     homura::HookFunction(Sexy_SexyAppBase_Is3DAcceleratedAddr, &LawnApp::Is3DAccelerated, nullptr);
     homura::HookFunction(Sexy_SexyAppBase_SexyAppBaseAddr, &Sexy::SexyAppBase::_constructor, &old_Sexy_SexyAppBase_SexyAppBase);
+
     homura::HookFunction(SettingsDialog_AddedToManagerAddr, &SettingsDialog_AddedToManager, &old_SettingsDialog_AddedToManager);
     homura::HookFunction(SettingsDialog_RemovedFromManagerAddr, &SettingsDialog_RemovedFromManager, &old_SettingsDialog_RemovedFromManager);
     homura::HookFunction(SettingsDialog_DrawAddr, &SettingsDialog_Draw, &old_SettingsDialog_Draw);

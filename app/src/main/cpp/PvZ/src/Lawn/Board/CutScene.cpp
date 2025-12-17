@@ -83,3 +83,8 @@ void CutScene::Update() {
 
     old_CutScene_Update(this);
 }
+
+
+void CutScene::UpdateZombiesWonMP() {}
+
+void CutScene::UpdatePlantsWon() {}

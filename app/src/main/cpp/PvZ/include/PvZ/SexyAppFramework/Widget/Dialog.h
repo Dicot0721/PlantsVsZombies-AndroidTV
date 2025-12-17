@@ -68,6 +68,9 @@ public:
     int WaitForResult(bool unk) {
         return reinterpret_cast<int (*)(__Dialog *, bool)>(Sexy_Dialog_WaitForResultAddr)(this, unk);
     }
+    void ButtonDepress(int id) {
+        return reinterpret_cast<void (*)(__Dialog *, int)>(Sexy_Dialog_ButtonDepressAddr)(this, id);
+    }
 
 protected:
     __Dialog() = default;
@@ -75,6 +78,7 @@ protected:
 };
 
 class Dialog : public __Dialog {
+
 public:
     Dialog() = delete;
     ~Dialog() = delete;

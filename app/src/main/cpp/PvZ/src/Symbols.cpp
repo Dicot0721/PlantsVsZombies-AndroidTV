@@ -254,6 +254,7 @@ bool LoadGameMain() {
     LawnApp_IsScaryPotterLevelAddr = dlsym(handle, "_ZN7LawnApp18IsScaryPotterLevelEv");
     LawnApp_IsWhackAZombieLevelAddr = dlsym(handle, "_ZN7LawnApp19IsWhackAZombieLevelEv");
     LawnApp_DoUserDialogAddr = dlsym(handle, "_ZN7LawnApp12DoUserDialogEv");
+    LawnApp_DoConfirmRestartDialogAddr = dlsym(handle, "_ZN7LawnApp22DoConfirmRestartDialogEv");
     LawnApp_GamepadToPlayerIndexAddr = dlsym(handle, "_ZN7LawnApp20GamepadToPlayerIndexEj");
     LawnApp_DoNewOptionsAddr = dlsym(handle, "_ZN7LawnApp12DoNewOptionsEbj");
     LawnApp_DoConfirmBackToMainAddr = dlsym(handle, "_ZN7LawnApp19DoConfirmBackToMainEb");
@@ -269,6 +270,7 @@ bool LoadGameMain() {
     LawnApp_ClearSecondPlayerAddr = dlsym(handle, "_ZN7LawnApp17ClearSecondPlayerEv");
     LawnApp_LoadLevelConfigurationAddr = dlsym(handle, "_ZN7LawnApp22LoadLevelConfigurationEii");
     LawnApp_IsFirstTimeAdventureModeAddr = dlsym(handle, "_ZN7LawnApp24IsFirstTimeAdventureModeEv");
+    LawnApp_UpdateFramesAddr = dlsym(handle, "_ZN7LawnApp12UpdateFramesEv");
     LawnApp_IsAdventureModeAddr = dlsym(handle, "_ZN7LawnApp15IsAdventureModeEv");
     LawnApp_IsWallnutBowlingLevelAddr = dlsym(handle, "_ZN7LawnApp21IsWallnutBowlingLevelEv");
     LawnApp_IsCoopModeAddr = dlsym(handle, "_ZN7LawnApp10IsCoopModeEv");
@@ -315,6 +317,8 @@ bool LoadGameMain() {
     LawnApp_DoRetryAchievementsDialogAddr = dlsym(handle, "_ZN7LawnApp25DoRetryAchievementsDialogEv");
     LawnApp_HasSeedTypeAddr = dlsym(handle, "_ZN7LawnApp11HasSeedTypeE8SeedTypeb");
     LawnApp_KillBoardAddr = dlsym(handle, "_ZN7LawnApp9KillBoardEv");
+    LawnApp_SetBoardResultAddr = dlsym(handle, "_ZN7LawnApp14SetBoardResultE11BoardResult");
+    LawnApp_ShowVSResultsScreenAddr = dlsym(handle, "_ZN7LawnApp19ShowVSResultsScreenEv");
     LawnApp_ShowGameSelectorAddr = dlsym(handle, "_ZN7LawnApp16ShowGameSelectorEv");
     LawnApp_SetSecondPlayerAddr = dlsym(handle, "_ZN7LawnApp15SetSecondPlayerEi");
     LawnApp_PlayerToGamepadIndexAddr = dlsym(handle, "_ZN7LawnApp20PlayerToGamepadIndexEi");
@@ -687,6 +691,7 @@ bool LoadGameMain() {
     VSResultsMenu_OnExitAddr = dlsym(handle, "_ZN13VSResultsMenu6OnExitEv");
     VSResultsMenu_DrawInfoBoxAddr = dlsym(handle, "_ZN13VSResultsMenu11DrawInfoBoxEPN4Sexy8GraphicsEi");
     VSResultsMenu_ButtonDepressAddr = dlsym(handle, "_ZN13VSResultsMenu13ButtonDepressEi");
+    VSResultsMenu_InitFromBoardAddr = dlsym(handle, "_ZN13VSResultsMenu13InitFromBoardEP5Board");
 
 
     WaitForSecondPlayerDialog_WaitForSecondPlayerDialogAddr = dlsym(handle, "_ZN25WaitForSecondPlayerDialogC2EP7LawnApp");
@@ -698,6 +703,7 @@ bool LoadGameMain() {
     Sexy_Dialog_AddedToManagerWidgetManagerAddr = dlsym(handle, "_ZN4Sexy6Dialog14AddedToManagerEPNS_13WidgetManagerE");
     Sexy_Dialog_RemovedFromManagerAddr = dlsym(handle, "_ZN4Sexy6Dialog18RemovedFromManagerEPNS_13WidgetManagerE");
     Sexy_Dialog_WaitForResultAddr = dlsym(handle, "_ZN4Sexy6Dialog13WaitForResultEb");
+    Sexy_Dialog_ButtonDepressAddr = dlsym(handle, "_ZN4Sexy6Dialog13ButtonDepressEi");
 
 
     AlmanacDialog_AddedToManagerAddr = dlsym(handle, "_ZN13AlmanacDialog14AddedToManagerEPN4Sexy13WidgetManagerE");
@@ -855,6 +861,7 @@ bool LoadGameMain() {
     HelpOptionsDialog_ButtonDepressAddr = dlsym(handle, "_ZN17HelpOptionsDialog13ButtonDepressEi");
     HelpOptionsDialog_HelpOptionsDialogAddr = dlsym(handle, "_ZN17HelpOptionsDialogC2EP7LawnApp");
     HelpOptionsDialog_ResizeAddr = dlsym(handle, "_ZN17HelpOptionsDialog6ResizeEiiii");
+    NewOptionsDialog_ButtonDepressAddr = dlsym(handle, "_ZN16NewOptionsDialog13ButtonDepressEi");
     Music2_DeleteAddr = dlsym(handle, "_ZN6Music2D0Ev");
     Music_MusicAddr = dlsym(handle, "_ZN5MusicC2Ev");
     Music2_Music2Addr = dlsym(handle, "_ZN6Music2C2Ev");
@@ -873,6 +880,7 @@ bool LoadGameMain() {
     Music_UpdateMusicBurstAddr = dlsym(handle, "_ZN5Music16UpdateMusicBurstEv");
     TodFoley_IsFoleyPlayingAddr = dlsym(handle, "_ZN8TodFoley14IsFoleyPlayingE9FoleyType");
     TodFoley_StopFoleyAddr = dlsym(handle, "_ZN8TodFoley9StopFoleyE9FoleyType");
+    TodFoley_CancelPausedFoleyAddr = dlsym(handle, "_ZN8TodFoley17CancelPausedFoleyEv");
     SoundSystemFindInstanceAddr = dlsym(handle, "_Z23SoundSystemFindInstanceP8TodFoley9FoleyType");
     TodStringListLoadAddr = dlsym(handle, "_Z17TodStringListLoadPKc");
     TodReplaceStringAddr = dlsym(handle, "_Z16TodReplaceStringRKSsPKcS0_");
@@ -987,6 +995,7 @@ bool LoadGameMain() {
     ReanimatorEnsureDefinitionLoadedAddr = dlsym(handle, "_Z32ReanimatorEnsureDefinitionLoaded15ReanimationTypeb");
     Sexy_SexyAppBase_Is3DAcceleratedAddr = dlsym(handle, "_ZN4Sexy11SexyAppBase15Is3DAcceleratedEv");
     Sexy_SexyAppBase_SexyAppBaseAddr = dlsym(handle, "_ZN4Sexy11SexyAppBaseC2Ev");
+    Sexy_SexyAppBase_UpdateAppAddr = dlsym(handle, "_ZN4Sexy11SexyAppBase9UpdateAppEv");
     Sexy_SexyAppBase_Set3DAcceleratedAddr = dlsym(handle, "_ZN4Sexy11SexyAppBase15Set3DAccleratedEbb");
     Sexy_ResourceManager_GetSoundThrowAddr = dlsym(handle, "_ZN4Sexy15ResourceManager13GetSoundThrowERKSs");
 

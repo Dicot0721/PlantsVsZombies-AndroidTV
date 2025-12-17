@@ -21,25 +21,39 @@
 #define PVZ_LAWN_WIDGET_VS_RESULTS_MENU_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/SexyAppFramework/Widget/MenuWidget.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
+#include "WaitForSecondPlayerDialog.h"
+#include <__stddef_size_t.h>
 
-class VSResultsMenu {
+class VSResultsMenu : public Sexy::MenuWidget {
 public:
-};
-
-inline void (*old_VSResultsMenu_Update)(int *a);
-
-inline void (*old_VSResultsMenu_OnExit)(int *a);
-
-inline void (*old_VSResultsMenu_DrawInfoBox)(int *a, Sexy::Graphics *a2, int a3);
+    int unk[5];           // 70 ~ 74
+    int mResultsButtonId; // 75
+    int unk2[9];          // 76 ~ 84
 
 
-void VSResultsMenu_Update(int *a);
+    void Update();
+    void OnExit();
+    void ButtonDepress(int buttonId);
+    void DrawInfoBox(Sexy::Graphics *a2, int a3);
 
-void VSResultsMenu_OnExit(int *a);
+    static size_t getClientEventSize(EventType type);
+    void processClientEvent(void *buf, ssize_t bufSize);
+    static size_t getServerEventSize(EventType type);
+    void processServerEvent(void *buf, ssize_t bufSize);
+    void HandleTcpServerMessage(void *buf, ssize_t bufSize);
+    void HandleTcpClientMessage(void *buf, ssize_t bufSize);
+    void InitFromBoard(Board *board) {
+        reinterpret_cast<void (*)(VSResultsMenu *, Board *)>(VSResultsMenu_InitFromBoardAddr)(this, board);
+    }
+}; // 85个整数
 
-void VSResultsMenu_ButtonDepress(int *vsResultsScreen, int buttonId);
+inline void (*old_VSResultsMenu_Update)(VSResultsMenu *a);
 
-void VSResultsMenu_DrawInfoBox(int *a, Sexy::Graphics *a2, int a3);
+inline void (*old_VSResultsMenu_OnExit)(VSResultsMenu *a);
+
+inline void (*old_VSResultsMenu_DrawInfoBox)(VSResultsMenu *a, Sexy::Graphics *a2, int a3);
+
 
 #endif // PVZ_LAWN_WIDGET_VS_RESULTS_MENU_H

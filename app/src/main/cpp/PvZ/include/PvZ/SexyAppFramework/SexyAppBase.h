@@ -100,10 +100,14 @@ public:
     }
 
     ~SexyAppBase() = delete;
+    bool UpdateApp();
 };
 
 } // namespace Sexy
 
 inline void (*old_Sexy_SexyAppBase_SexyAppBase)(Sexy::__SexyAppBase *appBase);
+
+inline bool (*old_Sexy_SexyAppBase_UpdateApp)(Sexy::SexyAppBase *appBase);
+
 
 #endif // PVZ_SEXYAPPFRAMEWORK_SEXY_APP_BASE_H

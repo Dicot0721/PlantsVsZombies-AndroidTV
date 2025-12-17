@@ -191,6 +191,9 @@ public:
     void StopFoley(FoleyType theFoleyType) {
         reinterpret_cast<void (*)(TodFoley *, FoleyType)>(TodFoley_StopFoleyAddr)(this, theFoleyType);
     }
+    void CancelPausedFoley() {
+        reinterpret_cast<void (*)(TodFoley *)>(TodFoley_CancelPausedFoleyAddr)(this);
+    }
 };
 
 inline FoleyInstance *SoundSystemFindInstance(TodFoley *theSoundSystem, FoleyType theFoleyType) {

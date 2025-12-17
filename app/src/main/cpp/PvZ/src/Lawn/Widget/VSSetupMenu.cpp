@@ -242,74 +242,74 @@ void VSSetupMenu::Update() {
         return;
     }
 
-    if (tcpClientSocket >= 0) {
-        char buf[1024];
-
-        while (true) {
-            ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
-            if (n > 0) {
-                // buf[n] = '\0'; // 确保字符串结束
-                // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
-
-                HandleTcpClientMessage(buf, n);
-            } else if (n == 0) {
-                // 对端关闭连接（收到FIN）
-                LOG_DEBUG("[TCP] 对方关闭连接");
-                close(tcpClientSocket);
-                tcpClientSocket = -1;
-                break;
-            } else {
-                if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                    // 没有更多数据可读，正常退出
-                    break;
-                } else if (errno == EINTR) {
-                    // 被信号中断，重试
-                    continue;
-                } else {
-                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
-                    close(tcpClientSocket);
-                    tcpClientSocket = -1;
-                    break;
-                }
-            }
-        }
-    }
-
-    if (tcp_connected) {
-        char buf[1024];
-        while (true) {
-            ssize_t n = recv(tcpServerSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
-            if (n > 0) {
-                // buf[n] = '\0'; // 确保字符串结束
-                // LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
-                HandleTcpServerMessage(buf, n);
-
-            } else if (n == 0) {
-                // 对端关闭连接（收到FIN）
-                LOG_DEBUG("[TCP] 对方关闭连接");
-                close(tcpServerSocket);
-                tcpServerSocket = -1;
-                tcp_connecting = false;
-                tcp_connected = false;
-                break;
-            } else {
-                if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                    // 没有更多数据可读，正常退出
-                    break;
-                } else if (errno == EINTR) {
-                    // 被信号中断，重试
-                    continue;
-                } else {
-                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
-                    close(tcpServerSocket);
-                    tcpServerSocket = -1;
-                    tcp_connecting = false;
-                    tcp_connected = false;
-                    break;
-                }
-            }
-        }
-    }
+    //    if (tcpClientSocket >= 0) {
+    //        char buf[1024];
+    //
+    //        while (true) {
+    //            ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
+    //            if (n > 0) {
+    //                // buf[n] = '\0'; // 确保字符串结束
+    //                // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
+    //
+    //                HandleTcpClientMessage(buf, n);
+    //            } else if (n == 0) {
+    //                // 对端关闭连接（收到FIN）
+    //                LOG_DEBUG("[TCP] 对方关闭连接");
+    //                close(tcpClientSocket);
+    //                tcpClientSocket = -1;
+    //                break;
+    //            } else {
+    //                if (errno == EAGAIN || errno == EWOULDBLOCK) {
+    //                    // 没有更多数据可读，正常退出
+    //                    break;
+    //                } else if (errno == EINTR) {
+    //                    // 被信号中断，重试
+    //                    continue;
+    //                } else {
+    //                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
+    //                    close(tcpClientSocket);
+    //                    tcpClientSocket = -1;
+    //                    break;
+    //                }
+    //            }
+    //        }
+    //    }
+    //
+    //    if (tcp_connected) {
+    //        char buf[1024];
+    //        while (true) {
+    //            ssize_t n = recv(tcpServerSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
+    //            if (n > 0) {
+    //                // buf[n] = '\0'; // 确保字符串结束
+    //                // LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
+    //                HandleTcpServerMessage(buf, n);
+    //
+    //            } else if (n == 0) {
+    //                // 对端关闭连接（收到FIN）
+    //                LOG_DEBUG("[TCP] 对方关闭连接");
+    //                close(tcpServerSocket);
+    //                tcpServerSocket = -1;
+    //                tcp_connecting = false;
+    //                tcp_connected = false;
+    //                break;
+    //            } else {
+    //                if (errno == EAGAIN || errno == EWOULDBLOCK) {
+    //                    // 没有更多数据可读，正常退出
+    //                    break;
+    //                } else if (errno == EINTR) {
+    //                    // 被信号中断，重试
+    //                    continue;
+    //                } else {
+    //                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
+    //                    close(tcpServerSocket);
+    //                    tcpServerSocket = -1;
+    //                    tcp_connecting = false;
+    //                    tcp_connected = false;
+    //                    break;
+    //                }
+    //            }
+    //        }
+    //    }
 }
 
 void VSSetupMenu::PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
@@ -552,6 +552,13 @@ void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
 
 void VSSetupMenu::OnStateEnter(VSSetupState theState) {
     if (theState == VSSetupState::VS_SETUP_CONTROLLERS) {
+
+        LOG_DEBUG("[TCP] OnStateEnter: {}", (tcp_connected || tcpClientSocket >= 0));
+        if (tcp_connected || tcpClientSocket >= 0) {
+            SetSecondPlayerIndex(mApp->mTwoPlayerState);
+            GoToState(VSSetupState::VS_SETUP_SIDES);
+            return;
+        }
         mController2Index = -1;
         auto *aWaitDialog = new WaitForSecondPlayerDialog(mApp);
         mApp->AddDialog(aWaitDialog);

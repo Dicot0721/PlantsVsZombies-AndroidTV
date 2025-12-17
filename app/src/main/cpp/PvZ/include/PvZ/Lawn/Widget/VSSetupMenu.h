@@ -178,21 +178,23 @@ public:
     void MouseUp(int x, int y, int theCount);
     void AddedToManager(Sexy::WidgetManager *a2);
 
+    void processClientEvent(void *buf, ssize_t bufSize);
+
+
+    void processServerEvent(void *buf, ssize_t bufSize);
+    static size_t getServerEventSize(EventType type);
+
+    static size_t getClientEventSize(EventType type);
+    void HandleTcpClientMessage(void *buf, ssize_t bufSize);
+    void HandleTcpServerMessage(void *buf, ssize_t bufSize);
+
 protected:
     friend void InitHookFunction();
     void _constructor();
     void _destructor();
-    void HandleTcpClientMessage(void *buf, ssize_t bufSize);
-    void HandleTcpServerMessage(void *buf, ssize_t bufSize);
+
     void PickRandomZombies(std::vector<SeedType> &theZombieSeeds);
     void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds);
-
-
-    void processServerEvent(void *buf, ssize_t bufSize);
-    size_t getServerEventSize(EventType type);
-
-    void processClientEvent(void *buf, ssize_t bufSize);
-    size_t getClientEventSize(EventType type);
 };
 
 inline bool is1PControllerMoving;

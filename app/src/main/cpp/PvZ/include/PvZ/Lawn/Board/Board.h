@@ -581,10 +581,8 @@ public:
     bool TakeSunMoney(int theAmount, int thePlayer);
     void SwitchGamepadControls();
 
-protected:
-    friend void InitHookFunction();
-
-    void _constructor(LawnApp *theApp);
+    static size_t getClientEventSize(EventType type);
+    static size_t getServerEventSize(EventType type);
     void HandleTcpClientMessage(void *buf, ssize_t bufSize);
     void HandleTcpServerMessage(void *buf, ssize_t bufSize);
     void __MouseDown(int x, int y, int theClickCount);
@@ -592,10 +590,13 @@ protected:
     void __MouseUp(int x, int y, int theClickCount);
     void PauseFromSecondPlayer(bool thePause);
 
-    size_t getClientEventSize(EventType type);
     void processClientEvent(void *buf, ssize_t bufSize);
-    size_t getServerEventSize(EventType type);
     void processServerEvent(void *buf, ssize_t bufSize);
+
+protected:
+    friend void InitHookFunction();
+
+    void _constructor(LawnApp *theApp);
 };
 
 int GetRectOverlap(const Sexy::Rect &rect1, const Sexy::Rect &rect2);

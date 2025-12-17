@@ -88,7 +88,7 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
 
     mSelectedServerIndex = 0;
     mUseManualTarget = false;
-    mManualIp[0] = '\0';
+    mManualIp[INET_ADDRSTRLEN] = {0};
     mManualPort = 0;
 
     // 连接按钮
@@ -98,6 +98,11 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mDirectConnectButton->mWidth = 180;
     mDirectConnectButton->mHeight = 40;
     AddWidget(mDirectConnectButton);
+
+    if (tcp_connected || tcpClientSocket >= 0) {
+        GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+        GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+    }
 }
 
 void WaitForSecondPlayerDialog::_destructor() {
@@ -322,84 +327,42 @@ void WaitForSecondPlayerDialog::Update() {
         CheckTcpAccept();
     }
 
-    if (tcpClientSocket >= 0) {
-        char buf[1024];
-
-        while (true) {
-            ssize_t n = recv(tcpClientSocket, buf, sizeof(buf), MSG_DONTWAIT);
-            if (n > 0) {
-                // buf[n] = '\0'; // 确保字符串结束
-                // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
-
-                HandleTcpClientMessage(buf, n);
-            } else if (n == 0) {
-                // 对端关闭连接（收到FIN）
-                LOG_DEBUG("[TCP] 对方关闭连接");
-                close(tcpClientSocket);
-                tcpClientSocket = -1;
-                break;
-            } else {
-                if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                    // 没有更多数据可读，正常退出
-                    break;
-                } else if (errno == EINTR) {
-                    // 被信号中断，重试
-                    continue;
-                } else {
-                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
-                    close(tcpClientSocket);
-                    tcpClientSocket = -1;
-                    break;
-                }
-            }
-        }
-    }
-
-    if (mIsJoiningRoom) {
-        if (tcp_connected) {
-            char buf[1024];
-            while (true) {
-                ssize_t n = recv(tcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);
-                if (n > 0) {
-                    // buf[n] = '\0'; // 确保字符串结束
-                    // LOG_DEBUG("[TCP] 收到来自Server的数据: %s", buf);
-                    HandleTcpServerMessage(buf, n);
-
-                } else if (n == 0) {
-                    // 对端关闭连接（收到FIN）
-                    LOG_DEBUG("[TCP] 对方关闭连接");
-                    close(tcpServerSocket);
-                    tcpServerSocket = -1;
-                    tcp_connecting = false;
-                    tcp_connected = false;
-                    break;
-                } else {
-                    if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                        // 没有更多数据可读，正常退出
-                        break;
-                    } else if (errno == EINTR) {
-                        // 被信号中断，重试
-                        continue;
-                    } else {
-                        LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
-                        close(tcpServerSocket);
-                        tcpServerSocket = -1;
-                        tcp_connecting = false;
-                        tcp_connected = false;
-                        break;
-                    }
-                }
-            }
-        } else {
-            TryTcpConnect();
-        }
+    if (mIsJoiningRoom && !tcp_connected) {
+        TryTcpConnect();
     }
 }
 
-void WaitForSecondPlayerDialog::HandleTcpClientMessage(void *buf, ssize_t bufSize) {}
 
-void WaitForSecondPlayerDialog::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
+size_t WaitForSecondPlayerDialog::getClientEventSize(EventType type) {
+    switch (type) {
+
+        default:
+            return sizeof(BaseEvent);
+    }
+}
+
+void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
     BaseEvent *event = (BaseEvent *)buf;
+    LOG_DEBUG("TYPE:{}", (int)event->type);
+    switch (event->type) {
+
+        default:
+            break;
+    }
+}
+
+size_t WaitForSecondPlayerDialog::getServerEventSize(EventType type) {
+    switch (type) {
+        case EVENT_START_GAME:
+            return sizeof(BaseEvent);
+        default:
+            return sizeof(BaseEvent);
+    }
+}
+
+void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
+    BaseEvent *event = (BaseEvent *)buf;
+    LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_START_GAME:
             GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
@@ -409,6 +372,7 @@ void WaitForSecondPlayerDialog::HandleTcpServerMessage(void *buf, ssize_t bufSiz
             break;
     }
 }
+
 
 void WaitForSecondPlayerDialog::InitUdpScanSocket() {
     scanned_server_count = 0;

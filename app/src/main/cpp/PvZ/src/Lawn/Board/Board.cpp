@@ -43,6 +43,7 @@
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
 #include "PvZ/Lawn/Widget/SeedChooserScreen.h"
+#include "PvZ/Lawn/Widget/VSResultsMenu.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/Misc.h"
@@ -605,6 +606,9 @@ Coin *Board::AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoi
         U8U8U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_COIN_ADD}, uint8_t(theCoinType), uint8_t(theCoinMotion), uint16_t(theX), uint16_t(theY)};
         send(tcpClientSocket, &event, sizeof(U8U8U16U16_Event), 0);
     }
+
+    if (tcp_connected)
+        return nullptr;
     return old_Board_AddCoin(this, theX, theY, theCoinType, theCoinMotion);
 }
 
@@ -1059,6 +1063,8 @@ size_t Board::getClientEventSize(EventType type) {
             return sizeof(U16U16_Event);
         case EVENT_CLIENT_BOARD_PAUSE:
             return sizeof(U8_Event);
+        case EVENT_CLIENT_BOARD_CONCEDE:
+            return sizeof(BaseEvent);
         default:
             return sizeof(BaseEvent);
     }
@@ -1093,6 +1099,20 @@ void Board::processClientEvent(void *buf, ssize_t bufSize) {
         case EVENT_CLIENT_BOARD_PAUSE: {
             U8_Event *event1 = (U8_Event *)event;
             PauseFromSecondPlayer(event1->data);
+        } break;
+        case EVENT_CLIENT_BOARD_CONCEDE: {
+            mApp->KillNewOptionsDialog();
+            if (mGamepadControls2->mPlayerIndex2 == 1) {
+                mApp->SetBoardResult(7);
+                mApp->mGameScene = SCENE_ZOMBIES_WON;
+            } else {
+                mApp->SetBoardResult(8);
+                mApp->mGameScene = SCENE_PLANTS_WON;
+            }
+
+            mApp->ShowVSResultsScreen();
+            mApp->mVSResultsScreen->InitFromBoard(this);
+            mApp->KillBoard();
         } break;
         default:
             break;
@@ -1192,7 +1212,8 @@ size_t Board::getServerEventSize(EventType type) {
 
         case EVENT_SERVER_BOARD_START_LEVEL:
             return sizeof(U16x9_Event);
-
+        case EVENT_SERVER_BOARD_CONCEDE:
+            return sizeof(BaseEvent);
         default:
             return sizeof(BaseEvent);
     }
@@ -1279,7 +1300,9 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_BOARD_COIN_ADD: {
             U8U8U16U16_Event *event1 = (U8U8U16U16_Event *)event;
+            tcp_connected = false;
             AddCoin(event1->data3, event1->data4, (CoinType)event1->data1, (CoinMotion)event1->data2);
+            tcp_connected = true;
         } break;
         case EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER: {
             U16U16_Event *event1 = (U16U16_Event *)event;
@@ -1298,6 +1321,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE: {
+
             U8U8U16U16_Event *event1 = (U8U8U16U16_Event *)event;
             GridItem *gridItem = AddAGraveStone(event1->data1, event1->data2);
             gridItem->mLaunchCounter = event1->data4;
@@ -1443,17 +1467,14 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             GridItem *gridItem = nullptr;
             while (IterateGridItems(gridItem)) {
                 if (gridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
-                    LOG_DEBUG("{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], uint16_t(mGridItems.DataArrayGetID(gridItem)));
                     serverGridItemIDMap.emplace(event1->data[gridItem->mGridY], uint16_t(mGridItems.DataArrayGetID(gridItem)));
                 }
                 if (gridItem->mGridItemType == GRIDITEM_GRAVESTONE) {
                     if (gridItem->mGridY == 1) {
                         serverGridItemIDMap.emplace(event1->data[5], uint16_t(mGridItems.DataArrayGetID(gridItem)));
-                        LOG_DEBUG("1{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], uint16_t(mGridItems.DataArrayGetID(gridItem)));
                     }
                     if (gridItem->mGridY >= 3) {
                         serverGridItemIDMap.emplace(event1->data[6], uint16_t(mGridItems.DataArrayGetID(gridItem)));
-                        LOG_DEBUG("3{} {} {}", gridItem->mGridY, event1->data[gridItem->mGridY], uint16_t(mGridItems.DataArrayGetID(gridItem)));
                     }
                 }
             }
@@ -1468,7 +1489,22 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 }
             }
         } break;
+        case EVENT_SERVER_BOARD_CONCEDE: {
+            mApp->mMusic->StopAllMusic();
+            mApp->mSoundSystem->CancelPausedFoley();
+            mApp->KillNewOptionsDialog();
+            if (mGamepadControls1->mPlayerIndex2 == 1) {
+                mApp->SetBoardResult(7);
+                mApp->mGameScene = SCENE_ZOMBIES_WON;
+            } else {
+                mApp->SetBoardResult(8);
+                mApp->mGameScene = SCENE_PLANTS_WON;
+            }
 
+            mApp->ShowVSResultsScreen();
+            mApp->mVSResultsScreen->InitFromBoard(this);
+            mApp->KillBoard();
+        } break;
         default:
             break;
     }
@@ -1497,79 +1533,79 @@ void Board::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
 void Board::Update() {
     isMainMenu = false;
 
-    if (mApp->mGameMode == GAMEMODE_MP_VS && !mApp->mVSSetupScreen) {
-        if (tcpClientSocket >= 0) {
-            char buf[1024];
-            while (true) {
-                ssize_t n = recv(tcpClientSocket, buf, sizeof(buf), MSG_DONTWAIT);
-                if (n > 0) {
-                    // buf[n] = '\0'; // 确保字符串结束
-                    // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
-
-                    HandleTcpClientMessage(buf, n);
-                } else if (n == 0) {
-                    // 对端关闭连接（收到FIN）
-                    LOG_DEBUG("[TCP] 对方关闭连接");
-                    close(tcpClientSocket);
-                    tcpClientSocket = -1;
-                    mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
-                    break;
-                } else {
-                    if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                        // 没有更多数据可读，正常退出
-                        break;
-                    } else if (errno == EINTR) {
-                        // 被信号中断，重试
-                        continue;
-                    } else {
-                        LOG_DEBUG("[TCP] recv 出错 errno=%d", errno);
-                        close(tcpClientSocket);
-                        tcpClientSocket = -1;
-                        mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (tcp_connected) {
-            char buf[1024];
-            while (true) {
-                ssize_t n = recv(tcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);
-                if (n > 0) {
-                    // buf[n] = '\0'; // 确保字符串结束
-                    // LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
-                    HandleTcpServerMessage(buf, n);
-
-                } else if (n == 0) {
-                    // 对端关闭连接（收到FIN）
-                    LOG_DEBUG("[TCP] 对方关闭连接");
-                    close(tcpServerSocket);
-                    tcpServerSocket = -1;
-                    tcp_connecting = false;
-                    tcp_connected = false;
-                    mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
-                    break;
-                } else {
-                    if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                        // 没有更多数据可读，正常退出
-                        break;
-                    } else if (errno == EINTR) {
-                        // 被信号中断，重试
-                        continue;
-                    } else {
-                        LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
-                        close(tcpServerSocket);
-                        tcpServerSocket = -1;
-                        tcp_connecting = false;
-                        tcp_connected = false;
-                        mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
-                        break;
-                    }
-                }
-            }
-        }
-    }
+    //    if (mApp->mGameMode == GAMEMODE_MP_VS && !mApp->mVSSetupScreen) {
+    //        if (tcpClientSocket >= 0) {
+    //            char buf[1024];
+    //            while (true) {
+    //                ssize_t n = recv(tcpClientSocket, buf, sizeof(buf), MSG_DONTWAIT);
+    //                if (n > 0) {
+    //                    // buf[n] = '\0'; // 确保字符串结束
+    //                    // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
+    //
+    //                    HandleTcpClientMessage(buf, n);
+    //                } else if (n == 0) {
+    //                    // 对端关闭连接（收到FIN）
+    //                    LOG_DEBUG("[TCP] 对方关闭连接");
+    //                    close(tcpClientSocket);
+    //                    tcpClientSocket = -1;
+    //                    mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
+    //                    break;
+    //                } else {
+    //                    if (errno == EAGAIN || errno == EWOULDBLOCK) {
+    //                        // 没有更多数据可读，正常退出
+    //                        break;
+    //                    } else if (errno == EINTR) {
+    //                        // 被信号中断，重试
+    //                        continue;
+    //                    } else {
+    //                        LOG_DEBUG("[TCP] recv 出错 errno=%d", errno);
+    //                        close(tcpClientSocket);
+    //                        tcpClientSocket = -1;
+    //                        mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //
+    //        if (tcp_connected) {
+    //            char buf[1024];
+    //            while (true) {
+    //                ssize_t n = recv(tcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);
+    //                if (n > 0) {
+    //                    // buf[n] = '\0'; // 确保字符串结束
+    //                    // LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
+    //                    HandleTcpServerMessage(buf, n);
+    //
+    //                } else if (n == 0) {
+    //                    // 对端关闭连接（收到FIN）
+    //                    LOG_DEBUG("[TCP] 对方关闭连接");
+    //                    close(tcpServerSocket);
+    //                    tcpServerSocket = -1;
+    //                    tcp_connecting = false;
+    //                    tcp_connected = false;
+    //                    mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
+    //                    break;
+    //                } else {
+    //                    if (errno == EAGAIN || errno == EWOULDBLOCK) {
+    //                        // 没有更多数据可读，正常退出
+    //                        break;
+    //                    } else if (errno == EINTR) {
+    //                        // 被信号中断，重试
+    //                        continue;
+    //                    } else {
+    //                        LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
+    //                        close(tcpServerSocket);
+    //                        tcpServerSocket = -1;
+    //                        tcp_connecting = false;
+    //                        tcp_connected = false;
+    //                        mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
+    //                        break;
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
 
 
     if (requestDrawButterInCursor) {
@@ -4139,7 +4175,7 @@ void Board::DoPlantingAchievementCheck(SeedType theSeedType) {
 
 void Board::DrawUITop(Sexy::Graphics *g) {
     if (seedBankPin && !mApp->IsSlotMachineLevel()) {
-        if (mApp->mGameScene != GameScenes::SCENE_LEADER_BOARD && mApp->mGameScene != GameScenes::SCENE_ZOMBIES_WON) {
+        if (mApp->mGameScene != GameScenes::SCENE_PLANTS_WON && mApp->mGameScene != GameScenes::SCENE_ZOMBIES_WON) {
             if (mSeedBank1->BeginDraw(g)) {
                 mSeedBank1->SeedBank::Draw(g);
                 mSeedBank1->EndDraw(g);
@@ -4847,7 +4883,7 @@ GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
 
 GridItem *Board::AddAGraveStone(int gridX, int gridY) {
     GridItem *result = old_Board_AddAGraveStone(this, gridX, gridY);
-    if (tcpClientSocket >= 0) {
+    if (tcpClientSocket >= 0 && mApp->mGameScene == SCENE_PLAYING) {
         U8U8U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE}, uint8_t(gridX), uint8_t(gridY), uint16_t(mGridItems.DataArrayGetID(result)), uint16_t(result->mLaunchCounter)};
         send(tcpClientSocket, &event, sizeof(U8U8U16U16_Event), 0);
     }

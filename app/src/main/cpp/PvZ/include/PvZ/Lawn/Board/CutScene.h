@@ -73,6 +73,8 @@ public:
 
     void ShowShovel();
     void Update();
+    void UpdateZombiesWonMP();
+    void UpdatePlantsWon();
 };
 
 

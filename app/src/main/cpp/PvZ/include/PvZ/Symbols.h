@@ -253,10 +253,12 @@ inline void *LawnApp_PlaySampleAddr;
 inline void *LawnApp_DoCheatDialogAddr;
 inline void *LawnApp_DoCheatCodeDialogAddr;
 inline void *LawnApp_DoUserDialogAddr;
+inline void *LawnApp_DoConfirmRestartDialogAddr;
 inline void *LawnApp_OnSessionTaskFailedAddr;
 inline void *LawnApp_ClearSecondPlayerAddr;
 inline void *LawnApp_LoadLevelConfigurationAddr;
 inline void *LawnApp_IsFirstTimeAdventureModeAddr;
+inline void *LawnApp_UpdateFramesAddr;
 inline void *LawnApp_IsAdventureModeAddr;
 inline void *LawnApp_IsWallnutBowlingLevelAddr;
 inline void *LawnApp_IsCoopModeAddr;
@@ -303,6 +305,8 @@ inline void *LawnApp_ParticleTryToGetAddr;
 inline void *LawnApp_DoRetryAchievementsDialogAddr;
 inline void *LawnApp_HasSeedTypeAddr;
 inline void *LawnApp_KillBoardAddr;
+inline void *LawnApp_SetBoardResultAddr;
+inline void *LawnApp_ShowVSResultsScreenAddr;
 inline void *LawnApp_ShowGameSelectorAddr;
 inline void *LawnApp_SetSecondPlayerAddr;
 inline void *LawnApp_PlayerToGamepadIndexAddr;
@@ -673,6 +677,7 @@ inline void *VSResultsMenu_UpdateAddr;
 inline void *VSResultsMenu_OnExitAddr;
 inline void *VSResultsMenu_DrawInfoBoxAddr;
 inline void *VSResultsMenu_ButtonDepressAddr;
+inline void *VSResultsMenu_InitFromBoardAddr;
 
 
 inline void *WaitForSecondPlayerDialog_WaitForSecondPlayerDialogAddr;
@@ -684,6 +689,7 @@ inline void *WaitForSecondPlayerDialog_DeleteAddr;
 inline void *Sexy_Dialog_AddedToManagerWidgetManagerAddr;
 inline void *Sexy_Dialog_RemovedFromManagerAddr;
 inline void *Sexy_Dialog_WaitForResultAddr;
+inline void *Sexy_Dialog_ButtonDepressAddr;
 
 
 inline void *AlmanacDialog_AddedToManagerAddr;
@@ -785,6 +791,7 @@ inline void *Sexy_ScrollbarWidget_SetMaxValueAddr;
 inline void *Sexy_ExtractLoadingSoundsResourcesAddr;
 inline void *TodFoley_IsFoleyPlayingAddr;
 inline void *TodFoley_StopFoleyAddr;
+inline void *TodFoley_CancelPausedFoleyAddr;
 inline void *SoundSystemFindInstanceAddr;
 inline void *TodStringListLoadAddr;
 inline void *TodReplaceStringAddr;
@@ -856,6 +863,7 @@ inline void *HelpOptionsDialog_ButtonDepressAddr;
 inline void *HelpOptionsDialog_HelpOptionsDialogAddr;
 inline void *HelpOptionsDialog_ResizeAddr;
 
+inline void *NewOptionsDialog_ButtonDepressAddr;
 
 inline void *Music2_DeleteAddr;
 inline void *Music_MusicAddr;
@@ -1004,6 +1012,7 @@ inline void *HelpBarWidget_HelpBarWidgetAddr;
 inline void *Sexy_SexyAppBase_Is3DAcceleratedAddr;
 inline void *Sexy_SexyAppBase_Set3DAcceleratedAddr;
 inline void *Sexy_SexyAppBase_SexyAppBaseAddr;
+inline void *Sexy_SexyAppBase_UpdateAppAddr;
 inline void *Sexy_ResourceManager_GetSoundThrowAddr;
 inline void *ToolTipWidget_SetWarningTextAddr;
 inline void *ToolTipWidget_SetTitleAddr;

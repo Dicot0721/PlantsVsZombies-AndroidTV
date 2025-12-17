@@ -42,6 +42,7 @@ class TodFoley;
 class DefaultPlayerInfo;
 class PottedPlant;
 class VSSetupMenu;
+class VSResultsMenu;
 class MailBox;
 
 class LawnApp : public Sexy::__SexyAppBase {
@@ -53,7 +54,7 @@ public:
     int *mHelpTextScreen;                    // 557
     int unkUnk;                              // 558
     VSSetupMenu *mVSSetupScreen;             // 559
-    int *mVSResultsScreen;                   // 560
+    VSResultsMenu *mVSResultsScreen;         // 560
     SeedChooserScreen *mSeedChooserScreen;   // 561
     SeedChooserScreen *mZombieChooserScreen; // 562
     int *mAwardScreen;                       // 563
@@ -172,6 +173,9 @@ public:
     void DoUserDialog() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_DoUserDialogAddr)(this);
     }
+    Sexy::Dialog *DoConfirmRestartDialog() {
+        return reinterpret_cast<Sexy::Dialog *(*)(LawnApp *)>(LawnApp_DoConfirmRestartDialogAddr)(this);
+    }
     bool IsFirstTimeAdventureMode() {
         return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_IsFirstTimeAdventureModeAddr)(this);
     }
@@ -248,6 +252,12 @@ public:
     }
     void KillBoard() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillBoardAddr)(this);
+    }
+    void SetBoardResult(int result) {
+        reinterpret_cast<void (*)(LawnApp *, int)>(LawnApp_SetBoardResultAddr)(this, result);
+    }
+    void ShowVSResultsScreen() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ShowVSResultsScreenAddr)(this);
     }
     void ShowGameSelector() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ShowGameSelectorAddr)(this);
@@ -336,6 +346,9 @@ public:
         mNewIs3DAccelerated = isAccelerated;
         mPlayerInfo->mIs3DAcceleratedClosed = !isAccelerated;
     }
+    void HandleTcpClientMessage(void *buf, ssize_t bufSize);
+    void HandleTcpServerMessage(void *buf, ssize_t bufSize);
+    void UpdateFrames();
 
 protected:
     friend void InitHookFunction();
@@ -385,5 +398,7 @@ inline bool (*old_LawnApp_IsNight)(LawnApp *lawnApp);
 inline bool (*old_LawnApp_HasSeedType)(LawnApp *lawnApp, SeedType theSeedType, int playerIndex);
 
 inline void (*old_LawnApp_DoNewOptions)(LawnApp *lawnApp, bool a2, unsigned int a3);
+
+inline void (*old_LawnApp_UpdateFrames)(LawnApp *lawnApp);
 
 #endif // PVZ_LAWN_LAWN_APP_H

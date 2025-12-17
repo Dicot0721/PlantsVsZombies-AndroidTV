@@ -18,6 +18,7 @@
  */
 
 #include "PvZ/SexyAppFramework/SexyAppBase.h"
+#include "Homura/Logger.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/PlayerInfo.h"
 
@@ -32,4 +33,9 @@ void Sexy::__SexyAppBase::_constructor() {
     // Sexy_Ratio_Set((int *)appBase + 397, 4, 3);
     // *((uint32_t *)appBase + 403) = 600;
     // *((uint32_t *)appBase + 402) = 800;
+}
+
+
+bool Sexy::SexyAppBase::UpdateApp() {
+    return old_Sexy_SexyAppBase_UpdateApp(this);
 }

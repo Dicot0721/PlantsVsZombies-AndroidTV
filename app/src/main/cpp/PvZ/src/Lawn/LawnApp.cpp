@@ -18,12 +18,15 @@
  */
 
 #include "PvZ/Lawn/LawnApp.h"
+#include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/System/Music.h"
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
 #include "PvZ/Lawn/Widget/ConfirmBackToMainDialog.h"
 #include "PvZ/Lawn/Widget/MainMenu.h"
+#include "PvZ/Lawn/Widget/VSResultsMenu.h"
+#include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/Misc.h"
 #include "PvZ/STL/pvzstl_string.h"
@@ -215,6 +218,206 @@ int LawnApp::GamepadToPlayerIndex(unsigned int thePlayerIndex) {
             return 1;
     }
     return -1;
+}
+
+static std::vector<char> clientRecvBuffer;
+static std::vector<char> serverRecvBuffer;
+
+
+void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
+
+    clientRecvBuffer.insert(clientRecvBuffer.end(), (char *)buf, (char *)buf + bufSize);
+    size_t offset = 0;
+
+    while (clientRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
+        BaseEvent *base = (BaseEvent *)&clientRecvBuffer[offset];
+
+        if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type <= EVENT_SERVER_BOARD_START_LEVEL) {
+            size_t eventSize = Board::getClientEventSize(base->type);
+            if (clientRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+            if (!mBoard) {
+                offset += eventSize;
+                break;
+            }
+            mBoard->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
+            offset += eventSize;
+        }
+
+        if (base->type >= EVENT_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
+            size_t eventSize = VSSetupMenu::getClientEventSize(base->type);
+            if (clientRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+            if (!mVSSetupScreen) {
+                offset += eventSize;
+                break;
+            }
+            mVSSetupScreen->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
+            offset += eventSize;
+        }
+
+
+        if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type <= EVENT_SERVER_VSRESULT_BUTTON_DEPRESS) {
+            size_t eventSize = VSResultsMenu::getClientEventSize(base->type);
+            if (clientRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+            if (!mVSResultsScreen) {
+                offset += eventSize;
+                break;
+            }
+            mVSResultsScreen->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
+            offset += eventSize;
+        }
+    }
+
+    if (offset != 0) {
+        clientRecvBuffer.erase(clientRecvBuffer.begin(), clientRecvBuffer.begin() + offset);
+    }
+}
+
+void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
+    serverRecvBuffer.insert(serverRecvBuffer.end(), (char *)buf, (char *)buf + bufSize);
+    size_t offset = 0;
+
+    while (serverRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
+        BaseEvent *base = (BaseEvent *)&serverRecvBuffer[offset];
+        LOG_DEBUG("base.type ={}", (int)base->type);
+        if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type <= EVENT_SERVER_BOARD_START_LEVEL) {
+            size_t eventSize = Board::getServerEventSize(base->type);
+
+
+            if (serverRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+
+            if (!mBoard) {
+                offset += eventSize;
+                break;
+            }
+            mBoard->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
+            offset += eventSize;
+        }
+
+        if (base->type >= EVENT_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
+            size_t eventSize = VSSetupMenu::getServerEventSize(base->type);
+            if (serverRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+
+            if (!mVSSetupScreen) {
+                offset += eventSize;
+                break;
+            }
+            mVSSetupScreen->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
+            offset += eventSize;
+        }
+
+        if (base->type == EVENT_START_GAME) {
+            size_t eventSize = WaitForSecondPlayerDialog::getServerEventSize(base->type);
+            if (serverRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+            if (!GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER)) {
+                offset += eventSize;
+                break;
+            }
+            ((WaitForSecondPlayerDialog *)GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER))->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
+            offset += eventSize;
+        }
+
+
+        if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type <= EVENT_SERVER_VSRESULT_BUTTON_DEPRESS) {
+            size_t eventSize = VSResultsMenu::getServerEventSize(base->type);
+            if (serverRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+
+            if (!mVSResultsScreen) {
+                offset += eventSize;
+                break;
+            }
+            mVSResultsScreen->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
+            offset += eventSize;
+        }
+    }
+
+    if (offset != 0) {
+        serverRecvBuffer.erase(serverRecvBuffer.begin(), serverRecvBuffer.begin() + offset);
+    }
+}
+
+
+void LawnApp::UpdateFrames() {
+
+    if (tcpClientSocket >= 0) {
+        char buf[1024];
+        while (true) {
+            ssize_t n = recv(tcpClientSocket, buf, sizeof(buf), MSG_DONTWAIT);
+            if (n > 0) {
+                // buf[n] = '\0'; // 确保字符串结束
+                // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
+
+                HandleTcpClientMessage(buf, n);
+            } else if (n == 0) {
+                // 对端关闭连接（收到FIN）
+                LOG_DEBUG("[TCP] 对方关闭连接");
+                close(tcpClientSocket);
+                tcpClientSocket = -1;
+                LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
+                break;
+            } else {
+                if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                    // 没有更多数据可读，正常退出
+                    break;
+                } else if (errno == EINTR) {
+                    // 被信号中断，重试
+                    continue;
+                } else {
+                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
+                    close(tcpClientSocket);
+                    tcpClientSocket = -1;
+                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
+                    break;
+                }
+            }
+        }
+    }
+
+    if (tcp_connected) {
+        char buf[1024];
+        while (true) {
+            ssize_t n = recv(tcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);
+            if (n > 0) {
+                // buf[n] = '\0'; // 确保字符串结束
+                // LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
+                HandleTcpServerMessage(buf, n);
+
+            } else if (n == 0) {
+                // 对端关闭连接（收到FIN）
+                LOG_DEBUG("[TCP] 对方关闭连接");
+                close(tcpServerSocket);
+                tcpServerSocket = -1;
+                tcp_connecting = false;
+                tcp_connected = false;
+                LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
+                break;
+            } else {
+                if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                    // 没有更多数据可读，正常退出
+                    break;
+                } else if (errno == EINTR) {
+                    // 被信号中断，重试
+                    continue;
+                } else {
+                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
+                    close(tcpServerSocket);
+                    tcpServerSocket = -1;
+                    tcp_connecting = false;
+                    tcp_connected = false;
+                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
+                    break;
+                }
+            }
+        }
+    }
+
+    return old_LawnApp_UpdateFrames(this);
 }
 
 void LawnApp::UpdateApp() {
