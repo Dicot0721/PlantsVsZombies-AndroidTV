@@ -30,6 +30,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <stdint.h>
 
 
 enum EventType : uint8_t {
@@ -98,7 +99,23 @@ enum EventType : uint8_t {
     EVENT_SERVER_VSRESULT_BUTTON_DEPRESS,
 };
 
+enum class UIMode {
+    MODE1_INIT = 1,  // 初始
+    MODE2_LAN = 2,   // LAN 联机
+    MODE3_SERVER = 3 // 服务器联机
+};
 
+enum class InputPurpose {
+    NONE = 0,
+    LAN_JOIN_MANUAL,    // 模式2：加入指定IP房间
+    SERVER_CONNECT_ADDR // 模式3：连接服务器 IP:PORT
+};
+struct ServerRoomItem {
+    int roomId;
+    char name[128];
+    bool full;
+    bool gaming;
+};
 class WaitForSecondPlayerDialog : public __LawnDialog {
 public:
     bool m2PJoined;
@@ -110,8 +127,8 @@ public:
     int *roomName5;
     int *roomName6;
 
-    GameButton *mJoinButton;
-    GameButton *mCreateButton;
+    GameButton *mLeftButton;
+    GameButton *mRightButton;
     bool mIsCreatingRoom;
     bool mIsJoiningRoom;
 
@@ -121,10 +138,68 @@ public:
     GameButton *mDirectConnectButton;
 
     // 手动直连目标
-    bool mUseManualTarget = false;
+    bool mUseManualTarget;
     char mManualIp[INET_ADDRSTRLEN];
     int mManualPort;
 
+    UIMode mUIMode;
+    InputPurpose mInputPurpose;
+
+    // 模式3：服务器连接状态（你后面会接入你给的Java协议）
+    bool mServerConnected;
+
+    // （可选）模式3：服务器房间列表选择
+    int mSelectedRoomIndex_Server;
+
+    int mServerSock;          // TCP socket to server
+    bool mServerConnecting;   // non-blocking connect in progress
+    bool mServerHosting;      // created a room
+    bool mServerJoined;       // joined a room as guest
+    bool mServerHostHasGuest; // server pushed guest joined/left
+    int mServerHostedRoomId;  // created room id
+    int mServerJoinedRoomId;  // joined room id (optional)
+    int mServerLastQueryTick; // frame tick for auto query
+    int mServerLastRecvTick;  // for debug/timeout if needed
+
+    char mServerIp[INET_ADDRSTRLEN];
+    int mServerPort;
+
+    ServerRoomItem mServerRooms[255];
+    int mServerRoomCount;
+
+    // recv buffer for framed protocol
+    uint8_t mSrvRecvBuf[8192];
+    int mSrvRecvLen;
+
+    // helper UI text
+    char mServerStatusText[128];
+
+    // MODE3 actions
+    bool ServerConnectFromInput(); // consume gInputString
+    void ServerDisconnect(const char *why);
+    void ServerUpdateIO(); // read frames (nonblocking)
+    void ServerSendQuery();
+    void ServerSendCreate();
+    void ServerSendJoinSelected();
+    void ServerSendExitRoom();
+    void ServerSendLeaveRoom();
+    void ServerSendStart(); // host start (optional)
+
+    // protocol helpers
+    bool ServerSendFrame(uint8_t type, const void *payload, uint16_t len);
+    bool ServerTryReadOneFrame(uint8_t &outType, uint8_t *outPayload, uint16_t &outLen);
+    static uint32_t ReadBE32(const uint8_t *p);
+    static void WriteBE32(uint8_t *p, uint32_t v);
+
+    // MODE3 drawing + selection
+    void DrawServerRoomList(Sexy::Graphics *g);
+    void ServerSelectRoomByMouse(int x, int y);
+    // 统一切模式
+    void SetMode(UIMode mode);
+    void RefreshButtons();
+
+    // 弹输入框（可复用一个函数，用不同 title）
+    void ShowTextInput(const char *title);
     // 115：192，111：194。自roomName1起的成员为我新增的成员，我Hook了构造函数调用方，为构造时分配了更多内存，因此可以为WaitForSecondPlayerDialog任意地新增成员。
 
     void GameButtonDown(GamepadButton theButton, unsigned int thePlayerIndex) {
@@ -170,6 +245,7 @@ protected:
 
     bool GetActiveBroadcast(sockaddr_in &out_bcast, std::string *out_ifname);
     int ScoreIfname(const char *ifname);
+    bool ServerSendU8(uint8_t b);
 };
 
 void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int id);

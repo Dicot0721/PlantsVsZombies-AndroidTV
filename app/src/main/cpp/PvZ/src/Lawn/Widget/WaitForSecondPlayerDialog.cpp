@@ -38,6 +38,141 @@
 
 using namespace Sexy;
 
+void WaitForSecondPlayerDialog::SetMode(UIMode mode) {
+    // 退出旧模式时做必要清理
+
+
+    if (mUIMode == UIMode::MODE2_LAN) {
+        // 离开 LAN 模式：停止广播、退出/离开、关闭扫描
+        StopUdpBroadcastRoom();
+        LeaveRoom();
+        ExitRoom();
+        CloseUdpScanSocket();
+    }
+    if (mUIMode == UIMode::MODE3_SERVER) {
+        // 这里先只清状态；真正断开服务器连接你后续接入socket再处理
+        mServerConnected = false;
+    }
+
+    mUIMode = mode;
+    mDialogHeader = mUIMode == UIMode::MODE1_INIT ? "选择对战模式" : mUIMode == UIMode::MODE2_LAN ? "LAN对战" : "服务器对战";
+    // 进入 LAN 模式默认开始扫描
+    if (mUIMode == UIMode::MODE2_LAN) {
+        mIsCreatingRoom = false;
+        mIsJoiningRoom = false;
+        InitUdpScanSocket();
+    }
+
+    RefreshButtons();
+}
+
+void WaitForSecondPlayerDialog::RefreshButtons() {
+    switch (mUIMode) {
+        case UIMode::MODE1_INIT:
+            mLeftButton->SetLabel("LAN对战");
+            mLeftButton->mDisabled = false;
+
+            mRightButton->SetLabel("服务器对战");
+            mRightButton->mDisabled = false;
+
+            mLawnYesButton->SetLabel("本地对战");
+            mLawnYesButton->mDisabled = false;
+
+            mLawnNoButton->SetLabel("返回");
+            mLawnNoButton->mDisabled = false;
+            break;
+
+        case UIMode::MODE2_LAN:
+            // left: 加入/离开
+            mLeftButton->SetLabel(mIsJoiningRoom ? "离开房间" : "加入房间");
+            if (mIsJoiningRoom) {
+                mLeftButton->mDisabled = false;
+            } else {
+                // 扫描模式下：没房间就禁用“加入房间”
+                bool inScanMode = (!mIsCreatingRoom && !mIsJoiningRoom);
+                if (inScanMode) {
+                    mLeftButton->mDisabled = (scanned_server_count == 0);
+                } else {
+                    // 其他情况（例如创建房间时 left 通常禁用）
+                    mLeftButton->mDisabled = true;
+                }
+            }
+            // right: 创建/退出
+            mRightButton->SetLabel(mIsCreatingRoom ? "退出房间" : "创建房间");
+
+            // Yes：未创建房间 -> “加入指定IP房间”；创建房间 -> “开始游戏”
+            if (mIsCreatingRoom) {
+                mLawnYesButton->SetLabel("开始游戏");
+                mLawnYesButton->mDisabled = (tcpClientSocket == -1);
+            } else {
+                mLawnYesButton->SetLabel("加入指定IP房间");
+                mLawnYesButton->mDisabled = false;
+            }
+
+            mLawnNoButton->SetLabel("返回模式选择");
+            mLawnNoButton->mDisabled = false;
+            break;
+
+        case UIMode::MODE3_SERVER: {
+            // left: 加入 / 离开
+            mLeftButton->SetLabel(mServerJoined ? "离开房间" : "加入房间");
+
+            // right: 创建 / 退出
+            mRightButton->SetLabel(mServerHosting ? "退出房间" : "创建房间");
+
+            // ✅ YesButton：host/joined 都显示“开始游戏”
+            if (mServerHosting) {
+                mLawnYesButton->SetLabel("开始游戏");
+                mLawnYesButton->mDisabled = (!mServerConnected || mServerConnecting || !mServerHostHasGuest);
+            } else if (mServerJoined) {
+                mLawnYesButton->SetLabel("开始游戏");
+                mLawnYesButton->mDisabled = true; // ✅ guest 永远禁用
+            } else {
+                // ✅ 已连接后显示“更换服务器”，功能仍然是弹输入框重新连接
+                if (mServerConnected || mServerConnecting) {
+                    mLawnYesButton->SetLabel("更换服务器");
+                } else {
+                    mLawnYesButton->SetLabel("连接服务器");
+                }
+                mLawnYesButton->mDisabled = false;
+            }
+
+
+            mLawnNoButton->SetLabel("返回模式选择");
+            mLawnNoButton->mDisabled = false;
+
+            // ✅ 加入按钮：连接后且“房间数量>0”才允许（空闲态）
+            bool canJoinIdle = (mServerConnected && !mServerConnecting && !mServerHosting && !mServerJoined && (mServerRoomCount > 0));
+            mLeftButton->mDisabled = !canJoinIdle && !mServerJoined; // 离开房间时应可点
+            if (mServerJoined) {
+                mLeftButton->mDisabled = (!mServerConnected || mServerConnecting);
+            }
+
+            // 创建按钮：空闲态可创建；hosting 时可退出
+            bool canCreateIdle = (mServerConnected && !mServerConnecting && !mServerJoined);
+            mRightButton->mDisabled = !canCreateIdle;
+
+            break;
+        }
+    }
+}
+
+void WaitForSecondPlayerDialog::ShowTextInput(const char *title) {
+    Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
+    JNIEnv *env = bridgeApp->getJNIEnv();
+    jobject view = bridgeApp->mNativeApp->getView();
+    jclass viewCls = env->GetObjectClass(view);
+    jmethodID mid = env->GetMethodID(viewCls, "showTextInputDialog2", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+    jstring jTitle = env->NewStringUTF(title);
+    jstring jHint = env->NewStringUTF("IP:PORT");
+    jstring jInitial = env->NewStringUTF("");
+    env->CallVoidMethod(view, mid, 0, jTitle, jHint, jInitial);
+    env->DeleteLocalRef(jTitle);
+    env->DeleteLocalRef(jHint);
+    env->DeleteLocalRef(jInitial);
+    env->DeleteLocalRef(viewCls);
+}
+
 void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(this, theApp);
 
@@ -56,12 +191,12 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     GameButton *backButton = MakeButton(1001, &mButtonListener, this, "[BACK]");
     mLawnNoButton = backButton;
 
-    mJoinButton = MakeButton(1002, &mButtonListener, this, "[JOIN_ROOM_BUTTON]");
-    mJoinButton->mDisabled = true;
-    AddWidget(mJoinButton);
+    mLeftButton = MakeButton(1002, &mButtonListener, this, "[JOIN_ROOM_BUTTON]");
+    mLeftButton->mDisabled = true;
+    AddWidget(mLeftButton);
 
-    mCreateButton = MakeButton(1003, &mButtonListener, this, "[CREATE_ROOM_BUTTON]");
-    AddWidget(mCreateButton);
+    mRightButton = MakeButton(1003, &mButtonListener, this, "[CREATE_ROOM_BUTTON]");
+    AddWidget(mRightButton);
 
     this->LawnDialog::Resize(0, 0, 800, 600);
 
@@ -73,15 +208,15 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     backButton->mWidth -= 30;
     backButton->mX += 15;
 
-    mJoinButton->mX = playOfflineButton->mX;
-    mJoinButton->mY = playOfflineButton->mY - 80;
-    mJoinButton->mWidth = playOfflineButton->mWidth;
-    mJoinButton->mHeight = playOfflineButton->mHeight;
+    mLeftButton->mX = playOfflineButton->mX;
+    mLeftButton->mY = playOfflineButton->mY - 80;
+    mLeftButton->mWidth = playOfflineButton->mWidth;
+    mLeftButton->mHeight = playOfflineButton->mHeight;
 
-    mCreateButton->mX = backButton->mX;
-    mCreateButton->mY = backButton->mY - 80;
-    mCreateButton->mWidth = backButton->mWidth;
-    mCreateButton->mHeight = backButton->mHeight;
+    mRightButton->mX = backButton->mX;
+    mRightButton->mY = backButton->mY - 80;
+    mRightButton->mWidth = backButton->mWidth;
+    mRightButton->mHeight = backButton->mHeight;
 
     InitUdpScanSocket();
     mIsCreatingRoom = false;
@@ -91,107 +226,182 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mUseManualTarget = false;
     mManualIp[0] = '\0';
     mManualPort = 0;
+    mUIMode = UIMode::MODE1_INIT;
+    mInputPurpose = InputPurpose::NONE;
+    mServerConnected = false;
+    mSelectedRoomIndex_Server = 0;
 
-    // 连接按钮
-    mDirectConnectButton = MakeButton(1004, &mButtonListener, this, "[CONNECT_IP]");
-    mDirectConnectButton->mX = 300;
-    mDirectConnectButton->mY = 350;
-    mDirectConnectButton->mWidth = 180;
-    mDirectConnectButton->mHeight = 40;
-    AddWidget(mDirectConnectButton);
 
-    if (tcp_connected || tcpClientSocket >= 0) {
-        GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
-        GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
-    }
+    // ===== MODE3 init =====
+    mServerSock = -1;
+    mServerConnecting = false;
+
+    mServerHosting = false;
+    mServerJoined = false;
+    mServerHostHasGuest = false;
+    mServerHostedRoomId = 0;
+    mServerJoinedRoomId = 0;
+    mServerLastQueryTick = 0;
+    mServerLastRecvTick = 0;
+
+    mServerIp[0] = '\0';
+    mServerPort = 0;
+
+    mServerRoomCount = 0;
+    mSrvRecvLen = 0;
+
+    std::memset(mServerRooms, 0, sizeof(mServerRooms));
+    std::memset(mSrvRecvBuf, 0, sizeof(mSrvRecvBuf));
+    std::memset(mServerStatusText, 0, sizeof(mServerStatusText));
+    std::strncpy(mServerStatusText, "未连接", sizeof(mServerStatusText) - 1);
+
+
+    SetMode(UIMode::MODE1_INIT);
 }
 
 void WaitForSecondPlayerDialog::_destructor() {
     old_WaitForSecondPlayerDialog_Delete(this);
 }
+
 void WaitForSecondPlayerDialog::Draw(Graphics *g) {
+    // 先画原始 Dialog（背景、按钮等）
     old_WaitForSecondPlayerDialog_Draw(this, g);
+    if (mUIMode == UIMode::MODE1_INIT) {
+        pvzstl::string str1 = "本地对战：一部手机，和线下朋友一起玩";
+        pvzstl::string str2 = "LAN对战：两部手机，连至同一Wifi下对战";
+        pvzstl::string str3 = "服务器对战：两部手机，通过公网服务器对战";
+        g->DrawString(str1, 160, 200);
+        g->DrawString(str2, 160, 240);
+        g->DrawString(str3, 160, 280);
+    } else if (mUIMode == UIMode::MODE2_LAN) {
 
-    if (mIsCreatingRoom) {
-        pvzstl::string str = StrFormat("您的房间名称: %s的房间", mApp->mPlayerInfo->mName);
-        g->DrawString(str, 230, 150);
+        // =========================
+        // MODE2_LAN: Host（创建房间）
+        // =========================
+        if (mIsCreatingRoom) {
+            pvzstl::string str = StrFormat("已创建房间: %s的房间", mApp->mPlayerInfo->mName);
+            g->DrawString(str, 230, 150);
 
-        if (tcpPort != 0) {
-            pvzstl::string str1 = StrFormat("网口:%s PORT:%d", ifname.c_str(), tcpPort);
-            g->DrawString(str1, 260, 200);
+            if (tcpPort != 0) {
+                pvzstl::string str1 = StrFormat("PORT:%d 网口:%s", tcpPort, ifname.c_str());
+                g->DrawString(str1, 260, 200);
+            }
+
+            pvzstl::string str2 = (udpBroadcastSocket >= 0) ? "房间已开放扫描" : "开放扫描时出错";
+            g->DrawString(str2, 260, 250);
+
+            // 是否有玩家加入
+            pvzstl::string str3 = (tcpClientSocket == -1) ? "对方未加入..." : "对方已加入！";
+            g->DrawString(str3, 260, 300);
+
+            // （可选）提示开始游戏按钮状态
+            pvzstl::string str4 = (tcpClientSocket == -1) ? "等待玩家加入后才能开始游戏" : "可以开始游戏（点击“开始游戏”）";
+            g->DrawString(str4, 220, 360);
+
+            return;
         }
 
-        pvzstl::string str2 = udpBroadcastSocket >= 0 ? StrFormat("房间可被查找") : StrFormat("房间不可查找");
-        g->DrawString(str2, 260, 250);
-
-        pvzstl::string str3 = tcpClientSocket == -1 ? StrFormat("对方未加入...") : StrFormat("对方已加入！");
-        g->DrawString(str3, 260, 300);
-        return;
-    }
-
-    // ===== joining 状态：支持手动 & 选中房间 =====
-    if (mIsJoiningRoom) {
-        if (mUseManualTarget) {
-            // 手动连接
-            pvzstl::string str = tcp_connected ? StrFormat("已加入至: 手动连接") : StrFormat("正在加入: 手动连接");
-            g->DrawString(str, 280, 150);
-
-            pvzstl::string str1 = StrFormat("IP: %s:%d", mManualIp, mManualPort);
-            g->DrawString(str1, 280, 200);
-
-        } else {
-            // 扫描列表连接：用当前选中项，而不是 servers[0]
-            int idx = mSelectedServerIndex;
-            if (idx < 0)
-                idx = 0;
-            if (idx >= scanned_server_count)
-                idx = scanned_server_count - 1;
-
-            if (scanned_server_count <= 0) {
-                pvzstl::string str1 = StrFormat("正在加入: (无可用房间)");
-                g->DrawString(str1, 280, 150);
-            } else {
-                pvzstl::string str = tcp_connected ? StrFormat("已加入至: %s的房间", servers[idx].name) : StrFormat("正在加入: %s的房间", servers[idx].name);
+        // =========================
+        // MODE2_LAN: Guest（加入房间）
+        // =========================
+        if (mIsJoiningRoom) {
+            if (mUseManualTarget) {
+                // 手动连接
+                pvzstl::string str = tcp_connected ? "已加入至: 手动连接" : "正在加入: 手动连接";
                 g->DrawString(str, 280, 150);
 
-                pvzstl::string str1 = StrFormat("IP: %s:%d", servers[idx].ip, servers[idx].tcp_port);
+                pvzstl::string str1 = StrFormat("IP: %s:%d", mManualIp, mManualPort);
                 g->DrawString(str1, 280, 200);
+
+            } else {
+                // 扫描列表连接：使用当前选中项
+                int idx = mSelectedServerIndex;
+                if (idx < 0)
+                    idx = 0;
+                if (idx >= scanned_server_count)
+                    idx = scanned_server_count - 1;
+
+                if (scanned_server_count <= 0) {
+                    pvzstl::string str1 = "无可用房间";
+                    g->DrawString(str1, 280, 150);
+                } else {
+                    pvzstl::string str = tcp_connected ? StrFormat("已加入至: %s的房间", servers[idx].name) : StrFormat("正在加入: %s的房间", servers[idx].name);
+                    g->DrawString(str, 280, 150);
+
+                    pvzstl::string str1 = StrFormat("IP: %s:%d", servers[idx].ip, servers[idx].tcp_port);
+                    g->DrawString(str1, 280, 200);
+                }
+            }
+
+            return;
+        }
+
+        // =========================
+        // MODE2_LAN: 扫描中/列表展示（未创建、未加入）
+        // =========================
+        if (scanned_server_count <= 0) {
+            pvzstl::string str1 = (udpScanSocket >= 0) ? "正在扫描房间..." : "无法扫描房间";
+            g->DrawString(str1, 320, 200);
+
+            pvzstl::string str2 = "（若要加入指定IP房间，请点击“加入指定IP房间”）";
+            g->DrawString(str2, 120, 260);
+
+            return;
+        }
+
+        // 列表：高亮 mSelectedServerIndex，支持点击选择（你 MouseDown 已实现）
+        int idx = mSelectedServerIndex;
+        if (idx < 0)
+            idx = 0;
+        if (idx >= scanned_server_count)
+            idx = scanned_server_count - 1;
+        mSelectedServerIndex = idx;
+
+        int yPos = 180;
+        Sexy::Color oldColor = g->mColor;
+
+        // （可选）标题
+        g->DrawString("可用房间：", 230, 140);
+
+        for (int i = 0; i < scanned_server_count; i++) {
+            if (i == mSelectedServerIndex) {
+                // 选中高亮（你原本用 leaderboard_selector）
+                TodDrawImageScaledF(g, addonImages.leaderboard_selector, 140, yPos - 35, 0.7, 0.7);
+                g->SetColor(Sexy::Color(0, 255, 0));
+            } else {
+                g->SetColor(oldColor);
+            }
+
+            pvzstl::string line = StrFormat("%s的房间  %s:%d", servers[i].name, servers[i].ip, servers[i].tcp_port);
+            g->DrawString(line, 230, yPos);
+            yPos += 50;
+        }
+
+        g->SetColor(oldColor);
+    } else if (mUIMode == UIMode::MODE3_SERVER) {
+
+        pvzstl::string head = mServerConnected ? "已连接至服务器" : (mServerConnecting ? "正在连接服务器..." : "未连接至服务器");
+        g->DrawString(head, 280, 160);
+
+        pvzstl::string st = StrFormat("状态：%s", mServerStatusText);
+        g->DrawString(st, 260, 200);
+
+        if (!mServerConnected) {
+            g->DrawString("请点击“连接服务器”，输入服务器IP:PORT", 150, 240);
+            g->DrawString("连接成功后，才能加入房间/创建房间", 170, 280);
+        } else {
+            // hosting/joined 提示
+            if (mServerHosting) {
+                pvzstl::string s = StrFormat("已创建房间：id=%d  %s", mServerHostedRoomId, mServerHostHasGuest ? "（已有玩家加入）" : "（等待玩家加入）");
+                g->DrawString(s, 170, 240);
+            } else if (mServerJoined) {
+                pvzstl::string s = StrFormat("已加入房间：id=%d", mServerJoinedRoomId);
+                g->DrawString(s, 240, 240);
+            } else {
+                DrawServerRoomList(g);
             }
         }
-        return;
     }
-
-    // ===== 非 joining/creating：显示扫描状态或列表 =====
-    if (scanned_server_count == 0) {
-        pvzstl::string str1 = udpScanSocket >= 0 ? StrFormat("查找房间中...") : StrFormat("无法查找房间");
-        g->DrawString(str1, 340, 200);
-        return;
-    }
-
-    // 列表：高亮 mSelectedServerIndex（绿色），支持选择其他房间
-    int idx = mSelectedServerIndex;
-    if (idx < 0)
-        idx = 0;
-    if (idx >= scanned_server_count)
-        idx = scanned_server_count - 1;
-    mSelectedServerIndex = idx;
-
-    int yPos = 180;
-    Sexy::Color oldColor = g->mColor;
-
-    for (int i = 0; i < scanned_server_count; i++) {
-        if (i == mSelectedServerIndex) {
-            g->SetColor(Sexy::Color(0, 255, 0)); // 绿色高亮
-        } else {
-            g->SetColor(oldColor); // 恢复默认
-        }
-
-        pvzstl::string line = StrFormat("%s的房间 %s:%d", servers[i].name, servers[i].ip, servers[i].tcp_port);
-        g->DrawString(line, 230, yPos);
-        yPos += 50; // 你想更稀疏就改成 50
-    }
-
-    g->SetColor(oldColor);
 }
 
 
@@ -261,8 +471,8 @@ bool WaitForSecondPlayerDialog::ManualIpConnect() {
     mIsJoiningRoom = true;
     CloseUdpScanSocket();
 
-    mCreateButton->mDisabled = true;
-    mJoinButton->SetLabel("[LEAVE_ROOM_BUTTON]");
+    mRightButton->mDisabled = true;
+    mLeftButton->SetLabel("[LEAVE_ROOM_BUTTON]");
 
     mLawnYesButton->mDisabled = true;
     mLawnYesButton->SetLabel("[PLAY_ONLINE]");
@@ -282,55 +492,114 @@ bool WaitForSecondPlayerDialog::ManualIpConnect() {
 
     return true;
 }
-
 void WaitForSecondPlayerDialog::Update() {
-    // mJoinButton->mDisabled = server_count == 0;
 
-    bool inScanMode = (!mIsCreatingRoom && !mIsJoiningRoom);
-    if (inScanMode) {
-        mJoinButton->mDisabled = scanned_server_count == 0;
-        // 扫描列表从 0 -> >0 时，默认选中第一个
-        if (scanned_server_count > 0 && mSelectedServerIndex < 0) {
-            mSelectedServerIndex = 0;
-        }
-        // 越界修正
-        if (mSelectedServerIndex >= scanned_server_count) {
-            mSelectedServerIndex = scanned_server_count - 1;
-        }
-        if (mSelectedServerIndex < 0)
-            mSelectedServerIndex = 0;
+    // =========================================================
+    // 1) 统一处理输入框回填（gInputString）
+    //    关键点：
+    //    - 只在“真的消费了输入”时才清 mInputPurpose
+    //    - 若用途/模式不匹配：兜底清掉输入，避免每帧刷屏
+    // =========================================================
+    if (!gInputString.empty()) {
 
-        if (!gInputString.empty()) {
+        // MODE2：LAN 手动加入指定 IP
+        if (mInputPurpose == InputPurpose::LAN_JOIN_MANUAL && mUIMode == UIMode::MODE2_LAN) {
+
             mUseManualTarget = true;
-            ManualIpConnect();
+            ManualIpConnect(); // ✅ 内部会消费 gInputString
+            mInputPurpose = InputPurpose::NONE;
+
+            // 状态变化后立即刷新按钮
+            RefreshButtons();
+        }
+        // MODE3：连接服务器 IP:PORT
+        else if (mInputPurpose == InputPurpose::SERVER_CONNECT_ADDR && mUIMode == UIMode::MODE3_SERVER) {
+
+            ServerConnectFromInput(); // ✅ 内部会消费 gInputString
+            mInputPurpose = InputPurpose::NONE;
+
+            // 状态变化后立即刷新按钮
+            RefreshButtons();
+        } else {
+            // ✅ 兜底：收到输入但用途/模式不匹配
+            // 防止 gInputString 永远不空导致每帧重复触发/刷日志
+            LOG_DEBUG("[Input] drop input='{}' purpose={} mode={}", gInputString.c_str(), (int)mInputPurpose, (int)mUIMode);
+            gInputString.clear();
+            // 这里不强制清 mInputPurpose 也行；清掉更安全：
+            mInputPurpose = InputPurpose::NONE;
         }
     }
 
-    if (mDirectConnectButton) {
-        mDirectConnectButton->mVisible = inScanMode;
-        mDirectConnectButton->mDisabled = !inScanMode;
-    }
+    // =========================================================
+    // 2) MODE2：LAN 才跑 UDP 扫描/广播节拍
+    // =========================================================
+    if (mUIMode == UIMode::MODE2_LAN) {
 
-    if (mIsCreatingRoom) {
-        mLawnYesButton->mDisabled = tcpClientSocket == -1;
-    }
+        bool inScanMode = (!mIsCreatingRoom && !mIsJoiningRoom);
+        if (inScanMode) {
+            // 扫描模式下：没房间就禁用“加入房间”
+            mLeftButton->mDisabled = (scanned_server_count == 0);
 
-    lastBroadcastTime++;
-    if (lastBroadcastTime >= 100) {
+            // 选中索引修正
+            if (scanned_server_count > 0 && mSelectedServerIndex < 0)
+                mSelectedServerIndex = 0;
+            if (mSelectedServerIndex >= scanned_server_count)
+                mSelectedServerIndex = scanned_server_count - 1;
+            if (mSelectedServerIndex < 0)
+                mSelectedServerIndex = 0;
+        }
+
+        // 创建房间时：开始游戏按钮是否可点
         if (mIsCreatingRoom) {
-            UdpBroadcastRoom(); // 每秒广播一次
-        } else if (!mIsJoiningRoom) {
-            ScanUdpBroadcastRoom();
+            mLawnYesButton->mDisabled = (tcpClientSocket == -1);
+        }
+
+        // UDP 广播/扫描节拍
+        lastBroadcastTime++;
+        if (lastBroadcastTime >= 100) { // ~1秒
+            if (mIsCreatingRoom) {
+                UdpBroadcastRoom();
+            } else if (!mIsJoiningRoom) {
+                ScanUdpBroadcastRoom();
+            }
+        }
+
+        // TCP accept / connect
+        if (tcpListenSocket >= 0) {
+            CheckTcpAccept();
+        }
+        if (mIsJoiningRoom && !tcp_connected) {
+            TryTcpConnect();
         }
     }
 
-    if (tcpListenSocket >= 0) {
-        CheckTcpAccept();
+    // =========================================================
+    // 3) MODE3：服务器联机 IO（connect 完成检测 + 收包） + 自动 query
+    // =========================================================
+    if (mUIMode == UIMode::MODE3_SERVER) {
+
+        // 网络 IO（你实现：包含 connect 完成检测、收包解析等）
+        ServerUpdateIO();
+
+        // 自动 Query：仅在“空闲态”每秒一次
+        // 空闲态定义：已连接 && 未创建房间 && 未加入房间 && 未进入 relay
+        mServerLastQueryTick++;
+        if (mServerConnected && !mServerHosting && !mServerJoined) {
+            if (mServerLastQueryTick >= 100) { // ~1秒
+                mServerLastQueryTick = 0;
+                ServerSendQuery();
+            }
+        } else {
+            // 不在空闲态就不刷列表，tick 防溢出
+            if (mServerLastQueryTick > 1000000)
+                mServerLastQueryTick = 0;
+        }
     }
 
-    if (mIsJoiningRoom && !tcp_connected) {
-        TryTcpConnect();
-    }
+    // =========================================================
+    // 4) 每帧根据状态刷新文字/禁用（避免状态变化后没更新）
+    // =========================================================
+    RefreshButtons();
 }
 
 
@@ -899,178 +1168,730 @@ void WaitForSecondPlayerDialog::StopUdpBroadcastRoom() {
     LOG_DEBUG("[UDP] Broadcast closed\n");
 }
 
+static inline void WriteBE32_u32(uint8_t *p, uint32_t v) {
+    p[0] = uint8_t((v >> 24) & 0xFF);
+    p[1] = uint8_t((v >> 16) & 0xFF);
+    p[2] = uint8_t((v >> 8) & 0xFF);
+    p[3] = uint8_t((v) & 0xFF);
+}
 
 void WaitForSecondPlayerDialog::ShowIpInputDialog() {
 
-    LOG_DEBUG("[ShowIpInputDialog] enter");
-
     Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
-    if (!bridgeApp) {
-        LOG_DEBUG("[ShowIpInputDialog] BridgeApp is null");
-        return;
-    }
-
-    if (!bridgeApp->mNativeApp) {
-        LOG_DEBUG("[ShowIpInputDialog] mNativeApp is null");
-        return;
-    }
-
     JNIEnv *env = bridgeApp->getJNIEnv();
-    if (!env) {
-        LOG_DEBUG("[ShowIpInputDialog] JNIEnv is null");
-        return;
-    }
-
     jobject view = bridgeApp->mNativeApp->getView();
-    if (!view) {
-        LOG_DEBUG("[ShowIpInputDialog] NativeView is null");
-        return;
-    }
-
-    LOG_DEBUG("[ShowIpInputDialog] NativeView obtained");
-
-    // view 是 com.transmension.mobile.NativeView
     jclass viewCls = env->GetObjectClass(view);
-    if (!viewCls) {
-        LOG_DEBUG("[ShowIpInputDialog] GetObjectClass(view) failed");
-        return;
-    }
-
-    LOG_DEBUG("[ShowIpInputDialog] NativeView class obtained");
-
     // 方法签名：void showTextInputDialog2(int mode, String title, String hint, String initial)
     jmethodID mid = env->GetMethodID(viewCls, "showTextInputDialog2", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
-    if (!mid) {
-        LOG_DEBUG("[ShowIpInputDialog] GetMethodID(showTextInputDialog2) failed");
-        env->DeleteLocalRef(viewCls);
-        if (env->ExceptionCheck()) {
-            env->ExceptionDescribe();
-            env->ExceptionClear();
-        }
-        return;
-    }
-
-    LOG_DEBUG("[ShowIpInputDialog] Method showTextInputDialog2 found");
-
     jstring jTitle = env->NewStringUTF("加入此IP的房间:");
     jstring jHint = env->NewStringUTF("IP:PORT");
     jstring jInitial = env->NewStringUTF("");
-
-    if (!jTitle || !jHint || !jInitial) {
-        LOG_DEBUG("[ShowIpInputDialog] Failed to create jstring");
-        env->DeleteLocalRef(viewCls);
-        return;
-    }
-
-    LOG_DEBUG("[ShowIpInputDialog] Calling showTextInputDialog2");
-
     env->CallVoidMethod(view, mid, 0, jTitle, jHint, jInitial);
-
-    if (env->ExceptionCheck()) {
-        LOG_DEBUG("[ShowIpInputDialog] Java exception occurred during CallVoidMethod");
-        env->ExceptionDescribe(); // 调试期建议保留
-        env->ExceptionClear();
-    } else {
-        LOG_DEBUG("[ShowIpInputDialog] showTextInputDialog2 call succeeded");
-    }
-
     env->DeleteLocalRef(jTitle);
     env->DeleteLocalRef(jHint);
     env->DeleteLocalRef(jInitial);
     env->DeleteLocalRef(viewCls);
-
-    LOG_DEBUG("[ShowIpInputDialog] exit");
 }
 
 
 void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int id) {
     auto *dialog = reinterpret_cast<WaitForSecondPlayerDialog *>((uint32_t(listener) - offsetof(WaitForSecondPlayerDialog, mButtonListener)));
+
+    // 1000: YesButton
     if (id == 1000) {
-        // 2P手柄按两下A
-        dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
-        dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+        if (dialog->mUIMode == UIMode::MODE1_INIT) {
+            // 本地游戏：按两下A
+            dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+            dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+        } else if (dialog->mUIMode == UIMode::MODE2_LAN) {
+            if (dialog->mIsCreatingRoom) {
+                // 开始游戏（房主）：根据是否有玩家加入决定是否可点（RefreshButtons里已禁用）
+                dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+                dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+                if (tcpClientSocket >= 0) {
+                    BaseEvent event = {EventType::EVENT_START_GAME};
+                    send(tcpClientSocket, &event, sizeof(BaseEvent), 0);
+                }
+            } else {
+                // 加入指定IP房间：弹输入框
+                gInputString.clear();
+                dialog->mInputPurpose = InputPurpose::LAN_JOIN_MANUAL;
+                dialog->ShowTextInput("加入此IP的房间:");
+                return;
+            }
+        } else if (dialog->mUIMode == UIMode::MODE3_SERVER) {
 
-        if (tcpClientSocket >= 0) {
-            BaseEvent event = {EventType::EVENT_START_GAME};
-            send(tcpClientSocket, &event, sizeof(BaseEvent), 0);
+            if (dialog->mServerHosting) {
+                // ✅ 开始游戏（只有 host 且有人加入时按钮才会启用）
+                dialog->ServerSendStart();
+                return;
+            }
+
+            // 未创建房间：连接服务器
+            gInputString.clear();
+            dialog->mInputPurpose = InputPurpose::SERVER_CONNECT_ADDR;
+            dialog->ShowTextInput("连接服务器:");
+            return;
         }
-    } else if (id == 1001) {
-        dialog->StopUdpBroadcastRoom();
-        dialog->LeaveRoom();
-        dialog->ExitRoom();
-        dialog->CloseUdpScanSocket();
+    }
 
-    } else if (id == 1002) {
-
-
-        if (dialog->mIsJoiningRoom) {
-            // 启动扫描线程
+    // 1001: NoButton
+    else if (id == 1001) {
+        if (dialog->mUIMode == UIMode::MODE1_INIT) {
+            // 返回：沿用你原来的清理
+            dialog->StopUdpBroadcastRoom();
             dialog->LeaveRoom();
-            dialog->InitUdpScanSocket();
-
-            dialog->mCreateButton->mDisabled = false;
-            dialog->mJoinButton->SetLabel("[JOIN_ROOM_BUTTON]");
-
-            dialog->mLawnYesButton->mDisabled = false;
-            dialog->mLawnYesButton->SetLabel("[PLAY_OFFLINE]");
-        } else {
-            dialog->JoinRoom();
-            dialog->CloseUdpScanSocket();
-
-            dialog->mCreateButton->mDisabled = true;
-            dialog->mJoinButton->SetLabel("[LEAVE_ROOM_BUTTON]");
-
-            dialog->mLawnYesButton->mDisabled = true;
-            dialog->mLawnYesButton->SetLabel("[PLAY_ONLINE]");
-        }
-    } else if (id == 1003) {
-
-        if (dialog->mIsCreatingRoom) {
-            // 启动扫描线程
             dialog->ExitRoom();
-            dialog->InitUdpScanSocket();
-
-            dialog->mJoinButton->mDisabled = true;
-            dialog->mCreateButton->SetLabel("[CREATE_ROOM_BUTTON]");
-
-            dialog->mLawnYesButton->mDisabled = false;
-            dialog->mLawnYesButton->SetLabel("[PLAY_OFFLINE]");
-        } else {
-            dialog->CreateRoom();
             dialog->CloseUdpScanSocket();
-
-            dialog->mJoinButton->mDisabled = true;
-            dialog->mCreateButton->SetLabel("[EXIT_ROOM_BUTTON]");
-
-            dialog->mLawnYesButton->mDisabled = true;
-            dialog->mLawnYesButton->SetLabel("[PLAY_ONLINE]");
+        } else {
+            // 模式2/3：返回到模式1
+            dialog->SetMode(UIMode::MODE1_INIT);
+            dialog->mServerHosting = false;
+            dialog->mServerJoined = false;
+            if (dialog->mServerSock) {
+                close(dialog->mServerSock);
+                dialog->mServerSock = -1;
+            }
+            return;
         }
-    } else if (id == 1004) {
-        dialog->ShowIpInputDialog();
+    }
+
+    // 1002: leftButton
+    else if (id == 1002) {
+        if (dialog->mUIMode == UIMode::MODE1_INIT) {
+            dialog->SetMode(UIMode::MODE2_LAN);
+        } else if (dialog->mUIMode == UIMode::MODE2_LAN) {
+            // 加入房间 / 离开房间（沿用你原逻辑）
+            if (dialog->mIsJoiningRoom) {
+                dialog->LeaveRoom();
+                dialog->InitUdpScanSocket();
+            } else {
+                dialog->JoinRoom();
+                dialog->CloseUdpScanSocket();
+            }
+            dialog->RefreshButtons();
+        } else if (dialog->mUIMode == UIMode::MODE3_SERVER) {
+            if (!dialog->mServerConnected)
+                return;
+
+            if (dialog->mServerJoined) {
+                dialog->ServerSendLeaveRoom(); // LEAVE_ROOM(0x07)
+            } else if (!dialog->mServerHosting) {
+                // 空闲态才能 join
+                dialog->ServerSendJoinSelected(); // JOIN(0x03)
+            }
+            dialog->RefreshButtons();
+            return;
+        }
+    }
+
+    // 1003: rightButton
+    else if (id == 1003) {
+        if (dialog->mUIMode == UIMode::MODE1_INIT) {
+            dialog->SetMode(UIMode::MODE3_SERVER);
+        } else if (dialog->mUIMode == UIMode::MODE2_LAN) {
+            // 创建房间 / 退出房间（沿用你原逻辑）
+            if (dialog->mIsCreatingRoom) {
+                dialog->ExitRoom();
+                dialog->InitUdpScanSocket();
+            } else {
+                dialog->CreateRoom();
+                dialog->CloseUdpScanSocket();
+            }
+            dialog->RefreshButtons();
+        } else if (dialog->mUIMode == UIMode::MODE3_SERVER) {
+            if (!dialog->mServerConnected)
+                return;
+
+            if (dialog->mServerHosting) {
+                dialog->ServerSendExitRoom(); // EXIT_ROOM(0x06)
+            } else if (!dialog->mServerJoined) {
+                dialog->ServerSendCreate(); // CREATE(0x01)
+            }
+            dialog->RefreshButtons();
+            return;
+        }
     }
 
     old_WaitForSecondPlayerDialog_ButtonDepress(listener, id);
 }
 
+bool WaitForSecondPlayerDialog::ServerTryReadOneFrame(uint8_t &outType, uint8_t *outPayload, uint16_t &outLen) {
+    if (mSrvRecvLen < 3)
+        return false;
+
+    uint8_t type = mSrvRecvBuf[0];
+    uint16_t len = (uint16_t(mSrvRecvBuf[1]) << 8) | uint16_t(mSrvRecvBuf[2]);
+    if (mSrvRecvLen < 3 + (int)len)
+        return false;
+
+    outType = type;
+    outLen = len;
+    if (len > 0 && outPayload) {
+        std::memcpy(outPayload, mSrvRecvBuf + 3, len);
+    }
+
+    // consume
+    int remain = mSrvRecvLen - (3 + (int)len);
+    if (remain > 0) {
+        std::memmove(mSrvRecvBuf, mSrvRecvBuf + 3 + len, remain);
+    }
+    mSrvRecvLen = remain;
+    return true;
+}
+
+void WaitForSecondPlayerDialog::ServerUpdateIO() {
+    if (mServerSock < 0)
+        return;
+
+    // 1) connect 完成检测
+    if (mServerConnecting && !mServerConnected) {
+        fd_set wfds;
+        FD_ZERO(&wfds);
+        FD_SET(mServerSock, &wfds);
+        timeval tv{0, 0};
+        int r = select(mServerSock + 1, nullptr, &wfds, nullptr, &tv);
+        if (r > 0 && FD_ISSET(mServerSock, &wfds)) {
+            int err = 0;
+            socklen_t elen = sizeof(err);
+            getsockopt(mServerSock, SOL_SOCKET, SO_ERROR, &err, &elen);
+            if (err == 0) {
+                mServerConnecting = false;
+                mServerConnected = true;
+                std::strncpy(mServerStatusText, "已连接", sizeof(mServerStatusText) - 1);
+                ServerSendQuery();
+            } else {
+                ServerDisconnect("connect error");
+                std::strncpy(mServerStatusText, "连接失败", sizeof(mServerStatusText) - 1);
+            }
+        }
+    }
+
+    // 2) 读数据（非阻塞）
+    while (true) {
+        if (mSrvRecvLen >= (int)sizeof(mSrvRecvBuf)) {
+            // buffer full -> drop
+            ServerDisconnect("recv overflow");
+            return;
+        }
+
+        ssize_t n = recv(mServerSock, mSrvRecvBuf + mSrvRecvLen, sizeof(mSrvRecvBuf) - mSrvRecvLen, 0);
+        if (n > 0) {
+            mSrvRecvLen += (int)n;
+        } else if (n == 0) {
+            ServerDisconnect("server closed");
+            return;
+        } else {
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
+                break;
+            ServerDisconnect("recv error");
+            return;
+        }
+    }
+
+    // 3) 解析帧并处理
+    uint8_t type;
+    uint16_t len;
+    uint8_t payload[2048];
+
+    while (ServerTryReadOneFrame(type, payload, len)) {
+        // 服务器对战：RespType
+        switch (type) {
+            case 0x81: { // ROOM_CREATED
+                if (len >= 4) {
+                    int id = (int)ReadBE32(payload);
+                    mServerHosting = true;
+                    mServerJoined = false;
+                    mServerHostHasGuest = false;
+                    mServerHostedRoomId = id;
+                    mServerJoinedRoomId = 0;
+                    std::strncpy(mServerStatusText, "已创建房间", sizeof(mServerStatusText) - 1);
+                }
+                break;
+            }
+            case 0x82: { // ROOM_LIST
+                // payload: [count:1] + count*([roomId:4][flags:1][nameLen:1][nameBytes])
+                mServerRoomCount = 0;
+                if (len < 1)
+                    break;
+                int count = payload[0] & 0xFF;
+                int off = 1;
+
+                for (int i = 0; i < count && mServerRoomCount < 255; i++) {
+                    if (off + 6 > (int)len)
+                        break;
+                    int id = (int)ReadBE32(payload + off);
+                    off += 4;
+                    int flags = payload[off++] & 0xFF;
+                    int nameLen = payload[off++] & 0xFF;
+                    if (off + nameLen > (int)len)
+                        break;
+
+                    ServerRoomItem &it = mServerRooms[mServerRoomCount++];
+                    it.roomId = id;
+                    it.full = (flags & 1) != 0;
+                    it.gaming = (flags & 2) != 0;
+                    std::memset(it.name, 0, sizeof(it.name));
+                    int cp = nameLen;
+                    if (cp > (int)sizeof(it.name) - 1)
+                        cp = (int)sizeof(it.name) - 1;
+                    std::memcpy(it.name, payload + off, cp);
+                    off += nameLen;
+                }
+
+                if (mSelectedRoomIndex_Server < 0)
+                    mSelectedRoomIndex_Server = 0;
+                if (mSelectedRoomIndex_Server >= mServerRoomCount)
+                    mSelectedRoomIndex_Server = mServerRoomCount - 1;
+                if (mSelectedRoomIndex_Server < 0)
+                    mSelectedRoomIndex_Server = 0;
+                break;
+            }
+            case 0x83: { // JOIN_RESULT
+                bool ok = (len >= 1 && payload[0] == 1);
+                int rid = (len >= 5) ? (int)ReadBE32(payload + 1) : 0;
+                if (ok) {
+                    mServerJoined = true;
+                    mServerHosting = false;
+                    mServerHostedRoomId = 0;
+                    mServerJoinedRoomId = rid;
+                    mServerHostHasGuest = false;
+                    std::strncpy(mServerStatusText, "已加入房间", sizeof(mServerStatusText) - 1);
+                } else {
+                    std::strncpy(mServerStatusText, "加入失败", sizeof(mServerStatusText) - 1);
+                }
+                break;
+            }
+            case 0x84: { // GUEST_JOINED
+                if (len >= 4) {
+                    int rid = (int)ReadBE32(payload);
+                    if (mServerHosting && rid == mServerHostedRoomId) {
+                        mServerHostHasGuest = true;
+                        std::strncpy(mServerStatusText, "玩家已加入", sizeof(mServerStatusText) - 1);
+                    }
+                }
+                break;
+            }
+            case 0x87: { // GUEST_LEFT
+                if (len >= 4) {
+                    int rid = (int)ReadBE32(payload);
+                    if (mServerHosting && rid == mServerHostedRoomId) {
+                        mServerHostHasGuest = false;
+                        std::strncpy(mServerStatusText, "玩家已离开", sizeof(mServerStatusText) - 1);
+                    }
+                }
+                break;
+            }
+            case 0x86: { // ROOM_EXITED
+                // 不管 host/guest 哪边退出成功，回到空闲
+                mServerHosting = false;
+                mServerJoined = false;
+                mServerHostHasGuest = false;
+                mServerHostedRoomId = 0;
+                mServerJoinedRoomId = 0;
+
+                std::strncpy(mServerStatusText, "已退出房间", sizeof(mServerStatusText) - 1);
+
+                // 退出后拉一次列表
+                ServerSendQuery();
+                break;
+            }
+            case 0x85: { // RELAY_BEGIN
+                std::strncpy(mServerStatusText, "开始对战", sizeof(mServerStatusText) - 1);
+                LOG_DEBUG("[MODE3] RELAY_BEGIN");
+
+                // ✅ 如果已经交接过，就忽略（理论上不会进来，因为 mServerSock 会被置 -1）
+                if (mServerSock < 0) {
+                    LOG_DEBUG("[MODE3] RELAY_BEGIN ignored (already handed off)");
+                    break;
+                }
+
+                // === 交接：把服务器 socket 复用给 MODE2 的全局收发 ===
+                // 先清掉 LAN 的两个 socket，避免 UpdateFrames 同时读两路
+                if (tcpClientSocket >= 0) {
+                    close(tcpClientSocket);
+                    tcpClientSocket = -1;
+                }
+                if (tcpServerSocket >= 0) {
+                    close(tcpServerSocket);
+                    tcpServerSocket = -1;
+                }
+                tcp_connected = false;
+                tcp_connecting = false;
+
+                if (mServerHosting) {
+                    // 我是房主：后续走 tcpClientSocket（你的 MODE2 host 收包逻辑就是读 tcpClientSocket）
+                    tcpClientSocket = mServerSock;
+                    // 保持非阻塞没问题：你 UpdateFrames 用 MSG_DONTWAIT，本来就非阻塞友好
+                    mServerSock = -1; // ✅ 交接完成：让 WaitDialog 不再管理该 socket
+                } else if (mServerJoined) {
+                    // 我是房客：后续走 tcpServerSocket + tcp_connected=true
+                    tcpServerSocket = mServerSock;
+                    tcp_connected = true;
+                    tcp_connecting = false;
+                    mServerSock = -1; // ✅ 交接完成
+                } else {
+                    // 理论不该发生
+                    LOG_DEBUG("[MODE3] RELAY_BEGIN but role unknown, disconnect");
+                    ServerDisconnect("relay role unknown");
+                    break;
+                }
+
+                // 进入对战：按两下A
+                GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+                GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+                return;
+            }
+
+
+            case 0xFF: { // ERROR
+                int ec = (len >= 1) ? (payload[0] & 0xFF) : -1;
+                std::snprintf(mServerStatusText, sizeof(mServerStatusText), "服务器错误: %d", ec);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+}
+
+static bool SendAll(int sock, const void *data, size_t len) {
+    const uint8_t *p = (const uint8_t *)data;
+    size_t off = 0;
+    while (off < len) {
+        ssize_t n = send(sock, p + off, len - off, 0);
+        if (n > 0) {
+            off += (size_t)n;
+            continue;
+        }
+        if (n < 0 && (errno == EAGAIN || errno == EWOULDBLOCK))
+            continue;
+        return false;
+    }
+    return true;
+}
+
+bool WaitForSecondPlayerDialog::ServerSendU8(uint8_t b) {
+    if (mServerSock < 0)
+        return false;
+    return SendAll(mServerSock, &b, 1);
+}
+void WaitForSecondPlayerDialog::ServerSendQuery() {
+    // MsgType.QUERY = 0x02
+    ServerSendU8(0x02);
+}
+
+void WaitForSecondPlayerDialog::ServerSendCreate() {
+    if (mServerSock < 0)
+        return;
+    if (!mApp || !mApp->mPlayerInfo || !mApp->mPlayerInfo->mName)
+        return;
+
+    const char *name = mApp->mPlayerInfo->mName;
+    int nlen = (int)std::strlen(name);
+    if (nlen > 255)
+        nlen = 255;
+
+    uint8_t head[2];
+    head[0] = 0x01;          // MsgType.CREATE
+    head[1] = (uint8_t)nlen; // nameLen
+
+    if (!SendAll(mServerSock, head, 2)) {
+        std::strncpy(mServerStatusText, "发送CREATE失败", sizeof(mServerStatusText) - 1);
+        return;
+    }
+    if (nlen > 0 && !SendAll(mServerSock, name, (size_t)nlen)) {
+        std::strncpy(mServerStatusText, "发送CREATE失败", sizeof(mServerStatusText) - 1);
+        return;
+    }
+}
+
+
+void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
+    if (mServerRoomCount <= 0) {
+        g->DrawString("暂无房间（可创建房间）", 240, 240);
+        return;
+    }
+
+    int yPos = 280;
+    Sexy::Color oldColor = g->mColor;
+
+    g->DrawString("服务器房间列表：", 230, 240);
+
+    int idx = mSelectedRoomIndex_Server;
+    if (idx < 0)
+        idx = 0;
+    if (idx >= mServerRoomCount)
+        idx = mServerRoomCount - 1;
+    mSelectedRoomIndex_Server = idx;
+
+    for (int i = 0; i < mServerRoomCount; i++) {
+        if (i == mSelectedRoomIndex_Server) {
+            TodDrawImageScaledF(g, addonImages.leaderboard_selector, 140, yPos - 35, 0.7, 0.7);
+            g->SetColor(Sexy::Color(0, 255, 0));
+        } else {
+            g->SetColor(oldColor);
+        }
+
+        const ServerRoomItem &r = mServerRooms[i];
+        pvzstl::string tag = r.gaming ? "[GAMING]" : (r.full ? "[FULL]" : "");
+        pvzstl::string line = StrFormat("%s (id=%d) %s", r.name, r.roomId, tag.c_str());
+        g->DrawString(line, 230, yPos);
+        yPos += 45;
+    }
+
+    g->SetColor(oldColor);
+}
+
+void WaitForSecondPlayerDialog::ServerSelectRoomByMouse(int x, int y) {
+    (void)x;
+
+    // 与 DrawServerRoomList 的 yPos 对齐
+    const int listY = 280 - 30;
+    const int lineH = 45;
+
+    if (mServerRoomCount <= 0)
+        return;
+
+    if (y >= listY && y < listY + mServerRoomCount * lineH) {
+        int idx = (y - listY) / lineH;
+        if (idx >= 0 && idx < mServerRoomCount) {
+            if (mSelectedRoomIndex_Server != idx) {
+                mSelectedRoomIndex_Server = idx;
+                mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+            }
+        }
+    }
+}
+
+void WaitForSecondPlayerDialog::ServerSendJoinSelected() {
+    if (mServerSock < 0)
+        return;
+    if (mServerRoomCount <= 0)
+        return;
+
+    int idx = mSelectedRoomIndex_Server;
+    if (idx < 0)
+        idx = 0;
+    if (idx >= mServerRoomCount)
+        idx = mServerRoomCount - 1;
+    int roomId = mServerRooms[idx].roomId;
+
+    uint8_t buf[1 + 4];
+    buf[0] = 0x03; // JOIN
+    WriteBE32_u32(buf + 1, (uint32_t)roomId);
+
+    if (!SendAll(mServerSock, buf, sizeof(buf))) {
+        std::strncpy(mServerStatusText, "发送JOIN失败", sizeof(mServerStatusText) - 1);
+        ServerDisconnect("join send fail");
+    }
+}
+
+
+void WaitForSecondPlayerDialog::ServerSendExitRoom() {
+    // EXIT_ROOM = 0x06
+    if (!ServerSendU8(0x06)) {
+        std::strncpy(mServerStatusText, "发送EXIT失败", sizeof(mServerStatusText) - 1);
+        ServerDisconnect("exit send fail");
+    }
+}
+
+void WaitForSecondPlayerDialog::ServerSendLeaveRoom() {
+    // LEAVE_ROOM = 0x07
+    if (!ServerSendU8(0x07)) {
+        std::strncpy(mServerStatusText, "发送LEAVE失败", sizeof(mServerStatusText) - 1);
+        ServerDisconnect("leave send fail");
+    }
+}
+
+void WaitForSecondPlayerDialog::ServerSendStart() {
+    // START = 0x05
+    if (!ServerSendU8(0x05)) {
+        std::strncpy(mServerStatusText, "发送START失败", sizeof(mServerStatusText) - 1);
+        ServerDisconnect("start send fail");
+    }
+}
+
+
+bool WaitForSecondPlayerDialog::ServerConnectFromInput() {
+    if (gInputString.empty())
+        return false;
+
+    std::string input = gInputString;
+    gInputString.clear();
+
+    auto Trim = [](const std::string &s) -> std::string {
+        const char *ws = " \t\r\n";
+        size_t a = s.find_first_not_of(ws);
+        if (a == std::string::npos)
+            return "";
+        size_t b = s.find_last_not_of(ws);
+        return s.substr(a, b - a + 1);
+    };
+
+    std::string t = Trim(input);
+    size_t pos = t.find(':');
+    if (pos == std::string::npos) {
+        std::strncpy(mServerStatusText, "地址格式错误（需IP:PORT）", sizeof(mServerStatusText) - 1);
+        return false;
+    }
+
+    std::string ip = Trim(t.substr(0, pos));
+    std::string ps = Trim(t.substr(pos + 1));
+    int port = atoi(ps.c_str());
+    if (port <= 0 || port > 65535) {
+        std::strncpy(mServerStatusText, "端口错误", sizeof(mServerStatusText) - 1);
+        return false;
+    }
+
+    in_addr addr{};
+    if (inet_pton(AF_INET, ip.c_str(), &addr) != 1) {
+        std::strncpy(mServerStatusText, "IP错误", sizeof(mServerStatusText) - 1);
+        return false;
+    }
+
+    // 如果之前连着，先断
+    if (mServerSock >= 0) {
+        ServerDisconnect("reconnect");
+    }
+
+    std::memset(mServerIp, 0, sizeof(mServerIp));
+    std::strncpy(mServerIp, ip.c_str(), sizeof(mServerIp) - 1);
+    mServerPort = port;
+
+    // 建 socket + 非阻塞 connect
+    mServerSock = socket(AF_INET, SOCK_STREAM, 0);
+    if (mServerSock < 0) {
+        std::strncpy(mServerStatusText, "socket失败", sizeof(mServerStatusText) - 1);
+        return false;
+    }
+
+    int one = 1;
+    setsockopt(mServerSock, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+
+    int flags = fcntl(mServerSock, F_GETFL, 0);
+    fcntl(mServerSock, F_SETFL, flags | O_NONBLOCK);
+
+    sockaddr_in sa{};
+    sa.sin_family = AF_INET;
+    sa.sin_port = htons((uint16_t)mServerPort);
+    inet_pton(AF_INET, mServerIp, &sa.sin_addr);
+
+    int ret = connect(mServerSock, (sockaddr *)&sa, sizeof(sa));
+    int e = errno; // ✅ 立刻保存
+    LOG_DEBUG("[MODE3] connect ret={} errno={}", ret, e);
+    if (ret == 0) {
+        mServerConnecting = false;
+        mServerConnected = true;
+        std::strncpy(mServerStatusText, "已连接", sizeof(mServerStatusText) - 1);
+
+        // 刚连上先拉一次列表
+        mServerRoomCount = 0;
+        mSrvRecvLen = 0;
+        ServerSendQuery();
+        return true;
+    }
+
+    if (errno == EINPROGRESS) {
+        mServerConnecting = true;
+        mServerConnected = false;
+        std::strncpy(mServerStatusText, "连接中...", sizeof(mServerStatusText) - 1);
+        return true;
+    }
+
+    ServerDisconnect("connect fail");
+    std::snprintf(mServerStatusText, sizeof(mServerStatusText), "连接失败 errno=%d", e);
+    return false;
+}
+
+void WaitForSecondPlayerDialog::ServerDisconnect(const char *why) {
+    (void)why;
+
+    if (mServerSock >= 0) {
+        shutdown(mServerSock, SHUT_RDWR);
+        close(mServerSock);
+        mServerSock = -1;
+    }
+
+    mServerConnecting = false;
+    mServerConnected = false;
+
+
+    mServerHosting = false;
+    mServerJoined = false;
+    mServerHostHasGuest = false;
+    mServerHostedRoomId = 0;
+    mServerJoinedRoomId = 0;
+
+    mServerRoomCount = 0;
+    mSelectedRoomIndex_Server = 0;
+    mSrvRecvLen = 0;
+
+    std::strncpy(mServerStatusText, "未连接", sizeof(mServerStatusText) - 1);
+}
+
+uint32_t WaitForSecondPlayerDialog::ReadBE32(const uint8_t *p) {
+    return (uint32_t(p[0]) << 24) | (uint32_t(p[1]) << 16) | (uint32_t(p[2]) << 8) | uint32_t(p[3]);
+}
+
+
+void WaitForSecondPlayerDialog::WriteBE32(uint8_t *p, uint32_t v) {
+    p[0] = uint8_t((v >> 24) & 0xFF);
+    p[1] = uint8_t((v >> 16) & 0xFF);
+    p[2] = uint8_t((v >> 8) & 0xFF);
+    p[3] = uint8_t((v) & 0xFF);
+}
+
+bool WaitForSecondPlayerDialog::ServerSendFrame(uint8_t type, const void *payload, uint16_t len) {
+    if (mServerSock < 0)
+        return false;
+
+    uint8_t hdr[3];
+    hdr[0] = type;
+    hdr[1] = (uint8_t)((len >> 8) & 0xFF);
+    hdr[2] = (uint8_t)(len & 0xFF);
+
+    if (!SendAll(mServerSock, hdr, 3))
+        return false;
+    if (len > 0 && payload) {
+        if (!SendAll(mServerSock, payload, len))
+            return false;
+    }
+    return true;
+}
+
+
 void WaitForSecondPlayerDialog::Resize(int theX, int theY, int theWidth, int theHeight) {}
 
 
 void WaitForSecondPlayerDialog::MouseDown(int x, int y, int clicks) {
+    // MODE3：点选服务器房间
+    if (mUIMode == UIMode::MODE3_SERVER) {
+        if (!mServerConnected)
+            return;
+        if (mServerHosting || mServerJoined)
+            return; // 在房间里不让选（你也可以允许）
+        ServerSelectRoomByMouse(x, y);
+        return;
+    }
+
+    // ===== 下面保持你原来的 LAN 逻辑 =====
     if (mIsCreatingRoom || mIsJoiningRoom)
         return;
     if (scanned_server_count <= 0)
         return;
 
-    // 列表绘制起点和行高要与你 Draw 保持一致
     const int listX = 230;
     const int listY = 180 - 30;
     const int lineH = 50;
 
-    // 简单判定：只用 y 命中即可
     if (y >= listY && y < listY + scanned_server_count * lineH) {
         int idx = (y - listY) / lineH;
         if (idx >= 0 && idx < scanned_server_count) {
-            mSelectedServerIndex = idx;
+            if (mSelectedServerIndex != idx) {
+                mSelectedServerIndex = idx;
+                mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+            }
         }
     }
 }

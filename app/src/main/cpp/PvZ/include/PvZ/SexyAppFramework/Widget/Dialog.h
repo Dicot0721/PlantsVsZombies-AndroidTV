@@ -40,10 +40,10 @@ public:
     DialogButton *mYesButton;       // 67
     DialogButton *mNoButton;        // 68
     int mNumButtons;                // 69
-    int *mDialogHeader;             // 70
-    int *mDialogFooter;             // 71
-    int *mDialogLines;              // 72
-    int *mUnkText;                  // 73
+    pvzstl::string mDialogHeader;   // 70
+    pvzstl::string mDialogFooter;   // 71
+    pvzstl::string mDialogLines;    // 72
+    pvzstl::string mUnkText;        // 73
     TextLayout mTextLayout;         // 74 ~ 157
     int unk1[3];                    // 158 ~ 160
     int mButtonMode;                // 161

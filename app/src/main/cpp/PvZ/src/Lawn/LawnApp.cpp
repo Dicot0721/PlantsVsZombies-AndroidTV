@@ -104,6 +104,7 @@ void LawnApp::LoadAddonImages() {
     addonImages.crater_night_roof_left = GetImageByFileName("addonFiles/images/crater_night_roof_left");
     addonImages.crater_night_roof_left->mNumRows = 1;
     addonImages.crater_night_roof_left->mNumCols = 2;
+    addonImages.leaderboard_selector = GetImageByFileName("images/leaderboard_selector");
 
     addonImages.IMAGE_SEEDCHOOSER_LARGE_BACKGROUND2 = GetImageByFileName("addonFiles/images/SeedChooser_Large_Background2");
     addonImages.IMAGE_ZOMBIEJACKSONHEAD = GetImageByFileName("addonFiles/particles/ZombieJacksonHead");
@@ -244,7 +245,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             offset += eventSize;
         }
 
-        if (base->type >= EVENT_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
+        else if (base->type >= EVENT_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
             size_t eventSize = VSSetupMenu::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -257,7 +258,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
         }
 
 
-        if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type <= EVENT_SERVER_VSRESULT_BUTTON_DEPRESS) {
+        else if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type <= EVENT_SERVER_VSRESULT_BUTTON_DEPRESS) {
             size_t eventSize = VSResultsMenu::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -267,6 +268,8 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             }
             mVSResultsScreen->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
             offset += eventSize;
+        } else {
+            offset += sizeof(BaseEvent);
         }
     }
 
@@ -295,9 +298,9 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             }
             mBoard->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
             offset += eventSize;
-        }
+        } else
 
-        if (base->type >= EVENT_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
+            if (base->type >= EVENT_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
             size_t eventSize = VSSetupMenu::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -308,9 +311,9 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             }
             mVSSetupScreen->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
             offset += eventSize;
-        }
+        } else
 
-        if (base->type == EVENT_START_GAME) {
+            if (base->type == EVENT_START_GAME) {
             size_t eventSize = WaitForSecondPlayerDialog::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -320,10 +323,10 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             }
             ((WaitForSecondPlayerDialog *)GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER))->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
             offset += eventSize;
-        }
+        } else
 
 
-        if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type <= EVENT_SERVER_VSRESULT_BUTTON_DEPRESS) {
+            if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type <= EVENT_SERVER_VSRESULT_BUTTON_DEPRESS) {
             size_t eventSize = VSResultsMenu::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -334,6 +337,8 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             }
             mVSResultsScreen->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
             offset += eventSize;
+        } else {
+            offset += sizeof(BaseEvent);
         }
     }
 
@@ -359,7 +364,8 @@ void LawnApp::UpdateFrames() {
                 LOG_DEBUG("[TCP] 对方关闭连接");
                 close(tcpClientSocket);
                 tcpClientSocket = -1;
-                LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
+                if (!GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER))
+                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
                 break;
             } else {
                 if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -372,7 +378,7 @@ void LawnApp::UpdateFrames() {
                     LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
                     close(tcpClientSocket);
                     tcpClientSocket = -1;
-                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
+                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 }
             }
@@ -395,7 +401,7 @@ void LawnApp::UpdateFrames() {
                 tcpServerSocket = -1;
                 tcp_connecting = false;
                 tcp_connected = false;
-                LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
+                LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
                 break;
             } else {
                 if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -410,7 +416,7 @@ void LawnApp::UpdateFrames() {
                     tcpServerSocket = -1;
                     tcp_connecting = false;
                     tcp_connected = false;
-                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
+                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 }
             }

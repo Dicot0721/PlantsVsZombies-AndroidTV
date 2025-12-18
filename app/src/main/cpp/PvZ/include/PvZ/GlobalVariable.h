@@ -159,6 +159,7 @@ struct AddonImages {
     Sexy::Image *gamerpic;
     Sexy::Image *crater_night_roof_center;
     Sexy::Image *crater_night_roof_left;
+    Sexy::Image *leaderboard_selector;
     Sexy::Image *IMAGE_SEEDCHOOSER_LARGE_BACKGROUND2;
     Sexy::Image *IMAGE_ZOMBIEJACKSONHEAD;
     Sexy::Image *IMAGE_ZOMBIEBACKUPDANCERHEAD2;
