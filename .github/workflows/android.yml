@@ -60,7 +60,7 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: PvZ-TV-${{ matrix.version }}-${{ matrix.build_type }}
-          path: app/build/outputs/apk/**/*.apk
+          path: app/build/outputs/apk/**/PvZ-TV-*.apk
 
   release:
     permissions:
@@ -104,7 +104,7 @@ jobs:
           prerelease: true
           automatic_release_tag: nightly
           title: Nightly Build
-          files: artifact/*.apk
+          files: artifact/**/*.apk
 
       - name: Archive builds
         uses: softprops/action-gh-release@v2
@@ -115,4 +115,4 @@ jobs:
           make_latest: true
           tag_name: ${{ steps.build_vars.outputs.date }}-${{ steps.build_vars.outputs.commits_count }}
           body: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
-          files: artifact/*.apk
+          files: artifact/**/*.apk
