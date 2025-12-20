@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License along with
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "Homura/Logger.h"
 #include "PvZ/Android/Native/BridgeApp.h"
