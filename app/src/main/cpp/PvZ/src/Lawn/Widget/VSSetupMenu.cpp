@@ -343,9 +343,7 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::ve
     }
 }
 
-
-std::vector<char> clientVSSetupMenuRecvBuffer;
-
+static std::vector<char> clientVSSetupMenuRecvBuffer;
 
 size_t VSSetupMenu::getClientEventSize(EventType type) {
     switch (type) {
@@ -419,9 +417,7 @@ void VSSetupMenu::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
     }
 }
 
-
-std::vector<char> serverVSSetupMenuRecvBuffer;
-
+static std::vector<char> serverVSSetupMenuRecvBuffer;
 
 size_t VSSetupMenu::getServerEventSize(EventType type) {
     switch (type) {

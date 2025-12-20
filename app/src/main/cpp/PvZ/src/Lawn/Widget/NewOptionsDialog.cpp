@@ -1,7 +1,3 @@
-//
-// Created by Administrator on 2025/12/17.
-//
-
 #include "PvZ/Lawn/Widget/NewOptionsDialog.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/LawnApp.h"

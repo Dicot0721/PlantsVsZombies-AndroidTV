@@ -21,11 +21,10 @@
 #include "Homura/Logger.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
+
 #include <unistd.h>
 
-
-std::vector<char> clientVSResultsMenuRecvBuffer;
-
+static std::vector<char> clientVSResultsMenuRecvBuffer;
 
 size_t VSResultsMenu::getClientEventSize(EventType type) {
     switch (type) {
@@ -70,9 +69,7 @@ void VSResultsMenu::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
     }
 }
 
-
-std::vector<char> serverVSResultsMenuRecvBuffer;
-
+static std::vector<char> serverVSResultsMenuRecvBuffer;
 
 size_t VSResultsMenu::getServerEventSize(EventType type) {
     switch (type) {

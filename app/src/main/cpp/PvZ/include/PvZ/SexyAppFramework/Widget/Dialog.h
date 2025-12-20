@@ -78,7 +78,6 @@ protected:
 };
 
 class Dialog : public __Dialog {
-
 public:
     Dialog() = delete;
     ~Dialog() = delete;

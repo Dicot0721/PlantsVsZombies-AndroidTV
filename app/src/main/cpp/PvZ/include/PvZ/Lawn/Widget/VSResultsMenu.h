@@ -24,7 +24,8 @@
 #include "PvZ/SexyAppFramework/Widget/MenuWidget.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "WaitForSecondPlayerDialog.h"
-#include <__stddef_size_t.h>
+
+#include <cstddef>
 
 class VSResultsMenu : public Sexy::MenuWidget {
 public:

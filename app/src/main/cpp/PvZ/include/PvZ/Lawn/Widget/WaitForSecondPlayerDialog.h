@@ -28,7 +28,7 @@
 #include <linux/in.h>
 #include <netinet/in.h>
 
-#include <__stddef_size_t.h>
+#include <cstddef>
 #include <cstdint>
 
 
@@ -137,6 +137,10 @@ public:
     ~WaitForSecondPlayerDialog() {
         _destructor();
     }
+
+    static size_t getServerEventSize(EventType type);
+    static size_t getClientEventSize(EventType type);
+
     void Update();
     void Draw(Sexy::Graphics *g);
     void Resize(int theX, int theY, int theWidth, int theHeight);
@@ -155,10 +159,7 @@ public:
     bool ManualIpConnect();
     void ShowIpInputDialog();
 
-    static size_t getServerEventSize(EventType type);
-
     void processServerEvent(void *buf, ssize_t bufSize);
-    static size_t getClientEventSize(EventType type);
     void processClientEvent(void *buf, ssize_t bufSize);
 
 protected:
@@ -166,7 +167,6 @@ protected:
 
     void _constructor(LawnApp *theApp);
     void _destructor();
-
 
     bool GetActiveBroadcast(sockaddr_in &out_bcast, std::string *out_ifname);
     int ScoreIfname(const char *ifname);

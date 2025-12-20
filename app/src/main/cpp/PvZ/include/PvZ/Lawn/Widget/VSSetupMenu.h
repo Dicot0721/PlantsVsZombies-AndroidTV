@@ -167,6 +167,10 @@ public:
     ~VSSetupMenu() {
         _destructor();
     }
+
+    static size_t getServerEventSize(EventType type);
+    static size_t getClientEventSize(EventType type);
+
     void Draw(Sexy::Graphics *g);
     void Update();
     void KeyDown(Sexy::KeyCode theKey);
@@ -179,12 +183,8 @@ public:
     void AddedToManager(Sexy::WidgetManager *a2);
 
     void processClientEvent(void *buf, ssize_t bufSize);
-
-
     void processServerEvent(void *buf, ssize_t bufSize);
-    static size_t getServerEventSize(EventType type);
 
-    static size_t getClientEventSize(EventType type);
     void HandleTcpClientMessage(void *buf, ssize_t bufSize);
     void HandleTcpServerMessage(void *buf, ssize_t bufSize);
 
