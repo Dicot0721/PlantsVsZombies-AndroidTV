@@ -2,7 +2,7 @@
 
 # PlantsVsZombies AndroidTV
 
-**[English](README.md)** | **简体中文**
+**[English](./README.md)** | **简体中文**
 
 [![license](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)][GPL-3.0]
 [![Android CI](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml/badge.svg)](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml "Android CI")
@@ -55,13 +55,13 @@
 
 #### 格式
 
-见 [`.clang-format`](.clang-format).
+见 [`.clang-format`](/.clang-format).
 
 > 建议在每次提交前先用 IDE 对代码进行格式化.
 
 ### 提交
 
-参考 _[约定式提交](https://www.conventionalcommits.org/)_.
+参考[约定式提交](https://www.conventionalcommits.org/zh-hans/v1.0.0/).
 
 ### 拉取请求 (PR)
 

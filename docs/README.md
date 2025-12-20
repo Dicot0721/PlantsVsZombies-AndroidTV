@@ -2,7 +2,7 @@
 
 # PlantsVsZombies AndroidTV
 
-**English** | **[简体中文](README.zh-cn.md)**
+**English** | **[简体中文](./README.zh-cn.md)**
 
 [![license](https://img.shields.io/github/license/Dicot0721/PlantsVsZombies-AndroidTV)][GPL-3.0]
 [![Android CI](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml/badge.svg)](https://github.com/Dicot0721/PlantsVsZombies-AndroidTV/actions/workflows/android.yml "Android CI")
@@ -56,13 +56,13 @@ A mod of _Plants vs. Zombies_ Android TV version.
 
 #### Format
 
-See [`.clang-format`](.clang-format).
+See [`.clang-format`](/.clang-format).
 
 > It is recommended to format the code using the IDE before each commit.
 
 ### Commit
 
-See _[Conventional Commits](https://www.conventionalcommits.org/)_.
+Refer to [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
 ### Pull Request (PR)
 
