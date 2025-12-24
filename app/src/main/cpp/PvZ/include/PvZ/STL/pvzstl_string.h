@@ -292,6 +292,14 @@ public:
         return _get_rep()->_capacity;
     }
 
+    void shrink_to_fit() {
+        if (capacity() > size() || _get_rep()->_is_shared()) {
+            CharT *tmp = _get_rep()->_clone();
+            _get_rep()->_dispose();
+            _dataplus = tmp;
+        }
+    }
+
     void clear() noexcept {
         if (_get_rep()->_is_shared()) {
             _get_rep()->_dispose();
@@ -474,6 +482,20 @@ public:
         return n;
     }
 
+    void resize(size_type n, CharT c) {
+        const size_type sz = size();
+        _check_length(sz, n, "basic_string::resize");
+        if (n > sz) {
+            append(n - sz, c);
+        } else if (n < sz) {
+            erase(n);
+        }
+    }
+
+    void resize(size_type n) {
+        resize(n, CharT{});
+    }
+
     void swap(basic_string &other) noexcept /* strengthened */ {
         if (_get_rep()->_is_leaked()) {
             _get_rep()->_set_sharable();
@@ -560,6 +582,122 @@ public:
             }
         }
         return npos;
+    }
+
+    [[nodiscard]] size_type find_first_of(const basic_string &str, size_type pos = 0) const noexcept {
+        return find_first_of(_self_view{str}, pos);
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    [[nodiscard]] size_type find_first_of(const SV &t, size_type pos = 0) const noexcept(std::is_nothrow_convertible_v<const SV &, _self_view>) {
+        const _self_view sv = t;
+        const auto xpos = _self_view{*this}.find_first_of(sv, pos);
+        if constexpr (_self_view::npos == npos) {
+            return xpos;
+        } else {
+            return (xpos != _self_view::npos) ? static_cast<size_type>(xpos) : npos;
+        }
+    }
+
+    [[nodiscard]] size_type find_first_of(const CharT *s, size_type pos, size_type n) const {
+        assert((s != nullptr || n == 0) && "basic_string::find_first_of received nullptr");
+        return find_first_of(_self_view{s, n}, pos);
+    }
+
+    [[nodiscard]] size_type find_first_of(const CharT *s, size_type pos = 0) const {
+        assert((s != nullptr) && "basic_string::find_first_of received nullptr");
+        return find_first_of(_self_view{s}, pos);
+    }
+
+    [[nodiscard]] size_type find_first_of(CharT c, size_type pos = 0) const noexcept {
+        return find(c, pos);
+    }
+
+    [[nodiscard]] size_type find_first_not_of(const basic_string &str, size_type pos = 0) const noexcept {
+        return find_first_not_of(_self_view{str}, pos);
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    [[nodiscard]] size_type find_first_not_of(const SV &t, size_type pos = 0) const noexcept(std::is_nothrow_convertible_v<const SV &, _self_view>) {
+        const _self_view sv = t;
+        const auto xpos = _self_view{*this}.find_first_not_of(sv, pos);
+        if constexpr (_self_view::npos == npos) {
+            return xpos;
+        } else {
+            return (xpos != _self_view::npos) ? static_cast<size_type>(xpos) : npos;
+        }
+    }
+
+    [[nodiscard]] size_type find_first_not_of(const CharT *s, size_type pos, size_type n) const {
+        assert((s != nullptr || n == 0) && "basic_string::find_first_not_of received nullptr");
+        return find_first_not_of(_self_view{s, n}, pos);
+    }
+
+    [[nodiscard]] size_type find_first_not_of(const CharT *s, size_type pos = 0) const {
+        assert((s != nullptr) && "basic_string::find_first_not_of received nullptr");
+        return find_first_not_of(_self_view{s}, pos);
+    }
+
+    [[nodiscard]] size_type find_first_not_of(CharT c, size_type pos = 0) const noexcept {
+        return find_first_not_of(_self_view{std::addressof(c), 1}, pos);
+    }
+
+    [[nodiscard]] size_type find_last_of(const basic_string &str, size_type pos = npos) const noexcept {
+        return find_last_of(_self_view{str}, pos);
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    [[nodiscard]] size_type find_last_of(const SV &t, size_type pos = npos) const noexcept(std::is_nothrow_convertible_v<const SV &, _self_view>) {
+        const _self_view sv = t;
+        const auto xpos = _self_view{*this}.find_last_of(sv, pos);
+        if constexpr (_self_view::npos == npos) {
+            return xpos;
+        } else {
+            return (xpos != _self_view::npos) ? static_cast<size_type>(xpos) : npos;
+        }
+    }
+
+    [[nodiscard]] size_type find_last_of(const CharT *s, size_type pos, size_type n) const {
+        assert((s != nullptr || n == 0) && "basic_string::find_last_of received nullptr");
+        return find_last_of(_self_view{s, n}, pos);
+    }
+
+    [[nodiscard]] size_type find_last_of(const CharT *s, size_type pos = npos) const {
+        assert((s != nullptr) && "basic_string::find_last_of received nullptr");
+        return find_last_of(_self_view{s}, pos);
+    }
+
+    [[nodiscard]] size_type find_last_of(CharT c, size_type pos = npos) const noexcept {
+        return rfind(c, pos);
+    }
+
+    [[nodiscard]] size_type find_last_not_of(const basic_string &str, size_type pos = npos) const noexcept {
+        return find_last_not_of(_self_view{str}, pos);
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    [[nodiscard]] size_type find_last_not_of(const SV &t, size_type pos = npos) const noexcept(std::is_nothrow_convertible_v<const SV &, _self_view>) {
+        const _self_view sv = t;
+        const auto xpos = _self_view{*this}.find_last_not_of(sv, pos);
+        if constexpr (_self_view::npos == npos) {
+            return xpos;
+        } else {
+            return (xpos != _self_view::npos) ? static_cast<size_type>(xpos) : npos;
+        }
+    }
+
+    [[nodiscard]] size_type find_last_not_of(const CharT *s, size_type pos, size_type n) const {
+        assert((s != nullptr || n == 0) && "basic_string::find_last_not_of received nullptr");
+        return find_last_not_of(_self_view{s, n}, pos);
+    }
+
+    [[nodiscard]] size_type find_last_not_of(const CharT *s, size_type pos = npos) const {
+        assert((s != nullptr) && "basic_string::find_last_not_of received nullptr");
+        return find_last_not_of(_self_view{s}, pos);
+    }
+
+    [[nodiscard]] size_type find_last_not_of(CharT c, size_type pos = npos) const noexcept {
+        return find_last_not_of(_self_view{std::addressof(c), 1}, pos);
     }
 
     [[nodiscard]] bool starts_with(_self_view sv) const noexcept {
