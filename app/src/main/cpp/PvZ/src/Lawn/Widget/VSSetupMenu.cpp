@@ -104,9 +104,6 @@ void VSSetupMenu::_constructor() {
     mApp->mBoard->AddWidget(aBanModeButton);
     gVSSetupWidget->mDrawString = true;
 
-    mApp->mDanceMode = false;
-    mApp->mBoard->mDanceMode = false;
-
     is1PControllerMoving = false;
     is2PControllerMoving = false;
     touchingOnWhichController = 0;
@@ -470,7 +467,7 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_VSSETUPMENU_RANDOM_PICK: {
             U16x10_Event *event1 = (U16x10_Event *)event;
             tcp_connected = false;
-            ButtonDepress(11);
+            ButtonDepress(VSSetupMenu_Random_Battle);
             tcp_connected = true;
 
             mApp->mBoard->mSeedBank1->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
@@ -599,14 +596,15 @@ void VSSetupMenu::ButtonDepress(int theId) {
         if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
             GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
             GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
-        } else {
-            return;
-            // // 自动分配阵营
-            // mController1Position = 0;
-            // mController2Position = 1;
-            // GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
-            // GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
         }
+        //        else {
+        //            return;
+        // // 自动分配阵营
+        // mController1Position = 0;
+        // mController2Position = 1;
+        // GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
+        // GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
+        //        }
     }
 
     old_VSSetupMenu_ButtonDepress(this, theId);
@@ -678,10 +676,8 @@ void VSSetupMenu::ButtonDepress(int theId) {
             }
             break;
         case VSSetupWidget::VSSetupWidget_More_Packets: // 额外卡槽
-            gVSSetupWidget->ButtonDepress(VSSetupWidget::VSSetupWidget_More_Packets);
-            break;
         case VSSetupWidget::VSSetupWidget_Ban_Mode: // 禁选模式
-            gVSSetupWidget->ButtonDepress(VSSetupWidget::VSSetupWidget_Ban_Mode);
+            gVSSetupWidget->ButtonDepress(theId);
             break;
         default:
             break;
