@@ -352,7 +352,7 @@ void Zombie::UpdateZombieJackInTheBox() {
 
     if (mZombiePhase == ZombiePhase::PHASE_JACK_IN_THE_BOX_RUNNING) {
         if (mHasHead) {
-            if ((mApp->mGameMode != GameMode::GAMEMODE_MP_VS && mPhaseCounter <= 0) || mIsEating) {
+            if (mApp->IsVSMode() ? mIsEating : mPhaseCounter <= 0) {
                 mPhaseCounter = 110;
                 mZombiePhase = ZombiePhase::PHASE_JACK_IN_THE_BOX_POPPING;
 
