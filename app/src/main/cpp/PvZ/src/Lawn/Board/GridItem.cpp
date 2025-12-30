@@ -250,15 +250,14 @@ void GridItem::DrawCrater(Sexy::Graphics *g) {
     float aXPos = mBoard->GridToPixelX(mGridX, mGridY) - 8.0f;
     float aYPos = mBoard->GridToPixelY(mGridX, mGridY) + 40.0f;
     if (mGridItemCounter < 25) {
-        int aAlpha = TodAnimateCurve(25, 0, mGridItemCounter, 255, 0, TodCurves::CURVE_LINEAR);
-        Color color = {255, 255, 255, aAlpha};
-        g->SetColor(color);
+        int anAlpha = TodAnimateCurve(25, 0, mGridItemCounter, 255, 0, TodCurves::CURVE_LINEAR);
+        g->SetColor(Color(255, 255, 255, anAlpha));
         g->SetColorizeImages(true);
     }
 
     bool fading = mGridItemCounter < 9000;
     Sexy::Image *aImage = *Sexy_IMAGE_CRATER_Addr;
-    int theCelCol = 0;
+    int aCelCol = 0;
 
     if (mBoard->IsPoolSquare(mGridX, mGridY)) {
         if (mBoard->StageIsNight()) {
@@ -266,12 +265,14 @@ void GridItem::DrawCrater(Sexy::Graphics *g) {
         } else {
             aImage = *Sexy_IMAGE_CRATER_WATER_DAY_Addr;
         }
+
         if (fading) {
-            theCelCol = 1;
+            aCelCol = 1;
         }
-        float aPos = mGridY * std::numbers::pi_v<float> + mGridX * std::numbers::pi_v<float> * 0.25f;
-        float aTime = mBoard->mMainCounter * std::numbers::pi_v<float> * 2.0f / 200.0f;
-        aYPos = sin(aPos + aTime) * 2.0f;
+
+        float aPos = mGridY * PI + mGridX * PI * 0.25f;
+        float aTime = mBoard->mMainCounter * PI * 2.0f / 200.0f;
+        aYPos += sin(aPos + aTime) * 2.0f;
     } else if (mBoard->StageHasRoof()) {
         if (mGridX < 5) {
             if (mBoard->StageIsNight()) {
@@ -290,11 +291,12 @@ void GridItem::DrawCrater(Sexy::Graphics *g) {
             aXPos += 18.0f;
             aYPos += -9.0f;
         }
+
         if (fading) {
-            theCelCol = 1;
+            aCelCol = 1;
         }
     } else if (mBoard->StageIsNight()) {
-        theCelCol = 1;
+        aCelCol = 1;
         if (fading) {
             aImage = *Sexy_IMAGE_CRATER_FADING_Addr;
         }
@@ -302,6 +304,6 @@ void GridItem::DrawCrater(Sexy::Graphics *g) {
         aImage = *Sexy_IMAGE_CRATER_FADING_Addr;
     }
 
-    TodDrawImageCelF(g, aImage, aXPos, aYPos, theCelCol, 0);
+    TodDrawImageCelF(g, aImage, aXPos, aYPos, aCelCol, 0);
     g->SetColorizeImages(false);
 }
