@@ -35,47 +35,46 @@ VSSetupWidget::VSSetupWidget() {
 }
 
 VSSetupWidget::~VSSetupWidget() {
-    gVSSetupWidget->mMorePacketsButton->mBtnNoDraw = true;
-    gVSSetupWidget->mMorePacketsButton->mDisabled = true;
-    gVSSetupWidget->mBanModeButton->mBtnNoDraw = true;
-    gVSSetupWidget->mBanModeButton->mDisabled = true;
-    gVSSetupWidget->mDrawString = false;
+    mMorePacketsButton->mBtnNoDraw = true;
+    mMorePacketsButton->mDisabled = true;
+    mBanModeButton->mBtnNoDraw = true;
+    mBanModeButton->mDisabled = true;
+    mDrawString = false;
     gVSSetupWidget = nullptr;
 }
 
 void VSSetupWidget::SetDisable() {
-    gVSSetupWidget->mMorePacketsButton->mBtnNoDraw = true;
-    gVSSetupWidget->mMorePacketsButton->mDisabled = true;
-    gVSSetupWidget->mBanModeButton->mBtnNoDraw = true;
-    gVSSetupWidget->mBanModeButton->mDisabled = true;
-    gVSSetupWidget->mDrawString = false;
+    mMorePacketsButton->mBtnNoDraw = true;
+    mMorePacketsButton->mDisabled = true;
+    mBanModeButton->mBtnNoDraw = true;
+    mBanModeButton->mDisabled = true;
+    mDrawString = false;
+}
+
+void VSSetupWidget::SwapButtonImage(ButtonWidget *theButton, int theIndex) {
+    std::swap(mCheckboxImage[theIndex], mCheckboxImagePress[theIndex]);
+    theButton->mButtonImage = gVSSetupWidget->mCheckboxImage[theIndex];
+    theButton->mOverImage = gVSSetupWidget->mCheckboxImage[theIndex];
+    theButton->mDownImage = gVSSetupWidget->mCheckboxImage[theIndex];
 }
 
 void VSSetupWidget::ButtonDepress(this VSSetupWidget &self, int theId) {
-    if (theId == 1145) {
-        self.CheckboxChecked(1145, self.mMorePackets);
-        std::swap(gVSSetupWidget->mCheckboxImage[0], gVSSetupWidget->mCheckboxImagePress[0]);
-        ButtonWidget *aButton = gVSSetupWidget->mMorePacketsButton;
-        aButton->mButtonImage = gVSSetupWidget->mCheckboxImage[0];
-        aButton->mOverImage = gVSSetupWidget->mCheckboxImage[0];
-        aButton->mDownImage = gVSSetupWidget->mCheckboxImage[0];
+    if (theId == VSSetupWidget_More_Packets) {
+        self.CheckboxChecked(VSSetupWidget_More_Packets, self.mMorePackets);
+        self.SwapButtonImage(self.mMorePacketsButton, 0);
     }
-    if (theId == 1146) {
-        self.CheckboxChecked(1146, self.mBanMode);
-        std::swap(gVSSetupWidget->mCheckboxImage[1], gVSSetupWidget->mCheckboxImagePress[1]);
-        ButtonWidget *aButton = gVSSetupWidget->mBanModeButton;
-        aButton->mButtonImage = gVSSetupWidget->mCheckboxImage[1];
-        aButton->mOverImage = gVSSetupWidget->mCheckboxImage[1];
-        aButton->mDownImage = gVSSetupWidget->mCheckboxImage[1];
+    if (theId == VSSetupWidget_Ban_Mode) {
+        self.CheckboxChecked(VSSetupWidget_Ban_Mode, self.mBanMode);
+        self.SwapButtonImage(self.mBanModeButton, 1);
     }
 }
 
 void VSSetupWidget::CheckboxChecked(int theId, bool checked) {
     switch (theId) {
-        case 1145:
+        case VSSetupWidget_More_Packets:
             mMorePackets = !checked;
             break;
-        case 1146:
+        case VSSetupWidget_Ban_Mode:
             mBanMode = !checked;
             break;
         default:
@@ -91,8 +90,8 @@ void VSSetupMenu::_constructor() {
     Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
     // 拓展卡槽,禁选模式
     gVSSetupWidget = new VSSetupWidget;
-    ButtonWidget *aMorePacketsButton = MakeNewButton(1145, &mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
-    ButtonWidget *aBanModeButton = MakeNewButton(1146, &mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
+    ButtonWidget *aMorePacketsButton = MakeNewButton(VSSetupWidget::VSSetupWidget_More_Packets, &mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
+    ButtonWidget *aBanModeButton = MakeNewButton(VSSetupWidget::VSSetupWidget_Ban_Mode, &mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
     gVSSetupWidget->mMorePacketsButton = aMorePacketsButton;
     gVSSetupWidget->mBanModeButton = aBanModeButton;
     for (int i = 0; i < NUM_VS_BUTTONS; i++) {
@@ -116,7 +115,7 @@ void VSSetupMenu::_constructor() {
 void VSSetupMenu::_destructor() {
     old_VSSetupMenu_Destructor(this);
 
-    if (gVSSetupWidget != nullptr)
+    if (gVSSetupWidget)
         gVSSetupWidget->~VSSetupWidget();
 }
 
@@ -678,11 +677,11 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 // }
             }
             break;
-        case 1145: // 额外卡槽
-            gVSSetupWidget->ButtonDepress(1145);
+        case VSSetupWidget::VSSetupWidget_More_Packets: // 额外卡槽
+            gVSSetupWidget->ButtonDepress(VSSetupWidget::VSSetupWidget_More_Packets);
             break;
-        case 1146: // 禁选模式
-            gVSSetupWidget->ButtonDepress(1146);
+        case VSSetupWidget::VSSetupWidget_Ban_Mode: // 禁选模式
+            gVSSetupWidget->ButtonDepress(VSSetupWidget::VSSetupWidget_Ban_Mode);
             break;
         default:
             break;

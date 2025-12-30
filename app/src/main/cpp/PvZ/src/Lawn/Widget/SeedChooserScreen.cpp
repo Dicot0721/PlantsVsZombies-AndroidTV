@@ -1100,11 +1100,9 @@ void SeedChooserScreen::Draw(Graphics *g) {
 
         mToolTip1->Draw(g);
         mToolTip2->Draw(g);
-
-        return;
+    } else {
+        old_SeedChooserScreen_Draw(this, g);
     }
-
-    old_SeedChooserScreen_Draw(this, g);
 
     if (gVSSetupWidget) {
         if (gVSSetupWidget->mBanMode) {

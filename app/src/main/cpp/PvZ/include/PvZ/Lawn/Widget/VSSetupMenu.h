@@ -58,10 +58,10 @@ public:
 };
 
 class VSSetupWidget {
-private:
+public:
     enum {
-        VS_BUTTON_PACKETS = 1145,
-        VS_BUTTON_BAN = 1146,
+        VSSetupWidget_More_Packets = 1145,
+        VSSetupWidget_Ban_Mode = 1146,
     };
 
 public:
@@ -80,6 +80,7 @@ public:
     VSSetupWidget();
     ~VSSetupWidget();
     void SetDisable();
+    void SwapButtonImage(Sexy::ButtonWidget *theButton, int theIndex);
     void ButtonDepress(this VSSetupWidget &self, int theId);
     void CheckboxChecked(int theId, bool checked);
     void GetZombieSeedType();
