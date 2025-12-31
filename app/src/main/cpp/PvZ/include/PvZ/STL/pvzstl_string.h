@@ -49,7 +49,7 @@ class basic_string {
 public:
     using traits_type = std::char_traits<CharT>;
     using value_type = CharT;
-    using size_type = std::uint32_t;
+    using size_type = /* std::size_t */ std::uint32_t;
     using difference_type = std::ptrdiff_t;
     using pointer = CharT *;
     using const_pointer = const CharT *;
@@ -207,6 +207,8 @@ public:
         return _dataplus[pos];
     }
 
+    // 不提供非 const 重载以满足 noexcept 要求,
+    // 需要修改请使用 `at()`.
     [[nodiscard]] const CharT &operator[](size_type pos) const noexcept {
         assert((pos <= size()) && "string index out of bounds");
         return c_str()[pos];
@@ -704,7 +706,8 @@ protected:
         std::atomic_int32_t _ref_count; // 引用计数 (小于等于 0 时释放内存)
         CharT _data[];                  // 作为字符存储的底层数组 (柔性数组成员)
 
-        // `_rep` 在自身的成员函数中才保证是完整类型, 故不定义为非静态成员变量.
+        // C++ 标准中未明确在静态成员变量的初始化器中自身是否为完整类型 (`sizeof` 运算符需要完整类型),
+        // 故将 `_max_size` 定义为静态成员函数.
         [[nodiscard]] static consteval size_type _max_size() noexcept {
             // npos = (m + 1) * sizeof(CharT) + sizeof(_rep)
             // max_size = m / 4
@@ -726,7 +729,7 @@ protected:
             if (cap > _max_size()) {
                 throw std::length_error{"basic_string::_rep::_create"};
             }
-            constexpr size_type pagesize = 0x1000;
+            constexpr size_type pagesize = 4096; // 目标架构为 32-bit, 故不考虑 64 KB 设备
             constexpr size_type malloc_header_size = 4 * sizeof(void *);
             if ((cap > old_cap) && (cap < 2 * old_cap)) {
                 cap = 2 * old_cap;
@@ -773,6 +776,7 @@ protected:
             }
         }
 
+        // 调用过不清楚是否修改自身数据的成员函数, 如 `operator[]`, `begin()`
         [[nodiscard]] bool _is_leaked() const noexcept {
             return _ref_count < 0;
         }
