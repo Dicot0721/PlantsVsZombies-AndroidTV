@@ -30,8 +30,6 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <stdint.h>
-
 
 enum EventType : uint8_t {
     EVENT_NULL,

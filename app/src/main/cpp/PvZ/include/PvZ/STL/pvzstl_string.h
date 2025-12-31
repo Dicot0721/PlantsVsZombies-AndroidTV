@@ -729,7 +729,7 @@ protected:
             if (cap > _max_size()) {
                 throw std::length_error{"basic_string::_rep::_create"};
             }
-            constexpr size_type pagesize = 4096; // 目标架构为 32-bit, 故不考虑 64 KB 设备
+            constexpr size_type pagesize = 4096;
             constexpr size_type malloc_header_size = 4 * sizeof(void *);
             if ((cap > old_cap) && (cap < 2 * old_cap)) {
                 cap = 2 * old_cap;

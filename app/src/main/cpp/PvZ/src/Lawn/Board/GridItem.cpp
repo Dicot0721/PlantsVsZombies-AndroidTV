@@ -270,8 +270,8 @@ void GridItem::DrawCrater(Sexy::Graphics *g) {
             aCelCol = 1;
         }
 
-        float aPos = mGridY * PI + mGridX * PI * 0.25f;
-        float aTime = mBoard->mMainCounter * PI * 2.0f / 200.0f;
+        float aPos = mGridY * std::numbers::pi + mGridX * std::numbers::pi * 0.25f;
+        float aTime = mBoard->mMainCounter * std::numbers::pi * 2.0f / 200.0f;
         aYPos += sin(aPos + aTime) * 2.0f;
     } else if (mBoard->StageHasRoof()) {
         if (mGridX < 5) {
