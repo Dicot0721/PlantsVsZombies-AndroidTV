@@ -419,7 +419,10 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
 
                     // 如果已经有一个 dialog，先关掉
                     if (mTextInputDialog != null) {
-                        try { mTextInputDialog.dismiss(); } catch (Throwable ignored) {}
+                        try {
+                            mTextInputDialog.dismiss();
+                        } catch (Throwable ignored) {
+                        }
                         mTextInputDialog = null;
                     }
 
@@ -458,7 +461,8 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
                     // 把光标放到末尾
                     try {
                         edit.setSelection(edit.getText() != null ? edit.getText().length() : 0);
-                    } catch (Throwable ignored) {}
+                    } catch (Throwable ignored) {
+                    }
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
                     builder.setTitle(title != null ? title : "");

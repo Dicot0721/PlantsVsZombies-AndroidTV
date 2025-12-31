@@ -676,7 +676,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
             }
             break;
         case VSSetupWidget::VSSetupWidget_More_Packets: // 额外卡槽
-        case VSSetupWidget::VSSetupWidget_Ban_Mode: // 禁选模式
+        case VSSetupWidget::VSSetupWidget_Ban_Mode:     // 禁选模式
             gVSSetupWidget->ButtonDepress(theId);
             break;
         default:

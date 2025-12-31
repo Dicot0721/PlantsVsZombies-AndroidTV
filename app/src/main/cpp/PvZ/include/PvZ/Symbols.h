@@ -25,6 +25,7 @@
 namespace Sexy {
 class Image;
 class Font;
+class SexyAppBase;
 } // namespace Sexy
 
 class LawnApp;
@@ -1282,11 +1283,11 @@ inline Sexy::Image **Sexy_IMAGE_ESRB_RATING_Addr;
 
 inline char **ReanimTrackId_anim_head1_Addr;
 inline LawnApp **gLawnApp_Addr;
+inline Sexy::SexyAppBase **Sexy_gSexyAppBase_Addr;
 inline ReanimatorDefinition **gReanimatorDefArray_Addr;
 inline int *gEffectSystem_Addr;
 inline int *gFoleyParamArraySizeAddr;
 inline int *Challenge_gVSSuddenDeathMode_Addr;
-inline int *Sexy_gSexyAppBase_Addr;
 inline int *Sexy_SOUND_PAUSE_Addr;
 inline int *Sexy_SOUND_FROZEN_Addr;
 inline int *Sexy_SOUND_TAP_Addr;

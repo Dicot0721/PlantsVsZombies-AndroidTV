@@ -60,7 +60,7 @@ void ReanimatorCache::GetPlantImageSize(SeedType theSeedType, int &theOffsetX, i
 }
 
 void ReanimatorCache::ReanimatorCacheInitialize() {
-    mApp = (LawnApp *)*Sexy_gSexyAppBase_Addr;
+    mApp = reinterpret_cast<LawnApp *>(*Sexy_gSexyAppBase_Addr);
     for (int i = 0; i < SeedType::NUM_SEED_TYPES; i++)
         mPlantImages[i] = nullptr;
     for (int i = 0; i < LawnMowerType::NUM_MOWER_TYPES; i++)
