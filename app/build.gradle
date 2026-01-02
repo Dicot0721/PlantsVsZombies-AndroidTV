@@ -7,7 +7,7 @@ def keystorePropertiesFile = rootProject.file("keystore.properties")
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 } else {
-    Runtime.getRuntime().exec(
+    Runtime.getRuntime().exec(new String[]{
             "keytool", "-genkeypair",
             "-v", "-keystore", "${System.getProperty("user.home")}/debug.keystore",
             "-storepass", "android",
@@ -17,7 +17,7 @@ if (keystorePropertiesFile.exists()) {
             "-keysize", "2048",
             "-validity", "10000",
             "-dname", "CN=Android Debug,O=Android,C=US"
-    ).waitFor()
+    }).waitFor()
 }
 
 android {
@@ -31,7 +31,11 @@ android {
         targetSdk = 33
         versionCode = 2
         versionName = "0.0.0"
-        versionNameSuffix = '-' + new Date().format("yyMMdd")
+        versionNameSuffix = (() -> {
+            def process = Runtime.getRuntime().exec("git log --date=format:%y%m%d --pretty=format:%cd -n 1")
+            def reader = new BufferedReader(new InputStreamReader(process.getInputStream()))
+            return "-${reader.readLine()}"
+        })()
 
         ndk {
             abiFilters "armeabi-v7a"
