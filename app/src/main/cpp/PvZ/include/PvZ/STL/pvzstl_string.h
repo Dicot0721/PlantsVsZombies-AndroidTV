@@ -36,8 +36,6 @@ namespace pvzstl {
 template <typename SV, typename CharT>
 concept _convertible_to_string_view = std::is_convertible_v<const SV &, std::basic_string_view<CharT>> && !std::is_convertible_v<const SV &, const CharT *>;
 
-struct _uninitialized_size_tag {};
-
 /**
  * @class 采用写时复制 (COW) 实现的字符串类模板
  *
@@ -832,19 +830,12 @@ protected:
         return r->_data;
     }
 
-    [[nodiscard]] static constexpr size_type _from_view_pos(typename _self_view::size_type pos) noexcept {
+    [[nodiscard]] static constexpr size_type _from_view_pos(_self_view::size_type pos) noexcept {
         if constexpr (npos == _self_view::npos) {
             return pos;
         } else {
             return (pos == _self_view::npos) ? npos : static_cast<size_type>(pos);
         }
-    }
-
-    // Construct a string with enough storage to hold `size` characters, but don't initialize the characters.
-    // The contents of the string, including the null terminator, must be initialized separately.
-    explicit basic_string(_uninitialized_size_tag, size_type size)
-        : _dataplus{_rep::_create(size, 0)->_data} {
-        _get_rep()->_size = size;
     }
 
     [[nodiscard]] _rep *_get_rep() const noexcept {
@@ -918,56 +909,6 @@ protected:
         }
         return *this;
     }
-
-    [[nodiscard]] friend basic_string operator+(const basic_string &lhs, const basic_string &rhs) {
-        const size_type lhs_sz = lhs.size();
-        const size_type rhs_sz = rhs.size();
-        basic_string r(_uninitialized_size_tag{}, lhs_sz + rhs_sz);
-        traits_type::copy(r._dataplus, lhs.c_str(), lhs_sz);
-        traits_type::copy(r._dataplus + lhs_sz, rhs.c_str(), rhs_sz);
-        r._dataplus[lhs_sz + rhs_sz] = CharT{};
-        return r;
-    }
-
-    [[nodiscard]] friend basic_string operator+(const CharT *lhs, const basic_string &rhs) {
-        assert((lhs != nullptr) && "operator+(const CharT *, const basic_string &) received nullptr");
-        const size_type lhs_sz = traits_type::length(lhs);
-        const size_type rhs_sz = rhs.size();
-        basic_string r(_uninitialized_size_tag{}, lhs_sz + rhs_sz);
-        traits_type::copy(r._dataplus, lhs, lhs_sz);
-        traits_type::copy(r._dataplus + lhs_sz, rhs.c_str(), rhs_sz);
-        r._dataplus[lhs_sz + rhs_sz] = CharT{};
-        return r;
-    }
-
-    [[nodiscard]] friend basic_string operator+(CharT lhs, const basic_string &rhs) {
-        const size_type rhs_sz = rhs.size();
-        basic_string r(_uninitialized_size_tag{}, rhs_sz + 1);
-        r._dataplus[0] = lhs;
-        traits_type::copy(r._dataplus + 1, rhs.c_str(), rhs_sz);
-        r._dataplus[rhs_sz + 1] = CharT{};
-        return r;
-    }
-
-    [[nodiscard]] friend basic_string operator+(const basic_string &lhs, const CharT *rhs) {
-        assert((rhs != nullptr) && "operator+(const basic_string &, const CharT *) received nullptr");
-        const size_type lhs_sz = lhs.size();
-        const size_type rhs_sz = traits_type::length(rhs);
-        basic_string r(_uninitialized_size_tag{}, lhs_sz + rhs_sz);
-        traits_type::copy(r._dataplus, lhs.c_str(), lhs_sz);
-        traits_type::copy(r._dataplus + lhs_sz, rhs, rhs_sz);
-        r._dataplus[lhs_sz + rhs_sz] = CharT{};
-        return r;
-    }
-
-    [[nodiscard]] friend basic_string operator+(const basic_string &lhs, CharT rhs) {
-        const size_type lhs_sz = lhs.size();
-        basic_string r(_uninitialized_size_tag{}, lhs_sz + 1);
-        traits_type::copy(r._dataplus, lhs.c_str(), lhs_sz);
-        r._dataplus[lhs_sz] = rhs;
-        r._dataplus[lhs_sz + 1] = CharT{};
-        return r;
-    }
 };
 
 template <typename CharT>
@@ -988,6 +929,55 @@ template <typename CharT>
 template <typename CharT>
 [[nodiscard]] auto operator<=>(const basic_string<CharT> &lhs, const CharT *rhs) {
     return std::basic_string_view<CharT>{lhs} <=> std::basic_string_view<CharT>{rhs};
+}
+
+template <typename CharT>
+[[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, const basic_string<CharT> &rhs) {
+    basic_string<CharT> r;
+    r.reserve(lhs.size() + rhs.size());
+    r.append(lhs);
+    r.append(rhs);
+    return r;
+}
+
+template <typename CharT>
+[[nodiscard]] basic_string<CharT> operator+(const CharT *lhs, const basic_string<CharT> &rhs) {
+    assert((lhs != nullptr) && "operator+(const CharT *, const basic_string &) received nullptr");
+    const auto len = basic_string<CharT>::traits_type::length(lhs);
+    basic_string<CharT> r;
+    r.reserve(len + rhs.size());
+    r.append(lhs, len);
+    r.append(rhs);
+    return r;
+}
+
+template <typename CharT>
+[[nodiscard]] basic_string<CharT> operator+(CharT lhs, const basic_string<CharT> &rhs) {
+    basic_string<CharT> r;
+    r.reserve(1 + rhs.size());
+    r.push_back(lhs);
+    r.append(rhs);
+    return r;
+}
+
+template <typename CharT>
+[[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, const CharT *rhs) {
+    assert((rhs != nullptr) && "operator+(const basic_string &, const CharT *) received nullptr");
+    const auto len = basic_string<CharT>::traits_type::length(rhs);
+    basic_string<CharT> r;
+    r.reserve(lhs.size() + len);
+    r.append(lhs);
+    r.append(rhs, len);
+    return r;
+}
+
+template <typename CharT>
+[[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, CharT rhs) {
+    basic_string<CharT> r;
+    r.reserve(lhs.size() + 1);
+    r.append(lhs);
+    r.push_back(rhs);
+    return r;
 }
 
 template <typename CharT>
