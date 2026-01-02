@@ -37,11 +37,6 @@ jobs:
           distribution: temurin
           cache: gradle
 
-      - name: Set up ccache
-        uses: hendrikmuhs/ccache-action@v1.2
-        with:
-          key: ${{ matrix.version }}-${{ matrix.build_type }}
-
       - name: Decode keystore
         if: matrix.build_type == 'Release'
         env:

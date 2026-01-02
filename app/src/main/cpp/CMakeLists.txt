@@ -4,14 +4,6 @@ project(PvZTV)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if ("${CMAKE_CXX_COMPILER_LAUNCHER}" STREQUAL "")
-    find_program(CCACHE_PROGRAM ccache)
-    if (CCACHE_PROGRAM)
-        set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
-        set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}")
-    endif ()
-endif ()
-
 string(APPEND CMAKE_CXX_FLAGS
         " -Wall" # 开启绝大部分警告
         " -Werror=return-type"
