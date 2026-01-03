@@ -933,9 +933,7 @@ template <typename CharT>
 
 template <typename CharT>
 [[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, const basic_string<CharT> &rhs) {
-    basic_string<CharT> r;
-    r.reserve(lhs.size() + rhs.size());
-    r.append(lhs);
+    basic_string<CharT> r = lhs;
     r.append(rhs);
     return r;
 }
@@ -962,20 +960,14 @@ template <typename CharT>
 
 template <typename CharT>
 [[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, const CharT *rhs) {
-    assert((rhs != nullptr) && "operator+(const basic_string &, const CharT *) received nullptr");
-    const auto len = basic_string<CharT>::traits_type::length(rhs);
-    basic_string<CharT> r;
-    r.reserve(lhs.size() + len);
-    r.append(lhs);
-    r.append(rhs, len);
+    basic_string<CharT> r = lhs;
+    r.append(rhs);
     return r;
 }
 
 template <typename CharT>
 [[nodiscard]] basic_string<CharT> operator+(const basic_string<CharT> &lhs, CharT rhs) {
-    basic_string<CharT> r;
-    r.reserve(lhs.size() + 1);
-    r.append(lhs);
+    basic_string<CharT> r = lhs;
     r.push_back(rhs);
     return r;
 }
@@ -997,7 +989,6 @@ template <typename CharT>
 
 template <typename CharT>
 [[nodiscard]] basic_string<CharT> operator+(const CharT *lhs, basic_string<CharT> &&rhs) {
-    assert((lhs != nullptr) && "operator+(const CharT *, basic_string &&) received nullptr");
     return std::move(rhs.insert(0, lhs));
 }
 
@@ -1008,7 +999,6 @@ template <typename CharT>
 
 template <typename CharT>
 [[nodiscard]] basic_string<CharT> operator+(basic_string<CharT> &&lhs, const CharT *rhs) {
-    assert((rhs != nullptr) && "operator+(basic_string &&, const CharT *) received nullptr");
     return std::move(lhs.append(rhs));
 }
 
