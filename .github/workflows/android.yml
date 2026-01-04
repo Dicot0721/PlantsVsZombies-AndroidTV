@@ -29,6 +29,7 @@ jobs:
           repository: ${{ secrets.ASSETS_REPO }}
           path: app/src/main/assets
           token: ${{ secrets.ASSETS_TOKEN }}
+        continue-on-error: true
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -45,11 +46,13 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          echo "$KEYSTORE_ENCODED" | base64 -d > app/keystore.jks
-          echo "storeFile=keystore.jks" >> keystore.properties
-          echo "storePassword=$KEYSTORE_PASSWORD" >> keystore.properties
-          echo "keyAlias=$KEY_ALIAS" >> keystore.properties
-          echo "keyPassword=$KEY_PASSWORD" >> keystore.properties
+          if [ -n "$KEYSTORE_ENCODED" ]; then
+            echo "$KEYSTORE_ENCODED" | base64 -d > app/keystore.jks
+            echo "storeFile=keystore.jks" >> keystore.properties
+            echo "storePassword=$KEYSTORE_PASSWORD" >> keystore.properties
+            echo "keyAlias=$KEY_ALIAS" >> keystore.properties
+            echo "keyPassword=$KEY_PASSWORD" >> keystore.properties
+          fi
 
       - name: Build with Gradle
         run: |
