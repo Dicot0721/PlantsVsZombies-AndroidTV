@@ -1003,11 +1003,11 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
     if (theZombieType == ZombieType::ZOMBIE_BUNGEE)
         theIsRustle = false;
 
-    if (mApp->mGameMode == GAMEMODE_MP_VS && mApp->mGameScene == SCENE_PLAYING) {
+    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
         if (tcp_connected)
             return nullptr;
 
-        Zombie *zombie = old_Board_AddZombieInRow(this, theZombieType, theRow, theFromWave, theIsRustle);
+        Zombie *aZombie = old_Board_AddZombieInRow(this, theZombieType, theRow, theFromWave, theIsRustle);
         if (tcpClientSocket >= 0) {
             U8x4U16Buf32x2_Event event;
             event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
@@ -1016,12 +1016,12 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
             event.data1[2] = uint8_t(theFromWave);
             event.data1[3] = uint8_t(theIsRustle);
 
-            event.data2 = uint16_t(mZombies.DataArrayGetID(zombie));
-            event.data3[0].f32 = zombie->mVelX;
-            event.data3[1].f32 = zombie->mPosX;
+            event.data2 = uint16_t(mZombies.DataArrayGetID(aZombie));
+            event.data3[0].f32 = aZombie->mVelX;
+            event.data3[1].f32 = aZombie->mPosX;
             send(tcpClientSocket, &event, sizeof(U8x4U16Buf32x2_Event), 0);
         }
-        return zombie;
+        return aZombie;
     }
 
     return old_Board_AddZombieInRow(this, theZombieType, theRow, theFromWave, theIsRustle);
@@ -1200,7 +1200,13 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_PLANT_DIE:
         case EVENT_SERVER_BOARD_ZOMBIE_DIE:
         case EVENT_SERVER_BOARD_LAWNMOWER_STRART:
+
             return sizeof(U16_Event);
+
+        // --- 僵尸冻结、巨人投掷小鬼 ---
+        case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP:
+        case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW:
+            return sizeof(U16U16_Event);
 
         // --- 种子包被种下 ---
         case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED:
@@ -1386,9 +1392,12 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
-            U8x4U16Buf32x2_Event *eventZombieAdd = (U8x4U16Buf32x2_Event *)event;
+            U8x4U16Buf32x2_Event *eventZombieAdd = reinterpret_cast<U8x4U16Buf32x2_Event *>(event);
+            ZombieType aZombieType = ZombieType(eventZombieAdd->data1[0]);
+            if (aZombieType == ZombieType::ZOMBIE_IMP) // 移除主机生成时向客机同步传递的小鬼
+                return;
             tcp_connected = false;
-            Zombie *aZombie = AddZombieInRow((ZombieType)eventZombieAdd->data1[0], eventZombieAdd->data1[1], eventZombieAdd->data1[2], eventZombieAdd->data1[3]);
+            Zombie *aZombie = AddZombieInRow(aZombieType, eventZombieAdd->data1[1], eventZombieAdd->data1[2], eventZombieAdd->data1[3]);
             LOG_DEBUG("serverZombieIDMap Add {} {}", eventZombieAdd->data2, uint16_t(mZombies.DataArrayGetID(aZombie)));
             serverZombieIDMap.emplace(eventZombieAdd->data2, uint16_t(mZombies.DataArrayGetID(aZombie)));
             tcp_connected = true;
@@ -1429,6 +1438,19 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 tcp_connected = false;
                 aZombie->mIceTrapCounter = aIceTrapCounter;
                 tcp_connected = true;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW: {
+            U16U16Buf32Buf32_Event *eventImpThrow = reinterpret_cast<U16U16Buf32Buf32_Event *>(event);
+            uint16_t serverZombieID = eventImpThrow->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                float aOffsetDistance = eventImpThrow->data3.f32;
+                tcp_connected = false;
+                Zombie *aZombieImp = aZombie->ThrowAZombieImp(aOffsetDistance);
+                tcp_connected = true;
+                serverZombieIDMap.emplace(eventImpThrow->data2, uint16_t(mZombies.DataArrayGetID(aZombieImp)));
             }
         } break;
         case EVENT_SERVER_BOARD_LAWNMOWER_STRART: {

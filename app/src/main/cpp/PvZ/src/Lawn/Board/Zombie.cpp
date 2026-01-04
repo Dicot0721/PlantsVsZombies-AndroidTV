@@ -449,11 +449,15 @@ void Zombie::UpdateZombieGargantuar() {
             ReanimShowTrack("Zombie_gargantuar_whiterope", RENDER_GROUP_HIDDEN);
             mApp->PlayFoley(FoleyType::FOLEY_SWING);
 
+            if (mApp->IsVSMode() && tcp_connected)
+                return;
+
             Zombie *aZombieImp = mBoard->AddZombie(ZombieType::ZOMBIE_IMP, mFromWave, false);
             if (aZombieImp == nullptr)
                 return;
 
             float aMinThrowDistance = 40.0f;
+            float aOffserDistance = RandRangeFloat(0.0f, 100.0f);
             if (mBoard->StageHasRoof()) {
                 aThrowingDistance -= 180.0f;
                 aMinThrowDistance = -140.0f;
@@ -461,7 +465,16 @@ void Zombie::UpdateZombieGargantuar() {
             if (aThrowingDistance < aMinThrowDistance) {
                 aThrowingDistance = aMinThrowDistance;
             } else if (aThrowingDistance > 140.0f) {
-                aThrowingDistance -= RandRangeFloat(0.0f, 100.0f);
+                aThrowingDistance -= aOffserDistance;
+            }
+
+            if (tcpClientSocket >= 0) {
+                U16U16Buf32Buf32_Event event;
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW;
+                event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+                event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombieImp));
+                event.data3.f32 = aOffserDistance;
+                send(tcpClientSocket, &event, sizeof(U16U16Buf32Buf32_Event), 0);
             }
 
             aZombieImp->mPosX = mPosX - 133.0f;
@@ -526,6 +539,50 @@ void Zombie::UpdateZombieGargantuar() {
         mApp->PlayFoley(FoleyType::FOLEY_LOW_GROAN);
         PlayZombieReanim("anim_smash", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 16.0f);
     }
+}
+
+Zombie *Zombie::ThrowAZombieImp(float theOffsetDistance) {
+    float aThrowingDistance = mPosX - 360.0f;
+    Zombie *aZombieImp = mBoard->AddZombie(ZombieType::ZOMBIE_IMP, mFromWave, false);
+    if (aZombieImp == nullptr)
+        return nullptr;
+
+    float aMinThrowDistance = 40.0f;
+    if (mBoard->StageHasRoof()) {
+        aThrowingDistance -= 180.0f;
+        aMinThrowDistance = -140.0f;
+    }
+    if (aThrowingDistance < aMinThrowDistance) {
+        aThrowingDistance = aMinThrowDistance;
+    } else if (aThrowingDistance > 140.0f) {
+        aThrowingDistance -= theOffsetDistance;
+    }
+
+    aZombieImp->mPosX = mPosX - 133.0f;
+    aZombieImp->mPosY = GetPosYBasedOnRow(mRow);
+    aZombieImp->SetRow(mRow);
+    aZombieImp->mVariant = false;
+    aZombieImp->mAltitude = 88.0f;
+    aZombieImp->mRenderOrder = mRenderOrder + 1;
+    aZombieImp->mZombiePhase = ZombiePhase::PHASE_IMP_GETTING_THROWN;
+    aZombieImp->mScaleZombie = mScaleZombie;
+    aZombieImp->mBodyHealth *= mScaleZombie * mScaleZombie;
+    aZombieImp->mBodyMaxHealth *= mScaleZombie * mScaleZombie;
+
+    if (mMindControlled) {
+        aZombieImp->mPosX = mPosX + mWidth;
+        aZombieImp->StartMindControlled();
+        aZombieImp->mVelX = -3.0f;
+    } else {
+        aZombieImp->mVelX = 3.0f;
+    }
+    aZombieImp->mChilledCounter = mChilledCounter;
+    aZombieImp->mVelZ = 0.5f * (aThrowingDistance / aZombieImp->mVelX) * THOWN_ZOMBIE_GRAVITY;
+    aZombieImp->PlayZombieReanim("anim_thrown", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 18.0f);
+    aZombieImp->UpdateReanim();
+    mApp->PlayFoley(FoleyType::FOLEY_IMP);
+
+    return aZombieImp;
 }
 
 void Zombie::UpdateZombiePeaHead() {

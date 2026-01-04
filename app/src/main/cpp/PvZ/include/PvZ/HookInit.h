@@ -309,8 +309,8 @@ inline void InitHookFunction() {
     homura::HookFunction(Plant_PlayBodyReanimAddr, &Plant::PlayBodyReanim, &old_Plant_PlayBodyReanim);
     homura::HookFunction(Plant_UpdateProductionPlantAddr, &Plant::UpdateProductionPlant, &old_Plant_UpdateProductionPlant);
     homura::HookFunction(Plant_FireAddr, &Plant::Fire, nullptr);
-    homura::HookFunction(Plant_UpdateShootingAddr, &Plant::UpdateShooting, nullptr);
-    homura::HookFunction(Plant_UpdateShooterAddr, &Plant::UpdateShooter, nullptr);
+    //    homura::HookFunction(Plant_UpdateShootingAddr, &Plant::UpdateShooting, nullptr);
+    //    homura::HookFunction(Plant_UpdateShooterAddr, &Plant::UpdateShooter, nullptr);
     homura::HookFunction(Plant_IceZombiesAddr, &Plant::IceZombies, nullptr);
 
     // MSHookFunction(Plant_CobCannonFireAddr, (void *) Plant_CobCannonFire, (void **) &old_Plant_CobCannonFire);

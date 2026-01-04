@@ -286,6 +286,7 @@ public:
     void UpdateZombieImp();
     void UpdateZombieJackInTheBox();
     void UpdateZombieGargantuar();
+    Zombie *ThrowAZombieImp(float theOffsetDistance);
     void UpdateZombiePeaHead();
     void UpdateZombieGatlingHead();
     void BurnRow(int theRow);
