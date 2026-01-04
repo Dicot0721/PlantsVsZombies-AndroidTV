@@ -1208,6 +1208,10 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW:
             return sizeof(U16U16_Event);
 
+        // --- 舞王召唤舞伴 ---
+        case EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS:
+            return sizeof(U16x4U16_Event);
+
         // --- 种子包被种下 ---
         case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED:
             return sizeof(U8U8_Event);
@@ -1394,7 +1398,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
             U8x4U16Buf32x2_Event *eventZombieAdd = reinterpret_cast<U8x4U16Buf32x2_Event *>(event);
             ZombieType aZombieType = ZombieType(eventZombieAdd->data1[0]);
-            if (aZombieType == ZombieType::ZOMBIE_IMP) // 移除主机生成时向客机同步传递的小鬼
+            if (aZombieType == ZombieType::ZOMBIE_IMP || aZombieType == ZombieType::ZOMBIE_BACKUP_DANCER) // 移除主机生成时向客机同步传递的小鬼和舞伴
                 return;
             tcp_connected = false;
             Zombie *aZombie = AddZombieInRow(aZombieType, eventZombieAdd->data1[1], eventZombieAdd->data1[2], eventZombieAdd->data1[3]);
@@ -1413,6 +1417,21 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE clientZombieID {}", clientZombieID);
                 Zombie *zombie = mZombies.DataArrayGet(clientZombieID);
                 zombie->RiseFromGrave(event1->data1, event1->data2);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS: {
+            U16x4U16_Event *eventSummonBackupDancers = reinterpret_cast<U16x4U16_Event *>(event);
+            uint16_t serverZombieID = eventSummonBackupDancers->data2;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                tcp_connected = false;
+                aZombie->SummonBackupDancers();
+                tcp_connected = true;
+                for (int i = 0; i < NUM_BACKUP_DANCERS; ++i) {
+                    if (aZombie->mFollowerZombieID[i] != ZombieID::ZOMBIEID_NULL)
+                        serverZombieIDMap.emplace(uint16_t(eventSummonBackupDancers->data1[i]), uint16_t(aZombie->mFollowerZombieID[i]));
+                }
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED: {

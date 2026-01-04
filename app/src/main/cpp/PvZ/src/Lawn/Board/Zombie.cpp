@@ -877,6 +877,79 @@ void Zombie::UpdateZombieSquashHead() {
     }
 }
 
+void Zombie::UpdateZombieDancer() {
+    if (mIsEating)
+        return; // 不更新动作
+
+    if (mSummonCounter > 0) {
+        mSummonCounter--;
+        if (mSummonCounter == 0) {
+            if (GetDancerFrame() == 12 && mHasHead && mPosX < 700.0f) {
+                mZombiePhase = ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_WITH_LIGHT;
+                PlayZombieReanim("anim_point", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
+            } else {
+                mSummonCounter = 1;
+            }
+        }
+    }
+
+    if (mZombiePhase == ZombiePhase::PHASE_DANCER_DANCING_IN) {
+        if (mHasHead && mPhaseCounter == 0) {
+            mZombiePhase = ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS;
+            PlayZombieReanim("anim_point", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
+            PickRandomSpeed();
+        }
+    } else if (mZombiePhase == ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS || mZombiePhase == ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_WITH_LIGHT) {
+        Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (aBodyReanim->mLoopCount > 0) {
+            if (mZombiePhase == ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS && mBoard->CountZombiesOnScreen() <= 15) {
+                mApp->PlayFoley(FoleyType::FOLEY_DANCER);
+            }
+
+            if (!(mApp->IsVSMode() && tcp_connected))
+                SummonBackupDancers();
+            mZombiePhase = ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_HOLD;
+            mPhaseCounter = 200;
+        }
+    } else {
+        if (mZombiePhase == ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_HOLD) {
+            if (mPhaseCounter != 0)
+                return;
+
+            mZombiePhase = ZombiePhase::PHASE_DANCER_DANCING_LEFT;
+            PlayZombieReanim("anim_walk", ReanimLoopType::REANIM_LOOP, 20, 0.0f);
+        }
+
+        ZombiePhase aDancerPhase = GetDancerPhase();
+        if (aDancerPhase != mZombiePhase) {
+            switch (aDancerPhase) {
+                case ZombiePhase::PHASE_DANCER_DANCING_LEFT:
+                    mZombiePhase = aDancerPhase;
+                    PlayZombieReanim("anim_walk", ReanimLoopType::REANIM_LOOP, 10, 0.0f);
+                    break;
+
+                case ZombiePhase::PHASE_DANCER_WALK_TO_RAISE:
+                    mZombiePhase = aDancerPhase;
+                    PlayZombieReanim("anim_armraise", ReanimLoopType::REANIM_LOOP, 10, 18.0f);
+                    mApp->ReanimationTryToGet(mBodyReanimID)->mAnimTime = 0.6f;
+                    break;
+
+                case ZombiePhase::PHASE_DANCER_RAISE_LEFT_1:
+                case ZombiePhase::PHASE_DANCER_RAISE_RIGHT_1:
+                case ZombiePhase::PHASE_DANCER_RAISE_LEFT_2:
+                case ZombiePhase::PHASE_DANCER_RAISE_RIGHT_2:
+                    mZombiePhase = aDancerPhase;
+                    PlayZombieReanim("anim_armraise", ReanimLoopType::REANIM_LOOP, 10, 18.0f);
+                    break;
+            }
+        }
+
+        if (mHasHead && mSummonCounter == 0 && NeedsMoreBackupDancers()) {
+            mSummonCounter = 100;
+        }
+    }
+}
+
 void Zombie::UpdateZombieRiseFromGrave() {
     if (mInPool) {
         mAltitude = TodAnimateCurve(50, 0, mPhaseCounter, -150, -40, TodCurves::CURVE_LINEAR) * mScaleZombie;
@@ -2670,6 +2743,14 @@ void Zombie::SummonBackupDancers() {
                 break;
         }
         mFollowerZombieID[i] = SummonBackupDancer(aRow, aPosX);
+
+        if (tcpClientSocket >= 0) {
+            U16x4U16_Event event;
+            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS;
+            event.data1[i] = uint16_t(mFollowerZombieID[i]);
+            event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+            send(tcpClientSocket, &event, sizeof(U16x4U16_Event), 0);
+        }
     }
 }
 

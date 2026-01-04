@@ -81,6 +81,7 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_ZOMBIE_DIE,
     EVENT_SERVER_BOARD_ZOMBIE_ADD,
     EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE,
+    EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS,
     EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED,
     EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP,
     EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW,
@@ -385,6 +386,12 @@ public:
     uint8_t data1[4];
     uint16_t data2;
     Buffer32Bit data3[2];
+};
+
+class U16x4U16_Event : public BaseEvent {
+public:
+    uint16_t data1[4];
+    uint16_t data2;
 };
 
 

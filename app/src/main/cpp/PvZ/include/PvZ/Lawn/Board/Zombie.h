@@ -292,6 +292,7 @@ public:
     void BurnRow(int theRow);
     void UpdateZombieJalapenoHead();
     void UpdateZombieSquashHead();
+    void UpdateZombieDancer();
     void UpdateZombieRiseFromGrave();
     void UpdateDamageStates(unsigned int theDamageFlags);
     void BossDestroyIceballInRow(int theRow);

@@ -356,6 +356,7 @@ inline void *Zombie_GetZombieRectAddr;
 inline void *Zombie_UpdateZombieGatlingHeadAddr;
 inline void *Zombie_UpdateZombieJalapenoHeadAddr;
 inline void *Zombie_UpdateZombieSquashHeadAddr;
+inline void *Zombie_UpdateZombieDancerAddr;
 inline void *Zombie_UpdateZombieRiseFromGraveAddr;
 inline void *Zombie_DrawBossPartAddr;
 inline void *Zombie_BossSpawnAttackAddr;
