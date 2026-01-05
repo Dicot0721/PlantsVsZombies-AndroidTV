@@ -1199,6 +1199,7 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_TAKE_DEATHMONEY:
         case EVENT_SERVER_BOARD_PLANT_DIE:
         case EVENT_SERVER_BOARD_ZOMBIE_DIE:
+        case EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED:
         case EVENT_SERVER_BOARD_PLANT_DO_SPECIAL:
         case EVENT_SERVER_BOARD_LAWNMOWER_STRART:
             return sizeof(U16_Event);
@@ -1403,6 +1404,17 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 tcp_connected = false;
                 aZombie->DieNoLoot();
+                tcp_connected = true;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED: {
+            U16_Event *eventZombieMindControlled = reinterpret_cast<U16_Event *>(event);
+            uint16_t serverZombieID = eventZombieMindControlled->data;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                tcp_connected = false;
+                aZombie->StartMindControlled();
                 tcp_connected = true;
             }
         } break;

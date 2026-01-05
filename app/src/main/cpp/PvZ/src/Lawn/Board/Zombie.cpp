@@ -2244,6 +2244,16 @@ void Zombie::SetRow(int theRow) {
 }
 
 void Zombie::StartMindControlled() {
+    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
+        if (tcp_connected)
+            return;
+
+        if (tcpClientSocket >= 0) {
+            U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};
+            send(tcpClientSocket, &event, sizeof(U16_Event), 0);
+        }
+    }
+
     old_Zombie_StartMindControlled(this);
 }
 
