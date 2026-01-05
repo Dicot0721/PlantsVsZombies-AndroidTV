@@ -245,7 +245,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             offset += eventSize;
         }
 
-        else if (base->type >= EVENT_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
+        else if (base->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
             size_t eventSize = VSSetupMenu::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -300,7 +300,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             offset += eventSize;
         } else
 
-            if (base->type >= EVENT_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
+            if (base->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
             size_t eventSize = VSSetupMenu::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整

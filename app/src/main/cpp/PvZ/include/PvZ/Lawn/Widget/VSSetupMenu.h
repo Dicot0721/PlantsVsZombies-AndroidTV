@@ -34,10 +34,16 @@ constexpr int NUM_VS_BUTTONS = 2;
 constexpr int NUM_VS_BAN_PACKETS = 4;
 
 enum VSSetupState {
-    VS_SETUP_CONTROLLERS = 0,
-    VS_SETUP_SIDES = 1,
-    VS_SELECT_BATTLE = 2,
-    VS_CUSTOM_BATTLE = 3,
+    VS_SETUP_STATE_CONTROLLERS = 0,
+    VS_SETUP_STATE_SIDES = 1,
+    VS_SETUP_STATE_SELECT_BATTLE = 2,
+    VS_SETUP_STATE_CUSTOM_BATTLE = 3,
+};
+
+enum VSSetupMode {
+    VS_SETUP_MODE_QUICK_PLAY = 0,    // 快速游戏
+    VS_SETUP_MODE_CUSTOM_BATTLE = 1, // 自定义战场
+    VS_SETUP_MODE_RANDOM_BATTLE = 2, // 随机战场
 };
 
 namespace Sexy {
@@ -118,7 +124,7 @@ public:
     int unkInt79;                         // 79
     int mNextFirstPick;                   // 80
     int mInt81;                           // 81
-    int mInt82;                           // 82
+    VSSetupMode mSetupMode;               // 82
     int unkInt83[85];                     // 83 ~ 167
     int mInt168;                          // 168
     int unkInt169[59];                    // 169 ~ 227

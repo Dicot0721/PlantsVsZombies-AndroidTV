@@ -29,6 +29,8 @@
 
 class VSResultsMenu : public Sexy::MenuWidget {
 public:
+    enum { VSResultsMenu_Play_Again, VSResultsMenu_Quit_VS = 1 };
+
     int unk[5];           // 70 ~ 74
     int mResultsButtonId; // 75
     int unk2[9];          // 76 ~ 84
@@ -36,7 +38,8 @@ public:
 
     void Update();
     void OnExit();
-    void ButtonDepress(int buttonId);
+    void ButtonDepress(int theId);
+    void Draw(Sexy::Graphics *g);
     void DrawInfoBox(Sexy::Graphics *a2, int a3);
 
     static size_t getClientEventSize(EventType type);
@@ -53,6 +56,8 @@ public:
 inline void (*old_VSResultsMenu_Update)(VSResultsMenu *a);
 
 inline void (*old_VSResultsMenu_OnExit)(VSResultsMenu *a);
+
+inline void (*old_VSResultsMenu_Draw)(VSResultsMenu *, Sexy::Graphics *);
 
 inline void (*old_VSResultsMenu_DrawInfoBox)(VSResultsMenu *a, Sexy::Graphics *a2, int a3);
 

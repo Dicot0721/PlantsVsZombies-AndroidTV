@@ -21,8 +21,11 @@
 #include "Homura/Logger.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
+#include "PvZ/TodLib/Common/TodCommon.h"
 
 #include <unistd.h>
+
+using namespace Sexy;
 
 static std::vector<char> clientVSResultsMenuRecvBuffer;
 
@@ -41,7 +44,8 @@ void VSResultsMenu::processClientEvent(void *buf, ssize_t bufSize) {
     switch (event->type) {
         case EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS: {
             U8_Event *event1 = (U8_Event *)event;
-            int theId = event1->data;
+            int anId = event1->data;
+            mResultsButtonId = anId;
         } break;
 
         default:
@@ -86,8 +90,8 @@ void VSResultsMenu::processServerEvent(void *buf, ssize_t bufSize) {
     switch (event->type) {
         case EVENT_SERVER_VSRESULT_BUTTON_DEPRESS: {
             U8_Event *event1 = (U8_Event *)event;
-            int theId = event1->data;
-            mResultsButtonId = theId;
+            int anId = event1->data;
+            mResultsButtonId = anId;
             OnExit();
         } break;
 
@@ -195,42 +199,49 @@ void VSResultsMenu::OnExit() {
     old_VSResultsMenu_OnExit(this);
 }
 
-void VSResultsMenu::ButtonDepress(int buttonId) {
-
+void VSResultsMenu::ButtonDepress(int theId) {
     if (mIsFading)
         return;
 
-    if (buttonId == 1) {
-        mResultsButtonId = buttonId;
+    if (theId == VSResultsMenu::VSResultsMenu_Quit_VS) {
+        mResultsButtonId = theId;
         OnExit();
         return;
     }
 
-
     if (tcp_connected) {
         // 客户端点击再来一局
-        U8_Event event = {{EventType::EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS}, uint8_t(buttonId)};
+        U8_Event event = {{EventType::EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS}, uint8_t(theId)};
         send(tcpServerSocket, &event, sizeof(U8_Event), 0);
         return;
     }
 
     if (tcpClientSocket >= 0) {
-        U8_Event event = {{EventType::EVENT_SERVER_VSRESULT_BUTTON_DEPRESS}, uint8_t(buttonId)};
+        U8_Event event = {{EventType::EVENT_SERVER_VSRESULT_BUTTON_DEPRESS}, uint8_t(theId)};
         send(tcpClientSocket, &event, sizeof(U8_Event), 0);
     }
 
-
-    mResultsButtonId = buttonId;
+    mResultsButtonId = theId;
     OnExit();
 
-
-    // if (buttonId == 1) {
+    // if (theId == 1) {
     // LawnApp_DoBackToMain((int *) *gLawnApp_Addr);
     // LawnApp_KillVSResultsScreen((int *) *gLawnApp_Addr);
-    // } else if (buttonId == 0) {
+    // } else if (theId == 0) {
     // LawnApp_PreNewGame(*gLawnApp_Addr, 76, 0);
     // LawnApp_KillVSResultsScreen((int *) *gLawnApp_Addr);
     // }
+}
+
+void VSResultsMenu::Draw(Graphics *g) {
+    old_VSResultsMenu_Draw(this, g);
+
+    if (tcp_connected)
+        return;
+
+    if (tcpClientSocket >= 0 && mResultsButtonId == VSResultsMenu::VSResultsMenu_Play_Again) {
+        TodDrawString(g, "对方请求再来一次", 400, -20, *Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
+    }
 }
 
 void VSResultsMenu::DrawInfoBox(Sexy::Graphics *a2, int a3) {

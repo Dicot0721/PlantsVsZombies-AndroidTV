@@ -2278,6 +2278,21 @@ void Board::Draw(Sexy::Graphics *g) {
             g->DrawString("房间中", 370, -20);
         } else if (tcpClientSocket >= 0) {
             g->DrawString("房主", 380, -20);
+
+            VSSetupMenu *aVSSetupMenu = mApp->mVSSetupScreen;
+            if (aVSSetupMenu) {
+                pvzstl::string aRequestString;
+                if (aVSSetupMenu->mSetupMode == VSSetupMode::VS_SETUP_MODE_QUICK_PLAY) {
+                    aRequestString = "快速游戏";
+                } else if (aVSSetupMenu->mSetupMode == VSSetupMode::VS_SETUP_MODE_CUSTOM_BATTLE) {
+                    aRequestString = "自定义战场";
+                } else if (aVSSetupMenu->mSetupMode == VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE) {
+                    aRequestString = "随机战场";
+                }
+
+                TodDrawString(g, "对方想玩：", 320, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_CENTER);
+                TodDrawString(g, aRequestString, 500, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_CENTER);
+            }
         } else {
             g->DrawString("本地游戏", 360, -20);
         }
@@ -4054,7 +4069,7 @@ void Board::UpdateButtons() {
         gGamePlayerIndex = -1;
     }
     if (gButtonDownVSSetup) {
-        if (!(aVSSetup->mState == VSSetupState::VS_CUSTOM_BATTLE && gButtonCode == GamepadButton::BUTTONCODE_B)) { // 修复对战选卡阶段按下 B 键崩溃
+        if (!(aVSSetup->mState == VSSetupState::VS_SETUP_STATE_CUSTOM_BATTLE && gButtonCode == GamepadButton::BUTTONCODE_B)) { // 修复对战选卡阶段按下 B 键崩溃
             aVSSetup->GameButtonDown(gButtonCode, gGamePlayerIndex, 0);
         }
         gButtonDownVSSetup = false;

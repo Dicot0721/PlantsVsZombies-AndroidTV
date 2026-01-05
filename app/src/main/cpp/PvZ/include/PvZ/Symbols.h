@@ -679,6 +679,8 @@ inline int *VSSetupMenu_GAMEPAD_X_POSITIONSAddr;
 
 inline void *VSResultsMenu_UpdateAddr;
 inline void *VSResultsMenu_OnExitAddr;
+inline void *VSResultsMenu_DrawAddr;
+inline void *VSResultsMenu_DrawOverlayAddr;
 inline void *VSResultsMenu_DrawInfoBoxAddr;
 inline void *VSResultsMenu_ButtonDepressAddr;
 inline void *VSResultsMenu_InitFromBoardAddr;
@@ -1223,6 +1225,7 @@ inline Image **IMAGE_PEA_SHADOWS;
 inline Image **IMAGE_MP_TARGETS_X;
 
 inline Font **FONT_DWARVENTODCRAFT18;
+inline Font **FONT_HOUSEOFTERROR28;
 
 inline int *SOUND_BALLOON_POP;
 inline int *SOUND_BOING;

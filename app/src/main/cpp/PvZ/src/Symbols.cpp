@@ -692,6 +692,8 @@ bool LoadGameMain() {
 
     VSResultsMenu_UpdateAddr = dlsym(handle, "_ZN13VSResultsMenu6UpdateEv");
     VSResultsMenu_OnExitAddr = dlsym(handle, "_ZN13VSResultsMenu6OnExitEv");
+    VSResultsMenu_DrawAddr = dlsym(handle, "_ZN13VSResultsMenu4DrawEPN4Sexy8GraphicsE");
+    VSResultsMenu_DrawOverlayAddr = dlsym(handle, "_ZN13VSResultsMenu11DrawOverlayEPN4Sexy8GraphicsE");
     VSResultsMenu_DrawInfoBoxAddr = dlsym(handle, "_ZN13VSResultsMenu11DrawInfoBoxEPN4Sexy8GraphicsEi");
     VSResultsMenu_ButtonDepressAddr = dlsym(handle, "_ZN13VSResultsMenu13ButtonDepressEi");
     VSResultsMenu_InitFromBoardAddr = dlsym(handle, "_ZN13VSResultsMenu13InitFromBoardEP5Board");
@@ -1220,6 +1222,7 @@ bool LoadGameMain() {
     Sexy::IMAGE_MP_TARGETS_X = reinterpret_cast<Sexy::Image **>(dlsym(handle, "_ZN4Sexy18IMAGE_MP_TARGETS_XE"));
 
     Sexy::FONT_DWARVENTODCRAFT18 = reinterpret_cast<Sexy::Font **>(dlsym(handle, "_ZN4Sexy22FONT_DWARVENTODCRAFT18E"));
+    Sexy::FONT_HOUSEOFTERROR28 = reinterpret_cast<Sexy::Font **>(dlsym(handle, "_ZN4Sexy20FONT_HOUSEOFTERROR28E"));
 
     Sexy::SOUND_BALLOON_POP = reinterpret_cast<int *>(dlsym(handle, "_ZN4Sexy17SOUND_BALLOON_POPE"));
 

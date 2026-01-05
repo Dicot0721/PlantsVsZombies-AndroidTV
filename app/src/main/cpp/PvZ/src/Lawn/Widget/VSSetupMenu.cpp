@@ -118,6 +118,24 @@ void VSSetupMenu::_destructor() {
 
 void VSSetupMenu::Draw(Graphics *g) {
     old_VSSetupMenu_Draw(this, g);
+
+    if (tcp_connected)
+        return;
+
+    if (tcpClientSocket >= 0) {
+        pvzstl::string aRequestString;
+        if (mSetupMode == VSSetupMode::VS_SETUP_MODE_QUICK_PLAY) {
+            aRequestString = "对方想玩"
+                             "快速游戏";
+        } else if (mSetupMode == VSSetupMode::VS_SETUP_MODE_CUSTOM_BATTLE) {
+            aRequestString = "对方想玩"
+                             "自定义战场";
+        } else if (mSetupMode == VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE) {
+            aRequestString = "对方想玩"
+                             "随机战场";
+        }
+        TodDrawString(g, aRequestString, 400, 300, *Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
+    }
 }
 
 
@@ -133,7 +151,7 @@ void VSSetupMenu::AddedToManager(Sexy::WidgetManager *a2) {
 }
 
 void VSSetupMenu::MouseDown(int x, int y, int theCount) {
-    if (mState == VS_SETUP_SIDES) {
+    if (mState == VS_SETUP_STATE_SIDES) {
         Sexy::Widget *theController1Widget = FindWidget(7);
         Sexy::Widget *theController2Widget = FindWidget(8);
         if (x > theController1Widget->mX && x < theController1Widget->mX + 170 && y > theController1Widget->mY && y < theController1Widget->mY + 122) {
@@ -225,10 +243,10 @@ void VSSetupMenu::Update() {
         old_VSSetupMenu_Update(this);
     }
 
-    if (mState == VS_SETUP_CONTROLLERS) {
+    if (mState == VS_SETUP_STATE_CONTROLLERS) {
         return;
     }
-    if (mState == VS_SETUP_SIDES && !tcp_connected && tcpClientSocket == -1 && !isKeyboardTwoPlayerMode) {
+    if (mState == VS_SETUP_STATE_SIDES && !tcp_connected && tcpClientSocket == -1 && !isKeyboardTwoPlayerMode) {
         // 本地游戏
         // 自动分配阵营
         //        mController1Position = 0;
@@ -343,6 +361,8 @@ static std::vector<char> clientVSSetupMenuRecvBuffer;
 
 size_t VSSetupMenu::getClientEventSize(EventType type) {
     switch (type) {
+        case EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS:
+            return sizeof(U8_Event);
         case EVENT_SEEDCHOOSER_SELECT_SEED:
             return sizeof(U8U8_Event);
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER:
@@ -358,6 +378,11 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
     BaseEvent *event = (BaseEvent *)buf;
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
+        case EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS: {
+            U8_Event *eventButtonDepress = (U8_Event *)event;
+            int anId = eventButtonDepress->data;
+            mSetupMode = VSSetupMode(anId - 9);
+        } break;
         case EVENT_SEEDCHOOSER_SELECT_SEED: {
             U8U8_Event *event1 = (U8U8_Event *)event;
             SeedType theSeedType = (SeedType)event1->data1;
@@ -417,7 +442,7 @@ static std::vector<char> serverVSSetupMenuRecvBuffer;
 
 size_t VSSetupMenu::getServerEventSize(EventType type) {
     switch (type) {
-        case EVENT_VSSETUPMENU_BUTTON_DEPRESS:
+        case EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS:
         case EVENT_VSSETUPMENU_ENTER_STATE:
             return sizeof(U8_Event);
         case EVENT_SEEDCHOOSER_SELECT_SEED:
@@ -436,11 +461,11 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
     BaseEvent *event = (BaseEvent *)buf;
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
-        case EVENT_VSSETUPMENU_BUTTON_DEPRESS: {
+        case EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS: {
             U8_Event *event1 = (U8_Event *)event;
             int theId = event1->data;
             LOG_DEBUG("theId={}", theId);
-            if (theId == VSSetupMenu_Random_Battle && mState == VS_SELECT_BATTLE) { // 随机战场
+            if (theId == VSSetupMenu_Random_Battle && mState == VS_SETUP_STATE_SELECT_BATTLE) { // 随机战场
                 break;
             }
             tcp_connected = false;
@@ -527,13 +552,13 @@ void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
     // 修复在对战的阵营选取界面无法按返回键退出的BUG。
     if (theKey == Sexy::KeyCode::KEYCODE_ESCAPE) {
         switch (mState) {
-            case VS_SETUP_CONTROLLERS:
+            case VS_SETUP_STATE_CONTROLLERS:
                 break;
-            case VS_SETUP_SIDES:
-            case VS_SELECT_BATTLE:
+            case VS_SETUP_STATE_SIDES:
+            case VS_SETUP_STATE_SELECT_BATTLE:
                 mApp->DoBackToMain();
                 return;
-            case VS_CUSTOM_BATTLE: // 自定义战场
+            case VS_SETUP_STATE_CUSTOM_BATTLE: // 自定义战场
                 mApp->DoNewOptions(false, 0);
                 return;
         }
@@ -543,12 +568,12 @@ void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
 }
 
 void VSSetupMenu::OnStateEnter(VSSetupState theState) {
-    if (theState == VSSetupState::VS_SETUP_CONTROLLERS) {
+    if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {
 
         LOG_DEBUG("[TCP] OnStateEnter: {}", (tcp_connected || tcpClientSocket >= 0));
         if (tcp_connected || tcpClientSocket >= 0) {
             SetSecondPlayerIndex(mApp->mTwoPlayerState);
-            GoToState(VSSetupState::VS_SETUP_SIDES);
+            GoToState(VSSetupState::VS_SETUP_STATE_SIDES);
             return;
         }
         mController2Index = -1;
@@ -558,14 +583,14 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         int aButtonId = aWaitDialog->WaitForResult(true);
         if (aButtonId == 1000) {
             SetSecondPlayerIndex(mApp->mTwoPlayerState);
-            GoToState(VSSetupState::VS_SETUP_SIDES);
+            GoToState(VSSetupState::VS_SETUP_STATE_SIDES);
         } else if (aButtonId == 1001) {
             CloseVSSetup(true);
             mApp->KillBoard();
             mApp->ShowGameSelector();
         }
         return;
-    } else if (theState == VSSetupState::VS_SELECT_BATTLE) {
+    } else if (theState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE) {
         gGamepad1ToPlayerIndex = mController1Position;
     } else if (tcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_VSSETUPMENU_ENTER_STATE}, uint8_t(theState)};
@@ -574,7 +599,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
 
     old_VSSetupMenu_OnStateEnter(this, theState);
 
-    //    if (mState == VS_CUSTOM_BATTLE) {
+    //    if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
     //    mNextFirstPick = msNextFirstPick; // 0:植物先选,1:僵尸先选
     //    }
 }
@@ -584,12 +609,7 @@ void VSSetupMenu::ButtonPress(int theId) {
 }
 
 void VSSetupMenu::ButtonDepress(int theId) {
-
-    if (tcp_connected) {
-        return;
-    }
-
-    if (!isKeyboardTwoPlayerMode && mState == VS_SETUP_SIDES) {
+    if (!isKeyboardTwoPlayerMode && mState == VS_SETUP_STATE_SIDES) {
         // 自动分配阵营
         // GameButtonDown(GamepadButton::BUTTONCODE_LEFT, 0, 0);
         // GameButtonDown(GamepadButton::BUTTONCODE_RIGHT, 1, 0);
@@ -607,13 +627,19 @@ void VSSetupMenu::ButtonDepress(int theId) {
         //        }
     }
 
-    old_VSSetupMenu_ButtonDepress(this, theId);
+    if (tcp_connected) {
+        // 客户端点击再来一局
+        U8_Event event = {{EventType::EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
+        send(tcpServerSocket, &event, sizeof(U8_Event), 0);
+        return;
+    }
 
     if (tcpClientSocket >= 0) {
-        U8_Event event = {{EventType::EVENT_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
+        U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
         send(tcpClientSocket, &event, sizeof(U8_Event), 0);
     }
 
+    old_VSSetupMenu_ButtonDepress(this, theId);
 
     mApp->mBoard->PickBackground(); // 修改器修改场地后开局立即更换
 
@@ -639,7 +665,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
             }
             break;
         case VSSetupMenu_Custom_Battle:
-            if (mState == VS_CUSTOM_BATTLE) {
+            if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
                 gVSSetupWidget->SetDisable();
             }
             if (gVSSetupWidget && gVSSetupWidget->mBanMode) { // 禁选模式下交换双方控制权
