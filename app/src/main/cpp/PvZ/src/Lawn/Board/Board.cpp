@@ -1194,11 +1194,12 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_ADD:
             return sizeof(U8x4U16Buf32x2_Event);
 
-        // --- 金钱类、植物和僵尸死亡、植物触发特性、小推车启动 ---
+        // --- 金钱类、 植物,僵尸,场地物死亡、 僵尸魅惑、植物触发特性、小推车启动 ---
         case EVENT_SERVER_BOARD_TAKE_SUNMONEY:
         case EVENT_SERVER_BOARD_TAKE_DEATHMONEY:
         case EVENT_SERVER_BOARD_PLANT_DIE:
         case EVENT_SERVER_BOARD_ZOMBIE_DIE:
+        case EVENT_SERVER_BOARD_GRIDITEM_DIE:
         case EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED:
         case EVENT_SERVER_BOARD_PLANT_DO_SPECIAL:
         case EVENT_SERVER_BOARD_LAWNMOWER_STRART:
@@ -1323,6 +1324,17 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 plant->mLaunchCounter = event1->data2;
             }
         } break;
+        case EVENT_SERVER_BOARD_GRIDITEM_DIE: {
+            U16_Event *eventGridItemDie = reinterpret_cast<U16_Event *>(event);
+            uint16_t serverGridItemID = eventGridItemDie->data;
+            uint16_t clientGridItemID;
+            if (homura::FindInMap(serverGridItemIDMap, serverGridItemID, clientGridItemID)) {
+                GridItem *aGridItem = mGridItems.DataArrayGet(clientGridItemID);
+                tcp_connected = false;
+                aGridItem->GridItemDie();
+                tcp_connected = true;
+            }
+        } break;
         case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER: {
             U16U16_Event *event1 = (U16U16_Event *)event;
             uint16_t clientGridItemID;
@@ -1332,7 +1344,6 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE: {
-
             U8U8U16U16_Event *event1 = (U8U8U16U16_Event *)event;
             GridItem *gridItem = AddAGraveStone(event1->data1, event1->data2);
             gridItem->mLaunchCounter = event1->data4;
@@ -4849,7 +4860,7 @@ int Board::TotalZombiesHealthInWave(int theWaveIndex) {
     return aTotalHealth;
 }
 
-int Board::KillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags) {
+int Board::CustomKillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags) {
     Zombie *aZombie = nullptr;
     int aKilledZombies = 0;
     while (IterateZombies(aZombie)) {

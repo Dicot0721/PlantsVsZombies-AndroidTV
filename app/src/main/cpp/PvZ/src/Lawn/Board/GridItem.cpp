@@ -38,6 +38,20 @@
 
 using namespace Sexy;
 
+void GridItem::GridItemDie() {
+    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
+        if (tcp_connected)
+            return;
+
+        if (tcpClientSocket >= 0) {
+            U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_DIE}, uint16_t(mBoard->mGridItems.DataArrayGetID(this))};
+            send(tcpClientSocket, &event, sizeof(U16_Event), 0);
+        }
+    }
+
+    old_GridItem_GridItemDie(this);
+}
+
 void GridItem::DrawScaryPot(Sexy::Graphics *g) {
     // 修复路灯花照透罐子
 

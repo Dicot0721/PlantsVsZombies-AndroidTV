@@ -220,6 +220,7 @@ inline void InitHookFunction() {
     homura::HookFunction(GamepadControls_OnButtonDownAddr, &GamepadControls::OnButtonDown, &old_GamepadControls_OnButtonDown);
 
 
+    homura::HookFunction(GridItem_GridItemDieAddr, &GridItem::GridItemDie, &old_GridItem_GridItemDie);
     homura::HookFunction(GridItem_UpdateAddr, &GridItem::Update, &old_GridItem_Update);
     homura::HookFunction(GridItem_UpdateScaryPotAddr, &GridItem::UpdateScaryPot, &old_GridItem_UpdateScaryPot);
     homura::HookFunction(GridItem_DrawStinkyAddr, &GridItem::DrawStinky, &old_GridItem_DrawStinky);

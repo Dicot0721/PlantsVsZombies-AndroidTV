@@ -71,13 +71,11 @@ public:
     int unkMems2[4];                         // 71 ~ 74
     // 大小75个整数
 
-    void GridItemDie() {
-        reinterpret_cast<void (*)(GridItem *)>(GridItem_GridItemDieAddr)(this);
-    }
     void UpdateBurialMound() {
         reinterpret_cast<void (*)(GridItem *)>(GridItem_UpdateBurialMoundAddr)(this);
     }
 
+    void GridItemDie();
     void DrawScaryPot(Sexy::Graphics *g);
     void Update();
     void UpdateScaryPot();
@@ -89,6 +87,8 @@ public:
 /***************************************************************************************************************/
 inline bool transparentVase;
 
+
+inline void (*old_GridItem_GridItemDie)(GridItem *);
 
 inline void (*old_GridItem_Update)(GridItem *a1);
 
