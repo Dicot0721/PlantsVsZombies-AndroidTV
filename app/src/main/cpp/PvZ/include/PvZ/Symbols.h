@@ -86,6 +86,7 @@ inline void *Board_KeyUpAddr;
 inline void *Board_HasConveyorBeltSeedBankAddr;
 inline void *Board_TakeSunMoneyAddr;
 inline void *Board_AddALadderAddr;
+inline void *Board_AddACraterAddr;
 inline void *Board_AddPlantAddr;
 inline void *Board_AddZombieInRowAddr;
 inline void *Board_AddZombieAddr;
@@ -613,6 +614,7 @@ inline void *Plant_LaunchThreepeaterAddr;
 inline void *Plant_LaunchStarFruitAddr;
 inline void *Plant_FindTargetAndFireAddr;
 inline void *Plant_IceZombiesAddr;
+inline void *Plant_BlowAwayFliersAddr;
 
 
 inline void *Projectile_UpdateAddr;
@@ -1226,6 +1228,8 @@ inline int *SOUND_BALLOON_POP;
 inline int *SOUND_BOING;
 inline int *SOUND_BUZZER;
 inline int *SOUND_TAP;
+inline int *SOUND_DOOMSHROOM;
+inline int *SOUND_POTATO_MINE;
 } // namespace Sexy
 
 inline Sexy::Image **Sexy_IMAGE_SEEDPACKETFLASH_Addr;

@@ -595,21 +595,125 @@ void Plant::DrawSeedType(Sexy::Graphics *g, SeedType theSeedType, SeedType theIm
     g->SetColorizeImages(ColorizeImages);
 }
 
+void Plant::KillAllPlantsNearDoom() {
+    Plant *aPlant = nullptr;
+    while (mBoard->IteratePlants(aPlant)) {
+        if (aPlant->mRow == mRow && aPlant->mPlantCol == mPlantCol) {
+            aPlant->Die();
+        }
+    }
+}
+
 void Plant::DoSpecial() {
     // 试图修复辣椒爆炸后反而在本行的末尾处产生冰道。失败。
 
-    if (mSeedType == SeedType::SEED_CHERRYBOMB) {
-        // 用于成就
-        int num1 = mBoard->GetLiveZombiesCount();
-        old_Plant_DoSpecial(this);
-        int num2 = mBoard->GetLiveZombiesCount();
-        if (num1 - num2 >= 10 && !mApp->IsLittleTroubleLevel()) {
-            mBoard->GrantAchievement(AchievementId::ACHIEVEMENT_EXPLODONATOR, true);
+    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
+        if (tcp_connected)
+            return;
+
+        if (tcpClientSocket >= 0) {
+            U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_DO_SPECIAL}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
+            send(tcpClientSocket, &event, sizeof(U16_Event), 0);
         }
-        return;
     }
 
-    old_Plant_DoSpecial(this);
+    int aPosX = mX + mWidth / 2;
+    int aPosY = mY + mHeight / 2;
+    int aDamageRangeFlags = GetDamageRangeFlags(PlantWeapon::WEAPON_PRIMARY);
+
+    switch (mSeedType) {
+        case SeedType::SEED_BLOVER: {
+            if (mState != PlantState::STATE_DOINGSPECIAL) {
+                mState = PlantState::STATE_DOINGSPECIAL;
+                BlowAwayFliers(mX, mRow);
+            }
+            break;
+        }
+        case SeedType::SEED_CHERRYBOMB: {
+            mApp->PlayFoley(FoleyType::FOLEY_CHERRYBOMB);
+            mApp->PlayFoley(FoleyType::FOLEY_JUICY);
+
+            if (mBoard->KillAllZombiesInRadius(mRow, aPosX, aPosY, 115, 1, true, aDamageRangeFlags) >= 10)
+                if (!!mApp->IsLittleTroubleLevel())
+                    mBoard->GrantAchievement(AchievementId::ACHIEVEMENT_EXPLODONATOR, true);
+
+            mApp->AddTodParticle(aPosX, aPosY, (int)RenderLayer::RENDER_LAYER_TOP, ParticleEffect::PARTICLE_POWIE);
+            mBoard->ShakeBoard(3, -4);
+
+            Die();
+            break;
+        }
+        case SeedType::SEED_DOOMSHROOM: {
+            mApp->PlaySample(*SOUND_DOOMSHROOM);
+
+            mBoard->KillAllZombiesInRadius(mRow, aPosX, aPosY, 250, 3, true, aDamageRangeFlags);
+            KillAllPlantsNearDoom();
+
+            mApp->AddTodParticle(aPosX, aPosY, (int)RenderLayer::RENDER_LAYER_TOP, ParticleEffect::PARTICLE_DOOM);
+            mBoard->AddACrater(mPlantCol, mRow)->mGridItemCounter = 18000;
+            mBoard->ShakeBoard(3, -4);
+
+            Die();
+            break;
+        }
+        case SeedType::SEED_JALAPENO: {
+            mApp->PlayFoley(FoleyType::FOLEY_JALAPENO_IGNITE);
+            mApp->PlayFoley(FoleyType::FOLEY_JUICY);
+
+            mBoard->DoFwoosh(mRow);
+            mBoard->ShakeBoard(3, -4);
+
+            BurnRow(mRow);
+            mBoard->mIceTimer[mRow] = 20;
+
+            Die();
+            break;
+        }
+        case SeedType::SEED_UMBRELLA: {
+            if (mState != PlantState::STATE_UMBRELLA_TRIGGERED && mState != PlantState::STATE_UMBRELLA_REFLECTING) {
+                mState = PlantState::STATE_UMBRELLA_TRIGGERED;
+                mStateCountdown = 5;
+
+                PlayBodyReanim("anim_block", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 22.0f);
+            }
+
+            break;
+        }
+        case SeedType::SEED_ICESHROOM: {
+            mApp->PlayFoley(FoleyType::FOLEY_FROZEN);
+            IceZombies();
+            mApp->AddTodParticle(aPosX, aPosY, (int)RenderLayer::RENDER_LAYER_TOP, ParticleEffect::PARTICLE_ICE_TRAP);
+
+            Die();
+            break;
+        }
+        case SeedType::SEED_POTATOMINE: {
+            aPosX = mX + mWidth / 2 - 20;
+            aPosY = mY + mHeight / 2;
+
+            mApp->PlaySample(*SOUND_POTATO_MINE);
+            mBoard->KillAllZombiesInRadius(mRow, aPosX, aPosY, 60, 0, false, aDamageRangeFlags);
+
+            int aRenderPosition = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PARTICLE, mRow, 0);
+            mApp->AddTodParticle(aPosX + 20.0f, aPosY, aRenderPosition, ParticleEffect::PARTICLE_POTATO_MINE);
+            mBoard->ShakeBoard(3, -4);
+
+            Die();
+            break;
+        }
+        case SeedType::SEED_INSTANT_COFFEE: {
+            Plant *aPlant = mBoard->GetTopPlantAt(mPlantCol, mRow, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
+            if (aPlant && aPlant->mIsAsleep) {
+                aPlant->mWakeUpCounter = 100;
+            }
+
+            mState = PlantState::STATE_DOINGSPECIAL;
+            PlayBodyReanim("anim_crumble", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 22.0f);
+            mApp->PlayFoley(FoleyType::FOLEY_COFFEE);
+
+            break;
+        }
+    }
 }
 
 // void Plant_CobCannonFire(Plant *plant, int x, int y) {
@@ -1375,18 +1479,18 @@ int Plant::GetRefreshTimeAdjusted(SeedType theSeedType) {
     }
 }
 
-bool Plant::IsNocturnal(SeedType theSeedtype) {
-    return theSeedtype == SeedType::SEED_PUFFSHROOM || theSeedtype == SeedType::SEED_SEASHROOM || theSeedtype == SeedType::SEED_SUNSHROOM || theSeedtype == SeedType::SEED_FUMESHROOM
-        || theSeedtype == SeedType::SEED_HYPNOSHROOM || theSeedtype == SeedType::SEED_DOOMSHROOM || theSeedtype == SeedType::SEED_ICESHROOM || theSeedtype == SeedType::SEED_MAGNETSHROOM
-        || theSeedtype == SeedType::SEED_SCAREDYSHROOM || theSeedtype == SeedType::SEED_GLOOMSHROOM;
+bool Plant::IsNocturnal(SeedType theSeedType) {
+    return theSeedType == SeedType::SEED_PUFFSHROOM || theSeedType == SeedType::SEED_SEASHROOM || theSeedType == SeedType::SEED_SUNSHROOM || theSeedType == SeedType::SEED_FUMESHROOM
+        || theSeedType == SeedType::SEED_HYPNOSHROOM || theSeedType == SeedType::SEED_DOOMSHROOM || theSeedType == SeedType::SEED_ICESHROOM || theSeedType == SeedType::SEED_MAGNETSHROOM
+        || theSeedType == SeedType::SEED_SCAREDYSHROOM || theSeedType == SeedType::SEED_GLOOMSHROOM;
 }
 
 bool Plant::IsAquatic(SeedType theSeedType) {
     return theSeedType == SeedType::SEED_LILYPAD || theSeedType == SeedType::SEED_TANGLEKELP || theSeedType == SeedType::SEED_SEASHROOM || theSeedType == SeedType::SEED_CATTAIL;
 }
 
-bool Plant::IsFlying(SeedType theSeedtype) {
-    return theSeedtype == SeedType::SEED_INSTANT_COFFEE;
+bool Plant::IsFlying(SeedType theSeedType) {
+    return theSeedType == SeedType::SEED_INSTANT_COFFEE;
 }
 
 bool Plant::IsUpgrade(SeedType theSeedType) {
@@ -1868,4 +1972,9 @@ void Plant::IceZombies() {
             aBossZombie->BossDestroyFireball();
         }
     }
+}
+
+bool Plant::IsDisposable(SeedType theSeedType) {
+    return theSeedType == SeedType::SEED_CHERRYBOMB || theSeedType == SeedType::SEED_JALAPENO || theSeedType == SeedType::SEED_HYPNOSHROOM || theSeedType == SeedType::SEED_ICESHROOM
+        || theSeedType == SeedType::SEED_ICESHROOM || theSeedType == SeedType::SEED_ICESHROOM;
 }

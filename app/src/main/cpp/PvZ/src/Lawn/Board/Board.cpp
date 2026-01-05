@@ -1194,13 +1194,13 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_ADD:
             return sizeof(U8x4U16Buf32x2_Event);
 
-        // --- 金钱类、植物和僵尸死亡、小推车启动 ---
+        // --- 金钱类、植物和僵尸死亡、植物触发特性、小推车启动 ---
         case EVENT_SERVER_BOARD_TAKE_SUNMONEY:
         case EVENT_SERVER_BOARD_TAKE_DEATHMONEY:
         case EVENT_SERVER_BOARD_PLANT_DIE:
         case EVENT_SERVER_BOARD_ZOMBIE_DIE:
+        case EVENT_SERVER_BOARD_PLANT_DO_SPECIAL:
         case EVENT_SERVER_BOARD_LAWNMOWER_STRART:
-
             return sizeof(U16_Event);
 
         // --- 僵尸冻结、巨人投掷小鬼 ---
@@ -1381,6 +1381,17 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
                 tcp_connected = false;
                 aPlant->Die();
+                tcp_connected = true;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_PLANT_DO_SPECIAL: {
+            U16_Event *eventPlantDoSpecial = reinterpret_cast<U16_Event *>(event);
+            uint16_t serverPlantID = eventPlantDoSpecial->data;
+            uint16_t clientPlantID;
+            if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
+                Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
+                tcp_connected = false;
+                aPlant->DoSpecial();
                 tcp_connected = true;
             }
         } break;
@@ -4826,8 +4837,9 @@ int Board::TotalZombiesHealthInWave(int theWaveIndex) {
     return aTotalHealth;
 }
 
-void Board::KillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags) {
+int Board::KillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags) {
     Zombie *aZombie = nullptr;
+    int aKilledZombies = 0;
     while (IterateZombies(aZombie)) {
         if (aZombie->EffectedByDamage(theDamageRangeFlags)) {
             Rect aZombieRect = aZombie->GetZombieRect();
@@ -4842,6 +4854,8 @@ void Board::KillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius
                 } else {
                     aZombie->TakeDamage(1800, 18U);
                 }
+
+                aKilledZombies++;
             }
         }
     }
@@ -4856,6 +4870,8 @@ void Board::KillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius
             }
         }
     }
+
+    return aKilledZombies;
 }
 
 void Board::KillAllPlantsInRadius(int theX, int theY, int theRadius) {

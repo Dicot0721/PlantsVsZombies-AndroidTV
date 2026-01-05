@@ -90,6 +90,7 @@ bool LoadGameMain() {
     Board_GridToPixelYAddr = dlsym(handle, "_ZN5Board12GridToPixelYEii");
     Board_TakeSunMoneyAddr = dlsym(handle, "_ZN5Board12TakeSunMoneyEii");
     Board_AddALadderAddr = dlsym(handle, "_ZN5Board10AddALadderEii");
+    Board_AddACraterAddr = dlsym(handle, "_ZN5Board10AddACraterEii");
     Board_AddPlantAddr = dlsym(handle, "_ZN5Board8AddPlantEii8SeedTypeS0_ib");
     Board_AddZombieInRowAddr = dlsym(handle, "_ZN5Board14AddZombieInRowE10ZombieTypeiib");
     Board_AddZombieAddr = dlsym(handle, "_ZN5Board9AddZombieE10ZombieTypeib");
@@ -626,6 +627,7 @@ bool LoadGameMain() {
     Plant_LaunchStarFruitAddr = dlsym(handle, "_ZN5Plant15LaunchStarFruitEv");
     Plant_FindTargetAndFireAddr = dlsym(handle, "_ZN5Plant17FindTargetAndFireEi11PlantWeapon");
     Plant_IceZombiesAddr = dlsym(handle, "_ZN5Plant10IceZombiesEv");
+    Plant_BlowAwayFliersAddr = dlsym(handle, "_ZN5Plant14BlowAwayFliersEii");
 
 
     Projectile_UpdateAddr = dlsym(handle, "_ZN10Projectile6UpdateEv");
@@ -1284,6 +1286,8 @@ bool LoadGameMain() {
     Sexy::SOUND_BOING = reinterpret_cast<int *>(dlsym(handle, "_ZN4Sexy11SOUND_BOINGE"));
     Sexy::SOUND_BUZZER = reinterpret_cast<int *>(dlsym(handle, "_ZN4Sexy12SOUND_BUZZERE"));
     Sexy::SOUND_TAP = reinterpret_cast<int *>(dlsym(handle, "_ZN4Sexy9SOUND_TAPE"));
+    Sexy::SOUND_DOOMSHROOM = reinterpret_cast<int *>(dlsym(handle, "_ZN4Sexy16SOUND_DOOMSHROOME"));
+    Sexy::SOUND_POTATO_MINE = reinterpret_cast<int *>(dlsym(handle, "_ZN4Sexy17SOUND_POTATO_MINEE"));
     Sexy_SOUND_FROZEN_Addr = (int *)dlsym(handle, "_ZN4Sexy12SOUND_FROZENE");
     Sexy_SOUND_TAP_Addr = (int *)dlsym(handle, "_ZN4Sexy9SOUND_TAPE");
     Sexy_SOUND_FINALWAVE_Addr = (int *)dlsym(handle, "_ZN4Sexy15SOUND_FINALWAVEE");

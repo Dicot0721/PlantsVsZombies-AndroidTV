@@ -372,6 +372,9 @@ public:
     GridItem *AddALadder(int theGridX, int theGridY) {
         return reinterpret_cast<GridItem *(*)(Board *, int, int)>(Board_AddALadderAddr)(this, theGridX, theGridY);
     }
+    GridItem *AddACrater(int theGridX, int theGridY) {
+        return reinterpret_cast<GridItem *(*)(Board *, int, int)>(Board_AddACraterAddr)(this, theGridX, theGridY);
+    }
     void ClearCursor(int thePlayerIndex) {
         reinterpret_cast<void (*)(Board *, int)>(Board_ClearCursorAddr)(this, thePlayerIndex);
     }
@@ -554,7 +557,7 @@ public:
     bool IsPoolSquare(int theGridX, int theGridY);
     void PutZombieInWave(ZombieType theZombieType, int theWaveNumber, ZombiePicker *theZombiePicker);
     int TotalZombiesHealthInWave(int theWaveIndex);
-    void KillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags);
+    int KillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags);
     void KillAllPlantsInRadius(int theX, int theY, int theRadius);
     void RemoveCutsceneZombies();
     int CountZombiesOnScreen();

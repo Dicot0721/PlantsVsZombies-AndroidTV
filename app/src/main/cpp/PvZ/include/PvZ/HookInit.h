@@ -295,7 +295,7 @@ inline void InitHookFunction() {
 
     homura::HookFunction(Plant_UpdateAddr, &Plant::Update, &old_Plant_Update);
     homura::HookFunction(Plant_GetRefreshTimeAddr, &Plant::GetRefreshTime, &old_Plant_GetRefreshTime);
-    homura::HookFunction(Plant_DoSpecialAddr, &Plant::DoSpecial, &old_Plant_DoSpecial);
+    homura::HookFunction(Plant_DoSpecialAddr, &Plant::DoSpecial, nullptr);
     homura::HookFunction(Plant_DrawAddr, &Plant::Draw, &old_Plant_Draw);
     homura::HookFunction(Plant_DrawSeedTypeAddr, &Plant::DrawSeedType, nullptr);
     homura::HookFunction(Plant_IsUpgradeAddr, &Plant::IsUpgrade, &old_Plant_IsUpgrade);

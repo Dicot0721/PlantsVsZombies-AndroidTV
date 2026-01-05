@@ -248,10 +248,14 @@ public:
     void FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
         reinterpret_cast<void (*)(Plant *, int, PlantWeapon)>(Plant_FindTargetAndFireAddr)(this, theRow, thePlantWeapon);
     }
+    void BlowAwayFliers(int theX, int theRow) {
+        reinterpret_cast<void (*)(Plant *, int, int)>(Plant_BlowAwayFliersAddr)(this, theX, theRow);
+    }
 
     void PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int a6);
     void Update();
     void Draw(Sexy::Graphics *g);
+    void KillAllPlantsNearDoom();
     void DoSpecial();
     Zombie *FindTargetZombie(int theRow, PlantWeapon thePlantWeapon);
     GridItem *FindTargetGridItem(PlantWeapon thePlantWeapon);
@@ -261,9 +265,9 @@ public:
     static int GetRefreshTime(SeedType theSeedType, SeedType theImitaterType);
     static int GetCostAdjusted(SeedType theSeedType);
     static int GetRefreshTimeAdjusted(SeedType theSeedType);
-    static bool IsNocturnal(SeedType theSeedtype);
+    static bool IsNocturnal(SeedType theSeedType);
     static bool IsAquatic(SeedType theSeedType);
-    static bool IsFlying(SeedType theSeedtype);
+    static bool IsFlying(SeedType theSeedType);
     static bool IsUpgrade(SeedType theSeedType);
     int GetDamageRangeFlags(PlantWeapon thePlantWeapon);
     Sexy::Rect GetPlantRect();
@@ -288,6 +292,7 @@ public:
     void Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem);
     void PlayIdleAnim(float theRate);
     void IceZombies();
+    bool IsDisposable(SeedType theSeedType);
 };
 
 inline float PlantDrawHeightOffset(Board *theBoard, Plant *thePlant, SeedType theSeedType, int theCol, int theRow) {
@@ -331,8 +336,6 @@ inline void (*old_Plant_Update)(Plant *plant);
 inline void (*old_Plant_SetSleeping)(Plant *a, bool a2);
 
 inline void (*old_Plant_UpdateReanimColor)(Plant *a);
-
-inline void (*old_Plant_DoSpecial)(Plant *plant);
 
 inline void (*old_Plant_PlantInitialize)(Plant *plant, int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int a6);
 
