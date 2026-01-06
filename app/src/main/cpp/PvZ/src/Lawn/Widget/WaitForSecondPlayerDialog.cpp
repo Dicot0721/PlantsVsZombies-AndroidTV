@@ -178,9 +178,9 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
 
 
     if (mApp->mGameMode != GAMEMODE_MP_VS) {
-         GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
-         GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
-         return;
+        GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+        GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+        return;
     }
 
 
