@@ -29,7 +29,10 @@
 
 class VSResultsMenu : public Sexy::MenuWidget {
 public:
-    enum { VSResultsMenu_Play_Again, VSResultsMenu_Quit_VS = 1 };
+    enum {
+        VSResultsMenu_Play_Again = 0,
+        VSResultsMenu_Quit_VS = 1,
+    };
 
     int unk[5];           // 70 ~ 74
     int mResultsButtonId; // 75

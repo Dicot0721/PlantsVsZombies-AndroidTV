@@ -118,24 +118,6 @@ void VSSetupMenu::_destructor() {
 
 void VSSetupMenu::Draw(Graphics *g) {
     old_VSSetupMenu_Draw(this, g);
-
-    if (tcp_connected)
-        return;
-
-    if (tcpClientSocket >= 0) {
-        pvzstl::string aRequestString;
-        if (mSetupMode == VSSetupMode::VS_SETUP_MODE_QUICK_PLAY) {
-            aRequestString = "对方想玩"
-                             "快速游戏";
-        } else if (mSetupMode == VSSetupMode::VS_SETUP_MODE_CUSTOM_BATTLE) {
-            aRequestString = "对方想玩"
-                             "自定义战场";
-        } else if (mSetupMode == VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE) {
-            aRequestString = "对方想玩"
-                             "随机战场";
-        }
-        TodDrawString(g, aRequestString, 400, 300, *Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
-    }
 }
 
 
