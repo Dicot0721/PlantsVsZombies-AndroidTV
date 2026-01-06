@@ -176,8 +176,13 @@ void WaitForSecondPlayerDialog::ShowTextInput(const char *title) {
 void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(this, theApp);
 
-    // GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
-    // GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+
+    if (mApp->mGameMode != GAMEMODE_MP_VS) {
+         GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+         GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+         return;
+    }
+
 
     // 解决此Dialog显示时背景僵尸全部聚集、且草丛大块空缺的问题
     if (theApp->mBoard != nullptr) {
@@ -322,14 +327,12 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
                     idx = scanned_server_count - 1;
 
                 if (scanned_server_count <= 0) {
-                    pvzstl::string str1 = "无可用房间";
-                    g->DrawString(str1, 280, 150);
+                    g->DrawString("无可用房间", 280, 150);
                 } else {
                     pvzstl::string str = tcp_connected ? StrFormat("已加入至: %s的房间", servers[idx].name) : StrFormat("正在加入: %s的房间", servers[idx].name);
                     g->DrawString(str, 280, 150);
 
-                    pvzstl::string str1 = StrFormat("IP: %s:%d", servers[idx].ip, servers[idx].tcp_port);
-                    g->DrawString(str1, 280, 200);
+                    g->DrawString(StrFormat("IP: %s:%d", servers[idx].ip, servers[idx].tcp_port), 280, 200);
                 }
             }
 
@@ -343,8 +346,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
             pvzstl::string str1 = (udpScanSocket >= 0) ? "正在扫描房间..." : "无法扫描房间";
             g->DrawString(str1, 320, 200);
 
-            pvzstl::string str2 = "（若要加入指定IP房间，请点击“加入指定IP房间”）";
-            g->DrawString(str2, 120, 260);
+            g->DrawString("（若目标房间在LAN内但扫描不到，可尝试“加入指定IP房间”）", 55, 260);
 
             return;
         }
@@ -358,6 +360,8 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
         mSelectedServerIndex = idx;
 
         int yPos = 180;
+
+
         Sexy::Color oldColor = g->mColor;
 
         // （可选）标题

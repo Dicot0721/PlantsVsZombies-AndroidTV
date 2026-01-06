@@ -1102,6 +1102,7 @@ void Board::processClientEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_CLIENT_BOARD_CONCEDE: {
             mApp->KillNewOptionsDialog();
+            mApp->KillDialog(DIALOG_CONFIRM_IN_GAME_RESTART);
             if (mGamepadControls2->mPlayerIndex2 == 1) {
                 mApp->SetBoardResult(7);
                 mApp->mGameScene = SCENE_ZOMBIES_WON;
@@ -1568,6 +1569,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             mApp->mMusic->StopAllMusic();
             mApp->mSoundSystem->CancelPausedFoley();
             mApp->KillNewOptionsDialog();
+            mApp->KillDialog(DIALOG_CONFIRM_IN_GAME_RESTART);
             if (mGamepadControls1->mPlayerIndex2 == 1) {
                 mApp->SetBoardResult(7);
                 mApp->mGameScene = SCENE_ZOMBIES_WON;
