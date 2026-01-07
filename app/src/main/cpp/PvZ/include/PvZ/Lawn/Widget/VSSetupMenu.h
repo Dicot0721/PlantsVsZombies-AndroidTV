@@ -201,7 +201,6 @@ protected:
 
     void PickRandomZombies(std::vector<SeedType> &theZombieSeeds);
     void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds);
-
 };
 
 inline bool is1PControllerMoving;
