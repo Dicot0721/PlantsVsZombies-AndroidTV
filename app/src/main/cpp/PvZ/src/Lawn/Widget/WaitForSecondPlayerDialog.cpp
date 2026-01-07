@@ -1839,32 +1839,6 @@ uint32_t WaitForSecondPlayerDialog::ReadBE32(const uint8_t *p) {
 }
 
 
-void WaitForSecondPlayerDialog::WriteBE32(uint8_t *p, uint32_t v) {
-    p[0] = uint8_t((v >> 24) & 0xFF);
-    p[1] = uint8_t((v >> 16) & 0xFF);
-    p[2] = uint8_t((v >> 8) & 0xFF);
-    p[3] = uint8_t((v) & 0xFF);
-}
-
-bool WaitForSecondPlayerDialog::ServerSendFrame(uint8_t type, const void *payload, uint16_t len) {
-    if (mServerSock < 0)
-        return false;
-
-    uint8_t hdr[3];
-    hdr[0] = type;
-    hdr[1] = (uint8_t)((len >> 8) & 0xFF);
-    hdr[2] = (uint8_t)(len & 0xFF);
-
-    if (!SendAll(mServerSock, hdr, 3))
-        return false;
-    if (len > 0 && payload) {
-        if (!SendAll(mServerSock, payload, len))
-            return false;
-    }
-    return true;
-}
-
-
 void WaitForSecondPlayerDialog::Resize(int theX, int theY, int theWidth, int theHeight) {}
 
 

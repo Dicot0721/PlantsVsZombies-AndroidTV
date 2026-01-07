@@ -107,6 +107,7 @@ void VSSetupMenu::_constructor() {
     is1PControllerMoving = false;
     is2PControllerMoving = false;
     touchingOnWhichController = 0;
+    drawTipArrowAlphaCounter = 0;
 }
 
 void VSSetupMenu::_destructor() {
@@ -117,7 +118,33 @@ void VSSetupMenu::_destructor() {
 }
 
 void VSSetupMenu::Draw(Graphics *g) {
+    // 在这里绘制会被DrawOverlay遮挡，去DrawOverlay绘制即可
     old_VSSetupMenu_Draw(this, g);
+}
+
+
+void VSSetupMenu::DrawOverlay(Graphics *g) {
+    old_VSSetupMenu_DrawOverlay(this, g);
+
+    if (drawTipArrowAlphaCounter > 200) {
+        int aAlpha = TodAnimateCurve(0, 100, drawTipArrowAlphaCounter % 100, 50, 255, TodCurves::CURVE_BOUNCE);
+        Color theColor = {255, 255, 255, aAlpha};
+        g->SetColorizeImages(true);
+        g->SetColor(theColor);
+
+        if (!tcp_connected && mController1Position == -1) {
+            Sexy::Widget *theController1Widget = FindWidget(7);
+            g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController1Widget->mX + 160, theController1Widget->mY + 40);
+            g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController1Widget->mX - 50, theController1Widget->mY + 40, true);
+        }
+
+
+        if (tcpClientSocket < 0 && mController2Position == -1) {
+            Sexy::Widget *theController2Widget = FindWidget(8);
+            g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController2Widget->mX + 160, theController2Widget->mY + 40);
+            g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController2Widget->mX - 50, theController2Widget->mY + 40, true);
+        }
+    }
 }
 
 
@@ -137,10 +164,18 @@ void VSSetupMenu::MouseDown(int x, int y, int theCount) {
         Sexy::Widget *theController1Widget = FindWidget(7);
         Sexy::Widget *theController2Widget = FindWidget(8);
         if (x > theController1Widget->mX && x < theController1Widget->mX + 170 && y > theController1Widget->mY && y < theController1Widget->mY + 122) {
+            if (tcp_connected) {
+                return;
+            }
             is1PControllerMoving = true;
+            drawTipArrowAlphaCounter = 0;
             touchingOnWhichController = 1;
         } else if (x > theController2Widget->mX && x < theController2Widget->mX + 170 && y > theController2Widget->mY && y < theController2Widget->mY + 122) {
+            if (tcpClientSocket >= 0) {
+                return;
+            }
             is2PControllerMoving = true;
+            drawTipArrowAlphaCounter = 0;
             touchingOnWhichController = 2;
         }
         touchDownX = x;
@@ -211,6 +246,9 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
 
 void VSSetupMenu::Update() {
 
+
+    drawTipArrowAlphaCounter++;
+
     if (is1PControllerMoving || is2PControllerMoving) {
         Sexy::Widget *theController1Widget = FindWidget(7);
         Sexy::Widget *theController2Widget = FindWidget(8);
@@ -237,75 +275,6 @@ void VSSetupMenu::Update() {
         //        GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
         return;
     }
-
-    //    if (tcpClientSocket >= 0) {
-    //        char buf[1024];
-    //
-    //        while (true) {
-    //            ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
-    //            if (n > 0) {
-    //                // buf[n] = '\0'; // 确保字符串结束
-    //                // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
-    //
-    //                HandleTcpClientMessage(buf, n);
-    //            } else if (n == 0) {
-    //                // 对端关闭连接（收到FIN）
-    //                LOG_DEBUG("[TCP] 对方关闭连接");
-    //                close(tcpClientSocket);
-    //                tcpClientSocket = -1;
-    //                break;
-    //            } else {
-    //                if (errno == EAGAIN || errno == EWOULDBLOCK) {
-    //                    // 没有更多数据可读，正常退出
-    //                    break;
-    //                } else if (errno == EINTR) {
-    //                    // 被信号中断，重试
-    //                    continue;
-    //                } else {
-    //                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
-    //                    close(tcpClientSocket);
-    //                    tcpClientSocket = -1;
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //    if (tcp_connected) {
-    //        char buf[1024];
-    //        while (true) {
-    //            ssize_t n = recv(tcpServerSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
-    //            if (n > 0) {
-    //                // buf[n] = '\0'; // 确保字符串结束
-    //                // LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
-    //                HandleTcpServerMessage(buf, n);
-    //
-    //            } else if (n == 0) {
-    //                // 对端关闭连接（收到FIN）
-    //                LOG_DEBUG("[TCP] 对方关闭连接");
-    //                close(tcpServerSocket);
-    //                tcpServerSocket = -1;
-    //                tcp_connecting = false;
-    //                tcp_connected = false;
-    //                break;
-    //            } else {
-    //                if (errno == EAGAIN || errno == EWOULDBLOCK) {
-    //                    // 没有更多数据可读，正常退出
-    //                    break;
-    //                } else if (errno == EINTR) {
-    //                    // 被信号中断，重试
-    //                    continue;
-    //                } else {
-    //                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
-    //                    close(tcpServerSocket);
-    //                    tcpServerSocket = -1;
-    //                    tcp_connecting = false;
-    //                    tcp_connected = false;
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //    }
 }
 
 void VSSetupMenu::PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
@@ -338,8 +307,6 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::ve
         send(tcpClientSocket, &event, sizeof(U16x10_Event), 0);
     }
 }
-
-static std::vector<char> clientVSSetupMenuRecvBuffer;
 
 size_t VSSetupMenu::getClientEventSize(EventType type) {
     switch (type) {
@@ -399,28 +366,6 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             break;
     }
 }
-
-void VSSetupMenu::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
-
-    clientVSSetupMenuRecvBuffer.insert(clientVSSetupMenuRecvBuffer.end(), (char *)buf, (char *)buf + bufSize);
-    size_t offset = 0;
-
-    while (clientVSSetupMenuRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
-        BaseEvent *base = (BaseEvent *)&clientVSSetupMenuRecvBuffer[offset];
-        size_t eventSize = getClientEventSize(base->type);
-        if (clientVSSetupMenuRecvBuffer.size() - offset < eventSize)
-            break; // 不完整
-
-        processClientEvent((char *)&clientVSSetupMenuRecvBuffer[offset], eventSize);
-        offset += eventSize;
-    }
-
-    if (offset != 0) {
-        clientVSSetupMenuRecvBuffer.erase(clientVSSetupMenuRecvBuffer.begin(), clientVSSetupMenuRecvBuffer.begin() + offset);
-    }
-}
-
-static std::vector<char> serverVSSetupMenuRecvBuffer;
 
 size_t VSSetupMenu::getServerEventSize(EventType type) {
     switch (type) {
@@ -511,25 +456,6 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
 }
 
 
-void VSSetupMenu::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
-    serverVSSetupMenuRecvBuffer.insert(serverVSSetupMenuRecvBuffer.end(), (char *)buf, (char *)buf + bufSize);
-    size_t offset = 0;
-
-    while (serverVSSetupMenuRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
-        BaseEvent *base = (BaseEvent *)&serverVSSetupMenuRecvBuffer[offset];
-        size_t eventSize = getServerEventSize(base->type);
-        if (serverVSSetupMenuRecvBuffer.size() - offset < eventSize)
-            break; // 不完整
-
-        processServerEvent((char *)&serverVSSetupMenuRecvBuffer[offset], eventSize);
-        offset += eventSize;
-    }
-
-    if (offset != 0) {
-        serverVSSetupMenuRecvBuffer.erase(serverVSSetupMenuRecvBuffer.begin(), serverVSSetupMenuRecvBuffer.begin() + offset);
-    }
-}
-
 void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
     // 修复在对战的阵营选取界面无法按返回键退出的BUG。
     if (theKey == Sexy::KeyCode::KEYCODE_ESCAPE) {
@@ -550,6 +476,11 @@ void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
 }
 
 void VSSetupMenu::OnStateEnter(VSSetupState theState) {
+
+
+    if (theState == VSSetupState::VS_SETUP_STATE_SIDES) {
+        drawTipArrowAlphaCounter = 0;
+    }
     if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {
 
         LOG_DEBUG("[TCP] OnStateEnter: {}", (tcp_connected || tcpClientSocket >= 0));

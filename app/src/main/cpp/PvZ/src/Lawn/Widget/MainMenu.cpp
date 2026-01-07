@@ -108,6 +108,9 @@ void MainMenu::Update() {
         float num = mFadeCounterFloat + 0.005;
         mFadeCounterFloat = fmin(num, 1.0f);
     } else {
+
+        float theSoundVolume = mApp->mPlayerInfo == nullptr ? 1.0 : mApp->mPlayerInfo->mSoundVolume;
+
         if (InTransition()) {
             gFoleyVolumeCounter++;
             FoleyType aType = MainMenu_GetFoleyTypeByScene(mScene);
@@ -116,7 +119,7 @@ void MainMenu::Update() {
                 mApp->PlayFoley(aNextType);
                 mApp->SetFoleyVolume(aNextType, 0);
             }
-            float theVolume = TodAnimateCurveFloat(0, 93, gFoleyVolumeCounter, mApp->mPlayerInfo->mSoundVolume, 0, TodCurves::CURVE_BOUNCE_SLOW_MIDDLE);
+            float theVolume = TodAnimateCurveFloat(0, 93, gFoleyVolumeCounter, theSoundVolume, 0, TodCurves::CURVE_BOUNCE_SLOW_MIDDLE);
             if (gFoleyVolumeCounter >= 46) {
                 mApp->SetFoleyVolume(aNextType, theVolume);
                 if (mApp->mSoundSystem->IsFoleyPlaying(aType)) {
@@ -134,16 +137,16 @@ void MainMenu::Update() {
                     mApp->SetFoleyVolume(aType, 0);
                 }
                 if (mEnterReanimationCounter > 0) {
-                    float theVolume = TodAnimateCurveFloat(110, 0, mEnterReanimationCounter, 0, mApp->mPlayerInfo->mSoundVolume, TodCurves::CURVE_LINEAR);
+                    float theVolume = TodAnimateCurveFloat(110, 0, mEnterReanimationCounter, 0, theSoundVolume, TodCurves::CURVE_LINEAR);
                     mApp->SetFoleyVolume(aType, theVolume);
                 }
             }
             if (gAchievementState == SLIDING_IN) {
-                float theVolume = TodAnimateCurveFloat(100, 0, gMainMenuAchievementCounter, mApp->mPlayerInfo->mSoundVolume, 0, TodCurves::CURVE_LINEAR);
+                float theVolume = TodAnimateCurveFloat(100, 0, gMainMenuAchievementCounter, theSoundVolume, 0, TodCurves::CURVE_LINEAR);
                 mApp->SetFoleyVolume(aType, theVolume);
             }
             if (gAchievementState == SLIDING_OUT && gMainMenuAchievementCounter <= 100) {
-                float theVolume = TodAnimateCurveFloat(100, 0, gMainMenuAchievementCounter, 0, mApp->mPlayerInfo->mSoundVolume, TodCurves::CURVE_LINEAR);
+                float theVolume = TodAnimateCurveFloat(100, 0, gMainMenuAchievementCounter, 0, theSoundVolume, TodCurves::CURVE_LINEAR);
                 mApp->SetFoleyVolume(aType, theVolume);
             }
         }
@@ -380,6 +383,11 @@ void MainMenu::SyncProfile(bool a2) {
     // LOGD("MainMenu_SyncProfile");
     old_MainMenu_SyncProfile(this, a2);
     mApp->mNewIs3DAccelerated = mApp->mPlayerInfo == nullptr || !mApp->mPlayerInfo->mIs3DAcceleratedClosed;
+
+    // 去除道具教学关卡
+    if (mApp->mPlayerInfo != nullptr) {
+        mApp->mPlayerInfo->mPassedShopSeedTutorial = true; // 标记玩家已经通过1-1的道具教学关卡
+    }
 }
 
 

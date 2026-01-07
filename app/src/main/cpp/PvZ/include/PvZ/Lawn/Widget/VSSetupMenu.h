@@ -119,8 +119,8 @@ public:
     VSSetupState mState;                  // 74 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
     int mController1Index;                // 75 // 0:手柄1, 1:手柄2
     int mController2Index;                // 76 // 0:手柄1, 1:手柄2
-    int mController1Position;             // 77  // -1 0 1， 分别位于左 中 右
-    int mController2Position;             // 78  // -1 0 1， 分别位于左 中 右
+    int mController1Position;             // 77  // -1 0 1， 分别位于中 左 右
+    int mController2Position;             // 78  // -1 0 1， 分别位于中 左 右
     int unkInt79;                         // 79
     int mNextFirstPick;                   // 80
     int mInt81;                           // 81
@@ -179,6 +179,7 @@ public:
     static size_t getClientEventSize(EventType type);
 
     void Draw(Sexy::Graphics *g);
+    void DrawOverlay(Sexy::Graphics *g);
     void Update();
     void KeyDown(Sexy::KeyCode theKey);
     void OnStateEnter(VSSetupState theState);
@@ -192,8 +193,6 @@ public:
     void processClientEvent(void *buf, ssize_t bufSize);
     void processServerEvent(void *buf, ssize_t bufSize);
 
-    void HandleTcpClientMessage(void *buf, ssize_t bufSize);
-    void HandleTcpServerMessage(void *buf, ssize_t bufSize);
 
 protected:
     friend void InitHookFunction();
@@ -202,18 +201,23 @@ protected:
 
     void PickRandomZombies(std::vector<SeedType> &theZombieSeeds);
     void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds);
+
 };
 
 inline bool is1PControllerMoving;
 inline bool is2PControllerMoving;
 inline int touchDownX;
 inline int touchingOnWhichController; // 0 NONE, 1 1P, 2 2P
+inline int drawTipArrowAlphaCounter;
+
 
 inline void (*old_VSSetupMenu_Constructor)(VSSetupMenu *);
 
 inline void (*old_VSSetupMenu_Destructor)(VSSetupMenu *);
 
 inline void (*old_VSSetupMenu_Draw)(VSSetupMenu *, Sexy::Graphics *g);
+
+inline void (*old_VSSetupMenu_DrawOverlay)(VSSetupMenu *, Sexy::Graphics *g);
 
 inline void (*old_VSSetupMenu_Update)(VSSetupMenu *a);
 

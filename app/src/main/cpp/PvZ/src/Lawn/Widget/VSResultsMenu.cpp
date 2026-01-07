@@ -27,7 +27,6 @@
 
 using namespace Sexy;
 
-static std::vector<char> clientVSResultsMenuRecvBuffer;
 
 size_t VSResultsMenu::getClientEventSize(EventType type) {
     switch (type) {
@@ -53,27 +52,6 @@ void VSResultsMenu::processClientEvent(void *buf, ssize_t bufSize) {
     }
 }
 
-void VSResultsMenu::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
-
-    clientVSResultsMenuRecvBuffer.insert(clientVSResultsMenuRecvBuffer.end(), (char *)buf, (char *)buf + bufSize);
-    size_t offset = 0;
-
-    while (clientVSResultsMenuRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
-        BaseEvent *base = (BaseEvent *)&clientVSResultsMenuRecvBuffer[offset];
-        size_t eventSize = getClientEventSize(base->type);
-        if (clientVSResultsMenuRecvBuffer.size() - offset < eventSize)
-            break; // 不完整
-
-        processClientEvent((char *)&clientVSResultsMenuRecvBuffer[offset], eventSize);
-        offset += eventSize;
-    }
-
-    if (offset != 0) {
-        clientVSResultsMenuRecvBuffer.erase(clientVSResultsMenuRecvBuffer.begin(), clientVSResultsMenuRecvBuffer.begin() + offset);
-    }
-}
-
-static std::vector<char> serverVSResultsMenuRecvBuffer;
 
 size_t VSResultsMenu::getServerEventSize(EventType type) {
     switch (type) {
@@ -100,99 +78,9 @@ void VSResultsMenu::processServerEvent(void *buf, ssize_t bufSize) {
     }
 }
 
-
-void VSResultsMenu::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
-    serverVSResultsMenuRecvBuffer.insert(serverVSResultsMenuRecvBuffer.end(), (char *)buf, (char *)buf + bufSize);
-    size_t offset = 0;
-
-    while (serverVSResultsMenuRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
-        BaseEvent *base = (BaseEvent *)&serverVSResultsMenuRecvBuffer[offset];
-        size_t eventSize = getServerEventSize(base->type);
-        if (serverVSResultsMenuRecvBuffer.size() - offset < eventSize)
-            break; // 不完整
-
-        processServerEvent((char *)&serverVSResultsMenuRecvBuffer[offset], eventSize);
-        offset += eventSize;
-    }
-
-    if (offset != 0) {
-        serverVSResultsMenuRecvBuffer.erase(serverVSResultsMenuRecvBuffer.begin(), serverVSResultsMenuRecvBuffer.begin() + offset);
-    }
-}
-
 void VSResultsMenu::Update() {
     // 记录当前游戏状态
     old_VSResultsMenu_Update(this);
-
-
-    //    if (tcpClientSocket >= 0) {
-    //        char buf[1024];
-    //
-    //        while (true) {
-    //            ssize_t n = recv(tcpClientSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
-    //            if (n > 0) {
-    //                // buf[n] = '\0'; // 确保字符串结束
-    //                // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
-    //
-    //                HandleTcpClientMessage(buf, n);
-    //            } else if (n == 0) {
-    //                // 对端关闭连接（收到FIN）
-    //                LOG_DEBUG("[TCP] 对方关闭连接");
-    //                close(tcpClientSocket);
-    //                tcpClientSocket = -1;
-    //                break;
-    //            } else {
-    //                if (errno == EAGAIN || errno == EWOULDBLOCK) {
-    //                    // 没有更多数据可读，正常退出
-    //                    break;
-    //                } else if (errno == EINTR) {
-    //                    // 被信号中断，重试
-    //                    continue;
-    //                } else {
-    //                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
-    //                    close(tcpClientSocket);
-    //                    tcpClientSocket = -1;
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //    if (tcp_connected) {
-    //        char buf[1024];
-    //        while (true) {
-    //            ssize_t n = recv(tcpServerSocket, buf, sizeof(buf) - 1, MSG_DONTWAIT);
-    //            if (n > 0) {
-    //                // buf[n] = '\0'; // 确保字符串结束
-    //                // LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
-    //                HandleTcpServerMessage(buf, n);
-    //
-    //            } else if (n == 0) {
-    //                // 对端关闭连接（收到FIN）
-    //                LOG_DEBUG("[TCP] 对方关闭连接");
-    //                close(tcpServerSocket);
-    //                tcpServerSocket = -1;
-    //                tcp_connecting = false;
-    //                tcp_connected = false;
-    //                break;
-    //            } else {
-    //                if (errno == EAGAIN || errno == EWOULDBLOCK) {
-    //                    // 没有更多数据可读，正常退出
-    //                    break;
-    //                } else if (errno == EINTR) {
-    //                    // 被信号中断，重试
-    //                    continue;
-    //                } else {
-    //                    LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
-    //                    close(tcpServerSocket);
-    //                    tcpServerSocket = -1;
-    //                    tcp_connecting = false;
-    //                    tcp_connected = false;
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //    }
 }
 
 void VSResultsMenu::OnExit() {

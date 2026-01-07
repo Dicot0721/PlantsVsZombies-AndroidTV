@@ -674,6 +674,7 @@ bool LoadGameMain() {
     VSSetupMenu_VSSetupMenuAddr = dlsym(handle, "_ZN11VSSetupMenuC2Ev");
     VSSetupMenu_Delete2Addr = dlsym(handle, "_ZN11VSSetupMenuD2Ev");
     VSSetupMenu_DrawAddr = dlsym(handle, "_ZN11VSSetupMenu4DrawEPN4Sexy8GraphicsE");
+    VSSetupMenu_DrawOverlayAddr = dlsym(handle, "_ZN11VSSetupMenu11DrawOverlayEPN4Sexy8GraphicsE");
     VSSetupMenu_AddedToManagerAddr = dlsym(handle, "_ZN11VSSetupMenu14AddedToManagerEPN4Sexy13WidgetManagerE");
     VSSetupMenu_UpdateAddr = dlsym(handle, "_ZN11VSSetupMenu6UpdateEv");
     VSSetupMenu_GameButtonDownAddr = dlsym(handle, "_ZN11VSSetupMenu14GameButtonDownEN4Sexy13GamepadButtonEij");

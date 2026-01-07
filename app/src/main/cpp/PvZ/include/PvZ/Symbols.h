@@ -661,6 +661,7 @@ inline void *SeedPacket_SetPacketTypeAddr;
 inline void *VSSetupMenu_VSSetupMenuAddr;
 inline void *VSSetupMenu_Delete2Addr;
 inline void *VSSetupMenu_DrawAddr;
+inline void *VSSetupMenu_DrawOverlayAddr;
 inline void *VSSetupMenu_AddedToManagerAddr;
 inline void *VSSetupMenu_UpdateAddr;
 inline void *VSSetupMenu_KeyDownAddr;

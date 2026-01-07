@@ -189,11 +189,9 @@ public:
     void ServerSendLeaveRoom();
     void ServerSendStart(); // host start (optional)
 
-    // protocol helpers
-    bool ServerSendFrame(uint8_t type, const void *payload, uint16_t len);
+
     bool ServerTryReadOneFrame(uint8_t &outType, uint8_t *outPayload, uint16_t &outLen);
     static uint32_t ReadBE32(const uint8_t *p);
-    static void WriteBE32(uint8_t *p, uint32_t v);
 
     // MODE3 drawing + selection
     void DrawServerRoomList(Sexy::Graphics *g);
@@ -248,7 +246,6 @@ protected:
     void _destructor();
 
     bool GetActiveBroadcast(sockaddr_in &out_bcast, std::string *out_ifname);
-    int ScoreIfname(const char *ifname);
     bool ServerSendU8(uint8_t b);
 };
 

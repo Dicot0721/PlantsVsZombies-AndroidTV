@@ -416,6 +416,7 @@ inline void InitHookFunction() {
     homura::HookFunction(VSSetupMenu_VSSetupMenuAddr, &VSSetupMenu::_constructor, &old_VSSetupMenu_Constructor);
     homura::HookFunction(VSSetupMenu_Delete2Addr, &VSSetupMenu::_destructor, &old_VSSetupMenu_Destructor);
     homura::HookFunction(VSSetupMenu_DrawAddr, &VSSetupMenu::Draw, &old_VSSetupMenu_Draw);
+    homura::HookFunction(VSSetupMenu_DrawOverlayAddr, &VSSetupMenu::DrawOverlay, &old_VSSetupMenu_DrawOverlay);
     homura::HookFunction(VSSetupMenu_AddedToManagerAddr, &VSSetupMenu::AddedToManager, &old_VSSetupMenu_AddedToManager);
     homura::HookFunction(VSSetupMenu_UpdateAddr, &VSSetupMenu::Update, &old_VSSetupMenu_Update);
     homura::HookFunction(VSSetupMenu_KeyDownAddr, &VSSetupMenu::KeyDown, &old_VSSetupMenu_KeyDown);

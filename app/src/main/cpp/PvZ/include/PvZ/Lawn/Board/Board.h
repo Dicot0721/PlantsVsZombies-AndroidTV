@@ -586,8 +586,6 @@ public:
 
     static size_t getClientEventSize(EventType type);
     static size_t getServerEventSize(EventType type);
-    void HandleTcpClientMessage(void *buf, ssize_t bufSize);
-    void HandleTcpServerMessage(void *buf, ssize_t bufSize);
     void __MouseDown(int x, int y, int theClickCount);
     void __MouseDrag(int x, int y);
     void __MouseUp(int x, int y, int theClickCount);
