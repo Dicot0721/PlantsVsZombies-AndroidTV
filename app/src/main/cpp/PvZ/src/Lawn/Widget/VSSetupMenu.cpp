@@ -217,8 +217,8 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         }
         mController1Position = newController1Position;
         if (tcpClientSocket >= 0) {
-            U16_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, uint16_t(mController1Position)};
-            send(tcpClientSocket, &event, sizeof(U16_Event), 0);
+            U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mController1Position == -1 ? uint8_t(2) : uint8_t(mController1Position)};
+            send(tcpClientSocket, &event, sizeof(U8_Event), 0);
         }
         is1PControllerMoving = false;
     } else if (touchingOnWhichController == 2) {
@@ -232,8 +232,8 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         }
         mController2Position = newController2Position;
         if (tcpServerSocket >= 0) {
-            U16_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, uint16_t(mController2Position)};
-            send(tcpServerSocket, &event, sizeof(U16_Event), 0);
+            U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mController2Position == -1 ? uint8_t(2) : uint8_t(mController2Position)};
+            send(tcpServerSocket, &event, sizeof(U8_Event), 0);
         }
         is2PControllerMoving = false;
     }
@@ -317,7 +317,7 @@ size_t VSSetupMenu::getClientEventSize(EventType type) {
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER:
             return sizeof(U16_Event);
         case EVENT_VSSETUPMENU_SET_CONTROLLER:
-            return sizeof(U16_Event);
+            return sizeof(U8_Event);
         default:
             return sizeof(BaseEvent);
     }
@@ -351,11 +351,12 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             is2PControllerMoving = true;
         } break;
         case EVENT_VSSETUPMENU_SET_CONTROLLER: {
-            U16_Event *event1 = (U16_Event *)event;
-            if (mController2Position == event1->data) {
+            U8_Event *event1 = (U8_Event *)event;
+            int realData = event1->data == 2 ? -1 : event1->data;
+            if (mController2Position == realData) {
                 GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
             }
-            mController2Position = event1->data;
+            mController2Position = realData;
             is2PControllerMoving = false;
             if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
                 GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
@@ -377,8 +378,9 @@ size_t VSSetupMenu::getServerEventSize(EventType type) {
         case EVENT_VSSETUPMENU_RANDOM_PICK:
             return sizeof(U16x10_Event);
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER:
-        case EVENT_VSSETUPMENU_SET_CONTROLLER:
             return sizeof(U16_Event);
+        case EVENT_VSSETUPMENU_SET_CONTROLLER:
+            return sizeof(U8_Event);
         default:
             return sizeof(BaseEvent);
     }
@@ -439,11 +441,12 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             is1PControllerMoving = true;
         } break;
         case EVENT_VSSETUPMENU_SET_CONTROLLER: {
-            U16_Event *event1 = (U16_Event *)event;
-            if (mController1Position == event1->data) {
+            U8_Event *event1 = (U8_Event *)event;
+            int realData = event1->data == 2 ? -1 : event1->data;
+            if (mController1Position == realData) {
                 GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);
             }
-            mController1Position = event1->data;
+            mController1Position = realData;
             is1PControllerMoving = false;
             if (mController1Position != -1 && mController2Position != -1 && mController1Position != mController2Position) {
                 GameButtonDown(GamepadButton::BUTTONCODE_A, 0, 0);

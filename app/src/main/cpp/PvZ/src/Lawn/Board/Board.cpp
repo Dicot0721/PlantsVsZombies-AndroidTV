@@ -1204,6 +1204,7 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_START_LEVEL:
             return sizeof(U16x9_Event);
         case EVENT_SERVER_BOARD_CONCEDE:
+        case EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE:
             return sizeof(BaseEvent);
         default:
             return sizeof(BaseEvent);
@@ -1484,6 +1485,10 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 tcp_connected = true;
                 serverZombieIDMap.emplace(eventImpThrow->data2, uint16_t(mZombies.DataArrayGetID(aZombieImp)));
             }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE: {
+            mApp->PlaySample(*Sexy_SOUND_HUGE_WAVE_Addr);
+            DisplayAdviceAgain("[ADVICE_HUGE_WAVE]", MESSAGE_STYLE_HUGE_WAVE, ADVICE_HUGE_WAVE);
         } break;
         case EVENT_SERVER_BOARD_LAWNMOWER_STRART: {
             U16_Event *eventLawnMowerStart = reinterpret_cast<U16_Event *>(event);
@@ -1993,6 +1998,14 @@ void Board::SpawnZombieWave() {
     // 在对战模式中放出一大波僵尸时播放大波僵尸音效
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         mApp->PlaySample(*Sexy_SOUND_HUGE_WAVE_Addr);
+    }
+
+    // 在联机对战模式同步大波僵尸事件
+    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+        if (tcpClientSocket) {
+            BaseEvent event = {EventType::EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE};
+            send(tcpClientSocket, &event, sizeof(BaseEvent), 0);
+        }
     }
 
     old_Board_SpawnZombieWave(this);
