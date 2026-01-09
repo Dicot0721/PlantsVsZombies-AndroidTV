@@ -52,7 +52,7 @@ void Coin::GamepadCursorOver(int thePlayerIndex) {
     //            Collect(thePlayerIndex);
     //        } else if (mType != COIN_COOP_DOUBLE_SUN && !mIsBeingCollected && mCoinMotion != COIN_MOTION_FROM_NEAR_CURSOR) {
     //            if (!IsSun() || mScale >= GetSunScale()) {
-    //                mPlayerIndex = thePlayerIndex;
+    //                mPlayerIndex2 = thePlayerIndex;
     //                mCoinMotion = COIN_MOTION_FROM_NEAR_CURSOR;
     //                unk2 = 0.0;
     //                if (IsSun())

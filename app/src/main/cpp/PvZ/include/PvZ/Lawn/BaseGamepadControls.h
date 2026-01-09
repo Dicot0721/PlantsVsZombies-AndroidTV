@@ -29,7 +29,7 @@ public:
     int *mVtable;                    // 0
     GameObject mGameObject;          // 1 ~ 13
     Board *mBoard;                   // 14
-    SeedBank *mSeedBank;             // 15
+    int unknown_always_1;            // 15
     float mUnkFirstHighlightRelated; // 16
     int mShovelRelated1;             // 17
     float mGamepadAccLeftX;
@@ -48,8 +48,8 @@ public:
     float mGamepadVelocityRightX;  // 31
     float mGamepadVelocityRightY;  // 32
     int unk2[4];                   // 33 ~ 36
-    int mPlayerIndex1;             // 37
-    int mPlayerIndex2;             // 38
+    int mPlayerIndex1;             // 37，P1/P2
+    int mPlayerIndex2;             // 38，与mPlayerIndex完全相等，没有区别
     float mCursorPositionYJitter;  // 39
     float mUpdateAdd0Dot016;       // 40
     int unkMems[2];                // 41 ~ 42

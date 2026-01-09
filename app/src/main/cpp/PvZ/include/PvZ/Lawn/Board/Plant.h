@@ -293,6 +293,9 @@ public:
     void PlayIdleAnim(float theRate);
     void IceZombies();
     bool IsDisposable(SeedType theSeedType);
+    ReanimationID GetPlantReanimationIDByIndex(int index);
+    void SendOtherAnimationToClient();
+    void SendPingPongAnimationToClient();
 };
 
 inline float PlantDrawHeightOffset(Board *theBoard, Plant *thePlant, SeedType theSeedType, int theCol, int theRow) {

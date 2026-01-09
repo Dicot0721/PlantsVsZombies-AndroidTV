@@ -253,6 +253,10 @@ int LawnLoadGame(Board *board, int *a2) {
 void Board::ShovelDown() {
     // 用于铲掉光标正下方的植物。
     requestDrawShovelInCursor = false;
+    if (tcpClientSocket) {
+        U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+        send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+    }
     bool isInShovelTutorial = (unsigned int)(mTutorialState - 15) <= 2;
     if (isInShovelTutorial) {
         // 如果正在铲子教学中(即冒险1-5的保龄球的开场前，戴夫要求你铲掉三个豌豆的这段时间),则发送铲除键来铲除。
@@ -266,6 +270,10 @@ void Board::ShovelDown() {
     float aYPos = mGamepadControls1->mCursorPositionY;
     Plant *aPlantUnderShovel = ToolHitTest(aXPos, aYPos);
     if (aPlantUnderShovel != nullptr) {
+        if (tcpClientSocket) {
+            BaseEvent event = {EventType::EVENT_SERVER_BOARD_GAMEPAD_USE_SHOVEL};
+            send(tcpClientSocket, &event, sizeof(BaseEvent), 0);
+        }
         mApp->PlayFoley(FoleyType::FOLEY_USE_SHOVEL); // 播放铲除音效
         aPlantUnderShovel->Die();                     // 让被铲的植物趋势
         SeedType aSeedType = aPlantUnderShovel->mSeedType;
@@ -461,15 +469,19 @@ Plant *Board::AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedTyp
         if (tcp_connected)
             return nullptr;
         if (tcpClientSocket >= 0) {
-            U16U16Buf32Buf32_Event event;
+            U16U16U16Buf32Buf32_Event event;
             event.type = EventType::EVENT_SERVER_BOARD_PLANT_ADD;
             event.data1 = uint16_t(theGridX);
             event.data2 = uint16_t(theGridY);
-            event.data3.u16x2.u16_1 = uint16_t(theSeedType);
-            event.data3.u16x2.u16_2 = uint16_t(theImitaterType);
-            event.data4.u16x2.u16_1 = uint16_t(mPlants.DataArrayGetID(aPlant));
-            event.data4.u16x2.u16_2 = theIsDoEffect;
-            send(tcpClientSocket, &event, sizeof(U16U16Buf32Buf32_Event), 0);
+            event.data3 = uint16_t(aPlant->mFrameLength);
+            event.data4.u16x2.u16_1 = uint16_t(theSeedType);
+            event.data4.u16x2.u16_2 = uint16_t(theImitaterType);
+            event.data5.u16x2.u16_1 = uint16_t(mPlants.DataArrayGetID(aPlant));
+            event.data5.u16x2.u16_2 = theIsDoEffect;
+            send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
+
+            //            aPlant->SendPingPongAnimationToClient();
+            //            aPlant->SendOtherAnimationToClient();
         }
     }
 
@@ -1154,8 +1166,11 @@ size_t Board::getServerEventSize(EventType type) {
         // --- Gamepad 相关 ---
         case EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE:
         case EVENT_SERVER_BOARD_GAMEPAD_SET_STATE:
+        case EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL:
         case EVENT_SERVER_BOARD_PAUSE:
             return sizeof(U8_Event);
+        case EVENT_SERVER_BOARD_GAMEPAD_USE_SHOVEL:
+            return sizeof(BaseEvent);
 
         // --- 发射计数类事件 ---
         case EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER:
@@ -1163,11 +1178,12 @@ size_t Board::getServerEventSize(EventType type) {
             return sizeof(U16U16_Event);
 
         // --- 动画、开火、植物添加、僵尸移速更新 ---
-        case EVENT_SERVER_BOARD_PLANT_ANIMATION:
+        case EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION:
+        case EVENT_SERVER_BOARD_PLANT_OTHER_ANIMATION:
         case EVENT_SERVER_BOARD_PLANT_FIRE:
         case EVENT_SERVER_BOARD_PLANT_ADD:
         case EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED:
-            return sizeof(U16U16Buf32Buf32_Event);
+            return sizeof(U16U16U16Buf32Buf32_Event);
 
         // --- 僵尸添加 ---
         case EVENT_SERVER_BOARD_ZOMBIE_ADD:
@@ -1286,6 +1302,16 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
             serverGamepadControls->mGamepadState = event1->data;
         } break;
+        case EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL: {
+            U8_Event *event1 = (U8_Event *)event;
+            if (!requestDrawShovelInCursor && event1->data) {
+                mApp->PlayFoley(FOLEY_SHOVEL);
+            }
+            requestDrawShovelInCursor = event1->data;
+        } break;
+        case EVENT_SERVER_BOARD_GAMEPAD_USE_SHOVEL: {
+            mApp->PlayFoley(FOLEY_USE_SHOVEL);
+        } break;
         case EVENT_SERVER_BOARD_PAUSE: {
             U8_Event *event1 = (U8_Event *)event;
             PauseFromSecondPlayer(event1->data);
@@ -1331,25 +1357,39 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             gridItem->unkBool1 = true;
             serverGridItemIDMap.emplace(event1->data3, uint16_t(mGridItems.DataArrayGetID(gridItem)));
         } break;
-        case EVENT_SERVER_BOARD_PLANT_ANIMATION: {
-            U16U16Buf32Buf32_Event *event1 = (U16U16Buf32Buf32_Event *)event;
+        case EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION: {
+            U16U16U16Buf32Buf32_Event *event1 = (U16U16U16Buf32Buf32_Event *)event;
             uint16_t clientPlantID;
             if (homura::FindInMap(serverPlantIDMap, event1->data1, clientPlantID)) {
                 Plant *plant = mPlants.DataArrayGet(clientPlantID);
                 plant->mFrameLength = event1->data2;
-                plant->mAnimCounter = int(event1->data3.u32);
-                mApp->ReanimationGet(plant->mBodyReanimID)->mAnimRate = event1->data4.f32;
+                plant->mAnimPing = event1->data3;
+                plant->mFrame = event1->data4.u32;
+                plant->mAnimCounter = event1->data5.u32;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_PLANT_OTHER_ANIMATION: {
+            U16U16U16Buf32Buf32_Event *event1 = (U16U16U16Buf32Buf32_Event *)event;
+            uint16_t clientPlantID;
+            if (homura::FindInMap(serverPlantIDMap, event1->data1, clientPlantID)) {
+                Plant *plant = mPlants.DataArrayGet(clientPlantID);
+                Reanimation *reanimation = mApp->ReanimationTryToGet(plant->GetPlantReanimationIDByIndex(event1->data2));
+                if (reanimation != nullptr) {
+                    reanimation->mLoopType = ReanimLoopType(event1->data3);
+                    reanimation->mAnimTime = event1->data4.f32;
+                    reanimation->mAnimRate = event1->data5.f32;
+                }
             }
         } break;
         case EVENT_SERVER_BOARD_PLANT_FIRE: {
-            U16U16Buf32Buf32_Event *eventPlantFire = reinterpret_cast<U16U16Buf32Buf32_Event *>(event);
+            U16U16U16Buf32Buf32_Event *eventPlantFire = reinterpret_cast<U16U16U16Buf32Buf32_Event *>(event);
             uint16_t serverPlantID = eventPlantFire->data1;
             uint16_t clientPlantID;
             if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
                 uint16_t aZombieID = eventPlantFire->data2;
-                uint16_t aGridItemID = eventPlantFire->data4.u16x2.u16_1;
-                uint16_t aRow = eventPlantFire->data3.u16x2.u16_1;
-                uint16_t aPlantWeapon = eventPlantFire->data3.u16x2.u16_2;
+                uint16_t aGridItemID = eventPlantFire->data5.u16x2.u16_1;
+                uint16_t aRow = eventPlantFire->data4.u16x2.u16_1;
+                uint16_t aPlantWeapon = eventPlantFire->data4.u16x2.u16_2;
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
                 Zombie *aZombie = aZombieID == ZOMBIEID_NULL ? nullptr : mZombies.DataArrayGet(homura::FindInMap(serverZombieIDMap, aZombieID).value_or(0));
                 GridItem *aGridItem = aGridItemID == GRIDITEMID_NULL ? nullptr : mGridItems.DataArrayGet(homura::FindInMap(serverGridItemIDMap, aGridItemID).value_or(0));
@@ -1359,10 +1399,11 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_PLANT_ADD: {
-            U16U16Buf32Buf32_Event *event1 = (U16U16Buf32Buf32_Event *)event;
+            U16U16U16Buf32Buf32_Event *event1 = (U16U16U16Buf32Buf32_Event *)event;
             tcp_connected = false;
-            Plant *plant = AddPlant(event1->data1, event1->data2, (SeedType)event1->data3.u16x2.u16_1, (SeedType)event1->data3.u16x2.u16_2, 0, event1->data4.u16x2.u16_2);
-            serverPlantIDMap.emplace(event1->data4.u16x2.u16_1, uint16_t(mPlants.DataArrayGetID(plant)));
+            Plant *plant = AddPlant(event1->data1, event1->data2, (SeedType)event1->data4.u16x2.u16_1, (SeedType)event1->data4.u16x2.u16_2, 0, event1->data5.u16x2.u16_2);
+            plant->mFrameLength = event1->data3;
+            serverPlantIDMap.emplace(event1->data5.u16x2.u16_1, uint16_t(mPlants.DataArrayGetID(plant)));
             tcp_connected = true;
         } break;
         case EVENT_SERVER_BOARD_PLANT_DIE: {
@@ -1449,11 +1490,11 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED: {
-            U16U16Buf32Buf32_Event *eventPickSpeed = reinterpret_cast<U16U16Buf32Buf32_Event *>(event);
+            U16U16U16Buf32Buf32_Event *eventPickSpeed = reinterpret_cast<U16U16U16Buf32Buf32_Event *>(event);
             uint16_t serverZombieID = eventPickSpeed->data1;
             uint16_t clientZombieID;
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
-                float aVelX = eventPickSpeed->data3.f32;
+                float aVelX = eventPickSpeed->data4.f32;
                 uint16_t anAnimTicks = eventPickSpeed->data2;
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 tcp_connected = false;
@@ -1474,12 +1515,12 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW: {
-            U16U16Buf32Buf32_Event *eventImpThrow = reinterpret_cast<U16U16Buf32Buf32_Event *>(event);
+            U16U16U16Buf32Buf32_Event *eventImpThrow = reinterpret_cast<U16U16U16Buf32Buf32_Event *>(event);
             uint16_t serverZombieID = eventImpThrow->data1;
             uint16_t clientZombieID;
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
-                float aOffsetDistance = eventImpThrow->data3.f32;
+                float aOffsetDistance = eventImpThrow->data4.f32;
                 tcp_connected = false;
                 Zombie *aZombieImp = aZombie->ThrowAZombieImp(aOffsetDistance);
                 tcp_connected = true;
@@ -1517,6 +1558,8 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             seedPacket->WasPlanted(0);
         } break;
         case EVENT_SERVER_BOARD_START_LEVEL: {
+            // 与主机端同步置0
+            mMainCounter = 0;
             U16x9_Event *event1 = (U16x9_Event *)event;
             serverPlantIDMap.clear();
             serverZombieIDMap.clear();
@@ -2664,7 +2707,11 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
         gPlayerIndex = (TouchPlayerIndex)seedPacket->GetPlayerIndex(); // 玩家1或玩家2
         if (gPlayerIndex == TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
             requestDrawShovelInCursor = false; // 不再绘制铲子
-            if (isCobCannonSelected) {         // 如果拿着加农炮，将其放下
+            if (tcpClientSocket) {
+                U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+                send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            }
+            if (isCobCannonSelected) { // 如果拿着加农炮，将其放下
                 mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
             }
             if (mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST
@@ -2764,6 +2811,10 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
             requestDrawShovelInCursor = true;
             mApp->PlayFoley(FoleyType::FOLEY_SHOVEL);
         }
+        if (tcpClientSocket) {
+            U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+            send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+        }
         return;
     }
     if (mObjectType == GameObjectType::OBJECT_TYPE_BUTTER) {
@@ -2813,6 +2864,10 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
         if (coin->mType == CoinType::COIN_USABLE_SEED_PACKET) {
             mTouchState = TouchState::TOUCHSTATE_USEFUL_SEED_PACKET;
             requestDrawShovelInCursor = false;
+            if (tcpClientSocket) {
+                U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+                send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            }
             // if (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
             // LOGD("5656565656");
             // GamepadControls_OnKeyDown(gamepadCon
@@ -3005,6 +3060,10 @@ void Board::__MouseDrag(int x, int y) {
             mGamepadControls1->mGamepadState = 7;
             mGamepadControls1->mIsInShopSeedBank = false;
             requestDrawShovelInCursor = false;
+            if (tcpClientSocket) {
+                U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+                send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            }
             if (tcpClientSocket >= 0 && mGamepadControls1->mPlayerIndex2 == 0) {
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_SET_STATE}, 7};
                 send(tcpClientSocket, &event, sizeof(U8_Event), 0);
@@ -3028,6 +3087,10 @@ void Board::__MouseDrag(int x, int y) {
                 if (!requestDrawShovelInCursor)
                     mApp->PlayFoley(FoleyType::FOLEY_SHOVEL);
                 requestDrawShovelInCursor = true;
+                if (tcpClientSocket) {
+                    U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+                    send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+                }
                 mGamepadControls1->mGamepadState = 1;
                 mSendKeyWhenTouchUp = true;
             }
@@ -3036,6 +3099,10 @@ void Board::__MouseDrag(int x, int y) {
             if (!requestDrawShovelInCursor)
                 mApp->PlayFoley(FoleyType::FOLEY_SHOVEL);
             requestDrawShovelInCursor = true;
+            if (tcpClientSocket) {
+                U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+                send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            }
             mGamepadControls1->mGamepadState = 1;
             mSendKeyWhenTouchUp = true;
         }
@@ -3307,7 +3374,11 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
 
         if (gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
             requestDrawShovelInCursor = false; // 不再绘制铲子
-            if (isCobCannonSelected) {         // 如果拿着加农炮，将其放下
+            if (tcpClientSocket) {
+                U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+                send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            }
+            if (isCobCannonSelected) { // 如果拿着加农炮，将其放下
                 mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
             }
             if (mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST
@@ -3420,6 +3491,10 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
             requestDrawShovelInCursor = true;
             mApp->PlayFoley(FoleyType::FOLEY_SHOVEL);
         }
+        if (tcpClientSocket) {
+            U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+            send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+        }
         return;
     }
 
@@ -3481,6 +3556,10 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
         if (coin->mType == CoinType::COIN_USABLE_SEED_PACKET) {
             gTouchStateSecond = TouchState::TOUCHSTATE_USEFUL_SEED_PACKET;
             requestDrawShovelInCursor = false;
+            if (tcpClientSocket) {
+                U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+                send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            }
             // if (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
             // LOGD("5656565656");
             // GamepadControls_OnKeyDown(gamepadCon
@@ -3640,6 +3719,10 @@ void Board::MouseDragSecond(int x, int y) {
             mGamepadControls1->mGamepadState = 7;
             mGamepadControls1->mIsInShopSeedBank = false;
             requestDrawShovelInCursor = false;
+            if (tcpClientSocket) {
+                U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+                send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            }
             if (tcpClientSocket >= 0 && mGamepadControls1->mPlayerIndex2 == 1) {
                 U8_Event event = {{EventType::EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE}, 7};
                 send(tcpClientSocket, &event, sizeof(U8_Event), 0);
@@ -3663,6 +3746,10 @@ void Board::MouseDragSecond(int x, int y) {
                 if (!requestDrawShovelInCursor)
                     mApp->PlayFoley(FoleyType::FOLEY_SHOVEL);
                 requestDrawShovelInCursor = true;
+                if (tcpClientSocket) {
+                    U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+                    send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+                }
                 mGamepadControls1->mGamepadState = 1;
                 gSendKeyWhenTouchUpSecond = true;
             }
@@ -3671,6 +3758,10 @@ void Board::MouseDragSecond(int x, int y) {
             if (!requestDrawShovelInCursor)
                 mApp->PlayFoley(FoleyType::FOLEY_SHOVEL);
             requestDrawShovelInCursor = true;
+            if (tcpClientSocket) {
+                U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
+                send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            }
             mGamepadControls1->mGamepadState = 1;
             gSendKeyWhenTouchUpSecond = true;
         }
@@ -3864,6 +3955,9 @@ void Board::StartLevel() {
     if (mApp->mGameMode == GAMEMODE_MP_VS) {
         if (tcpClientSocket >= 0) {
 
+            // 重置计时器，以与客户端同步舞王的舞步节奏
+            mMainCounter = 0;
+
             U16x9_Event nineShortDataEvent;
             nineShortDataEvent.type = EventType::EVENT_SERVER_BOARD_START_LEVEL;
 
@@ -3871,16 +3965,13 @@ void Board::StartLevel() {
             while (IterateGridItems(gridItem)) {
                 if (gridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
                     nineShortDataEvent.data[gridItem->mGridY] = uint16_t(mGridItems.DataArrayGetID(gridItem));
-                    LOG_DEBUG("{} {}", gridItem->mGridY, uint16_t(mGridItems.DataArrayGetID(gridItem)));
                 }
                 if (gridItem->mGridItemType == GRIDITEM_GRAVESTONE) {
                     if (gridItem->mGridY == 1) {
                         nineShortDataEvent.data[5] = uint16_t(mGridItems.DataArrayGetID(gridItem));
-                        LOG_DEBUG("1 {} {}", gridItem->mGridY, uint16_t(mGridItems.DataArrayGetID(gridItem)));
                     }
                     if (gridItem->mGridY >= 3) {
                         nineShortDataEvent.data[6] = uint16_t(mGridItems.DataArrayGetID(gridItem));
-                        LOG_DEBUG("3 {} {}", gridItem->mGridY, uint16_t(mGridItems.DataArrayGetID(gridItem)));
                     }
                 }
             }
@@ -3907,13 +3998,8 @@ void Board::StartLevel() {
             while (IteratePlants(plant)) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mPlants.DataArrayGetID(plant)), uint16_t(plant->mLaunchCounter)};
                 send(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
-                U16U16Buf32Buf32_Event event1;
-                event1.type = EventType::EVENT_SERVER_BOARD_PLANT_ANIMATION;
-                event1.data1 = uint16_t(mPlants.DataArrayGetID(plant));
-                event1.data2 = uint16_t(plant->mFrameLength);
-                event1.data3.u32 = uint32_t(plant->mAnimCounter);
-                event1.data4.f32 = mApp->ReanimationGet(plant->mBodyReanimID)->mAnimRate;
-                send(tcpClientSocket, &event1, sizeof(U16U16Buf32Buf32_Event), 0);
+                //                plant->SendPingPongAnimationToClient();
+                //                plant->SendOtherAnimationToClient();
             }
         }
     }

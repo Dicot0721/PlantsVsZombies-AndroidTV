@@ -469,12 +469,12 @@ void Zombie::UpdateZombieGargantuar() {
             }
 
             if (tcpClientSocket >= 0) {
-                U16U16Buf32Buf32_Event event;
+                U16U16U16Buf32Buf32_Event event;
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW;
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombieImp));
-                event.data3.f32 = aOffserDistance;
-                send(tcpClientSocket, &event, sizeof(U16U16Buf32Buf32_Event), 0);
+                event.data4.f32 = aOffserDistance;
+                send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
             }
 
             aZombieImp->mPosX = mPosX - 133.0f;
@@ -2404,12 +2404,12 @@ void Zombie::PickRandomSpeed() {
     UpdateAnimSpeed();
 
     if (mApp->IsVSMode() && tcpClientSocket >= 0) {
-        U16U16Buf32Buf32_Event event;
+        U16U16U16Buf32Buf32_Event event;
         event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED;
         event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
         event.data2 = uint16_t(mAnimTicksPerFrame);
-        event.data3.f32 = mVelX;
-        send(tcpClientSocket, &event, sizeof(U16U16Buf32Buf32_Event), 0);
+        event.data4.f32 = mVelX;
+        send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
     }
 }
 

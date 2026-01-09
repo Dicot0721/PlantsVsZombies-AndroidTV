@@ -727,20 +727,22 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
             return;
 
         if (tcpClientSocket >= 0) {
-            U16U16Buf32Buf32_Event event;
+            U16U16U16Buf32Buf32_Event event;
 
             event.type = EventType::EVENT_SERVER_BOARD_PLANT_FIRE;
             event.data1 = uint16_t(mBoard->mPlants.DataArrayGetID(this));
             event.data2 = theTargetZombie == nullptr ? uint16_t(ZOMBIEID_NULL) : uint16_t(mBoard->mZombies.DataArrayGetID(theTargetZombie));
-            event.data3.u16x2.u16_1 = uint16_t(theRow);
-            event.data3.u16x2.u16_2 = uint16_t(thePlantWeapon);
+            event.data4.u16x2.u16_1 = uint16_t(theRow);
+            event.data4.u16x2.u16_2 = uint16_t(thePlantWeapon);
             // 如果同时传入有效的 theTargetZombie 和 theTargetGridItem 会导致投手弹道计算错误
             if (theTargetZombie) { // 存在僵尸目标时传入空的场地物 ID
-                event.data4.u16x2.u16_1 = uint16_t(GRIDITEMID_NULL);
+                event.data5.u16x2.u16_1 = uint16_t(GRIDITEMID_NULL);
             } else {
-                event.data4.u16x2.u16_1 = theTargetGridItem == nullptr ? uint16_t(GRIDITEMID_NULL) : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
+                event.data5.u16x2.u16_1 = theTargetGridItem == nullptr ? uint16_t(GRIDITEMID_NULL) : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
             }
-            send(tcpClientSocket, &event, sizeof(U16U16Buf32Buf32_Event), 0);
+            send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
+//            SendPingPongAnimationToClient();
+//            SendOtherAnimationToClient();
         }
     }
 
@@ -1977,4 +1979,63 @@ void Plant::IceZombies() {
 bool Plant::IsDisposable(SeedType theSeedType) {
     return theSeedType == SeedType::SEED_CHERRYBOMB || theSeedType == SeedType::SEED_JALAPENO || theSeedType == SeedType::SEED_HYPNOSHROOM || theSeedType == SeedType::SEED_ICESHROOM
         || theSeedType == SeedType::SEED_ICESHROOM || theSeedType == SeedType::SEED_ICESHROOM;
+}
+
+
+ReanimationID Plant::GetPlantReanimationIDByIndex(int index) {
+    switch (index) {
+        case 0:
+            return mBodyReanimID;
+        case 1:
+            return mHeadReanimID;
+        case 2:
+            return mHeadReanimID2;
+        case 3:
+            return mHeadReanimID3;
+        case 4:
+            return mBlinkReanimID;
+        case 5:
+            return mLightReanimID;
+        case 6:
+            return mSleepingReanimID;
+        default:
+            return REANIMATIONID_NULL;
+    }
+}
+
+
+void Plant::SendPingPongAnimationToClient() {
+    uint16_t id = mBoard->mPlants.DataArrayGetID(this);
+
+    U16U16U16Buf32Buf32_Event event;
+    event.type = EventType::EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION;
+    event.data1 = id;
+    event.data2 = mFrameLength;
+    event.data3 = mAnimPing;
+    event.data4.u32 = mFrame;
+    event.data5.u32 = mAnimCounter;
+
+    send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
+}
+
+void Plant::SendOtherAnimationToClient() {
+
+    uint16_t id = mBoard->mPlants.DataArrayGetID(this);
+
+    for (int i = 0; i < 7; ++i) {
+
+        Reanimation *theReanim = mApp->ReanimationTryToGet(GetPlantReanimationIDByIndex(i));
+        if (theReanim == nullptr) {
+            continue;
+        }
+
+        U16U16U16Buf32Buf32_Event event2;
+        event2.type = EventType::EVENT_SERVER_BOARD_PLANT_OTHER_ANIMATION;
+        event2.data1 = id;
+        event2.data2 = i;
+        event2.data3 = theReanim->mLoopType;
+        event2.data4.f32 = theReanim->mAnimTime;
+        event2.data5.f32 = theReanim->mAnimRate;
+        send(tcpClientSocket, &event2, sizeof(U16U16U16Buf32Buf32_Event), 0);
+    }
 }

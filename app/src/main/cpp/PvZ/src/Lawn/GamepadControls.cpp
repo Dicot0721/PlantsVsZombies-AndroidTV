@@ -118,20 +118,39 @@ void GamepadControls_pickUpCobCannon(int gamePad, int cobCannon) {
 void GamepadControls::Draw(Sexy::Graphics *g) {
     // 实现在光标内绘制铲子和黄油手套(黄油手套其实就是花园的手套),并在锤僵尸关卡绘制种植预览
 
+
+
     if (mPlayerIndex2 != -1) {
         LawnApp *anApp = mGameObject.mApp;
         bool is2P = mPlayerIndex1 == 1;
         CursorObject *aCursorObject = is2P ? mBoard->mCursorObject2 : mBoard->mCursorObject1;
-        if (is2P) {
-            if (requestDrawButterInCursor) {
-                if (!anApp->IsCoopMode())
-                    requestDrawButterInCursor = false;
+
+
+        if (!anApp->IsCoopMode()) {
+            requestDrawButterInCursor = false;
+        }
+        if (!mBoard->mShowShovel) {
+            requestDrawShovelInCursor = false;
+        }
+
+        if (requestDrawButterInCursor) {
+            if (is2P) {
                 g->DrawImage(addonImages.butter_glove, mCursorPositionX, mCursorPositionY);
             }
-        } else {
-            if (requestDrawShovelInCursor) {
-                if (!mBoard->mShowShovel)
-                    requestDrawShovelInCursor = false;
+        }
+
+        if (requestDrawShovelInCursor) {
+            if (anApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+                if (!mIsZombie) {
+                    aCursorObject->mCursorType = CursorType::CURSOR_TYPE_SHOVEL;
+                    aCursorObject->mX = mCursorPositionX - 20;
+                    aCursorObject->mY = mCursorPositionY - 20;
+                    if (aCursorObject->BeginDraw(g)) {
+                        aCursorObject->Draw(g);
+                        aCursorObject->EndDraw(g);
+                    }
+                }
+            } else if (!is2P) {
                 if (anApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND) {
                     if (mBoard->mChallenge->mChallengeState == ChallengeState::STATECHALLENGE_NORMAL && anApp->mGameScene == GameScenes::SCENE_PLAYING) {
                         aCursorObject->mCursorType = CursorType::CURSOR_TYPE_MONEY_SIGN;
@@ -147,13 +166,14 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
                     aCursorObject->mX = mCursorPositionX - 20;
                     aCursorObject->mY = mCursorPositionY - 20;
                 }
-
                 if (aCursorObject->BeginDraw(g)) {
                     aCursorObject->Draw(g);
                     aCursorObject->EndDraw(g);
                 }
             }
         }
+
+
         if (anApp->IsWhackAZombieLevel()) {
             int theGridX = mBoard->PixelToGridXKeepOnBoard(mCursorPositionX, mCursorPositionY);
             int theGridY = mBoard->PixelToGridYKeepOnBoard(mCursorPositionX, mCursorPositionY);

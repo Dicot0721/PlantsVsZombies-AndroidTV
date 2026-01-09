@@ -62,6 +62,9 @@ enum EventType : uint8_t {
     EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE,
     EVENT_SERVER_BOARD_GAMEPAD_SET_STATE,
 
+    EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL,
+    EVENT_SERVER_BOARD_GAMEPAD_USE_SHOVEL,
+
     EVENT_CLIENT_BOARD_PAUSE,
     EVENT_SERVER_BOARD_PAUSE,
 
@@ -75,7 +78,8 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE,
 
     EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER,
-    EVENT_SERVER_BOARD_PLANT_ANIMATION, // 效果不佳，后续再想办法
+    EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION, // 效果不佳，后续再想办法
+    EVENT_SERVER_BOARD_PLANT_OTHER_ANIMATION, // 效果不佳，后续再想办法
     EVENT_SERVER_BOARD_PLANT_FIRE,
     EVENT_SERVER_BOARD_PLANT_ADD,
     EVENT_SERVER_BOARD_PLANT_DIE,
@@ -355,12 +359,11 @@ public:
     uint8_t data4;
 };
 
-class U16U16U16U16_Event : public BaseEvent {
+class U16Buf32Buf32_Event : public BaseEvent {
 public:
     uint16_t data1;
-    uint16_t data2;
-    uint16_t data3;
-    uint16_t data4;
+    Buffer32Bit data2;
+    Buffer32Bit data3;
 };
 
 class U16x9_Event : public BaseEvent {
@@ -375,12 +378,13 @@ public:
 };
 
 
-class U16U16Buf32Buf32_Event : public BaseEvent {
+class U16U16U16Buf32Buf32_Event : public BaseEvent {
 public:
     uint16_t data1;
     uint16_t data2;
-    Buffer32Bit data3;
+    uint16_t data3;
     Buffer32Bit data4;
+    Buffer32Bit data5;
 };
 
 class U8x4U16Buf32x2_Event : public BaseEvent {
