@@ -741,8 +741,8 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
                 event.data5.u16x2.u16_1 = theTargetGridItem == nullptr ? uint16_t(GRIDITEMID_NULL) : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
             }
             send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
-//            SendPingPongAnimationToClient();
-//            SendOtherAnimationToClient();
+            //            SendPingPongAnimationToClient();
+            //            SendOtherAnimationToClient();
         }
     }
 

@@ -119,7 +119,6 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
     // 实现在光标内绘制铲子和黄油手套(黄油手套其实就是花园的手套),并在锤僵尸关卡绘制种植预览
 
 
-
     if (mPlayerIndex2 != -1) {
         LawnApp *anApp = mGameObject.mApp;
         bool is2P = mPlayerIndex1 == 1;
