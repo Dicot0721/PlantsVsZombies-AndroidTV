@@ -29,12 +29,6 @@
 namespace homura {
 
 /**
- * @brief 将类型 T 约束为 指向函数指针的指针类型 或 空指针类型.
- */
-template <typename T, typename R, typename... Args>
-concept FuncPtrAddr = std::is_same_v<T, R (**)(Args...)> || std::is_null_pointer_v<T>;
-
-/**
  * @brief 替换全局函数/静态成员函数.
  *
  * @tparam R 目标函数的返回值类型.
@@ -46,18 +40,13 @@ concept FuncPtrAddr = std::is_same_v<T, R (**)(Args...)> || std::is_null_pointer
  *
  * @return 是否成功替换.
  */
-template <typename R, typename... Args, FuncPtrAddr<R, Args...> OldFuncAddr>
-bool HookFunction(void *symbol, R (*newFunc)(Args...), OldFuncAddr oldFuncAddr) {
-    if (symbol == nullptr || newFunc == nullptr || (!std::is_null_pointer_v<OldFuncAddr> && oldFuncAddr == nullptr)) {
-        LOG_ERROR("Is nullptr: symbol: {}, newFunc: {}, oldFunc: {}", symbol == nullptr, newFunc == nullptr, oldFuncAddr == nullptr);
+template <typename R, typename... Args>
+bool HookFunction(void *symbol, R (*newFunc)(Args...), std::type_identity_t<R (**)(Args...)> oldFuncAddr) {
+    if (symbol == nullptr || newFunc == nullptr) {
+        LOG_ERROR("Is nullptr: symbol: {}, newFunc: {}", symbol == nullptr, newFunc == nullptr);
         return false;
     }
-
-    if constexpr (!std::is_null_pointer_v<OldFuncAddr>) {
-        MSHookFunction(symbol, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
-    } else {
-        MSHookFunction(symbol, reinterpret_cast<void *>(newFunc), nullptr);
-    }
+    MSHookFunction(symbol, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
     return true;
 }
 
@@ -74,18 +63,13 @@ bool HookFunction(void *symbol, R (*newFunc)(Args...), OldFuncAddr oldFuncAddr) 
  *
  * @return 是否成功替换.
  */
-template <typename R, typename T, typename... Args, FuncPtrAddr<R, T *, Args...> OldFuncAddr>
-bool HookFunction(void *symbol, R (T::*newFunc)(Args...), OldFuncAddr oldFuncAddr) {
-    if (symbol == nullptr || newFunc == nullptr || (!std::is_null_pointer_v<OldFuncAddr> && oldFuncAddr == nullptr)) {
-        LOG_ERROR("Is nullptr: symbol: {}, newFunc: {}, oldFunc: {}", symbol == nullptr, newFunc == nullptr, oldFuncAddr == nullptr);
+template <typename R, typename T, typename... Args>
+bool HookFunction(void *symbol, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
+    if (symbol == nullptr || newFunc == nullptr) {
+        LOG_ERROR("Is nullptr: symbol: {}, newFunc: {}", symbol == nullptr, newFunc == nullptr);
         return false;
     }
-
-    if constexpr (!std::is_null_pointer_v<OldFuncAddr>) {
-        MSHookFunction(symbol, *reinterpret_cast<void **>(&newFunc), reinterpret_cast<void **>(oldFuncAddr));
-    } else {
-        MSHookFunction(symbol, *reinterpret_cast<void **>(&newFunc), nullptr);
-    }
+    MSHookFunction(symbol, *reinterpret_cast<void **>(&newFunc), reinterpret_cast<void **>(oldFuncAddr));
     return true;
 }
 
@@ -104,10 +88,10 @@ bool HookFunction(void *symbol, R (T::*newFunc)(Args...), OldFuncAddr oldFuncAdd
  *
  * @return 是否成功替换.
  */
-template <typename R, typename... Args, FuncPtrAddr<R, Args...> OldFuncAddr>
-bool HookVirtualFunc(void *vTableSymbol, size_t index, R (*newFunc)(Args...), OldFuncAddr oldFuncAddr) {
-    if (vTableSymbol == nullptr || newFunc == nullptr || (!std::is_null_pointer_v<OldFuncAddr> && oldFuncAddr == nullptr)) {
-        LOG_ERROR("Is nullptr: vTableSymbol: {}, newFunc: {}, oldFunc: {}", vTableSymbol == nullptr, newFunc == nullptr, oldFuncAddr == nullptr);
+template <typename R, typename... Args>
+bool HookVirtualFunc(void *vTableSymbol, size_t index, R (*newFunc)(Args...), std::type_identity_t<R (**)(Args...)> oldFuncAddr) {
+    if (vTableSymbol == nullptr || newFunc == nullptr) {
+        LOG_ERROR("Is nullptr: vTableSymbol: {}, newFunc: {}", vTableSymbol == nullptr, newFunc == nullptr);
         return false;
     }
     auto **funcPtrAddr = reinterpret_cast<R (**)(Args...)>(vTableSymbol) + index;
@@ -115,7 +99,7 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (*newFunc)(Args...), Ol
         return false;
     }
 
-    if constexpr (!std::is_null_pointer_v<OldFuncAddr>) {
+    if (oldFuncAddr != nullptr) {
         *oldFuncAddr = *funcPtrAddr;
     }
     *funcPtrAddr = newFunc;
@@ -137,10 +121,10 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (*newFunc)(Args...), Ol
  *
  * @return 是否成功替换.
  */
-template <typename R, typename T, typename... Args, FuncPtrAddr<R, T *, Args...> OldFuncAddr>
-bool HookVirtualFunc(void *vTableSymbol, size_t index, R (T::*newFunc)(Args...), OldFuncAddr oldFuncAddr) {
-    if (vTableSymbol == nullptr || newFunc == nullptr || (!std::is_null_pointer_v<OldFuncAddr> && oldFuncAddr == nullptr)) {
-        LOG_ERROR("Is nullptr: vTableSymbol: {}, newFunc: {}, oldFunc: {}", vTableSymbol == nullptr, newFunc == nullptr, oldFuncAddr == nullptr);
+template <typename R, typename T, typename... Args>
+bool HookVirtualFunc(void *vTableSymbol, size_t index, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
+    if (vTableSymbol == nullptr || newFunc == nullptr) {
+        LOG_ERROR("Is nullptr: vTableSymbol: {}, newFunc: {}", vTableSymbol == nullptr, newFunc == nullptr);
         return false;
     }
     auto **funcPtrAddr = reinterpret_cast<R (**)(T *, Args...)>(vTableSymbol) + index;
@@ -148,7 +132,7 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (T::*newFunc)(Args...),
         return false;
     }
 
-    if constexpr (!std::is_null_pointer_v<OldFuncAddr>) {
+    if (oldFuncAddr != nullptr) {
         *oldFuncAddr = *funcPtrAddr;
     }
     *funcPtrAddr = *reinterpret_cast<decltype(funcPtrAddr)>(&newFunc);
@@ -170,10 +154,10 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (T::*newFunc)(Args...),
  *
  * @return 是否成功替换.
  */
-template <typename R, typename... Args, FuncPtrAddr<R, Args...> OldFuncAddr>
-bool HookPltFunction(const std::string &libName, uintptr_t offset, R (*newFunc)(Args...), OldFuncAddr oldFuncAddr) {
-    if (newFunc == nullptr || (!std::is_null_pointer_v<OldFuncAddr> && oldFuncAddr == nullptr)) {
-        LOG_ERROR("Is nullptr: newFunc: {}, oldFunc: {}", newFunc == nullptr, oldFuncAddr == nullptr);
+template <typename R, typename... Args>
+bool HookPltFunction(const std::string &libName, uintptr_t offset, R (*newFunc)(Args...), std::type_identity_t<R (**)(Args...)> oldFuncAddr) {
+    if (newFunc == nullptr) {
+        LOG_ERROR("newFunc is nullptr");
         return false;
     }
     uintptr_t baseAddr = Patcher::GetBaseAddress(libName, false);
@@ -186,7 +170,7 @@ bool HookPltFunction(const std::string &libName, uintptr_t offset, R (*newFunc)(
         return false;
     }
 
-    if constexpr (!std::is_null_pointer_v<OldFuncAddr>) {
+    if (oldFuncAddr != nullptr) {
         *oldFuncAddr = *reinterpret_cast<R (**)(Args...)>(funcPtrAddr);
     }
     *reinterpret_cast<R (**)(Args...)>(funcPtrAddr) = newFunc;
