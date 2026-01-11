@@ -473,15 +473,15 @@ Plant *Board::AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedTyp
             event.type = EventType::EVENT_SERVER_BOARD_PLANT_ADD;
             event.data1 = uint16_t(theGridX);
             event.data2 = uint16_t(theGridY);
-            event.data3 = uint16_t(aPlant->mFrameLength);
+            event.data3 = uint16_t(aPlant->mLaunchCounter);
             event.data4.u16x2.u16_1 = uint16_t(theSeedType);
             event.data4.u16x2.u16_2 = uint16_t(theImitaterType);
             event.data5.u16x2.u16_1 = uint16_t(mPlants.DataArrayGetID(aPlant));
             event.data5.u16x2.u16_2 = theIsDoEffect;
             send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
 
-            //            aPlant->SendPingPongAnimationToClient();
-            //            aPlant->SendOtherAnimationToClient();
+            //            aPlant->SyncPingPongAnimationToClient();
+            aPlant->SyncAnimationToClient();
         }
     }
 
@@ -1176,6 +1176,8 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER:
         case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER:
             return sizeof(U16U16_Event);
+        case EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH:
+            return sizeof(U16_Event);
 
         // --- 动画、开火、植物添加、僵尸移速更新 ---
         case EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION:
@@ -1184,6 +1186,10 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_PLANT_ADD:
         case EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED:
             return sizeof(U16U16U16Buf32Buf32_Event);
+        case EVENT_SERVER_BOARD_PLANT_FINDTARGETANDFIRE:
+            return sizeof(U8U8U16_Event);
+        case EVENT_SERVER_BOARD_PLANT_KERNELPLUT_FINDTARGETANDFIRE:
+            return sizeof(U8U8U16U16_Event);
 
         // --- 僵尸添加 ---
         case EVENT_SERVER_BOARD_ZOMBIE_ADD:
@@ -1318,9 +1324,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_BOARD_COIN_ADD: {
             U8U8U16U16_Event *event1 = (U8U8U16U16_Event *)event;
-            tcp_connected = false;
-            AddCoin(event1->data3, event1->data4, (CoinType)event1->data1, (CoinMotion)event1->data2);
-            tcp_connected = true;
+            old_Board_AddCoin(this, event1->data3, event1->data4, CoinType(event1->data1), CoinMotion(event1->data2));
         } break;
         case EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER: {
             U16U16_Event *event1 = (U16U16_Event *)event;
@@ -1336,9 +1340,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             uint16_t clientGridItemID;
             if (homura::FindInMap(serverGridItemIDMap, serverGridItemID, clientGridItemID)) {
                 GridItem *aGridItem = mGridItems.DataArrayGet(clientGridItemID);
-                tcp_connected = false;
-                aGridItem->GridItemDie();
-                tcp_connected = true;
+                old_GridItem_GridItemDie(aGridItem);
             }
         } break;
         case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER: {
@@ -1353,8 +1355,8 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             U8U8U16U16_Event *event1 = (U8U8U16U16_Event *)event;
             GridItem *gridItem = AddAGraveStone(event1->data1, event1->data2);
             gridItem->mLaunchCounter = event1->data4;
-            gridItem->mVSGraveStoneHealth = 350;
-            gridItem->unkBool1 = true;
+            //            gridItem->mVSGraveStoneHealth = 350;
+            //            gridItem->unkBool1 = true;
             serverGridItemIDMap.emplace(event1->data3, uint16_t(mGridItems.DataArrayGetID(gridItem)));
         } break;
         case EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION: {
@@ -1377,7 +1379,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 if (reanimation != nullptr) {
                     reanimation->mLoopType = ReanimLoopType(event1->data3);
                     reanimation->mAnimTime = event1->data4.f32;
-                    reanimation->mAnimRate = event1->data5.f32;
+                    reanimation->SetAnimRate(event1->data5.f32);
                 }
             }
         } break;
@@ -1402,7 +1404,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             U16U16U16Buf32Buf32_Event *event1 = (U16U16U16Buf32Buf32_Event *)event;
             tcp_connected = false;
             Plant *plant = AddPlant(event1->data1, event1->data2, (SeedType)event1->data4.u16x2.u16_1, (SeedType)event1->data4.u16x2.u16_2, 0, event1->data5.u16x2.u16_2);
-            plant->mFrameLength = event1->data3;
+            plant->mLaunchCounter = event1->data3;
             serverPlantIDMap.emplace(event1->data5.u16x2.u16_1, uint16_t(mPlants.DataArrayGetID(plant)));
             tcp_connected = true;
         } break;
@@ -1428,6 +1430,58 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 tcp_connected = true;
             }
         } break;
+        case EVENT_SERVER_BOARD_PLANT_FINDTARGETANDFIRE: {
+            U8U8U16_Event *event1 = reinterpret_cast<U8U8U16_Event *>(event);
+            uint16_t serverPlantID = event1->data3;
+            uint16_t clientPlantID;
+            if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
+                Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
+                old_Plant_FindTargetAndFire(aPlant, event1->data1, PlantWeapon(event1->data2));
+                if (aPlant->mSeedType == SEED_LEFTPEATER) {
+                    Reanimation *aHeadReanim = mApp->ReanimationGet(aPlant->mHeadReanimID);
+                    Reanimation *aBodyReanim = mApp->ReanimationGet(aPlant->mBodyReanimID);
+                    aHeadReanim->StartBlend(20);
+                    aHeadReanim->mLoopType = ReanimLoopType::REANIM_LOOP;
+                    aHeadReanim->SetFramesForLayer("anim_head_idle");
+                    aHeadReanim->SetAnimRate(aBodyReanim->mAnimRate);
+                    aHeadReanim->mAnimTime = aBodyReanim->mAnimTime;
+                }
+            }
+        } break;
+        case EVENT_SERVER_BOARD_PLANT_KERNELPLUT_FINDTARGETANDFIRE: {
+            U8U8U16U16_Event *event1 = reinterpret_cast<U8U8U16U16_Event *>(event);
+            uint16_t serverPlantID = event1->data3;
+            uint16_t clientPlantID;
+            if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
+                Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
+                old_Plant_FindTargetAndFire(aPlant, event1->data1, PlantWeapon(event1->data2));
+                PlantState serverState = PlantState(event1->data4);
+                if (aPlant->mState != serverState) {
+                    aPlant->mState = serverState;
+                    Reanimation *reanimation = mApp->ReanimationGet(aPlant->mBodyReanimID);
+                    if (serverState == STATE_KERNELPULT_BUTTER) {
+                        reanimation->AssignRenderGroupToPrefix("Cornpult_butter", 0);
+                        reanimation->AssignRenderGroupToPrefix("Cornpult_kernal", -1);
+                    } else {
+                        reanimation->AssignRenderGroupToPrefix("Cornpult_butter", -1);
+                        reanimation->AssignRenderGroupToPrefix("Cornpult_kernal", 0);
+                    }
+                }
+            }
+        } break;
+        case EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH: {
+            U16_Event *event1 = reinterpret_cast<U16_Event *>(event);
+            uint16_t serverPlantID = event1->data;
+            uint16_t clientPlantID;
+            if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
+                Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
+                if (aPlant->mSeedType == SEED_THREEPEATER) {
+                    aPlant->LaunchThreepeater();
+                } else if (aPlant->mSeedType == SEED_STARFRUIT) {
+                    aPlant->LaunchStarFruit();
+                }
+            }
+        } break;
         case EVENT_SERVER_BOARD_ZOMBIE_DIE: {
             U16_Event *eventZombieDie = reinterpret_cast<U16_Event *>(event);
             uint16_t serverZombieID = eventZombieDie->data;
@@ -1445,9 +1499,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             uint16_t clientZombieID;
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
-                tcp_connected = false;
-                aZombie->StartMindControlled();
-                tcp_connected = true;
+                old_Zombie_StartMindControlled(aZombie);
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
@@ -1457,7 +1509,6 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 return;
             tcp_connected = false;
             Zombie *aZombie = AddZombieInRow(aZombieType, eventZombieAdd->data1[1], eventZombieAdd->data1[2], eventZombieAdd->data1[3]);
-            LOG_DEBUG("serverZombieIDMap Add {} {}", eventZombieAdd->data2, uint16_t(mZombies.DataArrayGetID(aZombie)));
             serverZombieIDMap.emplace(eventZombieAdd->data2, uint16_t(mZombies.DataArrayGetID(aZombie)));
             tcp_connected = true;
             float aVelX = eventZombieAdd->data3[0].f32;
@@ -1466,10 +1517,8 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE: {
             U8U8U16_Event *event1 = (U8U8U16_Event *)event;
-            LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE ID {}", event1->data3);
             uint16_t clientZombieID;
             if (homura::FindInMap(serverZombieIDMap, event1->data3, clientZombieID)) {
-                LOG_DEBUG("EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE clientZombieID {}", clientZombieID);
                 Zombie *zombie = mZombies.DataArrayGet(clientZombieID);
                 zombie->RiseFromGrave(event1->data1, event1->data2);
             }
@@ -3998,8 +4047,8 @@ void Board::StartLevel() {
             while (IteratePlants(plant)) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mPlants.DataArrayGetID(plant)), uint16_t(plant->mLaunchCounter)};
                 send(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
-                //                plant->SendPingPongAnimationToClient();
-                //                plant->SendOtherAnimationToClient();
+                //                plant->SyncPingPongAnimationToClient();
+                plant->SyncAnimationToClient();
             }
         }
     }

@@ -99,6 +99,7 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
             }
             // right: 创建/退出
             mRightButton->SetLabel(mIsCreatingRoom ? "退出房间" : "创建房间");
+            mRightButton->mDisabled = mIsJoiningRoom;
 
             // Yes：未创建房间 -> “加入指定IP房间”；创建房间 -> “开始游戏”
             if (mIsCreatingRoom) {
@@ -106,7 +107,7 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
                 mLawnYesButton->mDisabled = (tcpClientSocket == -1);
             } else {
                 mLawnYesButton->SetLabel("加入指定IP房间");
-                mLawnYesButton->mDisabled = false;
+                mLawnYesButton->mDisabled = mIsJoiningRoom;
             }
 
             mLawnNoButton->SetLabel("返回模式选择");

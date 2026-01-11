@@ -362,12 +362,17 @@ void LawnApp::UpdateFrames() {
             } else if (n == 0) {
                 // 对端关闭连接（收到FIN）
                 LOG_DEBUG("[TCP] 对方关闭连接");
-                close(tcpClientSocket);
-                tcpClientSocket = -1;
-                close(tcpListenSocket);
-                tcpListenSocket = -1;
-                if (!GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER))
+                if (tcpClientSocket >= 0) {
+                    close(tcpClientSocket);
+                    tcpClientSocket = -1;
+                }
+                if (!GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER)) {
+                    if (tcpListenSocket >= 0) {
+                        close(tcpListenSocket);
+                        tcpListenSocket = -1;
+                    }
                     LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
+                }
                 break;
             } else {
                 if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -378,10 +383,14 @@ void LawnApp::UpdateFrames() {
                     continue;
                 } else {
                     LOG_DEBUG("[TCP] recv 出错 errno={}", errno);
-                    close(tcpClientSocket);
-                    tcpClientSocket = -1;
-                    close(tcpListenSocket);
-                    tcpListenSocket = -1;
+                    if (tcpClientSocket >= 0) {
+                        close(tcpClientSocket);
+                        tcpClientSocket = -1;
+                    }
+                    if (tcpListenSocket >= 0) {
+                        close(tcpListenSocket);
+                        tcpListenSocket = -1;
+                    }
                     LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 }

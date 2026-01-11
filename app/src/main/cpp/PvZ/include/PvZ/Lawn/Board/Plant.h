@@ -245,9 +245,7 @@ public:
     void LaunchStarFruit() {
         reinterpret_cast<void (*)(Plant *)>(Plant_LaunchStarFruitAddr)(this);
     }
-    void FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
-        reinterpret_cast<void (*)(Plant *, int, PlantWeapon)>(Plant_FindTargetAndFireAddr)(this, theRow, thePlantWeapon);
-    }
+
     void BlowAwayFliers(int theX, int theRow) {
         reinterpret_cast<void (*)(Plant *, int, int)>(Plant_BlowAwayFliersAddr)(this, theX, theRow);
     }
@@ -293,9 +291,10 @@ public:
     void PlayIdleAnim(float theRate);
     void IceZombies();
     bool IsDisposable(SeedType theSeedType);
+    bool FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon);
     ReanimationID GetPlantReanimationIDByIndex(int index);
-    void SendOtherAnimationToClient();
-    void SendPingPongAnimationToClient();
+    void SyncAnimationToClient();
+    void SyncPingPongAnimationToClient();
 };
 
 inline float PlantDrawHeightOffset(Board *theBoard, Plant *thePlant, SeedType theSeedType, int theCol, int theRow) {
@@ -347,6 +346,10 @@ inline bool (*old_Plant_IsUpgrade)(SeedType theSeedType);
 inline void (*old_Plant_PlayBodyReanim)(Plant *, const char *theTrackName, ReanimLoopType theLoopType, int theBlendTime, float theAnimRate);
 
 inline void (*old_Plant_UpdateProductionPlant)(Plant *);
+
+inline void (*old_Plant_UpdateShooter)(Plant *);
+
+inline bool (*old_Plant_FindTargetAndFire)(Plant *, int, PlantWeapon);
 
 // inline void (*old_Plant_CobCannonFire)(Plant* plant, int x, int y);
 

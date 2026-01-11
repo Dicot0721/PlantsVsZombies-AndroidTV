@@ -18,6 +18,7 @@
  */
 
 #include "PvZ/Lawn/Board/Plant.h"
+#include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Challenge.h"
@@ -174,7 +175,16 @@ int Plant::GetDamageRangeFlags(PlantWeapon thePlantWeapon) {
 }
 
 void Plant::PlayBodyReanim(const char *theTrackName, ReanimLoopType theLoopType, int theBlendTime, float theAnimRate) {
-    old_Plant_PlayBodyReanim(this, theTrackName, theLoopType, theBlendTime, theAnimRate);
+    Reanimation *reanimation = mApp->ReanimationGet(mBodyReanimID);
+    if (theBlendTime > 0) {
+        reanimation->StartBlend(theBlendTime);
+    }
+    if (theAnimRate > 0.0f) {
+        reanimation->SetAnimRate(theAnimRate);
+    }
+    reanimation->mLoopType = theLoopType;
+    reanimation->mLoopCount = 0;
+    reanimation->SetFramesForLayer(theTrackName);
 }
 
 void Plant::SpikeweedAttack() {
@@ -741,8 +751,8 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
                 event.data5.u16x2.u16_1 = theTargetGridItem == nullptr ? uint16_t(GRIDITEMID_NULL) : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
             }
             send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
-            //            SendPingPongAnimationToClient();
-            //            SendOtherAnimationToClient();
+            //            SyncPingPongAnimationToClient();
+            //            SyncAnimationToClient();
         }
     }
 
@@ -1157,7 +1167,7 @@ void Plant::Die() {
         Plant *aFlowerPot = mBoard->GetFlowerPotAt(mPlantCol, mRow);
         if (aFlowerPot && aTopPlant == aFlowerPot) {
             Reanimation *aPotReanim = mApp->ReanimationGet(aFlowerPot->mBodyReanimID);
-            aPotReanim->mAnimRate = RandRangeFloat(10.0f, 15.0f);
+            aPotReanim->SetAnimRate(RandRangeFloat(10.0f, 15.0f));
         }
     }
 }
@@ -1823,21 +1833,21 @@ void Plant::UpdateShooting() {
                 aHeadReanim->StartBlend(20);
                 aHeadReanim->mLoopType = ReanimLoopType::REANIM_LOOP;
                 aHeadReanim->SetFramesForLayer("anim_head_idle1");
-                aHeadReanim->mAnimRate = aBodyReanim->mAnimRate;
+                aHeadReanim->SetAnimRate(aBodyReanim->mAnimRate);
                 aHeadReanim->mAnimTime = aBodyReanim->mAnimTime;
             }
 
             aHeadReanim2->StartBlend(20);
             aHeadReanim2->mLoopType = ReanimLoopType::REANIM_LOOP;
             aHeadReanim2->SetFramesForLayer("anim_head_idle2");
-            aHeadReanim2->mAnimRate = aBodyReanim->mAnimRate;
+            aHeadReanim2->SetAnimRate(aBodyReanim->mAnimRate);
             aHeadReanim2->mAnimTime = aBodyReanim->mAnimTime;
 
             if (aHeadReanim3->mLoopType == ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD) {
                 aHeadReanim3->StartBlend(20);
                 aHeadReanim3->mLoopType = ReanimLoopType::REANIM_LOOP;
                 aHeadReanim3->SetFramesForLayer("anim_head_idle3");
-                aHeadReanim3->mAnimRate = aBodyReanim->mAnimRate;
+                aHeadReanim3->SetAnimRate(aBodyReanim->mAnimRate);
                 aHeadReanim3->mAnimTime = aBodyReanim->mAnimTime;
             }
 
@@ -1850,7 +1860,7 @@ void Plant::UpdateShooting() {
             aHeadReanim->StartBlend(20);
             aHeadReanim->mLoopType = ReanimLoopType::REANIM_LOOP;
             aHeadReanim->SetFramesForLayer("anim_head_idle");
-            aHeadReanim->mAnimRate = aBodyReanim->mAnimRate;
+            aHeadReanim->SetAnimRate(aBodyReanim->mAnimRate);
             aHeadReanim->mAnimTime = aBodyReanim->mAnimTime;
         }
 
@@ -1858,7 +1868,7 @@ void Plant::UpdateShooting() {
             aHeadReanim2->StartBlend(20);
             aHeadReanim2->mLoopType = ReanimLoopType::REANIM_LOOP;
             aHeadReanim2->SetFramesForLayer("anim_splitpea_idle");
-            aHeadReanim2->mAnimRate = aBodyReanim->mAnimRate;
+            aHeadReanim2->SetAnimRate(aBodyReanim->mAnimRate);
             aHeadReanim2->mAnimTime = aBodyReanim->mAnimTime;
         }
 
@@ -1867,9 +1877,9 @@ void Plant::UpdateShooting() {
         if (aBodyReanim->mLoopCount > 0) {
             PlayBodyReanim("anim_idlehigh", ReanimLoopType::REANIM_LOOP, 20, 0.0f);
 
-            aBodyReanim->mAnimRate = aBodyReanim->mDefinition->mFPS;
+            aBodyReanim->SetAnimRate(aBodyReanim->mDefinition->mFPS);
             if (mApp->IsIZombieLevel()) {
-                aBodyReanim->mAnimRate = 0.0f;
+                aBodyReanim->SetAnimRate(0.0f);
             }
 
             return;
@@ -1879,7 +1889,7 @@ void Plant::UpdateShooting() {
             aHeadReanim->StartBlend(20);
             aHeadReanim->mLoopType = ReanimLoopType::REANIM_LOOP;
             aHeadReanim->SetFramesForLayer("anim_head_idle");
-            aHeadReanim->mAnimRate = aBodyReanim->mAnimRate;
+            aHeadReanim->SetAnimRate(aBodyReanim->mAnimRate);
             aHeadReanim->mAnimTime = aBodyReanim->mAnimTime;
             return;
         }
@@ -1899,16 +1909,18 @@ void Plant::UpdateShooting() {
 }
 
 void Plant::UpdateShooter() {
+
+    if (mApp->mGameMode == GAMEMODE_MP_VS && tcp_connected) {
+        return;
+    }
+
     mLaunchCounter--;
     if (mLaunchCounter <= 0) {
-        if (!(mApp->IsVSMode() && tcp_connected)) {
-            mLaunchCounter = mLaunchRate - Sexy::Rand(15);
-        }
+        mLaunchCounter = mLaunchRate - Sexy::Rand(15);
         if (tcpClientSocket >= 0) {
-            U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
-            send(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
+            U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
+            send(tcpClientSocket, &event, sizeof(U16_Event), 0);
         }
-
         if (mSeedType == SeedType::SEED_THREEPEATER) {
             LaunchThreepeater();
         } else if (mSeedType == SeedType::SEED_STARFRUIT) {
@@ -1951,7 +1963,7 @@ void Plant::PlayIdleAnim(float theRate) {
     if (aBodyReanim) {
         PlayBodyReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 20, theRate);
         if (mApp->IsIZombieLevel()) {
-            aBodyReanim->mAnimRate = 0.0f;
+            aBodyReanim->SetAnimRate(0.0f);
         }
     }
 }
@@ -2004,7 +2016,7 @@ ReanimationID Plant::GetPlantReanimationIDByIndex(int index) {
 }
 
 
-void Plant::SendPingPongAnimationToClient() {
+void Plant::SyncPingPongAnimationToClient() {
     uint16_t id = mBoard->mPlants.DataArrayGetID(this);
 
     U16U16U16Buf32Buf32_Event event;
@@ -2018,7 +2030,7 @@ void Plant::SendPingPongAnimationToClient() {
     send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
 }
 
-void Plant::SendOtherAnimationToClient() {
+void Plant::SyncAnimationToClient() {
 
     uint16_t id = mBoard->mPlants.DataArrayGetID(this);
 
@@ -2038,4 +2050,31 @@ void Plant::SendOtherAnimationToClient() {
         event2.data5.f32 = theReanim->mAnimRate;
         send(tcpClientSocket, &event2, sizeof(U16U16U16Buf32Buf32_Event), 0);
     }
+}
+
+
+bool Plant::FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
+    // 此函数用于在mLaunchCounter到0之后播放投手的投掷动画、豌豆的发射动画
+    if (tcp_connected) {
+        return false;
+    }
+
+    bool result = old_Plant_FindTargetAndFire(this, theRow, thePlantWeapon);
+
+    if (result) {
+        if (tcpClientSocket >= 0) {
+
+            if (mSeedType == SEED_KERNELPULT) {
+                U8U8U16U16_Event event = {
+                    {EventType::EVENT_SERVER_BOARD_PLANT_KERNELPLUT_FINDTARGETANDFIRE}, uint8_t(theRow), uint8_t(thePlantWeapon), uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mState)};
+                send(tcpClientSocket, &event, sizeof(U8U8U16U16_Event), 0);
+            } else {
+                U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_FINDTARGETANDFIRE}, uint8_t(theRow), uint8_t(thePlantWeapon), uint16_t(mBoard->mPlants.DataArrayGetID(this))};
+                send(tcpClientSocket, &event, sizeof(U8U8U16_Event), 0);
+            }
+        }
+    }
+
+
+    return result;
 }
