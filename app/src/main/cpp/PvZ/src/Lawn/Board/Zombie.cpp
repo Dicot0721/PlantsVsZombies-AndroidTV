@@ -18,6 +18,7 @@
  */
 
 #include "PvZ/Lawn/Board/Zombie.h"
+#include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Challenge.h"
@@ -2793,4 +2794,83 @@ bool Zombie::NeedsMoreBackupDancers() {
 
 void Zombie::DropLoot() {
     old_Zombie_DropLoot(this);
+}
+
+void Zombie::UpdateYuckyFace() {
+    if (mApp->mGameMode == GAMEMODE_MP_VS && (tcp_connected || tcpClientSocket >= 0)) {
+        mYuckyFaceCounter++;
+        // 20 < counter < 170 且还没有 yucky face 图时：停止吃并直接跳到 170
+        if (mYuckyFaceCounter > 20 && mYuckyFaceCounter < 170 && !HasYuckyFaceImage()) {
+            StopEating();
+            mYuckyFaceCounter = 170;
+            int zc = mBoard->CountZombiesOnScreen();
+            if ((zc <= 5 && mHasHead) || (zc <= 10 && mHasHead && Sexy::Rand(2) == 0)) {
+                mApp->PlayFoley(FOLEY_YUCK);
+            }
+        }
+        // counter > 270：结束 yucky
+        if (mYuckyFaceCounter > 270) {
+            ShowYuckyFace(false);
+            mYuckyFace = false;
+            mYuckyFaceCounter = 0;
+            return;
+        }
+        // counter == 70：显示 yucky face 并可能播放音效
+        if (mYuckyFaceCounter == 70) {
+            StopEating();
+            ShowYuckyFace(true);
+            int zc = mBoard->CountZombiesOnScreen();
+            if ((zc <= 5 && mHasHead) || (zc <= 10 && mHasHead && Sexy::Rand(2) == 0)) {
+                mApp->PlayFoley(FOLEY_YUCK);
+            }
+        }
+        // counter == 170：开始走路动画 + 尝试换行
+        if (mYuckyFaceCounter == 170) {
+            StartWalkAnim(20);
+            bool isThisRowPool = (mBoard->mPlantRow[mRow] == PLANTROW_POOL); // 2
+            // canGoDown: row-1；canGoUp: row+1
+            bool canGoDown = true;
+            bool canGoUp = true;
+            // down
+            if (!mBoard->RowCanHaveZombies(mRow - 1)) {
+                canGoDown = false;
+            } else if (mBoard->mPlantRow[mRow - 1] == PLANTROW_POOL && !isThisRowPool) {
+                canGoDown = false;
+            } else if (mBoard->mPlantRow[mRow - 1] != PLANTROW_POOL && isThisRowPool) {
+                canGoDown = false;
+            }
+            // up
+            if (!mBoard->RowCanHaveZombies(mRow + 1)) {
+                canGoUp = false;
+            } else if (mBoard->mPlantRow[mRow + 1] == PLANTROW_POOL && !isThisRowPool) {
+                canGoUp = false;
+            } else if (mBoard->mPlantRow[mRow + 1] != PLANTROW_POOL && isThisRowPool) {
+                canGoUp = false;
+            }
+            // 客机不允许随机换行
+            if (tcp_connected) {
+                return;
+            }
+            if (canGoDown && !canGoUp) {
+                SetRow(mRow - 1);
+            }
+            if (!canGoDown && canGoUp) {
+                SetRow(mRow + 1);
+            }
+            if (canGoDown && canGoUp) {
+                if (Sexy::Rand(2) == 0) {
+                    SetRow(mRow + 1);
+                } else {
+                    SetRow(mRow - 1);
+                };
+            }
+
+            if (tcpClientSocket >= 0) {
+                U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_YUCKY_SETROW}, uint16_t(mBoard->mZombies.DataArrayGetID(this)), uint16_t(mRow)};
+                send(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
+            }
+        }
+        return;
+    }
+    return old_Zombie_UpdateYuckyFace(this);
 }

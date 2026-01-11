@@ -447,6 +447,9 @@ bool LoadGameMain() {
     Zombie_BalloonPropellerHatSpinAddr = dlsym(handle, "_ZN6Zombie23BalloonPropellerHatSpinEb");
     Zombie_BobsledBurnAddr = dlsym(handle, "_ZN6Zombie11BobsledBurnEv");
     Zombie_CanTargetPlantAddr = dlsym(handle, "_ZN6Zombie14CanTargetPlantEP5Plant16ZombieAttackType");
+    Zombie_HasYuckyFaceImageAddr = dlsym(handle, "_ZN6Zombie17HasYuckyFaceImageEv");
+    Zombie_ShowYuckyFaceAddr = dlsym(handle, "_ZN6Zombie13ShowYuckyFaceEb");
+    Zombie_UpdateYuckyFaceAddr = dlsym(handle, "_ZN6Zombie15UpdateYuckyFaceEv");
 
 
     SeedChooserScreen_UpdateAddr = dlsym(handle, "_ZN17SeedChooserScreen6UpdateEv");

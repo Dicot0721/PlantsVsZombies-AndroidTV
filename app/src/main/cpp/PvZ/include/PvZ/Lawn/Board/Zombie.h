@@ -267,7 +267,12 @@ public:
     void BobsledBurn() {
         reinterpret_cast<void (*)(Zombie *)>(Zombie_BobsledBurnAddr)(this);
     }
-
+    bool HasYuckyFaceImage() {
+        return reinterpret_cast<bool (*)(Zombie *)>(Zombie_HasYuckyFaceImageAddr)(this);
+    }
+    void ShowYuckyFace(bool show) {
+        reinterpret_cast<void (*)(Zombie *, bool)>(Zombie_ShowYuckyFaceAddr)(this, show);
+    }
 
     Zombie() {
         _constructor();
@@ -369,6 +374,7 @@ public:
     ZombieID SummonBackupDancer(int theRow, int thePosX);
     void SummonBackupDancers();
     bool NeedsMoreBackupDancers();
+    void UpdateYuckyFace();
 
 protected:
     void _constructor() {
@@ -456,5 +462,7 @@ inline void (*old_Zombie_UpdateZombieWalking)(Zombie *);
 inline void (*old_Zombie_DropLoot)(Zombie *);
 
 inline void (*old_Zombie_ApplyBurn)(Zombie *);
+
+inline void (*old_Zombie_UpdateYuckyFace)(Zombie *);
 
 #endif // PVZ_LAWN_BOARD_ZOMBIE_H

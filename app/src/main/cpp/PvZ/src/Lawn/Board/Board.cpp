@@ -1228,6 +1228,8 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_CONCEDE:
         case EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE:
             return sizeof(BaseEvent);
+        case EVENT_SERVER_BOARD_ZOMBIE_YUCKY_SETROW:
+            return sizeof(U16U16_Event);
         default:
             return sizeof(BaseEvent);
     }
@@ -1579,6 +1581,16 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE: {
             mApp->PlaySample(*Sexy_SOUND_HUGE_WAVE_Addr);
             DisplayAdviceAgain("[ADVICE_HUGE_WAVE]", MESSAGE_STYLE_HUGE_WAVE, ADVICE_HUGE_WAVE);
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_YUCKY_SETROW: {
+            U16U16_Event *event1 = reinterpret_cast<U16U16_Event *>(event);
+            uint16_t serverZombieID = event1->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                aZombie->SetRow(event1->data2);
+                aZombie->StartWalkAnim(20);
+            }
         } break;
         case EVENT_SERVER_BOARD_LAWNMOWER_STRART: {
             U16_Event *eventLawnMowerStart = reinterpret_cast<U16_Event *>(event);

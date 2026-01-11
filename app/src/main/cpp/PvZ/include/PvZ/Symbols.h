@@ -435,6 +435,9 @@ inline void *Zombie_BungeeDropPlantAddr;
 inline void *Zombie_BalloonPropellerHatSpinAddr;
 inline void *Zombie_BobsledBurnAddr;
 inline void *Zombie_CanTargetPlantAddr;
+inline void *Zombie_HasYuckyFaceImageAddr;
+inline void *Zombie_ShowYuckyFaceAddr;
+inline void *Zombie_UpdateYuckyFaceAddr;
 
 
 inline void *SeedChooserScreen_UpdateAddr;
