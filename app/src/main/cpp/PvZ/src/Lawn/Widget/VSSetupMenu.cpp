@@ -349,7 +349,7 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
     // 1) 有概率先塞一个固定种子 SEED_INSTANT_COFFEE
     // ------------------------------------------------------------
     int alreadyPicked = 0;
-    if (mApp->mPlayerInfo->mLevel > 20 && Sexy::Rand(5) == 1) {
+    if ((mApp->mPlayerInfo->mLevel > 20 || mApp->HasFinishedAdventure()) && Sexy::Rand(5) == 1) {
         thePlantSeeds.push_back(SEED_INSTANT_COFFEE);
         alreadyPicked = 1;
     }
