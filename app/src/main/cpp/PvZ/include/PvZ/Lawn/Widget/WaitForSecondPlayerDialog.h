@@ -115,7 +115,7 @@ enum EventType : uint8_t {
 
 enum class UIMode {
     MODE1_INIT = 1,  // 初始
-    MODE2_LAN = 2,   // LAN 联机
+    MODE2_WIFI = 2,  // WIFI 联机
     MODE3_SERVER = 3 // 服务器联机
 };
 

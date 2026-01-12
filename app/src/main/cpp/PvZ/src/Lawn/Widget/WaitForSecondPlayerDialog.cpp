@@ -42,8 +42,8 @@ void WaitForSecondPlayerDialog::SetMode(UIMode mode) {
     // 退出旧模式时做必要清理
 
 
-    if (mUIMode == UIMode::MODE2_LAN) {
-        // 离开 LAN 模式：停止广播、退出/离开、关闭扫描
+    if (mUIMode == UIMode::MODE2_WIFI) {
+        // 离开 WIFI 模式：停止广播、退出/离开、关闭扫描
         StopUdpBroadcastRoom();
         LeaveRoom();
         ExitRoom();
@@ -55,9 +55,9 @@ void WaitForSecondPlayerDialog::SetMode(UIMode mode) {
     }
 
     mUIMode = mode;
-    mDialogHeader = mUIMode == UIMode::MODE1_INIT ? "选择对战模式" : mUIMode == UIMode::MODE2_LAN ? "LAN对战" : "服务器对战";
-    // 进入 LAN 模式默认开始扫描
-    if (mUIMode == UIMode::MODE2_LAN) {
+    mDialogHeader = mUIMode == UIMode::MODE1_INIT ? "选择对战模式" : mUIMode == UIMode::MODE2_WIFI ? "WIFI对战" : "服务器对战";
+    // 进入 WIFI 模式默认开始扫描
+    if (mUIMode == UIMode::MODE2_WIFI) {
         mIsCreatingRoom = false;
         mIsJoiningRoom = false;
         InitUdpScanSocket();
@@ -69,7 +69,7 @@ void WaitForSecondPlayerDialog::SetMode(UIMode mode) {
 void WaitForSecondPlayerDialog::RefreshButtons() {
     switch (mUIMode) {
         case UIMode::MODE1_INIT:
-            mLeftButton->SetLabel("LAN对战");
+            mLeftButton->SetLabel("WIFI对战");
             mLeftButton->mDisabled = false;
 
             mRightButton->SetLabel("服务器对战");
@@ -82,7 +82,7 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
             mLawnNoButton->mDisabled = false;
             break;
 
-        case UIMode::MODE2_LAN:
+        case UIMode::MODE2_WIFI:
             // left: 加入/离开
             mLeftButton->SetLabel(mIsJoiningRoom ? "离开房间" : "加入房间");
             if (mIsJoiningRoom) {
@@ -274,15 +274,15 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
     old_WaitForSecondPlayerDialog_Draw(this, g);
     if (mUIMode == UIMode::MODE1_INIT) {
         pvzstl::string str1 = "本地对战：一部手机，和线下朋友一起玩";
-        pvzstl::string str2 = "LAN对战：两部手机，连至同一Wifi下对战";
+        pvzstl::string str2 = "WIFI对战：两部手机，连至同一Wifi下对战";
         pvzstl::string str3 = "服务器对战：两部手机，通过公网服务器对战";
         g->DrawString(str1, 160, 200);
         g->DrawString(str2, 160, 240);
         g->DrawString(str3, 160, 280);
-    } else if (mUIMode == UIMode::MODE2_LAN) {
+    } else if (mUIMode == UIMode::MODE2_WIFI) {
 
         // =========================
-        // MODE2_LAN: Host（创建房间）
+        // MODE2_WIFI: Host（创建房间）
         // =========================
         if (mIsCreatingRoom) {
             pvzstl::string str = StrFormat("已创建房间: %s的房间", mApp->mPlayerInfo->mName);
@@ -308,7 +308,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
         }
 
         // =========================
-        // MODE2_LAN: Guest（加入房间）
+        // MODE2_WIFI: Guest（加入房间）
         // =========================
         if (mIsJoiningRoom) {
             if (mUseManualTarget) {
@@ -341,13 +341,13 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
         }
 
         // =========================
-        // MODE2_LAN: 扫描中/列表展示（未创建、未加入）
+        // MODE2_WIFI: 扫描中/列表展示（未创建、未加入）
         // =========================
         if (scanned_server_count <= 0) {
             pvzstl::string str1 = (udpScanSocket >= 0) ? "正在扫描房间..." : "无法扫描房间";
             g->DrawString(str1, 320, 200);
 
-            g->DrawString("（若目标房间在LAN内但扫描不到，可尝试“加入指定IP房间”）", 55, 260);
+            g->DrawString("（若目标房间在同一WIFI但扫描不到，可尝试“加入指定IP房间”）", 55, 260);
 
             return;
         }
@@ -507,8 +507,8 @@ void WaitForSecondPlayerDialog::Update() {
     // =========================================================
     if (!gInputString.empty()) {
 
-        // MODE2：LAN 手动加入指定 IP
-        if (mInputPurpose == InputPurpose::LAN_JOIN_MANUAL && mUIMode == UIMode::MODE2_LAN) {
+        // MODE2：WIFI 手动加入指定 IP
+        if (mInputPurpose == InputPurpose::LAN_JOIN_MANUAL && mUIMode == UIMode::MODE2_WIFI) {
 
             mUseManualTarget = true;
             ManualIpConnect(); // ✅ 内部会消费 gInputString
@@ -536,9 +536,9 @@ void WaitForSecondPlayerDialog::Update() {
     }
 
     // =========================================================
-    // 2) MODE2：LAN 才跑 UDP 扫描/广播节拍
+    // 2) MODE2：WIFI 才跑 UDP 扫描/广播节拍
     // =========================================================
-    if (mUIMode == UIMode::MODE2_LAN) {
+    if (mUIMode == UIMode::MODE2_WIFI) {
 
         bool inScanMode = (!mIsCreatingRoom && !mIsJoiningRoom);
         if (inScanMode) {
@@ -1208,7 +1208,7 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
             // 本地游戏：按两下A
             dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
             dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
-        } else if (dialog->mUIMode == UIMode::MODE2_LAN) {
+        } else if (dialog->mUIMode == UIMode::MODE2_WIFI) {
             if (dialog->mIsCreatingRoom) {
                 // 开始游戏（房主）：根据是否有玩家加入决定是否可点（RefreshButtons里已禁用）
                 dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
@@ -1264,8 +1264,8 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
     // 1002: leftButton
     else if (id == 1002) {
         if (dialog->mUIMode == UIMode::MODE1_INIT) {
-            dialog->SetMode(UIMode::MODE2_LAN);
-        } else if (dialog->mUIMode == UIMode::MODE2_LAN) {
+            dialog->SetMode(UIMode::MODE2_WIFI);
+        } else if (dialog->mUIMode == UIMode::MODE2_WIFI) {
             // 加入房间 / 离开房间（沿用你原逻辑）
             if (dialog->mIsJoiningRoom) {
                 dialog->LeaveRoom();
@@ -1294,7 +1294,7 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
     else if (id == 1003) {
         if (dialog->mUIMode == UIMode::MODE1_INIT) {
             dialog->SetMode(UIMode::MODE3_SERVER);
-        } else if (dialog->mUIMode == UIMode::MODE2_LAN) {
+        } else if (dialog->mUIMode == UIMode::MODE2_WIFI) {
             // 创建房间 / 退出房间（沿用你原逻辑）
             if (dialog->mIsCreatingRoom) {
                 dialog->ExitRoom();
@@ -1512,7 +1512,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 }
 
                 // === 交接：把服务器 socket 复用给 MODE2 的全局收发 ===
-                // 先清掉 LAN 的两个 socket，避免 UpdateFrames 同时读两路
+                // 先清掉 WIFI 的两个 socket，避免 UpdateFrames 同时读两路
                 if (tcpClientSocket >= 0) {
                     close(tcpClientSocket);
                     tcpClientSocket = -1;
@@ -1854,7 +1854,7 @@ void WaitForSecondPlayerDialog::MouseDown(int x, int y, int clicks) {
         return;
     }
 
-    // ===== 下面保持你原来的 LAN 逻辑 =====
+    // ===== 下面保持你原来的 WIFI 逻辑 =====
     if (mIsCreatingRoom || mIsJoiningRoom)
         return;
     if (scanned_server_count <= 0)

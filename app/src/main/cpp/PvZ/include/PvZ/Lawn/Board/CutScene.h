@@ -23,6 +23,7 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 #include "PvZ/Symbols.h"
+#include "Zombie.h"
 
 class LawnApp;
 class Board;
@@ -51,7 +52,9 @@ public:
     bool mUpsellHideBoard;                   // 64【推销隐藏关卡界面】
     ChallengeScreen *mUpsellChallengeScreen; // 17【推销插入的小游戏界面】
     bool mPreUpdatingBoard;                  // 72【场景布置阶段的关卡预更新】
-    int unk[11];                             // 19 ~ 29
+    ReanimationID mPlantsWonReanim;
+    Zombie *mZombieWonZombie;
+    int unk[9]; // 21 ~ 29
     // 大小30个整数
 
     bool IsSurvivalRepick() {

@@ -1446,11 +1446,11 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                     aPlant->mState = serverState;
                     Reanimation *reanimation = mApp->ReanimationGet(aPlant->mBodyReanimID);
                     if (serverState == STATE_KERNELPULT_BUTTER) {
-                        reanimation->AssignRenderGroupToPrefix("Cornpult_butter", 0);
-                        reanimation->AssignRenderGroupToPrefix("Cornpult_kernal", -1);
+                        reanimation->AssignRenderGroupToPrefix("Cornpult_butter", RENDER_GROUP_NORMAL);
+                        reanimation->AssignRenderGroupToPrefix("Cornpult_kernal", RENDER_GROUP_HIDDEN);
                     } else {
-                        reanimation->AssignRenderGroupToPrefix("Cornpult_butter", -1);
-                        reanimation->AssignRenderGroupToPrefix("Cornpult_kernal", 0);
+                        reanimation->AssignRenderGroupToPrefix("Cornpult_butter", RENDER_GROUP_HIDDEN);
+                        reanimation->AssignRenderGroupToPrefix("Cornpult_kernal", RENDER_GROUP_NORMAL);
                     }
                 }
             }
