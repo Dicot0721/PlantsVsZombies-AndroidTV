@@ -101,6 +101,12 @@ private:
 
 inline VSSetupWidget *gVSSetupWidget;
 
+inline Sexy::ButtonWidget *gVSSelectBgDayButton;
+inline Sexy::ButtonWidget *gVSSelectBgNightButton;
+inline Sexy::ButtonWidget *gVSSelectBgPoolButton;
+inline Sexy::ButtonWidget *gVSSelectBgPoolNightButton;
+inline Sexy::ButtonWidget *gVSSelectBgRoofButton;
+inline Sexy::ButtonWidget *gVSSelectBgRoofNightButton;
 
 class VSSetupMenu : public Sexy::__Widget {
 public:
@@ -161,9 +167,6 @@ public:
     void GoToState(VSSetupState theState) {
         reinterpret_cast<void (*)(VSSetupMenu *, int)>(VSSetupMenu_GoToStateAddr)(this, theState);
     }
-    void CloseVSSetup(bool close) {
-        reinterpret_cast<void (*)(VSSetupMenu *, bool)>(VSSetupMenu_CloseVSSetupAddr)(this, close);
-    }
     void OnPlayerPickedSeed(int thePlayerIndex) {
         reinterpret_cast<void (*)(VSSetupMenu *, int)>(VSSetupMenu_OnPlayerPickedSeedAddr)(this, thePlayerIndex);
     }
@@ -192,7 +195,7 @@ public:
 
     void processClientEvent(void *buf, ssize_t bufSize);
     void processServerEvent(void *buf, ssize_t bufSize);
-
+    void CloseVSSetup(bool a2);
 
 protected:
     friend void InitHookFunction();
@@ -201,6 +204,8 @@ protected:
 
     void PickRandomZombies(std::vector<SeedType> &theZombieSeeds);
     void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds);
+
+    void PickBackgroundImmediately();
 };
 
 inline bool is1PControllerMoving;
@@ -233,5 +238,7 @@ inline void (*old_VSSetupMenu_PickRandomZombies)(VSSetupMenu *, std::vector<Seed
 inline void (*old_VSSetupMenu_PickRandomPlants)(VSSetupMenu *, std::vector<SeedType> &theVector1, std::vector<SeedType> const &theVector2);
 
 inline void (*old_VSSetupMenu_AddedToManager)(VSSetupMenu *, Sexy::WidgetManager *a2);
+
+inline void (*old_VSSetupMenu_CloseVSSetup)(VSSetupMenu *, bool a2);
 
 #endif // PVZ_LAWN_WIDGET_VS_SETUP_MENU_H

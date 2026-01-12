@@ -468,6 +468,12 @@ public:
     void UpdateCoverLayer() {
         reinterpret_cast<void (*)(Board *)>(Board_UpdateCoverLayerAddr)(this);
     }
+    void AddMPTarget(int theGridX, int theGridY) {
+        reinterpret_cast<void (*)(Board *, int, int)>(Board_AddMPTargetAddr)(this, theGridX, theGridY);
+    }
+    void PlaceRake() {
+        reinterpret_cast<void (*)(Board *)>(Board_PlaceRakeAddr)(this);
+    }
 
     Board(LawnApp *theApp);
     void InitLevel();
@@ -552,6 +558,7 @@ public:
     bool PlantUsesAcceleratedPricing(SeedType theSeedType);
     bool IsPlantInCursor();
     void RemoveAllPlants();
+    void RemoveAllGridItems();
     void RemoveAllZombies();
     bool IsValidCobCannonSpotHelper(int theGridX, int theGridY);
     bool IsPoolSquare(int theGridX, int theGridY);
@@ -593,6 +600,7 @@ public:
 
     void processClientEvent(void *buf, ssize_t bufSize);
     void processServerEvent(void *buf, ssize_t bufSize);
+
 
 protected:
     friend void InitHookFunction();

@@ -62,6 +62,13 @@ inline void vformat(pvzstl::string &output, const char *fmt, va_list vList) {
     reinterpret_cast<void (*)(pvzstl::string &, const char *, va_list)>(Sexy_vformatAddr)(output, fmt, vList);
 }
 
+inline void InGameStrFormat(pvzstl::string &output, const char *fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+    reinterpret_cast<void (*)(pvzstl::string &, const char *, ...)>(Sexy_StrFormatAddr)(output, fmt, ap);
+    va_end(ap);
+}
+
 [[gnu::format(printf, 1, 2)]] inline pvzstl::string StrFormat(const char *fmt, ...) {
     pvzstl::string output;
     va_list args;

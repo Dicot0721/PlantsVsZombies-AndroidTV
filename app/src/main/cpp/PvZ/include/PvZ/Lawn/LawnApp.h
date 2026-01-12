@@ -98,7 +98,9 @@ public:
     int unk8_1[7];                           // 638 ~ 644
     int mInitialSunMoney;                    // 645     // 这个数据能给玩家加初始阳光
     bool mIsFullVersion;                     // 2584
-    int unk9[7];                             // 647 ~ 653
+    int unk9_1[3];                           // 647 ~ 649
+    int mVsInitialPlantMode;                 // 650
+    int unk9_2[3];                           // 651 ~ 653
     BoardResult mBoardResult;                // 654
     bool mKilledYetiAndRestarted;            // 2620
     int *mKonamiCheck;                       // 656

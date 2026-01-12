@@ -189,6 +189,8 @@ inline void *Board_ZombieGetIDAddr;
 inline void *Board_SetDanceModeAddr;
 inline void *Board_ChooseSeedsOnCurrentLevelAddr;
 inline void *Board_RowCanHaveZombiesAddr;
+inline void *Board_AddMPTargetAddr;
+inline void *Board_PlaceRakeAddr;
 
 
 inline void *SyncBoardAddr;
@@ -204,6 +206,8 @@ inline void *CutScene_ShouldRunUpsellBoardAddr;
 inline void *CutScene_OnKeyDownAddr;
 inline void *CutScene_MouseDownAddr;
 inline void *CutScene_IsBeforePreloadingAddr;
+inline void *CutScene_AddFlowerPotsAddr;
+inline void *CutScene_PlaceLawnItemsAddr;
 
 
 inline void *MainMenu_UpdateAddr;
@@ -1300,6 +1304,7 @@ inline ReanimatorDefinition **gReanimatorDefArray_Addr;
 inline int *gEffectSystem_Addr;
 inline int *gFoleyParamArraySizeAddr;
 inline int *Challenge_gVSSuddenDeathMode_Addr;
+inline int *Challenge_gVSWinModeAddr;
 inline int *Sexy_SOUND_PAUSE_Addr;
 inline int *Sexy_SOUND_FROZEN_Addr;
 inline int *Sexy_SOUND_TAP_Addr;

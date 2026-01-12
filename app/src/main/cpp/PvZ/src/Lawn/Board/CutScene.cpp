@@ -48,7 +48,7 @@ void CutScene::Update() {
 
             auto *aDialog = new WaitForSecondPlayerDialog(mApp);
             mApp->AddDialog(aDialog);
-            mApp->mWidgetManager->SetFocus(reinterpret_cast<Widget *>(aDialog));
+            mApp->mWidgetManager->SetFocus(aDialog);
 
             int buttonId = aDialog->WaitForResult(true);
             if (buttonId == 1001) {
@@ -88,3 +88,98 @@ void CutScene::Update() {
 void CutScene::UpdateZombiesWonMP() {}
 
 void CutScene::UpdatePlantsWon() {}
+
+
+void CutScene::AddFlowerPots() {
+    // 对战添加初始花盆
+    if (mApp->mGameMode == GAMEMODE_MP_VS) {
+        if (mBoard->StageHasRoof()) {
+            mBoard->AddPlant(0, 1, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, false);
+            mBoard->AddPlant(0, 3, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, false);
+            for (int i = 3; i < 4; ++i) {
+                for (int j = 0; j < 5; ++j) {
+                    mBoard->AddPlant(i, j, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, false);
+                }
+            }
+        }
+    }
+    return old_CutScene_AddFlowerPots(this);
+}
+
+void CutScene::PlaceLawnItems() {
+
+    if (mApp->mGameMode == GAMEMODE_MP_VS) {
+        if (mPlacedLawnItems)
+            return;
+
+        mPlacedLawnItems = 1;
+
+        // ===== TwoPlayerVS 专用：放 MPTarget + 墓碑/植物 =====
+        if (mApp->mGameMode == GAMEMODE_MP_VS) {
+            const int rows = mBoard->StageHas6Rows() ? 6 : 5;
+
+            // ---------- 1) AddMPTarget: x=8, row=r ----------
+            for (int r = 0; r < rows; r++) {
+                bool shouldAddTarget = false;
+
+                if (*Challenge_gVSWinModeAddr == 2) {
+                    if (rows == 6) {
+                        // rows==6: r==1 or r==4
+                        shouldAddTarget = (r == 1 || r == 4);
+                    } else {
+                        // rows == 5: r == 1 or r == 3
+                        shouldAddTarget = (r == 1 || r == 3);
+                    }
+                } else if (*Challenge_gVSWinModeAddr == 3) {
+                    if (rows == 6) {
+                        // rows==6: add at r==0,2,3,5
+                        shouldAddTarget = (r == 0 || r == 2 || r == 3 || r == 5);
+                    } else {
+                        // rows==5: r==1 or r==4
+                        shouldAddTarget = (r == 1 || r == 4);
+                    }
+                } else {
+                    // 其他 winmode：默认 add
+                    shouldAddTarget = true;
+                }
+
+                if (shouldAddTarget) {
+                    mBoard->AddMPTarget(8, r);
+                }
+            }
+
+            // ---------- 2) AddAGraveStone + AddPlant ----------
+            SeedType seedToPlant = (mApp->mVsInitialPlantMode == 1 || mApp->mVsInitialPlantMode == 3) ? SEED_SUNSHROOM : SEED_SUNFLOWER;
+
+            for (int r = 0; r < rows; r++) {
+                bool shouldPlace = false;
+                if (rows == 5) {
+                    if (r == 1 || r == 3) // r==1 or r==3
+                    {
+                        shouldPlace = true;
+                    }
+                } else {
+                    if (r == 1 || r == 4) {
+                        shouldPlace = true;
+                    }
+                }
+
+                if (shouldPlace) {
+                    mBoard->AddAGraveStone(8, r);
+                    mBoard->AddPlant(0, r, seedToPlant, (SeedType)-1, -1, true);
+                }
+            }
+        }
+
+        if (this->IsSurvivalRepick()) {
+            return;
+        }
+
+        mBoard->InitLawnMowers();
+        AddFlowerPots();
+        mBoard->PlaceRake();
+        return;
+    }
+
+    return old_CutScene_PlaceLawnItems(this);
+}

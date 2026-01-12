@@ -160,13 +160,13 @@ struct AddonImages {
     Sexy::Image *crater_night_roof_center;
     Sexy::Image *crater_night_roof_left;
     Sexy::Image *leaderboard_selector;
-    Sexy::Image *IMAGE_SEEDCHOOSER_LARGE_BACKGROUND2;
-    Sexy::Image *IMAGE_ZOMBIEJACKSONHEAD;
-    Sexy::Image *IMAGE_ZOMBIEBACKUPDANCERHEAD2;
-    Sexy::Image *IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_UPPER2;
-    Sexy::Image *IMAGE_REANIM_ZOMBIE_BACKUP_OUTERARM_UPPER2;
-    Sexy::Image *IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_HAND;
-    Sexy::Image *IMAGE_REANIM_ZOMBIE_DANCER_INNERARM_HAND;
+    //    Sexy::Image *IMAGE_SEEDCHOOSER_LARGE_BACKGROUND2;
+    //    Sexy::Image *IMAGE_ZOMBIEJACKSONHEAD;
+    //    Sexy::Image *IMAGE_ZOMBIEBACKUPDANCERHEAD2;
+    //    Sexy::Image *IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_UPPER2;
+    //    Sexy::Image *IMAGE_REANIM_ZOMBIE_BACKUP_OUTERARM_UPPER2;
+    //    Sexy::Image *IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_HAND;
+    //    Sexy::Image *IMAGE_REANIM_ZOMBIE_DANCER_INNERARM_HAND;
 } inline addonImages; // 此处是新增贴图的列表；
 
 struct AddonSounds {

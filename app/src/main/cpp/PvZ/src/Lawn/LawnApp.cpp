@@ -106,13 +106,23 @@ void LawnApp::LoadAddonImages() {
     addonImages.crater_night_roof_left->mNumCols = 2;
     addonImages.leaderboard_selector = GetImageByFileName("images/leaderboard_selector");
 
-    addonImages.IMAGE_SEEDCHOOSER_LARGE_BACKGROUND2 = GetImageByFileName("addonFiles/images/SeedChooser_Large_Background2");
-    addonImages.IMAGE_ZOMBIEJACKSONHEAD = GetImageByFileName("addonFiles/particles/ZombieJacksonHead");
-    addonImages.IMAGE_ZOMBIEBACKUPDANCERHEAD2 = GetImageByFileName("addonFiles/particles/ZombieBackupDancerHead2");
-    addonImages.IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_UPPER2 = GetImageByFileName("addonFiles/reanim/NewZombies/Zombie_jackson_outerarm_upper_bone");
-    addonImages.IMAGE_REANIM_ZOMBIE_BACKUP_OUTERARM_UPPER2 = GetImageByFileName("addonFiles/reanim/NewZombies/Zombie_backup_outerarm_upper_bone2");
-    addonImages.IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_HAND = GetImageByFileName("addonFiles/reanim/NewZombies/Zombie_jackson_outerhand");
-    addonImages.IMAGE_REANIM_ZOMBIE_DANCER_INNERARM_HAND = GetImageByFileName("addonFiles/reanim/NewZombies/Zombie_backup_innerhand2");
+    //    addonImages.IMAGE_SEEDCHOOSER_LARGE_BACKGROUND2 = GetImageByFileName("addonFiles/images/SeedChooser_Large_Background2");
+    //    addonImages.IMAGE_ZOMBIEJACKSONHEAD = GetImageByFileName("addonFiles/particles/ZombieJacksonHead");
+    //    addonImages.IMAGE_ZOMBIEBACKUPDANCERHEAD2 = GetImageByFileName("addonFiles/particles/ZombieBackupDancerHead2");
+    //    addonImages.IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_UPPER2 = GetImageByFileName("addonFiles/reanim/NewZombies/Zombie_jackson_outerarm_upper_bone");
+    //    addonImages.IMAGE_REANIM_ZOMBIE_BACKUP_OUTERARM_UPPER2 = GetImageByFileName("addonFiles/reanim/NewZombies/Zombie_backup_outerarm_upper_bone2");
+    //    addonImages.IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_HAND = GetImageByFileName("addonFiles/reanim/NewZombies/Zombie_jackson_outerhand");
+    //    addonImages.IMAGE_REANIM_ZOMBIE_DANCER_INNERARM_HAND = GetImageByFileName("addonFiles/reanim/NewZombies/Zombie_backup_innerhand2");
+
+    //    int xClip = 130;
+    //    int yClip = 130;
+    //    Sexy::Rect rect = {*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr->mWidth - xClip, *Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr->mHeight - yClip, xClip, yClip};
+    //    addonImages.VSDay = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
+    //    addonImages.VSNight = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
+    //    addonImages.VSPool = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
+    //    addonImages.VSPoolNight = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
+    //    addonImages.VSRoof = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
+    //    addonImages.VSRoofNight = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
 
     int addonImagesNum = (sizeof(AddonImages) / sizeof(Sexy::Image *));
     mCompletedLoadingThreadTasks += 9 * addonImagesNum;
@@ -138,6 +148,9 @@ void LawnApp::LoadAddonSounds() {
 Image *LawnApp::GetImageByFileName(const char *theFileName) {
     // 根据贴图文件路径获得贴图
     Image *theImage = GetImage(theFileName, true);
+    if (theImage == nullptr) {
+        LOG_DEBUG("没成功: {}", theFileName);
+    }
     return theImage;
 }
 
@@ -680,15 +693,15 @@ void LawnApp::SetFoleyVolume(FoleyType theFoleyType, double theVolume) {
 
 void LawnApp::ShowLeaderboards() {
     gMainMenuLeaderboardsWidget = new LeaderboardsWidget(this);
-    mWidgetManager->AddWidget(reinterpret_cast<Widget *>(gMainMenuLeaderboardsWidget));
-    mWidgetManager->SetFocus(reinterpret_cast<Widget *>(gMainMenuLeaderboardsWidget));
+    mWidgetManager->AddWidget(gMainMenuLeaderboardsWidget);
+    mWidgetManager->SetFocus(gMainMenuLeaderboardsWidget);
 }
 
 void LawnApp::KillLeaderboards() {
     if (gMainMenuLeaderboardsWidget == nullptr)
         return;
 
-    mWidgetManager->RemoveWidget(reinterpret_cast<Widget *>(gMainMenuLeaderboardsWidget));
+    mWidgetManager->RemoveWidget(gMainMenuLeaderboardsWidget);
     (*((void (**)(LawnApp *, Sexy::__Widget *))vTable + 47))(this, gMainMenuLeaderboardsWidget); // MSGBOX()
     gMainMenuLeaderboardsWidget = nullptr;
 }
@@ -696,15 +709,15 @@ void LawnApp::KillLeaderboards() {
 void LawnApp::ShowZombatarScreen() {
     gMainMenuZombatarWidget = new ZombatarWidget(this);
     // Sexy_Widget_Resize(gMainMenuZombatarWidget,-80,-60,960,720);
-    mWidgetManager->AddWidget(reinterpret_cast<Widget *>(gMainMenuZombatarWidget));
-    mWidgetManager->SetFocus(reinterpret_cast<Widget *>(gMainMenuZombatarWidget));
+    mWidgetManager->AddWidget(gMainMenuZombatarWidget);
+    mWidgetManager->SetFocus(gMainMenuZombatarWidget);
 }
 
 void LawnApp::KillZombatarScreen() {
     if (gMainMenuZombatarWidget == nullptr)
         return;
 
-    mWidgetManager->RemoveWidget(reinterpret_cast<Widget *>(gMainMenuZombatarWidget));
+    mWidgetManager->RemoveWidget(gMainMenuZombatarWidget);
     (*((void (**)(LawnApp *, Sexy::__Widget *))vTable + 47))(this, gMainMenuZombatarWidget); // MSGBOX()
     gMainMenuZombatarWidget = nullptr;
 }
@@ -922,11 +935,11 @@ void LawnApp::LoadZombatarResources() {
     addonZombatarImages.zombatar_background_bej3_fairy_cave_village = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_background_bej3_fairy_cave_village");
     addonZombatarImages.zombatar_background_bej3_floating_rock_city = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_background_bej3_floating_rock_city");
     addonZombatarImages.zombatar_background_bej3_horse_forset_tree = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_background_bej3_horse_forset_tree");
-    addonZombatarImages.zombatar_background_bej3_jungle_ruins_path = GetImageByFileName("PvZ/addonFiles/images/ZombatarWidget/zombatar_background_bej3_jungle_ruins_pa.h");
+    addonZombatarImages.zombatar_background_bej3_jungle_ruins_path = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_background_bej3_jungle_ruins_path");
     addonZombatarImages.zombatar_background_bej3_lantern_plants_world = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_background_bej3_lantern_plants_world");
     addonZombatarImages.zombatar_background_bej3_lightning = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_background_bej3_lightning");
     addonZombatarImages.zombatar_background_bej3_lion_tower_cascade = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_background_bej3_lion_tower_cascade");
-    addonZombatarImages.zombatar_background_bej3_pointy_ice_path = GetImageByFileName("PvZ/addonFiles/images/ZombatarWidget/zombatar_background_bej3_pointy_ice_pa.h");
+    addonZombatarImages.zombatar_background_bej3_pointy_ice_path = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_background_bej3_pointy_ice_path");
     addonZombatarImages.zombatar_background_bej3_pointy_ice_path_purple = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_background_bej3_pointy_ice_path_purple");
     addonZombatarImages.zombatar_background_bej3_rock_city_lake = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_background_bej3_rock_city_lake");
     addonZombatarImages.zombatar_background_bej3_snowy_cliffs_castle = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_background_bej3_snowy_cliffs_castle");
@@ -1120,4 +1133,11 @@ void LawnApp::LoadZombatarResources() {
     addonZombatarImages.zombatar_accessory_bg_highlight = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_accessory_bg_highlight");
     addonZombatarImages.zombatar_accessory_bg_none = GetImageByFileName("addonFiles/images/ZombatarWidget/zombatar_accessory_bg_none");
     zombatarResLoaded = true;
+
+    //    int addonZombatarImagesNum = (sizeof(addonZombatarImages) / sizeof(Sexy::Image *));
+    //    for (int i = 0; i < addonZombatarImagesNum; ++i) {
+    //        if (*((Sexy::Image **)((char *)&addonZombatarImages + i * sizeof(Sexy::Image *))) == NULL) {
+    //            LOG_DEBUG("没成功{}", i);
+    //        }
+    //    }
 }

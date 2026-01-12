@@ -25,11 +25,12 @@
 #include "PvZ/SexyAppFramework/Misc/Rect.h"
 #include "PvZ/Symbols.h"
 
+
 namespace Sexy {
 
 class Graphics;
 class WidgetManager;
-class Widget;
+class __Widget;
 
 class __WidgetContainer {
 public:
@@ -55,17 +56,17 @@ public:
     int mWidgetId;                 // 28
     // 大小未知，目前认为是29个整数。反正Widget是64个整数，足够了。
 
-    void SetFocus(Widget *theWidget) {
-        reinterpret_cast<void (*)(__WidgetContainer *, Widget *)>(Sexy_WidgetContainer_SetFocusAddr)(this, theWidget);
+    void SetFocus(__Widget *theWidget) {
+        reinterpret_cast<void (*)(__WidgetContainer *, __Widget *)>(Sexy_WidgetContainer_SetFocusAddr)(this, theWidget);
     }
     void MarkDirty() {
         reinterpret_cast<void (*)(__WidgetContainer *)>(Sexy_WidgetContainer_MarkDirtyAddr)(this);
     }
-    void AddWidget(Widget *theWidget) {
-        reinterpret_cast<void (*)(__WidgetContainer *, Widget *)>(Sexy_WidgetContainer_AddWidgetAddr)(this, theWidget);
+    void AddWidget(__Widget *theWidget) {
+        reinterpret_cast<void (*)(__WidgetContainer *, __Widget *)>(Sexy_WidgetContainer_AddWidgetAddr)(this, theWidget);
     }
-    void RemoveWidget(Widget *theWidget) {
-        reinterpret_cast<void (*)(__WidgetContainer *, Widget *)>(Sexy_WidgetContainer_RemoveWidgetAddr)(this, theWidget);
+    void RemoveWidget(__Widget *theWidget) {
+        reinterpret_cast<void (*)(__WidgetContainer *, __Widget *)>(Sexy_WidgetContainer_RemoveWidgetAddr)(this, theWidget);
     }
 
 protected:

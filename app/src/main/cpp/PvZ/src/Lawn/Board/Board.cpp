@@ -126,6 +126,8 @@ void Board::SetGrids() {
                 mGridSquareType[i][j] = GridSquareType::GRIDSQUARE_POOL;
             } else if (mPlantRow[j] == PlantRowType::PLANTROW_HIGH_GROUND && i >= 4 && i <= 8) {
                 mGridSquareType[i][j] = GridSquareType::GRIDSQUARE_HIGH_GROUND;
+            } else if (mPlantRow[j] == PlantRowType::PLANTROW_NORMAL) {
+                mGridSquareType[i][j] = GridSquareType::GRIDSQUARE_GRASS;
             }
         }
     }
@@ -425,7 +427,10 @@ PlantingReason Board::CanPlantAt(int theGridX, int theGridY, SeedType theSeedTyp
     if (FreePlantAt) {
         return PlantingReason::PLANTING_OK;
     }
-    return old_Board_CanPlantAt(this, theGridX, theGridY, theSeedType);
+    PlantingReason r = old_Board_CanPlantAt(this, theGridX, theGridY, theSeedType);
+    LOG_DEBUG("{}", (int)r);
+    return r;
+    //    return old_Board_CanPlantAt(this, theGridX, theGridY, theSeedType);
 }
 
 
@@ -881,15 +886,6 @@ void Board::PickBackground() {
                 mPlantRow[5] = PlantRowType::PLANTROW_DIRT;
                 InitCoverLayer();
                 SetGrids();
-                if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-                    AddPlant(0, 1, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, 0);
-                    AddPlant(0, 3, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, 0);
-                    for (int i = 3; i < 5; ++i) {
-                        for (int j = 0; j < 5; ++j) {
-                            AddPlant(i, j, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, 0);
-                        }
-                    }
-                }
                 break;
             case 6:
                 mBackground = BackgroundType::BACKGROUND_6_BOSS;
@@ -902,15 +898,6 @@ void Board::PickBackground() {
                 mPlantRow[5] = PlantRowType::PLANTROW_DIRT;
                 InitCoverLayer();
                 SetGrids();
-                if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-                    AddPlant(0, 1, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, 0);
-                    AddPlant(0, 3, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, 0);
-                    for (int i = 3; i < 4; ++i) {
-                        for (int j = 0; j < 5; ++j) {
-                            AddPlant(i, j, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, 0);
-                        }
-                    }
-                }
                 break;
             case 7:
                 mBackground = BackgroundType::BACKGROUND_GREENHOUSE;
@@ -1203,7 +1190,7 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_GRIDITEM_DIE:
         case EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED:
         case EVENT_SERVER_BOARD_PLANT_DO_SPECIAL:
-        case EVENT_SERVER_BOARD_LAWNMOWER_STRART:
+        case EVENT_SERVER_BOARD_LAWNMOWER_START:
             return sizeof(U16_Event);
 
         // --- 僵尸冻结、巨人投掷小鬼 ---
@@ -1548,9 +1535,8 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 float aVelX = eventPickSpeed->data4.f32;
                 uint16_t anAnimTicks = eventPickSpeed->data2;
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
-                tcp_connected = false;
                 aZombie->ApplySyncedSpeed(aVelX, anAnimTicks);
-                tcp_connected = true;
+                aZombie->mPosX = eventPickSpeed->data5.f32;
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP: {
@@ -1560,9 +1546,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 uint16_t aIceTrapCounter = eventIceTrap->data2;
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
-                tcp_connected = false;
                 aZombie->mIceTrapCounter = aIceTrapCounter;
-                tcp_connected = true;
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW: {
@@ -1592,16 +1576,15 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 aZombie->StartWalkAnim(20);
             }
         } break;
-        case EVENT_SERVER_BOARD_LAWNMOWER_STRART: {
+        case EVENT_SERVER_BOARD_LAWNMOWER_START: {
             U16_Event *eventLawnMowerStart = reinterpret_cast<U16_Event *>(event);
-            tcp_connected = false;
             uint16_t aRow = eventLawnMowerStart->data;
             LawnMower *aLawnMower = nullptr;
             while (IterateLawnMowers(aLawnMower)) {
-                if (aLawnMower && aLawnMower->mRow == aRow)
-                    aLawnMower->StartMower();
+                if (aLawnMower && aLawnMower->mRow == aRow) {
+                    old_LawnMower_StartMower(aLawnMower);
+                }
             }
-            tcp_connected = true;
         }
         case EVENT_SERVER_BOARD_TAKE_SUNMONEY: {
             U16_Event *event1 = (U16_Event *)event;
@@ -4887,6 +4870,11 @@ void Board::RemoveAllZombies() {
         if (!aZombie->IsDeadOrDying())
             aZombie->DieNoLoot();
     }
+}
+
+void Board::RemoveAllGridItems() {
+    for (GridItem *aItem = nullptr; IterateGridItems(aItem); aItem->GridItemDie())
+        ;
 }
 
 bool Board::IsValidCobCannonSpotHelper(int theGridX, int theGridY) {

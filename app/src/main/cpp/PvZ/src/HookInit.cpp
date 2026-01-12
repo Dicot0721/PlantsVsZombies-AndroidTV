@@ -417,6 +417,7 @@ void InitHookFunction() {
     homura::HookFunction(VSSetupMenu_DrawAddr, &VSSetupMenu::Draw, &old_VSSetupMenu_Draw);
     homura::HookFunction(VSSetupMenu_DrawOverlayAddr, &VSSetupMenu::DrawOverlay, &old_VSSetupMenu_DrawOverlay);
     homura::HookFunction(VSSetupMenu_AddedToManagerAddr, &VSSetupMenu::AddedToManager, &old_VSSetupMenu_AddedToManager);
+    homura::HookFunction(VSSetupMenu_CloseVSSetupAddr, &VSSetupMenu::CloseVSSetup, &old_VSSetupMenu_CloseVSSetup);
     homura::HookFunction(VSSetupMenu_UpdateAddr, &VSSetupMenu::Update, &old_VSSetupMenu_Update);
     homura::HookFunction(VSSetupMenu_KeyDownAddr, &VSSetupMenu::KeyDown, &old_VSSetupMenu_KeyDown);
     homura::HookFunction(VSSetupMenu_OnStateEnterAddr, &VSSetupMenu::OnStateEnter, &old_VSSetupMenu_OnStateEnter);
@@ -457,6 +458,8 @@ void InitHookFunction() {
 
     homura::HookFunction(CutScene_ShowShovelAddr, &CutScene::ShowShovel, &old_CutScene_ShowShovel);
     homura::HookFunction(CutScene_UpdateAddr, &CutScene::Update, &old_CutScene_Update);
+    homura::HookFunction(CutScene_PlaceLawnItemsAddr, &CutScene::PlaceLawnItems, &old_CutScene_PlaceLawnItems);
+    homura::HookFunction(CutScene_AddFlowerPotsAddr, &CutScene::AddFlowerPots, &old_CutScene_AddFlowerPots);
 
 
     homura::HookFunction(NewOptionsDialog_ButtonDepressAddr, &NewOptionsDialog::ButtonDepress, &old_NewOptionsDialog_ButtonDepress);

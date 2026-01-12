@@ -27,18 +27,18 @@
 
 namespace Sexy {
 
-class Widget;
+class __Widget;
 
 class WidgetManager : public __WidgetContainer {
 public:
     char unkMem[44];
-    Widget *mFocusWidget; // 40
+    __Widget *mFocusWidget; // 40
 
-    void SetFocus(Widget *aWidget) {
-        reinterpret_cast<void (*)(WidgetManager *, Widget *)>(Sexy_WidgetManager_SetFocusAddr)(this, aWidget);
+    void SetFocus(__Widget *aWidget) {
+        reinterpret_cast<void (*)(WidgetManager *, __Widget *)>(Sexy_WidgetManager_SetFocusAddr)(this, aWidget);
     }
-    Widget *GetWidgetAt(int x, int y, int *theWidgetX, int *theWidgetY) {
-        return reinterpret_cast<Widget *(*)(WidgetManager *, int, int, int *, int *)>(Sexy_WidgetManager_GetWidgetAtAddr)(this, x, y, theWidgetX, theWidgetY);
+    __Widget *GetWidgetAt(int x, int y, int *theWidgetX, int *theWidgetY) {
+        return reinterpret_cast<__Widget *(*)(WidgetManager *, int, int, int *, int *)>(Sexy_WidgetManager_GetWidgetAtAddr)(this, x, y, theWidgetX, theWidgetY);
     }
 
     void MouseDown(int x, int y, int theClickCount);

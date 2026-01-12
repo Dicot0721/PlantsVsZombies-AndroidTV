@@ -200,6 +200,9 @@ bool LoadGameMain() {
     Board_SetDanceModeAddr = dlsym(handle, "_ZN5Board12SetDanceModeEb");
     Board_ChooseSeedsOnCurrentLevelAddr = dlsym(handle, "_ZN5Board25ChooseSeedsOnCurrentLevelEv");
     Board_RowCanHaveZombiesAddr = dlsym(handle, "_ZN5Board17RowCanHaveZombiesEi");
+    Board_AddMPTargetAddr = dlsym(handle, "_ZN5Board11AddMPTargetEii");
+    Board_PlaceRakeAddr = dlsym(handle, "_ZN5Board9PlaceRakeEv");
+
 
     SyncBoardAddr = dlsym(handle, "_Z9SyncBoardP15SaveGameContextP5Board");
     FixBoardAfterLoadAddr = dlsym(handle, "_Z17FixBoardAfterLoadP5Board");
@@ -215,6 +218,8 @@ bool LoadGameMain() {
     CutScene_OnKeyDownAddr = dlsym(handle, "_ZN8CutScene9OnKeyDownEN4Sexy7KeyCodeEj");
     CutScene_MouseDownAddr = dlsym(handle, "_ZN8CutScene9MouseDownEii");
     CutScene_IsBeforePreloadingAddr = dlsym(handle, "_ZN8CutScene18IsBeforePreloadingEv");
+    CutScene_AddFlowerPotsAddr = dlsym(handle, "_ZN8CutScene13AddFlowerPotsEv");
+    CutScene_PlaceLawnItemsAddr = dlsym(handle, "_ZN8CutScene14PlaceLawnItemsEv");
 
 
     MainMenu_UpdateAddr = dlsym(handle, "_ZN8MainMenu6UpdateEv");
@@ -1288,6 +1293,7 @@ bool LoadGameMain() {
     gEffectSystem_Addr = (int *)dlsym(handle, "gEffectSystem");
     gFoleyParamArraySizeAddr = (int *)dlsym(handle, "gFoleyParamArraySize");
     Challenge_gVSSuddenDeathMode_Addr = (int *)dlsym(handle, "_ZN9Challenge18gVSSuddenDeathModeE");
+    Challenge_gVSWinModeAddr = (int *)dlsym(handle, "_ZN9Challenge10gVSWinModeE");
     Sexy_gSexyAppBase_Addr = reinterpret_cast<Sexy::SexyAppBase **>(dlsym(handle, "_ZN4Sexy12gSexyAppBaseE"));
     Sexy_SOUND_PAUSE_Addr = (int *)dlsym(handle, "_ZN4Sexy11SOUND_PAUSEE");
     Sexy::SOUND_BOING = reinterpret_cast<int *>(dlsym(handle, "_ZN4Sexy11SOUND_BOINGE"));

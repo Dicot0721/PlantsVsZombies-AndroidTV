@@ -20,6 +20,7 @@
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
+#include "PvZ/Lawn/Board/CutScene.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/SeedChooserScreen.h"
@@ -104,6 +105,14 @@ void VSSetupMenu::_constructor() {
     mApp->mBoard->AddWidget(aBanModeButton);
     gVSSetupWidget->mDrawString = true;
 
+
+    //    gVSSelectBgDayButton = MakeNewButton(9000,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
+    //    gVSSelectBgNightButton = MakeNewButton(9001,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
+    //    gVSSelectBgPoolButton = MakeNewButton(9002,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
+    //    gVSSelectBgPoolNightButton = MakeNewButton(9003,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
+    //    gVSSelectBgRoofButton = MakeNewButton(9004,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
+    //    gVSSelectBgRoofNightButton = MakeNewButton(9005,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
+    //
     is1PControllerMoving = false;
     is2PControllerMoving = false;
     touchingOnWhichController = 0;
@@ -344,6 +353,15 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             (mIsZombieChooser ? screen->mSeedType2 : screen->mSeedType1) = theSeedType;
             screen->GameButtonDown(GamepadButton::BUTTONCODE_A, screen->mPlayerIndex);
         } break;
+        case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND: {
+            U8_Event *event1 = (U8_Event *)event;
+            int tmp = VSBackGround;
+            VSBackGround = event1->data;
+            tcp_connected = false;
+            PickBackgroundImmediately();
+            tcp_connected = true;
+            VSBackGround = tmp;
+        } break;
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
             U16_Event *event1 = (U16_Event *)event;
             Sexy::Widget *theController2Widget = FindWidget(8);
@@ -372,6 +390,7 @@ size_t VSSetupMenu::getServerEventSize(EventType type) {
     switch (type) {
         case EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS:
         case EVENT_VSSETUPMENU_ENTER_STATE:
+        case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND:
             return sizeof(U8_Event);
         case EVENT_SEEDCHOOSER_SELECT_SEED:
             return sizeof(U8U8_Event);
@@ -486,7 +505,6 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
     }
     if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {
 
-        LOG_DEBUG("[TCP] OnStateEnter: {}", (tcp_connected || tcpClientSocket >= 0));
         if (tcp_connected || tcpClientSocket >= 0) {
             SetSecondPlayerIndex(mApp->mTwoPlayerState);
             GoToState(VSSetupState::VS_SETUP_STATE_SIDES);
@@ -557,8 +575,6 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
     old_VSSetupMenu_ButtonDepress(this, theId);
 
-    mApp->mBoard->PickBackground(); // 修改器修改场地后开局立即更换
-
     // 对战额外卡槽
     int aNumPackets = mApp->mBoard->GetNumSeedsInBank(false);
 
@@ -583,6 +599,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
         case VSSetupMenu_Custom_Battle:
             if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
                 gVSSetupWidget->SetDisable();
+                PickBackgroundImmediately();
             }
             if (gVSSetupWidget && gVSSetupWidget->mBanMode) { // 禁选模式下交换双方控制权
                 mApp->mBoard->SwitchGamepadControls();
@@ -633,4 +650,38 @@ void VSSetupMenu::ButtonDepress(int theId) {
         aPacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 0, false);
         aPacket2->mX = mApp->mBoard->GetSeedPacketPositionX(i, 1, true);
     }
+}
+
+void VSSetupMenu::PickBackgroundImmediately() {
+    // 如果修改器里开启了更换场地
+    if (VSBackGround != 0 && VSBackGround != mApp->mBoard->mBackground + 1) {
+
+        if (tcp_connected) {
+            // 客户端
+            return;
+        }
+
+        for (int i = 0; i < 6; ++i) {
+            mApp->RemoveReanimation(mApp->mBoard->mCoverLayerAnimIDs[i]);
+        }
+        mApp->mBoard->PickBackground(); // 立即更换
+        mApp->mBoard->RemoveAllMowers();
+        mApp->mBoard->RemoveAllPlants();
+        mApp->mBoard->RemoveAllGridItems();
+        mApp->mBoard->mCutScene->mPlacedLawnItems = 0;
+        mApp->mBoard->mCutScene->PlaceLawnItems();
+
+
+        if (tcpClientSocket >= 0) {
+            U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND}, uint8_t(VSBackGround)};
+            send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+        }
+    }
+}
+
+void VSSetupMenu::CloseVSSetup(bool a2) {
+
+    PickBackgroundImmediately();
+
+    old_VSSetupMenu_CloseVSSetup(this, a2);
 }

@@ -2410,6 +2410,7 @@ void Zombie::PickRandomSpeed() {
         event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
         event.data2 = uint16_t(mAnimTicksPerFrame);
         event.data4.f32 = mVelX;
+        event.data5.f32 = mPosX;
         send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
     }
 }

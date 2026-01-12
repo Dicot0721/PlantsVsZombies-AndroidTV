@@ -45,7 +45,7 @@ public:
     ReanimationID mZombiesWonReanimID;       // 12
     bool mPreloaded;                         // 52
     bool mPlacedZombies;                     // 53
-    bool mPlacedLawnItems;                   // 54
+    int mPlacedLawnItems;                    // 54
     int mCrazyDaveCountDown;                 // 14【推销戴夫倒计时】
     int mCrazyDaveLastTalkIndex;             // 15【戴夫推销的话的编号】
     bool mUpsellHideBoard;                   // 64【推销隐藏关卡界面】
@@ -75,11 +75,17 @@ public:
     void Update();
     void UpdateZombiesWonMP();
     void UpdatePlantsWon();
+    void PlaceLawnItems();
+    void AddFlowerPots();
 };
 
 
 inline void (*old_CutScene_ShowShovel)(CutScene *cutScene);
 
 inline void (*old_CutScene_Update)(CutScene *instance);
+
+inline void (*old_CutScene_PlaceLawnItems)(CutScene *cutScene);
+
+inline void (*old_CutScene_AddFlowerPots)(CutScene *cutScene);
 
 #endif // PVZ_LAWN_BOARD_CUT_SCENE_H
