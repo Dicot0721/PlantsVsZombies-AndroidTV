@@ -881,7 +881,7 @@ void VSSetupMenu::PickBackgroundImmediately() {
         mApp->mBoard->RemoveAllMowers();
         mApp->mBoard->RemoveAllPlants();
         mApp->mBoard->RemoveAllGridItems();
-        mApp->mBoard->mCutScene->mPlacedLawnItems = 0;
+        mApp->mBoard->mCutScene->mPlacedLawnItems = false;
         mApp->mBoard->mCutScene->PlaceLawnItems();
 
 

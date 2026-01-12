@@ -46,7 +46,7 @@ public:
     ReanimationID mZombiesWonReanimID;       // 12
     bool mPreloaded;                         // 52
     bool mPlacedZombies;                     // 53
-    int mPlacedLawnItems;                    // 54
+    bool mPlacedLawnItems;                   // 54
     int mCrazyDaveCountDown;                 // 14【推销戴夫倒计时】
     int mCrazyDaveLastTalkIndex;             // 15【戴夫推销的话的编号】
     bool mUpsellHideBoard;                   // 64【推销隐藏关卡界面】

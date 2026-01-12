@@ -112,7 +112,7 @@ void CutScene::PlaceLawnItems() {
         if (mPlacedLawnItems)
             return;
 
-        mPlacedLawnItems = 1;
+        mPlacedLawnItems = true;
 
         // ===== TwoPlayerVS 专用：放 MPTarget + 墓碑/植物 =====
         if (mApp->mGameMode == GAMEMODE_MP_VS) {
