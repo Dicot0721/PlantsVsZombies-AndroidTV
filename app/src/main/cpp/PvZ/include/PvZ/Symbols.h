@@ -686,6 +686,7 @@ inline int *VSSetupMenu_GAMEPAD_X_POSITIONSAddr;
 inline SeedType *VSSetupMenu_msRandomPools_Addr;
 
 
+inline void *VSResultsMenu_VSResultsMenuAddr;
 inline void *VSResultsMenu_UpdateAddr;
 inline void *VSResultsMenu_OnExitAddr;
 inline void *VSResultsMenu_DrawAddr;

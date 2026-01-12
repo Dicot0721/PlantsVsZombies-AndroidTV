@@ -63,7 +63,7 @@ void SeedBank::Draw(Sexy::Graphics *g) {
     // (*(void (**)(uint32_t, int *, bool))(**((uint32_t **)g + 1) + 140))(*((uint32_t *)g + 1),transform,true);
     // }
 
-    if (gVSSetupWidget && gVSSetupWidget->mBanMode) {
+    if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBanMode) {
         g->SetColorizeImages(true);
         g->SetColor(Color(155, 155, 155));
     }

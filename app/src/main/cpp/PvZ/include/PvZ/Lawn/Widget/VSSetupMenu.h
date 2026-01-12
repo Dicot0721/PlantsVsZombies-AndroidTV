@@ -63,11 +63,11 @@ public:
     BannedSeedState mSeedState = SEED_NOT_BANNED;
 };
 
-class VSSetupWidget {
+class VSSetupAddonWidget {
 public:
     enum {
-        VSSetupWidget_More_Packets = 1145,
-        VSSetupWidget_Ban_Mode = 1146,
+        VSSetupAddonWidget_More_Packets = 12,
+        VSSetupAddonWidget_Ban_Mode = 13,
     };
 
 public:
@@ -83,23 +83,25 @@ public:
     BannedSeed mBannedSeed[NUM_ZOMBIE_SEED_TYPES];
     bool mDrawString = false;
 
-    VSSetupWidget();
-    ~VSSetupWidget();
+    VSSetupAddonWidget();
+    ~VSSetupAddonWidget();
     void SetDisable();
     void SwapButtonImage(Sexy::ButtonWidget *theButton, int theIndex);
-    void ButtonDepress(this VSSetupWidget &self, int theId);
+    void ButtonDepress(this VSSetupAddonWidget &self, int theId);
     void CheckboxChecked(int theId, bool checked);
     void GetZombieSeedType();
 
 private:
     static constexpr Sexy::ButtonListener::VTable sButtonListenerVtable{
-        .ButtonDepress = (void *)&VSSetupWidget::ButtonDepress,
+        .ButtonDepress = (void *)&VSSetupAddonWidget::ButtonDepress,
     };
 
     static inline Sexy::ButtonListener sButtonListener{&sButtonListenerVtable};
 };
 
-inline VSSetupWidget *gVSSetupWidget;
+inline VSSetupAddonWidget *gVSSetupAddonWidget;
+
+inline int gVSSetupRequestState = 0;
 
 inline Sexy::ButtonWidget *gVSSelectBgDayButton;
 inline Sexy::ButtonWidget *gVSSelectBgNightButton;

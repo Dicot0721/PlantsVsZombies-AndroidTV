@@ -427,6 +427,7 @@ void InitHookFunction() {
     homura::HookFunction(VSSetupMenu_PickRandomPlantsAddr, &VSSetupMenu::PickRandomPlants, &old_VSSetupMenu_PickRandomPlants);
 
 
+    homura::HookFunction(VSResultsMenu_VSResultsMenuAddr, &VSResultsMenu::_constructor, &old_VSResultsMenu_Constructor);
     homura::HookFunction(VSResultsMenu_UpdateAddr, &VSResultsMenu::Update, &old_VSResultsMenu_Update);
     homura::HookFunction(VSResultsMenu_OnExitAddr, &VSResultsMenu::OnExit, &old_VSResultsMenu_OnExit);
     homura::HookFunction(VSResultsMenu_DrawAddr, &VSResultsMenu::Draw, &old_VSResultsMenu_Draw);

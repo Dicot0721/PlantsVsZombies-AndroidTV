@@ -28,6 +28,11 @@
 using namespace Sexy;
 
 
+void VSResultsMenu::_constructor() {
+    old_VSResultsMenu_Constructor(this);
+    gVSResultRequestState = -1;
+}
+
 size_t VSResultsMenu::getClientEventSize(EventType type) {
     switch (type) {
         case EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS:
@@ -44,7 +49,7 @@ void VSResultsMenu::processClientEvent(void *buf, ssize_t bufSize) {
         case EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS: {
             U8_Event *event1 = (U8_Event *)event;
             int anId = event1->data;
-            mResultsButtonId = anId;
+            gVSResultRequestState = anId;
         } break;
 
         default:
@@ -101,6 +106,7 @@ void VSResultsMenu::ButtonDepress(int theId) {
         // 客户端点击再来一局
         U8_Event event = {{EventType::EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS}, uint8_t(theId)};
         send(tcpServerSocket, &event, sizeof(U8_Event), 0);
+        gVSResultRequestState = theId;
         return;
     }
 
@@ -124,11 +130,24 @@ void VSResultsMenu::ButtonDepress(int theId) {
 void VSResultsMenu::Draw(Graphics *g) {
     old_VSResultsMenu_Draw(this, g);
 
-    if (tcp_connected)
-        return;
+    if (tcp_connected) {
+        switch (gVSResultRequestState) {
+            case VSResultsMenu::VSResultsMenu_Play_Again:
+                TodDrawString(g, "已提醒房主再来一次", 400, -20, *Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
+                break;
+            default:
+                break;
+        }
+    }
 
-    if (tcpClientSocket >= 0 && mResultsButtonId == VSResultsMenu::VSResultsMenu_Play_Again) {
-        TodDrawString(g, "对方请求再来一次", 400, -20, *Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
+    if (tcpClientSocket >= 0) {
+        switch (gVSResultRequestState) {
+            case VSResultsMenu::VSResultsMenu_Play_Again:
+                TodDrawString(g, "对方请求再来一次", 400, -20, *Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
+                break;
+            default:
+                break;
+        }
     }
 }
 

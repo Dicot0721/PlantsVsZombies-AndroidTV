@@ -427,10 +427,7 @@ PlantingReason Board::CanPlantAt(int theGridX, int theGridY, SeedType theSeedTyp
     if (FreePlantAt) {
         return PlantingReason::PLANTING_OK;
     }
-    PlantingReason r = old_Board_CanPlantAt(this, theGridX, theGridY, theSeedType);
-    LOG_DEBUG("{}", (int)r);
-    return r;
-    //    return old_Board_CanPlantAt(this, theGridX, theGridY, theSeedType);
+    return old_Board_CanPlantAt(this, theGridX, theGridY, theSeedType);
 }
 
 
@@ -2263,35 +2260,8 @@ void Board::Draw(Sexy::Graphics *g) {
             g->DrawString("房间中", 370, -20);
         } else if (tcpClientSocket >= 0) {
             g->DrawString("房主", 380, -20);
-
-            VSSetupMenu *aVSSetupMenu = mApp->mVSSetupScreen;
-            if (aVSSetupMenu) {
-                pvzstl::string aRequestString;
-                if (aVSSetupMenu->mSetupMode == VSSetupMode::VS_SETUP_MODE_QUICK_PLAY) {
-                    aRequestString = "快速游戏";
-                } else if (aVSSetupMenu->mSetupMode == VSSetupMode::VS_SETUP_MODE_CUSTOM_BATTLE) {
-                    aRequestString = "自定义战场";
-                } else if (aVSSetupMenu->mSetupMode == VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE) {
-                    aRequestString = "随机战场";
-                }
-
-                TodDrawString(g, "对方想玩：", 320, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_CENTER);
-                TodDrawString(g, aRequestString, 500, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_CENTER);
-            }
         } else {
             g->DrawString("本地游戏", 360, -20);
-        }
-
-        if (gVSSetupWidget) {
-            if (gVSSetupWidget->mDrawString) {
-                g->DrawString("额外卡槽", VS_BUTTON_MORE_PACKETS_X + 40, VS_BUTTON_MORE_PACKETS_Y + 25);
-                g->DrawString("禁选模式", VS_BUTTON_BAN_MODE_X + 40, VS_BUTTON_BAN_MODE_Y + 25);
-
-                if (gVSSetupWidget->mBanMode) {
-                    g->SetColor(Color(205, 0, 0, 255));
-                    g->DrawString("禁            用                            阶            段", 200, 45);
-                }
-            }
         }
     }
 }
@@ -4421,7 +4391,7 @@ void Board::ShakeBoard(int theShakeAmountX, int theShakeAmountY) {
 int Board::GetNumSeedsInBank(bool isZombieBank) {
     // 对战额外卡槽
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        if (gVSSetupWidget != nullptr && gVSSetupWidget->mMorePackets)
+        if (gVSSetupAddonWidget != nullptr && gVSSetupAddonWidget->mMorePackets)
             return 7;
     }
 

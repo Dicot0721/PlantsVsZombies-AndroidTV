@@ -367,12 +367,12 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
 
         // （可选）标题
         g->DrawString("可用房间：", 230, 140);
-
+        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
         for (int i = 0; i < scanned_server_count; i++) {
             if (i == mSelectedServerIndex) {
                 // 选中高亮（你原本用 leaderboard_selector）
                 TodDrawImageScaledF(g, addonImages.leaderboard_selector, 140, yPos - 35, 0.7, 0.7);
-                g->SetColor(Sexy::Color(0, 255, 0));
+                g->SetColor(Color(0, 205, 0, 255));
             } else {
                 g->SetColor(oldColor);
             }
@@ -1622,7 +1622,7 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
     Sexy::Color oldColor = g->mColor;
 
     g->DrawString("服务器房间列表：", 230, 240);
-
+    g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
     int idx = mSelectedRoomIndex_Server;
     if (idx < 0)
         idx = 0;

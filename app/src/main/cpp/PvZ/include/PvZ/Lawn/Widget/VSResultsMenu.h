@@ -51,10 +51,20 @@ public:
     void processServerEvent(void *buf, ssize_t bufSize);
     void HandleTcpServerMessage(void *buf, ssize_t bufSize);
     void HandleTcpClientMessage(void *buf, ssize_t bufSize);
+
+    VSResultsMenu() {
+        _constructor();
+    }
+
     void InitFromBoard(Board *board) {
         reinterpret_cast<void (*)(VSResultsMenu *, Board *)>(VSResultsMenu_InitFromBoardAddr)(this, board);
     }
+
+    void _constructor();
 }; // 85个整数
+
+inline int gVSResultRequestState = -1;
+
 
 inline void (*old_VSResultsMenu_Update)(VSResultsMenu *a);
 
@@ -64,5 +74,6 @@ inline void (*old_VSResultsMenu_Draw)(VSResultsMenu *, Sexy::Graphics *);
 
 inline void (*old_VSResultsMenu_DrawInfoBox)(VSResultsMenu *a, Sexy::Graphics *a2, int a3);
 
+inline void (*old_VSResultsMenu_Constructor)(VSResultsMenu *);
 
 #endif // PVZ_LAWN_WIDGET_VS_RESULTS_MENU_H

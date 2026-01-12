@@ -701,6 +701,7 @@ bool LoadGameMain() {
 
 
     VSResultsMenu_UpdateAddr = dlsym(handle, "_ZN13VSResultsMenu6UpdateEv");
+    VSResultsMenu_VSResultsMenuAddr = dlsym(handle, "_ZN13VSResultsMenuC2Ev");
     VSResultsMenu_OnExitAddr = dlsym(handle, "_ZN13VSResultsMenu6OnExitEv");
     VSResultsMenu_DrawAddr = dlsym(handle, "_ZN13VSResultsMenu4DrawEPN4Sexy8GraphicsE");
     VSResultsMenu_DrawOverlayAddr = dlsym(handle, "_ZN13VSResultsMenu11DrawOverlayEPN4Sexy8GraphicsE");

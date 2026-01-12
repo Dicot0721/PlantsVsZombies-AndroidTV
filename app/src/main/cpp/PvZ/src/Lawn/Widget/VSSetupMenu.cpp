@@ -29,22 +29,22 @@
 
 using namespace Sexy;
 
-VSSetupWidget::VSSetupWidget() {
+VSSetupAddonWidget::VSSetupAddonWidget() {
     //    if (gMoreZombieSeeds) {
     //        game_patches::drawMoreZombieSeeds.Modify();
     //    }
 }
 
-VSSetupWidget::~VSSetupWidget() {
+VSSetupAddonWidget::~VSSetupAddonWidget() {
     mMorePacketsButton->mBtnNoDraw = true;
     mMorePacketsButton->mDisabled = true;
     mBanModeButton->mBtnNoDraw = true;
     mBanModeButton->mDisabled = true;
     mDrawString = false;
-    gVSSetupWidget = nullptr;
+    gVSSetupAddonWidget = nullptr;
 }
 
-void VSSetupWidget::SetDisable() {
+void VSSetupAddonWidget::SetDisable() {
     mMorePacketsButton->mBtnNoDraw = true;
     mMorePacketsButton->mDisabled = true;
     mBanModeButton->mBtnNoDraw = true;
@@ -52,30 +52,30 @@ void VSSetupWidget::SetDisable() {
     mDrawString = false;
 }
 
-void VSSetupWidget::SwapButtonImage(ButtonWidget *theButton, int theIndex) {
+void VSSetupAddonWidget::SwapButtonImage(ButtonWidget *theButton, int theIndex) {
     std::swap(mCheckboxImage[theIndex], mCheckboxImagePress[theIndex]);
-    theButton->mButtonImage = gVSSetupWidget->mCheckboxImage[theIndex];
-    theButton->mOverImage = gVSSetupWidget->mCheckboxImage[theIndex];
-    theButton->mDownImage = gVSSetupWidget->mCheckboxImage[theIndex];
+    theButton->mButtonImage = gVSSetupAddonWidget->mCheckboxImage[theIndex];
+    theButton->mOverImage = gVSSetupAddonWidget->mCheckboxImage[theIndex];
+    theButton->mDownImage = gVSSetupAddonWidget->mCheckboxImage[theIndex];
 }
 
-void VSSetupWidget::ButtonDepress(this VSSetupWidget &self, int theId) {
-    if (theId == VSSetupWidget_More_Packets) {
-        self.CheckboxChecked(VSSetupWidget_More_Packets, self.mMorePackets);
+void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId) {
+    if (theId == VSSetupAddonWidget_More_Packets) {
+        self.CheckboxChecked(VSSetupAddonWidget_More_Packets, self.mMorePackets);
         self.SwapButtonImage(self.mMorePacketsButton, 0);
     }
-    if (theId == VSSetupWidget_Ban_Mode) {
-        self.CheckboxChecked(VSSetupWidget_Ban_Mode, self.mBanMode);
+    if (theId == VSSetupAddonWidget_Ban_Mode) {
+        self.CheckboxChecked(VSSetupAddonWidget_Ban_Mode, self.mBanMode);
         self.SwapButtonImage(self.mBanModeButton, 1);
     }
 }
 
-void VSSetupWidget::CheckboxChecked(int theId, bool checked) {
+void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
     switch (theId) {
-        case VSSetupWidget_More_Packets:
+        case VSSetupAddonWidget_More_Packets:
             mMorePackets = !checked;
             break;
-        case VSSetupWidget_Ban_Mode:
+        case VSSetupAddonWidget_Ban_Mode:
             mBanMode = !checked;
             break;
         default:
@@ -90,20 +90,20 @@ void VSSetupMenu::_constructor() {
     Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
     Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
     // 拓展卡槽,禁选模式
-    gVSSetupWidget = new VSSetupWidget;
-    ButtonWidget *aMorePacketsButton = MakeNewButton(VSSetupWidget::VSSetupWidget_More_Packets, &mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
-    ButtonWidget *aBanModeButton = MakeNewButton(VSSetupWidget::VSSetupWidget_Ban_Mode, &mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
-    gVSSetupWidget->mMorePacketsButton = aMorePacketsButton;
-    gVSSetupWidget->mBanModeButton = aBanModeButton;
+    gVSSetupAddonWidget = new VSSetupAddonWidget;
+    ButtonWidget *aMorePacketsButton = MakeNewButton(VSSetupAddonWidget::VSSetupAddonWidget_More_Packets, &mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
+    ButtonWidget *aBanModeButton = MakeNewButton(VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode, &mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
+    gVSSetupAddonWidget->mMorePacketsButton = aMorePacketsButton;
+    gVSSetupAddonWidget->mBanModeButton = aBanModeButton;
     for (int i = 0; i < NUM_VS_BUTTONS; i++) {
-        gVSSetupWidget->mCheckboxImage[i] = aCheckbox;
-        gVSSetupWidget->mCheckboxImagePress[i] = aCheckboxPressed;
+        gVSSetupAddonWidget->mCheckboxImage[i] = aCheckbox;
+        gVSSetupAddonWidget->mCheckboxImagePress[i] = aCheckboxPressed;
     }
     aMorePacketsButton->Resize(VS_BUTTON_MORE_PACKETS_X, VS_BUTTON_MORE_PACKETS_Y, 175, 50);
     aBanModeButton->Resize(VS_BUTTON_BAN_MODE_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
     mApp->mBoard->AddWidget(aMorePacketsButton);
     mApp->mBoard->AddWidget(aBanModeButton);
-    gVSSetupWidget->mDrawString = true;
+    gVSSetupAddonWidget->mDrawString = true;
 
 
     //    gVSSelectBgDayButton = MakeNewButton(9000,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
@@ -117,13 +117,14 @@ void VSSetupMenu::_constructor() {
     is2PControllerMoving = false;
     touchingOnWhichController = 0;
     drawTipArrowAlphaCounter = 0;
+    gVSSetupRequestState = 0;
 }
 
 void VSSetupMenu::_destructor() {
     old_VSSetupMenu_Destructor(this);
 
-    if (gVSSetupWidget)
-        gVSSetupWidget->~VSSetupWidget();
+    if (gVSSetupAddonWidget)
+        gVSSetupAddonWidget->~VSSetupAddonWidget();
 }
 
 void VSSetupMenu::Draw(Graphics *g) {
@@ -152,6 +153,99 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
             Sexy::Widget *theController2Widget = FindWidget(8);
             g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController2Widget->mX + 160, theController2Widget->mY + 40);
             g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController2Widget->mX - 50, theController2Widget->mY + 40, true);
+        }
+
+        g->SetColorizeImages(false);
+    }
+
+
+    //        if (mSetupMode == VSSetupMode::VS_SETUP_MODE_QUICK_PLAY) {
+    //            gRequestString = "快速游戏";
+    //        } else if (mSetupMode == VSSetupMode::VS_SETUP_MODE_CUSTOM_BATTLE) {
+    //            gRequestString = "自定义战场";
+    //        } else if (mSetupMode == VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE) {
+    //            gRequestString = "随机战场";
+    //        }
+
+    //        TodDrawString(g, "对方想玩：", 320, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_CENTER);
+    //        TodDrawString(g, gRequestString, 500, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_CENTER);
+    //
+    if (gVSSetupRequestState != 0) {
+
+
+        if (tcp_connected) {
+            switch (gVSSetupRequestState) {
+                case 9:
+                    TodDrawString(g, "已提醒房主：    快速游戏", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    break;
+                case 10:
+                    TodDrawString(g, "已提醒房主：    自定义战场", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    break;
+                case 11:
+                    TodDrawString(g, "已提醒房主：    随机战场", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    break;
+                case VSSetupAddonWidget::VSSetupAddonWidget_More_Packets:
+                    if (gVSSetupAddonWidget && !gVSSetupAddonWidget->mMorePackets) {
+                        TodDrawString(g, "已提醒房主：    开启额外卡槽", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    } else {
+                        TodDrawString(g, "已提醒房主：    关闭额外卡槽", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    }
+                    break;
+                case VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode:
+                    if (gVSSetupAddonWidget && !gVSSetupAddonWidget->mBanMode) {
+                        TodDrawString(g, "已提醒房主：    开启禁选模式", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    } else {
+                        TodDrawString(g, "已提醒房主：    关闭禁选模式", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (tcpClientSocket >= 0) {
+            switch (gVSSetupRequestState) {
+                case 9:
+                    TodDrawString(g, "对方想玩：    快速游戏", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    break;
+                case 10:
+                    TodDrawString(g, "对方想玩：    自定义战场", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    break;
+                case 11:
+                    TodDrawString(g, "对方想玩：    随机战场", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    break;
+                case VSSetupAddonWidget::VSSetupAddonWidget_More_Packets:
+                    if (gVSSetupAddonWidget && !gVSSetupAddonWidget->mMorePackets) {
+                        TodDrawString(g, "对方想要：    开启额外卡槽", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    } else {
+                        TodDrawString(g, "对方想要：    关闭额外卡槽", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    }
+                    break;
+                case VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode:
+                    if (gVSSetupAddonWidget && !gVSSetupAddonWidget->mBanMode) {
+                        TodDrawString(g, "对方想要：    开启禁选模式", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    } else {
+                        TodDrawString(g, "对方想要：    关闭禁选模式", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+
+    if (gVSSetupAddonWidget) {
+        if (gVSSetupAddonWidget->mDrawString) {
+            g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+            g->SetColor(Color(0, 205, 0, 255));
+            g->DrawString("额外卡槽", VS_BUTTON_MORE_PACKETS_X + 40, VS_BUTTON_MORE_PACKETS_Y + 25);
+            g->DrawString("禁选模式", VS_BUTTON_BAN_MODE_X + 40, VS_BUTTON_BAN_MODE_Y + 25);
+
+            if (gVSSetupAddonWidget->mBanMode) {
+                g->SetColor(Color(205, 0, 0, 255));
+                g->DrawString("禁            用                            阶            段", 200, 45);
+            }
         }
     }
 }
@@ -454,8 +548,7 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
     switch (event->type) {
         case EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS: {
             U8_Event *eventButtonDepress = (U8_Event *)event;
-            int anId = eventButtonDepress->data;
-            mSetupMode = VSSetupMode(anId - 9);
+            gVSSetupRequestState = eventButtonDepress->data;
         } break;
         case EVENT_SEEDCHOOSER_SELECT_SEED: {
             U8U8_Event *event1 = (U8U8_Event *)event;
@@ -560,12 +653,12 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             tcp_connected = true;
 
             mApp->mBoard->mSeedBank1->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
-            for (int i = 0; i < mApp->mBoard->mSeedBank1->mNumPackets - 1; ++i) {
+            for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(false) - 1; ++i) {
                 mApp->mBoard->mSeedBank1->mSeedPackets[i + 1].SetPacketType((SeedType)event1->data[i], SeedType::SEED_NONE);
             }
 
             mApp->mBoard->mSeedBank2->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE, SeedType::SEED_NONE);
-            for (int i = 0; i < mApp->mBoard->mSeedBank2->mNumPackets - 1; ++i) {
+            for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(true) - 1; ++i) {
                 mApp->mBoard->mSeedBank2->mSeedPackets[i + 1].SetPacketType((SeedType)event1->data[i + 6], SeedType::SEED_NONE);
             }
         } break;
@@ -677,10 +770,14 @@ void VSSetupMenu::ButtonDepress(int theId) {
         //        }
     }
 
+    if (gVSSetupRequestState == theId) {
+        gVSSetupRequestState = 0;
+    }
+
     if (tcp_connected) {
-        // 客户端点击再来一局
         U8_Event event = {{EventType::EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
         send(tcpServerSocket, &event, sizeof(U8_Event), 0);
+        gVSSetupRequestState = theId;
         return;
     }
 
@@ -714,10 +811,10 @@ void VSSetupMenu::ButtonDepress(int theId) {
             break;
         case VSSetupMenu_Custom_Battle:
             if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
-                gVSSetupWidget->SetDisable();
+                gVSSetupAddonWidget->SetDisable();
                 PickBackgroundImmediately();
             }
-            if (gVSSetupWidget && gVSSetupWidget->mBanMode) { // 禁选模式下交换双方控制权
+            if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBanMode) { // 禁选模式下交换双方控制权
                 mApp->mBoard->SwitchGamepadControls();
             }
             break;
@@ -750,9 +847,9 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 // }
             }
             break;
-        case VSSetupWidget::VSSetupWidget_More_Packets: // 额外卡槽
-        case VSSetupWidget::VSSetupWidget_Ban_Mode:     // 禁选模式
-            gVSSetupWidget->ButtonDepress(theId);
+        case VSSetupAddonWidget::VSSetupAddonWidget_More_Packets: // 额外卡槽
+        case VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode:     // 禁选模式
+            gVSSetupAddonWidget->ButtonDepress(theId);
             break;
         default:
             break;
