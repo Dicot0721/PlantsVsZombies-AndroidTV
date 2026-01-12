@@ -482,7 +482,7 @@ public:
     void Update();
     void RemovedFromManager(Sexy::WidgetManager *theManager);
     void UpdateButtons();
-    int GetNumSeedsInBank(bool thePlayerIndex);
+    int GetNumSeedsInBank(bool isZombieBank);
     void RemoveParticleByType(ParticleEffect theEffectType);
     void FadeOutLevel();
     Plant *AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int thePlayerIndex, bool theIsDoEffect);

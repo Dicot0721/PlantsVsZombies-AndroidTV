@@ -683,6 +683,7 @@ inline void *VSSetupMenu_PickRandomZombiesAddr;
 inline void *VSSetupMenu_PickRandomPlantsAddr;
 inline void *VSSetupMenu_OnPlayerPickedSeedAddr;
 inline int *VSSetupMenu_GAMEPAD_X_POSITIONSAddr;
+inline SeedType *VSSetupMenu_msRandomPools_Addr;
 
 
 inline void *VSResultsMenu_UpdateAddr;

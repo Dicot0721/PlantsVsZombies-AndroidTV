@@ -697,6 +697,7 @@ bool LoadGameMain() {
     VSSetupMenu_PickRandomPlantsAddr = dlsym(handle, "_ZN11VSSetupMenu16PickRandomPlantsERSt6vectorI8SeedTypeSaIS1_EERKS3_");
     VSSetupMenu_OnPlayerPickedSeedAddr = dlsym(handle, "_ZN11VSSetupMenu18OnPlayerPickedSeedEi");
     VSSetupMenu_GAMEPAD_X_POSITIONSAddr = (int *)dlsym(handle, "_ZN11VSSetupMenu19GAMEPAD_X_POSITIONSE");
+    VSSetupMenu_msRandomPools_Addr = (SeedType *)dlsym(handle, "_ZN11VSSetupMenu13msRandomPoolsE");
 
 
     VSResultsMenu_UpdateAddr = dlsym(handle, "_ZN13VSResultsMenu6UpdateEv");

@@ -4418,14 +4418,14 @@ void Board::ShakeBoard(int theShakeAmountX, int theShakeAmountY) {
     env->DeleteLocalRef(cls);
 }
 
-int Board::GetNumSeedsInBank(bool thePlayerIndex) {
+int Board::GetNumSeedsInBank(bool isZombieBank) {
     // 对战额外卡槽
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         if (gVSSetupWidget != nullptr && gVSSetupWidget->mMorePackets)
             return 7;
     }
 
-    return old_Board_GetNumSeedsInBank(this, thePlayerIndex);
+    return old_Board_GetNumSeedsInBank(this, isZombieBank);
 }
 
 int Board::GetSeedPacketPositionX(int thePacketIndex, int theSeedBankIndex, bool thePlayerIndex) {

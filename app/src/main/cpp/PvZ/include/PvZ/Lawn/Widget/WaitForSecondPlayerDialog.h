@@ -377,9 +377,9 @@ public:
 };
 
 
-class U16x10_Event : public BaseEvent {
+class U16x12_Event : public BaseEvent {
 public:
-    uint16_t data[10];
+    uint16_t data[12];
 };
 
 
