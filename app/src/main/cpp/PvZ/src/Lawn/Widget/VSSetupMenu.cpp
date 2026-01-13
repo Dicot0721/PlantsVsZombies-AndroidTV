@@ -293,7 +293,7 @@ void VSSetupMenu::MouseDrag(int x, int y) {
         theController1Widget->Move(theController1Widget->mX + x - touchDownX, theController1Widget->mY);
         if (tcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController1Widget->mX)};
-            send(tcpClientSocket, &event, sizeof(U16_Event), 0);
+            sendWithSize(tcpClientSocket, &event, sizeof(U16_Event), 0);
         }
     } else if (touchingOnWhichController == 2) {
         if (tcpClientSocket >= 0)
@@ -302,7 +302,7 @@ void VSSetupMenu::MouseDrag(int x, int y) {
         theController2Widget->Move(theController2Widget->mX + x - touchDownX, theController2Widget->mY);
         if (tcpServerSocket >= 0) {
             U16_Event event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController2Widget->mX)};
-            send(tcpServerSocket, &event, sizeof(U16_Event), 0);
+            sendWithSize(tcpServerSocket, &event, sizeof(U16_Event), 0);
         }
     }
     touchDownX = x;
@@ -321,7 +321,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         mController1Position = newController1Position;
         if (tcpClientSocket >= 0) {
             U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mController1Position == -1 ? uint8_t(2) : uint8_t(mController1Position)};
-            send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            sendWithSize(tcpClientSocket, &event, sizeof(U8_Event), 0);
         }
         is1PControllerMoving = false;
     } else if (touchingOnWhichController == 2) {
@@ -336,7 +336,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         mController2Position = newController2Position;
         if (tcpServerSocket >= 0) {
             U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mController2Position == -1 ? uint8_t(2) : uint8_t(mController2Position)};
-            send(tcpServerSocket, &event, sizeof(U8_Event), 0);
+            sendWithSize(tcpServerSocket, &event, sizeof(U8_Event), 0);
         }
         is2PControllerMoving = false;
     }
@@ -523,7 +523,7 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
             event.data[i + 6] = theZombieSeeds[i];
         }
 
-        send(tcpClientSocket, &event, sizeof(U16x12_Event), 0);
+        sendWithSize(tcpClientSocket, &event, sizeof(U16x12_Event), 0);
     }
 }
 
@@ -737,7 +737,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         gGamepad1ToPlayerIndex = mController1Position;
     } else if (tcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_VSSETUPMENU_ENTER_STATE}, uint8_t(theState)};
-        send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+        sendWithSize(tcpClientSocket, &event, sizeof(U8_Event), 0);
     }
 
     old_VSSetupMenu_OnStateEnter(this, theState);
@@ -776,14 +776,14 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
     if (tcp_connected) {
         U8_Event event = {{EventType::EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
-        send(tcpServerSocket, &event, sizeof(U8_Event), 0);
+        sendWithSize(tcpServerSocket, &event, sizeof(U8_Event), 0);
         gVSSetupRequestState = theId;
         return;
     }
 
     if (tcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
-        send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+        sendWithSize(tcpClientSocket, &event, sizeof(U8_Event), 0);
     }
 
     old_VSSetupMenu_ButtonDepress(this, theId);
@@ -887,7 +887,7 @@ void VSSetupMenu::PickBackgroundImmediately() {
 
         if (tcpClientSocket >= 0) {
             U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND}, uint8_t(VSBackGround)};
-            send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            sendWithSize(tcpClientSocket, &event, sizeof(U8_Event), 0);
         }
     }
 }

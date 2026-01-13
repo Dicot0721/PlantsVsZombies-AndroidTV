@@ -540,7 +540,7 @@ void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int t
             if (theZombieType == ZOMBIE_BUNGEE) {
                 event.data3.f32 = aZombie->mAltitude;
             }
-            send(tcpClientSocket, &event, sizeof(U16Buf32Buf32_Event), 0);
+            sendWithSize(tcpClientSocket, &event, sizeof(U16Buf32Buf32_Event), 0);
         }
     }
 }

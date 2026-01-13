@@ -475,7 +475,7 @@ void Zombie::UpdateZombieGargantuar() {
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombieImp));
                 event.data4.f32 = aOffserDistance;
-                send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
+                sendWithSize(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
             }
 
             aZombieImp->mPosX = mPosX - 133.0f;
@@ -1165,7 +1165,7 @@ void Zombie::RiseFromGrave(int theGridX, int theGridY) {
     mBoard->mBackground = tmp;
 
     U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE}, uint8_t(theGridX), uint8_t(theGridY), uint16_t(mBoard->mZombies.DataArrayGetID(this))};
-    send(tcpClientSocket, &event, sizeof(U8U8U16_Event), 0);
+    sendWithSize(tcpClientSocket, &event, sizeof(U8U8U16_Event), 0);
 }
 
 void Zombie::CheckForBoardEdge() {
@@ -1514,7 +1514,7 @@ void Zombie::DieNoLoot() {
 
         if (tcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_DIE}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};
-            send(tcpClientSocket, &event, sizeof(U16_Event), 0);
+            sendWithSize(tcpClientSocket, &event, sizeof(U16_Event), 0);
         }
     }
 
@@ -2251,7 +2251,7 @@ void Zombie::StartMindControlled() {
 
         if (tcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};
-            send(tcpClientSocket, &event, sizeof(U16_Event), 0);
+            sendWithSize(tcpClientSocket, &event, sizeof(U16_Event), 0);
         }
     }
 
@@ -2411,7 +2411,7 @@ void Zombie::PickRandomSpeed() {
         event.data2 = uint16_t(mAnimTicksPerFrame);
         event.data4.f32 = mVelX;
         event.data5.f32 = mPosX;
-        send(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
+        sendWithSize(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
     }
 }
 
@@ -2592,7 +2592,7 @@ void Zombie::HitIceTrap() {
         event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP;
         event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
         event.data2 = uint16_t(mIceTrapCounter);
-        send(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
+        sendWithSize(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
     }
 
     StopZombieSound();
@@ -2761,7 +2761,7 @@ void Zombie::SummonBackupDancers() {
             event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS;
             event.data1[i] = uint16_t(mFollowerZombieID[i]);
             event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
-            send(tcpClientSocket, &event, sizeof(U16x4U16_Event), 0);
+            sendWithSize(tcpClientSocket, &event, sizeof(U16x4U16_Event), 0);
         }
     }
 }
@@ -2868,7 +2868,7 @@ void Zombie::UpdateYuckyFace() {
 
             if (tcpClientSocket >= 0) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_YUCKY_SETROW}, uint16_t(mBoard->mZombies.DataArrayGetID(this)), uint16_t(mRow)};
-                send(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
+                sendWithSize(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
             }
         }
         return;

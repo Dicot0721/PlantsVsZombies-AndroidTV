@@ -1215,7 +1215,7 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
                 dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
                 if (tcpClientSocket >= 0) {
                     BaseEvent event = {EventType::EVENT_START_GAME};
-                    send(tcpClientSocket, &event, sizeof(BaseEvent), 0);
+                    sendWithSize(tcpClientSocket, &event, sizeof(BaseEvent), 0);
                 }
             } else {
                 // 加入指定IP房间：弹输入框

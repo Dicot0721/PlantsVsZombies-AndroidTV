@@ -105,14 +105,14 @@ void VSResultsMenu::ButtonDepress(int theId) {
     if (tcp_connected) {
         // 客户端点击再来一局
         U8_Event event = {{EventType::EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS}, uint8_t(theId)};
-        send(tcpServerSocket, &event, sizeof(U8_Event), 0);
+        sendWithSize(tcpServerSocket, &event, sizeof(U8_Event), 0);
         gVSResultRequestState = theId;
         return;
     }
 
     if (tcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_SERVER_VSRESULT_BUTTON_DEPRESS}, uint8_t(theId)};
-        send(tcpClientSocket, &event, sizeof(U8_Event), 0);
+        sendWithSize(tcpClientSocket, &event, sizeof(U8_Event), 0);
     }
 
     mResultsButtonId = theId;

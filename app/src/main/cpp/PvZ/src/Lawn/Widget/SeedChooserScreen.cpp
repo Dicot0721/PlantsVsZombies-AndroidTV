@@ -488,7 +488,7 @@ void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int the
 
     if (tcpClientSocket >= 0 && mApp->IsVSMode()) {
         U8U8_Event event = {{EventType::EVENT_SEEDCHOOSER_SELECT_SEED}, uint8_t(mIsZombieChooser ? mSeedType2 : mSeedType1), mIsZombieChooser};
-        send(tcpClientSocket, &event, sizeof(U8U8_Event), 0);
+        sendWithSize(tcpClientSocket, &event, sizeof(U8U8_Event), 0);
     }
 
     old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
@@ -852,7 +852,7 @@ void SeedChooserScreen::MouseUp(int x, int y) {
 
     if (tcp_connected && mApp->mGameMode == GAMEMODE_MP_VS) {
         U8U8_Event event = {{EventType::EVENT_SEEDCHOOSER_SELECT_SEED}, uint8_t(mIsZombieChooser ? mSeedType2 : mSeedType1), mIsZombieChooser};
-        send(tcpServerSocket, &event, sizeof(U8U8_Event), 0);
+        sendWithSize(tcpServerSocket, &event, sizeof(U8U8_Event), 0);
         return;
     }
 

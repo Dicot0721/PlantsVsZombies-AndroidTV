@@ -319,6 +319,7 @@ union Buffer32Bit {
 class BaseEvent {
 public:
     EventType type;
+    uint8_t size;
 };
 
 class U8_Event : public BaseEvent {
@@ -418,5 +419,13 @@ inline int tcpServerSocket = -1;
 inline bool tcp_connecting = false; // 正在尝试连接
 inline bool tcp_connected = false;
 
+static inline ssize_t sendWithSize(int socket, BaseEvent *event, size_t len, int flags) {
+
+    //    如果后续出现了大于255byte的数据包，记得改这里
+    //    assert(len <= 255);
+
+    event->size = len;
+    return send(socket, event, len, flags);
+}
 
 #endif // PVZ_LAWN_WIDGET_WAIT_FOR_SECOND_PLAYER_DIALOG_H
