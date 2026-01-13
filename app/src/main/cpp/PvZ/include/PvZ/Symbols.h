@@ -355,6 +355,7 @@ inline void *Zombie_UpdateYetiAddr;
 inline void *Zombie_UpdateZombieFlyerAddr;
 inline void *Zombie_UpdateZombieImpAddr;
 inline void *Zombie_UpdateZombieJackInTheBoxAddr;
+inline void *Zombie_UpdateZombiePolevaulterAddr;
 inline void *Zombie_UpdateZombieGargantuarAddr;
 inline void *Zombie_UpdateZombiePeaHeadAddr;
 inline void *Zombie_GetZombieRectAddr;

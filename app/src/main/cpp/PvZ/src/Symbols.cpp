@@ -367,6 +367,7 @@ bool LoadGameMain() {
     Zombie_UpdateZombieFlyerAddr = dlsym(handle, "_ZN6Zombie17UpdateZombieFlyerEv");
     Zombie_UpdateZombieImpAddr = dlsym(handle, "_ZN6Zombie15UpdateZombieImpEv");
     Zombie_UpdateZombieJackInTheBoxAddr = dlsym(handle, "_ZN6Zombie24UpdateZombieJackInTheBoxEv");
+    Zombie_UpdateZombiePolevaulterAddr = dlsym(handle, "_ZN6Zombie23UpdateZombiePolevaulterEv");
     Zombie_UpdateZombieGargantuarAddr = dlsym(handle, "_ZN6Zombie22UpdateZombieGargantuarEv");
     Zombie_UpdateZombiePeaHeadAddr = dlsym(handle, "_ZN6Zombie19UpdateZombiePeaHeadEv");
     Zombie_UpdateZombieGatlingHeadAddr = dlsym(handle, "_ZN6Zombie23UpdateZombieGatlingHeadEv");

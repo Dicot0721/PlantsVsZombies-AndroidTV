@@ -98,6 +98,9 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS,
     EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED,
     EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP,
+    EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT,      // 撑杆僵尸开始跳跃。暂时不同步此事件，因为同步后的撑杆落地会概率向前瞬移一段距离
+    EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH, // 开始播放砸地动画
+    EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW, // 开始播放扔小鬼动画
     EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW,
     EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE,    // 同步"一大波僵尸"提示
     EVENT_SERVER_BOARD_ZOMBIE_YUCKY_SETROW, // 同步吃大蒜换行
@@ -312,7 +315,13 @@ union Buffer32Bit {
         uint16_t u16_2;
     } u16x2;
 
+    struct {
+        int16_t i16_1;
+        int16_t i16_2;
+    } i16x2;
+
     uint32_t u32;
+    int32_t i32;
     float f32;
 };
 
@@ -365,6 +374,12 @@ public:
     uint8_t data2;
     uint8_t data3;
     uint8_t data4;
+};
+
+class U16Buf32_Event : public BaseEvent {
+public:
+    uint16_t data1;
+    Buffer32Bit data2;
 };
 
 class U16Buf32Buf32_Event : public BaseEvent {

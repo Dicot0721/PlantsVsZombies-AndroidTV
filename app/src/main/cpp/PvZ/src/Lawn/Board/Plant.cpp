@@ -1106,6 +1106,11 @@ GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
                 continue;
             }
 
+            if (mSeedType == SEED_SPLITPEA && thePlantWeapon == WEAPON_SECONDARY) {
+                // 如果是裂荚射手朝后的头，就直接不开火
+                return nullptr;
+            }
+
             if (aBestGridItem == nullptr || aGridX < aLastGridX) {
                 if (mSeedType == SeedType::SEED_FUMESHROOM && aGridX - mPlantCol > 3) {
                     // 如果是大喷菇，则索敌三格以内的靶子或墓碑

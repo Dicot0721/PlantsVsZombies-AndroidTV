@@ -375,6 +375,7 @@ public:
     void SummonBackupDancers();
     bool NeedsMoreBackupDancers();
     void UpdateYuckyFace();
+    void UpdateZombiePolevaulter();
 
 protected:
     void _constructor() {

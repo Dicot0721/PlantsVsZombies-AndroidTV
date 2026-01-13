@@ -1210,6 +1210,10 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP:
         case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW:
             return sizeof(U16U16_Event);
+        case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT:
+        case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW:
+        case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH:
+            return sizeof(U16Buf32_Event);
 
         // --- 舞王召唤舞伴 ---
         case EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS:
@@ -1589,6 +1593,18 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 aZombie->ApplySyncedSpeed(aVelX, anAnimTicks);
                 aZombie->mPosX = eventPickSpeed->data5.f32;
+
+                // 撑杆僵尸落地
+                if (aZombie->mZombieType == ZOMBIE_POLEVAULTER && aZombie->mZombiePhase == PHASE_POLEVAULTER_IN_VAULT) {
+                    aZombie->mZombiePhase = PHASE_POLEVAULTER_POST_VAULT;
+                    aZombie->mPosY = aZombie->GetPosYBasedOnRow(aZombie->mRow);
+                    aZombie->mZombieAttackRect.mX = 50;
+                    aZombie->mZombieAttackRect.mY = 0;
+                    aZombie->mZombieAttackRect.mWidth = 20;
+                    aZombie->mZombieAttackRect.mHeight = 115;
+                    //                    aZombie->mZombieHeight = HEIGHT_ZOMBIE_NORMAL;
+                    aZombie->StartWalkAnim(0);
+                }
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP: {
@@ -1612,6 +1628,45 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 Zombie *aZombieImp = aZombie->ThrowAZombieImp(aOffsetDistance);
                 tcp_connected = true;
                 serverZombieIDMap.emplace(eventImpThrow->data2, uint16_t(mZombies.DataArrayGetID(aZombieImp)));
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT: {
+            U16Buf32_Event *event1 = reinterpret_cast<U16Buf32_Event *>(event);
+            uint16_t serverZombieID = event1->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                aZombie->mX = event1->data2.i16x2.i16_1;
+                int aJumpDistance = event1->data2.i16x2.i16_2;
+                aZombie->mZombiePhase = PHASE_POLEVAULTER_IN_VAULT;
+                aZombie->PlayZombieReanim("anim_jump", REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
+                Reanimation *aReanim = mApp->ReanimationGet(aZombie->mBodyReanimID);
+                float aAnimDuration = aReanim->mFrameCount / aReanim->mAnimRate * 100.0f;
+                aZombie->mVelX = aJumpDistance / aAnimDuration;
+                aZombie->mHasObject = false;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH: {
+            U16Buf32_Event *event1 = reinterpret_cast<U16Buf32_Event *>(event);
+            uint16_t serverZombieID = event1->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                aZombie->mPosX = event1->data2.f32;
+                aZombie->mZombiePhase = PHASE_GARGANTUAR_SMASHING;
+                mApp->PlayFoley(FOLEY_LOW_GROAN);
+                aZombie->PlayZombieReanim("anim_smash", REANIM_PLAY_ONCE_AND_HOLD, 20, 16.0f);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW: {
+            U16Buf32_Event *event1 = reinterpret_cast<U16Buf32_Event *>(event);
+            uint16_t serverZombieID = event1->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                aZombie->mPosX = event1->data2.f32;
+                aZombie->mZombiePhase = PHASE_GARGANTUAR_THROWING;
+                aZombie->PlayZombieReanim("anim_throw", REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE: {

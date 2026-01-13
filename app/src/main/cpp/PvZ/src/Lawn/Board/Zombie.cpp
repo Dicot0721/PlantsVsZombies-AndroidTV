@@ -391,6 +391,96 @@ void Zombie::UpdateZombieJackInTheBox() {
     }
 }
 
+
+void Zombie::UpdateZombiePolevaulter() {
+    if (mZombiePhase == PHASE_POLEVAULTER_PRE_VAULT && mHasHead && mZombieHeight == HEIGHT_ZOMBIE_NORMAL) {
+        Plant *plant = FindPlantTarget(ATTACKTYPE_VAULT);
+        if (plant != nullptr) {
+            if (mBoard->GetLadderAt(plant->mPlantCol, plant->mRow) != nullptr) {
+                if (mBoard->GridToPixelX(plant->mPlantCol, plant->mRow) + 40 > mPosX && mZombieHeight == HEIGHT_ZOMBIE_NORMAL && mUseLadderCol != plant->mPlantCol) {
+                    mZombieHeight = HEIGHT_UP_LADDER;
+                    mUseLadderCol = plant->mPlantCol;
+                }
+                return;
+            }
+
+            if (mApp->IsVSMode() && tcp_connected) {
+                return;
+            }
+
+            mZombiePhase = PHASE_POLEVAULTER_IN_VAULT;
+            PlayZombieReanim("anim_jump", REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
+            Reanimation *aReanim = mApp->ReanimationGet(mBodyReanimID);
+            float aAnimDuration = aReanim->mFrameCount / aReanim->mAnimRate * 100.0f;
+            int aJumpDistance = mX - plant->mX - 80;
+            if (mApp->IsWallnutBowlingLevel()) {
+                aJumpDistance = 0;
+            }
+            mVelX = aJumpDistance / aAnimDuration;
+            mHasObject = false;
+
+            if (tcpClientSocket >= 0) {
+                U16Buf32_Event event;
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT;
+                event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+                event.data2.i16x2.i16_1 = int16_t(mX);
+                event.data2.i16x2.i16_2 = int16_t(aJumpDistance);
+                sendWithSize(tcpClientSocket, &event, sizeof(U16Buf32_Event), 0);
+            }
+        }
+
+
+        if (mApp->IsIZombieLevel() && mBoard->mChallenge->IZombieGetBrainTarget(this) != nullptr) {
+            mZombiePhase = PHASE_POLEVAULTER_POST_VAULT;
+            StartWalkAnim(0);
+            return;
+        }
+    } else if (mZombiePhase == PHASE_POLEVAULTER_IN_VAULT) {
+        Reanimation *aReanim2 = mApp->ReanimationGet(mBodyReanimID);
+        bool flag = false;
+        if (aReanim2->mAnimTime > 0.6f && aReanim2->mAnimTime <= 0.7f) {
+            Plant *plant2 = FindPlantTarget(ATTACKTYPE_VAULT);
+            if (plant2 != nullptr && plant2->mSeedType == SEED_TALLNUT) {
+                mApp->PlayFoley(FOLEY_BONK);
+                flag = true;
+                mApp->AddTodParticle(plant2->mX + 60, plant2->mY - 20, mRenderOrder + 1, PARTICLE_TALL_NUT_BLOCK);
+                mPosX = plant2->mX;
+                mPosY -= 30.0f;
+                mZombieHeight = HEIGHT_FALLING;
+            }
+        }
+
+        if (aReanim2->mLoopCount > 0) {
+            flag = true;
+            mPosX -= 150.0f;
+        }
+
+
+        if (aReanim2->ShouldTriggerTimedEvent(0.2f)) {
+            mApp->PlayFoley(FOLEY_GRASSSTEP);
+        }
+        if (aReanim2->ShouldTriggerTimedEvent(0.4f)) {
+            mApp->PlayFoley(FOLEY_POLEVAULT);
+        }
+        if (flag) {
+            mX = mPosX;
+            mZombiePhase = PHASE_POLEVAULTER_POST_VAULT;
+            mZombieAttackRect.mX = 50;
+            mZombieAttackRect.mY = 0;
+            mZombieAttackRect.mWidth = 20;
+            mZombieAttackRect.mHeight = 115;
+            StartWalkAnim(0);
+            return;
+        }
+
+
+        float aOldPosX = mPosX;
+        mPosX -= 150.0f * aReanim2->mAnimTime;
+        mPosY = GetPosYBasedOnRow(mRow);
+        mPosX = aOldPosX;
+    }
+}
+
 void Zombie::UpdateZombieGargantuar() {
     // 修复魅惑巨人不索敌敌方僵尸的BUG
     if (mZombiePhase == ZombiePhase::PHASE_GARGANTUAR_SMASHING) {
@@ -515,7 +605,18 @@ void Zombie::UpdateZombieGargantuar() {
     if (IsImmobilizied() || !mHasHead)
         return;
 
+    // 客机不判断是否扔小鬼、是否砸地
+    if (mApp->IsVSMode() && tcp_connected)
+        return;
+
     if (mHasObject && mBodyHealth < mBodyMaxHealth / 2 && aThrowingDistance > 40.0f) {
+        if (tcpClientSocket >= 0) {
+            U16Buf32_Event event;
+            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW;
+            event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+            event.data2.f32 = mPosX;
+            sendWithSize(tcpClientSocket, &event, sizeof(U16Buf32_Event), 0);
+        }
         mZombiePhase = ZombiePhase::PHASE_GARGANTUAR_THROWING;
         PlayZombieReanim("anim_throw", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
         return;
@@ -536,6 +637,15 @@ void Zombie::UpdateZombieGargantuar() {
     }
 
     if (doSmash) {
+
+        if (tcpClientSocket >= 0) {
+            U16Buf32_Event event;
+            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH;
+            event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+            event.data2.f32 = mPosX;
+            sendWithSize(tcpClientSocket, &event, sizeof(U16Buf32_Event), 0);
+        }
+
         mZombiePhase = ZombiePhase::PHASE_GARGANTUAR_SMASHING;
         mApp->PlayFoley(FoleyType::FOLEY_LOW_GROAN);
         PlayZombieReanim("anim_smash", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 16.0f);
@@ -1106,7 +1216,7 @@ int Zombie::GetDancerFrame() {
     }
 
     // 修复女仆秘籍问题、修复舞王和舞者的跳舞时间不吃高级暂停也不吃倍速
-    // 关键就是用mBoard.mMainCounter代替mApp.mAppCounter做计时
+    // 关键就是用mBoard->mMainCounter代替mApp->mAppCounter做计时
     int num1 = mZombiePhase == ZombiePhase::PHASE_DANCER_DANCING_IN ? 10 : 20;
     int num2 = mZombiePhase == ZombiePhase::PHASE_DANCER_DANCING_IN ? 110 : 460;
     return mBoard->mMainCounter % num2 / num1;
