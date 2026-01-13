@@ -76,10 +76,6 @@ void Coin::Update() {
     }
 
     if (mType == CoinType::COIN_VS_PLANT_TROPHY || mType == CoinType::COIN_VS_ZOMBIE_TROPHY) {
-        if (tcp_connected || tcpClientSocket >= 0) {
-            Collect(0);
-            return;
-        }
         old_Coin_Update(this);
         return;
     }

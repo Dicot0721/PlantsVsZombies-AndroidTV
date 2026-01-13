@@ -18,6 +18,7 @@
  */
 
 #include "PvZ/Lawn/Board/LawnMower.h"
+#include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/LawnApp.h"
 

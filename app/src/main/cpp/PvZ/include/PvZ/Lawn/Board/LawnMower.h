@@ -28,6 +28,7 @@ class Board;
 class Zombie;
 class LawnMower {
 public:
+    int placeholder[4];
     LawnApp *mApp;              //+0x0
     Board *mBoard;              //+0x4
     float mPosX;                //+0x8
