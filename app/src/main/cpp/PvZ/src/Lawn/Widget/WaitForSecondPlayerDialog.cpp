@@ -177,6 +177,7 @@ void WaitForSecondPlayerDialog::ShowTextInput(const char *title) {
 void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(this, theApp);
 
+    gNetDelayNow = 0; // 清除旧的延时数据
 
     if (mApp->mGameMode != GAMEMODE_MP_VS) {
         GameButtonDown(GamepadButton::BUTTONCODE_A, 1);

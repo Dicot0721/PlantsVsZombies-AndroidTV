@@ -62,7 +62,7 @@ public:
     int unkMem8[2];                         // 550 ~ 551
     // 115： 552 , 111： 553
 
-    Dialog *GetDialog(Dialogs theDialogId) {
+    Dialog *GetDialog(Dialogs theDialogId) { // vTable + 4 * 103
         return reinterpret_cast<Dialog *(*)(__SexyAppBase *, Dialogs)>(Sexy_SexyAppBase_GetDialogAddr)(this, theDialogId);
     }
     void EraseFile(const std::string &theFileName) {

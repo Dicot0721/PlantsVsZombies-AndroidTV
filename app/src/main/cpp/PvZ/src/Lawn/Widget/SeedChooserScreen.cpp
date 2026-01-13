@@ -35,11 +35,6 @@
 
 using namespace Sexy;
 
-namespace {
-GameButton *gSeedChooserScreenMainMenuButton;
-SeedChooserTouchState gSeedChooserTouchState = SeedChooserTouchState::SEEDCHOOSER_TOUCHSTATE_NONE;
-} // namespace
-
 
 SeedChooserScreen::SeedChooserScreen(bool theIsZombieChooser) {
     _constructor(theIsZombieChooser);
@@ -168,18 +163,6 @@ void SeedChooserScreen::_constructor(bool theIsZombieChooser) {
     }
 }
 
-
-void LawnApp::KillSeedChooserScreen() {
-    SeedChooserScreen *seedChooserScreen = mSeedChooserScreen;
-    if (seedChooserScreen != nullptr && mGameMode != GameMode::GAMEMODE_MP_VS) {
-        seedChooserScreen->RemoveWidget(gSeedChooserScreenMainMenuButton);
-        gSeedChooserScreenMainMenuButton->~GameButton();
-        ;
-        gSeedChooserScreenMainMenuButton = nullptr;
-    }
-
-    old_LawnApp_KillSeedChooserScreen(this);
-}
 
 void SeedChooserScreen::RebuildHelpbar() {
     // 拓宽Widget大小
@@ -981,7 +964,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
         }
         Color aColor = mIsZombieChooser ? Color(0, 255, 0) : Color(213, 159, 43);
         pvzstl::string aChooserStr = mIsZombieChooser ? TodStringTranslate("[CHOOSE_YOUR_ZOMBIES]") : TodStringTranslate("[CHOOSE_YOUR_SEEDS]");
-        int aStringX = *(reinterpret_cast<int *>(aBackgroundImage) + 9) / 2;
+        int aStringX = aBackgroundImage->mWidth / 2;
         TodDrawString(g, aChooserStr, aStringX, 114, *Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
 
         int aNumSeeds = NUM_ZOMBIE_SEED_IN_CHOOSER - SEED_ZOMBIE_GRAVESTONE;
@@ -1093,8 +1076,8 @@ void SeedChooserScreen::Draw(Graphics *g) {
                 Image *aCursorArrowImage = (i == 1) ? *Sexy::IMAGE_CURSOR_ARROW_P2 : *Sexy::IMAGE_CURSOR_ARROW_P1;
                 Image *aCursorTextImage = (i == 1) ? *Sexy::IMAGE_CURSOR_P2_TEXT : *Sexy::IMAGE_CURSOR_P1_TEXT;
                 float v57 = sinf(unkF * 5.0);
-                g->DrawImageF(aCursorArrowImage, (float)(aCursorPositionX + 25 - *((int *)aCursorArrowImage + 9) / 2), (float)(v57 + v57) + (float)(aCursorPositionY - 8));
-                g->DrawImageF(aCursorTextImage, (float)(aCursorPositionX + 25 - *((int *)aCursorTextImage + 9) / 2), (float)(aCursorPositionY - 32));
+                g->DrawImageF(aCursorArrowImage, (float)(aCursorPositionX + 25 - aCursorArrowImage->mWidth / 2), (float)(v57 + v57) + (float)(aCursorPositionY - 8));
+                g->DrawImageF(aCursorTextImage, (float)(aCursorPositionX + 25 - aCursorTextImage->mWidth / 2), (float)(aCursorPositionY - 32));
             }
         }
 

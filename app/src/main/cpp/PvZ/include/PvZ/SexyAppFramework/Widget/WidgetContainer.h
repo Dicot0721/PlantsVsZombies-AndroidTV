@@ -56,17 +56,20 @@ public:
     int mWidgetId;                 // 28
     // 大小未知，目前认为是29个整数。反正Widget是64个整数，足够了。
 
-    void SetFocus(__Widget *theWidget) {
+    void SetFocus(__Widget *theWidget) { // vTable + 48
         reinterpret_cast<void (*)(__WidgetContainer *, __Widget *)>(Sexy_WidgetContainer_SetFocusAddr)(this, theWidget);
     }
-    void MarkDirty() {
+    void MarkDirty() { // vTable + 56
         reinterpret_cast<void (*)(__WidgetContainer *)>(Sexy_WidgetContainer_MarkDirtyAddr)(this);
     }
-    void AddWidget(__Widget *theWidget) {
+    void AddWidget(__Widget *theWidget) { // vTable + 24
         reinterpret_cast<void (*)(__WidgetContainer *, __Widget *)>(Sexy_WidgetContainer_AddWidgetAddr)(this, theWidget);
     }
-    void RemoveWidget(__Widget *theWidget) {
+    void RemoveWidget(__Widget *theWidget) { // vTable + 28
         reinterpret_cast<void (*)(__WidgetContainer *, __Widget *)>(Sexy_WidgetContainer_RemoveWidgetAddr)(this, theWidget);
+    }
+    void BringToFront(__Widget *theWidget) { // vTable + 60
+        reinterpret_cast<void (*)(__WidgetContainer *, __Widget *)>(Sexy_WidgetContainer_BringToFrontAddr)(this, theWidget);
     }
 
 protected:

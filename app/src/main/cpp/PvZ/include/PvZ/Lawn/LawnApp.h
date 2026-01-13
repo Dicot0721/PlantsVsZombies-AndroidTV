@@ -279,7 +279,9 @@ public:
     bool HasSeedType(SeedType theSeedType, int thePlayerIndex) {
         return reinterpret_cast<int (*)(LawnApp *, SeedType, int)>(LawnApp_HasSeedTypeAddr)(this, theSeedType, thePlayerIndex);
     }
-
+    void SafeDeleteWidget(Sexy::__Widget *widget) { // vTable + 4 * 47
+        reinterpret_cast<void (*)(LawnApp *, Sexy::__Widget *)>(LawnApp_SafeDeleteWidgetAddr)(this, widget);
+    }
     LawnApp() {
         _constructor();
     };
@@ -351,6 +353,9 @@ public:
     void HandleTcpClientMessage(void *buf, ssize_t bufSize);
     void HandleTcpServerMessage(void *buf, ssize_t bufSize);
     void UpdateFrames();
+    void ShowSeedChooserScreen();
+    void ShowZombieChooserScreen();
+    void KillZombieChooserScreen();
 
 protected:
     friend void InitHookFunction();
@@ -362,6 +367,9 @@ protected:
 inline bool disableShop;
 inline bool doCheatDialog;     // 菜单DoCheatDialog
 inline bool doCheatCodeDialog; // 菜单DoCheatCodeDialog
+inline int gPingNetPingPongCounter = 0;
+inline int gPingNetDelayCounter = -1;
+inline int gNetDelayNow = 0;
 
 inline void (*old_LawnApp_ClearSecondPlayer)(LawnApp *lawnApp);
 
@@ -402,5 +410,7 @@ inline bool (*old_LawnApp_HasSeedType)(LawnApp *lawnApp, SeedType theSeedType, i
 inline void (*old_LawnApp_DoNewOptions)(LawnApp *lawnApp, bool a2, unsigned int a3);
 
 inline void (*old_LawnApp_UpdateFrames)(LawnApp *lawnApp);
+
+inline void (*old_LawnApp_KillSeedChooserScreen)(LawnApp *lawnApp);
 
 #endif // PVZ_LAWN_LAWN_APP_H

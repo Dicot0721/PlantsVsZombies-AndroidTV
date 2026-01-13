@@ -2367,9 +2367,9 @@ void Board::Draw(Sexy::Graphics *g) {
         g->SetColor(aColor);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
         if (tcp_connected) {
-            g->DrawString("房间中", 370, -20);
+            g->DrawString(gNetDelayNow == 0 ? "房间中" : StrFormat("房间中 %dms", gNetDelayNow * 10), 370, -20);
         } else if (tcpClientSocket >= 0) {
-            g->DrawString("房主", 380, -20);
+            g->DrawString(StrFormat(gNetDelayNow == 0 ? "房主" : "房主 %dms", gNetDelayNow * 10), 380, -20);
         } else {
             g->DrawString("本地游戏", 360, -20);
         }

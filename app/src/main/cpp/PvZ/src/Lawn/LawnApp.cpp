@@ -28,6 +28,7 @@
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
+#include "PvZ/Lawn/Widget/seedChooserScreen.h"
 #include "PvZ/Misc.h"
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
@@ -245,8 +246,23 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
 
     while (clientRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
         BaseEvent *base = (BaseEvent *)&clientRecvBuffer[offset];
+        if (base->type == EVENT_CLIENT_PING) {
+            size_t eventSize = sizeof(U8_Event);
+            if (clientRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+            U8_Event *eventPing = static_cast<U8_Event *>(base);
 
-        if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type <= EVENT_SERVER_BOARD_START_LEVEL) {
+            if (eventPing->data == 1) {
+                U8_Event eventPong = {{EVENT_SERVER_PONG}, 1};
+                gPingNetDelayCounter = 0; // 开始计时
+                sendWithSize(tcpClientSocket, &eventPong, sizeof(U8_Event), 0);
+            } else if (eventPing->data == 2) {
+                gNetDelayNow = gPingNetDelayCounter;
+                gPingNetDelayCounter = -1;
+            }
+
+            offset += eventSize;
+        } else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type <= EVENT_SERVER_BOARD_START_LEVEL) {
             size_t eventSize = Board::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -298,7 +314,20 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
     while (serverRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
         BaseEvent *base = (BaseEvent *)&serverRecvBuffer[offset];
         LOG_DEBUG("base.type ={}", (int)base->type);
-        if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type <= EVENT_SERVER_BOARD_START_LEVEL) {
+        if (base->type == EVENT_SERVER_PONG) {
+            size_t eventSize = sizeof(U8_Event);
+            if (serverRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+            U8_Event *eventPong = static_cast<U8_Event *>(base);
+
+            U8_Event eventPing = {{EVENT_CLIENT_PING}, 2};
+            gNetDelayNow = gPingNetDelayCounter;
+            gPingNetDelayCounter = -1; // 停止计时
+            gPingNetPingPongCounter = 0;
+            sendWithSize(tcpServerSocket, &eventPing, sizeof(U8_Event), 0);
+
+            offset += eventSize;
+        } else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type <= EVENT_SERVER_BOARD_START_LEVEL) {
             size_t eventSize = Board::getServerEventSize(base->type);
 
 
@@ -364,6 +393,11 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
 void LawnApp::UpdateFrames() {
 
     if (tcpClientSocket >= 0) {
+
+        if (gPingNetDelayCounter != -1) {
+            gPingNetDelayCounter++;
+        }
+
         char buf[1024];
         while (true) {
             ssize_t n = recv(tcpClientSocket, buf, sizeof(buf), MSG_DONTWAIT);
@@ -412,6 +446,17 @@ void LawnApp::UpdateFrames() {
     }
 
     if (tcp_connected) {
+
+        if (gPingNetDelayCounter != -1) {
+            gPingNetDelayCounter++;
+        }
+
+        gPingNetPingPongCounter++;
+        if (gPingNetPingPongCounter == 100) {
+            gPingNetDelayCounter = 0; // 开始计时
+            U8_Event eventPing = {{EVENT_CLIENT_PING}, 1};
+            sendWithSize(tcpServerSocket, &eventPing, sizeof(U8_Event), 0);
+        }
         char buf[1024];
         while (true) {
             ssize_t n = recv(tcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);
@@ -847,6 +892,45 @@ bool LawnApp::IsFinalBossLevel() {
 
 PottedPlant *LawnApp::GetPottedPlantByIndex(int thePottedPlantIndex) {
     return &mPlayerInfo->mPottedPlants[thePottedPlantIndex];
+}
+
+void LawnApp::ShowSeedChooserScreen() {
+    SeedChooserScreen *theChooser = new SeedChooserScreen(false);
+    mSeedChooserScreen = theChooser;
+    theChooser->Resize(0, 0, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND_Addr)->mWidth, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND_Addr)->mHeight);
+    mWidgetManager->AddWidget(mSeedChooserScreen);
+    mWidgetManager->BringToFront(mSeedChooserScreen);
+}
+
+void LawnApp::KillSeedChooserScreen() {
+    // 删除主菜单按钮
+    if (mSeedChooserScreen != nullptr && mGameMode != GameMode::GAMEMODE_MP_VS) {
+        mSeedChooserScreen->RemoveWidget(gSeedChooserScreenMainMenuButton);
+        gSeedChooserScreenMainMenuButton->~GameButton();
+        gSeedChooserScreenMainMenuButton = nullptr;
+    }
+
+    if (mSeedChooserScreen) {
+        mWidgetManager->RemoveWidget(mSeedChooserScreen);
+        SafeDeleteWidget(mSeedChooserScreen);
+        mSeedChooserScreen = nullptr;
+    }
+}
+
+void LawnApp::ShowZombieChooserScreen() {
+    SeedChooserScreen *theChooser = new SeedChooserScreen(true);
+    mZombieChooserScreen = theChooser;
+    theChooser->Resize(800 - (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mWidth, 0, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mWidth, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mHeight);
+    mWidgetManager->AddWidget(mZombieChooserScreen);
+    mWidgetManager->BringToFront(mZombieChooserScreen);
+}
+
+void LawnApp::KillZombieChooserScreen() {
+    if (mZombieChooserScreen) {
+        mWidgetManager->RemoveWidget(mZombieChooserScreen);
+        SafeDeleteWidget(mZombieChooserScreen);
+        mZombieChooserScreen = nullptr;
+    }
 }
 
 static bool zombatarResLoaded;

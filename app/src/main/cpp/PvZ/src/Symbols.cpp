@@ -284,7 +284,10 @@ bool LoadGameMain() {
     LawnApp_LawnMessageBoxAddr = dlsym(handle, "_ZN7LawnApp14LawnMessageBoxEiPKcS1_S1_S1_i");
     LawnApp_ReanimationGetAddr = dlsym(handle, "_ZN7LawnApp14ReanimationGetE13ReanimationID");
     LawnApp_TryHelpTextScreenAddr = dlsym(handle, "_ZN7LawnApp17TryHelpTextScreenEi");
+    LawnApp_ShowSeedChooserScreenAddr = dlsym(handle, "_ZN7LawnApp21ShowSeedChooserScreenEv");
     LawnApp_KillSeedChooserScreenAddr = dlsym(handle, "_ZN7LawnApp21KillSeedChooserScreenEv");
+    LawnApp_ShowZombieChooserScreenAddr = dlsym(handle, "_ZN7LawnApp23ShowZombieChooserScreenEv");
+    LawnApp_KillZombieChooserScreenAddr = dlsym(handle, "_ZN7LawnApp23KillZombieChooserScreenEv");
     LawnApp_GetSeedsAvailableAddr = dlsym(handle, "_ZN7LawnApp17GetSeedsAvailableEb");
     LawnApp_IsIZombieLevelAddr = dlsym(handle, "_ZN7LawnApp14IsIZombieLevelEv");
     LawnApp_AddTodParticleAddr = dlsym(handle, "_ZN7LawnApp14AddTodParticleEffi14ParticleEffect");
@@ -328,6 +331,7 @@ bool LoadGameMain() {
     LawnApp_ShowGameSelectorAddr = dlsym(handle, "_ZN7LawnApp16ShowGameSelectorEv");
     LawnApp_SetSecondPlayerAddr = dlsym(handle, "_ZN7LawnApp15SetSecondPlayerEi");
     LawnApp_PlayerToGamepadIndexAddr = dlsym(handle, "_ZN7LawnApp20PlayerToGamepadIndexEi");
+    LawnApp_SafeDeleteWidgetAddr = dlsym(handle, "_ZN7LawnApp16SafeDeleteWidgetEPN4Sexy6WidgetE");
 
 
     ChallengeScreen_UpdateAddr = dlsym(handle, "_ZN15ChallengeScreen6UpdateEv");
@@ -963,6 +967,7 @@ bool LoadGameMain() {
     Sexy_WidgetManager_SetFocusAddr = dlsym(handle, "_ZN4Sexy13WidgetManager11GetWidgetAtEiiPiS1_");
     Sexy_WidgetContainer_AddWidgetAddr = dlsym(handle, "_ZN4Sexy15WidgetContainer9AddWidgetEPNS_6WidgetE");
     Sexy_WidgetContainer_RemoveWidgetAddr = dlsym(handle, "_ZN4Sexy15WidgetContainer12RemoveWidgetEPNS_6WidgetE");
+    Sexy_WidgetContainer_BringToFrontAddr = dlsym(handle, "_ZN4Sexy15WidgetContainer12BringToFrontEPNS_6WidgetE");
     Sexy_WidgetContainer_SetFocusAddr = dlsym(handle, "_ZN4Sexy15WidgetContainer8SetFocusEPNS_6WidgetE");
     Sexy_WidgetManager_MouseDownAddr = dlsym(handle, "_ZN4Sexy13WidgetManager8SetFocusEPNS_6WidgetE");
     Sexy_WidgetManager_MouseDragAddr = dlsym(handle, "_ZN4Sexy13WidgetManager9MouseDragEii");
@@ -1177,6 +1182,8 @@ bool LoadGameMain() {
     Sexy_IMAGE_SUNFLOWER_TROPHY_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy22IMAGE_SUNFLOWER_TROPHYE");
     Sexy_IMAGE_REANIM_WALLNUT_BODY_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy25IMAGE_REANIM_WALLNUT_BODYE");
     Sexy_IMAGE_REANIM_ZOMBIE_LADDER_OUTERARM_UPPER2_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy42IMAGE_REANIM_ZOMBIE_LADDER_OUTERARM_UPPER2E");
+    Sexy_IMAGE_SEEDCHOOSER_BACKGROUND_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy28IMAGE_SEEDCHOOSER_BACKGROUNDE");
+    Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy29IMAGE_SEEDCHOOSER_BACKGROUND2E");
     Sexy_IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_UPPER2_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy43IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_UPPER2E");
     Sexy_IMAGE_REANIM_ZOMBIE_PAPER_LEFTARM_UPPER2_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy40IMAGE_REANIM_ZOMBIE_PAPER_LEFTARM_UPPER2E");
     Sexy_IMAGE_REANIM_ZOMBIE_POLEVAULTER_OUTERARM_UPPER2_Addr = (Sexy::Image **)dlsym(handle, "_ZN4Sexy47IMAGE_REANIM_ZOMBIE_POLEVAULTER_OUTERARM_UPPER2E");

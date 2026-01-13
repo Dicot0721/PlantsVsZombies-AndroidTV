@@ -111,6 +111,7 @@ public:
     GameButton *mAlmanacButton;              // 961
     int unkMems3[4];                         // 962 ~ 965
     // 大小966个整数
+    int mNewMemberOHHHHHHHHHHHHHHHHH;
 
     void CloseSeedChooser() {
         reinterpret_cast<void (*)(SeedChooserScreen *)>(SeedChooserScreen_CloseSeedChooserAddr)(this);
@@ -192,6 +193,9 @@ protected:
     void _constructor(bool theIsZombieChooser);
 };
 
+inline GameButton *gSeedChooserScreenMainMenuButton;
+inline SeedChooserTouchState gSeedChooserTouchState = SeedChooserTouchState::SEEDCHOOSER_TOUCHSTATE_NONE;
+
 /***************************************************************************************************************/
 inline bool daveNoPickSeeds;
 
@@ -199,8 +203,6 @@ inline bool daveNoPickSeeds;
 inline void (*old_SeedChooserScreen_RebuildHelpbar)(SeedChooserScreen *instance);
 
 inline void (*old_SeedChooserScreen_SeedChooserScreen)(SeedChooserScreen *seedChooserScreen, bool isZombieChooser);
-
-inline void (*old_LawnApp_KillSeedChooserScreen)(LawnApp *lawnApp);
 
 inline void (*old_SeedChooserScreen_Update)(SeedChooserScreen *a);
 
