@@ -1005,17 +1005,29 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
 
         Zombie *aZombie = old_Board_AddZombieInRow(this, theZombieType, theRow, theFromWave, theIsRustle);
         if (tcpClientSocket >= 0) {
-            U8x4U16Buf32x2_Event event;
-            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
-            event.data1[0] = uint8_t(theZombieType);
-            event.data1[1] = uint8_t(theRow);
-            event.data1[2] = uint8_t(theFromWave);
-            event.data1[3] = uint8_t(theIsRustle);
+            if (theZombieType == ZOMBIE_BUNGEE) {
+                GamepadControls *theGamepad = mGamepadControls1->mIsZombie ? mGamepadControls1 : mGamepadControls2;
+                int theTargetCol = PixelToGridXKeepOnBoard(theGamepad->mCursorPositionX, theGamepad->mCursorPositionY);
+                U16Buf32Buf32_Event event;
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD;
+                event.data1 = uint16_t(mZombies.DataArrayGetID(aZombie));
+                event.data2.u8x4.u8_1 = uint8_t(theTargetCol);
+                event.data2.u8x4.u8_2 = uint8_t(theRow);
+                event.data3.f32 = aZombie->mAltitude;
+                send(tcpClientSocket, &event, sizeof(U16Buf32Buf32_Event), 0);
+            } else {
+                U8x4U16Buf32x2_Event event;
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
+                event.data1[0] = uint8_t(theZombieType);
+                event.data1[1] = uint8_t(theRow);
+                event.data1[2] = uint8_t(theFromWave);
+                event.data1[3] = uint8_t(theIsRustle);
 
-            event.data2 = uint16_t(mZombies.DataArrayGetID(aZombie));
-            event.data3[0].f32 = aZombie->mVelX;
-            event.data3[1].f32 = aZombie->mPosX;
-            send(tcpClientSocket, &event, sizeof(U8x4U16Buf32x2_Event), 0);
+                event.data2 = uint16_t(mZombies.DataArrayGetID(aZombie));
+                event.data3[0].f32 = aZombie->mVelX;
+                event.data3[1].f32 = aZombie->mPosX;
+                send(tcpClientSocket, &event, sizeof(U8x4U16Buf32x2_Event), 0);
+            };
         }
         return aZombie;
     }
@@ -1178,6 +1190,10 @@ size_t Board::getServerEventSize(EventType type) {
         // --- 僵尸添加 ---
         case EVENT_SERVER_BOARD_ZOMBIE_ADD:
             return sizeof(U8x4U16Buf32x2_Event);
+        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD:
+            return sizeof(U16Buf32Buf32_Event);
+        case EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT:
+            return sizeof(U16Buf32Buf32_Event);
 
         // --- 金钱类、 植物,僵尸,场地物死亡、 僵尸魅惑、植物触发特性、小推车启动 ---
         case EVENT_SERVER_BOARD_TAKE_SUNMONEY:
@@ -1500,6 +1516,45 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             float aVelX = eventZombieAdd->data3[0].f32;
             aZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
             aZombie->mPosX = eventZombieAdd->data3[1].f32;
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD: {
+            U16Buf32Buf32_Event *eventZombieBungeeAdd = reinterpret_cast<U16Buf32Buf32_Event *>(event);
+
+            int theTargetCol = eventZombieBungeeAdd->data2.u8x4.u8_1;
+            int theRow = eventZombieBungeeAdd->data2.u8x4.u8_2;
+
+            tcp_connected = false;
+            Zombie *aZombie = AddZombieInRow(ZOMBIE_BUNGEE, theRow, 0, false);
+            serverZombieIDMap.emplace(eventZombieBungeeAdd->data1, uint16_t(mZombies.DataArrayGetID(aZombie)));
+            tcp_connected = true;
+
+            aZombie->mAltitude = eventZombieBungeeAdd->data3.f32;
+            aZombie->mTargetCol = theTargetCol;
+            aZombie->SetRow(theRow);
+            aZombie->mPosX = GridToPixelX(theTargetCol, theRow);
+            aZombie->mPosY = aZombie->GetPosYBasedOnRow(theRow);
+            aZombie->mRenderOrder = Board::MakeRenderOrder(RENDER_LAYER_GRAVE_STONE, theRow, 7);
+
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT: {
+            U16Buf32Buf32_Event *eventZombieAddByCheat = reinterpret_cast<U16Buf32Buf32_Event *>(event);
+            int theGridX = eventZombieAddByCheat->data2.u8x4.u8_1;
+            int theGridY = eventZombieAddByCheat->data2.u8x4.u8_2;
+            uint16_t serverZombieID = eventZombieAddByCheat->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                if (aZombie->mZombieType == ZOMBIE_BUNGEE) {
+                    aZombie->mAltitude = eventZombieAddByCheat->data3.f32;
+                    aZombie->mTargetCol = theGridX;
+                    aZombie->SetRow(theGridY);
+                    aZombie->mPosX = GridToPixelX(theGridX, theGridY);
+                    aZombie->mPosY = aZombie->GetPosYBasedOnRow(theGridX);
+                    aZombie->mRenderOrder = Board::MakeRenderOrder(RENDER_LAYER_GRAVE_STONE, theGridX, 7);
+                } else {
+                    aZombie->mPosX = GridToPixelX(theGridX, theGridY) - 30.0f;
+                }
+            }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE: {
             U8U8U16_Event *event1 = (U8U8U16_Event *)event;

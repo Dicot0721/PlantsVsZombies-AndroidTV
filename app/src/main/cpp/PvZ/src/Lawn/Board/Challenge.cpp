@@ -513,15 +513,35 @@ ZombieType Challenge::IZombieSeedTypeToZombieType(SeedType theSeedType) {
 }
 
 void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int theGridY) {
-    Zombie *aZombie = mBoard->AddZombieInRow(theZombieType, theGridY, 0, 0);
+    Zombie *aZombie = mBoard->AddZombieInRow(theZombieType, theGridY, 0, false);
     if (theZombieType == ZOMBIE_BUNGEE) {
         aZombie->mTargetCol = theGridX;
-        aZombie->SetRow(theGridX);
+        aZombie->SetRow(theGridY);
         aZombie->mPosX = mBoard->GridToPixelX(theGridX, theGridY);
         aZombie->mPosY = aZombie->GetPosYBasedOnRow(theGridY);
         aZombie->mRenderOrder = Board::MakeRenderOrder(RENDER_LAYER_GRAVE_STONE, theGridY, 7);
     } else {
         aZombie->mPosX = mBoard->GridToPixelX(theGridX, theGridY) - 30.0f;
+    }
+
+
+    if (mApp->mGameMode == GAMEMODE_MP_VS) {
+        if (tcp_connected) {
+            return;
+        }
+
+        if (tcpClientSocket >= 0) {
+            U16Buf32Buf32_Event event;
+            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT;
+            event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombie));
+            event.data2.u8x4.u8_1 = uint8_t(theGridX);
+            event.data2.u8x4.u8_2 = uint8_t(theGridY);
+            //            event.data2.u16x2.u16_2 = uint16_t(theZombieType);
+            if (theZombieType == ZOMBIE_BUNGEE) {
+                event.data3.f32 = aZombie->mAltitude;
+            }
+            send(tcpClientSocket, &event, sizeof(U16Buf32Buf32_Event), 0);
+        }
     }
 }
 
