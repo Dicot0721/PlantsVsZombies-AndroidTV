@@ -25,10 +25,10 @@
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
 #include "PvZ/Lawn/Widget/ConfirmBackToMainDialog.h"
 #include "PvZ/Lawn/Widget/MainMenu.h"
+#include "PvZ/Lawn/Widget/SeedChooserScreen.h"
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
-#include "PvZ/Lawn/Widget/seedChooserScreen.h"
 #include "PvZ/Misc.h"
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
@@ -201,6 +201,7 @@ void LawnApp::ClearSecondPlayer() {
         close(udpBroadcastSocket);
         udpBroadcastSocket = -1;
     }
+    gNetDelayNow = 0; // 清除旧的延时数据
     old_LawnApp_ClearSecondPlayer(this);
 }
 

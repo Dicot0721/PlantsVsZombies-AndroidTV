@@ -19,6 +19,7 @@
 
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
 #include "Homura/Logger.h"
+#include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/TodLib/Common/TodCommon.h"
@@ -31,6 +32,7 @@ using namespace Sexy;
 void VSResultsMenu::_constructor() {
     old_VSResultsMenu_Constructor(this);
     gVSResultRequestState = -1;
+    gNetDelayNow = 0; // 清除旧的延时数据
 }
 
 size_t VSResultsMenu::getClientEventSize(EventType type) {
