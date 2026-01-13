@@ -82,7 +82,7 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH,               // 播放杨桃、三线射手的开火动画
     EVENT_SERVER_BOARD_PLANT_FINDTARGETANDFIRE,            // 播放其他植物的开火动画
     EVENT_SERVER_BOARD_PLANT_KERNELPLUT_FINDTARGETANDFIRE, // 黄油投手
-    EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION, // 似乎无用，先不同步
+    EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION,           // 似乎无用，先不同步
     EVENT_SERVER_BOARD_PLANT_OTHER_ANIMATION,              // 同步摇摆动画、开火动画的帧率和播放进度
     EVENT_SERVER_BOARD_PLANT_FIRE,                         // 射出子弹
     EVENT_SERVER_BOARD_PLANT_ADD,
