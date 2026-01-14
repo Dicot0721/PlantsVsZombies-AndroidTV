@@ -90,7 +90,29 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
             mLawnNoButton->mDisabled = false;
             break;
 
-        case UIMode::MODE2_WIFI:
+        case UIMode::MODE2_WIFI: {
+
+            //  如果正在创建房间（Host），左按钮改成“设置房间端口”
+            if (mIsCreatingRoom) {
+                // left: 设置端口
+                mLeftButton->SetLabel("[SET_ROOM_PORT]");
+                mLeftButton->mDisabled = false;
+
+                // right: 退出房间
+                mRightButton->SetLabel("[EXIT_ROOM_BUTTON]");
+                mRightButton->mDisabled = false;
+
+                // Yes: 开始游戏（有人加入才可点）
+                mLawnYesButton->SetLabel("[START_GAME]");
+                mLawnYesButton->mDisabled = (tcpClientSocket == -1);
+
+                // No: 返回模式选择
+                mLawnNoButton->SetLabel("[BACK_TO_MODE_SELECT]");
+                mLawnNoButton->mDisabled = false;
+
+                break;
+            }
+
             // left: 加入/离开
             mLeftButton->SetLabel(mIsJoiningRoom ? "[LEAVE_ROOM_BUTTON]" : "[JOIN_ROOM_BUTTON]");
             if (mIsJoiningRoom) {
@@ -105,22 +127,21 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
                     mLeftButton->mDisabled = true;
                 }
             }
+
             // right: 创建/退出
             mRightButton->SetLabel(mIsCreatingRoom ? "[EXIT_ROOM_BUTTON]" : "[CREATE_ROOM_BUTTON]");
             mRightButton->mDisabled = mIsJoiningRoom;
 
             // Yes：未创建房间 -> “加入指定IP房间”；创建房间 -> “开始游戏”
-            if (mIsCreatingRoom) {
-                mLawnYesButton->SetLabel("[START_GAME]");
-                mLawnYesButton->mDisabled = (tcpClientSocket == -1);
-            } else {
-                mLawnYesButton->SetLabel("[JOIN_SPECIFIED_IP_ROOM]");
-                mLawnYesButton->mDisabled = mIsJoiningRoom;
-            }
+            mLawnYesButton->SetLabel("[JOIN_SPECIFIED_IP_ROOM]");
+            mLawnYesButton->mDisabled = mIsJoiningRoom;
 
             mLawnNoButton->SetLabel("[BACK_TO_MODE_SELECT]");
             mLawnNoButton->mDisabled = false;
+
             break;
+        }
+
 
         case UIMode::MODE3_SERVER: {
             // left: 加入 / 离开
@@ -162,7 +183,7 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
     }
 }
 
-void WaitForSecondPlayerDialog::ShowTextInput(const char *titleKey) {
+void WaitForSecondPlayerDialog::ShowTextInput(const char *titleKey, const char *hintKey) {
     Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
     JNIEnv *env = bridgeApp->getJNIEnv();
     jobject view = bridgeApp->mNativeApp->getView();
@@ -170,7 +191,8 @@ void WaitForSecondPlayerDialog::ShowTextInput(const char *titleKey) {
     jmethodID mid = env->GetMethodID(viewCls, "showTextInputDialog2", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
     pvzstl::string title = TodStringTranslate(titleKey);
     jstring jTitle = env->NewStringUTF(title.c_str());
-    jstring jHint = env->NewStringUTF("IP:PORT");
+    pvzstl::string hint = TodStringTranslate(hintKey);
+    jstring jHint = env->NewStringUTF(hint.c_str());
     jstring jInitial = env->NewStringUTF("");
     env->CallVoidMethod(view, mid, 0, jTitle, jHint, jInitial);
     env->DeleteLocalRef(jTitle);
@@ -527,6 +549,43 @@ void WaitForSecondPlayerDialog::Update() {
             // 状态变化后立即刷新按钮
             RefreshButtons();
         }
+        // MODE2：WIFI 房主设置房间端口
+        else if (mInputPurpose == InputPurpose::HOST_SET_PORT) {
+
+            // 取走输入并清空
+            std::string input = gInputString;
+            gInputString.clear();
+
+            // 允许输入 0（随机端口），范围 0~65535
+            int port = atoi(input.c_str());
+            if (port < 0 || port > 65535) {
+                mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[PORT_INVALID_TITLE]", "[PORT_INVALID_DESC]", "[DIALOG_BUTTON_OK]", "", 3);
+                mInputPurpose = InputPurpose::NONE;
+                return;
+            }
+
+
+            // 保存设置
+            mApp->mPlayerInfo->mVSRoomPort = port;
+            mApp->mPlayerInfo->SaveDetails();
+
+            mInputPurpose = InputPurpose::NONE;
+            // ✅ 关键：重建房间，让 tcpPort / 广播端口真正改变
+            ExitRoom();   // 会关 tcpClient/tcpListen/udpBroadcast
+            CreateRoom(); // 你已改为使用 mVSRoomPort bind
+
+            // CreateRoom() 失败时：回到扫描模式避免卡死
+            if (!mIsCreatingRoom) {
+                InitUdpScanSocket();
+                mIsJoiningRoom = false;
+            } else {
+                // 创建成功：不需要扫描
+                CloseUdpScanSocket();
+            }
+            RefreshButtons();
+        }
+
+
         // MODE3：连接服务器 IP:PORT
         else if (mInputPurpose == InputPurpose::SERVER_CONNECT_ADDR && mUIMode == UIMode::MODE3_SERVER) {
 
@@ -774,76 +833,102 @@ bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in &out_bcast, std::
 
 
 void WaitForSecondPlayerDialog::CreateRoom() {
-    // 1. 创建TCP监听socket
+
+
+    // 1) 创建TCP监听socket
     tcpListenSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (tcpListenSocket < 0) {
-        LOG_DEBUG("TCP socket failed");
+        LOG_DEBUG("TCP socket failed errno={}", errno);
+        mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[CREATE_ROOM_FAIL_TITLE]", "[CREATE_ROOM_FAIL_SOCKET]", "[DIALOG_BUTTON_OK]", "", 3);
         return;
     }
+
     int flags = fcntl(tcpListenSocket, F_GETFL, 0);
     fcntl(tcpListenSocket, F_SETFL, flags | O_NONBLOCK);
 
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
-    addr.sin_port = htons(0);
+    addr.sin_port = htons(mApp->mPlayerInfo->mVSRoomPort); // 允许0
 
     int opt = 1;
     setsockopt(tcpListenSocket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt));
 
     if (bind(tcpListenSocket, (sockaddr *)&addr, sizeof(addr)) < 0) {
-        LOG_DEBUG("TCP bind failed");
+        LOG_DEBUG("TCP bind failed errno={}", errno);
+
+        // ✅ 清理
+        close(tcpListenSocket);
+        tcpListenSocket = -1;
+
+        InitUdpScanSocket();
+
+        // ✅ 弹窗（端口占用最常见）
+        pvzstl::string strFmt = TodStringTranslate("[CREATE_ROOM_FAIL_BIND]");
+
+        int result = mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[CREATE_ROOM_FAIL_TITLE]", StrFormat(strFmt.c_str(), mApp->mPlayerInfo->mVSRoomPort).c_str(), "[DIALOG_BUTTON_OK]", "", 3);
+        if (result == 1000) {
+            gInputString.clear();
+            mInputPurpose = InputPurpose::HOST_SET_PORT;
+            ShowTextInput("[INPUT_TITLE_SET_PORT]", "[HINT_PORT]");
+        }
         return;
     }
 
     if (listen(tcpListenSocket, 1) < 0) {
-        LOG_DEBUG("TCP listen failed");
+        LOG_DEBUG("TCP listen failed errno={}", errno);
+
+        // ✅ 清理
+        close(tcpListenSocket);
+        tcpListenSocket = -1;
+
+        mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[CREATE_ROOM_FAIL_TITLE]", "[CREATE_ROOM_FAIL_LISTEN]", "[DIALOG_BUTTON_OK]", "", 3);
         return;
     }
 
-    // 获取实际分配的端口号
+    // 获取实际分配的端口号（当 mVSRoomPort=0 时这里会得到随机端口）
     socklen_t addr_len = sizeof(addr);
     getsockname(tcpListenSocket, (struct sockaddr *)&addr, &addr_len);
     tcpPort = ntohs(addr.sin_port);
 
-    // LOGD("TCP server listening on port %d...\n", tcpPort);
-
-    // 2. 创建UDP广播socket
+    // 2) 创建UDP广播socket
     udpBroadcastSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (udpBroadcastSocket < 0) {
-        LOG_DEBUG("UDP socket failed");
+        mIsCreatingRoom = true;
+        LOG_DEBUG("UDP socket failed errno={}", errno);
         return;
     }
-
 
     int on = 1;
     setsockopt(udpBroadcastSocket, SOL_SOCKET, SO_BROADCAST, &on, sizeof(on));
     setsockopt(udpBroadcastSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
-    // 选择广播地址
+    // 选择广播地址（失败也给提示，但仍可兜底 255.255.255.255）
     sockaddr_in bcast{};
-
     if (GetActiveBroadcast(bcast, &ifname)) {
         bcast.sin_port = htons(UDP_PORT);
         broadcast_addr = bcast;
-        // 可选：打印一下，便于诊断
+
         char ipstr[INET_ADDRSTRLEN]{};
         inet_ntop(AF_INET, &bcast.sin_addr, ipstr, sizeof(ipstr));
-        LOG_DEBUG("[UDP] use if={}", ifname.c_str());
+        LOG_DEBUG("[UDP] use if={} bcast={}", ifname.c_str(), ipstr);
     } else {
-        // 兜底：尽量别用全局广播，尝试常见热点网段；再不行再用 255.255.255.255
         memset(&broadcast_addr, 0, sizeof(broadcast_addr));
         broadcast_addr.sin_family = AF_INET;
         broadcast_addr.sin_port = htons(UDP_PORT);
-        inet_pton(AF_INET, "255.255.255.255", &broadcast_addr.sin_addr); // Android 热点常见
+        inet_pton(AF_INET, "255.255.255.255", &broadcast_addr.sin_addr);
         LOG_WARN("[UDP] fallback broadcast 255.255.255.255:{}", UDP_PORT);
-    }
 
+        // ✅ 可选：提示玩家“没找到网卡广播地址，已用兜底”
+        // （如果你觉得太吵可以注释掉）
+        // ShowCreateRoomFail("[CREATE_ROOM_WARN_TITLE]", "[CREATE_ROOM_WARN_BCAST_FALLBACK]");
+    }
 
     flags = fcntl(udpBroadcastSocket, F_GETFL, 0);
     fcntl(udpBroadcastSocket, F_SETFL, flags | O_NONBLOCK);
 
-    LOG_DEBUG("[Host] Room created. TCP port={}, UDP port={}\n", tcpPort, UDP_PORT);
+    LOG_DEBUG("[Host] Room created. TCP port={}, UDP port={}", tcpPort, UDP_PORT);
+
     UdpBroadcastRoom();
     mIsCreatingRoom = true;
 }
@@ -1213,7 +1298,7 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
                 // 加入指定IP房间：弹输入框
                 gInputString.clear();
                 dialog->mInputPurpose = InputPurpose::LAN_JOIN_MANUAL;
-                dialog->ShowTextInput("[INPUT_TITLE_JOIN_IP]");
+                dialog->ShowTextInput("[INPUT_TITLE_JOIN_IP]", "[HINT_IP_PORT]");
                 return;
             }
         } else if (dialog->mUIMode == UIMode::MODE3_SERVER) {
@@ -1227,7 +1312,7 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
             // 未创建房间：连接服务器
             gInputString.clear();
             dialog->mInputPurpose = InputPurpose::SERVER_CONNECT_ADDR;
-            dialog->ShowTextInput("[INPUT_TITLE_CONNECT_SERVER]");
+            dialog->ShowTextInput("[INPUT_TITLE_CONNECT_SERVER]", "[HINT_IP_PORT]");
             return;
         }
     }
@@ -1257,7 +1342,18 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
     else if (id == 1002) {
         if (dialog->mUIMode == UIMode::MODE1_INIT) {
             dialog->SetMode(UIMode::MODE2_WIFI);
+
         } else if (dialog->mUIMode == UIMode::MODE2_WIFI) {
+
+            // ✅ Host（创建房间中）：leftButton 改为“设置房间端口”
+            if (dialog->mIsCreatingRoom) {
+                gInputString.clear();
+                dialog->mInputPurpose = InputPurpose::HOST_SET_PORT;
+                dialog->ShowTextInput("[INPUT_TITLE_SET_PORT]", "[HINT_PORT]");
+                return;
+            }
+
+            // ===== 下面保持你原来的 Join/Leave 逻辑 =====
             // 加入房间 / 离开房间（沿用你原逻辑）
             if (dialog->mIsJoiningRoom) {
                 dialog->LeaveRoom();
@@ -1267,6 +1363,7 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
                 dialog->CloseUdpScanSocket();
             }
             dialog->RefreshButtons();
+
         } else if (dialog->mUIMode == UIMode::MODE3_SERVER) {
             if (!dialog->mServerConnected)
                 return;
@@ -1281,6 +1378,7 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
             return;
         }
     }
+
 
     // 1003: rightButton
     else if (id == 1003) {

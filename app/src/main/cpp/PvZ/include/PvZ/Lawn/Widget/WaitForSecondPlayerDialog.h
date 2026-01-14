@@ -130,7 +130,10 @@ enum class UIMode {
 enum class InputPurpose {
     NONE = 0,
     LAN_JOIN_MANUAL,    // 模式2：加入指定IP房间
-    SERVER_CONNECT_ADDR // 模式3：连接服务器 IP:PORT
+    HOST_SET_PORT,       // ✅ 模式2：设置房间端口
+    SERVER_CONNECT_ADDR, // 模式3：连接服务器 IP:PORT
+
+
 };
 struct ServerRoomItem {
     int roomId;
@@ -141,6 +144,7 @@ struct ServerRoomItem {
 class WaitForSecondPlayerDialog : public __LawnDialog {
 public:
     bool m2PJoined;
+    // 115：192，111：194。自roomName1起的成员为我新增的成员，我Hook了构造函数调用方，为构造时分配了更多内存，因此可以为WaitForSecondPlayerDialog任意地新增成员。
 
     int *roomName1;
     int *roomName2;
@@ -219,8 +223,7 @@ public:
     void RefreshButtons();
 
     // 弹输入框（可复用一个函数，用不同 title）
-    void ShowTextInput(const char *title);
-    // 115：192，111：194。自roomName1起的成员为我新增的成员，我Hook了构造函数调用方，为构造时分配了更多内存，因此可以为WaitForSecondPlayerDialog任意地新增成员。
+    void ShowTextInput(const char *title, const char *hint);
 
     void GameButtonDown(GamepadButton theButton, unsigned int thePlayerIndex) {
         reinterpret_cast<void (*)(WaitForSecondPlayerDialog *, GamepadButton, unsigned int)>(WaitForSecondPlayerDialog_GameButtonDownAddr)(this, theButton, thePlayerIndex);
@@ -252,7 +255,6 @@ public:
     void LeaveRoom();
     void ExitRoom();
     bool ManualIpConnect();
-    void ShowIpInputDialog();
 
     void processServerEvent(void *buf, ssize_t bufSize);
     void processClientEvent(void *buf, ssize_t bufSize);

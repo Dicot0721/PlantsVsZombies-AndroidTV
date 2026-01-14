@@ -1076,6 +1076,7 @@ inline void *AwardScreen_GameButtonDownAddr;
 inline void *AwardScreen_MouseDownAddr;
 inline void *AwardScreen_MouseUpAddr;
 inline void *AwardScreen_StartButtonPressedAddr;
+inline void *Sexy_DefaultPlayerInfo_SaveDetailsAddr;
 inline void *LawnPlayerInfo_GetFlagAddr;
 inline void *LawnPlayerInfo_AddCoinsAddr;
 inline void *GetFlashingColorAddr;

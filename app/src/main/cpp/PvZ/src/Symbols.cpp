@@ -1063,6 +1063,7 @@ bool LoadGameMain() {
     AwardScreen_MouseDownAddr = dlsym(handle, "_ZN11AwardScreen9MouseDownEiii");
     AwardScreen_MouseUpAddr = dlsym(handle, "_ZN11AwardScreen7MouseUpEiii");
     AwardScreen_StartButtonPressedAddr = dlsym(handle, "_ZN11AwardScreen18StartButtonPressedEv");
+    Sexy_DefaultPlayerInfo_SaveDetailsAddr = dlsym(handle, "_ZN4Sexy17DefaultPlayerInfo11SaveDetailsEv");
     LawnPlayerInfo_GetFlagAddr = dlsym(handle, "_ZN14LawnPlayerInfo7GetFlagE11PlayerFlags");
     LawnPlayerInfo_AddCoinsAddr = dlsym(handle, "_ZN14LawnPlayerInfo8AddCoinsEi");
     GetFlashingColorAddr = dlsym(handle, "_Z16GetFlashingColorii");
