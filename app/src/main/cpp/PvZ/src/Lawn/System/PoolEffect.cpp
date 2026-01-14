@@ -32,14 +32,12 @@ using namespace Sexy;
 
 void PoolEffect::UpdateWaterEffect() {
     int idx = 0;
-    for (int y = 0; y < CAUSTIC_IMAGE_HEIGHT; y++)
-    {
+    for (int y = 0; y < CAUSTIC_IMAGE_HEIGHT; y++) {
         int timeV1 = (256 - y) << 17;
         int timeV0 = y << 17;
 
-        for (int x = 0; x < CAUSTIC_IMAGE_WIDTH; x++)
-        {
-            unsigned long* pix = &mCausticImage->mBits[idx];
+        for (int x = 0; x < CAUSTIC_IMAGE_WIDTH; x++) {
+            unsigned long *pix = &mCausticImage->mBits[idx];
 
             int timeU = x << 17;
             int timePool0 = mPoolCounter << 16;
@@ -49,16 +47,11 @@ void PoolEffect::UpdateWaterEffect() {
             auto a = (unsigned char)((a0 + a1) / 2);
 
             unsigned char alpha;
-            if (a >= 160U)
-            {
+            if (a >= 160U) {
                 alpha = 255 - 2 * (a - 160U);
-            }
-            else if (a >= 128U)
-            {
+            } else if (a >= 128U) {
                 alpha = 5 * (a - 128U);
-            }
-            else
-            {
+            } else {
                 alpha = 0;
             }
 
@@ -72,8 +65,7 @@ void PoolEffect::UpdateWaterEffect() {
 
 void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
     // 添加3D加速开关绘制支持
-    if (!mApp->Is3DAccelerated())
-    {
+    if (!mApp->Is3DAccelerated()) {
 
         if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_POOL_PARTY && mApp->mBoard != nullptr) {
             float theTmpTransY = g->mTransY;
@@ -95,15 +87,10 @@ void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
                 }
                 g->mTransY = theTmpTransY;
             }
-        }
-        else
-        {
-            if (theIsNight)
-            {
+        } else {
+            if (theIsNight) {
                 g->DrawImage(*Sexy_IMAGE_POOL_NIGHT_Addr, 34, 278);
-            }
-            else
-            {
+            } else {
                 g->DrawImage(*Sexy_IMAGE_POOL_Addr, 34, 278);
             }
         }
@@ -113,14 +100,11 @@ void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
     float aGridSquareX = (float)(*Sexy_IMAGE_POOL_Addr)->GetWidth() / 15.0f;
     float aGridSquareY = (float)(*Sexy_IMAGE_POOL_Addr)->GetHeight() / 5.0f;
     float aOffsetArray[3][16][6][2] = {{{{0.0f}}}};
-    for (int x = 0; x <= 15; x++)
-    {
-        for (int y = 0; y <= 5; y++)
-        {
+    for (int x = 0; x <= 15; x++) {
+        for (int y = 0; y <= 5; y++) {
             aOffsetArray[2][x][y][0] = (float)x / 15.0f;
             aOffsetArray[2][x][y][1] = (float)y / 5.0f;
-            if (x != 0 && x != 15 && y != 0 && y != 5)
-            {
+            if (x != 0 && x != 15 && y != 0 && y != 5) {
                 auto aPoolPhase = (float)(mPoolCounter * 2 * std::numbers::pi);
                 float aWaveTime1 = aPoolPhase / 800.0f;
                 float aWaveTime2 = aPoolPhase / 150.0f;
@@ -132,13 +116,11 @@ void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
 
                 aOffsetArray[0][x][y][0] = sin(yPhase + aWaveTime2) * 0.002f + sin(yPhase + aWaveTime1) * 0.005f;
                 aOffsetArray[0][x][y][1] = sin(xPhase + aWaveTime5) * 0.01f + sin(xPhase + aWaveTime3) * 0.015f + sin(xPhase + aWaveTime4) * 0.005f;
-                aOffsetArray[1][x][y][0] = sin(yPhase * 0.2f + aWaveTime2) * 0.015f + sin(yPhase * 0.2f + aWaveTime1) * 0.012f ;
+                aOffsetArray[1][x][y][0] = sin(yPhase * 0.2f + aWaveTime2) * 0.015f + sin(yPhase * 0.2f + aWaveTime1) * 0.012f;
                 aOffsetArray[1][x][y][1] = sin(xPhase * 0.2f + aWaveTime5) * 0.005f + sin(xPhase * 0.2f + aWaveTime3) * 0.015f + sin(xPhase * 0.2f + aWaveTime4) * 0.02f;
                 aOffsetArray[2][x][y][0] += sin(yPhase + aWaveTime1 * 1.5f) * 0.004f + sin(yPhase + aWaveTime2 * 1.5f) * 0.005f;
                 aOffsetArray[2][x][y][1] += sin(xPhase * 4.0f + aWaveTime5 * 2.5f) * 0.005f + sin(xPhase * 2.0f + aWaveTime3 * 2.5f) * 0.04f + sin(xPhase * 3.0f + aWaveTime4 * 2.5f) * 0.02f;
-            }
-            else
-            {
+            } else {
                 aOffsetArray[0][x][y][0] = 0.0f;
                 aOffsetArray[0][x][y][1] = 0.0f;
                 aOffsetArray[1][x][y][0] = 0.0f;
@@ -147,54 +129,39 @@ void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
         }
     }
 
-    int aIndexOffsetX[6] = { 0, 0, 1, 0, 1, 1 };
-    int aIndexOffsetY[6] = { 0, 1, 1, 0, 1, 0 };
+    int aIndexOffsetX[6] = {0, 0, 1, 0, 1, 1};
+    int aIndexOffsetY[6] = {0, 1, 1, 0, 1, 0};
     SexyVertex2D aVertArray[3][150][3];
 
-    for (int x = 0; x < 15; x++)
-    {
-        for (int y = 0; y < 5; y++)
-        {
-            for (int aLayer = 0; aLayer < 3; aLayer++)
-            {
-                SexyVertex2D* pVert = &aVertArray[aLayer][x * 10 + y * 2][0];
-                for (int aVertIndex = 0; aVertIndex < 6; aVertIndex++, pVert++)
-                {
+    for (int x = 0; x < 15; x++) {
+        for (int y = 0; y < 5; y++) {
+            for (int aLayer = 0; aLayer < 3; aLayer++) {
+                SexyVertex2D *pVert = &aVertArray[aLayer][x * 10 + y * 2][0];
+                for (int aVertIndex = 0; aVertIndex < 6; aVertIndex++, pVert++) {
                     int aIndexX = x + aIndexOffsetX[aVertIndex];
                     int aIndexY = y + aIndexOffsetY[aVertIndex];
-                    if (aLayer == 2)
-                    {
+                    if (aLayer == 2) {
                         pVert->x = (704.0f / 15.0f) * (float)aIndexX + 45.0f;
                         pVert->y = 30.0f * (float)aIndexY + 288.0f;
                         pVert->u = aOffsetArray[2][aIndexX][aIndexY][0] + (float)aIndexX / 15.0f;
                         pVert->v = aOffsetArray[2][aIndexX][aIndexY][1] + (float)aIndexY / 5.0f;
 
-                        if (!g->mClipRect.Contains((int)pVert->x, (int)pVert->y))
-                        {
+                        if (!g->mClipRect.Contains((int)pVert->x, (int)pVert->y)) {
                             pVert->color = 0x00FFFFFFUL;
-                        }
-                        else if (aIndexX == 0 || aIndexX == 15 || aIndexY == 0)
-                        {
+                        } else if (aIndexX == 0 || aIndexX == 15 || aIndexY == 0) {
                             pVert->color = 0x20FFFFFFUL;
-                        }
-                        else if (theIsNight)
-                        {
+                        } else if (theIsNight) {
                             pVert->color = 0x30FFFFFFUL;
-                        }
-                        else
-                        {
+                        } else {
                             pVert->color = aIndexX <= 7 ? 0xC0FFFFFFUL : 0x80FFFFFFUL;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         pVert->color = 0xFFFFFFFFUL;
                         pVert->x = (float)aIndexX * aGridSquareX + 35.0f;
                         pVert->y = (float)aIndexY * aGridSquareY + 279.0f;
                         pVert->u = aOffsetArray[aLayer][aIndexX][aIndexY][0] + (float)aIndexX / 15.0f;
                         pVert->v = aOffsetArray[aLayer][aIndexX][aIndexY][1] + (float)aIndexY / 5.0f;
-                        if (!g->mClipRect.Contains((int)pVert->x, (int)pVert->y))
-                        {
+                        if (!g->mClipRect.Contains((int)pVert->x, (int)pVert->y)) {
                             pVert->color = 0x00FFFFFFUL;
                         }
                     }
@@ -203,21 +170,18 @@ void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
         }
     }
     Graphics aPoolEffectG(*g);
-    aPoolEffectG.SetWrapMode(0, 0);     // 用于修复除mCausticImage绘制重复·外其他都是裁切，g本应当为全局平铺重复
+    aPoolEffectG.SetWrapMode(0, 0); // 用于修复除mCausticImage绘制重复·外其他都是裁切，g本应当为全局平铺重复
 
-    if (theIsNight)
-    {
+    if (theIsNight) {
         g->DrawTrianglesTex(*Sexy_IMAGE_POOL_BASE_NIGHT_Addr, aVertArray[0], 150);
         g->DrawTrianglesTex(*Sexy_IMAGE_POOL_SHADING_NIGHT_Addr, aVertArray[1], 150);
-    }
-    else
-    {
+    } else {
         g->DrawTrianglesTex(*Sexy_IMAGE_POOL_BASE_Addr, aVertArray[0], 150);
         g->DrawTrianglesTex(*Sexy_IMAGE_POOL_SHADING_Addr, aVertArray[1], 150);
     }
 
     UpdateWaterEffect();
-    g->DrawTrianglesTex((Image*)mCausticImage, aVertArray[2], 150);
+    g->DrawTrianglesTex((Image *)mCausticImage, aVertArray[2], 150);
 
     aPoolEffectG.SetWrapMode(1, 1);
 }
