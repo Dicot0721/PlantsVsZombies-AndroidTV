@@ -55,6 +55,7 @@ android {
 
         relWithDebInfo {
             applicationIdSuffix = ".debug"
+            signingConfig = signingConfigs.debug
             debuggable = true
             externalNativeBuild {
                 cmake {
