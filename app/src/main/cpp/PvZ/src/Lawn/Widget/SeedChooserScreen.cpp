@@ -1094,7 +1094,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
             aBanGraphics.mTransY = 0;
             aBanGraphics.SetColor(Color(205, 0, 0, 255));
             aBanGraphics.SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-            aBanGraphics.DrawString("禁            用                            阶            段", 440, 110);
+            aBanGraphics.DrawString(TodStringTranslate("[VS_UI_BAN_PHASE_BIG]"), 440, 110);
         }
 
         for (int i = 0; i < NUM_ZOMBIE_SEED_TYPES; i++) {

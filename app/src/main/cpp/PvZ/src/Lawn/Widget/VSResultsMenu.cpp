@@ -135,7 +135,7 @@ void VSResultsMenu::Draw(Graphics *g) {
     if (tcp_connected) {
         switch (gVSResultRequestState) {
             case VSResultsMenu::VSResultsMenu_Play_Again:
-                TodDrawString(g, "已提醒房主再来一次", 400, -20, *Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
+                TodDrawString(g, "[VS_RESULT_REMIND_HOST_PLAY_AGAIN]", 400, -20, *Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
                 break;
             default:
                 break;
@@ -145,13 +145,14 @@ void VSResultsMenu::Draw(Graphics *g) {
     if (tcpClientSocket >= 0) {
         switch (gVSResultRequestState) {
             case VSResultsMenu::VSResultsMenu_Play_Again:
-                TodDrawString(g, "对方请求再来一次", 400, -20, *Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
+                TodDrawString(g, "[VS_RESULT_OPPONENT_REQUEST_PLAY_AGAIN]", 400, -20, *Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
                 break;
             default:
                 break;
         }
     }
 }
+
 
 void VSResultsMenu::DrawInfoBox(Sexy::Graphics *a2, int a3) {
     // Sexy::Image* tmp = *Sexy_IMAGE_NO_GAMERPIC_Addr;

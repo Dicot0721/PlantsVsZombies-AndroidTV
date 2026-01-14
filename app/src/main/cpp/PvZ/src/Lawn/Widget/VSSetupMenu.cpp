@@ -25,6 +25,7 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/SeedChooserScreen.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 #include <unistd.h>
 
 using namespace Sexy;
@@ -158,76 +159,85 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
         g->SetColorizeImages(false);
     }
 
-
-    //        if (mSetupMode == VSSetupMode::VS_SETUP_MODE_QUICK_PLAY) {
-    //            gRequestString = "快速游戏";
-    //        } else if (mSetupMode == VSSetupMode::VS_SETUP_MODE_CUSTOM_BATTLE) {
-    //            gRequestString = "自定义战场";
-    //        } else if (mSetupMode == VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE) {
-    //            gRequestString = "随机战场";
-    //        }
-
-    //        TodDrawString(g, "对方想玩：", 320, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_CENTER);
-    //        TodDrawString(g, gRequestString, 500, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_CENTER);
-    //
     if (gVSSetupRequestState != 0) {
 
-
+        // ======================
+        // 我是 guest：已提醒房主...
+        // (tcp_connected == true 代表我作为 client 连接到 host)
+        // ======================
         if (tcp_connected) {
             switch (gVSSetupRequestState) {
-                case 9:
-                    TodDrawString(g, "已提醒房主：    快速游戏", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                case VSSetupMenu_Quick_Play: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
+                    pvzstl::string opt = TodStringTranslate("[VS_OPT_QUICK_GAME]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
-                case 10:
-                    TodDrawString(g, "已提醒房主：    自定义战场", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                }
+                case VSSetupMenu_Custom_Battle: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
+                    pvzstl::string opt = TodStringTranslate("[VS_OPT_CUSTOM_ARENA]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
-                case 11:
-                    TodDrawString(g, "已提醒房主：    随机战场", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                }
+                case VSSetupMenu_Random_Battle: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
+                    pvzstl::string opt = TodStringTranslate("[VS_OPT_RANDOM_ARENA]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
-                case VSSetupAddonWidget::VSSetupAddonWidget_More_Packets:
-                    if (gVSSetupAddonWidget && !gVSSetupAddonWidget->mMorePackets) {
-                        TodDrawString(g, "已提醒房主：    开启额外卡槽", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
-                    } else {
-                        TodDrawString(g, "已提醒房主：    关闭额外卡槽", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
-                    }
+                }
+                case VSSetupAddonWidget::VSSetupAddonWidget_More_Packets: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
+                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mMorePackets) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
-                case VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode:
-                    if (gVSSetupAddonWidget && !gVSSetupAddonWidget->mBanMode) {
-                        TodDrawString(g, "已提醒房主：    开启禁选模式", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
-                    } else {
-                        TodDrawString(g, "已提醒房主：    关闭禁选模式", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
-                    }
+                }
+                case VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
+                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mBanMode) ? "[VS_OPT_ENABLE_BAN_MODE]" : "[VS_OPT_DISABLE_BAN_MODE]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
+                }
                 default:
                     break;
             }
         }
 
+        // ======================
+        // 我是 host：对方想玩/想要...
+        // (tcpClientSocket >= 0 表示我作为 host 收到了 client 连接)
+        // ======================
         if (tcpClientSocket >= 0) {
             switch (gVSSetupRequestState) {
-                case 9:
-                    TodDrawString(g, "对方想玩：    快速游戏", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                case VSSetupMenu_Quick_Play: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_PLAY_FMT]");
+                    pvzstl::string opt = TodStringTranslate("[VS_OPT_QUICK_GAME]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
-                case 10:
-                    TodDrawString(g, "对方想玩：    自定义战场", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                }
+                case VSSetupMenu_Custom_Battle: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_PLAY_FMT]");
+                    pvzstl::string opt = TodStringTranslate("[VS_OPT_CUSTOM_ARENA]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
-                case 11:
-                    TodDrawString(g, "对方想玩：    随机战场", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                }
+                case VSSetupMenu_Random_Battle: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_PLAY_FMT]");
+                    pvzstl::string opt = TodStringTranslate("[VS_OPT_RANDOM_ARENA]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
-                case VSSetupAddonWidget::VSSetupAddonWidget_More_Packets:
-                    if (gVSSetupAddonWidget && !gVSSetupAddonWidget->mMorePackets) {
-                        TodDrawString(g, "对方想要：    开启额外卡槽", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
-                    } else {
-                        TodDrawString(g, "对方想要：    关闭额外卡槽", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
-                    }
+                }
+                case VSSetupAddonWidget::VSSetupAddonWidget_More_Packets: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
+                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mMorePackets) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
-                case VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode:
-                    if (gVSSetupAddonWidget && !gVSSetupAddonWidget->mBanMode) {
-                        TodDrawString(g, "对方想要：    开启禁选模式", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
-                    } else {
-                        TodDrawString(g, "对方想要：    关闭禁选模式", 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
-                    }
+                }
+                case VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
+                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mBanMode) ? "[VS_OPT_ENABLE_BAN_MODE]" : "[VS_OPT_DISABLE_BAN_MODE]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
+                }
                 default:
                     break;
             }
@@ -239,12 +249,12 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
         if (gVSSetupAddonWidget->mDrawString) {
             g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
             g->SetColor(Color(0, 205, 0, 255));
-            g->DrawString("额外卡槽", VS_BUTTON_MORE_PACKETS_X + 40, VS_BUTTON_MORE_PACKETS_Y + 25);
-            g->DrawString("禁选模式", VS_BUTTON_BAN_MODE_X + 40, VS_BUTTON_BAN_MODE_Y + 25);
+            g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SLOTS]"), VS_BUTTON_MORE_PACKETS_X + 40, VS_BUTTON_MORE_PACKETS_Y + 25);
+            g->DrawString(TodStringTranslate("[VS_UI_BAN_MODE]"), VS_BUTTON_BAN_MODE_X + 40, VS_BUTTON_BAN_MODE_Y + 25);
 
             if (gVSSetupAddonWidget->mBanMode) {
                 g->SetColor(Color(205, 0, 0, 255));
-                g->DrawString("禁            用                            阶            段", 200, 45);
+                g->DrawString(TodStringTranslate("[VS_UI_BAN_PHASE_BIG]"), 200, 45);
             }
         }
     }

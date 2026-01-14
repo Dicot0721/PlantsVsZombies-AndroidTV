@@ -194,7 +194,7 @@ public:
     int mSrvRecvLen;
 
     // helper UI text
-    char mServerStatusText[128];
+    pvzstl::string mServerStatusText;
 
     // MODE3 actions
     bool ServerConnectFromInput(); // consume gInputString

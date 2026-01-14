@@ -2374,15 +2374,27 @@ void Board::Draw(Sexy::Graphics *g) {
         Color aColor = Color(0, 205, 0, 255);
         g->SetColor(aColor);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+
         if (tcp_connected) {
-            g->DrawString(gNetDelayNow == 0 ? "房间中" : StrFormat("房间中 %dms", gNetDelayNow * 10), 370, -20);
+            if (gNetDelayNow == 0) {
+                g->DrawString(TodStringTranslate("[VS_STATUS_IN_ROOM]"), 370, -20);
+            } else {
+                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
+                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 370, -20);
+            }
         } else if (tcpClientSocket >= 0) {
-            g->DrawString(StrFormat(gNetDelayNow == 0 ? "房主" : "房主 %dms", gNetDelayNow * 10), 380, -20);
+            if (gNetDelayNow == 0) {
+                g->DrawString(TodStringTranslate("[VS_STATUS_HOST]"), 380, -20);
+            } else {
+                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_HOST_MS_FMT]");
+                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 380, -20);
+            }
         } else {
-            g->DrawString("本地游戏", 360, -20);
+            g->DrawString(TodStringTranslate("[VS_STATUS_LOCAL_GAME]"), 360, -20);
         }
     }
 }
+
 
 void Board::PauseFromSecondPlayer(bool thePause) {
     if (mPaused == thePause)
