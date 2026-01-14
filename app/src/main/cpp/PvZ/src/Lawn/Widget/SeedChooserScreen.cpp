@@ -633,9 +633,14 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
                         aLabel = TodStringTranslate("[SQUASH_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
                         break;
                     case SeedType::SEED_ZOMBIE_TALLNUT_HEAD: // 高坚果僵尸
+                    {
                         aTitle = TodStringTranslate("[TALLNUT_HEAD_ZOMBIE]");
                         aLabel = TodStringTranslate("[TALLNUT_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
-                        break;
+                        int aSeedX, aSeedY;
+                        SeedType aZombieSeedType = GetZombieIndexBySeedType(aSeedType);
+                        GetSeedPositionInChooser(aZombieSeedType, aSeedX, aSeedY);
+                        aTolTip->mX = aSeedX + 2 * (SEED_PACKET_WIDTH + 6);
+                    } break;
                     default:
                         return;
                 }
