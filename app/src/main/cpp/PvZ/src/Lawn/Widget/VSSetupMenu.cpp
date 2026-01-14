@@ -809,7 +809,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
     switch (theId) {
         case VSSetupMenu_Quick_Play:
-            if (aNumPackets == 7) {
+            if (mState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE && aNumPackets == 7) {
                 aSeedBank1->mSeedPackets[3].SetPacketType(SeedType::SEED_TORCHWOOD, SeedType::SEED_NONE);
                 aSeedBank1->mSeedPackets[4].SetPacketType(SeedType::SEED_POTATOMINE, SeedType::SEED_NONE);
                 aSeedBank1->mSeedPackets[5].SetPacketType(SeedType::SEED_SQUASH, SeedType::SEED_NONE);
