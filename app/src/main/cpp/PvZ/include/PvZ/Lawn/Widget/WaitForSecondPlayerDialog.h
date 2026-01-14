@@ -129,8 +129,8 @@ enum class UIMode {
 
 enum class InputPurpose {
     NONE = 0,
-    LAN_JOIN_MANUAL,    // 模式2：加入指定IP房间
-    HOST_SET_PORT,       // ✅ 模式2：设置房间端口
+    LAN_JOIN_MANUAL,     // 模式2：加入指定IP房间
+    HOST_SET_PORT,       // 模式2：设置房间端口
     SERVER_CONNECT_ADDR, // 模式3：连接服务器 IP:PORT
 
 
