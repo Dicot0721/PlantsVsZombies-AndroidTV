@@ -346,10 +346,10 @@ void Challenge::InitLevel() {
 
     // 为结盟僵王的2P传送带补充开局的4个固定植物
     if (mApp->mGameMode == GAMEMODE_TWO_PLAYER_COOP_BOSS) {
-        mBoard->mSeedBank2->AddSeed(SeedType::SEED_CABBAGEPULT, false);
-        mBoard->mSeedBank2->AddSeed(SeedType::SEED_JALAPENO, false);
-        mBoard->mSeedBank2->AddSeed(SeedType::SEED_CABBAGEPULT, false);
-        mBoard->mSeedBank2->AddSeed(SeedType::SEED_ICESHROOM, false);
+        mBoard->mSeedBankRight->AddSeed(SeedType::SEED_CABBAGEPULT, false);
+        mBoard->mSeedBankRight->AddSeed(SeedType::SEED_JALAPENO, false);
+        mBoard->mSeedBankRight->AddSeed(SeedType::SEED_CABBAGEPULT, false);
+        mBoard->mSeedBankRight->AddSeed(SeedType::SEED_ICESHROOM, false);
         mConveyorBeltCounter2 = 1000;
     }
 }

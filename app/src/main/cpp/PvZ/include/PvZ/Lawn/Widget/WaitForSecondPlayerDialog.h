@@ -363,12 +363,26 @@ public:
     uint16_t data2;
 };
 
+class I16I16_Event : public BaseEvent {
+public:
+    int16_t data1;
+    int16_t data2;
+};
+
 class U8U8U16U16_Event : public BaseEvent {
 public:
     uint8_t data1;
     uint8_t data2;
     uint16_t data3;
     uint16_t data4;
+};
+
+class U8U8I16I16_Event : public BaseEvent {
+public:
+    uint8_t data1;
+    uint8_t data2;
+    int16_t data3;
+    int16_t data4;
 };
 
 class U8U8U8U8_Event : public BaseEvent {

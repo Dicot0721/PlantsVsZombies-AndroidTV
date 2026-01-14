@@ -319,7 +319,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             size_t eventSize = sizeof(U8_Event);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
-            U8_Event *eventPong = static_cast<U8_Event *>(base);
+                       //            U8_Event *eventPong = static_cast<U8_Event *>(base);
 
             U8_Event eventPing = {{EVENT_CLIENT_PING}, 2};
             gNetDelayNow = gPingNetDelayCounter;

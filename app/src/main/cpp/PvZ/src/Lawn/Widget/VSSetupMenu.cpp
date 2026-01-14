@@ -652,14 +652,14 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             ButtonDepress(VSSetupMenu_Random_Battle);
             tcp_connected = true;
 
-            mApp->mBoard->mSeedBank1->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
+            mApp->mBoard->mSeedBankLeft->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
             for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(false) - 1; ++i) {
-                mApp->mBoard->mSeedBank1->mSeedPackets[i + 1].SetPacketType((SeedType)event1->data[i], SeedType::SEED_NONE);
+                mApp->mBoard->mSeedBankLeft->mSeedPackets[i + 1].SetPacketType((SeedType)event1->data[i], SeedType::SEED_NONE);
             }
 
-            mApp->mBoard->mSeedBank2->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE, SeedType::SEED_NONE);
+            mApp->mBoard->mSeedBankRight->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE, SeedType::SEED_NONE);
             for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(true) - 1; ++i) {
-                mApp->mBoard->mSeedBank2->mSeedPackets[i + 1].SetPacketType((SeedType)event1->data[i + 6], SeedType::SEED_NONE);
+                mApp->mBoard->mSeedBankRight->mSeedPackets[i + 1].SetPacketType((SeedType)event1->data[i + 6], SeedType::SEED_NONE);
             }
         } break;
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
@@ -791,8 +791,8 @@ void VSSetupMenu::ButtonDepress(int theId) {
     // 对战额外卡槽
     int aNumPackets = mApp->mBoard->GetNumSeedsInBank(false);
 
-    SeedBank *aSeedBank1 = mApp->mBoard->mSeedBank1;
-    SeedBank *aSeedBank2 = mApp->mBoard->mSeedBank2;
+    SeedBank *aSeedBank1 = mApp->mBoard->mSeedBankLeft;
+    SeedBank *aSeedBank2 = mApp->mBoard->mSeedBankRight;
 
     aSeedBank1->mNumPackets = aNumPackets;
     aSeedBank2->mNumPackets = aNumPackets;
@@ -820,8 +820,8 @@ void VSSetupMenu::ButtonDepress(int theId) {
             break;
         case VSSetupMenu_Random_Battle:
             if (aNumPackets == 7) {
-                //                mApp->mBoard->mSeedBank1->mNumPackets = 6;
-                //                mApp->mBoard->mSeedBank2->mNumPackets = 6;
+                //                mApp->mBoard->mSeedBankLeft->mNumPackets = 6;
+                //                mApp->mBoard->mSeedBankRight->mNumPackets = 6;
                 // 开启“额外开槽”后随机选卡会导致界面卡死
                 // std::vector<SeedType> aZombieSeeds, aPlantSeeds, tmpZombieSeeds, tmpPlantSeeds;
                 //

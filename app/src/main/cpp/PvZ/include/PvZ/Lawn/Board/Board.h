@@ -150,8 +150,8 @@ public:
     PlantRbTree mFlowerPotTree;                   // 118 ~ 123
     PlantRbTree mPumpkinTree;                     // 124 ~ 129
     CustomMessageWidget *mAdvice;                 // 130
-    SeedBank *mSeedBank1;                         // 131
-    SeedBank *mSeedBank2;                         // 132
+    SeedBank *mSeedBankLeft;                      // 131
+    SeedBank *mSeedBankRight;                     // 132
     int unknownMembers3[7];                       // 133 ~ 139
     GamepadControls *mGamepadControls1;           // 140
     GamepadControls *mGamepadControls2;           // 141

@@ -191,8 +191,8 @@ void SeedChooserScreen::EnableStartButton(int theIsEnabled) {
     if (theIsEnabled && mApp->IsCoopMode() && isKeyboardTwoPlayerMode) {
         old_SeedChooserScreen_EnableStartButton(this, theIsEnabled);
         OnStartButton();
-        mBoard->mSeedBank2->mSeedPackets[3].mPacketType = mSeedType2;
-        mBoard->mSeedBank2->mSeedPackets[3].mImitaterType = SeedType::SEED_NONE;
+        mBoard->mSeedBankRight->mSeedPackets[3].mPacketType = mSeedType2;
+        mBoard->mSeedBankRight->mSeedPackets[3].mImitaterType = SeedType::SEED_NONE;
         return;
     }
 
@@ -530,11 +530,11 @@ void SeedChooserScreen::GetSeedPositionInBank(int theIndex, int &x, int &y, int 
     // 修复对战选卡时的错位
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         if (!mIsZombieChooser) {
-            x = mBoard->mSeedBank1->mX - mX + mBoard->GetSeedPacketPositionX(theIndex, 0, mIsZombieChooser);
-            y = mBoard->mSeedBank1->mY - mY + 8;
+            x = mBoard->mSeedBankLeft->mX - mX + mBoard->GetSeedPacketPositionX(theIndex, 0, mIsZombieChooser);
+            y = mBoard->mSeedBankLeft->mY - mY + 8;
         } else {
-            x = mBoard->mSeedBank2->mX - mX + mBoard->GetSeedPacketPositionX(theIndex, 0, mIsZombieChooser);
-            y = mBoard->mSeedBank2->mY - mY + 8;
+            x = mBoard->mSeedBankRight->mX - mX + mBoard->GetSeedPacketPositionX(theIndex, 0, mIsZombieChooser);
+            y = mBoard->mSeedBankRight->mY - mY + 8;
         }
         return;
     }

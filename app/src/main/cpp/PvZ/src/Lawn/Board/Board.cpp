@@ -139,8 +139,8 @@ int LawnSaveGame(Board *board, int *a2) {
     if (board->mApp->IsCoopMode()) {
         if (board->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOWLING || board->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOSS) {
             int theSeedNum = 6;
-            SeedBank *seedBank1 = board->mSeedBank1;
-            SeedBank *seedBank2 = board->mSeedBank2;
+            SeedBank *seedBank1 = board->mSeedBankLeft;
+            SeedBank *seedBank2 = board->mSeedBankRight;
             seedBank1->mX = seedBank2->mX;
             for (int i = 0; i < theSeedNum; ++i) {
                 seedBank1->mSeedPackets[i].mSlotMachiningNextSeed = (SeedType)seedBank2->mSeedPackets[i].mY;
@@ -154,8 +154,8 @@ int LawnSaveGame(Board *board, int *a2) {
             return result;
         } else {
             int theSeedNum = 4;
-            SeedBank *seedBank1 = board->mSeedBank1;
-            SeedBank *seedBank2 = board->mSeedBank2;
+            SeedBank *seedBank1 = board->mSeedBankLeft;
+            SeedBank *seedBank2 = board->mSeedBankRight;
             seedBank1->mNumPackets = 2 * theSeedNum;
             seedBank1->mX = seedBank2->mX;
             for (int i = theSeedNum; i < 2 * theSeedNum; ++i) {
@@ -198,8 +198,8 @@ int LawnLoadGame(Board *board, int *a2) {
         if (board->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOWLING || board->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOSS) {
             int result = old_LawnLoadGame(board, a2);
             int theSeedNum = 6;
-            SeedBank *seedBank1 = board->mSeedBank1;
-            SeedBank *seedBank2 = board->mSeedBank2;
+            SeedBank *seedBank1 = board->mSeedBankLeft;
+            SeedBank *seedBank2 = board->mSeedBankRight;
             seedBank2->mNumPackets = theSeedNum;
             seedBank1->mNumPackets = theSeedNum;
             seedBank2->mX = seedBank1->mX;
@@ -221,8 +221,8 @@ int LawnLoadGame(Board *board, int *a2) {
         } else {
             int result = old_LawnLoadGame(board, a2);
             int theSeedNum = 4;
-            SeedBank *seedBank1 = board->mSeedBank1;
-            SeedBank *seedBank2 = board->mSeedBank2;
+            SeedBank *seedBank1 = board->mSeedBankLeft;
+            SeedBank *seedBank2 = board->mSeedBankRight;
             seedBank2->mNumPackets = theSeedNum;
             seedBank1->mNumPackets = theSeedNum;
             seedBank2->mX = seedBank1->mX;
@@ -1067,7 +1067,7 @@ size_t Board::getClientEventSize(EventType type) {
         case EVENT_CLIENT_BOARD_TOUCH_DOWN:
         case EVENT_CLIENT_BOARD_TOUCH_DRAG:
         case EVENT_CLIENT_BOARD_TOUCH_UP:
-            return sizeof(U16U16_Event);
+            return sizeof(I16I16_Event);
         case EVENT_CLIENT_BOARD_PAUSE:
             return sizeof(U8_Event);
         case EVENT_CLIENT_BOARD_CONCEDE:
@@ -1082,21 +1082,25 @@ void Board::processClientEvent(void *buf, ssize_t bufSize) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_CLIENT_BOARD_TOUCH_DOWN: {
-            U16U16_Event *event1 = (U16U16_Event *)event;
+            I16I16_Event *event1 = (I16I16_Event *)event;
             MouseDownSecond(event1->data1, event1->data2, 0);
             GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-            U8U8_Event eventReply = {{EventType::EVENT_BOARD_TOUCH_DOWN_REPLY}, uint8_t(clientGamepadControls->mSelectedSeedIndex), uint8_t(clientGamepadControls->mGamepadState)};
-            sendWithSize(tcpClientSocket, &eventReply, sizeof(U8U8_Event), 0);
+            U8U8I16I16_Event eventReply = {{EventType::EVENT_BOARD_TOUCH_DOWN_REPLY},
+                                           uint8_t(clientGamepadControls->mSelectedSeedIndex),
+                                           uint8_t(clientGamepadControls->mGamepadState),
+                                           int16_t(clientGamepadControls->mCursorPositionX),
+                                           int16_t(clientGamepadControls->mCursorPositionY)};
+            sendWithSize(tcpClientSocket, &eventReply, sizeof(U8U8I16I16_Event), 0);
         } break;
         case EVENT_CLIENT_BOARD_TOUCH_DRAG: {
-            U16U16_Event *event1 = (U16U16_Event *)event;
+            I16I16_Event *event1 = (I16I16_Event *)event;
             MouseDragSecond(event1->data1, event1->data2);
             GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-            U16U16_Event eventReply = {{EventType::EVENT_BOARD_TOUCH_DRAG_REPLY}, uint16_t(clientGamepadControls->mCursorPositionX), uint16_t(clientGamepadControls->mCursorPositionY)};
-            sendWithSize(tcpClientSocket, &eventReply, sizeof(U16U16_Event), 0);
+            I16I16_Event eventReply = {{EventType::EVENT_BOARD_TOUCH_DRAG_REPLY}, int16_t(clientGamepadControls->mCursorPositionX), int16_t(clientGamepadControls->mCursorPositionY)};
+            sendWithSize(tcpClientSocket, &eventReply, sizeof(I16I16_Event), 0);
         } break;
         case EVENT_CLIENT_BOARD_TOUCH_UP: {
-            U16U16_Event *event1 = (U16U16_Event *)event;
+            I16I16_Event *event1 = (I16I16_Event *)event;
             MouseUpSecond(event1->data1, event1->data2, 0);
             GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
             CursorObject *clientCursorObject = mGamepadControls2->mPlayerIndex2 == 1 ? mCursorObject2 : mCursorObject1;
@@ -1138,13 +1142,15 @@ size_t Board::getServerEventSize(EventType type) {
     switch (type) {
         // --- 触摸相关事件 ---
         case EVENT_BOARD_TOUCH_DOWN_REPLY:
+            return sizeof(U8U8I16I16_Event);
         case EVENT_BOARD_TOUCH_UP_REPLY:
             return sizeof(U8U8_Event);
 
         case EVENT_BOARD_TOUCH_DRAG_REPLY:
-            return sizeof(U16U16_Event);
+            return sizeof(I16I16_Event);
 
         case EVENT_SERVER_BOARD_TOUCH_DOWN:
+            return sizeof(U8U8I16I16_Event);
         case EVENT_SERVER_BOARD_COIN_ADD:
         case EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE:
             return sizeof(U8U8U16U16_Event);
@@ -1245,14 +1251,16 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_BOARD_TOUCH_DOWN_REPLY: {
-            U8U8_Event *event1 = (U8U8_Event *)event;
+            U8U8I16I16_Event *event1 = (U8U8I16I16_Event *)event;
             GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-            SeedBank *clientSeedBank = mGamepadControls2->mPlayerIndex2 == 1 ? mSeedBank2 : mSeedBank1;
+            SeedBank *clientSeedBank = mGamepadControls2->mPlayerIndex2 == 1 ? mSeedBankRight : mSeedBankLeft;
             if (clientGamepadControls->mSelectedSeedIndex != event1->data1) {
                 clientGamepadControls->mSelectedSeedIndex = event1->data1;
                 clientSeedBank->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
             }
             clientGamepadControls->mGamepadState = event1->data2;
+            clientGamepadControls->mCursorPositionX = event1->data3;
+            clientGamepadControls->mCursorPositionY = event1->data4;
         } break;
         case EVENT_BOARD_TOUCH_DRAG_REPLY: {
             U16U16_Event *event1 = (U16U16_Event *)event;
@@ -1268,9 +1276,9 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             clientCursorObject->mCursorType = (CursorType)event1->data2;
         } break;
         case EVENT_SERVER_BOARD_TOUCH_DOWN: {
-            U8U8U16U16_Event *event1 = (U8U8U16U16_Event *)event;
+            U8U8I16I16_Event *event1 = (U8U8I16I16_Event *)event;
             GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-            SeedBank *serverSeedBank = mGamepadControls1->mPlayerIndex2 == 0 ? mSeedBank1 : mSeedBank2;
+            SeedBank *serverSeedBank = mGamepadControls1->mPlayerIndex2 == 0 ? mSeedBankLeft : mSeedBankRight;
             if (serverGamepadControls->mSelectedSeedIndex != event1->data1) {
                 serverGamepadControls->mSelectedSeedIndex = event1->data1;
                 serverSeedBank->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
@@ -1703,7 +1711,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED: {
             U8U8_Event *event1 = (U8U8_Event *)event;
-            SeedBank *theSeedBank = event1->data2 ? mSeedBank1 : mSeedBank2;
+            SeedBank *theSeedBank = event1->data2 ? mSeedBankLeft : mSeedBankRight;
             SeedPacket *seedPacket = &theSeedBank->mSeedPackets[event1->data1];
             seedPacket->Deactivate();
             seedPacket->WasPlanted(0);
@@ -1917,16 +1925,16 @@ void Board::Update() {
     if (setSeedPacket && choiceSeedType != SeedType::SEED_NONE) {
         if (targetSeedBank == 1) {
             if (choiceSeedType < SeedType::NUM_SEED_TYPES && !mGamepadControls1->mIsZombie) {
-                mSeedBank1->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
-                mSeedBank1->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
+                mSeedBankLeft->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
+                mSeedBankLeft->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
             } else if (choiceSeedType > SeedType::SEED_ZOMBIE_GRAVESTONE && mGamepadControls1->mIsZombie) // IZ模式里用不了墓碑
-                mSeedBank1->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
-        } else if (targetSeedBank == 2 && mSeedBank2 != nullptr) {
+                mSeedBankLeft->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
+        } else if (targetSeedBank == 2 && mSeedBankRight != nullptr) {
             if (choiceSeedType < SeedType::NUM_SEED_TYPES && !mGamepadControls2->mIsZombie) {
-                mSeedBank2->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
-                mSeedBank2->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
+                mSeedBankRight->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
+                mSeedBankRight->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
             } else if (Challenge::IsZombieSeedType(choiceSeedType) && mGamepadControls2->mIsZombie)
-                mSeedBank2->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
+                mSeedBankRight->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
         }
         setSeedPacket = false;
     }
@@ -2753,35 +2761,38 @@ Rect slotMachineRect = {250, 0, 320, 100};
 // 触控落下手指在此处理
 void Board::MouseDown(int x, int y, int theClickCount) {
 
-    if (mApp->mGameMode != GAMEMODE_MP_VS) {
+    if (mApp->mGameMode != GAMEMODE_MP_VS || (!tcp_connected && tcpClientSocket == -1)) {
         __MouseDown(x, y, theClickCount);
         return;
     }
 
-    bool isRightSide = PixelToGridX(x, y) > 5 || mSeedBank2->ContainsPoint(x, y);
-    bool inRangeOf2P = (mGamepadControls2->mPlayerIndex2 == 1 && isRightSide) || (mGamepadControls2->mPlayerIndex2 == 0 && !isRightSide);
+    bool inRangeOf1PSeedBank = (mGamepadControls1->mPlayerIndex2 == 1 && mSeedBankRight->ContainsPoint(x, y))
+        || (mGamepadControls1->mPlayerIndex2 == 0 && (mSeedBankLeft->ContainsPoint(x, y) || TRect_Contains(&mTouchVSShovelRect, x, y)));
+    bool inRangeOf2PSeedBank = (mGamepadControls2->mPlayerIndex2 == 1 && mSeedBankRight->ContainsPoint(x, y))
+        || (mGamepadControls2->mPlayerIndex2 == 0 && (mSeedBankLeft->ContainsPoint(x, y) || TRect_Contains(&mTouchVSShovelRect, x, y)));
+
+
+    // 如果是客户端
     if (tcp_connected) {
-        if (!inRangeOf2P)
+        if (inRangeOf1PSeedBank)
             return;
-        U16U16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_DOWN}, uint16_t(x), uint16_t(y)};
-        sendWithSize(tcpServerSocket, &event, sizeof(U16U16_Event), 0);
-        return;
-    }
-    if (tcpClientSocket >= 0 && inRangeOf2P) {
+        I16I16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_DOWN}, int16_t(x), int16_t(y)};
+        sendWithSize(tcpServerSocket, &event, sizeof(I16I16_Event), 0);
         return;
     }
 
-    __MouseDown(x, y, theClickCount);
-
-
+    // 如果是客户端
     if (tcpClientSocket >= 0) {
+        if (inRangeOf2PSeedBank)
+            return;
+        __MouseDown(x, y, theClickCount);
         GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-        U8U8U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_TOUCH_DOWN},
+        U8U8I16I16_Event event = {{EventType::EVENT_SERVER_BOARD_TOUCH_DOWN},
                                   uint8_t(serverGamepadControls->mSelectedSeedIndex),
                                   uint8_t(serverGamepadControls->mGamepadState),
-                                  uint16_t(serverGamepadControls->mCursorPositionX),
-                                  uint16_t(serverGamepadControls->mCursorPositionY)};
-        sendWithSize(tcpClientSocket, &event, sizeof(U8U8U16U16_Event), 0);
+                                  int16_t(serverGamepadControls->mCursorPositionX),
+                                  int16_t(serverGamepadControls->mCursorPositionY)};
+        sendWithSize(tcpClientSocket, &event, sizeof(U8U8I16I16_Event), 0);
     }
 }
 void Board::__MouseDown(int x, int y, int theClickCount) {
@@ -2970,7 +2981,12 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
     }
 
     if (mGameMode == GameMode::GAMEMODE_MP_VS) {
-        gPlayerIndex = PixelToGridX(x, y) > 5 ? TouchPlayerIndex::TOUCHPLAYER_PLAYER2 : TouchPlayerIndex::TOUCHPLAYER_PLAYER1;
+        if (tcpClientSocket >= 0) {
+            gPlayerIndex = mGamepadControls1->mPlayerIndex2 == 0 ? TouchPlayerIndex::TOUCHPLAYER_PLAYER1 : TouchPlayerIndex::TOUCHPLAYER_PLAYER2;
+        } else {
+            gPlayerIndex = PixelToGridX(x, y) > 5 ? TouchPlayerIndex::TOUCHPLAYER_PLAYER2 : TouchPlayerIndex::TOUCHPLAYER_PLAYER1;
+        };
+
     } else if (mGameMode >= GameMode::GAMEMODE_TWO_PLAYER_COOP_DAY && mGameMode <= GameMode::GAMEMODE_TWO_PLAYER_COOP_ENDLESS) {
         gPlayerIndex = x > 400 ? TouchPlayerIndex::TOUCHPLAYER_PLAYER2 : TouchPlayerIndex::TOUCHPLAYER_PLAYER1;
     } else {
@@ -3149,16 +3165,16 @@ void Board::MouseDrag(int x, int y) {
         return;
     }
     if (tcp_connected) {
-        U16U16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_DRAG}, uint16_t(x), uint16_t(y)};
-        sendWithSize(tcpServerSocket, &event, sizeof(U16U16_Event), 0);
+        I16I16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_DRAG}, int16_t(x), int16_t(y)};
+        sendWithSize(tcpServerSocket, &event, sizeof(I16I16_Event), 0);
         return;
     }
     __MouseDrag(x, y);
 
     if (tcpClientSocket >= 0) {
         GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-        U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_TOUCH_DRAG}, uint16_t(serverGamepadControls->mCursorPositionX), uint16_t(serverGamepadControls->mCursorPositionY)};
-        sendWithSize(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
+        I16I16_Event event = {{EventType::EVENT_SERVER_BOARD_TOUCH_DRAG}, int16_t(serverGamepadControls->mCursorPositionX), int16_t(serverGamepadControls->mCursorPositionY)};
+        sendWithSize(tcpClientSocket, &event, sizeof(I16I16_Event), 0);
     }
 }
 void Board::__MouseDrag(int x, int y) {
@@ -3338,8 +3354,8 @@ void Board::MouseUp(int x, int y, int theClickCount) {
         return;
     }
     if (tcp_connected) {
-        U16U16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_UP}, uint16_t(x), uint16_t(y)};
-        sendWithSize(tcpServerSocket, &event, sizeof(U16U16_Event), 0);
+        I16I16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_UP}, int16_t(x), int16_t(y)};
+        sendWithSize(tcpServerSocket, &event, sizeof(I16I16_Event), 0);
         return;
     }
     __MouseUp(x, y, theClickCount);
@@ -3651,7 +3667,11 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
     }
 
     if (mGameMode == GameMode::GAMEMODE_MP_VS) {
-        gPlayerIndexSecond = PixelToGridX(x, y) > 5 ? TouchPlayerIndex::TOUCHPLAYER_PLAYER2 : TouchPlayerIndex::TOUCHPLAYER_PLAYER1;
+        if (tcpClientSocket >= 0) {
+            gPlayerIndexSecond = mGamepadControls2->mPlayerIndex2 == 0 ? TouchPlayerIndex::TOUCHPLAYER_PLAYER1 : TouchPlayerIndex::TOUCHPLAYER_PLAYER2;
+        } else {
+            gPlayerIndexSecond = PixelToGridX(x, y) > 5 ? TouchPlayerIndex::TOUCHPLAYER_PLAYER2 : TouchPlayerIndex::TOUCHPLAYER_PLAYER1;
+        }
     } else if (mGameMode >= GameMode::GAMEMODE_TWO_PLAYER_COOP_DAY && mGameMode <= GameMode::GAMEMODE_TWO_PLAYER_COOP_ENDLESS) {
         gPlayerIndexSecond = x > 400 ? TouchPlayerIndex::TOUCHPLAYER_PLAYER2 : TouchPlayerIndex::TOUCHPLAYER_PLAYER1;
     } else {
@@ -4348,9 +4368,9 @@ void Board::FadeOutLevel() {
     }
 
     if (mNewWallNutAndSunFlowerAndChomperOnly && !mApp->IsSurvivalMode() && !HasConveyorBeltSeedBank(0)) {
-        int num = mSeedBank1->mNumPackets;
+        int num = mSeedBankLeft->mNumPackets;
         for (int i = 0; i < num; ++i) {
-            SeedType theType = mSeedBank1->mSeedPackets[i].mPacketType;
+            SeedType theType = mSeedBankLeft->mSeedPackets[i].mPacketType;
             if (theType == SeedType::SEED_CHOMPER || theType == SeedType::SEED_WALLNUT || theType == SeedType::SEED_SUNFLOWER) {
                 GrantAchievement(AchievementId::ACHIEVEMENT_CHOMP, true);
                 break;
@@ -4374,15 +4394,15 @@ void Board::DoPlantingAchievementCheck(SeedType theSeedType) {
 void Board::DrawUITop(Sexy::Graphics *g) {
     if (seedBankPin && !mApp->IsSlotMachineLevel()) {
         if (mApp->mGameScene != GameScenes::SCENE_PLANTS_WON && mApp->mGameScene != GameScenes::SCENE_ZOMBIES_WON) {
-            if (mSeedBank1->BeginDraw(g)) {
-                mSeedBank1->SeedBank::Draw(g);
-                mSeedBank1->EndDraw(g);
+            if (mSeedBankLeft->BeginDraw(g)) {
+                mSeedBankLeft->SeedBank::Draw(g);
+                mSeedBankLeft->EndDraw(g);
             }
 
-            if (mSeedBank2 != nullptr) {
-                if (mSeedBank2->BeginDraw(g)) {
-                    mSeedBank2->SeedBank::Draw(g);
-                    mSeedBank2->EndDraw(g);
+            if (mSeedBankRight != nullptr) {
+                if (mSeedBankRight->BeginDraw(g)) {
+                    mSeedBankRight->SeedBank::Draw(g);
+                    mSeedBankRight->EndDraw(g);
                 }
             }
         }
@@ -4397,7 +4417,7 @@ int Board::GetSeedBankExtraWidth() {
         return 0;
     }
 
-    int aNumPackets = mSeedBank1->mNumPackets;
+    int aNumPackets = mSeedBankLeft->mNumPackets;
     return aNumPackets <= 6 ? 0 : aNumPackets == 7 ? 60 : aNumPackets == 8 ? 76 : aNumPackets == 9 ? 112 : 153;
 }
 
@@ -4509,7 +4529,7 @@ int Board::GetNumSeedsInBank(bool isZombieBank) {
 }
 
 int Board::GetSeedPacketPositionX(int thePacketIndex, int theSeedBankIndex, bool thePlayerIndex) {
-    int aNumPackets = mSeedBank1->mNumPackets;
+    int aNumPackets = mSeedBankLeft->mNumPackets;
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         if (aNumPackets == 6) {
             return thePlayerIndex ? 59 * thePacketIndex + 15 : 59 * thePacketIndex + 85;
