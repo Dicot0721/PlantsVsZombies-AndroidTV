@@ -47,7 +47,6 @@ constexpr uintptr_t AGVideoShowOffset = 0x69393C;
 constexpr uintptr_t AGVideoEnableOffset = 0x693940;
 constexpr uintptr_t AGVideoIsPlayingOffset = 0x693944;
 constexpr uintptr_t AGVideoPlayOffset = 0x693950;
-constexpr uintptr_t gDaveWidget_ADDR_RELATIVE = 0x715B18;
 #endif // PVZ_VERSION
 
 inline bool enableNewOptionsDialog = false;

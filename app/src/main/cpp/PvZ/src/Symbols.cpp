@@ -1320,7 +1320,6 @@ bool LoadGameMain() {
     gEffectSystem_Addr = (int *)dlsym(handle, "gEffectSystem");
     gFoleyParamArraySizeAddr = (int *)dlsym(handle, "gFoleyParamArraySize");
     gLawnReanimationArrayAddr = (ReanimationParams *)dlsym(handle, "gLawnReanimationArray");
-    gDaveWidgetAddr = (int *)(uintptr_t(Board_UpdateAddr) - uintptr_t(BOARD_UPDATE_ADDR_RELATIVE) + uintptr_t(gDaveWidget_ADDR_RELATIVE));
     Challenge_gVSSuddenDeathMode_Addr = (int *)dlsym(handle, "_ZN9Challenge18gVSSuddenDeathModeE");
     Challenge_gVSWinModeAddr = (int *)dlsym(handle, "_ZN9Challenge10gVSWinModeE");
     Sexy_gSexyAppBase_Addr = reinterpret_cast<Sexy::SexyAppBase **>(dlsym(handle, "_ZN4Sexy12gSexyAppBaseE"));
