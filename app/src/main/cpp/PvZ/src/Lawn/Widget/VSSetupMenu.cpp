@@ -30,80 +30,6 @@
 
 using namespace Sexy;
 
-VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
-    mButtonListener = &theVSSetupMenu->mButtonListener;
-    m7PacketsMode = mApp->mPlayerInfo->mVS7PacketsMode;
-    mBanMode = mApp->mPlayerInfo->mVSBanMode;
-    Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
-    Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
-    Image *a7PacketsImage = m7PacketsMode ? aCheckboxPressed : aCheckbox;
-    Image *a7PacketsImageDown = m7PacketsMode ? aCheckbox : aCheckboxPressed;
-    Image *aBanImage = mBanMode ? aCheckboxPressed : aCheckbox;
-    Image *aBanImageDown = mBanMode ? aCheckbox : aCheckboxPressed;
-    m7PacketsModeButton = MakeNewButton(VSSetupAddonWidget_7Packets_Mode, mButtonListener, theVSSetupMenu, "", nullptr, a7PacketsImage, a7PacketsImageDown, a7PacketsImageDown);
-    mBanModeButton = MakeNewButton(VSSetupAddonWidget_Ban_Mode, mButtonListener, theVSSetupMenu, "", nullptr, aBanImage, aBanImageDown, aBanImageDown);
-    mButtonImage[VS_SETUP_BUTTON_7PACKETS] = a7PacketsImage;
-    mButtonImageDown[VS_SETUP_BUTTON_7PACKETS] = a7PacketsImageDown;
-    mButtonImage[VS_SETUP_BUTTON_BAN] = aBanImage;
-    mButtonImageDown[VS_SETUP_BUTTON_BAN] = aBanImageDown;
-    m7PacketsModeButton->Resize(VS_BUTTON_MORE_PACKETS_X, VS_BUTTON_MORE_PACKETS_Y, 175, 50);
-    mBanModeButton->Resize(VS_BUTTON_BAN_MODE_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
-    mApp->mBoard->AddWidget(m7PacketsModeButton);
-    mApp->mBoard->AddWidget(mBanModeButton);
-}
-
-VSSetupAddonWidget::~VSSetupAddonWidget() {
-    m7PacketsModeButton->mBtnNoDraw = true;
-    m7PacketsModeButton->mDisabled = true;
-    mBanModeButton->mBtnNoDraw = true;
-    mBanModeButton->mDisabled = true;
-    mDrawString = false;
-    gVSSetupAddonWidget = nullptr;
-}
-
-void VSSetupAddonWidget::SetDisable() {
-    m7PacketsModeButton->mBtnNoDraw = true;
-    m7PacketsModeButton->mDisabled = true;
-    mBanModeButton->mBtnNoDraw = true;
-    mBanModeButton->mDisabled = true;
-    mDrawString = false;
-}
-
-void VSSetupAddonWidget::SwapButtonImage(ButtonWidget *theButton, int theIndex) {
-    std::swap(mButtonImage[theIndex], mButtonImageDown[theIndex]);
-    theButton->mButtonImage = mButtonImage[theIndex];
-    theButton->mOverImage = mButtonImage[theIndex];
-    theButton->mDownImage = mButtonImage[theIndex];
-}
-
-void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId) {
-    if (theId == VSSetupAddonWidget_7Packets_Mode) {
-        self.CheckboxChecked(VSSetupAddonWidget_7Packets_Mode, self.m7PacketsMode);
-        self.SwapButtonImage(self.m7PacketsModeButton, 0);
-    }
-    if (theId == VSSetupAddonWidget_Ban_Mode) {
-        self.CheckboxChecked(VSSetupAddonWidget_Ban_Mode, self.mBanMode);
-        self.SwapButtonImage(self.mBanModeButton, 1);
-    }
-}
-
-void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
-    switch (theId) {
-        case VSSetupAddonWidget_7Packets_Mode:
-            m7PacketsMode = !checked;
-            mApp->mPlayerInfo->mVS7PacketsMode = m7PacketsMode;
-            break;
-        case VSSetupAddonWidget_Ban_Mode:
-            mBanMode = !checked;
-            mApp->mPlayerInfo->mVSBanMode = mBanMode;
-            break;
-        default:
-            break;
-    }
-
-    mApp->mPlayerInfo->SaveDetails();
-}
-
 void VSSetupMenu::_constructor() {
     old_VSSetupMenu_Constructor(this);
 
@@ -361,7 +287,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
 }
 
 void VSSetupMenu::Update() {
-
+    gVSSetupAddonWidget->Update();
 
     drawTipArrowAlphaCounter++;
 
@@ -615,6 +541,7 @@ size_t VSSetupMenu::getServerEventSize(EventType type) {
         case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND:
             return sizeof(U8_Event);
         case EVENT_SEEDCHOOSER_SELECT_SEED:
+        case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT:
             return sizeof(U8U8_Event);
         case EVENT_VSSETUPMENU_RANDOM_PICK:
             return sizeof(U16x12_Event);
@@ -694,6 +621,11 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
                 GameButtonDown(GamepadButton::BUTTONCODE_A, 1, 0);
             }
         } break;
+        case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT: {
+            U8U8_Event *eventButtonInit = (U8U8_Event *)event;
+            gVSSetupAddonWidget->m7PacketsMode = eventButtonInit->data1;
+            gVSSetupAddonWidget->mBanMode = eventButtonInit->data2;
+        } break;
         default:
             break;
     }
@@ -720,10 +652,13 @@ void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
 }
 
 void VSSetupMenu::OnStateEnter(VSSetupState theState) {
-
-
     if (theState == VSSetupState::VS_SETUP_STATE_SIDES) {
         drawTipArrowAlphaCounter = 0;
+
+        if (tcpClientSocket >= 0) {
+            U8U8_Event event = {{EventType::EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT}, uint8_t(gVSSetupAddonWidget->m7PacketsMode), uint8_t(gVSSetupAddonWidget->mBanMode)};
+            sendWithSize(tcpClientSocket, &event, sizeof(U8U8_Event), 0);
+        }
     }
     if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {
 

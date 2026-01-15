@@ -21,16 +21,11 @@
 #define PVZ_LAWN_WIDGET_VS_SETUP_MENU_H
 
 #include "PvZ/Lawn/GamepadControls.h"
+#include "PvZ/Lawn/Widget/VSSetupAddonWidget.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
 #include "WaitForSecondPlayerDialog.h"
-
-constexpr int VS_BUTTON_MORE_PACKETS_X = 800;
-constexpr int VS_BUTTON_MORE_PACKETS_Y = 200;
-constexpr int VS_BUTTON_BAN_MODE_X = 800;
-constexpr int VS_BUTTON_BAN_MODE_Y = 240;
-constexpr int NUM_VS_BAN_PACKETS = 4;
 
 enum VSSetupState {
     VS_SETUP_STATE_CONTROLLERS = 0,
@@ -45,12 +40,6 @@ enum VSSetupMode {
     VS_SETUP_MODE_RANDOM_BATTLE = 2, // 随机战场
 };
 
-enum VSSetupButton {
-    VS_SETUP_BUTTON_7PACKETS,
-    VS_SETUP_BUTTON_BAN,
-    NUM_VS_SETUP_BUTTON,
-};
-
 namespace Sexy {
 class ButtonWidget;
 }
@@ -58,64 +47,6 @@ class ButtonWidget;
 class LawnApp;
 class Board;
 class DefaultPlayerInfo;
-class VSSetupMenu;
-
-class BannedSeed {
-public:
-    int mX = 0;
-    int mY = 0;
-    int mChosenPlayerIndex = 0;
-    SeedType mSeedType = SEED_NONE;
-    BannedSeedState mSeedState = SEED_NOT_BANNED;
-};
-
-class VSSetupAddonWidget {
-public:
-    enum {
-        VSSetupAddonWidget_7Packets_Mode = 12,
-        VSSetupAddonWidget_Ban_Mode = 13,
-    };
-
-public:
-    LawnApp *mApp = *gLawnApp_Addr;
-    Sexy::ButtonListener *mButtonListener;
-    Sexy::ButtonWidget *m7PacketsModeButton = nullptr;
-    Sexy::ButtonWidget *mBanModeButton = nullptr;
-    Sexy::Image *mButtonImage[NUM_VS_SETUP_BUTTON] = {nullptr};
-    Sexy::Image *mButtonImageDown[NUM_VS_SETUP_BUTTON] = {nullptr};
-    bool m7PacketsMode = false;
-    bool mBanMode = false;
-    int mNumBanPackets = NUM_VS_BAN_PACKETS;
-    int mSeedsInBothBanned = 0;
-    BannedSeed mBannedSeed[NUM_ZOMBIE_SEED_TYPES];
-    bool mDrawString = true;
-
-    VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu);
-    ~VSSetupAddonWidget();
-    void SetDisable();
-    void SwapButtonImage(Sexy::ButtonWidget *theButton, int theIndex);
-    void ButtonDepress(this VSSetupAddonWidget &self, int theId);
-    void CheckboxChecked(int theId, bool checked);
-    void GetZombieSeedType();
-
-private:
-    static constexpr Sexy::ButtonListener::VTable sButtonListenerVtable{
-        .ButtonDepress = (void *)&VSSetupAddonWidget::ButtonDepress,
-    };
-
-    static inline Sexy::ButtonListener sButtonListener{&sButtonListenerVtable};
-};
-
-inline VSSetupAddonWidget *gVSSetupAddonWidget;
-
-inline int gVSSetupRequestState = 0;
-
-inline Sexy::ButtonWidget *gVSSelectBgDayButton;
-inline Sexy::ButtonWidget *gVSSelectBgNightButton;
-inline Sexy::ButtonWidget *gVSSelectBgPoolButton;
-inline Sexy::ButtonWidget *gVSSelectBgPoolNightButton;
-inline Sexy::ButtonWidget *gVSSelectBgRoofButton;
-inline Sexy::ButtonWidget *gVSSelectBgRoofNightButton;
 
 class VSSetupMenu : public Sexy::__Widget {
 public:
@@ -216,6 +147,10 @@ protected:
 
     void PickBackgroundImmediately();
 };
+
+inline VSSetupAddonWidget *gVSSetupAddonWidget;
+
+inline int gVSSetupRequestState = 0;
 
 inline bool is1PControllerMoving;
 inline bool is2PControllerMoving;
