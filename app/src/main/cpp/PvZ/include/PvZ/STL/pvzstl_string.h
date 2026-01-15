@@ -830,7 +830,7 @@ protected:
         return r->_data;
     }
 
-    [[nodiscard]] static constexpr size_type _from_view_pos(_self_view::size_type pos) noexcept {
+    [[nodiscard]] static constexpr size_type _from_view_pos(typename _self_view::size_type pos) noexcept {
         if constexpr (npos == _self_view::npos) {
             return pos;
         } else {
