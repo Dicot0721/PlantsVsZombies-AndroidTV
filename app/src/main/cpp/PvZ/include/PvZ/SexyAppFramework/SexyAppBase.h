@@ -42,7 +42,9 @@ class __Dialog;
 class __SexyAppBase {
 public:
     int *vTable;                            // 0
-    int unkMem1[164];                       // 1 ~ 164
+    int unkMem1_1[30];                      // 1 ~ 30
+    bool unkBool_1[4];                      // 31
+    int unkMem1_2[133];                     // 32 ~ 164
     WidgetManager *mWidgetManager;          // 165
     int unkMem2[70];                        // 166 ~ 235, musicinterface 193
     bool mLawnMouseMode;                    // 944
@@ -65,14 +67,14 @@ public:
     Dialog *GetDialog(Dialogs theDialogId) { // vTable + 4 * 103
         return reinterpret_cast<Dialog *(*)(__SexyAppBase *, Dialogs)>(Sexy_SexyAppBase_GetDialogAddr)(this, theDialogId);
     }
-    void EraseFile(const std::string &theFileName) {
-        reinterpret_cast<void (*)(__SexyAppBase *, const std::string &)>(Sexy_SexyAppBase_EraseFileAddr)(this, theFileName);
+    void EraseFile(const pvzstl::string &theFileName) {
+        reinterpret_cast<void (*)(__SexyAppBase *, const pvzstl::string &)>(Sexy_SexyAppBase_EraseFileAddr)(this, theFileName);
     }
     Image *GetImage(const pvzstl::string &theFileName, bool commitBits = true) {
         return reinterpret_cast<Image *(*)(__SexyAppBase *, const pvzstl::string &, bool)>(Sexy_SexyAppBase_GetImageAddr)(this, theFileName, commitBits);
     }
-    bool RegistryReadString(const std::string &theValueName, std::string *theString) {
-        return reinterpret_cast<bool (*)(__SexyAppBase *, const std::string &, std::string *)>(Sexy_SexyAppBase_RegistryReadStringAddr)(this, theValueName, theString);
+    bool RegistryReadString(const pvzstl::string &theValueName, pvzstl::string *theString) {
+        return reinterpret_cast<bool (*)(__SexyAppBase *, const pvzstl::string &, pvzstl::string *)>(Sexy_SexyAppBase_RegistryReadStringAddr)(this, theValueName, theString);
     }
     Image *CopyImage(Image *theImage) {
         return reinterpret_cast<Image *(*)(__SexyAppBase *, Image *)>(Sexy_SexyAppBase_CopyImageAddr)(this, theImage);
@@ -83,6 +85,16 @@ public:
     void AddDialog(__Dialog *theDialog) {
         reinterpret_cast<void (*)(__SexyAppBase *, __Dialog *)>(Sexy_SexyAppBase_AddDialogAddr)(this, theDialog);
     }
+    void DoParseCmdLine() { // vTable + 4 * 62
+        reinterpret_cast<void (*)(__SexyAppBase *)>(Sexy_SexyAppBase_DoParseCmdLineAddr)(this);
+    }
+    int GetInteger(const pvzstl::string &theName, int defValue) {
+        return reinterpret_cast<bool (*)(__SexyAppBase *, const pvzstl::string &, int)>(Sexy_SexyAppBase_GetIntegerAddr)(this, theName, defValue);
+    }
+    void LoadResourceManifest() {
+        reinterpret_cast<void (*)(__SexyAppBase *)>(Sexy_SexyAppBase_LoadResourceManifestAddr)(this);
+    }
+
 
 protected:
     __SexyAppBase() = default;

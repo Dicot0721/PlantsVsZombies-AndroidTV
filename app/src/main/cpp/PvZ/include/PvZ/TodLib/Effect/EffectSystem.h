@@ -25,6 +25,7 @@
 #include "PvZ/SexyAppFramework/Graphics/Image.h"
 #include "PvZ/SexyAppFramework/Misc/TriVertex.h"
 
+#include "PvZ/Symbols.h"
 #include "Reanimator.h"
 #include "Trail.h"
 
@@ -64,6 +65,10 @@ public:
     TrailHolder *mTrailHolder;
     ReanimationHolder *mReanimationHolder;
     AttachmentHolder *mAttachmentHolder;
+
+    void EffectSystemInitialize() {
+        reinterpret_cast<void (*)(EffectSystem *)>(EffectSystem_EffectSystemInitializeAddr)(this);
+    }
 };
 
 #endif // PVZ_SEXYAPPFRAMEWORK_EFFECT_EFFECT_SYSTEM_H

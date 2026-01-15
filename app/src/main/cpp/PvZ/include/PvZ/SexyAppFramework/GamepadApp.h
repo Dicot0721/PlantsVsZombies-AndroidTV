@@ -22,13 +22,15 @@
 
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Symbols.h"
+#include "SexyCommonApp.h"
 
 namespace Sexy {
+class __GamepadApp : public __SexyCommonApp {};
 
-class GamepadApp : public __SexyAppBase {
+class GamepadApp : public __GamepadApp {
 public:
     bool HasGamepad() {
-        return reinterpret_cast<bool (*)(GamepadApp *)>(Sexy_GamepadApp_HasGamepadAddr)(this);
+        return reinterpret_cast<bool (*)(__GamepadApp *)>(Sexy_GamepadApp_HasGamepadAddr)(this);
     }
 };
 

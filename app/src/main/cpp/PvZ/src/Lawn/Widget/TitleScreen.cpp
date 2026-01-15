@@ -49,3 +49,7 @@ void TitleScreen_SwitchState(TitleScreen *titleScreen, TitleScreen::TitleState s
     titleScreen->mTitleStateDuration = duration;
     titleScreen->mTitleStateCounter = duration;
 }
+
+void TitleScreen::_constructor(LawnApp *theApp) {
+    old_TitleScreen_TitleScreen(this, theApp);
+}

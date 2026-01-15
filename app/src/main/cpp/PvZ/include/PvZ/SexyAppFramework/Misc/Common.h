@@ -58,6 +58,10 @@ inline float Rand(float range) {
     return reinterpret_cast<float (*)(float)>(Sexy_RandFloatAddr)(range);
 }
 
+inline int GetTickCount() {
+    return reinterpret_cast<int (*)()>(Sexy_GetTickCountAddr)();
+}
+
 inline void vformat(pvzstl::string &output, const char *fmt, va_list vList) {
     reinterpret_cast<void (*)(pvzstl::string &, const char *, va_list)>(Sexy_vformatAddr)(output, fmt, vList);
 }

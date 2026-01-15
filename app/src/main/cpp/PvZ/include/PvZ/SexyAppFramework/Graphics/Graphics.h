@@ -88,6 +88,10 @@ public:
     Graphics(Image *theDestImage = NULL) {
         CreateImage(theDestImage);
     }
+
+    static void SetTrackingDeviceState(bool state) {
+        reinterpret_cast<void (*)(bool)>(Sexy_Graphics_SetTrackingDeviceStateAddr)(state);
+    }
     void CreateGraphics(const Graphics &theGraphics) {
         reinterpret_cast<void (*)(Graphics *, const Graphics &)>(Sexy_Graphics_GraphicsAddr)(this, theGraphics);
     }

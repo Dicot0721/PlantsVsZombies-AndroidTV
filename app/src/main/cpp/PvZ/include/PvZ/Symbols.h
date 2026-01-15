@@ -21,6 +21,7 @@
 #define PVZ_SYMBOLS_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/TodLib/Effect/Reanimator.h"
 
 namespace Sexy {
 class Image;
@@ -733,6 +734,7 @@ inline void *AlmanacDialog_SetupLayoutPlantsAddr;
 
 
 inline void *Sexy_GraphicsState_CopyStateFromAddr;
+inline void *Sexy_Graphics_SetTrackingDeviceStateAddr;
 inline void *Sexy_Graphics_GraphicsAddr;
 inline void *Sexy_Graphics_Graphics2Addr;
 inline void *Sexy_Graphics_SetDrawModeAddr;
@@ -800,10 +802,12 @@ inline void *Reanimation_PropogateColorToAttachmentsAddr;
 inline void *Reanimation_StartBlendAddr;
 
 
+inline void *Sexy_SexyCommonApp_getGameInfoAddr;
 inline void *Sexy_GamepadApp_CheckGamepadAddr;
 inline void *Sexy_GamepadApp_HasGamepadAddr;
 inline void *Sexy_RandIntAddr;
 inline void *Sexy_RandFloatAddr;
+inline void *Sexy_GetTickCountAddr;
 inline void *Sexy_Level_isCardNotAllowedToPickAddr;
 inline void *Sexy_ScrollbarWidget_MouseDownAddr;
 inline void *CustomScrollbarWidget_RemoveScrollButtonsAddr;
@@ -866,6 +870,7 @@ inline void *ZenGarden_DrawPottedPlantAddr;
 inline void *PlantFlowerPotHeightOffsetAddr;
 
 
+inline void *TitleScreen_TitleScreenAddr;
 inline void *TitleScreen_DrawAddr;
 inline void *TitleScreen_UpdateAddr;
 inline void *TitleScreen_SwitchStateAddr;
@@ -946,6 +951,9 @@ inline void *Sexy_SexyAppBase_CopyImage2Addr;
 inline void *Sexy_SexyAppBase_GetDialogAddr;
 inline void *Sexy_SexyAppBase_EraseFileAddr;
 inline void *Sexy_SexyAppBase_AddDialogAddr;
+inline void *Sexy_SexyAppBase_DoParseCmdLineAddr;
+inline void *Sexy_SexyAppBase_LoadResourceManifestAddr;
+inline void *Sexy_SexyAppBase_GetIntegerAddr;
 inline void *Sexy_Ratio_SetAddr;
 inline void *Sexy_MemoryImage_MemoryImageAddr;
 inline void *Sexy_MemoryImage_ClearRectAddr;
@@ -1067,6 +1075,9 @@ inline void *TodStringTranslateAddr;
 inline void *GetRectOverlapAddr;
 inline void *BaseGamepadControls_GetGamepadVelocityAddr;
 inline void *TypingCheck_SetPhraseAddr;
+inline void *TypingCheck_AddCharAddr;
+inline void *TypingCheck_CreateByStringAddr;
+inline void *TypingCheck_TypingCheckAddr;
 inline void *ZenGardenControls_UpdateAddr;
 inline void *LookupFoleyAddr;
 inline void *TodDrawStringWrappedHelperAddr;
@@ -1088,6 +1099,10 @@ inline void *TodParticleSystem_DrawAddr;
 inline void *PoolEffect_BilinearLookupFixedPointAddr;
 inline void *PoolEffect_PoolEffectDrawAddr;
 inline void *Sexy_DefaultProfileMgr_GetAnyProfileAddr;
+inline void *Sexy_DefaultProfileMgr_AddProfileAddr;
+inline void *Sexy_DefaultProfileMgr_GetProfileAddr;
+inline void *Sexy_DefaultProfileMgr_LoadAddr;
+inline void *Sexy_DefaultProfileMgr_SaveAddr;
 inline void *TodDrawImageCelScaledFAddr;
 inline void *TodDrawImageScaledFAddr;
 inline void *TodDrawImageCenterScaledFAddr;
@@ -1103,6 +1118,7 @@ inline void *MailScreen_KeyDownAddr;
 inline void *Mailbox_GetNumUnseenMessagesAddr;
 inline void *SaveGameContext_SyncIntAddr;
 inline void *SaveGameContext_SyncReanimationDefAddr;
+inline void *EffectSystem_EffectSystemInitializeAddr;
 
 inline void *TodFoley_PlayFoleyAddr;
 
@@ -1314,6 +1330,8 @@ inline Sexy::SexyAppBase **Sexy_gSexyAppBase_Addr;
 inline ReanimatorDefinition **gReanimatorDefArray_Addr;
 inline int *gEffectSystem_Addr;
 inline int *gFoleyParamArraySizeAddr;
+inline ReanimationParams *gLawnReanimationArrayAddr;
+inline int *gDaveWidgetAddr;
 inline int *Challenge_gVSSuddenDeathMode_Addr;
 inline int *Challenge_gVSWinModeAddr;
 inline int *Sexy_SOUND_PAUSE_Addr;

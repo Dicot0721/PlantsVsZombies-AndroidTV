@@ -22,10 +22,12 @@
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/System/Music.h"
+#include "PvZ/Lawn/System/TypingCheck.h"
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
 #include "PvZ/Lawn/Widget/ConfirmBackToMainDialog.h"
 #include "PvZ/Lawn/Widget/MainMenu.h"
 #include "PvZ/Lawn/Widget/SeedChooserScreen.h"
+#include "PvZ/Lawn/Widget/TitleScreen.h"
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
@@ -577,12 +579,124 @@ void LawnApp::_constructor() {
 
 void LawnApp::Init() {
     // 试图修复默认加载名为player用户的问题。
+    LOG_DEBUG("1");
+    DoParseCmdLine();
+    if (!mTodCheatKeys)
+        unkBool_1[2] = true;
 
-    old_LawnApp_Init(this);
-    if (mPlayerInfo == nullptr && mProfileMgr->mNumProfiles > 0) {
-        mPlayerInfo = mProfileMgr->GetAnyProfile();
+    unk9_2[1] = 0;
+    unk9_2[2] = 0;
+    mBoardResult = BOARDRESULT_NONE;
+    mKilledYetiAndRestarted = false;
+    unk9_2[0] = Sexy::GetTickCount() / 1000;
+    unk9_1[1] = 0;
+    pvzstl::string strings[5];
+    getGameInfo(strings, this);
+    mGameInfoStrings[0] = strings[0];
+    mGameInfoStrings[1] = strings[1];
+    mGameInfoStrings[2] = strings[2];
+    mGameInfoStrings[3] = strings[3];
+    mGameInfoStrings[4] = strings[4];
+    LOG_DEBUG("2");
+    //    RpcEngine = DrRpcEngine::getRpcEngine();
+    //    pvzstl::string DomainURL;
+    //    ServerConfig::getDomainURL(DomainURL);
+    //    DrRpcEngine::setDefaultUrl(RpcEngine, DomainURL);
+    //    isEncryptionEnabled = ServerConfig::isEncryptionEnabled(RpcEngine);
+    //    DrRpcEngine::setDataEncryption(RpcEngine, isEncryptionEnabled);
+    //    if ( !LawnSession::Init(unk13_2) )
+    //        Sexy::SexyAppBase::DoExit(lawnApp, -1);
+    unk13_1[13] = 1;
+    unkBool3[0] = false;
+    //    LawnApp::SrvLoginToServer(lawnApp);
+    //    PerfTimer aPerfTimer;
+    //    Sexy::PerfTimer::PerfTimer(aPerfTimer);
+    //    Sexy::PerfTimer::Start((Sexy::PerfTimer *)&v60);
+
+    mProfileMgr->Load();
+    pvzstl::string defaultName = "player";
+    if (mProfileMgr->GetAnyProfile() == nullptr) {
+        mProfileMgr->AddProfile(defaultName);
+        mProfileMgr->Save();
+    }
+    LOG_DEBUG("3");
+    if (mPlayerInfo == nullptr) {
+        pvzstl::string value;
+        bool readSuccess = RegistryReadString("CurUser", &value);
+        if (readSuccess) {
+            mPlayerInfo = mProfileMgr->GetProfile(value);
+        } else {
+            mPlayerInfo = mProfileMgr->GetProfile(defaultName);
+        }
+
+        if (mPlayerInfo == nullptr && mProfileMgr->mNumProfiles > 0) {
+            mPlayerInfo = mProfileMgr->GetAnyProfile();
+        }
     }
 
+    LOG_DEBUG("4");
+    mMaxExecutions = GetInteger("MaxExecutions", 0);
+    mMaxPlays = GetInteger("MaxPlays", 0);
+    mMaxTime = GetInteger("MaxTime", 0);
+    LoadResourceManifest();
+    TodLoadResources("Init");
+    mTitleScreen = new TitleScreen(this);
+
+    LOG_DEBUG("5");
+    mTitleScreen->Resize(0, 0, unkMem1_1[18], unkMem1_1[19]);
+    mWidgetManager->AddWidget(mTitleScreen);
+    mWidgetManager->SetFocus(mTitleScreen);
+    mEffectSystem->EffectSystemInitialize();
+    //    FilterEffectInitForApp();
+
+    mKonamiCheck = new TypingCheck;
+    mKonamiCheck->AddChar('a');
+    mKonamiCheck->AddChar('b');
+    mKonamiCheck->AddChar('b');
+    mKonamiCheck->AddChar('c');
+    mKonamiCheck->AddChar('d');
+    mKonamiCheck->AddChar('c');
+    mKonamiCheck->AddChar('b');
+    mKonamiCheck->AddChar('a');
+    LOG_DEBUG("6");
+    pvzstl::string mustache = "mustache";
+    mMustacheCheck = new TypingCheck(mustache);
+
+    pvzstl::string moustache = "moustache";
+    mMoustacheCheck = new TypingCheck(moustache);
+
+    pvzstl::string trickedout = "trickedout";
+    mSuperMowerCheck = new TypingCheck(trickedout);
+
+    pvzstl::string trickedout2 = "tricked out";
+    mSuperMowerCheck2 = new TypingCheck(trickedout2);
+
+    pvzstl::string future = "future";
+    mFutureCheck = new TypingCheck(future);
+
+    pvzstl::string pinata = "pinata";
+    mPinataCheck = new TypingCheck(pinata);
+
+    pvzstl::string dance = "dance";
+    mDanceCheck = new TypingCheck(dance);
+
+    pvzstl::string daisies = "daisies";
+    mDaisyCheck = new TypingCheck(daisies);
+
+    pvzstl::string sukhbir = "sukhbir";
+    mSukhbirCheck = new TypingCheck(sukhbir);
+
+
+    ReanimatorLoadDefinitions(gLawnReanimationArrayAddr, 178);
+
+    LOG_DEBUG("7");
+    //    ((Widget *)*gDaveWidgetAddr)->Resize(0, 0, unkMem1_1[18], unkMem1_1[19]);
+
+    mIsFullVersion = true;
+    Sexy::Graphics::SetTrackingDeviceState(false);
+    (*(void(__fastcall **)(int, int *))(*(int *)unkMem6[109] + 172))(unkMem6[109], &unkMem8[1]);
+
+    LOG_DEBUG("8");
     mNewIs3DAccelerated = mPlayerInfo == nullptr || !mPlayerInfo->mIs3DAcceleratedClosed;
 }
 

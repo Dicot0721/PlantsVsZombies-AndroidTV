@@ -21,7 +21,9 @@
 #define PVZ_LAWN_LAWN_APP_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/Lawn/System/TypingCheck.h"
 #include "PvZ/Lawn/Widget/AchievementsWidget.h"
+#include "PvZ/SexyAppFramework/GamepadApp.h"
 #include "PvZ/SexyAppFramework/Misc/ProfileMgr.h"
 #include "PvZ/SexyAppFramework/SexyAppBase.h"
 #include "PvZ/Symbols.h"
@@ -45,7 +47,7 @@ class VSSetupMenu;
 class VSResultsMenu;
 class MailBox;
 
-class LawnApp : public Sexy::__SexyAppBase {
+class LawnApp : public Sexy::__GamepadApp {
 public:
     Board *mBoard;                           // 552
     TitleScreen *mTitleScreen;               // 553
@@ -103,16 +105,16 @@ public:
     int unk9_2[3];                           // 651 ~ 653
     BoardResult mBoardResult;                // 654
     bool mKilledYetiAndRestarted;            // 2620
-    int *mKonamiCheck;                       // 656
-    int *mMustacheCheck;                     // 657
-    int *mMoustacheCheck;                    // 658
-    int *mSuperMowerCheck;                   // 659
-    int *mSuperMowerCheck2;                  // 660
-    int *mFutureCheck;                       // 661
-    int *mPinataCheck;                       // 662
-    int *mDanceCheck;                        // 663
-    int *mDaisyCheck;                        // 664
-    int *mSukhbirCheck;                      // 665
+    TypingCheck *mKonamiCheck;               // 656
+    TypingCheck *mMustacheCheck;             // 657
+    TypingCheck *mMoustacheCheck;            // 658
+    TypingCheck *mSuperMowerCheck;           // 659
+    TypingCheck *mSuperMowerCheck2;          // 660
+    TypingCheck *mFutureCheck;               // 661
+    TypingCheck *mPinataCheck;               // 662
+    TypingCheck *mDanceCheck;                // 663
+    TypingCheck *mDaisyCheck;                // 664
+    TypingCheck *mSukhbirCheck;              // 665
     bool mMustacheMode;                      // 2664
     bool mSuperMowerMode;                    // 2665
     bool mFutureMode;                        // 2666
@@ -127,7 +129,10 @@ public:
     int mTwoPlayerState;                     // 671
     int unk12[3];                            // 672 ~ 674
     MailBox *mMailBox;                       // 675
-    int unk13[26];                           // 676 ~ 701
+    int unk13_1[14];                         // 676 ~
+    bool unkBool3[4];
+    int unk13_2[6];
+    pvzstl::string mGameInfoStrings[5];      //  ~ 701
     int *mHelpBarWidget;                     // 702
     int unk14;                               // 703
     int *mLogComposer;                       // 704

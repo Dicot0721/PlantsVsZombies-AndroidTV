@@ -560,6 +560,7 @@ void InitHookFunction() {
     homura::HookFunction(Sexy_MemoryImage_ClearRectAddr, &Sexy::MemoryImage::ClearRect, nullptr);
 
 
+    homura::HookFunction(TitleScreen_TitleScreenAddr, &TitleScreen::_constructor, &old_TitleScreen_TitleScreen);
     homura::HookFunction(TitleScreen_DrawAddr, &TitleScreen_Draw, &old_TitleScreen_Draw);
     homura::HookFunction(TitleScreen_UpdateAddr, &TitleScreen_Update, &old_TitleScreen_Update);
     homura::HookFunction(TitleScreen_SwitchStateAddr, &TitleScreen_SwitchState, nullptr);

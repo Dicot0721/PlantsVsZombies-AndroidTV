@@ -35,6 +35,8 @@ public:
         Loading = 4
     };
 
+    void _constructor(LawnApp *theApp);
+
 public:
     Sexy::ButtonListener mButtonListener; // 64
     Sexy::Image *mPopcapLogo;             // 65
@@ -62,11 +64,19 @@ public:
     int unk2[2];
     bool mNeedPlayLogo; // 4 * 83
     LawnApp *mApp;      // 84
+
+public:
+    TitleScreen(LawnApp *theApp) {
+        _constructor(theApp);
+    }
+
 }; // 大小85个整数
 
 inline void (*old_TitleScreen_Draw)(TitleScreen *titleScreen, Sexy::Graphics *a2);
 
 inline void (*old_TitleScreen_Update)(TitleScreen *titleScreen);
+
+inline void (*old_TitleScreen_TitleScreen)(TitleScreen *titleScreen, LawnApp *);
 
 
 void TitleScreen_Draw(TitleScreen *titleScreen, Sexy::Graphics *graphics);
