@@ -579,7 +579,7 @@ void LawnApp::_constructor() {
 
 void LawnApp::Init() {
     // 试图修复默认加载名为player用户的问题。
-    LOG_DEBUG("1");
+
     DoParseCmdLine();
     if (!mTodCheatKeys)
         unkBool_1[2] = true;
@@ -597,7 +597,6 @@ void LawnApp::Init() {
     mGameInfoStrings[2] = strings[2];
     mGameInfoStrings[3] = strings[3];
     mGameInfoStrings[4] = strings[4];
-    LOG_DEBUG("2");
     //    RpcEngine = DrRpcEngine::getRpcEngine();
     //    pvzstl::string DomainURL;
     //    ServerConfig::getDomainURL(DomainURL);
@@ -619,7 +618,6 @@ void LawnApp::Init() {
         mProfileMgr->AddProfile(defaultName);
         mProfileMgr->Save();
     }
-    LOG_DEBUG("3");
     if (mPlayerInfo == nullptr) {
         pvzstl::string value;
         bool readSuccess = RegistryReadString("CurUser", &value);
@@ -634,7 +632,6 @@ void LawnApp::Init() {
         }
     }
 
-    LOG_DEBUG("4");
     mMaxExecutions = GetInteger("MaxExecutions", 0);
     mMaxPlays = GetInteger("MaxPlays", 0);
     mMaxTime = GetInteger("MaxTime", 0);
@@ -642,7 +639,6 @@ void LawnApp::Init() {
     TodLoadResources("Init");
     mTitleScreen = new TitleScreen(this);
 
-    LOG_DEBUG("5");
     mTitleScreen->Resize(0, 0, unkMem1_1[18], unkMem1_1[19]);
     mWidgetManager->AddWidget(mTitleScreen);
     mWidgetManager->SetFocus(mTitleScreen);
@@ -658,7 +654,6 @@ void LawnApp::Init() {
     mKonamiCheck->AddChar('c');
     mKonamiCheck->AddChar('b');
     mKonamiCheck->AddChar('a');
-    LOG_DEBUG("6");
     pvzstl::string mustache = "mustache";
     mMustacheCheck = new TypingCheck(mustache);
 
@@ -689,14 +684,12 @@ void LawnApp::Init() {
 
     ReanimatorLoadDefinitions(gLawnReanimationArrayAddr, 178);
 
-    LOG_DEBUG("7");
     //    ((Widget *)*gDaveWidgetAddr)->Resize(0, 0, unkMem1_1[18], unkMem1_1[19]);
 
     mIsFullVersion = true;
     Sexy::Graphics::SetTrackingDeviceState(false);
     (*(void(__fastcall **)(int, int *))(*(int *)unkMem6[109] + 172))(unkMem6[109], &unkMem8[1]);
 
-    LOG_DEBUG("8");
     mNewIs3DAccelerated = mPlayerInfo == nullptr || !mPlayerInfo->mIs3DAcceleratedClosed;
 }
 

@@ -861,7 +861,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
             }
             break;
         case VSSetupAddonWidget::VSSetupAddonWidget_7Packets_Mode: // 额外卡槽
-        case VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode:     // 禁选模式
+        case VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode:      // 禁选模式
             gVSSetupAddonWidget->ButtonDepress(theId);
             break;
         default:
