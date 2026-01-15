@@ -30,15 +30,31 @@
 
 using namespace Sexy;
 
-VSSetupAddonWidget::VSSetupAddonWidget() {
-    //    if (gMoreZombieSeeds) {
-    //        game_patches::drawMoreZombieSeeds.Modify();
-    //    }
+VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
+    mButtonListener = &theVSSetupMenu->mButtonListener;
+    m7PacketsMode = mApp->mPlayerInfo->mVS7PacketsMode;
+    mBanMode = mApp->mPlayerInfo->mVSBanMode;
+    Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
+    Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
+    Image *a7PacketsImage = m7PacketsMode ? aCheckboxPressed : aCheckbox;
+    Image *a7PacketsImageDown = m7PacketsMode ? aCheckbox : aCheckboxPressed;
+    Image *aBanImage = mBanMode ? aCheckboxPressed : aCheckbox;
+    Image *aBanImageDown = mBanMode ? aCheckbox : aCheckboxPressed;
+    m7PacketsModeButton = MakeNewButton(VSSetupAddonWidget_7Packets_Mode, mButtonListener, theVSSetupMenu, "", nullptr, a7PacketsImage, a7PacketsImageDown, a7PacketsImageDown);
+    mBanModeButton = MakeNewButton(VSSetupAddonWidget_Ban_Mode, mButtonListener, theVSSetupMenu, "", nullptr, aBanImage, aBanImageDown, aBanImageDown);
+    mButtonImage[VS_SETUP_BUTTON_7PACKETS] = a7PacketsImage;
+    mButtonImageDown[VS_SETUP_BUTTON_7PACKETS] = a7PacketsImageDown;
+    mButtonImage[VS_SETUP_BUTTON_BAN] = aBanImage;
+    mButtonImageDown[VS_SETUP_BUTTON_BAN] = aBanImageDown;
+    m7PacketsModeButton->Resize(VS_BUTTON_MORE_PACKETS_X, VS_BUTTON_MORE_PACKETS_Y, 175, 50);
+    mBanModeButton->Resize(VS_BUTTON_BAN_MODE_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
+    mApp->mBoard->AddWidget(m7PacketsModeButton);
+    mApp->mBoard->AddWidget(mBanModeButton);
 }
 
 VSSetupAddonWidget::~VSSetupAddonWidget() {
-    mMorePacketsButton->mBtnNoDraw = true;
-    mMorePacketsButton->mDisabled = true;
+    m7PacketsModeButton->mBtnNoDraw = true;
+    m7PacketsModeButton->mDisabled = true;
     mBanModeButton->mBtnNoDraw = true;
     mBanModeButton->mDisabled = true;
     mDrawString = false;
@@ -46,24 +62,24 @@ VSSetupAddonWidget::~VSSetupAddonWidget() {
 }
 
 void VSSetupAddonWidget::SetDisable() {
-    mMorePacketsButton->mBtnNoDraw = true;
-    mMorePacketsButton->mDisabled = true;
+    m7PacketsModeButton->mBtnNoDraw = true;
+    m7PacketsModeButton->mDisabled = true;
     mBanModeButton->mBtnNoDraw = true;
     mBanModeButton->mDisabled = true;
     mDrawString = false;
 }
 
 void VSSetupAddonWidget::SwapButtonImage(ButtonWidget *theButton, int theIndex) {
-    std::swap(mCheckboxImage[theIndex], mCheckboxImagePress[theIndex]);
-    theButton->mButtonImage = gVSSetupAddonWidget->mCheckboxImage[theIndex];
-    theButton->mOverImage = gVSSetupAddonWidget->mCheckboxImage[theIndex];
-    theButton->mDownImage = gVSSetupAddonWidget->mCheckboxImage[theIndex];
+    std::swap(mButtonImage[theIndex], mButtonImageDown[theIndex]);
+    theButton->mButtonImage = mButtonImage[theIndex];
+    theButton->mOverImage = mButtonImage[theIndex];
+    theButton->mDownImage = mButtonImage[theIndex];
 }
 
 void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId) {
-    if (theId == VSSetupAddonWidget_More_Packets) {
-        self.CheckboxChecked(VSSetupAddonWidget_More_Packets, self.mMorePackets);
-        self.SwapButtonImage(self.mMorePacketsButton, 0);
+    if (theId == VSSetupAddonWidget_7Packets_Mode) {
+        self.CheckboxChecked(VSSetupAddonWidget_7Packets_Mode, self.m7PacketsMode);
+        self.SwapButtonImage(self.m7PacketsModeButton, 0);
     }
     if (theId == VSSetupAddonWidget_Ban_Mode) {
         self.CheckboxChecked(VSSetupAddonWidget_Ban_Mode, self.mBanMode);
@@ -73,39 +89,26 @@ void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId)
 
 void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
     switch (theId) {
-        case VSSetupAddonWidget_More_Packets:
-            mMorePackets = !checked;
+        case VSSetupAddonWidget_7Packets_Mode:
+            m7PacketsMode = !checked;
+            mApp->mPlayerInfo->mVS7PacketsMode = m7PacketsMode;
             break;
         case VSSetupAddonWidget_Ban_Mode:
             mBanMode = !checked;
+            mApp->mPlayerInfo->mVSBanMode = mBanMode;
             break;
         default:
             break;
     }
+
+    mApp->mPlayerInfo->SaveDetails();
 }
 
 void VSSetupMenu::_constructor() {
     old_VSSetupMenu_Constructor(this);
 
-
-    Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
-    Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
     // 拓展卡槽,禁选模式
-    gVSSetupAddonWidget = new VSSetupAddonWidget;
-    ButtonWidget *aMorePacketsButton = MakeNewButton(VSSetupAddonWidget::VSSetupAddonWidget_More_Packets, &mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
-    ButtonWidget *aBanModeButton = MakeNewButton(VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode, &mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
-    gVSSetupAddonWidget->mMorePacketsButton = aMorePacketsButton;
-    gVSSetupAddonWidget->mBanModeButton = aBanModeButton;
-    for (int i = 0; i < NUM_VS_BUTTONS; i++) {
-        gVSSetupAddonWidget->mCheckboxImage[i] = aCheckbox;
-        gVSSetupAddonWidget->mCheckboxImagePress[i] = aCheckboxPressed;
-    }
-    aMorePacketsButton->Resize(VS_BUTTON_MORE_PACKETS_X, VS_BUTTON_MORE_PACKETS_Y, 175, 50);
-    aBanModeButton->Resize(VS_BUTTON_BAN_MODE_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
-    mApp->mBoard->AddWidget(aMorePacketsButton);
-    mApp->mBoard->AddWidget(aBanModeButton);
-    gVSSetupAddonWidget->mDrawString = true;
-
+    gVSSetupAddonWidget = new VSSetupAddonWidget(this);
 
     //    gVSSelectBgDayButton = MakeNewButton(9000,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
     //    gVSSelectBgNightButton = MakeNewButton(9001,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
@@ -185,9 +188,9 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
-                case VSSetupAddonWidget::VSSetupAddonWidget_More_Packets: {
+                case VSSetupAddonWidget::VSSetupAddonWidget_7Packets_Mode: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
-                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mMorePackets) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
+                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->m7PacketsMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
@@ -226,9 +229,9 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
-                case VSSetupAddonWidget::VSSetupAddonWidget_More_Packets: {
+                case VSSetupAddonWidget::VSSetupAddonWidget_7Packets_Mode: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
-                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mMorePackets) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
+                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->m7PacketsMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
@@ -857,7 +860,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 // }
             }
             break;
-        case VSSetupAddonWidget::VSSetupAddonWidget_More_Packets: // 额外卡槽
+        case VSSetupAddonWidget::VSSetupAddonWidget_7Packets_Mode: // 额外卡槽
         case VSSetupAddonWidget::VSSetupAddonWidget_Ban_Mode:     // 禁选模式
             gVSSetupAddonWidget->ButtonDepress(theId);
             break;

@@ -69,7 +69,9 @@ public:
     int mPurchases[36];         // 111 ~ 146 ，本应该是mPurchases[80]，111 ~ 190，但仅用到了前36个。
     bool mAchievements[12];     // 147 ~ 149, 从mPurchases[80]分出来的
     unsigned short mVSRoomPort; // 150 ~
-    bool mUnused[143];
+    bool mVS7PacketsMode;
+    bool mVSBanMode;
+    bool mUnused[141];
     bool mIsVibrateClosed;
     bool mZombatarEnabled;
     unsigned char mZombatarHat;

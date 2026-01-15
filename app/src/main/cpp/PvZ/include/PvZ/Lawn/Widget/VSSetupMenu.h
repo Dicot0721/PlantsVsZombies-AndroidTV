@@ -30,7 +30,6 @@ constexpr int VS_BUTTON_MORE_PACKETS_X = 800;
 constexpr int VS_BUTTON_MORE_PACKETS_Y = 200;
 constexpr int VS_BUTTON_BAN_MODE_X = 800;
 constexpr int VS_BUTTON_BAN_MODE_Y = 240;
-constexpr int NUM_VS_BUTTONS = 2;
 constexpr int NUM_VS_BAN_PACKETS = 4;
 
 enum VSSetupState {
@@ -46,6 +45,12 @@ enum VSSetupMode {
     VS_SETUP_MODE_RANDOM_BATTLE = 2, // 随机战场
 };
 
+enum VSSetupButton {
+    VS_SETUP_BUTTON_7PACKETS,
+    VS_SETUP_BUTTON_BAN,
+    NUM_VS_SETUP_BUTTON,
+};
+
 namespace Sexy {
 class ButtonWidget;
 }
@@ -53,6 +58,7 @@ class ButtonWidget;
 class LawnApp;
 class Board;
 class DefaultPlayerInfo;
+class VSSetupMenu;
 
 class BannedSeed {
 public:
@@ -66,24 +72,25 @@ public:
 class VSSetupAddonWidget {
 public:
     enum {
-        VSSetupAddonWidget_More_Packets = 12,
+        VSSetupAddonWidget_7Packets_Mode = 12,
         VSSetupAddonWidget_Ban_Mode = 13,
     };
 
 public:
     LawnApp *mApp = *gLawnApp_Addr;
-    Sexy::ButtonWidget *mMorePacketsButton = nullptr;
+    Sexy::ButtonListener *mButtonListener;
+    Sexy::ButtonWidget *m7PacketsModeButton = nullptr;
     Sexy::ButtonWidget *mBanModeButton = nullptr;
-    Sexy::Image *mCheckboxImage[NUM_VS_BUTTONS] = {nullptr};
-    Sexy::Image *mCheckboxImagePress[NUM_VS_BUTTONS] = {nullptr};
-    bool mMorePackets = false;
+    Sexy::Image *mButtonImage[NUM_VS_SETUP_BUTTON] = {nullptr};
+    Sexy::Image *mButtonImageDown[NUM_VS_SETUP_BUTTON] = {nullptr};
+    bool m7PacketsMode = false;
     bool mBanMode = false;
     int mNumBanPackets = NUM_VS_BAN_PACKETS;
     int mSeedsInBothBanned = 0;
     BannedSeed mBannedSeed[NUM_ZOMBIE_SEED_TYPES];
-    bool mDrawString = false;
+    bool mDrawString = true;
 
-    VSSetupAddonWidget();
+    VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu);
     ~VSSetupAddonWidget();
     void SetDisable();
     void SwapButtonImage(Sexy::ButtonWidget *theButton, int theIndex);
