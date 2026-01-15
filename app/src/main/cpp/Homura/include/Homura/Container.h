@@ -41,7 +41,7 @@ template <template <typename...> typename Map, typename Key, typename T>
 
 template <template <typename...> typename Map, typename Key, typename T>
     requires IsMap<Map, Key, T>
-bool FindInMap(const Map<Key, T> &map, std::type_identity_t<const Key &> key, std::type_identity_t<T &> output) {
+bool FindInMap(const Map<Key, T> &map, std::type_identity_t<const Key &> key, T &output) {
     auto it = map.find(key);
     if (it == map.end()) {
         return false;
