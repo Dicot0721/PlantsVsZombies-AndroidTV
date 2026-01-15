@@ -21,7 +21,7 @@
 #define PVZ_SYMBOLS_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
-#include "PvZ/TodLib/Effect/Reanimator.h"
+
 
 namespace Sexy {
 class Image;
@@ -31,6 +31,7 @@ class SexyAppBase;
 
 class LawnApp;
 class ReanimatorDefinition;
+class ReanimationParams;
 
 inline void *Board_UpdateAddr;
 inline void *Board_BoardAddr;
