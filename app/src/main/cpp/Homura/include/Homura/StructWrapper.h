@@ -39,7 +39,7 @@ namespace homura {
  * @return 返回一个指针, 其值为成员变量的地址.
  */
 template <typename T>
-[[nodiscard]] T *GetMemberAddress(void *thiz, uintptr_t offset) {
+[[nodiscard]] T *GetMemAddr(void *thiz, uintptr_t offset) {
     return reinterpret_cast<T *>(uintptr_t(thiz) + offset);
 }
 
@@ -59,12 +59,12 @@ template <typename T>
  * Challenge *aChallenge = homura::GetMemberRef&lt;Challenge *&gt;(gLawnApp, 0x8A0, 0x254);
  * @endcode
  */
-template <typename T, std::integral... Args>
-[[nodiscard]] T &GetMemberRef(void *thiz, uintptr_t first, Args... others) {
+template <typename T>
+[[nodiscard]] T &GetMemberRef(void *thiz, uintptr_t first, std::integral auto... others) {
     if constexpr (sizeof...(others) > 0) {
         return GetMemberRef<T>(GetMemberRef<void *>(thiz, first), others...);
     } else {
-        return *GetMemberAddress<T>(thiz, first);
+        return *GetMemAddr<T>(thiz, first);
     }
 }
 
@@ -86,12 +86,12 @@ template <typename T, std::integral... Args>
  * aZombieAllowed[(int)ZombieType::ZOMBIE_NORMAL] = false; // 禁止出普通僵尸
  * @endcode
  */
-template <typename T, size_t N, std::integral... Args>
-[[nodiscard]] std::span<T, N> GetMemberSpan(void *thiz, uintptr_t first, Args... others) {
+template <typename T, size_t N>
+[[nodiscard]] std::span<T, N> GetMemberSpan(void *thiz, uintptr_t first, std::integral auto... others) {
     if constexpr (sizeof...(others) > 0) {
         return GetMemberSpan<T, N>(GetMemberRef<void *>(thiz, first), others...);
     } else {
-        return std::span<T, N>(GetMemberAddress<T>(thiz, first), N);
+        return std::span<T, N>(GetMemAddr<T>(thiz, first), N);
     }
 }
 
@@ -117,12 +117,12 @@ template <typename T, size_t N, std::integral... Args>
  * }
  * @endcode
  */
-template <typename T, size_t... Dims, std::integral... Args>
-[[nodiscard]] auto GetMemberMdspan(void *thiz, uintptr_t first, Args... others) {
+template <typename T, size_t... DIMS>
+[[nodiscard]] auto GetMemberMdspan(void *thiz, uintptr_t first, std::integral auto... others) -> std::mdspan<T, std::extents<size_t, DIMS...>> {
     if constexpr (sizeof...(others) > 0) {
-        return GetMemberMdspan<T, Dims...>(GetMemberRef<void *>(thiz, first), others...);
+        return GetMemberMdspan<T, DIMS...>(GetMemberRef<void *>(thiz, first), others...);
     } else {
-        return std::mdspan<T, std::extents<size_t, Dims...>>(GetMemberAddress<T>(thiz, first));
+        return std::mdspan<T, std::extents<size_t, DIMS...>>(GetMemAddr<T>(thiz, first));
     }
 }
 
@@ -137,10 +137,12 @@ template <typename T, size_t... Dims, std::integral... Args>
  * @param thiz 对象指针.
  * @param args 虚函数的参数列表.
  */
-template <size_t I, typename R = void, typename T, typename... Args>
-R CallVirtualFunc(T *thiz, Args... args) {
-    void **vtable = *reinterpret_cast<void ***>(thiz);
-    return reinterpret_cast<R (*)(T *, Args...)>(vtable[I])(thiz, args...);
+template <typename T, size_t I, typename R, typename... Args>
+R CallVirtualFunc(T *thiz, std::type_identity_t<Args &&>... args) {
+    using FuncType = R (T::*)(Args...);
+    FuncType *vtable = *reinterpret_cast<FuncType **>(thiz);
+    FuncType vfunc = vtable[I];
+    return (thiz->*vfunc)(std::forward<Args>(args)...);
 }
 
 } // namespace homura
