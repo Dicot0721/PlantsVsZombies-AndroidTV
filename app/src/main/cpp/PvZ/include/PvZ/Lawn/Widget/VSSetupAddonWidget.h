@@ -74,7 +74,6 @@ public:
     ~VSSetupAddonWidget();
     void Update();
     void SetDisable();
-    void SwapButtonImage(Sexy::ButtonWidget *theButton, int theIndex);
     void ButtonDepress(this VSSetupAddonWidget &self, int theId);
     void CheckboxChecked(int theId, bool checked);
 

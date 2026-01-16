@@ -946,9 +946,8 @@ bool Board::StageIsNight() {
 
 bool Board::StageHasPool() {
     // 关系到泳池特有的僵尸，如救生圈僵尸、海豚僵尸、潜水僵尸在本关出现与否。此处我们添加水族馆场景。
-    // return mBackground == BackgroundType::Zombiquarium || old_Board_StageHasPool(this);
-    return (mBackground == BackgroundType::BACKGROUND_ZOMBIQUARIUM && mApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM) || mBackground == BackgroundType::BACKGROUND_3_POOL
-        || mBackground == BackgroundType::BACKGROUND_4_FOG;
+    return (mBackground == BackgroundType::BACKGROUND_ZOMBIQUARIUM && mApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM && mApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN)
+        || mBackground == BackgroundType::BACKGROUND_3_POOL || mBackground == BackgroundType::BACKGROUND_4_FOG;
 }
 
 bool Board::StageHasRoof() {
