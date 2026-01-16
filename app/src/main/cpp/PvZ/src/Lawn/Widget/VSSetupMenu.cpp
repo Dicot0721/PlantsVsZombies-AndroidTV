@@ -287,7 +287,8 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
 }
 
 void VSSetupMenu::Update() {
-    gVSSetupAddonWidget->Update();
+    if (gVSSetupAddonWidget)
+        gVSSetupAddonWidget->Update();
 
     drawTipArrowAlphaCounter++;
 

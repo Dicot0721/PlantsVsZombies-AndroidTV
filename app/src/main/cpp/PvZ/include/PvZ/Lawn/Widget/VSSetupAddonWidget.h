@@ -63,7 +63,6 @@ public:
     Sexy::ButtonWidget *m7PacketsModeButton = nullptr;
     Sexy::ButtonWidget *mBanModeButton = nullptr;
     Sexy::Image *mButtonImage[NUM_VS_SETUP_ADDON_BUTTON] = {nullptr};
-    Sexy::Image *mButtonImageDown[NUM_VS_SETUP_ADDON_BUTTON] = {nullptr};
     bool m7PacketsMode = false;
     bool mBanMode = false;
     int mNumBanPackets = NUM_VS_BAN_PACKETS;

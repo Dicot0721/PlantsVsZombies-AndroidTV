@@ -29,12 +29,8 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     mBanMode = mApp->mPlayerInfo->mVSBanMode;
     Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
     Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
-    Image *a7PacketsImage = m7PacketsMode ? aCheckboxPressed : aCheckbox;
-    Image *a7PacketsImageDown = m7PacketsMode ? aCheckbox : aCheckboxPressed;
-    Image *aBanImage = mBanMode ? aCheckboxPressed : aCheckbox;
-    Image *aBanImageDown = mBanMode ? aCheckbox : aCheckboxPressed;
-    m7PacketsModeButton = MakeNewButton(VSSetupAddonWidget_7Packets_Mode, mButtonListener, theVSSetupMenu, "", nullptr, a7PacketsImage, a7PacketsImageDown, a7PacketsImageDown);
-    mBanModeButton = MakeNewButton(VSSetupAddonWidget_Ban_Mode, mButtonListener, theVSSetupMenu, "", nullptr, aBanImage, aBanImageDown, aBanImageDown);
+    m7PacketsModeButton = MakeNewButton(VSSetupAddonWidget_7Packets_Mode, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
+    mBanModeButton = MakeNewButton(VSSetupAddonWidget_Ban_Mode, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
     m7PacketsModeButton->Resize(VS_BUTTON_MORE_PACKETS_X, VS_BUTTON_MORE_PACKETS_Y, 175, 50);
     mBanModeButton->Resize(VS_BUTTON_BAN_MODE_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
     mApp->mBoard->AddWidget(m7PacketsModeButton);
@@ -54,17 +50,11 @@ void VSSetupAddonWidget::Update() {
     Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
     Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
     Image *a7PacketsImage = m7PacketsMode ? aCheckboxPressed : aCheckbox;
-    Image *a7PacketsImageDown = m7PacketsMode ? aCheckbox : aCheckboxPressed;
     Image *aBanImage = mBanMode ? aCheckboxPressed : aCheckbox;
-    Image *aBanImageDown = mBanMode ? aCheckbox : aCheckboxPressed;
     if (mButtonImage[VS_SETUP_ADDON_BUTTON_7PACKETS] != a7PacketsImage)
-        mButtonImage[VS_SETUP_ADDON_BUTTON_7PACKETS] = a7PacketsImage;
-    if (mButtonImageDown[VS_SETUP_ADDON_BUTTON_7PACKETS] != a7PacketsImageDown)
-        mButtonImageDown[VS_SETUP_ADDON_BUTTON_7PACKETS] = a7PacketsImageDown;
+        m7PacketsModeButton->mButtonImage = a7PacketsImage;
     if (mButtonImage[VS_SETUP_ADDON_BUTTON_BAN] != aBanImage)
-        mButtonImage[VS_SETUP_ADDON_BUTTON_BAN] = aBanImage;
-    if (mButtonImageDown[VS_SETUP_ADDON_BUTTON_BAN] != aBanImageDown)
-        mButtonImageDown[VS_SETUP_ADDON_BUTTON_BAN] = aBanImageDown;
+        mBanModeButton->mButtonImage = aBanImage;
 }
 
 void VSSetupAddonWidget::SetDisable() {
@@ -75,21 +65,12 @@ void VSSetupAddonWidget::SetDisable() {
     mDrawString = false;
 }
 
-void VSSetupAddonWidget::SwapButtonImage(ButtonWidget *theButton, int theIndex) {
-    std::swap(mButtonImage[theIndex], mButtonImageDown[theIndex]);
-    theButton->mButtonImage = mButtonImage[theIndex];
-    theButton->mOverImage = mButtonImage[theIndex];
-    theButton->mDownImage = mButtonImage[theIndex];
-}
-
 void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId) {
     if (theId == VSSetupAddonWidget_7Packets_Mode) {
         self.CheckboxChecked(VSSetupAddonWidget_7Packets_Mode, self.m7PacketsMode);
-        self.SwapButtonImage(self.m7PacketsModeButton, 0);
     }
     if (theId == VSSetupAddonWidget_Ban_Mode) {
         self.CheckboxChecked(VSSetupAddonWidget_Ban_Mode, self.mBanMode);
-        self.SwapButtonImage(self.mBanModeButton, 1);
     }
 }
 
