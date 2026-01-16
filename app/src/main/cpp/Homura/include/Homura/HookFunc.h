@@ -41,7 +41,7 @@ namespace homura {
  * @return 是否成功替换.
  */
 template <typename R, typename... Args>
-bool HookFunction(void *symbol, R (*newFunc)(Args...), std::type_identity_t<R (**)(Args...)> oldFuncAddr) {
+bool HookFunction(void *symbol, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
     if (symbol == nullptr || newFunc == nullptr) {
         LOG_ERROR("Is nullptr: symbol: {}, newFunc: {}", symbol == nullptr, newFunc == nullptr);
         return false;
@@ -89,13 +89,13 @@ bool HookFunction(void *symbol, R (T::*newFunc)(Args...), std::type_identity_t<R
  * @return 是否成功替换.
  */
 template <typename R, typename... Args>
-bool HookVirtualFunc(void *vTableSymbol, size_t index, R (*newFunc)(Args...), std::type_identity_t<R (**)(Args...)> oldFuncAddr) {
+bool HookVirtualFunc(void *vTableSymbol, size_t index, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
     if (vTableSymbol == nullptr || newFunc == nullptr) {
         LOG_ERROR("Is nullptr: vTableSymbol: {}, newFunc: {}", vTableSymbol == nullptr, newFunc == nullptr);
         return false;
     }
-    auto **funcPtrAddr = reinterpret_cast<R (**)(Args...)>(vTableSymbol) + index;
-    if (!SetProtection(reinterpret_cast<uintptr_t>(funcPtrAddr), sizeof(void *), PROT_READ | PROT_WRITE)) {
+    auto funcPtrAddr = reinterpret_cast<decltype(oldFuncAddr)>(vTableSymbol) + index;
+    if (!SetProtection(uintptr_t(funcPtrAddr), sizeof(void *), PROT_READ | PROT_WRITE)) {
         return false;
     }
 
@@ -104,7 +104,7 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (*newFunc)(Args...), st
     }
     *funcPtrAddr = newFunc;
 
-    SetProtection(reinterpret_cast<uintptr_t>(funcPtrAddr), sizeof(void *), PROT_READ);
+    SetProtection(uintptr_t(funcPtrAddr), sizeof(void *), PROT_READ);
     return true;
 }
 
@@ -127,17 +127,18 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (T::*newFunc)(Args...),
         LOG_ERROR("Is nullptr: vTableSymbol: {}, newFunc: {}", vTableSymbol == nullptr, newFunc == nullptr);
         return false;
     }
-    auto **funcPtrAddr = reinterpret_cast<R (**)(T *, Args...)>(vTableSymbol) + index;
-    if (!SetProtection(reinterpret_cast<uintptr_t>(funcPtrAddr), sizeof(void *), PROT_READ | PROT_WRITE)) {
+    using FuncPtrAddr = decltype(oldFuncAddr);
+    auto funcPtrAddr = reinterpret_cast<FuncPtrAddr>(vTableSymbol) + index;
+    if (!SetProtection(uintptr_t(funcPtrAddr), sizeof(void *), PROT_READ | PROT_WRITE)) {
         return false;
     }
 
     if (oldFuncAddr != nullptr) {
         *oldFuncAddr = *funcPtrAddr;
     }
-    *funcPtrAddr = *reinterpret_cast<decltype(funcPtrAddr)>(&newFunc);
+    *funcPtrAddr = *reinterpret_cast<FuncPtrAddr>(&newFunc);
 
-    SetProtection(reinterpret_cast<uintptr_t>(funcPtrAddr), sizeof(void *), PROT_READ);
+    SetProtection(uintptr_t(funcPtrAddr), sizeof(void *), PROT_READ);
     return true;
 }
 
@@ -155,7 +156,7 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (T::*newFunc)(Args...),
  * @return 是否成功替换.
  */
 template <typename R, typename... Args>
-bool HookPltFunction(const std::string &libName, uintptr_t offset, R (*newFunc)(Args...), std::type_identity_t<R (**)(Args...)> oldFuncAddr) {
+bool HookPltFunction(const std::string &libName, uintptr_t offset, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
     if (newFunc == nullptr) {
         LOG_ERROR("newFunc is nullptr");
         return false;
@@ -165,15 +166,15 @@ bool HookPltFunction(const std::string &libName, uintptr_t offset, R (*newFunc)(
         LOG_ERROR("Failed to get base address.");
         return false;
     }
-    uintptr_t funcPtrAddr = baseAddr + offset;
-    if (!SetProtection(funcPtrAddr, sizeof(void *), PROT_READ | PROT_WRITE)) {
+    auto funcPtrAddr = reinterpret_cast<decltype(oldFuncAddr)>(baseAddr + offset);
+    if (!SetProtection(uintptr_t(funcPtrAddr), sizeof(void *), PROT_READ | PROT_WRITE)) {
         return false;
     }
 
     if (oldFuncAddr != nullptr) {
-        *oldFuncAddr = *reinterpret_cast<R (**)(Args...)>(funcPtrAddr);
+        *oldFuncAddr = *funcPtrAddr;
     }
-    *reinterpret_cast<R (**)(Args...)>(funcPtrAddr) = newFunc;
+    *funcPtrAddr = newFunc;
 
     SetProtection(funcPtrAddr, sizeof(void *), PROT_READ);
     return true;
