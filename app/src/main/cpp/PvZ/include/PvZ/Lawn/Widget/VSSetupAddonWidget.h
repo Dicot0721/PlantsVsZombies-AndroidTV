@@ -25,15 +25,18 @@
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 
-constexpr int VS_BUTTON_MORE_PACKETS_X = 800;
-constexpr int VS_BUTTON_MORE_PACKETS_Y = 200;
-constexpr int VS_BUTTON_BAN_MODE_X = 800;
-constexpr int VS_BUTTON_BAN_MODE_Y = 240;
+constexpr int VS_ADDON_BUTTON_X = 800;
+constexpr int VS_BUTTON_EXTRA_PACKETS_Y = 200;
+constexpr int VS_BUTTON_EXTRA_SEEDS_Y = 240;
+constexpr int VS_BUTTON_BAN_MODE_Y = 280;
+constexpr int VS_BUTTON_BALANCE_PATCH_Y = 320;
 constexpr int NUM_VS_BAN_PACKETS = 4;
 
 enum VSSetupAddonButton {
-    VS_SETUP_ADDON_BUTTON_7PACKETS,
+    VS_SETUP_ADDON_BUTTON_EXTRA_PACKETS,
+    VS_SETUP_ADDON_BUTTON_EXTRA_SEEDS,
     VS_SETUP_ADDON_BUTTON_BAN,
+    VS_SETUP_ADDON_BUTTON_BALANCE_PATCH,
     NUM_VS_SETUP_ADDON_BUTTON,
 };
 
@@ -53,18 +56,24 @@ class ButtonWidget;
 class VSSetupAddonWidget {
 public:
     enum {
-        VSSetupAddonWidget_7Packets_Mode = 12,
-        VSSetupAddonWidget_Ban_Mode = 13,
+        VSSetupAddonWidget_ExtraPackets = 12,
+        VSSetupAddonWidget_ExtraSeeds = 13,
+        VSSetupAddonWidget_BanMode = 14,
+        VSSetupAddonWidget_BalancePatch = 15,
     };
 
 public:
     LawnApp *mApp = *gLawnApp_Addr;
     Sexy::ButtonListener *mButtonListener;
-    Sexy::ButtonWidget *m7PacketsModeButton = nullptr;
+    Sexy::ButtonWidget *mExtraPacketsButton = nullptr;
+    Sexy::ButtonWidget *mExtraSeedsButton = nullptr;
     Sexy::ButtonWidget *mBanModeButton = nullptr;
+    Sexy::ButtonWidget *mBalancePatchButton = nullptr;
     Sexy::Image *mButtonImage[NUM_VS_SETUP_ADDON_BUTTON] = {nullptr};
-    bool m7PacketsMode = false;
+    bool mExtraPacketsMode = false;
+    bool mExtraSeedsMode = false;
     bool mBanMode = false;
+    bool mBalancePatchMode = false;
     int mNumBanPackets = NUM_VS_BAN_PACKETS;
     int mSeedsInBothBanned = 0;
     BannedSeed mBannedSeed[NUM_ZOMBIE_SEED_TYPES];

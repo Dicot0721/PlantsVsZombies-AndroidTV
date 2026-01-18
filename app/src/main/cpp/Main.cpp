@@ -913,14 +913,6 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     jumpLogo = true;
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeMoreZombieSeeds(JNIEnv *env, jclass clazz) {
-    gMoreZombieSeeds = true;
-}
-
-extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeVSBalanceAdjustment(JNIEnv *env, jclass clazz) {
-    gVSBalanceAdjustment = true;
-}
-
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIntroVideoCompleted(JNIEnv *env, jclass clazz) {
     TitleScreen *aTitleScreen = (*gLawnApp_Addr)->mTitleScreen;
     if (aTitleScreen != nullptr) {

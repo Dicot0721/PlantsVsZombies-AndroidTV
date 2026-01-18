@@ -25,6 +25,7 @@
 #include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
@@ -148,7 +149,7 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         switch (theSeedType) {
             case SEED_SUNSHROOM:
-                if (gVSBalanceAdjustment) { // 清除阳光菇的初始冷却
+                if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBalancePatchMode) { // 清除阳光菇的初始冷却
                     mRefreshTime = 0;
                     mRefreshing = false;
                     mActive = true;

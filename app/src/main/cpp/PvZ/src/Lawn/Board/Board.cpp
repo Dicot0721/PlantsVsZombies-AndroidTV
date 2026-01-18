@@ -4532,7 +4532,7 @@ void Board::ShakeBoard(int theShakeAmountX, int theShakeAmountY) {
 int Board::GetNumSeedsInBank(bool isZombieBank) {
     // 对战额外卡槽
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        if (gVSSetupAddonWidget != nullptr && gVSSetupAddonWidget->m7PacketsMode)
+        if (gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraPacketsMode)
             return 7;
     }
 

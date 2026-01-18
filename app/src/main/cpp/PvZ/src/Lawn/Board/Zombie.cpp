@@ -26,6 +26,7 @@
 #include "PvZ/Lawn/Board/Plant.h"
 #include "PvZ/Lawn/Board/Projectile.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -125,7 +126,7 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
             break;
 
         case ZombieType::ZOMBIE_TRASHCAN:
-            if (gVSBalanceAdjustment) {
+            if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBalancePatchMode) {
                 mShieldHealth = 1100; // 800 -> 1100
             }
             break;

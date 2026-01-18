@@ -70,8 +70,10 @@ public:
     bool mAchievements[12];     // 147 ~ 149, 从mPurchases[80]分出来的
     unsigned short mVSRoomPort; // 150 ~
     bool mVS7PacketsMode;
+    bool mVSExtraSeedsMode;
     bool mVSBanMode;
-    bool mUnused[141];
+    bool mVSBalancePatchMode;
+    bool mUnused[139];
     bool mIsVibrateClosed;
     bool mZombatarEnabled;
     unsigned char mZombatarHat;

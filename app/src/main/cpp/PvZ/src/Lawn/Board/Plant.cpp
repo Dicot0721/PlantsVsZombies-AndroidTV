@@ -27,6 +27,7 @@
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/ReanimationLawn.h"
+#include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
@@ -1117,7 +1118,7 @@ GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
                     continue;
                 }
                 if (mSeedType == SeedType::SEED_PUFFSHROOM || mSeedType == SeedType::SEED_SEASHROOM) {
-                    if (gVSBalanceAdjustment && aGridX - mPlantCol > 2) {
+                    if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBalancePatchMode && aGridX - mPlantCol > 2) {
                         continue;
                     }
                     // 如果是小喷菇或水兵菇，则索敌三格以内的墓碑
@@ -1187,8 +1188,8 @@ int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
         if (theSeedType == SeedType::SEED_IMITATER && theImitaterType != SeedType::SEED_NONE) {
             theSeedType = theImitaterType;
         }
-        if (gVSBalanceAdjustment) {
-            return GetCostAdjusted(theSeedType);
+        if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBalancePatchMode) {
+            return GetCostBalanced(theSeedType);
         } else {
             switch (theSeedType) {
                 case SeedType::SEED_CHERRYBOMB:
@@ -1198,6 +1199,8 @@ int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_ZOMBIE_DANCER:
                 case SeedType::SEED_ZOMBIE_DIGGER:
                 case SeedType::SEED_ZOMBIE_LADDER:
+                case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD:
+                case SeedType::SEED_ZOMBIE_TALLNUT_HEAD:
                     return 150;
                 case SeedType::SEED_SQUASH:
                 case SeedType::SEED_GARLIC:
@@ -1212,8 +1215,6 @@ int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_ZOMBIE_SNORKEL:
                 case SeedType::SEED_ZOMBIE_DOLPHIN_RIDER:
                 case SeedType::SEED_ZOMBIE_JALAPENO_HEAD:
-                case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD:
-                case SeedType::SEED_ZOMBIE_TALLNUT_HEAD:
                     return 125;
                 case SeedType::SEED_CACTUS:
                 case SeedType::SEED_CABBAGEPULT:
@@ -1267,8 +1268,8 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
             theSeedType = theImitaterType;
         }
         int aRefreshTime;
-        if (gVSBalanceAdjustment) {
-            aRefreshTime = GetRefreshTimeAdjusted(theSeedType);
+        if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBalancePatchMode) {
+            aRefreshTime = GetRefreshTimeBalanced(theSeedType);
         } else {
             if (Challenge::IsMPSeedType(theSeedType)) {
                 switch (theSeedType) {
@@ -1343,15 +1344,15 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_ZOMBIE_TRASHCAN:
                 case SeedType::SEED_ZOMBIE_SCREEN_DOOR:
                     return aRefreshTime;
-                // 平衡调整后不减cd
+                // 平衡调整后cd减幅下降
                 case SeedType::SEED_POTATOMINE:
                 case SeedType::SEED_SQUASH:
                 case SeedType::SEED_CHERRYBOMB:
                 case SeedType::SEED_JALAPENO:
                 case SeedType::SEED_DOOMSHROOM:
                 case SeedType::SEED_ICESHROOM:
-                    if (gVSBalanceAdjustment)
-                        return aRefreshTime;
+                    if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBalancePatchMode)
+                        return aRefreshTime / 3 * 2;
                 default:
                     return aRefreshTime / 3;
             }
@@ -1361,10 +1362,11 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
     return old_Plant_GetRefreshTime(theSeedType, theImitaterType);
 }
 
-int Plant::GetCostAdjusted(SeedType theSeedType) {
+int Plant::GetCostBalanced(SeedType theSeedType) {
     switch (theSeedType) {
         case SeedType::SEED_SUNSHROOM:
             return 0;
+        case SeedType::SEED_ICESHROOM: // 75 -> 25
         case SeedType::SEED_INSTANT_COFFEE:
         case SeedType::SEED_ZOMBIE_NORMAL:
         case SeedType::SEED_ZOMBIE_DUCKY_TUBE:
@@ -1372,8 +1374,7 @@ int Plant::GetCostAdjusted(SeedType theSeedType) {
             return 25;
         case SeedType::SEED_GRAVEBUSTER:  // 75 -> 50
         case SeedType::SEED_HYPNOSHROOM:  // 75 -> 50
-        case SeedType::SEED_ICESHROOM:    // 75 -> 50
-        case SeedType::SEED_BLOVER:       // 100->50
+        case SeedType::SEED_BLOVER:       // 100 -> 50
         case SeedType::SEED_PUMPKINSHELL: // 125 -> 50
         case SeedType::SEED_ZOMBIE_GRAVESTONE:
         case SeedType::SEED_ZOMBIE_TRASHCAN:
@@ -1385,12 +1386,12 @@ int Plant::GetCostAdjusted(SeedType theSeedType) {
             return 50;
         case SeedType::SEED_PEASHOOTER: // 100 -> 75
         case SeedType::SEED_KERNELPULT: // 100 -> 75
-        case SeedType::SEED_SQUASH:
         case SeedType::SEED_GARLIC:
         case SeedType::SEED_ZOMBIE_POLEVAULTER:     // 100 -> 75
         case SeedType::SEED_ZOMBIE_JACK_IN_THE_BOX: // 100 -> 75
         case SeedType::SEED_ZOMBIE_SNORKEL:
             return 75;
+        case SeedType::SEED_SQUASH:  // 75 -> 100 削弱窝瓜!!!
         case SeedType::SEED_TALLNUT: // 125 -> 100
         case SeedType::SEED_CACTUS:
         case SeedType::SEED_SPLITPEA: // 125 -> 100
@@ -1408,26 +1409,24 @@ int Plant::GetCostAdjusted(SeedType theSeedType) {
         case SeedType::SEED_ZOMBIE_BUNGEE:
         case SeedType::SEED_ZOMBIE_LADDER: // 150 -> 125
         case SeedType::SEED_ZOMBIE_JALAPENO_HEAD:
-        case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD:
-        case SeedType::SEED_ZOMBIE_TALLNUT_HEAD:
             return 125;
         case SeedType::SEED_REPEATER:
         case SeedType::SEED_ZOMBIE_FOOTBALL:
         case SeedType::SEED_ZOMBIE_DANCER:
         case SeedType::SEED_ZOMBONI:
         case SeedType::SEED_ZOMBIE_CATAPULT: // 200 -> 150
+        case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD:
+        case SeedType::SEED_ZOMBIE_TALLNUT_HEAD:
             return 150;
         case SeedType::SEED_DOOMSHROOM: // 125 -> 175
         case SeedType::SEED_STARFRUIT:
         case SeedType::SEED_ZOMBIE_POGO: // 225 -> 175
             return 175;
+        case SeedType::SEED_THREEPEATER:
         case SeedType::SEED_MELONPULT:         // 300 -> 200
         case SeedType::SEED_ZOMBIE_FLAG:       // 300 -> 200
         case SeedType::SEED_ZOMBIE_GARGANTUAR: // 250 -> 200
             return 200;
-        case SeedType::SEED_THREEPEATER: // 200 -> 225
-            return 225;
-            // return 250;
         default:
             return GetPlantDefinition(theSeedType).mSeedCost;
     }
@@ -1435,7 +1434,7 @@ int Plant::GetCostAdjusted(SeedType theSeedType) {
     return GetPlantDefinition(theSeedType).mSeedCost;
 }
 
-int Plant::GetRefreshTimeAdjusted(SeedType theSeedType) {
+int Plant::GetRefreshTimeBalanced(SeedType theSeedType) {
     if (Challenge::IsMPSeedType(theSeedType)) {
         switch (theSeedType) {
             case SeedType::SEED_ZOMBONI:
@@ -1459,7 +1458,7 @@ int Plant::GetRefreshTimeAdjusted(SeedType theSeedType) {
             case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD:
             case SeedType::SEED_ZOMBIE_TALLNUT_HEAD:
                 return 3000;
-            case SeedType::SEED_ZOMBIE_POLEVAULTER: // 30 -> 15
+                //            case SeedType::SEED_ZOMBIE_POLEVAULTER: // 30 -> 15
             case SeedType::SEED_ZOMBIE_NEWSPAPER:
             case SeedType::SEED_ZOMBIE_SCREEN_DOOR:
             case SeedType::SEED_ZOMBIE_JACK_IN_THE_BOX: // 30 -> 15

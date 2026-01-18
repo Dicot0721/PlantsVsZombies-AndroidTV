@@ -583,12 +583,6 @@ public class EnhanceActivity extends MainActivity {
         if (sharedPreferences.getBoolean("jumpLogo", false))
             nativeJumpLogo();
 
-        if (sharedPreferences.getBoolean("gMoreZombieSeeds", false))
-            nativeMoreZombieSeeds();
-
-        if (sharedPreferences.getBoolean("gVSBalanceAdjustment", false))
-            nativeVSBalanceAdjustment();
-
         if (sharedPreferences.getBoolean("heavyWeaponAccel", false))
             nativeHeavyWeaponAccel();
 

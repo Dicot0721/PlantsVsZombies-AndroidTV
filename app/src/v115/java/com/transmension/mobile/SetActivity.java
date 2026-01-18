@@ -965,34 +965,6 @@ public class SetActivity extends Activity {
             return true;
         });
 
-        final CheckBox moreZombieSeeds = new CheckBox(this);
-        moreZombieSeeds.setText(R.string.addon_ingame_moreZombieSeeds);
-        moreZombieSeeds.setChecked(sharedPreferences.getBoolean("gMoreZombieSeeds", false));
-        moreZombieSeeds.setOnCheckedChangeListener((compoundButton, bool) -> sharedPreferences.edit().putBoolean("gMoreZombieSeeds", bool).apply());
-        moreZombieSeeds.setLayoutParams(matchWrapParams);
-        moreZombieSeeds.setOnLongClickListener(v -> {
-            new AlertDialog.Builder(SetActivity.this)
-                    .setTitle(R.string.addon_ingame_moreZombieSeeds)
-                    .setMessage(R.string.addon_ingame_moreZombieSeeds_info)
-                    .setPositiveButton("OK", null)
-                    .create().show();
-            return true;
-        });
-
-        final CheckBox VSBalanceAdjustment = new CheckBox(this);
-        VSBalanceAdjustment.setText(R.string.addon_ingame_VSBalanceAdjustment);
-        VSBalanceAdjustment.setChecked(sharedPreferences.getBoolean("gVSBalanceAdjustment", false));
-        VSBalanceAdjustment.setOnCheckedChangeListener((compoundButton, bool) -> sharedPreferences.edit().putBoolean("gVSBalanceAdjustment", bool).apply());
-        VSBalanceAdjustment.setLayoutParams(matchWrapParams);
-        VSBalanceAdjustment.setOnLongClickListener(v -> {
-            new AlertDialog.Builder(SetActivity.this)
-                    .setTitle(R.string.addon_ingame_VSBalanceAdjustment)
-                    .setMessage(R.string.addon_ingame_VSBalanceAdjustment_info)
-                    .setPositiveButton("OK", null)
-                    .create().show();
-            return true;
-        });
-
         container.addView(manualCollect);
         container.addView(canShop);
         container.addView(showCoolDown);
@@ -1005,8 +977,6 @@ public class SetActivity extends Activity {
         container.addView(useXboxMusics);
         container.addView(useOpenSL);
         container.addView(jumpLogo);
-        container.addView(moreZombieSeeds);
-        container.addView(VSBalanceAdjustment);
         try {
             Class.forName("com.android.support.CkHomuraMenu");
             final CheckBox useMenu = new CheckBox(this);

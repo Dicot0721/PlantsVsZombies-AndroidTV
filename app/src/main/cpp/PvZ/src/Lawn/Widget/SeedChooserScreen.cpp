@@ -233,7 +233,7 @@ bool SeedChooserScreen::SeedNotAllowedToPick(SeedType theSeedType) {
         if (mBoard->StageHasRoof() && theSeedType == SeedType::SEED_FLOWERPOT) {
             return false;
         }
-        if (gMoreZombieSeeds && theSeedType == SeedType::SEED_BLOVER) {
+        if (gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode && theSeedType == SeedType::SEED_BLOVER) {
             return false;
         }
     }
@@ -243,7 +243,7 @@ bool SeedChooserScreen::SeedNotAllowedToPick(SeedType theSeedType) {
 
 SeedType SeedChooserScreen::GetZombieSeedType(SeedType theSeedType) {
     int aSeedType = theSeedType + SEED_ZOMBIE_GRAVESTONE;
-    if (gMoreZombieSeeds) { // 解锁更多对战僵尸
+    if (gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode) { // 解锁更多对战僵尸
         return aSeedType >= NUM_ZOMBIE_SEED_IN_CHOOSER ? SEED_NONE : (SeedType)aSeedType;
     } else {
         return aSeedType > SEED_ZOMBIE_GARGANTUAR ? SEED_NONE : (SeedType)aSeedType;
@@ -552,7 +552,7 @@ void SeedChooserScreen::GetSeedPositionInChooser(int theIndex, int &x, int &y) {
     int aCol = theIndex % NumColumns();
     x = 53 * aCol + 22;
     if (mIsZombieChooser) {
-        if (aRow == 3 && !gMoreZombieSeeds) {
+        if (aRow == 3 && (gVSSetupAddonWidget && !gVSSetupAddonWidget->mExtraSeedsMode)) {
             x = 53 * aCol + 48;
         }
     }
@@ -909,7 +909,7 @@ int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, int theMoveDirection) {
         if (theNumSeed == 19 && theMoveDirection == 3) {
             return 19;
         }
-        if (gMoreZombieSeeds) { // 拓展僵尸选卡适配键盘选取
+        if (gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode) { // 拓展僵尸选卡适配键盘选取
             aNumRow = 5;
         }
     }
@@ -954,7 +954,7 @@ int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, int theMoveDirection) {
 }
 
 void SeedChooserScreen::Draw(Graphics *g) {
-    if (mIsZombieChooser && gMoreZombieSeeds) {
+    if (mIsZombieChooser && gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode) {
         if (mApp->GetDialog(DIALOG_STORE) || mApp->GetDialog(DIALOG_ALMANAC))
             return;
 

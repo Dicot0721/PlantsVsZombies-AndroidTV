@@ -160,10 +160,6 @@
     <string name="secondplayer_edit_toast">请按下新的按键</string>
     <string name="addon_ingame_jumplogo_info">加快进入游戏的速度。</string>
     <string name="addon_ingame_jumplogo">跳过Logo加载界面</string>
-    <string name="addon_ingame_moreZombieSeeds_info">解锁更多对战僵尸。</string>
-    <string name="addon_ingame_moreZombieSeeds">拓展僵尸选卡</string>
-    <string name="addon_ingame_VSBalanceAdjustment_info">平衡部分对战卡片的花费和冷却。</string>
-    <string name="addon_ingame_VSBalanceAdjustment">对战平衡调整</string>
     <string name="addon_custom_balance_adjustment"><![CDATA[自定义平衡调整->]]></string>
     <string name="addon_custom_balance_adjustment_info">ⓘ自定义修改卡片的费用和冷却。</string>
     <string name="custom_balance_title">自定义平衡设置</string>
