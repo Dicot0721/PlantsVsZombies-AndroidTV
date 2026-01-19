@@ -524,7 +524,6 @@ public:
     bool StageHasPool();
     bool StageHasRoof();
     bool StageHas6Rows();
-    bool ZombieIsAddInRow(ZombieType theZombieType);
     Zombie *AddZombieInRow(ZombieType theZombieType, int theRow, int theFromWave, bool theIsRustle);
     Zombie *AddZombie(ZombieType theZombieType, int theFromWave, bool theIsRustle);
     void DoPlantingEffects(int theGridX, int theGridY, Plant *thePlant);

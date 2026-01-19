@@ -984,15 +984,6 @@ void Board::DrawFog(Sexy::Graphics *g) {
     old_Board_DrawFog(this, g);
 }
 
-bool Board::ZombieIsAddInRow(ZombieType theZombieType) {
-    if (!mApp->IsVSMode())
-        return false;
-
-    return theZombieType == ZOMBIE_FLAG || theZombieType == ZOMBIE_DANCER || theZombieType == ZOMBIE_DUCKY_TUBE || theZombieType == ZOMBIE_SNORKEL || theZombieType == ZOMBIE_ZAMBONI
-        || theZombieType == ZOMBIE_BOBSLED || theZombieType == ZOMBIE_DOLPHIN_RIDER || theZombieType == ZOMBIE_JACK_IN_THE_BOX || theZombieType == ZOMBIE_BALLOON || theZombieType == ZOMBIE_DIGGER
-        || theZombieType == ZOMBIE_CATAPULT || theZombieType == ZOMBIE_GARGANTUAR;
-}
-
 Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromWave, bool theIsRustle) {
     // 修复蹦极僵尸出现时草丛也会摇晃
     if (theZombieType == ZombieType::ZOMBIE_BUNGEE)
@@ -1019,7 +1010,7 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
                 event.data1[0] = uint8_t(theZombieType);
                 event.data1[1] = uint8_t(theRow);
-                event.data1[2] = uint8_t(theFromWave);
+                event.data1[2] = int8_t(theFromWave);
                 event.data1[3] = uint8_t(theIsRustle);
 
                 event.data2 = uint16_t(mZombies.DataArrayGetID(aZombie));
@@ -1209,12 +1200,16 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED:
         case EVENT_SERVER_BOARD_PLANT_DO_SPECIAL:
         case EVENT_SERVER_BOARD_LAWNMOWER_START:
+        case EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL:
             return sizeof(U16_Event);
 
-        // --- 僵尸冻结、巨人投掷小鬼 ---
+        // --- 僵尸冻结、巨人投掷小鬼、僵尸状态计数 ---
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP:
         case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW:
+        case EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER:
             return sizeof(U16U16_Event);
+
+        // --- 撑杆跳跃、巨人开始投掷,锤击 ---
         case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT:
         case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW:
         case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH:
@@ -1518,10 +1513,13 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
             U8x4U16Buf32x2_Event *eventZombieAdd = reinterpret_cast<U8x4U16Buf32x2_Event *>(event);
             ZombieType aZombieType = ZombieType(eventZombieAdd->data1[0]);
+            uint8_t aRow = eventZombieAdd->data1[1];
+            int8_t aFromWave = eventZombieAdd->data1[2];
+            uint8_t aIsRustle = eventZombieAdd->data1[3];
             if (aZombieType == ZombieType::ZOMBIE_IMP || aZombieType == ZombieType::ZOMBIE_BACKUP_DANCER) // 移除主机生成时向客机同步传递的小鬼和舞伴
                 return;
             tcp_connected = false;
-            Zombie *aZombie = AddZombieInRow(aZombieType, eventZombieAdd->data1[1], eventZombieAdd->data1[2], eventZombieAdd->data1[3]);
+            Zombie *aZombie = AddZombieInRow(aZombieType, aRow, aFromWave, aIsRustle);
             serverZombieIDMap.emplace(eventZombieAdd->data2, uint16_t(mZombies.DataArrayGetID(aZombie)));
             tcp_connected = true;
             float aVelX = eventZombieAdd->data3[0].f32;
@@ -1690,6 +1688,28 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 aZombie->StartWalkAnim(20);
             }
         } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER: {
+            U16U16_Event *eventZombiePhaseCounter = reinterpret_cast<U16U16_Event *>(event);
+            uint16_t serverZombieID = eventZombiePhaseCounter->data1;
+            uint16_t clientZombieID;
+            uint16_t serverZombiePhaseCounter = eventZombiePhaseCounter->data2;
+            Zombie *aZombie = nullptr;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                aZombie->mPhaseCounter = serverZombiePhaseCounter;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL: {
+            U16_Event *eventZombieDoSpecial = reinterpret_cast<U16_Event *>(event);
+            uint16_t serverZombieID = eventZombieDoSpecial->data;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                tcp_connected = false;
+                aZombie->DoSpecial();
+                tcp_connected = true;
+            }
+        } break;
         case EVENT_SERVER_BOARD_LAWNMOWER_START: {
             U16_Event *eventLawnMowerStart = reinterpret_cast<U16_Event *>(event);
             uint16_t aRow = eventLawnMowerStart->data;
@@ -1699,7 +1719,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                     old_LawnMower_StartMower(aLawnMower);
                 }
             }
-        }
+        } break;
         case EVENT_SERVER_BOARD_TAKE_SUNMONEY: {
             U16_Event *event1 = (U16_Event *)event;
             mSunMoney1 = event1->data;

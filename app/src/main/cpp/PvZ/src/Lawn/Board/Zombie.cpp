@@ -829,40 +829,31 @@ void Zombie::BurnRow(int theRow) {
 }
 
 void Zombie::UpdateZombieJalapenoHead() {
-    // 修复辣椒僵尸被魅惑后爆炸依然伤害植物的BUG
-
     if (!mHasHead)
         return;
 
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) { // 修复对战辣椒瞬爆
-        if (mZombiePhase == PHASE_ZOMBIE_NORMAL) {
+    if (mApp->IsVSMode()) { // 修复对战辣椒瞬爆
+        if (tcp_connected)
+            return;
+
+        if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_NORMAL) {
             int aDistance = 275 + Rand(175);
-            mPhaseCounter = (int)(aDistance / mVelX) * ZOMBIE_LIMP_SPEED_FACTOR;
+            mPhaseCounter = int(aDistance / mVelX) * ZOMBIE_LIMP_SPEED_FACTOR;
             mZombiePhase = PHASE_JALAPENO_PRE_BURN;
+
+            if (tcpClientSocket >= 0) {
+                U16U16_Event event;
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER;
+                event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+                event.data2 = uint16_t(mPhaseCounter);
+                sendWithSize(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
+            }
             return;
         }
     }
 
     if (mPhaseCounter == 0) {
-        mApp->PlayFoley(FoleyType::FOLEY_JALAPENO_IGNITE);
-        mApp->PlayFoley(FoleyType::FOLEY_JUICY);
-        mBoard->DoFwoosh(mRow);
-        mBoard->ShakeBoard(3, -4);
-
-        if (mMindControlled) // 魅惑修复
-        {
-            BurnRow(mRow);
-        } else {
-            Plant *aPlant = nullptr;
-            while (mBoard->IteratePlants(aPlant)) {
-                // Rect aPlantRect = aPlant->GetPlantRect(); // 原版代码遗留，但该变量并未被使用，故注释
-                if (aPlant->mRow == mRow && !aPlant->NotOnGround()) {
-                    mBoard->mPlantsEaten++;
-                    aPlant->Die();
-                }
-            }
-        }
-        DieNoLoot();
+        DoSpecial();
     }
 }
 
@@ -2985,4 +2976,43 @@ void Zombie::UpdateYuckyFace() {
         return;
     }
     return old_Zombie_UpdateYuckyFace(this);
+}
+
+void Zombie::DoSpecial() {
+    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
+        if (tcp_connected)
+            return;
+
+        if (tcpClientSocket >= 0) {
+            U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};
+            sendWithSize(tcpClientSocket, &event, sizeof(U16_Event), 0);
+        }
+    }
+
+    switch (mZombieType) {
+        case ZombieType::ZOMBIE_JALAPENO_HEAD: {
+            mApp->PlayFoley(FoleyType::FOLEY_JALAPENO_IGNITE);
+            mApp->PlayFoley(FoleyType::FOLEY_JUICY);
+            mBoard->DoFwoosh(mRow);
+            mBoard->ShakeBoard(3, -4);
+
+            if (mMindControlled) { // 修复辣椒僵尸被魅惑后爆炸依然伤害植物的BUG
+                BurnRow(mRow);
+            } else {
+                Plant *aPlant = nullptr;
+                while (mBoard->IteratePlants(aPlant)) {
+                    // Rect aPlantRect = aPlant->GetPlantRect(); // 原版代码遗留，但该变量并未被使用，故注释
+                    if (aPlant->mRow == mRow && !aPlant->NotOnGround()) {
+                        mBoard->mPlantsEaten++;
+                        aPlant->Die();
+                    }
+                }
+            }
+
+            DieNoLoot();
+            break;
+        }
+        default:
+            break;
+    }
 }
