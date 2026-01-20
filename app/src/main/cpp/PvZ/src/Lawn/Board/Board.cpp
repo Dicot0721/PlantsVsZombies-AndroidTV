@@ -995,13 +995,13 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
 
         Zombie *aZombie = old_Board_AddZombieInRow(this, theZombieType, theRow, theFromWave, theIsRustle);
         if (tcpClientSocket >= 0) {
-            if (theZombieType == ZOMBIE_BUNGEE) {
-                GamepadControls *theGamepad = mGamepadControls1->mIsZombie ? mGamepadControls1 : mGamepadControls2;
-                int theTargetCol = PixelToGridXKeepOnBoard(theGamepad->mCursorPositionX, theGamepad->mCursorPositionY);
+            if (theZombieType == ZombieType::ZOMBIE_BUNGEE) {
+                GamepadControls *aGamepad = mGamepadControls1->mIsZombie ? mGamepadControls1 : mGamepadControls2;
+                int aTargetCol = PixelToGridXKeepOnBoard(aGamepad->mCursorPositionX, aGamepad->mCursorPositionY);
                 U16Buf32Buf32_Event event;
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD;
                 event.data1 = uint16_t(mZombies.DataArrayGetID(aZombie));
-                event.data2.u8x4.u8_1 = uint8_t(theTargetCol);
+                event.data2.u8x4.u8_1 = uint8_t(aTargetCol);
                 event.data2.u8x4.u8_2 = uint8_t(theRow);
                 event.data3.f32 = aZombie->mAltitude;
                 sendWithSize(tcpClientSocket, &event, sizeof(U16Buf32Buf32_Event), 0);
@@ -1516,7 +1516,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             uint8_t aRow = eventZombieAdd->data1[1];
             int8_t aFromWave = eventZombieAdd->data1[2];
             uint8_t aIsRustle = eventZombieAdd->data1[3];
-            if (aZombieType == ZombieType::ZOMBIE_IMP || aZombieType == ZombieType::ZOMBIE_BACKUP_DANCER) // 移除主机生成时向客机同步传递的小鬼和舞伴
+            if (aZombieType == ZombieType::ZOMBIE_BACKUP_DANCER) // 移除主机生成时向客机同步传递的小鬼和舞伴
                 return;
             tcp_connected = false;
             Zombie *aZombie = AddZombieInRow(aZombieType, aRow, aFromWave, aIsRustle);
@@ -1529,20 +1529,20 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD: {
             U16Buf32Buf32_Event *eventZombieBungeeAdd = reinterpret_cast<U16Buf32Buf32_Event *>(event);
 
-            int theTargetCol = eventZombieBungeeAdd->data2.u8x4.u8_1;
-            int theRow = eventZombieBungeeAdd->data2.u8x4.u8_2;
+            int aTargetCol = eventZombieBungeeAdd->data2.u8x4.u8_1;
+            int aRow = eventZombieBungeeAdd->data2.u8x4.u8_2;
 
             tcp_connected = false;
-            Zombie *aZombie = AddZombieInRow(ZOMBIE_BUNGEE, theRow, 0, false);
+            Zombie *aZombie = AddZombieInRow(ZOMBIE_BUNGEE, aRow, 0, false);
             serverZombieIDMap.emplace(eventZombieBungeeAdd->data1, uint16_t(mZombies.DataArrayGetID(aZombie)));
             tcp_connected = true;
 
             aZombie->mAltitude = eventZombieBungeeAdd->data3.f32;
-            aZombie->mTargetCol = theTargetCol;
-            aZombie->SetRow(theRow);
-            aZombie->mPosX = GridToPixelX(theTargetCol, theRow);
-            aZombie->mPosY = aZombie->GetPosYBasedOnRow(theRow);
-            aZombie->mRenderOrder = Board::MakeRenderOrder(RENDER_LAYER_GRAVE_STONE, theRow, 7);
+            aZombie->mTargetCol = aTargetCol;
+            aZombie->SetRow(aRow);
+            aZombie->mPosX = GridToPixelX(aTargetCol, aRow);
+            aZombie->mPosY = aZombie->GetPosYBasedOnRow(aRow);
+            aZombie->mRenderOrder = Board::MakeRenderOrder(RENDER_LAYER_GRAVE_STONE, aRow, 7);
 
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT: {
@@ -1624,15 +1624,18 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW: {
             U16U16U16Buf32Buf32_Event *eventImpThrow = reinterpret_cast<U16U16U16Buf32Buf32_Event *>(event);
-            uint16_t serverZombieID = eventImpThrow->data1;
-            uint16_t clientZombieID;
-            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
-                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+            uint16_t serverGargantuarID = eventImpThrow->data1;
+            uint16_t serverImpID = eventImpThrow->data2;
+            uint16_t clientGargantuarID;
+            uint16_t clientImpID;
+            if (homura::FindInMap(serverZombieIDMap, serverImpID, clientImpID) && homura::FindInMap(serverZombieIDMap, serverGargantuarID, clientGargantuarID)) {
+                Zombie *aGargantuar = mZombies.DataArrayGet(clientGargantuarID);
+                Zombie *aZombieImp = mZombies.DataArrayGet(clientImpID);
                 float aOffsetDistance = eventImpThrow->data4.f32;
                 tcp_connected = false;
-                Zombie *aZombieImp = aZombie->ThrowAZombieImp(aOffsetDistance);
+                if (aGargantuar && aZombieImp)
+                    aZombieImp->ThrowZombieImp(aGargantuar, aOffsetDistance);
                 tcp_connected = true;
-                serverZombieIDMap.emplace(eventImpThrow->data2, uint16_t(mZombies.DataArrayGetID(aZombieImp)));
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT: {

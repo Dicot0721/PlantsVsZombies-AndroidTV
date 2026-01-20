@@ -653,11 +653,8 @@ void Zombie::UpdateZombieGargantuar() {
     }
 }
 
-Zombie *Zombie::ThrowAZombieImp(float theOffsetDistance) {
+void Zombie::ThrowZombieImp(Zombie *theThrowerZombie, float theOffsetDistance) {
     float aThrowingDistance = mPosX - 360.0f;
-    Zombie *aZombieImp = mBoard->AddZombie(ZombieType::ZOMBIE_IMP, mFromWave, false);
-    if (aZombieImp == nullptr)
-        return nullptr;
 
     float aMinThrowDistance = 40.0f;
     if (mBoard->StageHasRoof()) {
@@ -670,31 +667,29 @@ Zombie *Zombie::ThrowAZombieImp(float theOffsetDistance) {
         aThrowingDistance -= theOffsetDistance;
     }
 
-    aZombieImp->mPosX = mPosX - 133.0f;
-    aZombieImp->mPosY = GetPosYBasedOnRow(mRow);
-    aZombieImp->SetRow(mRow);
-    aZombieImp->mVariant = false;
-    aZombieImp->mAltitude = 88.0f;
-    aZombieImp->mRenderOrder = mRenderOrder + 1;
-    aZombieImp->mZombiePhase = ZombiePhase::PHASE_IMP_GETTING_THROWN;
-    aZombieImp->mScaleZombie = mScaleZombie;
-    aZombieImp->mBodyHealth *= mScaleZombie * mScaleZombie;
-    aZombieImp->mBodyMaxHealth *= mScaleZombie * mScaleZombie;
+    mPosX = mPosX - 133.0f;
+    mPosY = GetPosYBasedOnRow(theThrowerZombie->mRow);
+    SetRow(theThrowerZombie->mRow);
+    mVariant = false;
+    mAltitude = 88.0f;
+    mRenderOrder = mRenderOrder + 1;
+    mZombiePhase = ZombiePhase::PHASE_IMP_GETTING_THROWN;
+    mScaleZombie = theThrowerZombie->mScaleZombie;
+    mBodyHealth *= mScaleZombie * mScaleZombie;
+    mBodyMaxHealth *= mScaleZombie * mScaleZombie;
 
     if (mMindControlled) {
-        aZombieImp->mPosX = mPosX + mWidth;
-        aZombieImp->StartMindControlled();
-        aZombieImp->mVelX = -3.0f;
+        mPosX = mPosX + mWidth;
+        StartMindControlled();
+        mVelX = -3.0f;
     } else {
-        aZombieImp->mVelX = 3.0f;
+        mVelX = 3.0f;
     }
-    aZombieImp->mChilledCounter = mChilledCounter;
-    aZombieImp->mVelZ = 0.5f * (aThrowingDistance / aZombieImp->mVelX) * THOWN_ZOMBIE_GRAVITY;
-    aZombieImp->PlayZombieReanim("anim_thrown", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 18.0f);
-    aZombieImp->UpdateReanim();
+    mChilledCounter = theThrowerZombie->mChilledCounter;
+    mVelZ = 0.5f * (aThrowingDistance / mVelX) * THOWN_ZOMBIE_GRAVITY;
+    PlayZombieReanim("anim_thrown", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 18.0f);
+    UpdateReanim();
     mApp->PlayFoley(FoleyType::FOLEY_IMP);
-
-    return aZombieImp;
 }
 
 void Zombie::UpdateZombiePeaHead() {
@@ -833,6 +828,7 @@ void Zombie::UpdateZombieJalapenoHead() {
         return;
 
     if (mApp->IsVSMode()) { // 修复对战辣椒瞬爆
+        // TODO: 修复辣椒僵尸放置后概率消失
         if (tcp_connected)
             return;
 

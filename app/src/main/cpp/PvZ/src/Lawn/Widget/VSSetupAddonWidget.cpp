@@ -46,15 +46,7 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
 }
 
 VSSetupAddonWidget::~VSSetupAddonWidget() {
-    mExtraPacketsButton->mBtnNoDraw = true;
-    mExtraPacketsButton->mDisabled = true;
-    mExtraSeedsButton->mBtnNoDraw = true;
-    mExtraSeedsButton->mDisabled = true;
-    mBanModeButton->mBtnNoDraw = true;
-    mBanModeButton->mDisabled = true;
-    mBalancePatchButton->mBtnNoDraw = true;
-    mBalancePatchButton->mDisabled = true;
-    mDrawString = false;
+    SetDisable();
     gVSSetupAddonWidget = nullptr;
 }
 
