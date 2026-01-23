@@ -90,7 +90,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -409,7 +408,11 @@ public class SetActivity extends Activity {
         saveAspect.setText(R.string.addon_aspect_save);
         saveAspect.setOnClickListener(view -> {
             sharedPreferences.edit().putInt("width", widthPicker.getValue()).putInt("height", heightPicker.getValue()).putInt("scaleX", scaleSeekBar.getProgress()).putInt("scaleY", scaleSeekBar.getProgress()).putBoolean("shiLiuBiJiu", !fullscreenCheckBox.isChecked()).apply();
-            Toast.makeText(SetActivity.this, getString(R.string.addon_aspect_toast1) + (fullscreenCheckBox.isChecked() ? getString(R.string.addon_aspect_toast2) : String.format(Locale.getDefault(), "%d: %d", widthPicker.getValue(), heightPicker.getValue())) + String.format(Locale.getDefault(), getString(R.string.addon_aspect_toast3), scaleSeekBar.getProgress()), Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    SetActivity.this,
+                    fullscreenCheckBox.isChecked() ? getString(R.string.addon_aspect_toast1) : getString(R.string.addon_aspect_toast2, widthPicker.getValue(), heightPicker.getValue(), scaleSeekBar.getProgress()),
+                    Toast.LENGTH_SHORT
+            ).show();
         });
 
         CheckBox immersiveCheckBox = new CheckBox(this);
