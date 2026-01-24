@@ -29,7 +29,7 @@
     <string name="addon_keyboard_lock_info">ⓘ决定游戏内的隐藏按钮(小眼睛按钮)是否可以拖动。</string>
     <string name="addon_keyboard_longpress">方向键长按每秒连点数</string>
     <string name="addon_keyboard_longpress_info">ⓘ决定长按方向按钮时每秒触发多少次。</string>
-    <string name="addon_keyboard_set">自定义键盘按钮→</string>
+    <string name="addon_keyboard_set">自定义键盘按钮</string>
     <string name="addon_keyboard_set_info">ⓘ调节游戏键盘按钮的位置、大小、透明度、可见性。</string>
     <string name="addon_userdata_name">存档相关</string>
     <string name="addon_userdata_info">您可以在此处管理存档。</string>
@@ -48,8 +48,8 @@
     <string name="addon_userdata_autobackup">自动备份存档</string>
     <string name="addon_userdata_autobackup_info">ⓘ自动备份存档功能会保留您最近20次的存档。您可以在 “从备份恢复存档” 中使用这些存档。</string>
     <string name="addon_secondplayer_name">外接键盘</string>
-    <string name="addon_secondplayer_info">外接一把键盘后，您就能和朋友一起玩双人对战、双人结盟、双人冒险、双人小游戏、双人无尽等等。\n\n进入游戏后在任意界面按下双人模式切换按钮(默认“M键”)即可开启本模式。\n\n您可在下方查看、更改键盘的键位设置。</string>
-    <string name="addon_secondplayer_set"><![CDATA[设置双人键盘键位->]]></string>
+    <string name="addon_secondplayer_info">外接一把键盘后，您就能和朋友一起玩双人对战、双人结盟、双人冒险、双人小游戏、双人无尽等等。\n\n进入游戏后在任意界面按下双人模式切换按钮（默认“M键”）即可开启本模式。\n\n您可在下方查看、更改键盘的键位设置。</string>
+    <string name="addon_secondplayer_set">设置双人键盘键位</string>
     <string name="addon_secondplayer_set_info">ⓘ查看默认键位和更改键位。</string>
     <string name="addon_ingame_name">游戏设置</string>
     <string name="addon_ingame_info">游戏内的一些功能选项。长按某个选项可查看说明。</string>

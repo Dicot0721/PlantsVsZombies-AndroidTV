@@ -942,7 +942,7 @@ public class SetActivity extends Activity {
 
         final CheckBox useOpenSL = new CheckBox(this);
         useOpenSL.setText(R.string.addon_ingame_useopensl);
-        useOpenSL.setChecked(sharedPreferences.getBoolean("useOpenSL", true));
+        useOpenSL.setChecked(sharedPreferences.getBoolean("useOpenSL", false));
         useOpenSL.setOnCheckedChangeListener((compoundButton, bool) -> sharedPreferences.edit().putBoolean("useOpenSL", bool).apply());
         useOpenSL.setLayoutParams(matchWrapParams);
         useOpenSL.setOnLongClickListener(v -> {
