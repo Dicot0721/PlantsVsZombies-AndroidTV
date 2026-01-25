@@ -1215,7 +1215,7 @@ public class SetActivity extends Activity {
                                             String readmeContent = byteArrayOutputStream.toString("UTF-8");
 
                                             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                                            builder.setTitle(String.format(getString(R.string.addon_appearance_readmetitle), pakNameToShow)); // 设置对话框标题
+                                            builder.setTitle(getString(R.string.addon_appearance_readmetitle, pakNameToShow)); // 设置对话框标题
                                             builder.setMessage(readmeContent); // 设置对话框内容
 
                                             // 添加确定按钮和取消按钮
@@ -1341,7 +1341,7 @@ public class SetActivity extends Activity {
                     fos.flush();// 刷新缓冲区
                     is.close();
                     fos.close();
-                    Toast.makeText(this, getString(R.string.addon_adventure_importlevels_toast4) + adventureNames[adventureId], Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.addon_adventure_importlevels_toast4, adventureNames[adventureId]), Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -1445,7 +1445,10 @@ public class SetActivity extends Activity {
         final Button buttonHide = new Button(this);
         PackageManager packageManager = getPackageManager();
         ComponentName set = new ComponentName(getPackageName(), SetActivityEntrance.class.getName());
-        buttonHide.setText(String.format(getString(R.string.addon_hide_self), packageManager.getComponentEnabledSetting(set) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED ? "显示" : "隐藏"));
+        buttonHide.setText(getString(
+                R.string.addon_hide_self,
+                (packageManager.getComponentEnabledSetting(set) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED) ? getString(R.string.show) : getString(R.string.hide)
+        ));
         buttonHide.setTextSize(15f);
         buttonHide.setTypeface(Typeface.DEFAULT_BOLD);
         buttonHide.setOnClickListener(view -> hideOrNot());
@@ -1615,15 +1618,15 @@ public class SetActivity extends Activity {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.addon_hide_self_title1)
                     .setMessage(R.string.addon_hide_self_message1)
-                    .setNegativeButton(R.string.addon_hide_self_back, null)
-                    .setPositiveButton(R.string.addon_hide_self_ok, (dialogInterface, i1) -> packageManager.setComponentEnabledSetting(set, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, 0))
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, (dialogInterface, i1) -> packageManager.setComponentEnabledSetting(set, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, 0))
                     .show();
         } else {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.addon_hide_self_title2)
                     .setMessage(R.string.addon_hide_self_message2)
-                    .setNegativeButton(R.string.addon_hide_self_back, null)
-                    .setPositiveButton(R.string.addon_hide_self_ok, (dialogInterface, i1) -> packageManager.setComponentEnabledSetting(set, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0))
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(android.R.string.ok, (dialogInterface, i1) -> packageManager.setComponentEnabledSetting(set, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0))
                     .show();
         }
     }

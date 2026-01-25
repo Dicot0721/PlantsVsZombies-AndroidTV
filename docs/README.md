@@ -72,6 +72,6 @@ Send the PR to branch `dev`.
 
 The source code for this project is licensed under the [GPL-3.0][GPL-3.0] license.
 
-This project is not associated with or endorsed by TRANSMENSION, PopCap or Electronic Arts.
+This project is not associated with or endorsed by Transmension, PopCap or Electronic Arts.
 
 [GPL-3.0]: https://www.gnu.org/licenses/gpl-3.0.html "GPL-3.0"
