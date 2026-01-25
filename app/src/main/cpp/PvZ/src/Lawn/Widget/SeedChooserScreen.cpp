@@ -972,18 +972,16 @@ void SeedChooserScreen::Draw(Graphics *g) {
         int aStringX = aBackgroundImage->mWidth / 2;
         TodDrawString(g, aChooserStr, aStringX, 114, *Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
 
-        int aNumSeeds = NUM_ZOMBIE_SEED_IN_CHOOSER - SEED_ZOMBIE_GRAVESTONE;
-        for (SeedType aSeedShadow = SEED_PEASHOOTER; aSeedShadow < aNumSeeds; aSeedShadow = SeedType(aSeedShadow + 1)) {
+        int aNumSeeds = NUM_ZOMBIE_SEED_IN_CHOOSER;
+        for (SeedType aSeedShadow = SEED_ZOMBIE_GRAVESTONE; aSeedShadow < aNumSeeds; aSeedShadow = SeedType(aSeedShadow + 1)) {
             int x, y;
-            GetSeedPositionInChooser(aSeedShadow, x, y);
+            GetSeedPositionInChooser(GetSeedPacketIndex(aSeedShadow), x, y);
 
             if (HasPacket(aSeedShadow, mIsZombieChooser)) {
                 ChosenSeed &aChosenSeed = mChosenSeeds[GetSeedPacketIndex(aSeedShadow)];
 
-                SeedType aZombieSeedType = GetZombieSeedType(aSeedShadow);
-
                 if (aChosenSeed.mSeedState != SEED_IN_CHOOSER) {
-                    DrawPacket(g, x, y, aZombieSeedType, SEED_NONE, 0, CanPickNow() ? 55 : 25, &Color::White, true, true);
+                    DrawPacket(g, x, y, aSeedShadow, SEED_NONE, 0, CanPickNow() ? 55 : 25, &Color::White, true, true);
                 }
             } else {
                 g->DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
@@ -1086,29 +1084,35 @@ void SeedChooserScreen::Draw(Graphics *g) {
             }
         }
 
+        DrawBanIcon(g);
+
         mToolTip1->Draw(g);
         mToolTip2->Draw(g);
     } else {
         old_SeedChooserScreen_Draw(this, g);
+        DrawBanIcon(g);
+    }
+}
+
+void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
+    if (!gVSSetupAddonWidget)
+        return;
+
+    if (gVSSetupAddonWidget->mBanMode) {
+        Graphics aBanGraphics(*g);
+        aBanGraphics.mTransX = 0;
+        aBanGraphics.mTransY = 0;
+        aBanGraphics.SetColor(Color(205, 0, 0, 255));
+        aBanGraphics.SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        aBanGraphics.DrawString(TodStringTranslate("[VS_UI_BAN_PHASE_BIG]"), 440, 110);
     }
 
-    if (gVSSetupAddonWidget) {
-        if (gVSSetupAddonWidget->mBanMode) {
-            Graphics aBanGraphics(*g);
-            aBanGraphics.mTransX = 0;
-            aBanGraphics.mTransY = 0;
-            aBanGraphics.SetColor(Color(205, 0, 0, 255));
-            aBanGraphics.SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-            aBanGraphics.DrawString(TodStringTranslate("[VS_UI_BAN_PHASE_BIG]"), 440, 110);
-        }
-
-        for (int i = 0; i < NUM_ZOMBIE_SEED_TYPES; i++) {
-            if (gVSSetupAddonWidget->mBannedSeed[i].mSeedState == BannedSeedState::SEED_BANNED) {
-                if ((mIsZombieChooser && gVSSetupAddonWidget->mBannedSeed[i].mChosenPlayerIndex == 1) || (!mIsZombieChooser && gVSSetupAddonWidget->mBannedSeed[i].mChosenPlayerIndex == 0)) {
-                    int x = gVSSetupAddonWidget->mBannedSeed[i].mX;
-                    int y = gVSSetupAddonWidget->mBannedSeed[i].mY;
-                    g->DrawImage(*IMAGE_MP_TARGETS_X, x + 5, y + 5);
-                }
+    for (int i = 0; i < NUM_ZOMBIE_SEED_TYPES; i++) {
+        if (gVSSetupAddonWidget->mBannedSeed[i].mSeedState == BannedSeedState::SEED_BANNED) {
+            if ((mIsZombieChooser && gVSSetupAddonWidget->mBannedSeed[i].mChosenPlayerIndex == 1) || (!mIsZombieChooser && gVSSetupAddonWidget->mBannedSeed[i].mChosenPlayerIndex == 0)) {
+                int x = gVSSetupAddonWidget->mBannedSeed[i].mX;
+                int y = gVSSetupAddonWidget->mBannedSeed[i].mY;
+                g->DrawImage(*IMAGE_MP_TARGETS_X, x + 5, y + 5);
             }
         }
     }

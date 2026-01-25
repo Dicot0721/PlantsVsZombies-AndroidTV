@@ -179,6 +179,7 @@ public:
     static SeedType GetZombieIndexBySeedType(SeedType theSeedType);
     int GetNextSeedInDir(int theNumSeed, int theMoveDirection);
     void Draw(Sexy::Graphics *g);
+    void DrawBanIcon(Sexy::Graphics *g);
     SeedType SeedHitTest(int x, int y);
 
     void MouseMove(int x, int y);
