@@ -654,7 +654,7 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             gVSSetupAddonWidget->mExtraPacketsMode = eventButtonInit->data1;
             gVSSetupAddonWidget->mExtraSeedsMode = eventButtonInit->data2;
             gVSSetupAddonWidget->mBanMode = eventButtonInit->data3;
-            gVSSetupAddonWidget->mBalancePatchMode = eventButtonInit->data4;
+            mApp->mPlayerInfo->mVSBalancePatchMode = eventButtonInit->data4;
         } break;
         default:
             break;

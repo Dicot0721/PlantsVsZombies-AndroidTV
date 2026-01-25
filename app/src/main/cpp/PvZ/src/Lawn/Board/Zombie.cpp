@@ -126,7 +126,7 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
             break;
 
         case ZombieType::ZOMBIE_TRASHCAN:
-            if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBalancePatchMode) {
+            if (mApp->mPlayerInfo->mVSBalancePatchMode) {
                 mShieldHealth = 1100; // 800 -> 1100
             }
             break;
@@ -293,12 +293,20 @@ void Zombie::UpdateYeti() {
     if (mMindControlled || !mHasHead || IsDeadOrDying())
         return;
 
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) { // 修复对战雪人露头就逃跑
+    if (mApp->IsVSMode()) { // 修复对战雪人露头就逃跑
         if (mZombiePhase == PHASE_YETI_PRE_RUN) {
             mPhaseCounter = RandRangeInt(1500, 2000);
             mHasObject = true;
             mZombiePhase = PHASE_ZOMBIE_NORMAL;
-            return;
+        } else if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_NORMAL) {
+            if (mPhaseCounter == 500 && tcpClientSocket >= 0) {
+                U8U8U16U16_Event event;
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER;
+                event.data1 = uint8_t(mZombiePhase);
+                event.data3 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+                event.data4 = uint16_t(mPhaseCounter);
+                sendWithSize(tcpClientSocket, &event, sizeof(U8U8U16U16_Event), 0);
+            }
         }
     }
 
@@ -828,22 +836,10 @@ void Zombie::UpdateZombieJalapenoHead() {
         return;
 
     if (mApp->IsVSMode()) { // 修复对战辣椒瞬爆
-        // TODO: 修复辣椒僵尸放置后概率消失
-        if (tcp_connected)
-            return;
-
         if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_NORMAL) {
             int aDistance = 275 + Rand(175);
             mPhaseCounter = int(aDistance / mVelX) * ZOMBIE_LIMP_SPEED_FACTOR;
             mZombiePhase = PHASE_JALAPENO_PRE_BURN;
-
-            if (tcpClientSocket >= 0) {
-                U16U16_Event event;
-                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER;
-                event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
-                event.data2 = uint16_t(mPhaseCounter);
-                sendWithSize(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
-            }
             return;
         }
     }

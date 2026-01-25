@@ -1516,7 +1516,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             uint8_t aRow = eventZombieAdd->data1[1];
             int8_t aFromWave = eventZombieAdd->data1[2];
             uint8_t aIsRustle = eventZombieAdd->data1[3];
-            if (aZombieType == ZombieType::ZOMBIE_BACKUP_DANCER) // 移除主机生成时向客机同步传递的小鬼和舞伴
+            if (aZombieType == ZombieType::ZOMBIE_BACKUP_DANCER) // 移除主机生成时向客机同步传递的舞伴
                 return;
             tcp_connected = false;
             Zombie *aZombie = AddZombieInRow(aZombieType, aRow, aFromWave, aIsRustle);
@@ -1692,14 +1692,15 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER: {
-            U16U16_Event *eventZombiePhaseCounter = reinterpret_cast<U16U16_Event *>(event);
-            uint16_t serverZombieID = eventZombiePhaseCounter->data1;
+            U8U8U16U16_Event *eventZombiePhaseCounter = reinterpret_cast<U8U8U16U16_Event *>(event);
+            uint8_t serverZombiePhase = eventZombiePhaseCounter->data1;
+            uint16_t serverZombieID = eventZombiePhaseCounter->data3;
             uint16_t clientZombieID;
-            uint16_t serverZombiePhaseCounter = eventZombiePhaseCounter->data2;
-            Zombie *aZombie = nullptr;
+            uint16_t serverPhaseCounter = eventZombiePhaseCounter->data4;
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
-                aZombie->mPhaseCounter = serverZombiePhaseCounter;
+                aZombie->mZombiePhase = ZombiePhase(serverZombiePhase);
+                aZombie->mPhaseCounter = serverPhaseCounter;
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL: {

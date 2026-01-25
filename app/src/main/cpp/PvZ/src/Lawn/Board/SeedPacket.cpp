@@ -149,7 +149,7 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         switch (theSeedType) {
             case SEED_SUNSHROOM:
-                if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBalancePatchMode) { // 清除阳光菇的初始冷却
+                if (mApp->mPlayerInfo->mVSBalancePatchMode) { // 清除阳光菇的初始冷却
                     mRefreshTime = 0;
                     mRefreshing = false;
                     mActive = true;
