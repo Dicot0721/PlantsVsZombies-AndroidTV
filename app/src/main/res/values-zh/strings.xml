@@ -76,7 +76,9 @@
     <string name="addon_ingame_usemenu_info">主要方便修改者调试游戏的工具，觉得影响游戏平衡可以关掉。</string>
     <string name="addon_ingame_positionautofix_info">在玩家松开手指后将光标归位到格点中央。</string>
     <string name="addon_ingame_useopensl">OpenSL 音频库</string>
-    <string name="addon_ingame_useopensl_info">使用 OpenSL ES For Android 替换游戏默认使用的 AudioTrack API，能够有效减少游戏声音的延迟。</string>
+    <string name="addon_ingame_useopensl_info">使用 OpenSL ES For Android 替换游戏默认使用的 AudioTrack API，也许能够缩短游戏音效的延迟。</string>
+    <string name="addon_ingame_jumplogo">跳过 Logo 加载界面</string>
+    <string name="addon_ingame_jumplogo_info">加快进入游戏的速度。</string>
     <string name="addon_adventure_name">难度选择</string>
     <string name="addon_adventure_info">选择冒险模式的难度。</string>
     <string name="addon_adventure_normallevel">原版冒险模式难度</string>
@@ -131,7 +133,7 @@
     <string name="addon_hide_self_message1">\n确定显示吗？</string>
     <string name="addon_hide_self_message2">隐藏后，您依然可以长按游戏桌面图标打开附加设置。\n\n确定隐藏吗？</string>
     <string name="secondplayer_title">外接键盘键位设置</string>
-    <string name="secondplayer_info">\n1P默认按键为:\n光标移动-↑←↓→\n切植物栏-小键盘0和小键盘.\n种植植物-回车或小键盘1\n铲除植物-小键盘2\n开始游戏-小键盘3\n\n\n2P默认按键为:\n光标移动-WASD\n切植物栏-Q和E\n种植植物-J\n铲除植物-K\n放置黄油-L\n\n\n双人模式切换-M\n\n高级暂停-T\n\n普通暂停-ESC\n</string>
+    <string name="secondplayer_info">\n1P默认按键为:\n光标移动-↑←↓→\n切植物栏-小键盘0和小键盘.\n种植植物-回车或小键盘1\n铲除植物-小键盘2\n开始游戏-小键盘3\n\n2P默认按键为:\n光标移动-WASD\n切植物栏-Q和E\n种植植物-J\n铲除植物-K\n放置黄油-L\n\n双人模式切换-M\n\n高级暂停-T\n\n普通暂停-ESC\n</string>
     <string name="secondplayer_preferencesIntro0">双人模式切换</string>
     <string name="secondplayer_preferencesIntro1">P1 种植植物</string>
     <string name="secondplayer_preferencesIntro2">P1 铲除植物</string>
@@ -155,8 +157,6 @@
     <string name="secondplayer_default">默认</string>
     <string name="secondplayer_edit">重新设置</string>
     <string name="secondplayer_edit_toast">请按下新的按键</string>
-    <string name="addon_ingame_jumplogo_info">加快进入游戏的速度。</string>
-    <string name="addon_ingame_jumplogo">跳过 Logo 加载界面</string>
     <string name="addon_custom_balance_adjustment">自定义平衡调整</string>
     <string name="addon_custom_balance_adjustment_info">ⓘ自定义修改卡片的费用和冷却。</string>
     <string name="custom_balance_title">自定义平衡设置</string>
