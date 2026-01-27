@@ -31,8 +31,9 @@ struct TodAllocator {
 
     void Free(void *theItem, int theItemSize);
 };
-extern int gNumGlobalAllocators;
-extern TodAllocator gGlobalAllocators[MAX_GLOBAL_ALLOCATORS];
+
+inline int gNumGlobalAllocators = 0;
+inline TodAllocator gGlobalAllocators[MAX_GLOBAL_ALLOCATORS];
 
 template <typename T>
 class TodListNode {
@@ -50,17 +51,18 @@ public:
     int mSize;
     TodAllocator *mpAllocator;
 
-    inline T RemoveHead() {
+    T RemoveHead() {
         TodListNode<T> *aHead = mHead;
         TodListNode<T> *aSecNode = aHead->mNext;
         mHead = aSecNode;
-        if (aSecNode)
+        if (aSecNode) {
             aSecNode->mPrev = nullptr;
-        else
+        } else {
             mTail = nullptr;
+        }
 
         T aVal = aHead->mValue;
-        mSize--;
+        --mSize;
         mpAllocator->Free(aHead, sizeof(TodListNode<T>));
         return aVal;
     }

@@ -28,18 +28,20 @@ namespace Sexy {
 class Graphics;
 class MemoryImage;
 }; // namespace Sexy
-// using namespace Sexy;
 
 class LawnApp;
+
 class ReanimCacheImageVariation {
 public:
     SeedType mSeedType;
     DrawVariation mDrawVariation;
     Sexy::MemoryImage *mImage;
 };
-typedef TodList<ReanimCacheImageVariation> ImageVariationList;
+
+using ImageVariationList = TodList<ReanimCacheImageVariation>;
 
 class Reanimation;
+
 class ReanimatorCache {
 public:
     ImageVariationList mImageVariationList;

@@ -70,17 +70,16 @@ void ReanimatorCache::ReanimatorCacheInitialize() {
 }
 
 void ReanimatorCache::ReanimatorCacheDispose() {
-    for (int i = 0; i < SeedType::NUM_SEED_TYPES; i++)
-        delete mPlantImages[i];
+    for (auto *mPlantImage : mPlantImages)
+        delete mPlantImage;
     while (mImageVariationList.mSize != 0) {
         ReanimCacheImageVariation aImageVariation = mImageVariationList.RemoveHead();
-        if (aImageVariation.mImage != nullptr)
-            delete aImageVariation.mImage;
+        delete aImageVariation.mImage;
     }
-    for (int i = 0; i < LawnMowerType::NUM_MOWER_TYPES; i++)
-        delete mLawnMowers[i];
-    for (int i = 0; i < ZombieType::NUM_ZOMBIE_TYPES; i++)
-        delete mZombieImages[i];
+    for (auto *mLawnMower : mLawnMowers)
+        delete mLawnMower;
+    for (auto *mZombieImage : mZombieImages)
+        delete mZombieImage;
 }
 
 void ReanimatorCache::DrawCachedPlant(Graphics *graphics, float thePosX, float thePosY, SeedType theSeedType, DrawVariation theDrawVariation) {

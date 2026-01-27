@@ -959,7 +959,7 @@ bool LoadGameMain() {
     Sexy_MemoryImage_GetBitsAddr = dlsym(handle, "_ZN4Sexy11MemoryImage7GetBitsEv");
     Sexy_MemoryImage_CreateAddr = dlsym(handle, "_ZN4Sexy11MemoryImage6CreateEii");
     Sexy_MemoryImage_SetImageModeAddr = dlsym(handle, "_ZN4Sexy11MemoryImage12SetImageModeEbb");
-    Sexy_MemoryImage_DeleteAddr = dlsym(handle, "_ZN4Sexy11MemoryImageD0Ev");
+    Sexy_MemoryImage_DeleteAddr = dlsym(handle, "_ZN4Sexy11MemoryImageD2Ev");
     Sexy_MemoryImage_WriteToPngAddr = dlsym(handle, "_ZN4Sexy11MemoryImage10WriteToPngESs");
     Sexy_MemoryImage_WriteToJPEGAddr = dlsym(handle, "_ZN4Sexy11MemoryImage11WriteToJPEGESs");
     Sexy_MemoryImage_BitsChangedAddr = dlsym(handle, "_ZN4Sexy11MemoryImage11BitsChangedEv");
