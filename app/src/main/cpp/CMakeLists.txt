@@ -10,7 +10,7 @@ string(APPEND CMAKE_CXX_FLAGS
         " -Werror=unused-result"
 )
 
-if (CMAKE_BUILD_TYPE STREQUAL "Release")
+if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_C_VISIBILITY_PRESET hidden)
     set(CMAKE_CXX_VISIBILITY_PRESET hidden) # 隐藏非 inline 符号
     set(CMAKE_VISIBILITY_INLINES_HIDDEN ON) # 隐藏 inline 符号
