@@ -48,11 +48,8 @@ SLAndroidSimpleBufferQueueItf playerBufferQueue;
 // Buffer
 [[maybe_unused]] unsigned char buffer[8192];
 
-} // namespace
-
-
 // Callback to handle buffer queue events
-static void playerCallback(SLAndroidSimpleBufferQueueItf bq, void *context) {
+void playerCallback(SLAndroidSimpleBufferQueueItf bq, void *context) {
     {
         std::lock_guard lock{mtx};
         bufferConsumed = true;
@@ -60,73 +57,79 @@ static void playerCallback(SLAndroidSimpleBufferQueueItf bq, void *context) {
     cv.notify_all(); // 通知主线程
 }
 
-static void waitForBufferConsumption() {
+void waitForBufferConsumption() {
     std::unique_lock lock{mtx};
     cv.wait(lock, [] { return bufferConsumed; }); // 阻塞等待
     bufferConsumed = false;
 }
 
-static void setup(int sampleRate, int channels, int bits) {
-    slCreateEngine(&engineObject, 0, nullptr, 0, nullptr, nullptr);
-    (*engineObject)->Realize(engineObject, SL_BOOLEAN_FALSE);
-    (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineEngine);
-    (*engineEngine)->CreateOutputMix(engineEngine, &outputMixObject, 0, nullptr, nullptr);
-    (*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE);
+namespace opensl {
+    void setup(int sampleRate, int channels, int bits) {
+        slCreateEngine(&engineObject, 0, nullptr, 0, nullptr, nullptr);
+        (*engineObject)->Realize(engineObject, SL_BOOLEAN_FALSE);
+        (*engineObject)->GetInterface(engineObject, SL_IID_ENGINE, &engineEngine);
+        (*engineEngine)->CreateOutputMix(engineEngine, &outputMixObject, 0, nullptr, nullptr);
+        (*outputMixObject)->Realize(outputMixObject, SL_BOOLEAN_FALSE);
 
-    SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 1};
-    SLDataFormat_PCM format_pcm = {
-        SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_44_1, SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16, SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_LITTLEENDIAN};
-    SLDataSource audioSrc = {&loc_bufq, &format_pcm};
+        SLDataLocator_AndroidSimpleBufferQueue loc_bufq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 1};
+        SLDataFormat_PCM format_pcm = {
+            SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_44_1, SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16, SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, SL_BYTEORDER_LITTLEENDIAN};
+        SLDataSource audioSrc = {&loc_bufq, &format_pcm};
 
-    // Configure audio sink
-    SLDataLocator_OutputMix loc_outmix = {SL_DATALOCATOR_OUTPUTMIX, outputMixObject};
-    SLDataSink audioSnk = {&loc_outmix, nullptr};
+        // Configure audio sink
+        SLDataLocator_OutputMix loc_outmix = {SL_DATALOCATOR_OUTPUTMIX, outputMixObject};
+        SLDataSink audioSnk = {&loc_outmix, nullptr};
 
-    // Create audio player
-    const SLInterfaceID ids[1] = {SL_IID_BUFFERQUEUE};
-    const SLboolean req[1] = {SL_BOOLEAN_TRUE};
-    (*engineEngine)->CreateAudioPlayer(engineEngine, &playerObject, &audioSrc, &audioSnk, 1, ids, req);
-    (*playerObject)->Realize(playerObject, SL_BOOLEAN_FALSE);
-    (*playerObject)->GetInterface(playerObject, SL_IID_PLAY, &playerPlay);
-    (*playerObject)->GetInterface(playerObject, SL_IID_BUFFERQUEUE, &playerBufferQueue);
-    (*playerBufferQueue)->RegisterCallback(playerBufferQueue, playerCallback, nullptr);
-}
-
-// Shutdown and cleanup
-static void shutdown() {
-    if (playerObject != nullptr) {
-        (*playerObject)->Destroy(playerObject);
-        playerObject = nullptr;
-        playerPlay = nullptr;
-        playerBufferQueue = nullptr;
+        // Create audio player
+        const SLInterfaceID ids[1] = {SL_IID_BUFFERQUEUE};
+        const SLboolean req[1] = {SL_BOOLEAN_TRUE};
+        (*engineEngine)->CreateAudioPlayer(engineEngine, &playerObject, &audioSrc, &audioSnk, 1, ids, req);
+        (*playerObject)->Realize(playerObject, SL_BOOLEAN_FALSE);
+        (*playerObject)->GetInterface(playerObject, SL_IID_PLAY, &playerPlay);
+        (*playerObject)->GetInterface(playerObject, SL_IID_BUFFERQUEUE, &playerBufferQueue);
+        (*playerBufferQueue)->RegisterCallback(playerBufferQueue, playerCallback, nullptr);
     }
 
-    // Destroy the output mix object
-    if (outputMixObject != nullptr) {
-        (*outputMixObject)->Destroy(outputMixObject);
-        outputMixObject = nullptr;
+    // Shutdown and cleanup
+    void shutdown() {
+        if (playerObject != nullptr) {
+            (*playerObject)->Destroy(playerObject);
+            playerObject = nullptr;
+            playerPlay = nullptr;
+            playerBufferQueue = nullptr;
+        }
+
+        // Destroy the output mix object
+        if (outputMixObject != nullptr) {
+            (*outputMixObject)->Destroy(outputMixObject);
+            outputMixObject = nullptr;
+        }
+
+        // Destroy the engine object
+        if (engineObject != nullptr) {
+            (*engineObject)->Destroy(engineObject);
+            engineObject = nullptr;
+            engineEngine = nullptr;
+        }
     }
 
-    // Destroy the engine object
-    if (engineObject != nullptr) {
-        (*engineObject)->Destroy(engineObject);
-        engineObject = nullptr;
-        engineEngine = nullptr;
+    void play() {
+        if (playerPlay != nullptr) {
+            (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PLAYING);
+        }
     }
-}
 
-static void play() {
-    if (playerPlay != nullptr) {
-        (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PLAYING);
+    // Stop playback
+    void stop() {
+        if (playerPlay != nullptr) {
+            (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_STOPPED);
+        }
     }
-}
 
-// Stop playback
-static void stop() {
-    if (playerPlay != nullptr) {
-        (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_STOPPED);
-    }
-}
+} // namespace opensl
+
+} // namespace
+
 
 // 写入音频数据到音频流
 void AudioWrite(const void *data, int dataSize) {
@@ -140,8 +143,8 @@ void Native::AudioOutput::initialize() {
 
 bool Native::AudioOutput::setup(int sampleRate, int channels, int bits) {
     bool result = old_Native_AudioOutput_setup(this, sampleRate, channels, bits);
-    ::setup(sampleRate, channels, bits);
-    ::play();
+    opensl::setup(sampleRate, channels, bits);
+    opensl::play();
     // int *mAudioOutput = *(int **)(*(uint32_t *)mNativeApp + 188);
     *(uint32_t *)(*(uint32_t *)mNativeApp + 188) = 0;
 
@@ -149,8 +152,8 @@ bool Native::AudioOutput::setup(int sampleRate, int channels, int bits) {
 }
 
 void Native::AudioOutput::shutdown() {
-    ::stop();
-    ::shutdown();
+    opensl::stop();
+    opensl::shutdown();
     old_Native_AudioOutput_shutdown(this);
 }
 
