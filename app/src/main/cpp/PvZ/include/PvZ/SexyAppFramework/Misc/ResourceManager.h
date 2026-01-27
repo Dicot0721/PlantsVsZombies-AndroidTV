@@ -53,8 +53,8 @@ protected:
     }; // 大小30个整数
 
 public:
-    int GetSoundThrow(const pvzstl::string &result, const pvzstl::string &theId) {
-        return reinterpret_cast<int (*)(const pvzstl::string &, const pvzstl::string &)>(Sexy_ResourceManager_GetSoundThrowAddr)(result, theId);
+    int GetSoundThrow(pvzstl::string &result, const pvzstl::string &theId) {
+        return reinterpret_cast<int (*)(pvzstl::string &, const pvzstl::string &)>(Sexy_ResourceManager_GetSoundThrowAddr)(result, theId);
     }
 };
 
