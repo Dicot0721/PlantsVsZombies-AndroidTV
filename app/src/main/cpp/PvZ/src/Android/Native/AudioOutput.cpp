@@ -17,8 +17,7 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "PvZ/Android/OpenSL.h"
-#include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/Android/Native/AudioOutput.h"
 
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
@@ -26,8 +25,6 @@
 
 #include <condition_variable>
 #include <mutex>
-
-using namespace Native;
 
 namespace {
 
@@ -95,19 +92,6 @@ static void setup(int sampleRate, int channels, int bits) {
     (*playerBufferQueue)->RegisterCallback(playerBufferQueue, playerCallback, nullptr);
 }
 
-static void play() {
-    if (playerPlay != nullptr) {
-        (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PLAYING);
-    }
-}
-
-// Stop playback
-static void stop() {
-    if (playerPlay != nullptr) {
-        (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_STOPPED);
-    }
-}
-
 // Shutdown and cleanup
 static void shutdown() {
     if (playerObject != nullptr) {
@@ -131,35 +115,47 @@ static void shutdown() {
     }
 }
 
+static void play() {
+    if (playerPlay != nullptr) {
+        (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_PLAYING);
+    }
+}
+
+// Stop playback
+static void stop() {
+    if (playerPlay != nullptr) {
+        (*playerPlay)->SetPlayState(playerPlay, SL_PLAYSTATE_STOPPED);
+    }
+}
+
 // 写入音频数据到音频流
 void AudioWrite(const void *data, int dataSize) {
     (*playerBufferQueue)->Enqueue(playerBufferQueue, data, dataSize);
     waitForBufferConsumption();
 }
 
-void Native_AudioOutput_initialize(Native::AudioOutput *audioOutput) {
-    old_Native_AudioOutput_initialize(audioOutput);
+void Native::AudioOutput::initialize() {
+    old_Native_AudioOutput_initialize(this);
 }
 
-bool Native_AudioOutput_setup(Native::AudioOutput *audioOutput, int sampleRate, int channels, int bits) {
-    bool result = old_Native_AudioOutput_setup(audioOutput, sampleRate, channels, bits);
-    setup(sampleRate, channels, bits);
-    play();
-    Native::NativeApp *mNativeApp = audioOutput->mNativeApp;
+bool Native::AudioOutput::setup(int sampleRate, int channels, int bits) {
+    bool result = old_Native_AudioOutput_setup(this, sampleRate, channels, bits);
+    ::setup(sampleRate, channels, bits);
+    ::play();
     // int *mAudioOutput = *(int **)(*(uint32_t *)mNativeApp + 188);
     *(uint32_t *)(*(uint32_t *)mNativeApp + 188) = 0;
 
     return result;
 }
 
-void Native_AudioOutput_shutdown(Native::AudioOutput *audioOutput) {
-    old_Native_AudioOutput_shutdown(audioOutput);
-    stop();
-    shutdown();
+void Native::AudioOutput::shutdown() {
+    ::stop();
+    ::shutdown();
+    old_Native_AudioOutput_shutdown(this);
 }
 
-int Native_AudioOutput_write(Native::AudioOutput *audioOutput, const void *a2, int a3) {
+int Native::AudioOutput::write(const void *data, int dataSize) {
     // return old_Native_AudioOutput_write(audioOutput,thePlayerIndex,a3);
-    AudioWrite(a2, a3);
-    return a3;
+    AudioWrite(data, dataSize);
+    return dataSize;
 }

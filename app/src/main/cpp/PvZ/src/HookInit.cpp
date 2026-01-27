@@ -20,7 +20,7 @@
 #include "PvZ/HookInit.h"
 #include "Homura/HookFunc.h"
 #include "PvZ/Android/IntroVideo.h"
-#include "PvZ/Android/OpenSL.h"
+#include "PvZ/Android/Native/AudioOutput.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/Coin.h"
@@ -686,8 +686,8 @@ void InitVTableHookFunction() {
 }
 
 void InitOpenSL() {
-    homura::HookFunction(Native_AudioOutput_setupAddr, &Native_AudioOutput_setup, &old_Native_AudioOutput_setup);
-    homura::HookFunction(Native_AudioOutput_shutdownAddr, &Native_AudioOutput_shutdown, &old_Native_AudioOutput_shutdown);
+    homura::HookFunction(Native_AudioOutput_setupAddr, &Native::AudioOutput::setup, &old_Native_AudioOutput_setup);
+    homura::HookFunction(Native_AudioOutput_shutdownAddr, &Native::AudioOutput::shutdown, &old_Native_AudioOutput_shutdown);
     // MSHookFunction(Native_AudioOutput_writeAddr,(void *) Native_AudioOutput_write,(void **) &old_Native_AudioOutput_write);
     homura::HookFunction(j_AGAudioWriteAddr, &AudioWrite, nullptr);
 }

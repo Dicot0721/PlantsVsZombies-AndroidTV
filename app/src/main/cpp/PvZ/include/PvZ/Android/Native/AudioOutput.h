@@ -22,7 +22,10 @@
 
 #include <jni.h>
 
+void AudioWrite(const void *data, int dataSize);
+
 namespace Native {
+
 class NativeApp;
 
 class AudioOutput {
@@ -30,8 +33,24 @@ public:
     NativeApp *mNativeApp;
     JNIEnv *mEnv;
     bool mUnkBool;
+
+    void initialize();
+
+    bool setup(int sampleRate, int channels, int bits);
+
+    void shutdown();
+
+    int write(const void *data, int dataSize);
 };
+
 } // namespace Native
 
+inline void (*old_Native_AudioOutput_initialize)(Native::AudioOutput *audioOutput);
+
+inline bool (*old_Native_AudioOutput_setup)(Native::AudioOutput *audioOutput, int sampleRate, int channels, int bits);
+
+inline void (*old_Native_AudioOutput_shutdown)(Native::AudioOutput *audioOutput);
+
+inline int (*old_Native_AudioOutput_write)(Native::AudioOutput *audioOutput, const void *data, int dataSize);
 
 #endif // PVZ_ANDROID_NATIVE_AUDIO_OUTPUT_H
