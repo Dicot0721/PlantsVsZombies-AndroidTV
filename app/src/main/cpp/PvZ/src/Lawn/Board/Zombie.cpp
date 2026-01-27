@@ -1036,6 +1036,8 @@ void Zombie::UpdateZombieDancer() {
                     mZombiePhase = aDancerPhase;
                     PlayZombieReanim("anim_armraise", ReanimLoopType::REANIM_LOOP, 10, 18.0f);
                     break;
+                default:
+                    break;
             }
         }
 

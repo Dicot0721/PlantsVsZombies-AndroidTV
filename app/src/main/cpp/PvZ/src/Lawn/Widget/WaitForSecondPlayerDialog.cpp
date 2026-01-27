@@ -1956,7 +1956,7 @@ void WaitForSecondPlayerDialog::MouseDown(int x, int y, int clicks) {
     if (scanned_server_count <= 0)
         return;
 
-    const int listX = 230;
+    [[maybe_unused]] const int listX = 230;
     const int listY = 180 - 30;
     const int lineH = 50;
 

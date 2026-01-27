@@ -724,6 +724,8 @@ void Plant::DoSpecial() {
 
             break;
         }
+        default:
+            break;
     }
 }
 
