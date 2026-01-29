@@ -57,7 +57,7 @@ constexpr float THOWN_ZOMBIE_GRAVITY = 0.05f;
 constexpr float CHILLED_SPEED_FACTOR = 0.4f;
 constexpr float CLIP_HEIGHT_LIMIT = -100.0f;
 constexpr float CLIP_HEIGHT_OFF = -200.0f;
-inline const Sexy::Color ZOMBIE_MINDCONTROLLED_COLOR = Sexy::Color(128, 0, 192, 255);
+constexpr Sexy::Color ZOMBIE_MINDCONTROLLED_COLOR{128, 0, 192, 255};
 
 enum ZombieAttackType {
     ATTACKTYPE_CHEW,

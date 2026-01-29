@@ -20,15 +20,11 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_GRAPHICS_COLOR_H
 #define PVZ_SEXYAPPFRAMEWORK_GRAPHICS_COLOR_H
 
-#include "PvZ/SexyAppFramework/Misc/Common.h"
-
 namespace Sexy {
 
-#pragma pack(push, 1)
-struct SexyRGBA {
+struct alignas(1) SexyRGBA {
     unsigned char b, g, r, a;
 };
-#pragma pack(pop)
 
 class Color {
 public:
@@ -40,46 +36,122 @@ public:
     static Color Black;
     static Color White;
 
-    Color();
-    Color(int theColor);
-    Color(int theColor, int theAlpha);
-    Color(int theRed, int theGreen, int theBlue);
-    Color(int theRed, int theGreen, int theBlue, int theAlpha);
-    Color(const SexyRGBA &theColor);
-    Color(const unsigned char *theElements);
-    Color(const int *theElements);
+    constexpr Color() noexcept
+        : mRed{0}
+        , mGreen{0}
+        , mBlue{0}
+        , mAlpha{255} {}
 
-    int GetRed() const;
-    int GetGreen() const;
-    int GetBlue() const;
-    int GetAlpha() const;
-    unsigned long ToInt() const;
-    SexyRGBA ToRGBA() const;
+    constexpr Color(int theColor) noexcept
+        : mRed{(theColor >> 16) & 0xFF}
+        , mGreen{(theColor >> 8) & 0xFF}
+        , mBlue{theColor & 0xFF}
+        , mAlpha{(theColor >> 24) & 0xFF} {
+        if (mAlpha == 0) {
+            mAlpha = 0xff;
+        }
+    }
 
-    int &operator[](int theIdx);
-    int operator[](int theIdx) const;
+    constexpr Color(int theColor, int theAlpha) noexcept
+        : mRed{(theColor >> 16) & 0xFF}
+        , mGreen{(theColor >> 8) & 0xFF}
+        , mBlue{theColor & 0xFF}
+        , mAlpha{theAlpha} {}
+
+    constexpr Color(int theRed, int theGreen, int theBlue) noexcept
+        : mRed{theRed}
+        , mGreen{theGreen}
+        , mBlue{theBlue}
+        , mAlpha{0xFF} {}
+
+    constexpr Color(int theRed, int theGreen, int theBlue, int theAlpha) noexcept
+        : mRed{theRed}
+        , mGreen{theGreen}
+        , mBlue{theBlue}
+        , mAlpha{theAlpha} {}
+
+    constexpr Color(const SexyRGBA &theColor) noexcept
+        : mRed{theColor.r}
+        , mGreen{theColor.g}
+        , mBlue{theColor.b}
+        , mAlpha{theColor.a} {}
+
+    constexpr Color(const unsigned char *theElements) noexcept
+        : mRed{theElements[0]}
+        , mGreen{theElements[1]}
+        , mBlue{theElements[2]}
+        , mAlpha{0xFF} {}
+
+    constexpr Color(const int *theElements) noexcept
+        : mRed{theElements[0]}
+        , mGreen{theElements[1]}
+        , mBlue{theElements[2]}
+        , mAlpha{0xFF} {}
+
+    constexpr int GetRed() const noexcept {
+        return mRed;
+    }
+
+    constexpr int GetGreen() const noexcept {
+        return mGreen;
+    }
+
+    constexpr int GetBlue() const noexcept {
+        return mBlue;
+    }
+
+    constexpr int GetAlpha() const noexcept {
+        return mAlpha;
+    }
+
+    constexpr unsigned long ToInt() const noexcept {
+        return (mAlpha << 24) | (mRed << 16) | (mGreen << 8) | (mBlue);
+    }
+
+    constexpr SexyRGBA ToRGBA() const noexcept {
+        SexyRGBA anRGBA;
+        anRGBA.r = mRed;
+        anRGBA.g = mGreen;
+        anRGBA.b = mBlue;
+        anRGBA.a = mAlpha;
+        return anRGBA;
+    }
+
+    constexpr int operator[](int theIdx) const noexcept {
+        switch (theIdx) {
+            case 0:
+                return mRed;
+            case 1:
+                return mGreen;
+            case 2:
+                return mBlue;
+            case 3:
+                return mAlpha;
+            default:
+                return 0;
+        }
+    }
+
+    friend constexpr bool operator==(const Color &theColor1, const Color &theColor2) = default;
 };
-
-bool operator==(const Color &theColor1, const Color &theColor2);
-bool operator!=(const Color &theColor1, const Color &theColor2);
 
 } // namespace Sexy
 
-inline Sexy::Color black = {0, 0, 0, 255};
+constexpr Sexy::Color black = {0, 0, 0, 255};
 
-inline Sexy::Color gray = {80, 80, 80, 255};
+constexpr Sexy::Color gray = {80, 80, 80, 255};
 
-inline Sexy::Color white = {255, 255, 255, 255};
+constexpr Sexy::Color white = {255, 255, 255, 255};
 
-inline Sexy::Color blue = {0, 255, 255, 255};
+constexpr Sexy::Color blue = {0, 255, 255, 255};
 
-inline Sexy::Color yellow = {255, 255, 0, 255};
+constexpr Sexy::Color yellow = {255, 255, 0, 255};
 
-inline Sexy::Color brown = {205, 133, 63, 255};
+constexpr Sexy::Color brown = {205, 133, 63, 255};
 
-inline Sexy::Color green = {0, 250, 154, 255};
+constexpr Sexy::Color green = {0, 250, 154, 255};
 
-inline Sexy::Color gZombatarSkinColor[] = {
+constexpr Sexy::Color gZombatarSkinColor[] = {
     {134, 147, 122, 255},
     {79, 135, 94, 255},
     {127, 135, 94, 255},
@@ -94,7 +166,7 @@ inline Sexy::Color gZombatarSkinColor[] = {
     {104, 121, 90, 255},
 };
 
-inline Sexy::Color gZombatarAccessoryColor[] = {
+constexpr Sexy::Color gZombatarAccessoryColor[] = {
     {151, 33, 33, 255},
     {199, 53, 53, 255},
     {220, 112, 47, 255},
@@ -115,7 +187,7 @@ inline Sexy::Color gZombatarAccessoryColor[] = {
     {255, 255, 255, 255},
 };
 
-inline Sexy::Color gZombatarAccessoryColor2[] = {
+constexpr Sexy::Color gZombatarAccessoryColor2[] = {
     {238, 19, 24, 255},
     {247, 89, 215, 255},
     {239, 198, 253, 255},
@@ -135,6 +207,5 @@ inline Sexy::Color gZombatarAccessoryColor2[] = {
     {159, 17, 20, 255},
     {255, 255, 255, 255},
 };
-
 
 #endif // PVZ_SEXYAPPFRAMEWORK_GRAPHICS_COLOR_H

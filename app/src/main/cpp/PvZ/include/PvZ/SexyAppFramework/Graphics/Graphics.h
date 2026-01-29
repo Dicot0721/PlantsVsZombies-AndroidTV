@@ -189,8 +189,8 @@ inline void (*old_Sexy_Graphics_PushTransform)(Sexy::Graphics *, int *, bool);
 
 inline void (*old_Sexy_Graphics_PopTransform)(Sexy::Graphics *graphics);
 
-void Sexy_Graphics_DrawImageColorized(Sexy::Graphics *graphics, Sexy::Image *image, Sexy::Color *color, int x, int y);
+void Sexy_Graphics_DrawImageColorized(Sexy::Graphics *graphics, Sexy::Image *image, const Sexy::Color *color, int x, int y);
 
-void Sexy_Graphics_DrawImageColorizedScaled(Sexy::Graphics *graphics, Sexy::Image *image, Sexy::Color *color, float x, float y, float xScaled, float yScaled);
+void Sexy_Graphics_DrawImageColorizedScaled(Sexy::Graphics *graphics, Sexy::Image *image, const Sexy::Color *color, float x, float y, float xScaled, float yScaled);
 
 #endif // PVZ_SEXYAPPFRAMEWORK_GRAPHICS_GRAPHICS_H

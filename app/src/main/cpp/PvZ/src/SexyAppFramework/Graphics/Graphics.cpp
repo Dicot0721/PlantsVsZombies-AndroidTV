@@ -32,14 +32,14 @@ void Graphics::PopTransform() {
     old_Sexy_Graphics_PopTransform(this);
 }
 
-void Sexy_Graphics_DrawImageColorized(Sexy::Graphics *g, Sexy::Image *image, Sexy::Color *color, int x, int y) {
+void Sexy_Graphics_DrawImageColorized(Sexy::Graphics *g, Sexy::Image *image, const Sexy::Color *color, int x, int y) {
     g->SetColor(*color);
     g->SetColorizeImages(true);
     g->DrawImage(image, x, y);
     g->SetColorizeImages(false);
 }
 
-void Sexy_Graphics_DrawImageColorizedScaled(Sexy::Graphics *g, Sexy::Image *image, Sexy::Color *color, float x, float y, float xScaled, float yScaled) {
+void Sexy_Graphics_DrawImageColorizedScaled(Sexy::Graphics *g, Sexy::Image *image, const Sexy::Color *color, float x, float y, float xScaled, float yScaled) {
     g->SetColor(*color);
     g->SetColorizeImages(true);
     TodDrawImageScaledF(g, image, x, y, xScaled, yScaled);
