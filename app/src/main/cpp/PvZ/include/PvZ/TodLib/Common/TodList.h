@@ -64,10 +64,12 @@ public:
     }
 
     TodListNode<T> *GetHead() noexcept {
+        assert(mHead != nullptr);
         return mHead;
     }
 
     TodListNode<T> *GetTail() noexcept {
+        assert(mTail != nullptr);
         return mTail;
     }
 
@@ -125,6 +127,7 @@ public:
     }
 
     void SetAllocator(TodAllocator *theAllocator) noexcept {
+        assert(mSize == 0);
         mpAllocator = theAllocator;
     }
 };
