@@ -72,7 +72,7 @@ void ReanimatorCache::ReanimatorCacheInitialize() {
 void ReanimatorCache::ReanimatorCacheDispose() {
     for (auto *mPlantImage : mPlantImages)
         delete mPlantImage;
-    while (mImageVariationList.mSize != 0) {
+    while (mImageVariationList.mSize > 0) {
         ReanimCacheImageVariation aImageVariation = mImageVariationList.RemoveHead();
         delete aImageVariation.mImage;
     }

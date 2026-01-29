@@ -27,7 +27,7 @@
 
 #include <cstdlib>
 
-struct TodAllocator;
+class TodAllocator;
 
 namespace Sexy {
 class Graphics;

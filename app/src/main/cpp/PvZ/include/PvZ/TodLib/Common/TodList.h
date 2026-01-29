@@ -20,51 +20,112 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_LIST_H
 #define PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_LIST_H
 
+#include <cassert>
+
 constexpr int MAX_GLOBAL_ALLOCATORS = 128;
 
-struct TodAllocator {
+class TodAllocator {
+public:
     void *mFreeList;
     void *mBlockList;
     int mGrowCount;
     int mTotalItems;
     int mItemSize;
 
-    void Free(void *theItem, int theItemSize);
+    void Initialize(int theGrowCount, int theItemSize) noexcept;
+    void Dispose() noexcept;
+    void FreeAll() noexcept;
+    void *Alloc(int theItemSize);
+    void *Calloc(int theItemSize);
+    void Free(void *theItem, int theItemSize) noexcept;
+    void Grow();
+    bool IsPointerFromAllocator(void *theItem) const noexcept;
+    bool IsPointerOnFreeList(void *theItem) const noexcept;
 };
 
-inline int gNumGlobalAllocators = 0;
-inline TodAllocator gGlobalAllocators[MAX_GLOBAL_ALLOCATORS];
-
 template <typename T>
-class TodListNode {
+struct TodListNode {
 public:
     T mValue;
-    TodListNode<T> *mNext;
-    TodListNode<T> *mPrev;
+    TodListNode *mNext;
+    TodListNode *mPrev;
 };
 
 template <typename T>
 class TodList {
 public:
-    TodListNode<T> *mHead;
-    TodListNode<T> *mTail;
-    int mSize;
-    TodAllocator *mpAllocator;
+    TodListNode<T> *mHead = nullptr;
+    TodListNode<T> *mTail = nullptr;
+    int mSize = 0;
+    TodAllocator *mpAllocator = nullptr;
+
+    ~TodList() {
+        RemoveAll();
+    }
+
+    TodListNode<T> *GetHead() noexcept {
+        return mHead;
+    }
+
+    TodListNode<T> *GetTail() noexcept {
+        return mTail;
+    }
 
     T RemoveHead() {
-        TodListNode<T> *aHead = mHead;
-        TodListNode<T> *aSecNode = aHead->mNext;
+        auto *aHead = mHead;
+        auto *aSecNode = aHead->mNext;
         mHead = aSecNode;
         if (aSecNode) {
             aSecNode->mPrev = nullptr;
         } else {
             mTail = nullptr;
         }
-
         T aVal = aHead->mValue;
         --mSize;
         mpAllocator->Free(aHead, sizeof(TodListNode<T>));
         return aVal;
+    }
+
+    TodListNode<T> *RemoveAt(TodListNode<T> *theNode) noexcept {
+        if (theNode->mPrev != nullptr) {
+            theNode->mPrev->mNext = theNode->mNext;
+        } else {
+            mHead = theNode->mNext;
+        }
+
+        if (theNode->mNext != nullptr) {
+            theNode->mNext->mPrev = theNode->mPrev;
+        } else {
+            mTail = theNode->mPrev;
+        }
+
+        --mSize;
+        mpAllocator->Free(theNode, sizeof(TodListNode<T>));
+        return theNode->mNext;
+    }
+
+    TodListNode<T> *Find(const T &theItem) {
+        for (auto *aNode = mHead; aNode != nullptr; aNode = aNode->mNext) {
+            if (aNode->mValue == theItem) {
+                return aNode;
+            }
+        }
+        return nullptr;
+    }
+
+    void RemoveAll() noexcept {
+        for (auto *aNode = mHead; aNode != nullptr;) {
+            auto *temp = aNode;
+            aNode = aNode->mNext;
+            mpAllocator->Free(temp, sizeof(TodListNode<T>));
+        }
+        mSize = 0;
+        mHead = nullptr;
+        mTail = nullptr;
+    }
+
+    void SetAllocator(TodAllocator *theAllocator) noexcept {
+        mpAllocator = theAllocator;
     }
 };
 
