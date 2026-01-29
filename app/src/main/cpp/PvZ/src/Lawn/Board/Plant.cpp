@@ -316,7 +316,7 @@ void Plant::Draw(Sexy::Graphics *g) {
     g->SetDrawMode(Graphics::DRAWMODE_NORMAL);
     int theCelRow = 0;
     float aOffsetX = 0.0f;
-    float aOffsetY = PlantDrawHeightOffset(mBoard, 0, mSeedType, mPlantCol, mRow);
+    float aOffsetY = PlantDrawHeightOffset(mBoard, nullptr, mSeedType, mPlantCol, mRow);
     if (IsFlying(mSeedType) && mSquished) {
         aOffsetY += 30.0f;
     }

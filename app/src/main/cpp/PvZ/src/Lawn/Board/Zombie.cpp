@@ -1250,7 +1250,7 @@ void Zombie::RiseFromGrave(int theGridX, int theGridY) {
     if (mBoard->mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
         // if (old_ZombieTypeCanGoInPool(mZombieType)) {
         DieNoLoot();
-        mBoard->AddZombieInRow(mZombieType, theGridY, mBoard->mCurrentWave, 1);
+        mBoard->AddZombieInRow(mZombieType, theGridY, mBoard->mCurrentWave, true);
         return;
         // }
     }

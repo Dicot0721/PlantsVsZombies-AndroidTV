@@ -106,7 +106,7 @@ void MailScreen::ButtonDepress(int theId) {
 
 
 namespace {
-constexpr int mMailTrigger = 20;
+constexpr int MAIL_TRIGGER_DISTANCE = 20;
 int mMailTouchDownX;
 int mMailTouchDownY;
 } // namespace
@@ -119,10 +119,11 @@ void MailScreen::MouseDown(int x, int y, int theClickCount) {
 void MailScreen::MouseDrag(int x, int y) {}
 
 void MailScreen::MouseUp(int x, int y) {
-    if (mMailTouchDownX - x > mMailTrigger) {
-        KeyDown(39, 0, 0);
-    } else if (x - mMailTouchDownX > mMailTrigger) {
+    const int distance = x - mMailTouchDownX;
+    if (distance > MAIL_TRIGGER_DISTANCE) {
         KeyDown(37, 0, 0);
+    } else if (-distance > MAIL_TRIGGER_DISTANCE) {
+        KeyDown(39, 0, 0);
     } else if (mMailTouchDownX < 400) {
         KeyDown(37, 0, 0);
     } else {

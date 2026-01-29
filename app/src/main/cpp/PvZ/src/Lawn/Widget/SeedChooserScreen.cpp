@@ -100,7 +100,7 @@ void SeedChooserScreen::_constructor(bool theIsZombieChooser) {
 
     if (mGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_WALLNUT) {
         ChosenSeed *theChosenSeed = &(mChosenSeeds[SeedType::SEED_WALLNUT]);
-        theChosenSeed->mX = mBoard->GetSeedPacketPositionX(0, 0, 0);
+        theChosenSeed->mX = mBoard->GetSeedPacketPositionX(0, 0, false);
         theChosenSeed->mY = 8;
         theChosenSeed->mEndX = theChosenSeed->mX;
         theChosenSeed->mEndY = theChosenSeed->mY;
@@ -747,7 +747,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         }
     }
 
-    if (HasPacket(SeedType::SEED_IMITATER, 0) && !mApp->IsVSMode() && !mIsZombieChooser) {
+    if (HasPacket(SeedType::SEED_IMITATER, false) && !mApp->IsVSMode() && !mIsZombieChooser) {
         int mImitaterPositionX = 0;
         int mImitaterPositionY = 0;
         GetSeedPositionInChooser(SeedType::SEED_IMITATER, mImitaterPositionX, mImitaterPositionY);
@@ -849,14 +849,8 @@ void SeedChooserScreen::MouseUp(int x, int y) {
             ButtonDepress(SeedChooserScreen_ViewLawn);
             break;
         case SeedChooserTouchState::SeedChooser:
-            if (mIsZombieChooser) {
-                GameButtonDown(BUTTONCODE_A, 1);
-            } else if (m1PChoosingSeeds) {
-                if (mApp->IsCoopMode()) {
-                    GameButtonDown(BUTTONCODE_A, 0);
-                } else {
-                    GameButtonDown(BUTTONCODE_A, 1);
-                }
+            if (!mIsZombieChooser && m1PChoosingSeeds && mApp->IsCoopMode()) {
+                GameButtonDown(BUTTONCODE_A, 0);
             } else {
                 GameButtonDown(BUTTONCODE_A, 1);
             }

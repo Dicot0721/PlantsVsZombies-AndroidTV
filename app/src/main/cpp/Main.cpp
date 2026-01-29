@@ -845,8 +845,8 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
         return;
     }
 
-    float &aX = (aIsPlayer2 == true) ? gGamepadP2VelX : gGamepadP1VelX;
-    float &aY = (aIsPlayer2 == true) ? gGamepadP2VelY : gGamepadP1VelY;
+    float &aX = aIsPlayer2 ? gGamepadP2VelX : gGamepadP1VelX;
+    float &aY = aIsPlayer2 ? gGamepadP2VelY : gGamepadP1VelY;
     if (is_key_down) {
         switch (aButtonCode) {
             case GamepadButton::BUTTONCODE_B:

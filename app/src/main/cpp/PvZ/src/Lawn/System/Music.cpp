@@ -358,7 +358,7 @@ void __Music::UpdateMusicBurst2() {
         mMusicInterface->SetSongVolume(MusicFile::MUSIC_FILE_MAIN_MUSIC, aDrumsJumpOrder * mPauseVolume);
         mMusicInterface->SetSongVolume(MusicFile::MUSIC_FILE_DRUMS_NIGHTMOONGRAINS, aFadeTrackVolume * mPauseVolume);
         if (aPackedOrderMain != -1) {
-            mMusicInterface->PlayMusic(mCurMusicFileDrums, aPackedOrderMain, 0);
+            mMusicInterface->PlayMusic(mCurMusicFileDrums, aPackedOrderMain, false);
         }
     }
 }

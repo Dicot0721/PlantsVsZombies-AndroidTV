@@ -503,8 +503,8 @@ void DrawSeedPacket(Sexy::Graphics *g,
 }
 
 
-void SeedPacket::WasPlanted(int player) {
-    old_SeedPacket_WasPlanted(this, player);
+void SeedPacket::WasPlanted(int thePlayerIndex) {
+    old_SeedPacket_WasPlanted(this, thePlayerIndex);
     if (tcpClientSocket >= 0) {
         U8U8_Event event = {{EventType::EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED}, uint8_t(mIndex), mSeedBank == mBoard->mSeedBankLeft};
         sendWithSize(tcpClientSocket, &event, sizeof(U8U8_Event), 0);

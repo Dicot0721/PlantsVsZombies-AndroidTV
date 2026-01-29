@@ -1064,7 +1064,7 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
             char server_ip[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, &recv_addr.sin_addr, server_ip, sizeof(server_ip));
 
-            time_t now = time(NULL);
+            time_t now = time(nullptr);
             bool found = false;
 
             // 更新已存在的server
@@ -1101,7 +1101,7 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
     }
 
     // 检查超时
-    time_t current_time = time(NULL);
+    time_t current_time = time(nullptr);
     for (int i = 0; i < scanned_server_count;) {
         if (difftime(current_time, servers[i].last_seen) > UDP_TIMEOUT) {
 
@@ -1939,7 +1939,7 @@ uint32_t WaitForSecondPlayerDialog::ReadBE32(const uint8_t *p) {
 void WaitForSecondPlayerDialog::Resize(int theX, int theY, int theWidth, int theHeight) {}
 
 
-void WaitForSecondPlayerDialog::MouseDown(int x, int y, int clicks) {
+void WaitForSecondPlayerDialog::MouseDown(int x, int y, int theClickCount) {
     // MODE3：点选服务器房间
     if (mUIMode == UIMode::MODE3_SERVER) {
         if (!mServerConnected)

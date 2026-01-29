@@ -245,7 +245,7 @@ public:
     void Update();
     void Draw(Sexy::Graphics *g);
     void Resize(int theX, int theY, int theWidth, int theHeight);
-    void MouseDown(int x, int y, int count);
+    void MouseDown(int x, int y, int theClickCount);
     void CreateRoom();
     void JoinRoom();
     void UdpBroadcastRoom();

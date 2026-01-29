@@ -85,7 +85,7 @@ public:
     Graphics(const Graphics &theGraphics) {
         CreateGraphics(theGraphics);
     }
-    Graphics(Image *theDestImage = NULL) {
+    Graphics(Image *theDestImage = nullptr) {
         CreateImage(theDestImage);
     }
 
@@ -95,7 +95,7 @@ public:
     void CreateGraphics(const Graphics &theGraphics) {
         reinterpret_cast<void (*)(Graphics *, const Graphics &)>(Sexy_Graphics_GraphicsAddr)(this, theGraphics);
     }
-    void CreateImage(Image *theDestImage = NULL) {
+    void CreateImage(Image *theDestImage = nullptr) {
         reinterpret_cast<void (*)(Graphics *, Image *)>(Sexy_Graphics_Graphics2Addr)(this, theDestImage);
     }
     ~Graphics() {

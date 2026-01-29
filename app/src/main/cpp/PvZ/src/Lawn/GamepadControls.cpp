@@ -337,7 +337,7 @@ void GamepadControls::UpdatePreviewReanim() {
         InvalidatePreviewReanim();
         RenderLayer aRenderLayer = mIsZombie ? RENDER_LAYER_ZOMBIE : RENDER_LAYER_PLANT;
         int aRenderOrder = Board::MakeRenderOrder(aRenderLayer, aGridY, 100);
-        float theDrawHeightOffset = PlantDrawHeightOffset(mBoard, 0, aSeedType, aGridX, aGridY);
+        float theDrawHeightOffset = PlantDrawHeightOffset(mBoard, nullptr, aSeedType, aGridX, aGridY);
         if (mIsZombie) {
             ZombieType aZombieType = Challenge::IZombieSeedTypeToZombieType(aSeedType);
             switch (aZombieType) {
@@ -642,7 +642,7 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
             } else {
                 for (int i = 0; i != 6; ++i) {
                     if (mBoard->CanPlantAt(mGridX, i, mSelectedSeedType) == PlantingReason::PLANTING_OK) {
-                        float offset = PlantDrawHeightOffset(mBoard, 0, mSelectedSeedType, mGridX, i);
+                        float offset = PlantDrawHeightOffset(mBoard, nullptr, mSelectedSeedType, mGridX, i);
                         g->DrawImage(mPreviewImage, 0, offset + (i - mGridY) * 85);
                     }
                 }

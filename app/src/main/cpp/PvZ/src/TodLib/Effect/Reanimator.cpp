@@ -22,6 +22,8 @@
 #include "PvZ/Lawn/Widget/MainMenu.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
+
+#include <format>
 #include <regex>
 
 bool Reanimation::DrawTrack(Sexy::Graphics *g, int theTrackIndex, int theRenderGroup, TodTriangleGroup *theTriangleGroup) {
@@ -137,15 +139,10 @@ void Reanimation_SetZombatarReanim(Reanimation *zombatarReanim) {
 void Reanimation_SetZombatarHats(Reanimation *zombatarReanim, unsigned char hats, unsigned char hatsColor) {
     Reanimation_HideTrackByPrefix(zombatarReanim, "hats", true);
     if (hats != 255) {
-        char hatsChar[] = "hats_00";
-        int hatsLength = strlen(hatsChar);
-        if (hatsLength >= 2) {
-            // 将数字转换为字符串并替换最后两个字符
-            snprintf(&hatsChar[hatsLength - 2], 3, "%02d", hats); // %02d 确保数字有两位，不足则补零
-        }
-        Reanimation_HideTrackByPrefix(zombatarReanim, hatsChar, false);
+        std::string hatsChar = std::format("hats_{:02}", hats);
+        Reanimation_HideTrackByPrefix(zombatarReanim, hatsChar.c_str(), false);
         if (hatsColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::HAT, hats)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(hatsChar);
+            int theTrackIndex = zombatarReanim->FindTrackIndex(hatsChar.c_str());
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[hatsColor];
         }
@@ -156,15 +153,10 @@ void Reanimation_SetZombatarHats(Reanimation *zombatarReanim, unsigned char hats
 void Reanimation_SetZombatarHair(Reanimation *zombatarReanim, unsigned char hair, unsigned char hairColor) {
     Reanimation_HideTrackByPrefix(zombatarReanim, "hair", true);
     if (hair != 255) {
-        char hairChar[] = "hair_00";
-        int hairLength = strlen(hairChar);
-        if (hairLength >= 2) {
-            // 将数字转换为字符串并替换最后两个字符
-            snprintf(&hairChar[hairLength - 2], 3, "%02d", hair); // %02d 确保数字有两位，不足则补零
-        }
-        Reanimation_HideTrackByPrefix(zombatarReanim, hairChar, false);
+        std::string hairChar = std::format("hair_{:02}", hair);
+        Reanimation_HideTrackByPrefix(zombatarReanim, hairChar.c_str(), false);
         if (hairColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::HAIR, hair)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(hairChar);
+            int theTrackIndex = zombatarReanim->FindTrackIndex(hairChar.c_str());
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor[hairColor];
         }
@@ -175,15 +167,10 @@ void Reanimation_SetZombatarHair(Reanimation *zombatarReanim, unsigned char hair
 void Reanimation_SetZombatarFHair(Reanimation *zombatarReanim, unsigned char facialHair, unsigned char facialHairColor) {
     Reanimation_HideTrackByPrefix(zombatarReanim, "facialHair", true);
     if (facialHair != 255) {
-        char facialHairChar[] = "facialHair_00";
-        int facialHairLength = strlen(facialHairChar);
-        if (facialHairLength >= 2) {
-            // 将数字转换为字符串并替换最后两个字符
-            snprintf(&facialHairChar[facialHairLength - 2], 3, "%02d", facialHair); // %02d 确保数字有两位，不足则补零
-        }
-        Reanimation_HideTrackByPrefix(zombatarReanim, facialHairChar, false);
+        std::string facialHairChar = std::format("facialHair_{:02}", facialHair);
+        Reanimation_HideTrackByPrefix(zombatarReanim, facialHairChar.c_str(), false);
         if (facialHairColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::FHAIR, facialHair)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(facialHairChar);
+            int theTrackIndex = zombatarReanim->FindTrackIndex(facialHairChar.c_str());
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor[facialHairColor];
         }
@@ -194,48 +181,43 @@ void Reanimation_SetZombatarFHair(Reanimation *zombatarReanim, unsigned char fac
 void Reanimation_SetZombatarAccessories(Reanimation *zombatarReanim, unsigned char accessories, unsigned char accessoriesColor) {
     Reanimation_HideTrackByPrefix(zombatarReanim, "accessories", true);
     if (accessories != 255) {
-        char accessoriesChar[] = "accessories_00";
-        int accessoriesLength = strlen(accessoriesChar);
-        if (accessoriesLength >= 2) {
-            unsigned char accessoriesFix;
-            switch (accessories) {
-                case 5:
-                    accessoriesFix = 14;
-                    break;
-                case 6:
-                    accessoriesFix = 5;
-                    break;
-                case 7:
-                    accessoriesFix = 6;
-                    break;
-                case 8:
-                    accessoriesFix = 12;
-                    break;
-                case 9:
-                    accessoriesFix = 7;
-                    break;
-                case 10:
-                    accessoriesFix = 9;
-                    break;
-                case 11:
-                    accessoriesFix = 10;
-                    break;
-                case 12:
-                    accessoriesFix = 11;
-                    break;
-                case 14:
-                    accessoriesFix = 8;
-                    break;
-                default:
-                    accessoriesFix = accessories;
-                    break;
-            }
-            // 将数字转换为字符串并替换最后两个字符
-            snprintf(&accessoriesChar[accessoriesLength - 2], 3, "%02d", accessoriesFix); // %02d 确保数字有两位，不足则补零
+        unsigned char accessoriesFix;
+        switch (accessories) {
+            case 5:
+                accessoriesFix = 14;
+                break;
+            case 6:
+                accessoriesFix = 5;
+                break;
+            case 7:
+                accessoriesFix = 6;
+                break;
+            case 8:
+                accessoriesFix = 12;
+                break;
+            case 9:
+                accessoriesFix = 7;
+                break;
+            case 10:
+                accessoriesFix = 9;
+                break;
+            case 11:
+                accessoriesFix = 10;
+                break;
+            case 12:
+                accessoriesFix = 11;
+                break;
+            case 14:
+                accessoriesFix = 8;
+                break;
+            default:
+                accessoriesFix = accessories;
+                break;
         }
-        Reanimation_HideTrackByPrefix(zombatarReanim, accessoriesChar, false);
+        std::string accessoriesChar = std::format("accessories_{:02}", accessoriesFix);
+        Reanimation_HideTrackByPrefix(zombatarReanim, accessoriesChar.c_str(), false);
         if (accessoriesColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::ACCESSORY, accessories)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(accessoriesChar);
+            int theTrackIndex = zombatarReanim->FindTrackIndex(accessoriesChar.c_str());
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[accessoriesColor];
         }
@@ -246,15 +228,10 @@ void Reanimation_SetZombatarAccessories(Reanimation *zombatarReanim, unsigned ch
 void Reanimation_SetZombatarEyeWear(Reanimation *zombatarReanim, unsigned char eyeWear, unsigned char eyeWearColor) {
     Reanimation_HideTrackByPrefix(zombatarReanim, "eyeWear", true);
     if (eyeWear != 255) {
-        char eyeWearChar[] = "eyeWear_00";
-        int eyeWearLength = strlen(eyeWearChar);
-        if (eyeWearLength >= 2) {
-            // 将数字转换为字符串并替换最后两个字符
-            snprintf(&eyeWearChar[eyeWearLength - 2], 3, "%02d", eyeWear); // %02d 确保数字有两位，不足则补零
-        }
-        Reanimation_HideTrackByPrefix(zombatarReanim, eyeWearChar, false);
+        std::string eyeWearChar = std::format("eyeWear_{:02}", eyeWear);
+        Reanimation_HideTrackByPrefix(zombatarReanim, eyeWearChar.c_str(), false);
         if (eyeWearColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::EYEWEAR, eyeWear)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(eyeWearChar);
+            int theTrackIndex = zombatarReanim->FindTrackIndex(eyeWearChar.c_str());
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[eyeWearColor];
         }
@@ -265,15 +242,10 @@ void Reanimation_SetZombatarEyeWear(Reanimation *zombatarReanim, unsigned char e
 void Reanimation_SetZombatarTidBits(Reanimation *zombatarReanim, unsigned char tidBits, unsigned char tidBitsColor) {
     Reanimation_HideTrackByPrefix(zombatarReanim, "tidBits", true);
     if (tidBits != 255) {
-        char tidBitsChar[] = "tidBits_00";
-        int tidBitsLength = strlen(tidBitsChar);
-        if (tidBitsLength >= 2) {
-            // 将数字转换为字符串并替换最后两个字符
-            snprintf(&tidBitsChar[tidBitsLength - 2], 3, "%02d", tidBits); // %02d 确保数字有两位，不足则补零
-        }
-        Reanimation_HideTrackByPrefix(zombatarReanim, tidBitsChar, false);
+        std::string tidBitsChar = std::format("tidBits_{:02}", tidBits);
+        Reanimation_HideTrackByPrefix(zombatarReanim, tidBitsChar.c_str(), false);
         if (tidBitsColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::TIDBIT, tidBits)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(tidBitsChar);
+            int theTrackIndex = zombatarReanim->FindTrackIndex(tidBitsChar.c_str());
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[tidBitsColor];
         }

@@ -52,7 +52,7 @@ void CutScene::Update() {
 
             int buttonId = aDialog->WaitForResult(true);
             if (buttonId == 1001) {
-                mBoard->unknownBool = 1;
+                mBoard->unknownBool = true;
             } else {
 
                 SeedBank *seedBank2 = mApp->mBoard->mSeedBankRight;
