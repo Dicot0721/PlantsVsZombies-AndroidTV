@@ -20,81 +20,77 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_MISC_POINT_H
 #define PVZ_SEXYAPPFRAMEWORK_MISC_POINT_H
 
-#include "PvZ/SexyAppFramework/Misc/Common.h"
-
 namespace Sexy {
 
-template <class _T>
+template <class T>
 class TPoint {
 public:
-    _T mX;
-    _T mY;
+    T mX;
+    T mY;
 
 public:
-    TPoint(_T theX, _T theY)
-        : mX(theX)
-        , mY(theY) {}
+    constexpr TPoint(T theX, T theY)
+        : mX{theX}
+        , mY{theY} {}
 
-    TPoint(const TPoint<_T> &theTPoint)
-        : mX(theTPoint.mX)
-        , mY(theTPoint.mY) {}
-
-    TPoint()
+    constexpr TPoint()
         : mX(0)
         , mY(0) {}
 
-    inline bool operator==(const TPoint &p) {
-        return ((p.mX == mX) && (p.mY == mY));
-    }
+    [[nodiscard]] constexpr bool operator==(const TPoint &p) const = default;
 
-    inline bool operator!=(const TPoint &p) {
-        return ((p.mX != mX) || (p.mY != mY));
-    }
-
-    TPoint operator+(const TPoint &p) const {
+    [[nodiscard]] constexpr TPoint operator+(const TPoint &p) const {
         return TPoint(mX + p.mX, mY + p.mY);
     }
-    TPoint operator-(const TPoint &p) const {
+
+    [[nodiscard]] constexpr TPoint operator-(const TPoint &p) const {
         return TPoint(mX - p.mX, mY - p.mY);
     }
-    TPoint operator*(const TPoint &p) const {
+
+    [[nodiscard]] constexpr TPoint operator*(const TPoint &p) const {
         return TPoint(mX * p.mX, mY * p.mY);
     }
-    TPoint operator/(const TPoint &p) const {
+
+    [[nodiscard]] constexpr TPoint operator/(const TPoint &p) const {
         return TPoint(mX / p.mX, mY / p.mY);
     }
-    TPoint &operator+=(const TPoint &p) {
+
+    constexpr TPoint &operator+=(const TPoint &p) {
         mX += p.mX;
         mY += p.mY;
         return *this;
     }
-    TPoint &operator-=(const TPoint &p) {
+
+    constexpr TPoint &operator-=(const TPoint &p) {
         mX -= p.mX;
         mY -= p.mY;
         return *this;
     }
-    TPoint &operator*=(const TPoint &p) {
+
+    constexpr TPoint &operator*=(const TPoint &p) {
         mX *= p.mX;
         mY *= p.mY;
         return *this;
     }
-    TPoint &operator/=(const TPoint &p) {
+
+    constexpr TPoint &operator/=(const TPoint &p) {
         mX /= p.mX;
         mY /= p.mY;
         return *this;
     }
-    TPoint operator*(_T s) const {
+
+    [[nodiscard]] constexpr TPoint operator*(T s) const {
         return TPoint(mX * s, mY * s);
     }
-    TPoint operator/(_T s) const {
+
+    [[nodiscard]] constexpr TPoint operator/(T s) const {
         return TPoint(mX / s, mY / s);
     }
 };
 
-typedef TPoint<int> Point;
-typedef TPoint<double> FPoint;
+using Point = TPoint<int>;
+using FPoint = TPoint<double>;
 
-}; // namespace Sexy
-
+} // namespace Sexy
 
 #endif // PVZ_SEXYAPPFRAMEWORK_MISC_POINT_H

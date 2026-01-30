@@ -20,9 +20,9 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_MISC_SEXY_MATRIX_H
 #define PVZ_SEXYAPPFRAMEWORK_MISC_SEXY_MATRIX_H
 
-#include "PvZ/Symbols.h"
-
 #include "SexyVector.h"
+
+#include <numbers>
 
 namespace Sexy {
 
@@ -37,23 +37,111 @@ public:
         };
     };
 
-    SexyMatrix3() = default; // so 中存在对应的空函数
+    constexpr SexyMatrix3() = default;
+
+    constexpr void ZeroMatrix() noexcept {
+        // clang-format off
+        m00 = m01 = m02 =
+        m10 = m11 = m12 =
+        m20 = m21 = m22 = 0;
+        // clang-format on
+    }
+
+    constexpr void LoadIdentity() noexcept {
+        m01 = m02 = m10 = m12 = m20 = m21 = 0;
+        m00 = m11 = m22 = 1;
+    }
+
+    [[nodiscard]] constexpr SexyVector2 operator*(const SexyVector2 &theVec) const {
+        return {
+            m00 * theVec.x + m01 * theVec.y + m02, //
+            m10 * theVec.x + m11 * theVec.y + m12  //
+        };
+    }
+
+    [[nodiscard]] constexpr SexyVector3 operator*(const SexyVector3 &theVec) const {
+        return {
+            m00 * theVec.x + m01 * theVec.y + m02 * theVec.z, //
+            m10 * theVec.x + m11 * theVec.y + m12 * theVec.z, //
+            m20 * theVec.x + m21 * theVec.y + m22 * theVec.z  //
+        };
+    }
+
+    [[nodiscard]] constexpr SexyMatrix3 operator*(const SexyMatrix3 &theMat) const {
+        SexyMatrix3 aResult;
+        for (int i = 0; i < 3; ++i) {
+            for (int j = 0; j < 3; ++j) {
+                float x = 0;
+                for (int k = 0; k < 3; ++k) {
+                    x += m[i][k] * theMat.m[k][j];
+                }
+                aResult.m[i][j] = x;
+            }
+        }
+        return aResult;
+    }
+
+    constexpr const SexyMatrix3 &operator*=(const SexyMatrix3 &theMat) {
+        return *this = *this * theMat;
+    }
 };
 
 class SexyTransform2D : public SexyMatrix3 {
 public:
-    SexyTransform2D() {
-        reinterpret_cast<void (*)(SexyTransform2D *)>(Sexy_SexyTransform2D_SexyTransform2DAddr)(this);
+    constexpr SexyTransform2D() noexcept {
+        LoadIdentity();
     }
 
-    void Scale(float sx, float sy) {
-        reinterpret_cast<void (*)(SexyTransform2D *, float, float)>(Sexy_SexyTransform2D_ScaleAddr)(this, sx, sy);
+    explicit constexpr SexyTransform2D(bool loadIdentity) noexcept {
+        if (loadIdentity) {
+            LoadIdentity();
+        }
     }
-    void Translate(float tx, float ty) {
-        reinterpret_cast<void (*)(SexyTransform2D *, float, float)>(Sexy_SexyTransform2D_TranslateAddr)(this, tx, ty);
+
+    constexpr SexyTransform2D(const SexyMatrix3 &theMatrix) noexcept
+        : SexyMatrix3{theMatrix} {}
+
+    constexpr SexyTransform2D &operator=(const SexyMatrix3 &theMat) noexcept {
+        SexyMatrix3::operator=(theMat);
+        return *this;
     }
+
+    constexpr void Translate(float tx, float ty) {
+        SexyMatrix3 aMat;
+        aMat.LoadIdentity();
+        aMat.m02 = tx;
+        aMat.m12 = ty;
+        aMat.m22 = 1;
+
+        *this = aMat * (*this);
+    }
+
     void RotateRad(float rot) {
-        reinterpret_cast<void (*)(SexyTransform2D *, float)>(Sexy_SexyTransform2D_RotateRadAddr)(this, rot);
+        SexyMatrix3 aMat;
+        aMat.LoadIdentity();
+
+        const float sinRot = -std::sinf(rot);
+        const float cosRot = std::cosf(rot);
+
+        aMat.m00 = cosRot;
+        aMat.m01 = -sinRot;
+        aMat.m10 = sinRot;
+        aMat.m11 = cosRot;
+
+        *this = aMat * (*this);
+    }
+
+    void RotateDeg(float rot) {
+        RotateRad(std::numbers::pi * rot / 180.0f);
+    }
+
+    constexpr void Scale(float sx, float sy) {
+        SexyMatrix3 aMat;
+        aMat.LoadIdentity();
+        aMat.m00 = sx;
+        aMat.m11 = sy;
+
+        *this = aMat * (*this);
     }
 };
 

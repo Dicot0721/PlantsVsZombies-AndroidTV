@@ -20,12 +20,33 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_MISC_TRI_VERTEX_H
 #define PVZ_SEXYAPPFRAMEWORK_MISC_TRI_VERTEX_H
 
+#include <cstdint>
+
 namespace Sexy {
 
 class TriVertex {
 public:
     float x, y, u, v;
-    unsigned int color;
+    uint32_t color = 0;
+
+    constexpr TriVertex() = default;
+
+    constexpr TriVertex(float theX, float theY) noexcept
+        : x{theX}
+        , y{theY} {}
+
+    constexpr TriVertex(float theX, float theY, float theU, float theV) noexcept
+        : x{theX}
+        , y{theY}
+        , u{theU}
+        , v{theV} {}
+
+    constexpr TriVertex(float theX, float theY, float theU, float theV, uint32_t theColor) noexcept
+        : x{theX}
+        , y{theY}
+        , u{theU}
+        , v{theV}
+        , color{theColor} {}
 };
 
 } // namespace Sexy

@@ -88,27 +88,27 @@ public:
         , mBlue{theElements[2]}
         , mAlpha{0xFF} {}
 
-    constexpr int GetRed() const noexcept {
+    [[nodiscard]] constexpr int GetRed() const noexcept {
         return mRed;
     }
 
-    constexpr int GetGreen() const noexcept {
+    [[nodiscard]] constexpr int GetGreen() const noexcept {
         return mGreen;
     }
 
-    constexpr int GetBlue() const noexcept {
+    [[nodiscard]] constexpr int GetBlue() const noexcept {
         return mBlue;
     }
 
-    constexpr int GetAlpha() const noexcept {
+    [[nodiscard]] constexpr int GetAlpha() const noexcept {
         return mAlpha;
     }
 
-    constexpr unsigned long ToInt() const noexcept {
+    [[nodiscard]] constexpr unsigned long ToInt() const noexcept {
         return (mAlpha << 24) | (mRed << 16) | (mGreen << 8) | (mBlue);
     }
 
-    constexpr SexyRGBA ToRGBA() const noexcept {
+    [[nodiscard]] constexpr SexyRGBA ToRGBA() const noexcept {
         SexyRGBA anRGBA;
         anRGBA.r = mRed;
         anRGBA.g = mGreen;
@@ -117,7 +117,7 @@ public:
         return anRGBA;
     }
 
-    constexpr int operator[](int theIdx) const noexcept {
+    [[nodiscard]] constexpr int operator[](int theIdx) const noexcept {
         switch (theIdx) {
             case 0:
                 return mRed;
@@ -132,7 +132,7 @@ public:
         }
     }
 
-    friend constexpr bool operator==(const Color &theColor1, const Color &theColor2) = default;
+    [[nodiscard]] friend constexpr bool operator==(const Color &theColor1, const Color &theColor2) = default;
 };
 
 } // namespace Sexy

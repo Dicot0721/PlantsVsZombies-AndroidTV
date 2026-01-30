@@ -20,72 +20,135 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_MISC_SEXY_VECTOR_H
 #define PVZ_SEXYAPPFRAMEWORK_MISC_SEXY_VECTOR_H
 
-#include <math.h>
+#include <cmath>
 
 namespace Sexy {
+
 class SexyVector2 {
 public:
     float x, y;
 
-    SexyVector2()
-        : x(0)
-        , y(0) {}
-    SexyVector2(float theX, float theY)
-        : x(theX)
-        , y(theY) {}
+    constexpr SexyVector2() noexcept
+        : x{0}
+        , y{0} {}
 
-    float Dot(const SexyVector2 &v) const {
-        return x * v.x + y * v.y;
+    constexpr SexyVector2(float theX, float theY) noexcept
+        : x{theX}
+        , y{theY} {}
+
+    [[nodiscard]] constexpr float Dot(const SexyVector2 &v) const {
+        return (x * v.x) + (y * v.y);
     }
-    SexyVector2 operator+(const SexyVector2 &v) const {
-        return SexyVector2(x + v.x, y + v.y);
+
+    [[nodiscard]] constexpr SexyVector2 operator+(const SexyVector2 &v) const {
+        return {x + v.x, y + v.y};
     }
-    SexyVector2 operator-(const SexyVector2 &v) const {
-        return SexyVector2(x - v.x, y - v.y);
+
+    [[nodiscard]] constexpr SexyVector2 operator-(const SexyVector2 &v) const {
+        return {x - v.x, y - v.y};
     }
-    SexyVector2 operator-() const {
-        return SexyVector2(-x, -y);
+
+    [[nodiscard]] constexpr SexyVector2 operator-() const {
+        return {-x, -y};
     }
-    SexyVector2 operator*(float t) const {
-        return SexyVector2(t * x, t * y);
+
+    [[nodiscard]] constexpr SexyVector2 operator*(float t) const {
+        return {t * x, t * y};
     }
-    SexyVector2 operator/(float t) const {
-        return SexyVector2(x / t, y / t);
+
+    [[nodiscard]] constexpr SexyVector2 operator/(float t) const {
+        return {x / t, y / t};
     }
-    void operator+=(const SexyVector2 &v) {
+
+    constexpr SexyVector2 &operator+=(const SexyVector2 &v) {
         x += v.x;
         y += v.y;
+        return *this;
     }
-    void operator-=(const SexyVector2 &v) {
+
+    constexpr SexyVector2 &operator-=(const SexyVector2 &v) {
         x -= v.x;
         y -= v.y;
+        return *this;
     }
-    void operator*=(float t) {
+
+    constexpr SexyVector2 &operator*=(float t) {
         x *= t;
         y *= t;
+        return *this;
     }
-    void operator/=(float t) {
+
+    constexpr SexyVector2 &operator/=(float t) {
         x /= t;
         y /= t;
+        return *this;
     }
 
-    bool operator==(const SexyVector2 &v) {
-        return x == v.x && y == v.y;
-    }
-    bool operator!=(const SexyVector2 &v) {
-        return x != v.x || y != v.y;
+    [[nodiscard]] constexpr bool operator==(const SexyVector2 &v) const = default;
+
+    [[nodiscard]] float Magnitude() const {
+        return std::sqrtf((x * x) + (y * y));
     }
 
-    float Magnitude() const {
-        return sqrtf(x * x + y * y);
-    }
-    float MagnitudeSquared() const {
-        return x * x + y * y;
+    [[nodiscard]] constexpr float MagnitudeSquared() const {
+        return (x * x) + (y * y);
     }
 
-    SexyVector2 Normalize() const {
+    [[nodiscard]] SexyVector2 Normalize() const {
         float aMag = Magnitude();
-        return aMag != 0 ? (*this) / aMag : *this;
+        return (aMag != 0) ? *this / aMag : *this;
+    }
+
+    [[nodiscard]] constexpr SexyVector2 Perp() const {
+        return {-y, x};
+    }
+};
+
+class SexyVector3 {
+public:
+    float x, y, z;
+
+    constexpr SexyVector3() noexcept
+        : x{0}
+        , y{0}
+        , z{0} {}
+
+    constexpr SexyVector3(float theX, float theY, float theZ) noexcept
+        : x{theX}
+        , y{theY}
+        , z{theZ} {}
+
+    [[nodiscard]] constexpr float Dot(const SexyVector3 &v) const {
+        return (x * v.x) + (y * v.y) + (z * v.z);
+    }
+
+    [[nodiscard]] constexpr SexyVector3 Cross(const SexyVector3 &v) const {
+        return {(y * v.z) - (z * v.y), (z * v.x) - (x * v.z), (x * v.y) - (y * v.x)};
+    }
+
+    [[nodiscard]] constexpr SexyVector3 operator+(const SexyVector3 &v) const {
+        return {x + v.x, y + v.y, z + v.z};
+    }
+
+    [[nodiscard]] constexpr SexyVector3 operator-(const SexyVector3 &v) const {
+        return {x - v.x, y - v.y, z - v.z};
+    }
+
+    [[nodiscard]] constexpr SexyVector3 operator*(float t) const {
+        return {t * x, t * y, t * z};
+    }
+
+    [[nodiscard]] constexpr SexyVector3 operator/(float t) const {
+        return {x / t, y / t, z / t};
+    }
+
+    [[nodiscard]] float Magnitude() const {
+        return std::sqrtf((x * x) + (y * y) + (z * z));
+    }
+
+    [[nodiscard]] SexyVector3 Normalize() const {
+        float aMag = Magnitude();
+        return (aMag != 0) ? *this / aMag : *this;
     }
 };
 
