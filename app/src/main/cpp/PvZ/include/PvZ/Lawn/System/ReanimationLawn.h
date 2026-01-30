@@ -27,7 +27,7 @@
 namespace Sexy {
 class Graphics;
 class MemoryImage;
-}; // namespace Sexy
+} // namespace Sexy
 
 class LawnApp;
 

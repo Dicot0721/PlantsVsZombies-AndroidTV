@@ -26,6 +26,6 @@ class TextLayout {
     [[maybe_unused]] int unk[84];
 }; // 大小84个整数
 
-}; // namespace Sexy
+} // namespace Sexy
 
 #endif // PVZ_SEXYAPPFRAMEWORK_MISC_TEXT_LAYOUT_H

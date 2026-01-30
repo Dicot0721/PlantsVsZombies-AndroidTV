@@ -91,9 +91,9 @@ public:
         mMaxUsedCount = 0u;
     }
 
-    uint32_t DataArrayGetID(const T *theItem) const noexcept {
+    uint32_t DataArrayGetID(const T *theItem) /* const */ noexcept {
         auto *aItem = reinterpret_cast<const DataArrayItem *>(theItem);
-        assert(&mBlock[uint16_t(aItem->mID)].mItem == theItem);
+        assert(DataArrayGet(aItem->mID) == theItem);
         return aItem->mID;
     }
 

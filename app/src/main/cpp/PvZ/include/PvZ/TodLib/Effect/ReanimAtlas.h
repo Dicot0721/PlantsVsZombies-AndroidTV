@@ -25,7 +25,7 @@
 class ReanimatorDefinition;
 namespace Sexy {
 class MemoryImage;
-}; // namespace Sexy
+} // namespace Sexy
 
 class ReanimAtlasImage {
 public:
