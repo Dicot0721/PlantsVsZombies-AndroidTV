@@ -20,8 +20,6 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_MISC_SEXY_VECTOR_H
 #define PVZ_SEXYAPPFRAMEWORK_MISC_SEXY_VECTOR_H
 
-#include <cmath>
-
 namespace Sexy {
 
 class SexyVector2 {
@@ -86,18 +84,13 @@ public:
 
     [[nodiscard]] constexpr bool operator==(const SexyVector2 &v) const = default;
 
-    [[nodiscard]] float Magnitude() const {
-        return std::sqrtf((x * x) + (y * y));
-    }
+    [[nodiscard]] float Magnitude() const;
 
     [[nodiscard]] constexpr float MagnitudeSquared() const {
         return (x * x) + (y * y);
     }
 
-    [[nodiscard]] SexyVector2 Normalize() const {
-        float aMag = Magnitude();
-        return (aMag != 0) ? *this / aMag : *this;
-    }
+    [[nodiscard]] SexyVector2 Normalize() const;
 
     [[nodiscard]] constexpr SexyVector2 Perp() const {
         return {-y, x};
@@ -142,14 +135,9 @@ public:
         return {x / t, y / t, z / t};
     }
 
-    [[nodiscard]] float Magnitude() const {
-        return std::sqrtf((x * x) + (y * y) + (z * z));
-    }
+    [[nodiscard]] float Magnitude() const;
 
-    [[nodiscard]] SexyVector3 Normalize() const {
-        float aMag = Magnitude();
-        return (aMag != 0) ? *this / aMag : *this;
-    }
+    [[nodiscard]] SexyVector3 Normalize() const;
 };
 
 } // namespace Sexy

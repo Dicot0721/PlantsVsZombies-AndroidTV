@@ -22,8 +22,6 @@
 
 #include "SexyVector.h"
 
-#include <numbers>
-
 namespace Sexy {
 
 class SexyMatrix3 {
@@ -81,7 +79,7 @@ public:
         return aResult;
     }
 
-    constexpr const SexyMatrix3 &operator*=(const SexyMatrix3 &theMat) {
+    constexpr SexyMatrix3 &operator*=(const SexyMatrix3 &theMat) {
         return *this = *this * theMat;
     }
 };
@@ -92,7 +90,8 @@ public:
         LoadIdentity();
     }
 
-    explicit constexpr SexyTransform2D(bool loadIdentity) noexcept {
+    explicit constexpr SexyTransform2D(bool loadIdentity) noexcept
+        : SexyMatrix3{} {
         if (loadIdentity) {
             LoadIdentity();
         }
@@ -116,24 +115,8 @@ public:
         *this = aMat * (*this);
     }
 
-    void RotateRad(float rot) {
-        SexyMatrix3 aMat;
-        aMat.LoadIdentity();
-
-        const float sinRot = -std::sinf(rot);
-        const float cosRot = std::cosf(rot);
-
-        aMat.m00 = cosRot;
-        aMat.m01 = -sinRot;
-        aMat.m10 = sinRot;
-        aMat.m11 = cosRot;
-
-        *this = aMat * (*this);
-    }
-
-    void RotateDeg(float rot) {
-        RotateRad(std::numbers::pi * rot / 180.0f);
-    }
+    void RotateRad(float rot);
+    void RotateDeg(float rot);
 
     constexpr void Scale(float sx, float sy) {
         SexyMatrix3 aMat;

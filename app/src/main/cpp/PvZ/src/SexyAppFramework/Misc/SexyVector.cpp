@@ -17,38 +17,26 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef PVZ_SEXYAPPFRAMEWORK_MISC_TRI_VERTEX_H
-#define PVZ_SEXYAPPFRAMEWORK_MISC_TRI_VERTEX_H
+#include "PvZ/SexyAppFramework/Misc/SexyVector.h"
 
-#include <cstdint>
+#include <cmath>
 
-namespace Sexy {
+using namespace Sexy;
 
-class TriVertex {
-public:
-    float x, y, u, v;
-    uint32_t color = 0;
+[[nodiscard]] float SexyVector2::Magnitude() const {
+    return std::sqrtf((x * x) + (y * y));
+}
 
-    constexpr TriVertex() = default;
+[[nodiscard]] SexyVector2 SexyVector2::Normalize() const {
+    float aMag = Magnitude();
+    return (aMag != 0) ? *this / aMag : *this;
+}
 
-    TriVertex(float theX, float theY) noexcept
-        : x{theX}
-        , y{theY} {}
+[[nodiscard]] float SexyVector3::Magnitude() const {
+    return std::sqrtf((x * x) + (y * y) + (z * z));
+}
 
-    constexpr TriVertex(float theX, float theY, float theU, float theV) noexcept
-        : x{theX}
-        , y{theY}
-        , u{theU}
-        , v{theV} {}
-
-    constexpr TriVertex(float theX, float theY, float theU, float theV, uint32_t theColor) noexcept
-        : x{theX}
-        , y{theY}
-        , u{theU}
-        , v{theV}
-        , color{theColor} {}
-};
-
-} // namespace Sexy
-
-#endif // PVZ_SEXYAPPFRAMEWORK_MISC_TRI_VERTEX_H
+[[nodiscard]] SexyVector3 SexyVector3::Normalize() const {
+    float aMag = Magnitude();
+    return (aMag != 0) ? *this / aMag : *this;
+}

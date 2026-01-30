@@ -17,38 +17,29 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef PVZ_SEXYAPPFRAMEWORK_MISC_TRI_VERTEX_H
-#define PVZ_SEXYAPPFRAMEWORK_MISC_TRI_VERTEX_H
+#include "PvZ/SexyAppFramework/Misc/SexyMatrix.h"
 
-#include <cstdint>
+#include <cmath>
 
-namespace Sexy {
+#include <numbers>
 
-class TriVertex {
-public:
-    float x, y, u, v;
-    uint32_t color = 0;
+using namespace Sexy;
 
-    constexpr TriVertex() = default;
+void SexyTransform2D::RotateRad(float rot) {
+    SexyMatrix3 aMat;
+    aMat.LoadIdentity();
 
-    TriVertex(float theX, float theY) noexcept
-        : x{theX}
-        , y{theY} {}
+    const float sinRot = -std::sinf(rot);
+    const float cosRot = std::cosf(rot);
 
-    constexpr TriVertex(float theX, float theY, float theU, float theV) noexcept
-        : x{theX}
-        , y{theY}
-        , u{theU}
-        , v{theV} {}
+    aMat.m00 = cosRot;
+    aMat.m01 = -sinRot;
+    aMat.m10 = sinRot;
+    aMat.m11 = cosRot;
 
-    constexpr TriVertex(float theX, float theY, float theU, float theV, uint32_t theColor) noexcept
-        : x{theX}
-        , y{theY}
-        , u{theU}
-        , v{theV}
-        , color{theColor} {}
-};
+    *this = aMat * (*this);
+}
 
-} // namespace Sexy
-
-#endif // PVZ_SEXYAPPFRAMEWORK_MISC_TRI_VERTEX_H
+void SexyTransform2D::RotateDeg(float rot) {
+    RotateRad(static_cast<float>(std::numbers::pi * rot / 180.0));
+}
