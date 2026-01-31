@@ -29,6 +29,7 @@
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodFoley.h"
 #include "PvZ/TodLib/Effect/EffectSystem.h"
+#include "PvZ/TodLib/Effect/TodParticle.h"
 
 class ZenGarden;
 class Board;

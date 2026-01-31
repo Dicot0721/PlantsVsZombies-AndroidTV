@@ -26,27 +26,16 @@ namespace Sexy {
 
 class TriVertex {
 public:
-    float x, y, u, v;
-    uint32_t color = 0;
+    float x;
+    float y;
+    uint32_t offset8;
+    float offsetC;
+    uint32_t color = 0; // ARGB (0 = use color specified in function call)
+    uint32_t offset14;
+    float u;
+    float v;
 
     constexpr TriVertex() = default;
-
-    TriVertex(float theX, float theY) noexcept
-        : x{theX}
-        , y{theY} {}
-
-    constexpr TriVertex(float theX, float theY, float theU, float theV) noexcept
-        : x{theX}
-        , y{theY}
-        , u{theU}
-        , v{theV} {}
-
-    constexpr TriVertex(float theX, float theY, float theU, float theV, uint32_t theColor) noexcept
-        : x{theX}
-        , y{theY}
-        , u{theU}
-        , v{theV}
-        , color{theColor} {}
 };
 
 } // namespace Sexy
