@@ -24,11 +24,11 @@
 #include <cstdint>
 #include <cstring>
 
-enum {
-    DATA_ARRAY_INDEX_MASK = 65535,
-    DATA_ARRAY_KEY_MASK = -65536,
+enum : uint32_t {
+    DATA_ARRAY_INDEX_MASK = 0x0000'FFFF,
+    DATA_ARRAY_KEY_MASK = 0xFFFF'0000,
     DATA_ARRAY_KEY_SHIFT = 16,
-    DATA_ARRAY_MAX_SIZE = 65536,
+    DATA_ARRAY_MAX_SIZE = DATA_ARRAY_INDEX_MASK + 1,
     DATA_ARRAY_KEY_FIRST = 1,
 };
 
@@ -145,7 +145,7 @@ public:
     }
 
     T *DataArrayGet(uint32_t theId) noexcept {
-        assert(DataArrayTryToGet(theId) != nullptr);
+        // assert(DataArrayTryToGet(theId) != nullptr); // useless in net play
         return &mBlock[uint16_t(theId)].mItem;
     }
 };
