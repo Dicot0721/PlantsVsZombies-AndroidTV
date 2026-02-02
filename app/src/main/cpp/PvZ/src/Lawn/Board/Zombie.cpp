@@ -2929,19 +2929,15 @@ void Zombie::UpdateYuckyFace() {
             bool canGoDown = true;
             bool canGoUp = true;
             // down
-            if (!mBoard->RowCanHaveZombies(mRow - 1)) {
-                canGoDown = false;
-            } else if (mBoard->mPlantRow[mRow - 1] == PLANTROW_POOL && !isThisRowPool) {
-                canGoDown = false;
-            } else if (mBoard->mPlantRow[mRow - 1] != PLANTROW_POOL && isThisRowPool) {
+            if (!mBoard->RowCanHaveZombies(mRow - 1) ||                               //
+                ((mBoard->mPlantRow[mRow - 1] == PLANTROW_POOL) && !isThisRowPool) || //
+                ((mBoard->mPlantRow[mRow - 1] != PLANTROW_POOL) && isThisRowPool)) {
                 canGoDown = false;
             }
             // up
-            if (!mBoard->RowCanHaveZombies(mRow + 1)) {
-                canGoUp = false;
-            } else if (mBoard->mPlantRow[mRow + 1] == PLANTROW_POOL && !isThisRowPool) {
-                canGoUp = false;
-            } else if (mBoard->mPlantRow[mRow + 1] != PLANTROW_POOL && isThisRowPool) {
+            if (!mBoard->RowCanHaveZombies(mRow + 1) ||                               //
+                ((mBoard->mPlantRow[mRow + 1] == PLANTROW_POOL) && !isThisRowPool) || //
+                ((mBoard->mPlantRow[mRow + 1] != PLANTROW_POOL) && isThisRowPool)) {
                 canGoUp = false;
             }
             // 客机不允许随机换行

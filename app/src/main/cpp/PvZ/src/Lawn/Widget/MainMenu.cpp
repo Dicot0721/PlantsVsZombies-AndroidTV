@@ -639,7 +639,7 @@ void MainMenu::Draw(Sexy::Graphics *g) {
             unkMems3[3] = v18;
             TodAnimateCurveFloat(0, 100, v18, 0.75, 0.8, TodCurves::CURVE_SIN_WAVE);
             Sexy::Rect v38 = {0, 0, mailAlertImage->mWidth, mailAlertImage->mHeight};
-            g->DrawImageMatrix(mailAlertImage, aSexyTransform2D, v38, 0.0, 0.0, 1);
+            g->DrawImageMatrix(mailAlertImage, aSexyTransform2D, v38, 0.0, 0.0, true);
         }
     }
     int moreTrackIndex = mainMenuReanim->FindTrackIndex("more");
@@ -651,10 +651,10 @@ void MainMenu::Draw(Sexy::Graphics *g) {
     aSexyTransform2D.Translate(120.0, 200.0);
 
     Sexy::Rect v37 = {0, 0, m2DMarkImage->mWidth, m2DMarkImage->mHeight};
-    g->DrawImageMatrix(m2DMarkImage, aSexyTransform2D, v37, 0.0, 0.0, 1);
+    g->DrawImageMatrix(m2DMarkImage, aSexyTransform2D, v37, 0.0, 0.0, true);
     Sexy::Rect v38 = {15, 15, 90, 90};
     aSexyTransform2D.Translate(-4.0, -16.0);
-    g->DrawImageMatrix(mApp->mQRCodeImage, aSexyTransform2D, v38, 0.0, 0.0, 1);
+    g->DrawImageMatrix(mApp->mQRCodeImage, aSexyTransform2D, v38, 0.0, 0.0, true);
 }
 
 void MainMenu::DrawOverlay(Sexy::Graphics *g) {

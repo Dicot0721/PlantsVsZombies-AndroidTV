@@ -74,6 +74,13 @@ private:
     };
 
 public:
+    enum SeedDir {
+        SEED_DIR_UP,
+        SEED_DIR_DOWN,
+        SEED_DIR_LEFT,
+        SEED_DIR_RIGHT,
+    };
+
     Sexy::ButtonListener mButtonListener;    // 64
     int unkMem1;                             // 65
     GameButton *mImitaterButton;             // 66
@@ -177,7 +184,7 @@ public:
     int NumColumns();
     void ShowToolTip(unsigned int thePlayerIndex);
     static SeedType GetZombieIndexBySeedType(SeedType theSeedType);
-    int GetNextSeedInDir(int theNumSeed, int theMoveDirection);
+    int GetNextSeedInDir(int theNumSeed, SeedDir theMoveDirection);
     void Draw(Sexy::Graphics *g);
     void DrawBanIcon(Sexy::Graphics *g);
     SeedType SeedHitTest(int x, int y);

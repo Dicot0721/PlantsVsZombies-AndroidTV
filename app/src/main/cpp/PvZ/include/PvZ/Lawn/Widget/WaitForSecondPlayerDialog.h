@@ -332,6 +332,7 @@ union Buffer32Bit {
     int32_t i32;
     float f32;
 };
+static_assert(sizeof(Buffer32Bit) == 4);
 
 class BaseEvent {
 public:

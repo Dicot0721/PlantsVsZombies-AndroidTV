@@ -569,11 +569,7 @@ void SeedChooserScreen::GetSeedPositionInChooser(int theIndex, int &x, int &y) {
 }
 
 int SeedChooserScreen::NumColumns() {
-    if (mIsZombieChooser) {
-        return 5;
-    } else {
-        return 8;
-    }
+    return mIsZombieChooser ? 5 : 8;
 }
 
 
@@ -870,13 +866,20 @@ void SeedChooserScreen::MouseUp(int x, int y) {
     gSeedChooserTouchState = SeedChooserTouchState::SEEDCHOOSER_TOUCHSTATE_NONE;
 }
 
-int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, int theMoveDirection) {
-    int aNumCol = NumColumns();
+int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, SeedDir theMoveDirection) {
+    if (mIsZombieChooser) {
+        // 右下角边缘
+        if ((theNumSeed == 14 && theMoveDirection == SeedDir::SEED_DIR_DOWN) || //
+            (theNumSeed == 18 && theMoveDirection == SeedDir::SEED_DIR_RIGHT)) {
+            return 18;
+        }
+    }
+
+    const int aNumCol = NumColumns();
+
     int aRow;
     int aCol;
-
-    // 计算当前行列位置
-    if (theNumSeed == 48) {
+    if (theNumSeed == SeedType::SEED_IMITATER) {
         aCol = 8;
         aRow = 5;
     } else {
@@ -884,66 +887,35 @@ int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, int theMoveDirection) {
         aCol = theNumSeed % aNumCol;
     }
 
-    // 确定最大行数
-    int aNumRow;
-    if (mApp->IsVSMode()) {
-        aNumRow = 4;
-    } else if (Has7Rows()) {
-        aNumRow = 5;
-    } else {
-        aNumRow = 4;
-    }
-
-    // 僵尸选择特殊处理
-    if (mIsZombieChooser) {
-        // 边界条件检查
-        if (theNumSeed == 14 && theMoveDirection == 1) {
-            return 19;
-        }
-        if (theNumSeed == 19 && theMoveDirection == 3) {
-            return 19;
-        }
-        if (gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode) { // 拓展僵尸选卡适配键盘选取
-            aNumRow = 5;
-        }
-    }
+    const int aNumRow = mIsZombieChooser ? (gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode ? 5 : 3) // 拓展僵尸选卡适配键盘选取
+                                         : (!mApp->IsVSMode() && Has7Rows() ? 5 : 4);
 
     // 根据方向移动
-    int aNextSeed;
     switch (theMoveDirection) {
-        case 0: // 向上
+        case SeedDir::SEED_DIR_UP:
             if (aRow > 0) {
                 --aRow;
             }
-            aNextSeed = aCol + NumColumns() * aRow;
             break;
-
-        case 1: // 向下
-            if (aRow < aNumRow) {
+        case SeedDir::SEED_DIR_DOWN:
+            if (aRow < aNumRow - 1) {
                 ++aRow;
             }
-            aNextSeed = aCol + NumColumns() * aRow;
             break;
-
-        case 2: // 向左
+        case SeedDir::SEED_DIR_LEFT:
             if (aCol > 0) {
                 --aCol;
             }
-            aNextSeed = aCol + NumColumns() * aRow;
             break;
-
-        case 3: // 向右
-            if (aCol < NumColumns() - 1) {
+        case SeedDir::SEED_DIR_RIGHT:
+            if (aCol < aNumCol - 1) {
                 ++aCol;
             }
-            aNextSeed = aCol + NumColumns() * aRow;
             break;
-
         default:
-            aNextSeed = aCol + NumColumns() * aRow;
             break;
     }
-
+    int aNextSeed = aCol + aNumCol * aRow;
     return aNextSeed;
 }
 

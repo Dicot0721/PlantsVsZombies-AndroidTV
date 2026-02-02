@@ -154,7 +154,7 @@ public:
     void ScaryPotterOpenPot(GridItem *theScaryPot);
     GridItem *IZombieGetBrainTarget(Zombie *theZombie);
     void IZombieSquishBrain(GridItem *theBrain);
-    int ScaryPotterCountSunInPot(GridItem *theGridItem);
+    int ScaryPotterCountSunInPot(GridItem *theScaryPot);
     SeedType GetArtChallengeSeed(int theGridX, int theGridY);
     void InitZombieWavesFromList(ZombieType *theZombieList, int theListLength);
     void IZombieSetupPlant(Plant *thePlant);

@@ -396,7 +396,7 @@ void VSSetupMenu::PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
             } while (std::find(theZombieSeeds.begin(), theZombieSeeds.end(), chosen) != theZombieSeeds.end());
 
             // 校验可用
-            if (mApp->HasSeedType(chosen, /*isZombie=*/1))
+            if (mApp->HasSeedType(chosen, 1))
                 break;
         }
 
