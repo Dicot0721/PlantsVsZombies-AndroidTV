@@ -898,7 +898,7 @@ int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, SeedDir theMoveDirection
             }
             break;
         case SeedDir::SEED_DIR_DOWN:
-            if (aRow < aNumRow - 1) {
+            if (aRow < aNumRow) {
                 ++aRow;
             }
             break;
