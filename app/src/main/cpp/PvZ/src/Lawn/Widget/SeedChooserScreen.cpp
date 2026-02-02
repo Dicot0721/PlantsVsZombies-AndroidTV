@@ -556,7 +556,7 @@ void SeedChooserScreen::GetSeedPositionInChooser(int theIndex, int &x, int &y) {
     } else {
         x = 53 * aCol + 22;
     }
-    if (Has7Rows() || (mIsZombieChooser && isExtraSeedsMode)) {
+    if (!mIsZombieChooser && Has7Rows()) {
         y = 70 * aRow + 123;
     } else {
         y = 73 * aRow + 128;
@@ -571,7 +571,7 @@ int SeedChooserScreen::NumColumns() {
 void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
     old_SeedChooserScreen_ShowToolTip(this, thePlayerIndex);
 
-    bool aIsPlayer2 = thePlayerIndex == 1 ? true : false;
+    bool aIsPlayer2 = thePlayerIndex == 1;
     ToolTipWidget *aTolTip = aIsPlayer2 ? mToolTip2 : mToolTip1;
 
     if (mApp->IsVSMode()) {
@@ -587,7 +587,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
 
         if (mIsZombieChooser) {
             if (mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_GRAVESTONE].mSeedState == ChosenSeedState::SEED_IN_BANK && mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_GRAVESTONE].mCrazyDavePicked) {
-                bool seedIsGrave = (mToolTipSeed1 == SeedType::SEED_ZOMBIE_GRAVESTONE || mToolTipSeed2 == SeedType::SEED_ZOMBIE_GRAVESTONE) ? true : false;
+                bool seedIsGrave = mToolTipSeed1 == SeedType::SEED_ZOMBIE_GRAVESTONE || mToolTipSeed2 == SeedType::SEED_ZOMBIE_GRAVESTONE;
                 pvzstl::string str = seedIsGrave ? TodStringTranslate("[ZOMBIE_BOSS_WANTS]") : "";
                 aTolTip->SetWarningText(str);
             }
@@ -641,7 +641,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
         } else {
             if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBanMode) {
                 if (mChosenSeeds[aSeedType].mSeedState == ChosenSeedState::SEED_IN_CHOOSER) {
-                    bool aCanNotBanned = (mToolTipSeed1 == SeedType::SEED_INSTANT_COFFEE || mToolTipSeed2 == SeedType::SEED_INSTANT_COFFEE) ? true : false;
+                    bool aCanNotBanned = mToolTipSeed1 == SeedType::SEED_INSTANT_COFFEE || mToolTipSeed2 == SeedType::SEED_INSTANT_COFFEE;
                     pvzstl::string str = aCanNotBanned ? "此阶段不允许" : "";
                     aTolTip->SetWarningText(str);
                 }
