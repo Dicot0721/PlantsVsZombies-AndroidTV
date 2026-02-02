@@ -550,21 +550,16 @@ void SeedChooserScreen::GetSeedPositionInChooser(int theIndex, int &x, int &y) {
     }
     int aRow = theIndex / NumColumns();
     int aCol = theIndex % NumColumns();
-    x = 53 * aCol + 22;
-    if (mIsZombieChooser) {
-        if (aRow == 3 && (gVSSetupAddonWidget && !gVSSetupAddonWidget->mExtraSeedsMode)) {
-            x = 53 * aCol + 48;
-        }
+    bool isExtraSeedsMode = gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode;
+    if (mIsZombieChooser && aRow == 3 && !isExtraSeedsMode) {
+        x = 53 * aCol + 48;
+    } else {
+        x = 53 * aCol + 22;
     }
-
-    if (Has7Rows()) {
+    if (Has7Rows() || (mIsZombieChooser && isExtraSeedsMode)) {
         y = 70 * aRow + 123;
     } else {
         y = 73 * aRow + 128;
-    }
-
-    if (mIsZombieChooser) {
-        y = 70 * aRow + 123;
     }
 }
 
@@ -867,7 +862,8 @@ void SeedChooserScreen::MouseUp(int x, int y) {
 }
 
 int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, SeedDir theMoveDirection) {
-    if (mIsZombieChooser) {
+    bool isExtraSeedsMode = gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode;
+    if (mIsZombieChooser && !isExtraSeedsMode) {
         // 右下角边缘
         if ((theNumSeed == 14 && theMoveDirection == SeedDir::SEED_DIR_DOWN) || //
             (theNumSeed == 18 && theMoveDirection == SeedDir::SEED_DIR_RIGHT)) {
@@ -876,7 +872,6 @@ int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, SeedDir theMoveDirection
     }
 
     const int aNumCol = NumColumns();
-
     int aRow;
     int aCol;
     if (theNumSeed == SeedType::SEED_IMITATER) {
@@ -887,21 +882,19 @@ int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, SeedDir theMoveDirection
         aCol = theNumSeed % aNumCol;
     }
 
-    const int aNumRow = mIsZombieChooser ? (gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode ? 5 : 3) // 拓展僵尸选卡适配键盘选取
-                                         : (!mApp->IsVSMode() && Has7Rows() ? 5 : 4);
-
-    // 根据方向移动
     switch (theMoveDirection) {
         case SeedDir::SEED_DIR_UP:
             if (aRow > 0) {
                 --aRow;
             }
             break;
-        case SeedDir::SEED_DIR_DOWN:
-            if (aRow < aNumRow) {
+        case SeedDir::SEED_DIR_DOWN: {
+            int aMaxRow = mIsZombieChooser ? (isExtraSeedsMode ? 5 : 3) // 拓展僵尸选卡适配键盘选取
+                                           : (Has7Rows() ? 5 : 4);
+            if (aRow < aMaxRow) {
                 ++aRow;
             }
-            break;
+        } break;
         case SeedDir::SEED_DIR_LEFT:
             if (aCol > 0) {
                 --aCol;
