@@ -405,7 +405,7 @@ void DaveHelp_MouseUp(LeaderboardsWidget *leaderboardsWidget, int x, int y) {}
 void DaveHelp_DealClick(LeaderboardsWidget *leaderboardsWidget, int id) {}
 
 void DaveHelp_KeyDown(LeaderboardsWidget *leaderboardsWidget, int keyCode) {
-    if (keyCode == Sexy::KEYCODE_ESCAPE || keyCode == Sexy::KEYCODE_ESCAPE2) {
+    if (keyCode == Sexy::KEYCODE_ESCAPE || keyCode == Sexy::KEYCODE_GAMEPAD_B) {
         if (leaderboardsWidget->mHighLightAchievement) {
             leaderboardsWidget->mHighLightAchievement = false;
             return;
@@ -446,14 +446,14 @@ void DaveHelp_KeyDown(LeaderboardsWidget *leaderboardsWidget, int keyCode) {
         leaderboardsWidget->mFocusedAchievementIndex = mFocusedIndex;
         return;
     }
-    if (keyCode == Sexy::KEYCODE_SHOVEL) {
+    if (keyCode == Sexy::KEYCODE_QUICK_DIG) {
         leaderboardsWidget->mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
         pvzstl::string str1 = TodStringTranslate("[PLANTS_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{PLANTS}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED]);
         leaderboardsWidget->mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, str2.c_str(), "", "[DIALOG_BUTTON_OK]", "", 3);
         return;
     }
-    if (keyCode == Sexy::KEYCODE_HAMMER) {
+    if (keyCode == Sexy::KEYCODE_X_BUTTON) {
         leaderboardsWidget->mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
         pvzstl::string str1 = TodStringTranslate("[ZOMBIES_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{ZOMBIES}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ZOMBIES_KILLED]);

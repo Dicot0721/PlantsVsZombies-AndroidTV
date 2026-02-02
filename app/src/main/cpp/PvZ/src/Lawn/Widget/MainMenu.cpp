@@ -334,7 +334,7 @@ void MainMenu::KeyDown(Sexy::KeyCode theKeyCode) {
     if (gMainMenuAchievementsWidget != nullptr) {
         if (gAchievementState != SHOWING)
             return;
-        if (theKeyCode == Sexy::KEYCODE_ESCAPE || theKeyCode == Sexy::KEYCODE_ESCAPE2) {
+        if (theKeyCode == Sexy::KEYCODE_ESCAPE || theKeyCode == Sexy::KEYCODE_GAMEPAD_B) {
             MainMenu::ButtonDepress(ACHIEVEMENTS_BUTTON);
         } else if (theKeyCode == Sexy::KEYCODE_UP || theKeyCode == Sexy::KEYCODE_DOWN) {
             if (gMainMenuAchievementKeyboardScrollCounter != 0) {
@@ -3454,7 +3454,7 @@ void TestMenuWidget_MouseDrag(ZombatarWidget *zombatarWidget, int x, int y) {
 void TestMenuWidget_MouseUp(ZombatarWidget *zombatarWidget, int x, int y) {}
 
 void TestMenuWidget_KeyDown(ZombatarWidget *zombatarWidget, int keyCode) {
-    if (keyCode == Sexy::KEYCODE_ESCAPE || keyCode == Sexy::KEYCODE_ESCAPE2) {
+    if (keyCode == Sexy::KEYCODE_ESCAPE || keyCode == Sexy::KEYCODE_GAMEPAD_B) {
         LawnApp *lawnApp = *gLawnApp_Addr;
         lawnApp->KillZombatarScreen();
         lawnApp->ShowMainMenuScreen();

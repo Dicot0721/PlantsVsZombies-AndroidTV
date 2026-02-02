@@ -232,7 +232,7 @@ void ChallengeScreen::MouseUp(int x, int y) {
     if (!gTouchOutSide && !gChallengeItemMoved) {
         int gameIndex = mScreenTopChallengeIndex + (y - mPageTop) / gChallengeItemHeight;
         if (mSelectedMode == mUnk1[gameIndex]) {
-            KeyDown(Sexy::KEYCODE_ACCEPT);
+            KeyDown(Sexy::KEYCODE_RETURN);
         } else {
             mApp->PlaySample(*Sexy_SOUND_BUTTONCLICK_Addr);
             mSelectedMode = mUnk1[gameIndex];

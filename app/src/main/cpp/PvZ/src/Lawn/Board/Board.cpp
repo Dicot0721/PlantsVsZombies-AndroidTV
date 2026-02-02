@@ -262,7 +262,7 @@ void Board::ShovelDown() {
     bool isInShovelTutorial = (unsigned int)(mTutorialState - 15) <= 2;
     if (isInShovelTutorial) {
         // 如果正在铲子教学中(即冒险1-5的保龄球的开场前，戴夫要求你铲掉三个豌豆的这段时间),则发送铲除键来铲除。
-        mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_SHOVEL, 1112);
+        mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_QUICK_DIG, 1112);
         ClearCursor(0);
         RefreshSeedPacketFromCursor(0);
         return;
@@ -2894,7 +2894,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                 }
             }
             if (mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE) { // 拉老虎机用
-                mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_HAMMER, 1112);
+                mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_X_BUTTON, 1112);
                 return;
             }
             mTouchState = TouchState::TOUCHSTATE_SEED_BANK; // 记录本次触控的状态
@@ -2927,7 +2927,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                 }
             }
             if (mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE) { // 拉老虎机用
-                mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_HAMMER, 1112);
+                mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_X_BUTTON, 1112);
                 return;
             }
             mTouchState = TouchState::TOUCHSTATE_SEED_BANK; // 记录本次触控的状态
@@ -3057,7 +3057,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
 
     if (mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE) { // 拉老虎机用
         if (TRect_Contains(&slotMachineRect, x, y)) {
-            mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_HAMMER, 1112);
+            mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_X_BUTTON, 1112);
             return;
         }
     }
@@ -3427,15 +3427,15 @@ void Board::__MouseUp(int x, int y, int theClickCount) {
             } else if (mGameState == 7 || isCobCannonSelected || mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
                 if (mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST) {
                     mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
-                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
-                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
+                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
+                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                     mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
                 } else if ((mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mChallenge->mChallengeState == ChallengeState::STATECHALLENGE_NORMAL
                             && mApp->mGameScene == GameScenes::SCENE_PLAYING)
                            || mGameMode == GameMode::GAMEMODE_MP_VS) {
                     mGamepadControls1->OnButtonDown(GamepadButton::BUTTONCODE_A, mGamepadControls1->mPlayerIndex1, 0);
                 } else {
-                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
+                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                 }
                 int mGameStateNew = mGamepadControls1->mGamepadState;
                 int seedPacketIndexNew = mGamepadControls1->mSelectedSeedIndex;
@@ -3465,14 +3465,14 @@ void Board::__MouseUp(int x, int y, int theClickCount) {
             } else if (mGameState_2P == 7 || isCobCannonSelected_2P || mCursorType_2P == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
                 if (mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED || mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST) {
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
-                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
-                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
+                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
+                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
                 } else if ((mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mChallengeState == ChallengeState::STATECHALLENGE_NORMAL && mApp->mGameScene == GameScenes::SCENE_PLAYING)
                            || mGameMode == GameMode::GAMEMODE_MP_VS) {
                     mGamepadControls2->OnButtonDown(GamepadButton::BUTTONCODE_A, mGamepadControls2->mPlayerIndex1, 0);
                 } else {
-                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
+                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                 }
                 int mGameStateNew_2P = mGamepadControls2->mGamepadState;
                 int seedPacketIndexNew_2P = mGamepadControls2->mSelectedSeedIndex;
@@ -3566,7 +3566,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
                 }
             }
             if (mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE) { // 拉老虎机用
-                mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_HAMMER, 1112);
+                mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_X_BUTTON, 1112);
                 return;
             }
             gTouchStateSecond = TouchState::TOUCHSTATE_SEED_BANK; // 记录本次触控的状态
@@ -3600,7 +3600,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
                 }
             }
             if (mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE) { // 拉老虎机用
-                mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_HAMMER, 1112);
+                mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_X_BUTTON, 1112);
                 return;
             }
             gTouchStateSecond = TouchState::TOUCHSTATE_SEED_BANK; // 记录本次触控的状态
@@ -3639,7 +3639,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
 
     if (mObjectType == GameObjectType::OBJECT_TYPE_SHOVEL) {
         if (!useNewShovel) {
-            mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_SHOVEL, 1112);
+            mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_QUICK_DIG, 1112);
             return;
         }
         gPlayerIndexSecond = TouchPlayerIndex::TOUCHPLAYER_PLAYER1; // 玩家1
@@ -3753,7 +3753,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
 
     if (mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE) { // 拉老虎机用
         if (TRect_Contains(&slotMachineRect, x, y)) {
-            mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_HAMMER, 1112);
+            mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_X_BUTTON, 1112);
             return;
         }
     }
@@ -4069,14 +4069,14 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
 
                 if (aGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED || aGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST) {
                     mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
-                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
-                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
+                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
+                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                     mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
                 } else if ((aGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && aChallengeState == ChallengeState::STATECHALLENGE_NORMAL && aGameScene == GameScenes::SCENE_PLAYING)
                            || aGameMode == GameMode::GAMEMODE_MP_VS) {
                     mGamepadControls1->OnButtonDown(GamepadButton::BUTTONCODE_A, mGamepadControls1->mPlayerIndex1, 0);
                 } else {
-                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
+                    mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                 }
                 int mGameStateNew = mGamepadControls1->mGamepadState;
                 int numSeedsInBankNew = aSeedBank->GetNumSeedsOnConveyorBelt();
@@ -4095,14 +4095,14 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
             } else if (aGameState_2P == 7 || aIsCobCannonSelected_2P || aCursorType_2P == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
                 if (aGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED || aGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST) {
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
-                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
-                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
+                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
+                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
                 } else if ((aGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && aChallengeState == ChallengeState::STATECHALLENGE_NORMAL && aGameScene == GameScenes::SCENE_PLAYING)
                            || aGameMode == GameMode::GAMEMODE_MP_VS) {
                     mGamepadControls2->OnButtonDown(GamepadButton::BUTTONCODE_A, mGamepadControls2->mPlayerIndex1, 0);
                 } else {
-                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ACCEPT, 1096);
+                    mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                 }
                 int mGameStateNew_2P = mGamepadControls2->mGamepadState;
                 int numSeedsInBankNew_2P = aSeedBank_2P->GetNumSeedsOnConveyorBelt();
@@ -4204,7 +4204,7 @@ void Board::UpdateButtons() {
     VSSetupMenu *aVSSetup = mApp->mVSSetupScreen;
     GamepadControls *aGamepad = (gGamePlayerIndex == 1) ? mGamepadControls2 : mGamepadControls1;
     if (gKeyDown) {
-        aGamepad->OnKeyDown(KeyCode::KEYCODE_SHOVEL, 1112);
+        aGamepad->OnKeyDown(KeyCode::KEYCODE_QUICK_DIG, 1112);
         aGamepad->mGamepadState = 7;
         gKeyDown = false;
         gGamePlayerIndex = -1;
