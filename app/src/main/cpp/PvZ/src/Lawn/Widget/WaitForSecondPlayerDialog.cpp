@@ -25,6 +25,7 @@
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
+
 #include <arpa/inet.h>
 #include <asm-generic/fcntl.h>
 #include <fcntl.h>
@@ -1277,7 +1278,10 @@ static inline void WriteBE32_u32(uint8_t *p, uint32_t v) {
 
 
 void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int id) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winvalid-offsetof" // warning: offset of on non-standard-layout type 'xxx'
     auto *dialog = reinterpret_cast<WaitForSecondPlayerDialog *>((uint32_t(listener) - offsetof(WaitForSecondPlayerDialog, mButtonListener)));
+#pragma clang diagnostic pop
 
     // 1000: YesButton
     if (id == 1000) {

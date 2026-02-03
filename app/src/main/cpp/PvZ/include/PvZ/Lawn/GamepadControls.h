@@ -108,11 +108,11 @@ public:
     void UpdatePreviewReanim();
     void OnButtonDown(GamepadButton theButton, int thePlayerIndex, unsigned int unk);
 
+    GamepadControls() = delete;
+    ~GamepadControls() = delete;
+
 protected:
     friend void InitHookFunction();
-
-    GamepadControls() = default;
-    ~GamepadControls() = default;
 
     void _constructor(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2);
 };

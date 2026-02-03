@@ -57,9 +57,8 @@ public:
 
     void GetGamepadVelocity(float *horizontal, float *vertical);
 
-protected:
-    BaseGamepadControls() = default;
-    ~BaseGamepadControls() = default;
+    BaseGamepadControls() = delete;
+    ~BaseGamepadControls() = delete;
 };
 
 #endif // PVZ_LAWN_BASE_GAMEPAD_CONTROLS_H
