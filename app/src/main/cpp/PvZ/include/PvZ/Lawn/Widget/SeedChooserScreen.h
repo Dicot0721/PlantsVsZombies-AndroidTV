@@ -81,7 +81,7 @@ public:
         SEED_DIR_RIGHT,
     };
 
-    int unkMem1;                             // 65
+    bool mShowHelpText;                      // 65
     GameButton *mImitaterButton;             // 66
     ChosenSeed mChosenSeeds[NUM_SEED_TYPES]; // 67 ~ 930
     LawnApp *mApp;                           // 931
@@ -109,7 +109,7 @@ public:
     bool mIsZombieChooser;                   // 3812
     SeedBank *mSeedBank1;                    // 954
     SeedBank *mSeedBank2;                    // 955
-    int unkCounter;                          // 956
+    int mDimCounter;                         // 956
     int mImitaterDialogOpened;               // 957
     GameButton *mViewLawnButton;             // 958
     GameButton *mStoreButton;                // 959

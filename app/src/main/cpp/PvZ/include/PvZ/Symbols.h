@@ -1258,6 +1258,7 @@ inline Image **IMAGE_MP_TARGETS_X;
 
 inline Font **FONT_DWARVENTODCRAFT18;
 inline Font **FONT_HOUSEOFTERROR28;
+inline Font **FONT_DWARVENTODCRAFT24;
 
 inline int *SOUND_BALLOON_POP;
 inline int *SOUND_BOING;

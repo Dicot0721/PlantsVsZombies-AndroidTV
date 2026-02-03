@@ -913,144 +913,334 @@ int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, SeedDir theMoveDirection
 }
 
 void SeedChooserScreen::Draw(Graphics *g) {
-    if (mIsZombieChooser && gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode) {
-        if (mApp->GetDialog(DIALOG_STORE) || mApp->GetDialog(DIALOG_ALMANAC))
-            return;
+    // Early returns for dialogs
+    if (mApp->GetDialog(DIALOG_STORE) || mApp->GetDialog(DIALOG_ALMANAC))
+        return;
 
-        g->SetLinearBlend(true);
-        if (!mBoard->ChooseSeedsOnCurrentLevel() || (mBoard->mCutScene && mBoard->mCutScene->IsBeforePreloading()))
-            return;
+    g->SetLinearBlend(true);
 
-        Image *aBackgroundImage = mIsZombieChooser ? *Sexy::IMAGE_SEEDCHOOSER_BACKGROUND2 : *Sexy::IMAGE_SEEDCHOOSER_BACKGROUND;
-        g->DrawImage(aBackgroundImage, 0, 87);
-        if (!mApp->IsVSMode() && HasPacket(SEED_IMITATER, false)) {
-            g->DrawImage(*Sexy::IMAGE_SEEDCHOOSER_IMITATERADDON, mImitaterButton->mX - 5, mImitaterButton->mY - 12);
-        }
-        Color aColor = mIsZombieChooser ? Color(0, 255, 0) : Color(213, 159, 43);
-        pvzstl::string aChooserStr = mIsZombieChooser ? TodStringTranslate("[CHOOSE_YOUR_ZOMBIES]") : TodStringTranslate("[CHOOSE_YOUR_SEEDS]");
-        int aStringX = aBackgroundImage->mWidth / 2;
-        TodDrawString(g, aChooserStr, aStringX, 114, *Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+    if (!mBoard->ChooseSeedsOnCurrentLevel() || (mBoard->mCutScene && mBoard->mCutScene->IsBeforePreloading()))
+        return;
 
-        int aNumSeeds = NUM_ZOMBIE_SEED_IN_CHOOSER;
-        for (SeedType aSeedShadow = SEED_ZOMBIE_GRAVESTONE; aSeedShadow < aNumSeeds; aSeedShadow = SeedType(aSeedShadow + 1)) {
+    // Setup base color
+    Color aBaseColor(255, 255, 255);
+
+    // Handle two-player mode dimming
+    if (mApp->IsVSMode() && !CanPickNow()) {
+        float aDimAmount = TodAnimateCurveFloat(0, 25, mDimCounter, 1.0f, 0.45f, CURVE_EASE_IN_OUT);
+        g->SetColorizeImages(true);
+        aBaseColor = Color((int)(aDimAmount * 255.0f), (int)(aDimAmount * 255.0f), (int)(aDimAmount * 255.0f));
+        g->SetColor(aBaseColor);
+    }
+
+    // Draw background
+    Image *aBackgroundImage = mIsZombieChooser ? *Sexy::IMAGE_SEEDCHOOSER_BACKGROUND2 : *Sexy::IMAGE_SEEDCHOOSER_BACKGROUND;
+    g->DrawImage(aBackgroundImage, 0, 87);
+
+    // Draw imitater addon for plant chooser
+    if (!mIsZombieChooser && HasPacket(SEED_IMITATER, false) && !mApp->IsVSMode()) {
+        g->DrawImage(*Sexy::IMAGE_SEEDCHOOSER_IMITATERADDON, mImitaterButton->mX - 5, mImitaterButton->mY - 12);
+    }
+
+    // Draw title text
+    Color aTitleColor;
+    pvzstl::string aTitleText;
+    if (mIsZombieChooser) {
+        aTitleColor = Color(0, 255, 0);
+        aTitleText = "[CHOOSE_YOUR_ZOMBIES]";
+    } else {
+        aTitleColor = Color(213, 159, 43);
+        aTitleText = "[CHOOSE_YOUR_PLANTS]";
+    }
+
+    pvzstl::string aTitleString = TodStringTranslate(aTitleText.c_str());
+    TodDrawString(g, aTitleString, aBackgroundImage->mWidth / 2, 114, *Sexy::FONT_DWARVENTODCRAFT18, aTitleColor, DS_ALIGN_CENTER);
+
+    bool isExtraSeedsMode = gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode;
+
+    // Calculate seed count
+    int aNumSeeds = isExtraSeedsMode ? NUM_ZOMBIE_SEED_IN_CHOOSER - SEED_ZOMBIE_GRAVESTONE : 19;
+    if (!mIsZombieChooser) {
+        if (mApp->IsVSMode() || !Has7Rows())
+            aNumSeeds = 40;
+        else if (HasPacket(SEED_IMITATER, false))
+            aNumSeeds = 49;
+        else
+            aNumSeeds = 48;
+    }
+
+    // Draw seed packet shadows (two passes)
+    for (int aPass = 0; aPass < 2; aPass++) {
+        bool aDrawShadow = (aPass == 0);
+
+        for (SeedType aSeedShadow = SEED_PEASHOOTER; aSeedShadow < aNumSeeds; aSeedShadow = SeedType(aSeedShadow + 1)) {
             int x, y;
-            GetSeedPositionInChooser(GetSeedPacketIndex(aSeedShadow), x, y);
+            GetSeedPositionInChooser(aSeedShadow, x, y);
 
-            if (HasPacket(aSeedShadow, mIsZombieChooser)) {
-                ChosenSeed &aChosenSeed = mChosenSeeds[GetSeedPacketIndex(aSeedShadow)];
+            SeedType aDisplaySeedType = aSeedShadow;
+            if (mIsZombieChooser)
+                aDisplaySeedType = GetZombieSeedType(aSeedShadow);
 
-                if (aChosenSeed.mSeedState != SEED_IN_CHOOSER) {
-                    DrawPacket(g, x, y, aSeedShadow, SEED_NONE, 0, CanPickNow() ? 55 : 25, &Color::White, true, true);
-                }
+            if (aDisplaySeedType == SEED_IMITATER)
+                continue;
+
+            if (aDisplaySeedType == SEED_NONE || !HasPacket(aDisplaySeedType, mIsZombieChooser)) {
+                if (aDrawShadow)
+                    g->DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
             } else {
+                ChosenSeed &aChosenSeed = mChosenSeeds[aSeedShadow];
+                if (aChosenSeed.mSeedState != SEED_IN_CHOOSER) {
+                    // Determine grayness based on selection state
+                    int aGrayness = 55;
+                    //                    if (mSeedType1 == aSeedShadow || mSeedType2 == aSeedShadow)
+                    //                        aGrayness = 55;
+                    //                    else
+                    //                        aGrayness = 255;
+
+                    DrawPacket(g, x, y, aDisplaySeedType, SEED_NONE, 0.0f, aGrayness, &aBaseColor, true, true);
+                }
+            }
+        }
+    }
+
+    // Draw empty seed bank slots
+    int aNumSeedsInBank = mSeedBank1->mNumPackets;
+    for (int anIndex = 0; anIndex < aNumSeedsInBank; anIndex++) {
+        if (FindSeedInBank(anIndex, false) == SEED_NONE) {
+            int x, y;
+            GetSeedPositionInBank(anIndex, x, y, 0);
+            g->DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
+        }
+    }
+
+    // Draw coop mode second bank slots
+    if (mApp->IsCoopMode() && mSeedBank2) {
+        for (int anIndex = 0; anIndex < aNumSeedsInBank; anIndex++) {
+            if (FindSeedInBank(anIndex, true) == SEED_NONE) {
+                int x, y;
+                GetSeedPositionInBank(anIndex, x, y, 1);
                 g->DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
             }
         }
-
-
-        int aNumSeedsInBank = mSeedBank1->mNumPackets;
-        if (aNumSeedsInBank > 0) {
-            for (int anIndex = 0; anIndex < aNumSeedsInBank; anIndex++) {
-                if (FindSeedInBank(anIndex, mIsZombieChooser) == SEED_NONE) {
-                    int x, y;
-                    GetSeedPositionInBank(anIndex, x, y, 0);
-                    g->DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
-                }
-            }
-        }
-        if (mApp->IsCoopMode() && mSeedBank2 && aNumSeedsInBank > 0) {
-            for (int i = 0; i != aNumSeedsInBank; ++i) {
-                if (FindSeedInBank(i, 1) == SEED_NONE) {
-                    int x, y;
-                    GetSeedPositionInBank(i, x, y, 1);
-                    g->DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
-                }
-            }
-        }
-
-        //        SeedType aSeedTypeInCursor = SEED_NONE;
-        //        int aCursorX, aCursorY;
-        //        bool aGrayedInCursor = false;
-        for (SeedType aSeedType = SEED_ZOMBIE_GRAVESTONE; aSeedType < NUM_ZOMBIE_SEED_IN_CHOOSER; aSeedType = (SeedType)(aSeedType + 1)) {
-            ChosenSeed &aChosenSeed = mChosenSeeds[GetSeedPacketIndex(aSeedType)];
-            ChosenSeedState aSeedState = aChosenSeed.mSeedState;
-            if (HasPacket(aSeedType, mIsZombieChooser) && aSeedState != SEED_FLYING_TO_BANK && aSeedState != SEED_FLYING_TO_CHOOSER && aSeedState != SEED_PACKET_HIDDEN
-                && (aSeedState == SEED_IN_CHOOSER || mBoard->mCutScene->mSeedChoosing)) {
-                bool aGrayed = false;
-                if (((SeedNotRecommendedToPick(aSeedType) || SeedNotAllowedToPick(aSeedType)) && aSeedState == SEED_IN_CHOOSER) || SeedNotAllowedDuringTrial(aSeedType) || !CanPickNow())
-                    aGrayed = true;
-
-                int aPosX = aChosenSeed.mX;
-                int aPosY = aChosenSeed.mY;
-                if (aSeedState == SEED_IN_BANK) {
-                    int aSeedIndexInBank = aChosenSeed.mSeedIndexInBank;
-                    int aChosenPlayerIndex = aChosenSeed.mChosenPlayerIndex;
-                    GetSeedPositionInBank(aSeedIndexInBank, aPosX, aPosY, aChosenPlayerIndex);
-                } else {
-                    GetSeedPositionInChooser(GetSeedPacketIndex(aSeedType), aPosX, aPosY);
-                }
-
-                //                if (mSeedType1 == aSeedType && mBoard->mGamepadControls1->mPlayerIndex2 != -1 && aChosenSeed.mSeedState == SEED_IN_CHOOSER) {
-                //                    aSeedTypeInCursor = aSeedType;
-                //                    aGrayedInCursor = aGrayed;
-                //                }
-                //                if (mSeedType2 == aSeedType && mBoard->mGamepadControls2->mPlayerIndex2 != -1 && aChosenSeed.mSeedState == SEED_IN_CHOOSER) {
-                //                    aSeedTypeInCursor = aSeedType;
-                //                    aGrayedInCursor = aGrayed;
-                //                }
-
-                DrawPacket(g, aPosX, aPosY, aChosenSeed.mSeedType, SEED_NONE, 0, aGrayed ? 155 : 255, &Color::White, true, true);
-            }
-        }
-
-        for (SeedType aSeedType = SEED_ZOMBIE_GRAVESTONE; aSeedType < NUM_ZOMBIE_SEED_IN_CHOOSER; aSeedType = SeedType(aSeedType + 1)) {
-            ChosenSeed &aChosenSeed = mChosenSeeds[GetSeedPacketIndex(aSeedType)];
-            ChosenSeedState aSeedState = aChosenSeed.mSeedState;
-            if (HasPacket(aSeedType, mIsZombieChooser) && (aSeedState == SEED_FLYING_TO_BANK || aSeedState == SEED_FLYING_TO_CHOOSER)) {
-                DrawPacket(g, aChosenSeed.mX, aChosenSeed.mY, aChosenSeed.mSeedType, SEED_NONE, 0, 255, &Color::White, true, true);
-            }
-        }
-
-        int aGamepadIndex = mApp->PlayerToGamepadIndex(mPlayerIndex);
-        int aCursorPositionX = (aGamepadIndex == 1) ? mCursorPositionX2 : mCursorPositionX1;
-        int aCursorPositionY = (aGamepadIndex == 1) ? mCursorPositionY2 : mCursorPositionY1;
-        for (int i = 0; i != 2; ++i) {
-            int v50 = *(int *)(mBoard->unknownMembers3[i + 7] + 152);
-            if (v50 != -1 && !unkMems3[3]) {
-                if (v50 == mPlayerIndex || !mApp->IsVSMode()) {
-                    Image *aSeedSelectorImage = (v50 == mApp->mTwoPlayerState) ? *Sexy::IMAGE_SEED_SELECTOR_BLUE : *Sexy::IMAGE_SEED_SELECTOR;
-                    g->DrawImage(aSeedSelectorImage, aCursorPositionX - 8, aCursorPositionY - 4, 64, 85);
-                }
-            }
-        }
-
-        //        if (aSeedTypeInCursor != SEED_NONE && ShouldDisplayCursor(0)) {
-        //            GetSeedPositionInChooser(aSeedTypeInCursor, aCursorX, aCursorY);
-        //            DrawPacket(g, aCursorX, aCursorY + 5, aSeedTypeInCursor, SEED_NONE, 0.0, aGrayedInCursor ? 115 : 255, &Color::White, true, true);
-        //        }
-        //        if (aSeedTypeInCursor != SEED_NONE && ShouldDisplayCursor(1)) {
-        //            GetSeedPositionInChooser(aSeedTypeInCursor, aCursorX, aCursorY);
-        //            DrawPacket(g, aCursorX, aCursorY + 5, aSeedTypeInCursor, SEED_NONE, 0.0, aGrayedInCursor ? 115 : 255, &Color::White, true, true);
-        //        }
-
-        for (int i = 0; i != 2; ++i) {
-            if (ShouldDisplayCursor(i) && *(int *)(mBoard->unknownMembers3[i + 7] + 152) != -1) {
-                Image *aCursorArrowImage = (i == 1) ? *Sexy::IMAGE_CURSOR_ARROW_P2 : *Sexy::IMAGE_CURSOR_ARROW_P1;
-                Image *aCursorTextImage = (i == 1) ? *Sexy::IMAGE_CURSOR_P2_TEXT : *Sexy::IMAGE_CURSOR_P1_TEXT;
-                float v57 = sinf(unkF * 5.0);
-                g->DrawImageF(aCursorArrowImage, (float)(aCursorPositionX + 25 - aCursorArrowImage->mWidth / 2), (float)(v57 + v57) + (float)(aCursorPositionY - 8));
-                g->DrawImageF(aCursorTextImage, (float)(aCursorPositionX + 25 - aCursorTextImage->mWidth / 2), (float)(aCursorPositionY - 32));
-            }
-        }
-
-        DrawBanIcon(g);
-
-        mToolTip1->Draw(g);
-        mToolTip2->Draw(g);
-    } else {
-        old_SeedChooserScreen_Draw(this, g);
-        DrawBanIcon(g);
     }
+
+    // Draw seeds in chooser and bank
+    for (SeedType aSeedType = SEED_PEASHOOTER; aSeedType < NUM_SEEDS_IN_CHOOSER; aSeedType = SeedType(aSeedType + 1)) {
+        SeedType aDisplaySeedType = aSeedType;
+        if (mIsZombieChooser)
+            aDisplaySeedType = GetZombieSeedType(aSeedType);
+
+        if (!HasPacket(aDisplaySeedType, mIsZombieChooser))
+            continue;
+
+        if (aDisplaySeedType == SEED_NONE || aSeedType >= aNumSeeds)
+            continue;
+
+        ChosenSeed &aChosenSeed = mChosenSeeds[aSeedType];
+        ChosenSeedState aSeedState = aChosenSeed.mSeedState;
+
+        if (aSeedState == SEED_FLYING_TO_BANK || aSeedState == SEED_FLYING_TO_CHOOSER || aSeedState == SEED_PACKET_HIDDEN)
+            continue;
+
+        if (aSeedState != SEED_IN_CHOOSER && !mBoard->mCutScene->mSeedChoosing)
+            continue;
+
+        // Calculate position
+        int aPosX = aChosenSeed.mX;
+        int aPosY = aChosenSeed.mY;
+
+        if (aSeedState == SEED_IN_BANK) {
+            GetSeedPositionInBank(aChosenSeed.mSeedIndexInBank, aPosX, aPosY, aChosenSeed.mChosenPlayerIndex);
+            aChosenSeed.mX = aPosX;
+            aChosenSeed.mY = aPosY;
+        }
+
+        // Determine grayness
+        int aGrayness = 255;
+        bool aIsGrayed = false;
+
+        if (!mIsZombieChooser) {
+            if (aSeedState == SEED_IN_CHOOSER) {
+                if (SeedNotRecommendedToPick(aChosenSeed.mSeedType) || SeedNotAllowedToPick(aChosenSeed.mSeedType)) {
+                    aIsGrayed = true;
+                }
+            }
+
+            if (SeedNotAllowedDuringTrial(aChosenSeed.mSeedType))
+                aIsGrayed = true;
+        }
+
+        if (aIsGrayed)
+            aGrayness = 115;
+
+        // Check if being dragged
+        if (mSeedType1 == aSeedType && mBoard->mGamepadControls1->mPlayerIndex1 != -1 && aSeedState == SEED_IN_CHOOSER) {
+            mSeedType1 = aSeedType;
+            if (aIsGrayed)
+                aGrayness = 115;
+            else
+                aGrayness = 255;
+        }
+
+        if (mSeedType2 == aSeedType && mBoard->mGamepadControls2->mPlayerIndex2 != -1 && aSeedState == SEED_IN_CHOOSER) {
+            mSeedType2 = aSeedType;
+            if (aIsGrayed)
+                aGrayness = 115;
+            else
+                aGrayness = 255;
+        }
+
+        DrawPacket(g, aPosX, aPosY, aChosenSeed.mSeedType, aChosenSeed.mImitaterType, 0.0f, aGrayness, &aBaseColor, true, true);
+    }
+
+    // Draw imitater button
+    if (!mIsZombieChooser && !mApp->IsVSMode()) {
+        g->Translate(mImitaterButton->mX, mImitaterButton->mY);
+        mImitaterButton->Draw(g);
+        g->Translate(-mImitaterButton->mX, -mImitaterButton->mY);
+    }
+
+    int aGamepadIndex = mApp->PlayerToGamepadIndex(mPlayerIndex);
+    int aCursorX = aGamepadIndex ? mCursorPositionX2 : mCursorPositionX1;
+    int aCursorY = aGamepadIndex ? mCursorPositionY2 : mCursorPositionY1;
+
+    // Draw cursor selectors for two players
+    for (int aPlayerIndex = 0; aPlayerIndex < 2; aPlayerIndex++) {
+        int aPlayerState = (aPlayerIndex ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1)->mPlayerIndex2;
+        if (aPlayerState != -1 && !unkMems3[3]) {
+            if (aPlayerState == mPlayerIndex || !mApp->IsVSMode()) {
+                Image *aSelectorImage = (aPlayerState == mApp->mTwoPlayerState) ? *Sexy::IMAGE_SEED_SELECTOR_BLUE : *Sexy::IMAGE_SEED_SELECTOR;
+
+                g->DrawImage(aSelectorImage, aCursorX - 8, aCursorY - 4, 64, 85);
+            }
+        }
+    }
+
+    // Draw dragging seeds for player 1
+    if (mSeedType1 != SEED_NONE && ShouldDisplayCursor(0)) {
+        int x, y;
+        GetSeedPositionInChooser(mSeedType1, x, y);
+        SeedType aDisplaySeedType = mIsZombieChooser ? GetZombieSeedType(mSeedType1) : mSeedType1;
+        ChosenSeed &aChosenSeed = mChosenSeeds[mSeedType1];
+        int aGrayness = 255;
+        if (aChosenSeed.mSeedState != SEED_IN_CHOOSER)
+            aGrayness = 55;
+        if (((SeedNotRecommendedToPick(mSeedType1) || SeedNotAllowedToPick(mSeedType1)) && aChosenSeed.mSeedState == SEED_IN_CHOOSER) || SeedNotAllowedDuringTrial(mSeedType1))
+            aGrayness = 115;
+
+        DrawPacket(g, x, y + 5, aDisplaySeedType, SEED_NONE, 0.0f, aGrayness, &aBaseColor, true, true);
+    }
+
+    // Draw dragging seeds for player 2
+    if (mSeedType2 != SEED_NONE && ShouldDisplayCursor(1)) {
+        int x, y;
+        GetSeedPositionInChooser(mSeedType2, x, y);
+        SeedType aDisplaySeedType = mIsZombieChooser ? GetZombieSeedType(mSeedType2) : mSeedType2;
+        ChosenSeed &aChosenSeed = mChosenSeeds[mSeedType2];
+        int aGrayness = 255;
+        if (aChosenSeed.mSeedState != SEED_IN_CHOOSER)
+            aGrayness = 55;
+        if (((SeedNotRecommendedToPick(mSeedType2) || SeedNotAllowedToPick(mSeedType2)) && aChosenSeed.mSeedState == SEED_IN_CHOOSER) || SeedNotAllowedDuringTrial(mSeedType2))
+            aGrayness = 115;
+        DrawPacket(g, x, y + 5, aDisplaySeedType, SEED_NONE, 0.0f, aGrayness, &aBaseColor, true, true);
+    }
+
+    // Draw cursor arrows for players
+    for (int aPlayerIndex = 0; aPlayerIndex < 2; aPlayerIndex++) {
+        if (ShouldDisplayCursor(aPlayerIndex) && (aPlayerIndex ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1)->mPlayerIndex2 != -1) {
+            Image *aArrowImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_ARROW_P2 : *Sexy::IMAGE_CURSOR_ARROW_P1;
+            Image *aTextImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_P2_TEXT : *Sexy::IMAGE_CURSOR_P1_TEXT;
+
+            float aBounce = sinf(unkF * 5.0f) * 2.0f;
+
+            g->DrawImageF(aArrowImage, (float)(aCursorX + 25 - aArrowImage->mWidth / 2), (float)(aCursorY - 8) + aBounce);
+            g->DrawImageF(aTextImage, (float)(aCursorX + 25 - aTextImage->mWidth / 2), (float)(aCursorY - 32));
+        }
+    }
+
+    // Draw flying seed packets
+    for (SeedType aSeedType = SEED_PEASHOOTER; aSeedType < NUM_SEEDS_IN_CHOOSER; aSeedType = SeedType(aSeedType + 1)) {
+        SeedType aDisplaySeedType = aSeedType;
+        if (mIsZombieChooser)
+            aDisplaySeedType = GetZombieSeedType(aSeedType);
+
+        if (!HasPacket(aDisplaySeedType, mIsZombieChooser))
+            continue;
+
+        ChosenSeed &aChosenSeed = mChosenSeeds[aSeedType];
+        ChosenSeedState aSeedState = aChosenSeed.mSeedState;
+
+        if (aSeedState == SEED_FLYING_TO_BANK || aSeedState == SEED_FLYING_TO_CHOOSER) {
+            DrawPacket(g, aChosenSeed.mX, aChosenSeed.mY, aChosenSeed.mSeedType, aChosenSeed.mImitaterType, 0.0f, 255, &aBaseColor, true, true);
+        }
+    }
+
+    // Draw UI widgets
+    GamepadApp *aGamepadApp = reinterpret_cast<GamepadApp *>(mApp);
+    bool aHasGamepad = aGamepadApp->HasGamepad();
+    if (!aHasGamepad && (!mApp->mGamePad1IsOn || !mApp->mGamePad2IsOn)) {
+        // Draw button widgets
+        for (size_t i = 0; i < 4; i++) {
+            GameButton *aButton[4] = {mViewLawnButton, mStoreButton, mStartButton, mAlmanacButton};
+            if (aButton[i] && aButton[i]->mVisible) {
+                g->Translate(aButton[i]->mX, aButton[i]->mY);
+                aButton[i]->Draw(g);
+                g->Translate(-aButton[i]->mX, -aButton[i]->mY);
+            }
+        }
+    } else if (mShowHelpText && !mApp->IsVSMode()) {
+        // Draw help text with flashing effect
+        int aFlashPhase = mSeedChooserAge % 100;
+        pvzstl::string aHelpText = TodStringTranslate("[HELP_TEXT_2_START]");
+        int aTextX = aBackgroundImage->mWidth / 2;
+        int aTextY = aBackgroundImage->mHeight - 63;
+
+        Color aTextColor;
+        if (aFlashPhase <= 50)
+            aTextColor = Color(127, 127, 127, 255);
+        else
+            aTextColor = Color::White;
+
+        TodDrawString(g, aHelpText, aTextX, aTextY, *Sexy::FONT_DWARVENTODCRAFT24, aTextColor, DS_ALIGN_CENTER);
+    }
+    //    else {
+    //        // Check for disconnected controller warning
+    //        int aTwoPlayerState = mApp->mTwoPlayerState;
+    //        if (aTwoPlayerState != -1 && aTwoPlayerState == mPlayerIndex) {
+    //            // if (mBoard->mGamepadControls[aTwoPlayerState] &&
+    //            //     !mBoard->mGamepadControls[aTwoPlayerState]->mControllerConnected)
+    //            // { // 这是AI给出的结果，很显然还原是对的，但是实际上没有这个成员 | 故此还原TV伪C的判断
+    //
+    //            if (!*(bool *)(mApp->unkMem6[aTwoPlayerState + 135] + 412)) {
+    //
+    //                // Warninig警告: 不得简化sDisconnectTimer这个变量，更不能删除static字样！
+    //                static int sDisconnectTimer = 0;
+    //                sDisconnectTimer++;
+    //                /* 这一段看的我很迷糊，首先是mGamepadControls的判断，TV的伪C是判断!mApp->Unk6[aTwoPlayerState + 139], PSV又是调用函数判断成立
+    //                        经过我的分析，PSV调用的是一个判断控制器的状态的函数，有以下返回值: 0已连接，1167控制器未连接，TV很有可能函数已经被阉割了，不过我有空看看1.0.1的ida
+    //
+    //                   还有sDisconnectTimer这个变量，在PSV与TV中都是全局变量，在进行这一步时会进行X++。
+    //                        在这里我就不声明为全局变量了，声明为一个函数内静态变量(相当于全局变量但是只有此作用域可使用)*/
+    //
+    //                int aSeconds = (sDisconnectTimer / 60) % 60;
+    //                if (aSeconds > 30) {
+    //                    pvzstl::string aWarningText = TodStringTranslate("[RECONNECT_SECOND_CONTROLLER_FMT]");
+    //                    aWarningText = StrFormat(aWarningText.c_str(), aTwoPlayerState + 1); // 此处的StrFormat在TV中传入2，PSV则是mApp->mTwoPlayerState
+    //
+    //                    int aTextX = aBackgroundImage->mWidth / 2;
+    //                    int aTextY = aBackgroundImage->mHeight - 63;
+    //                    Color aWarningColor(255, 0, 0);
+    //
+    //                    TodDrawString(g, aWarningText, aTextX, aTextY, *Sexy::FONT_DWARVENTODCRAFT24, aWarningColor, DS_ALIGN_CENTER);
+    //                }
+    //            }
+    //        }
+    //    }
+
+    this->Widget::DeferOverlay(0);
+
+    // 绘制禁用叉叉
+    DrawBanIcon(g);
 }
 
 void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {

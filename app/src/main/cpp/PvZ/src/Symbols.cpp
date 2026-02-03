@@ -1255,6 +1255,7 @@ bool LoadGameMain() {
 
     Sexy::FONT_DWARVENTODCRAFT18 = reinterpret_cast<Sexy::Font **>(dlsym(handle, "_ZN4Sexy22FONT_DWARVENTODCRAFT18E"));
     Sexy::FONT_HOUSEOFTERROR28 = reinterpret_cast<Sexy::Font **>(dlsym(handle, "_ZN4Sexy20FONT_HOUSEOFTERROR28E"));
+    Sexy::FONT_DWARVENTODCRAFT24 = reinterpret_cast<Sexy::Font **>(dlsym(handle, "_ZN4Sexy22FONT_DWARVENTODCRAFT24E"));
 
     Sexy::SOUND_BALLOON_POP = reinterpret_cast<int *>(dlsym(handle, "_ZN4Sexy17SOUND_BALLOON_POPE"));
 
