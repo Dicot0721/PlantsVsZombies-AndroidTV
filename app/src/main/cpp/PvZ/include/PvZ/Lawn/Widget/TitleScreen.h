@@ -24,8 +24,7 @@
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 
-class TitleScreen : public Sexy::Widget {
-
+class TitleScreen : public Sexy::Widget, public Sexy::ButtonListener {
 public:
     enum TitleState {
         WaitingForFirstDraw = 0,
@@ -35,20 +34,16 @@ public:
         Loading = 4
     };
 
-    void _constructor(LawnApp *theApp);
-
-public:
-    Sexy::ButtonListener mButtonListener; // 64
-    Sexy::Image *mPopcapLogo;             // 65
-    Sexy::Image *mGuide;                  // 66
-    Sexy::Widget *mStartButton;           // 67
-    float mCurBarWidth;                   // 68
-    float mTotalBarWidth;                 // 69
-    float mBarVel;                        // 70
-    float mBarStartProgress;              // 71
-    bool mRegisterClicked;                // 288
-    bool mLoadingThreadComplete;          // 289
-    int mTitleAge;                        // 73
+    Sexy::Image *mPopcapLogo;    // 65
+    Sexy::Image *mGuide;         // 66
+    Sexy::Widget *mStartButton;  // 67
+    float mCurBarWidth;          // 68
+    float mTotalBarWidth;        // 69
+    float mBarVel;               // 70
+    float mBarStartProgress;     // 71
+    bool mRegisterClicked;       // 288
+    bool mLoadingThreadComplete; // 289
+    int mTitleAge;               // 73
     bool mNeedRegister;
     bool mNeedShowRegisterBox;
     bool mNeedToInit;
@@ -65,10 +60,14 @@ public:
     bool mNeedPlayLogo; // 4 * 83
     LawnApp *mApp;      // 84
 
-public:
     TitleScreen(LawnApp *theApp) {
         _constructor(theApp);
     }
+
+protected:
+    friend void InitHookFunction();
+
+    void _constructor(LawnApp *theApp);
 
 }; // 大小85个整数
 

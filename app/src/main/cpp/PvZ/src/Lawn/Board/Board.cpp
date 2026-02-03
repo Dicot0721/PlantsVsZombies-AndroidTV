@@ -77,7 +77,7 @@ void Board::_constructor(LawnApp *theApp) {
 
     pvzstl::string str =
         TodStringTranslate((theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) ? "[MAIN_MENU_BUTTON]" : "[MENU_BUTTON]");
-    gBoardMenuButton = MakeButton(1000, &mButtonListener, this, str);
+    gBoardMenuButton = MakeButton(1000, this, this, str);
     gBoardMenuButton->Resize(705, -3, 120, 80);
     gBoardMenuButton->mBtnNoDraw = true;
     gBoardMenuButton->mDisabled = true;
@@ -89,13 +89,13 @@ void Board::_constructor(LawnApp *theApp) {
 
     if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND) {
         pvzstl::string str1 = TodStringTranslate("[START_ONSLAUGHT]");
-        gBoardStoreButton = MakeButton(1001, &mButtonListener, this, str1);
+        gBoardStoreButton = MakeButton(1001, this, this, str1);
         gBoardStoreButton->Resize(0, 0, 0, 0);
         gBoardStoreButton->mBtnNoDraw = true;
         gBoardStoreButton->mDisabled = true;
     } else {
         pvzstl::string str1 = TodStringTranslate("[SHOP_BUTTON]");
-        gBoardStoreButton = MakeButton(1001, &mButtonListener, this, str1);
+        gBoardStoreButton = MakeButton(1001, this, this, str1);
         if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || theApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
             gBoardStoreButton->Resize(0, 550, 170, 120);
         } else {

@@ -136,15 +136,15 @@ enum class InputPurpose {
     LAN_JOIN_MANUAL,     // 模式2：加入指定IP房间
     HOST_SET_PORT,       // 模式2：设置房间端口
     SERVER_CONNECT_ADDR, // 模式3：连接服务器 IP:PORT
-
-
 };
+
 struct ServerRoomItem {
     int roomId;
     char name[128];
     bool full;
     bool gaming;
 };
+
 class WaitForSecondPlayerDialog : public LawnDialog {
 public:
     bool m2PJoined;
@@ -286,7 +286,6 @@ inline void (*old_WaitForSecondPlayerDialog_Delete)(WaitForSecondPlayerDialog *d
 // 双方都需要
 constexpr int UDP_PORT = 8888;
 
-
 // 主机端需要
 inline int udpBroadcastSocket = -1;
 inline int tcpListenSocket = -1;
@@ -295,7 +294,6 @@ inline int tcpPort = 0;
 inline int lastBroadcastTime = 0;
 inline sockaddr_in broadcast_addr;
 inline std::string ifname;
-
 
 // 客户端需要
 constexpr int MAX_SERVERS = 3;
@@ -452,13 +450,12 @@ inline server_info servers[MAX_SERVERS];
 inline int scanned_server_count = 0; // 已发现的服务端数量
 inline int udpScanSocket = -1;
 
-
 // 客户端TCP socket
 inline int tcpServerSocket = -1;
 inline bool tcp_connecting = false; // 正在尝试连接
 inline bool tcp_connected = false;
 
-static inline ssize_t sendWithSize(int socket, BaseEvent *event, size_t len, int flags) {
+inline ssize_t sendWithSize(int socket, BaseEvent *event, size_t len, int flags) {
 
     //    如果后续出现了大于255byte的数据包，记得改这里
     //    assert(len <= 255);

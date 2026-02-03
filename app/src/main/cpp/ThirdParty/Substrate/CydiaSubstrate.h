@@ -104,22 +104,22 @@ struct SubstrateHookMemory {
 
 
 template <typename Type_>
-static inline void MSHookFunction(Type_ *symbol, Type_ *replace, Type_ **result) {
+void MSHookFunction(Type_ *symbol, Type_ *replace, Type_ **result) {
     MSHookFunction(reinterpret_cast<void *>(symbol), reinterpret_cast<void *>(replace), reinterpret_cast<void **>(result));
 }
 
 template <typename Type_>
-static inline void MSHookFunction(Type_ *symbol, Type_ *replace) {
+void MSHookFunction(Type_ *symbol, Type_ *replace) {
     return MSHookFunction(symbol, replace, reinterpret_cast<Type_ **>(NULL));
 }
 
 template <typename Type_>
-static inline void MSHookSymbol(Type_ *&value, const char *name, MSImageRef image = NULL) {
+void MSHookSymbol(Type_ *&value, const char *name, MSImageRef image = NULL) {
     value = reinterpret_cast<Type_ *>(MSFindSymbol(image, name));
 }
 
 template <typename Type_>
-static inline void MSHookFunction(const char *name, Type_ *replace, Type_ **result = NULL) {
+void MSHookFunction(const char *name, Type_ *replace, Type_ **result = NULL) {
     Type_ *symbol;
     MSHookSymbol(symbol, name);
     return MSHookFunction(symbol, replace, result);

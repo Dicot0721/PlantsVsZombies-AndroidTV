@@ -194,7 +194,7 @@ void InitHookFunction() {
 
     homura::HookFunction(ChallengeScreen_AddedToManagerAddr, &ChallengeScreen::AddedToManager, &old_ChallengeScreen_AddedToManager);
     homura::HookFunction(ChallengeScreen_RemovedFromManagerAddr, &ChallengeScreen::RemovedFromManager, &old_ChallengeScreen_RemovedFromManager);
-    homura::HookFunction(ChallengeScreen_Delete2Addr, &ChallengeScreen::__Destructor2, &old_ChallengeScreen_Delete2);
+    homura::HookFunction(ChallengeScreen_Delete2Addr, &ChallengeScreen::_destructor2, &old_ChallengeScreen_Delete2);
     homura::HookFunction(ChallengeScreen_UpdateAddr, &ChallengeScreen::Update, &old_ChallengeScreen_Update);
     homura::HookFunction(ChallengeScreen_ChallengeScreenAddr, &ChallengeScreen::_constructor, &old_ChallengeScreen_ChallengeScreen);
     homura::HookFunction(ChallengeScreen_DrawAddr, &ChallengeScreen::Draw, &old_ChallengeScreen_Draw);
@@ -281,7 +281,7 @@ void InitHookFunction() {
     homura::HookFunction(MainMenu_RemovedFromManagerAddr, &MainMenu::RemovedFromManager, &old_MainMenu_RemovedFromManager);
     homura::HookFunction(MainMenu_DrawOverlayAddr, &MainMenu::DrawOverlay, &old_MainMenu_DrawOverlay);
     homura::HookFunction(MainMenu_DrawFadeAddr, &MainMenu::DrawFade, &old_MainMenu_DrawFade);
-    homura::HookFunction(MainMenu_Delete2Addr, &MainMenu::__Destructor2, &old_MainMenu_Delete2);
+    homura::HookFunction(MainMenu_Delete2Addr, &MainMenu::_destructor2, &old_MainMenu_Delete2);
     homura::HookFunction(MainMenu_DrawAddr, &MainMenu::Draw, &old_MainMenu_Draw);
 
 
@@ -451,7 +451,7 @@ void InitHookFunction() {
     homura::HookFunction(MailScreen_MailScreenAddr, &MailScreen::_constructor, &old_MailScreen_MailScreen);
     homura::HookFunction(MailScreen_AddedToManagerAddr, &MailScreen::AddedToManager, &old_MailScreen_AddedToManager);
     homura::HookFunction(MailScreen_RemovedFromManagerAddr, &MailScreen::RemovedFromManager, &old_MailScreen_RemovedFromManager);
-    homura::HookFunction(MailScreen_Delete2Addr, &MailScreen::__Destructor2, &old_MailScreen_Delete2);
+    homura::HookFunction(MailScreen_Delete2Addr, &MailScreen::_destructor2, &old_MailScreen_Delete2);
 
 
     homura::HookFunction(ZenGardenControls_UpdateAddr, &ZenGardenControls::Update, &old_ZenGardenControls_Update);

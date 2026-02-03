@@ -48,7 +48,7 @@ class LawnApp;
 class Board;
 class DefaultPlayerInfo;
 
-class VSSetupMenu : public Sexy::Widget {
+class VSSetupMenu : public Sexy::Widget, public Sexy::ButtonListener {
 public:
     enum {
         VSSetupMenu_Quick_Play = 9,     // 快速游戏
@@ -56,7 +56,6 @@ public:
         VSSetupMenu_Random_Battle = 11, // 随机战场
     };
 
-    Sexy::ButtonListener mButtonListener; // 64
     int unkInt[5];                        // 65 ~ 69
     int mInt70;                           // 70
     int mInt71;                           // 71

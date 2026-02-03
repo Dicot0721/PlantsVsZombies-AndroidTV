@@ -125,7 +125,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *graphics) {
 void ChallengeScreen::AddedToManager(int *theWidgetManager) {
     // 记录当前游戏状态
     pvzstl::string str = TodStringTranslate("[CLOSE]");
-    gChallengeScreenCloseButton = MakeButton(1000, &mButtonListener, this, str);
+    gChallengeScreenCloseButton = MakeButton(1000, this, this, str);
     gChallengeScreenCloseButton->Resize(800, 520, 170, 50);
     AddWidget(gChallengeScreenCloseButton);
 
@@ -146,7 +146,7 @@ void ChallengeScreen::RemovedFromManager(int *theWidgetManager) {
     }
 }
 
-void ChallengeScreen::__Destructor2() {
+void ChallengeScreen::_destructor2() {
     // 删除按钮
     old_ChallengeScreen_Delete2(this);
 

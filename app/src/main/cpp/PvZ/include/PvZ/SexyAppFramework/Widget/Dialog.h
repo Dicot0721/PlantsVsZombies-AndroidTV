@@ -32,9 +32,8 @@ class DialogButton;
 class Font;
 class Image;
 
-class Dialog : public Sexy::Widget {
+class Dialog : public Widget, public ButtonListener {
 public:
-    ButtonListener mButtonListener; // 64
     int *mDialogListener;           // 65
     Image *mComponentImage;         // 66
     DialogButton *mYesButton;       // 67

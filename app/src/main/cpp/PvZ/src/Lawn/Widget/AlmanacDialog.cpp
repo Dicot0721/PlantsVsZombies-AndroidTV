@@ -52,12 +52,12 @@ void AlmanacDialog::_constructor(LawnApp *theApp) {
 
     old_AlmanacDialog_AlmanacDialog(this, theApp);
 
-    gAlmanacBackButton = MakeButton(ALMANAC_BUTTON_BACK, &mButtonListener, this, TodStringTranslate("[ALMANAC_INDEX]"));
+    gAlmanacBackButton = MakeButton(ALMANAC_BUTTON_BACK, this, this, TodStringTranslate("[ALMANAC_INDEX]"));
     gAlmanacBackButton->Resize(0, 0, 0, 0);
     gAlmanacBackButton->mBtnNoDraw = true;
     gAlmanacBackButton->mDisabled = true;
 
-    gAlmanacCloseButton = MakeButton(ALMANAC_BUTTON_CLOSE, &mButtonListener, this, TodStringTranslate("[CLOSE]"));
+    gAlmanacCloseButton = MakeButton(ALMANAC_BUTTON_CLOSE, this, this, TodStringTranslate("[CLOSE]"));
     gAlmanacCloseButton->Resize(ALMANAC_BUTTON_CLOSE_X, ALMANAC_BUTTON_CLOSE_Y, ALMANAC_BUTTON_WIDTH, ALMANAC_BUTTON_HEIGHT);
     AddWidget(gAlmanacBackButton);
     AddWidget(gAlmanacCloseButton);

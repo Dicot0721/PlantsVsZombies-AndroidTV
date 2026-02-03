@@ -39,9 +39,8 @@ enum AchievementId {
     MAX_ACHIEVEMENTS
 };
 
-class AchievementsWidget : public Sexy::Widget {
+class AchievementsWidget : public Sexy::Widget, public Sexy::ButtonListener {
 public:
-    Sexy::ButtonListener mButtonListener; // 64
     LawnApp *mApp;                        // 65
     int mMouseDownY;
     int mLastDownY;

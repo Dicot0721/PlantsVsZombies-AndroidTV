@@ -41,18 +41,18 @@ void MailScreen::_constructor(LawnApp *theApp) {
     old_MailScreen_MailScreen(this, theApp);
 
     pvzstl::string str2 = TodStringTranslate("[MARK_MESSAGE_READ]");
-    gMailScreenReadButton = MakeButton(1002, &mButtonListener, this, str2);
+    gMailScreenReadButton = MakeButton(1002, this, this, str2);
     gMailScreenReadButton->Resize(-150, 450, 170, 80);
     AddWidget(gMailScreenReadButton);
 
     pvzstl::string str1 = TodStringTranslate("[GO_TO_READ_MAIL]");
-    gMailScreenSwitchButton = MakeButton(1001, &mButtonListener, this, str1);
+    gMailScreenSwitchButton = MakeButton(1001, this, this, str1);
     gMailScreenSwitchButton->Resize(-150, 520, 170, 80);
     AddWidget(gMailScreenSwitchButton);
 
 
     pvzstl::string str = TodStringTranslate("[CLOSE]");
-    gMailScreenCloseButton = MakeButton(1000, &mButtonListener, this, str);
+    gMailScreenCloseButton = MakeButton(1000, this, this, str);
     gMailScreenCloseButton->Resize(800, 520, 170, 80);
     AddWidget(gMailScreenCloseButton);
 
@@ -73,7 +73,7 @@ void MailScreen::RemovedFromManager(int *widgetManager) {
     old_MailScreen_RemovedFromManager(this, widgetManager);
 }
 
-void MailScreen::__Destructor2() {
+void MailScreen::_destructor2() {
     old_MailScreen_Delete2(this);
 
     gMailScreenCloseButton->~GameButton();

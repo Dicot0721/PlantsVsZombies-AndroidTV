@@ -17,29 +17,23 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_MENU_WIDGET_H
-#define PVZ_SEXYAPPFRAMEWORK_WIDGET_MENU_WIDGET_H
+#ifndef HOMURA_TYPEUTILS_H
+#define HOMURA_TYPEUTILS_H
 
-#include "ButtonListener.h"
-#include "Widget.h"
+#include <concepts>
 
-namespace Sexy {
+namespace homura {
 
-class MenuWidget : public Widget, public ButtonListener {
-public:
-    bool mIsFading;                 // 260
-    bool unkBool2;                  // 261
-    int *mMenuParser;               // 66
-    int *mSourceFileName;           // 67
-    int unkInt1;                    // 68
-    Image *mImage;                  // 69
-    // 大小70个整数
-
-    void Draw(Graphics *g) {
-        reinterpret_cast<void (*)(MenuWidget *, Graphics *)>(Sexy_MenuWidget_DrawAddr)(this, g);
+template <typename Base, std::derived_from<Base> Derived>
+Derived *DynamicCast(Base *ptr) noexcept {
+    if (ptr == nullptr) {
+        return nullptr;
     }
-};
+    Derived *const derivedPtr = reinterpret_cast<Derived *>(alignof(Derived));
+    Base *const basePtr = derivedPtr;
+    return reinterpret_cast<Derived *>(uintptr_t(ptr) - (uintptr_t(basePtr) - uintptr_t(derivedPtr)));
+}
 
-} // namespace Sexy
+} // namespace homura
 
-#endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_MENU_WIDGET_H
+#endif // HOMURA_TYPEUTILS_H

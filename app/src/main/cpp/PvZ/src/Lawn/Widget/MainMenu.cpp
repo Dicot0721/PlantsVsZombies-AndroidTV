@@ -175,7 +175,7 @@ void MainMenu::Update() {
         if (gMainMenuAchievementCounter == 0) {
             gAchievementState = SHOWING;
             pvzstl::string str1 = TodStringTranslate("[CLOSE]");
-            gMainMenuAchievementsBack = MakeButton(ACHIEVEMENTS_BACK_BUTTON, &mButtonListener, this, str1);
+            gMainMenuAchievementsBack = MakeButton(ACHIEVEMENTS_BACK_BUTTON, this, this, str1);
             gMainMenuAchievementsBack->Resize(1000, 564 + 720, 170, 50);
             AddWidget((Widget *)gMainMenuAchievementsBack);
         }
@@ -545,7 +545,7 @@ void MainMenu::RemovedFromManager(int *a2) {
     old_MainMenu_RemovedFromManager(this, a2);
 }
 
-void MainMenu::__Destructor2() {
+void MainMenu::_destructor2() {
     old_MainMenu_Delete2(this);
     if (gMainMenuAchievementsWidget != nullptr) {
         reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->~MaskHelpWidget();

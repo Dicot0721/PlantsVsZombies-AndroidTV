@@ -19,6 +19,7 @@
 
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "Homura/Logger.h"
+#include "Homura/TypeUtils.h"
 #include "PvZ/Android/Native/BridgeApp.h"
 #include "PvZ/Android/Native/NativeApp.h"
 #include "PvZ/GlobalVariable.h"
@@ -218,17 +219,17 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
         theApp->mBoard->UpdateCoverLayer();
     }
 
-    GameButton *playOfflineButton = MakeButton(1000, &mButtonListener, this, "[PLAY_OFFLINE]");
+    GameButton *playOfflineButton = MakeButton(1000, this, this, "[PLAY_OFFLINE]");
     mLawnYesButton = playOfflineButton;
 
-    GameButton *backButton = MakeButton(1001, &mButtonListener, this, "[BACK]");
+    GameButton *backButton = MakeButton(1001, this, this, "[BACK]");
     mLawnNoButton = backButton;
 
-    mLeftButton = MakeButton(1002, &mButtonListener, this, "[JOIN_ROOM_BUTTON]");
+    mLeftButton = MakeButton(1002, this, this, "[JOIN_ROOM_BUTTON]");
     mLeftButton->mDisabled = true;
     AddWidget(mLeftButton);
 
-    mRightButton = MakeButton(1003, &mButtonListener, this, "[CREATE_ROOM_BUTTON]");
+    mRightButton = MakeButton(1003, this, this, "[CREATE_ROOM_BUTTON]");
     AddWidget(mRightButton);
 
     this->LawnDialog::Resize(0, 0, 800, 600);
@@ -1269,7 +1270,7 @@ void WaitForSecondPlayerDialog::StopUdpBroadcastRoom() {
     LOG_DEBUG("[UDP] Broadcast closed\n");
 }
 
-static inline void WriteBE32_u32(uint8_t *p, uint32_t v) {
+static void WriteBE32_u32(uint8_t *p, uint32_t v) {
     p[0] = uint8_t((v >> 24) & 0xFF);
     p[1] = uint8_t((v >> 16) & 0xFF);
     p[2] = uint8_t((v >> 8) & 0xFF);
@@ -1278,140 +1279,137 @@ static inline void WriteBE32_u32(uint8_t *p, uint32_t v) {
 
 
 void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int id) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Winvalid-offsetof" // warning: offset of on non-standard-layout type 'xxx'
-    auto *dialog = reinterpret_cast<WaitForSecondPlayerDialog *>((uint32_t(listener) - offsetof(WaitForSecondPlayerDialog, mButtonListener)));
-#pragma clang diagnostic pop
+    auto *dialog = homura::DynamicCast<Sexy::ButtonListener, WaitForSecondPlayerDialog>(listener);
+    const UIMode aUIMode = dialog->mUIMode;
+    switch (id) {
+        case 1000: // YesButton
+            switch (aUIMode) {
+                case UIMode::MODE1_INIT:
+                    // 本地游戏：按两下A
+                    dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+                    dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+                    break;
+                case UIMode::MODE2_WIFI:
+                    if (dialog->mIsCreatingRoom) {
+                        // 开始游戏（房主）：根据是否有玩家加入决定是否可点（RefreshButtons里已禁用）
+                        dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+                        dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
+                        if (tcpClientSocket >= 0) {
+                            BaseEvent event = {EventType::EVENT_START_GAME};
+                            sendWithSize(tcpClientSocket, &event, sizeof(BaseEvent), 0);
+                        }
+                    } else {
+                        // 加入指定IP房间：弹输入框
+                        gInputString.clear();
+                        dialog->mInputPurpose = InputPurpose::LAN_JOIN_MANUAL;
+                        dialog->ShowTextInput("[INPUT_TITLE_JOIN_IP]", "[HINT_IP_PORT]");
+                        return;
+                    }
+                    break;
+                case UIMode::MODE3_SERVER:
+                    if (dialog->mServerHosting) {
+                        // ✅ 开始游戏（只有 host 且有人加入时按钮才会启用）
+                        dialog->ServerSendStart();
+                        return;
+                    }
 
-    // 1000: YesButton
-    if (id == 1000) {
-        if (dialog->mUIMode == UIMode::MODE1_INIT) {
-            // 本地游戏：按两下A
-            dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
-            dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
-        } else if (dialog->mUIMode == UIMode::MODE2_WIFI) {
-            if (dialog->mIsCreatingRoom) {
-                // 开始游戏（房主）：根据是否有玩家加入决定是否可点（RefreshButtons里已禁用）
-                dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
-                dialog->GameButtonDown(GamepadButton::BUTTONCODE_A, 1);
-                if (tcpClientSocket >= 0) {
-                    BaseEvent event = {EventType::EVENT_START_GAME};
-                    sendWithSize(tcpClientSocket, &event, sizeof(BaseEvent), 0);
-                }
-            } else {
-                // 加入指定IP房间：弹输入框
-                gInputString.clear();
-                dialog->mInputPurpose = InputPurpose::LAN_JOIN_MANUAL;
-                dialog->ShowTextInput("[INPUT_TITLE_JOIN_IP]", "[HINT_IP_PORT]");
-                return;
+                    // 未创建房间：连接服务器
+                    gInputString.clear();
+                    dialog->mInputPurpose = InputPurpose::SERVER_CONNECT_ADDR;
+                    dialog->ShowTextInput("[INPUT_TITLE_CONNECT_SERVER]", "[HINT_IP_PORT]");
+                    return;
             }
-        } else if (dialog->mUIMode == UIMode::MODE3_SERVER) {
-
-            if (dialog->mServerHosting) {
-                // ✅ 开始游戏（只有 host 且有人加入时按钮才会启用）
-                dialog->ServerSendStart();
-                return;
-            }
-
-            // 未创建房间：连接服务器
-            gInputString.clear();
-            dialog->mInputPurpose = InputPurpose::SERVER_CONNECT_ADDR;
-            dialog->ShowTextInput("[INPUT_TITLE_CONNECT_SERVER]", "[HINT_IP_PORT]");
-            return;
-        }
-    }
-
-    // 1001: NoButton
-    else if (id == 1001) {
-        if (dialog->mUIMode == UIMode::MODE1_INIT) {
-            // 返回：沿用你原来的清理
-            dialog->StopUdpBroadcastRoom();
-            dialog->LeaveRoom();
-            dialog->ExitRoom();
-            dialog->CloseUdpScanSocket();
-        } else {
-            // 模式2/3：返回到模式1
-            dialog->SetMode(UIMode::MODE1_INIT);
-            dialog->mServerHosting = false;
-            dialog->mServerJoined = false;
-            if (dialog->mServerSock) {
-                close(dialog->mServerSock);
-                dialog->mServerSock = -1;
-            }
-            return;
-        }
-    }
-
-    // 1002: leftButton
-    else if (id == 1002) {
-        if (dialog->mUIMode == UIMode::MODE1_INIT) {
-            dialog->SetMode(UIMode::MODE2_WIFI);
-
-        } else if (dialog->mUIMode == UIMode::MODE2_WIFI) {
-
-            // ✅ Host（创建房间中）：leftButton 改为“设置房间端口”
-            if (dialog->mIsCreatingRoom) {
-                gInputString.clear();
-                dialog->mInputPurpose = InputPurpose::HOST_SET_PORT;
-                dialog->ShowTextInput("[INPUT_TITLE_SET_PORT]", "[HINT_PORT]");
-                return;
-            }
-
-            // ===== 下面保持你原来的 Join/Leave 逻辑 =====
-            // 加入房间 / 离开房间（沿用你原逻辑）
-            if (dialog->mIsJoiningRoom) {
+            break;
+        case 1001: // NoButton
+            if (aUIMode == UIMode::MODE1_INIT) {
+                // 返回：沿用你原来的清理
+                dialog->StopUdpBroadcastRoom();
                 dialog->LeaveRoom();
-                dialog->InitUdpScanSocket();
-            } else {
-                dialog->JoinRoom();
-                dialog->CloseUdpScanSocket();
-            }
-            dialog->RefreshButtons();
-
-        } else if (dialog->mUIMode == UIMode::MODE3_SERVER) {
-            if (!dialog->mServerConnected)
-                return;
-
-            if (dialog->mServerJoined) {
-                dialog->ServerSendLeaveRoom(); // LEAVE_ROOM(0x07)
-            } else if (!dialog->mServerHosting) {
-                // 空闲态才能 join
-                dialog->ServerSendJoinSelected(); // JOIN(0x03)
-            }
-            dialog->RefreshButtons();
-            return;
-        }
-    }
-
-
-    // 1003: rightButton
-    else if (id == 1003) {
-        if (dialog->mUIMode == UIMode::MODE1_INIT) {
-            dialog->SetMode(UIMode::MODE3_SERVER);
-        } else if (dialog->mUIMode == UIMode::MODE2_WIFI) {
-            // 创建房间 / 退出房间（沿用你原逻辑）
-            if (dialog->mIsCreatingRoom) {
                 dialog->ExitRoom();
-                dialog->InitUdpScanSocket();
-            } else {
-                dialog->CreateRoom();
                 dialog->CloseUdpScanSocket();
-            }
-            dialog->RefreshButtons();
-        } else if (dialog->mUIMode == UIMode::MODE3_SERVER) {
-            if (!dialog->mServerConnected)
+            } else {
+                // 模式2/3：返回到模式1
+                dialog->SetMode(UIMode::MODE1_INIT);
+                dialog->mServerHosting = false;
+                dialog->mServerJoined = false;
+                if (dialog->mServerSock) {
+                    close(dialog->mServerSock);
+                    dialog->mServerSock = -1;
+                }
                 return;
-
-            if (dialog->mServerHosting) {
-                dialog->ServerSendExitRoom(); // EXIT_ROOM(0x06)
-            } else if (!dialog->mServerJoined) {
-                dialog->ServerSendCreate(); // CREATE(0x01)
             }
-            dialog->RefreshButtons();
-            return;
-        }
-    }
+            break;
+        case 1002: // leftButton
+            switch (aUIMode) {
+                case UIMode::MODE1_INIT:
+                    dialog->SetMode(UIMode::MODE2_WIFI);
+                    break;
+                case UIMode::MODE2_WIFI:
+                    // ✅ Host（创建房间中）：leftButton 改为“设置房间端口”
+                    if (dialog->mIsCreatingRoom) {
+                        gInputString.clear();
+                        dialog->mInputPurpose = InputPurpose::HOST_SET_PORT;
+                        dialog->ShowTextInput("[INPUT_TITLE_SET_PORT]", "[HINT_PORT]");
+                        return;
+                    }
 
+                    // ===== 下面保持你原来的 Join/Leave 逻辑 =====
+                    // 加入房间 / 离开房间（沿用你原逻辑）
+                    if (dialog->mIsJoiningRoom) {
+                        dialog->LeaveRoom();
+                        dialog->InitUdpScanSocket();
+                    } else {
+                        dialog->JoinRoom();
+                        dialog->CloseUdpScanSocket();
+                    }
+                    dialog->RefreshButtons();
+                    break;
+                case UIMode::MODE3_SERVER:
+                    if (!dialog->mServerConnected) {
+                        return;
+                    }
+                    if (dialog->mServerJoined) {
+                        dialog->ServerSendLeaveRoom(); // LEAVE_ROOM(0x07)
+                    } else if (!dialog->mServerHosting) {
+                        // 空闲态才能 join
+                        dialog->ServerSendJoinSelected(); // JOIN(0x03)
+                    }
+                    dialog->RefreshButtons();
+                    return;
+            }
+            break;
+        case 1003: // rightButton
+            switch (aUIMode) {
+                case UIMode::MODE1_INIT:
+                    dialog->SetMode(UIMode::MODE3_SERVER);
+                    break;
+                case UIMode::MODE2_WIFI:
+                    // 创建房间 / 退出房间（沿用你原逻辑）
+                    if (dialog->mIsCreatingRoom) {
+                        dialog->ExitRoom();
+                        dialog->InitUdpScanSocket();
+                    } else {
+                        dialog->CreateRoom();
+                        dialog->CloseUdpScanSocket();
+                    }
+                    dialog->RefreshButtons();
+                    break;
+                case UIMode::MODE3_SERVER:
+                    if (!dialog->mServerConnected) {
+                        return;
+                    }
+                    if (dialog->mServerHosting) {
+                        dialog->ServerSendExitRoom(); // EXIT_ROOM(0x06)
+                    } else if (!dialog->mServerJoined) {
+                        dialog->ServerSendCreate(); // CREATE(0x01)
+                    }
+                    dialog->RefreshButtons();
+                    return;
+            }
+            break;
+        default:
+            break;
+    }
     old_WaitForSecondPlayerDialog_ButtonDepress(listener, id);
 }
 

@@ -49,7 +49,7 @@ protected:
     friend void InitHookFunction();
 
     void _constructor(LawnApp *theApp);
-    void __Destructor2();
+    void _destructor2();
 };
 
 class MailBox {

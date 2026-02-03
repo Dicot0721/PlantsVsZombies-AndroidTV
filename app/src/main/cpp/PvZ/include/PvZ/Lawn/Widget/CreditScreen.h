@@ -27,7 +27,7 @@
 #include "PvZ/SexyAppFramework/Misc/PerfTimer.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 
-class CreditScreen : public Sexy::Widget {
+class CreditScreen : public Sexy::Widget, public Sexy::ButtonListener {
 public:
     enum CreditsPhase {
         CREDITS_MAIN1 = 0,
@@ -37,7 +37,6 @@ public:
     };
 
 public:
-    Sexy::ButtonListener mButtonListener; // 64
     LawnApp *mApp;                        // 65
     CreditsPhase mCreditsPhase;           // 66
     int mCreditsPhaseCounter;             // 67
@@ -70,7 +69,7 @@ public:
     void ButtonDepress(int theId);
 };
 
-static GameButton *gCreditScreenBackButton;
+inline GameButton *gCreditScreenBackButton;
 
 inline void (*old_CreditScreen_CreditScreen)(Sexy::Widget *a, LawnApp *a2, bool a3);
 

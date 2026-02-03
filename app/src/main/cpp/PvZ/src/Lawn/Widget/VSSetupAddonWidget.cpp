@@ -24,7 +24,7 @@
 using namespace Sexy;
 
 VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
-    mButtonListener = &theVSSetupMenu->mButtonListener;
+    mButtonListener = theVSSetupMenu;
     mExtraPacketsMode = mApp->mPlayerInfo->mVS7PacketsMode;
     mExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
     mBanMode = mApp->mPlayerInfo->mVSBanMode;

@@ -61,7 +61,7 @@ public:
     bool mCrazyDavePicked;      // 60
 };
 
-class SeedChooserScreen : public Sexy::Widget {
+class SeedChooserScreen : public Sexy::Widget, public Sexy::ButtonListener {
 private:
     enum {
         SeedChooserScreen_Start = 100,
@@ -81,7 +81,6 @@ public:
         SEED_DIR_RIGHT,
     };
 
-    Sexy::ButtonListener mButtonListener;    // 64
     int unkMem1;                             // 65
     GameButton *mImitaterButton;             // 66
     ChosenSeed mChosenSeeds[NUM_SEED_TYPES]; // 67 ~ 930

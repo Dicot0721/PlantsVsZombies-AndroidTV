@@ -25,23 +25,31 @@ namespace Sexy {
 class ButtonListener {
 public:
     struct VTable {
-        void *_destructor = nullptr;
-        void *__Destructor2 = nullptr;
-        void *ButtonPress = nullptr;
-        void *ButtonPress2 = nullptr;
-        void *ButtonDepress = nullptr;
+        void *_destructor = (void *)&ButtonListener::_destructor;
+        void *_destructor2 = (void *)&ButtonListener::_destructor2;
+        void *ButtonPress = (void *)&ButtonListener::ButtonPress;
+        void *ButtonPress2 = (void *)&ButtonListener::ButtonPress2;
+        void *ButtonDepress = (void *)&ButtonListener::ButtonDepress;
         void *ButtonDownTick = (void *)&ButtonListener::ButtonDownTick;
         void *ButtonMouseEnter = (void *)&ButtonListener::ButtonMouseEnter;
         void *ButtonMouseLeave = (void *)&ButtonListener::ButtonMouseLeave;
         void *ButtonMouseMove = (void *)&ButtonListener::ButtonMouseMove;
     };
 
+    const VTable *mVTable;
+
+private:
+    void _destructor(this ButtonListener &self) {}
+    void _destructor2(this ButtonListener &self) {}
+    void ButtonPress(this ButtonListener &self, int theId) {}
+    void ButtonPress2(this ButtonListener &self, int theId, int theClickCount) {
+        self.ButtonPress(theId);
+    }
+    void ButtonDepress(this ButtonListener &self, int theId) {}
     void ButtonDownTick(this ButtonListener &self, int id) {}
     void ButtonMouseEnter(this ButtonListener &self, int id) {}
     void ButtonMouseLeave(this ButtonListener &self, int id) {}
     void ButtonMouseMove(this ButtonListener &self, int id, int x, int y) {}
-
-    const VTable *mVTable;
 };
 
 } // namespace Sexy

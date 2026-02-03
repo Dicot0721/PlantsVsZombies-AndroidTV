@@ -31,9 +31,8 @@ struct Curve1DUtil {
     int unk[16];
 };
 
-class ChallengeScreen : public Sexy::Widget {
+class ChallengeScreen : public Sexy::Widget, public Sexy::ButtonListener {
 public:
-    Sexy::ButtonListener mButtonListener; // 64
     Sexy::ButtonWidget *mButtons[94];     // 65 ~ 158
     LawnApp *mApp;                        // 159
     int *mToolTipWidget;                  // 160
@@ -84,7 +83,7 @@ protected:
     friend void InitHookFunction();
 
     void _constructor(LawnApp *theApp, ChallengePage thePage);
-    void __Destructor2();
+    void _destructor2();
 };
 
 class ChallengeDefinition {
