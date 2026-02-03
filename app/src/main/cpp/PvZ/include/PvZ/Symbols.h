@@ -943,7 +943,6 @@ inline void *GameButton_DrawAddr;
 inline void *MakeButtonAddr;
 inline void *MakeNewButtonAddr;
 inline void *MakeNewCheckboxAddr;
-inline void *Sexy_ButtonWidget_ButtonWidgetAddr;
 inline void *ZombieTypeCanGoInPoolAddr;
 inline void *TodDrawStringAddr;
 inline void *Sexy_SexyAppBase_GetImageAddr;

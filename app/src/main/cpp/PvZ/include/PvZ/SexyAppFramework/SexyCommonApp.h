@@ -24,14 +24,16 @@
 
 namespace Sexy {
 
-class __SexyCommonApp : public __SexyApp {
+class SexyCommonApp : public SexyApp {
 public:
-    static void getGameInfo(pvzstl::string *theStrings, __SexyCommonApp *app) {
-        return reinterpret_cast<void (*)(pvzstl::string *, __SexyCommonApp *)>(Sexy_SexyCommonApp_getGameInfoAddr)(theStrings, app);
+    static void getGameInfo(pvzstl::string *theStrings, SexyCommonApp *app) {
+        return reinterpret_cast<void (*)(pvzstl::string *, SexyCommonApp *)>(Sexy_SexyCommonApp_getGameInfoAddr)(theStrings, app);
     }
-};
 
-class SexyCommonApp : public __SexyCommonApp {};
+protected:
+    SexyCommonApp() = default;
+    ~SexyCommonApp() = default;
+};
 
 } // namespace Sexy
 

@@ -24,12 +24,10 @@
 
 namespace Sexy {
 
-class __SexyApp : public __SexyAppBase {
-public:
-};
-
-class SexyApp : public __SexyApp {
-public:
+class SexyApp : public SexyAppBase {
+protected:
+    SexyApp() = default;
+    ~SexyApp() = default;
 };
 
 } // namespace Sexy

@@ -27,7 +27,7 @@
 class LawnApp;
 class Board;
 
-class __GameObject {
+class GameObject {
 public:
     int *vTable;        // 0
     int placeHolder[3]; // 1 ~ 3
@@ -43,29 +43,21 @@ public:
     // 大小13个整数
 
     void _destructor() {
-        reinterpret_cast<bool (*)(__GameObject *)>(GameObject_Delete2Addr)(this);
+        reinterpret_cast<bool (*)(GameObject *)>(GameObject_Delete2Addr)(this);
     }
     bool BeginDraw(Sexy::Graphics *g) {
-        return reinterpret_cast<bool (*)(__GameObject *, Sexy::Graphics *)>(GameObject_BeginDrawAddr)(this, g);
+        return reinterpret_cast<bool (*)(GameObject *, Sexy::Graphics *)>(GameObject_BeginDrawAddr)(this, g);
     }
     void EndDraw(Sexy::Graphics *g) {
-        reinterpret_cast<void (*)(__GameObject *, Sexy::Graphics *)>(GameObject_EndDrawAddr)(this, g);
+        reinterpret_cast<void (*)(GameObject *, Sexy::Graphics *)>(GameObject_EndDrawAddr)(this, g);
     }
     void MakeParentGraphicsFrame(Sexy::Graphics *g) {
-        reinterpret_cast<void (*)(__GameObject *, Sexy::Graphics *)>(GameObject_MakeParentGraphicsFrameAddr)(this, g);
+        reinterpret_cast<void (*)(GameObject *, Sexy::Graphics *)>(GameObject_MakeParentGraphicsFrameAddr)(this, g);
     }
 
 protected:
-    __GameObject() = default;
-    ~__GameObject() = default;
-};
-
-class GameObject : public __GameObject {
-public:
-    GameObject() = delete;
-    ~GameObject() {
-        __GameObject::_destructor();
-    };
+    GameObject() = default;
+    ~GameObject() = default;
 };
 
 #endif // PVZ_LAWN_BOARD_GAME_OBJECT_H

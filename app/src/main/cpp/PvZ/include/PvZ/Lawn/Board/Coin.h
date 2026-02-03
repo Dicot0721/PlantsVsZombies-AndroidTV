@@ -25,7 +25,7 @@
 #include "PvZ/Lawn/System/PlayerInfo.h"
 #include "PvZ/Symbols.h"
 
-class Coin : public __GameObject {
+class Coin : public GameObject {
 public:
     float mPosX;                   // 13
     float mPosY;                   // 14

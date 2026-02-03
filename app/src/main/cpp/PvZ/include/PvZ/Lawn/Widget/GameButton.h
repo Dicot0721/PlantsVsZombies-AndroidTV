@@ -71,18 +71,18 @@ protected:
 
 class NewLawnButton : public Sexy::DialogButton {};
 
-inline GameButton *MakeButton(int theId, Sexy::ButtonListener *theListener, Sexy::__Widget *theParent, const pvzstl::string &theText) {
-    return reinterpret_cast<GameButton *(*)(int, Sexy::ButtonListener *, Sexy::__Widget *, const pvzstl::string &)>(MakeButtonAddr)(theId, theListener, theParent, theText);
+inline GameButton *MakeButton(int theId, Sexy::ButtonListener *theListener, Sexy::Widget *theParent, const pvzstl::string &theText) {
+    return reinterpret_cast<GameButton *(*)(int, Sexy::ButtonListener *, Sexy::Widget *, const pvzstl::string &)>(MakeButtonAddr)(theId, theListener, theParent, theText);
 }
 inline NewLawnButton *MakeNewButton(int theId,
                                     Sexy::ButtonListener *theListener,
-                                    Sexy::__Widget *theWidget,
+                                    Sexy::Widget *theWidget,
                                     const pvzstl::string &theText,
                                     Sexy::Font *theFont,
                                     Sexy::Image *theImageNormal,
                                     Sexy::Image *theImageOver,
                                     Sexy::Image *theImageDown) {
-    return reinterpret_cast<NewLawnButton *(*)(int, Sexy::ButtonListener *, Sexy::__Widget *, const pvzstl::string &, Sexy::Font *, Sexy::Image *, Sexy::Image *, Sexy::Image *)>(MakeNewButtonAddr)(
+    return reinterpret_cast<NewLawnButton *(*)(int, Sexy::ButtonListener *, Sexy::Widget *, const pvzstl::string &, Sexy::Font *, Sexy::Image *, Sexy::Image *, Sexy::Image *)>(MakeNewButtonAddr)(
         theId, theListener, theWidget, theText, theFont, theImageNormal, theImageOver, theImageDown);
 }
 

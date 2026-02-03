@@ -30,14 +30,14 @@ namespace Sexy {
 
 class Graphics;
 class WidgetManager;
-class __Widget;
+class Widget;
 
-class __WidgetContainer {
+class WidgetContainer {
 public:
     int *vTable;                   // 0
     int mWidgetsUnk[5];            // 1 ~ 5
     WidgetManager *mWidgetManager; // 6
-    __WidgetContainer *mParent;    // 7
+    WidgetContainer *mParent;      // 7
     bool mUpdateIteratorModified;  // 32
     int *mUpdateIterator;          // 9
     int mLastWMUpdateCount;        // 10
@@ -56,34 +56,27 @@ public:
     int mWidgetId;                 // 28
     // 大小未知，目前认为是29个整数。反正Widget是64个整数，足够了。
 
-    void SetFocus(__Widget *theWidget) { // vTable + 48
-        reinterpret_cast<void (*)(__WidgetContainer *, __Widget *)>(Sexy_WidgetContainer_SetFocusAddr)(this, theWidget);
+    void SetFocus(Widget *theWidget) { // vTable + 48
+        reinterpret_cast<void (*)(WidgetContainer *, Widget *)>(Sexy_WidgetContainer_SetFocusAddr)(this, theWidget);
     }
     void MarkDirty() { // vTable + 56
-        reinterpret_cast<void (*)(__WidgetContainer *)>(Sexy_WidgetContainer_MarkDirtyAddr)(this);
+        reinterpret_cast<void (*)(WidgetContainer *)>(Sexy_WidgetContainer_MarkDirtyAddr)(this);
     }
-    void AddWidget(__Widget *theWidget) { // vTable + 24
-        reinterpret_cast<void (*)(__WidgetContainer *, __Widget *)>(Sexy_WidgetContainer_AddWidgetAddr)(this, theWidget);
+    void AddWidget(Widget *theWidget) { // vTable + 24
+        reinterpret_cast<void (*)(WidgetContainer *, Widget *)>(Sexy_WidgetContainer_AddWidgetAddr)(this, theWidget);
     }
-    void RemoveWidget(__Widget *theWidget) { // vTable + 28
-        reinterpret_cast<void (*)(__WidgetContainer *, __Widget *)>(Sexy_WidgetContainer_RemoveWidgetAddr)(this, theWidget);
+    void RemoveWidget(Widget *theWidget) { // vTable + 28
+        reinterpret_cast<void (*)(WidgetContainer *, Widget *)>(Sexy_WidgetContainer_RemoveWidgetAddr)(this, theWidget);
     }
-    void BringToFront(__Widget *theWidget) { // vTable + 60
-        reinterpret_cast<void (*)(__WidgetContainer *, __Widget *)>(Sexy_WidgetContainer_BringToFrontAddr)(this, theWidget);
+    void BringToFront(Widget *theWidget) { // vTable + 60
+        reinterpret_cast<void (*)(WidgetContainer *, Widget *)>(Sexy_WidgetContainer_BringToFrontAddr)(this, theWidget);
     }
 
 protected:
-    __WidgetContainer() = default;
-    ~__WidgetContainer() = default;
-};
-
-class WidgetContainer : public __WidgetContainer {
-public:
-    WidgetContainer() = delete;
-    ~WidgetContainer() = delete;
+    WidgetContainer() = default;
+    ~WidgetContainer() = default;
 };
 
 } // namespace Sexy
-
 
 #endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_WIDGET_CONTAINER_H

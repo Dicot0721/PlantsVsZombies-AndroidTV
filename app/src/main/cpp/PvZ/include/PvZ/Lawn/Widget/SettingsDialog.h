@@ -24,7 +24,7 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Widget/CheckboxListener.h"
 
-class SettingsDialog : public __LawnDialog {
+class SettingsDialog : public LawnDialog {
 public:
     int *mSliderListener;                     // 191
     Sexy::CheckboxListener mCheckboxListener; // 192

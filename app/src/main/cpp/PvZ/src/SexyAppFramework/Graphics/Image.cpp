@@ -21,27 +21,27 @@
 
 using namespace Sexy;
 
-int __Image::GetWidth() {
+int Image::GetWidth() {
     return mWidth;
 }
 
-int __Image::GetHeight() {
+int Image::GetHeight() {
     return mHeight;
 }
 
-int __Image::GetCelHeight() {
+int Image::GetCelHeight() {
     return mHeight / mNumRows;
 }
 
-int __Image::GetCelWidth() {
+int Image::GetCelWidth() {
     return mWidth / mNumCols;
 }
 
-void __Image::PushTransform(const SexyMatrix3 &theTransform, bool concatenate) {
+void Image::PushTransform(const SexyMatrix3 &theTransform, bool concatenate) {
     old_Sexy_Image_PushTransform(this, theTransform, concatenate);
 }
 
-void __Image::PopTransform() {
+void Image::PopTransform() {
     old_Sexy_Image_PopTransform(this);
 }
 

@@ -48,7 +48,7 @@ class VSSetupMenu;
 class VSResultsMenu;
 class MailBox;
 
-class LawnApp : public Sexy::__GamepadApp {
+class LawnApp : public Sexy::GamepadApp {
 public:
     Board *mBoard;                           // 552
     TitleScreen *mTitleScreen;               // 553
@@ -285,8 +285,8 @@ public:
     bool HasSeedType(SeedType theSeedType, int thePlayerIndex) {
         return reinterpret_cast<int (*)(LawnApp *, SeedType, int)>(LawnApp_HasSeedTypeAddr)(this, theSeedType, thePlayerIndex);
     }
-    void SafeDeleteWidget(Sexy::__Widget *widget) { // vTable + 4 * 47
-        reinterpret_cast<void (*)(LawnApp *, Sexy::__Widget *)>(LawnApp_SafeDeleteWidgetAddr)(this, widget);
+    void SafeDeleteWidget(Sexy::Widget *widget) { // vTable + 4 * 47
+        reinterpret_cast<void (*)(LawnApp *, Sexy::Widget *)>(LawnApp_SafeDeleteWidgetAddr)(this, widget);
     }
     LawnApp() {
         _constructor();

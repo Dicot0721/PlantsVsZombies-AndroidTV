@@ -23,7 +23,7 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/Widget/LawnDialog.h"
 
-class ConfirmBackToMainDialog : public __LawnDialog {
+class ConfirmBackToMainDialog : public LawnDialog {
 public:
     GameButton *mRestartButton; // 191
     // 115: 192, 111: 194

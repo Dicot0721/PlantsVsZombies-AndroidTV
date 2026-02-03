@@ -21,18 +21,18 @@
 
 using namespace Sexy;
 
-void __Widget::MarkDirty() {
-    (*((void (**)(__Widget *))this->vTable + 25))(this); // MarkDirty();
+void Widget::MarkDirty() {
+    (*((void (**)(Widget *))this->vTable + 25))(this); // MarkDirty();
 }
 
-void __Widget::AddWidget(__Widget *theWidget) {
-    (*((void (**)(__Widget *, __Widget *))this->vTable + 6))(this, theWidget); // AddWidget();
+void Widget::AddWidget(Widget *theWidget) {
+    (*((void (**)(Widget *, Widget *))this->vTable + 6))(this, theWidget); // AddWidget();
 }
 
-void __Widget::RemoveWidget(__Widget *theWidget) {
-    (*((void (**)(__Widget *, __Widget *))this->vTable + 7))(this, theWidget); // RemoveWidget();
+void Widget::RemoveWidget(Widget *theWidget) {
+    (*((void (**)(Widget *, Widget *))this->vTable + 7))(this, theWidget); // RemoveWidget();
 }
 
-Widget *__Widget::FindWidget(int theId) {
-    return (*((Widget * (**)(__Widget *, int)) this->vTable + 9))(this, theId); // FindWidget();
+Widget *Widget::FindWidget(int theId) {
+    return (*((Widget * (**)(Widget *, int)) this->vTable + 9))(this, theId); // FindWidget();
 }

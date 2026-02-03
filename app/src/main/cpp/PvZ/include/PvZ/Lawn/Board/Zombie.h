@@ -97,7 +97,7 @@ class Coin;
 class Plant;
 class Reanimation;
 class TodParticleSystem;
-class Zombie : public __GameObject {
+class Zombie : public GameObject {
 public:
     enum {
         ZOMBIE_WAVE_DEBUG = -1,

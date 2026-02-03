@@ -68,7 +68,7 @@ enum MusicDrumsState {
     MUSIC_DRUMS_FADING = 4,
 };
 
-class __Music { // 加载XBOX版xm格式音乐时用。优：音质好、有鼓点。缺：鼓点BUG多，xm格式难以修改
+class Music { // 加载XBOX版xm格式音乐时用。优：音质好、有鼓点。缺：鼓点BUG多，xm格式难以修改
 public:
     int *vTable;                           // 0
     int unkMems[3];                        // 1 ~ 3
@@ -98,13 +98,13 @@ public:
     // 大小26个整数
 
     void StopAllMusic() {
-        reinterpret_cast<void (*)(__Music *)>(Music_StopAllMusicAddr)(this);
+        reinterpret_cast<void (*)(Music *)>(Music_StopAllMusicAddr)(this);
     }
     unsigned long GetMusicOrder(MusicFile theMusicFile) {
-        return reinterpret_cast<unsigned long (*)(__Music *, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile);
+        return reinterpret_cast<unsigned long (*)(Music *, MusicFile)>(Music_GetMusicOrderAddr)(this, theMusicFile);
     }
     void SetupMusicFileForTune(MusicFile theMusicFile, MusicTune theMusicTune) {
-        reinterpret_cast<void (*)(__Music *, MusicFile, MusicTune)>(Music_SetupMusicFileForTuneAddr)(this, theMusicFile, theMusicTune);
+        reinterpret_cast<void (*)(Music *, MusicFile, MusicTune)>(Music_SetupMusicFileForTuneAddr)(this, theMusicFile, theMusicTune);
     }
 
     void PlayMusic(MusicTune theMusicTune, int theOffset, int theDrumsOffset);
@@ -118,17 +118,15 @@ public:
     void StartGameMusic(bool theStart);
 
 protected:
-    __Music() = default;
-    ~__Music() = default;
+    Music() = default;
+    ~Music() = default;
 
     void _constructor() {
-        reinterpret_cast<void (*)(__Music *)>(Music_MusicAddr)(this);
+        reinterpret_cast<void (*)(Music *)>(Music_MusicAddr)(this);
     }
 };
 
-class Music : public __Music {};
-
-class Music2 : public __Music { // 加载TV版ogg格式音乐时用。无鼓点。
+class Music2 : public Music { // 加载TV版ogg格式音乐时用。无鼓点。
 public:
     // 大小26个整数
     Music2() {
@@ -152,9 +150,9 @@ protected:
     };
 };
 
-inline void (*old_Music_StartGameMusic)(__Music *music, bool a2);
+inline void (*old_Music_StartGameMusic)(Music *music, bool a2);
 
-inline void (*old_Music_UpdateMusicBurst)(__Music *music);
+inline void (*old_Music_UpdateMusicBurst)(Music *music);
 
 inline void (*old_Music2_Music2)(Music2 *music);
 

@@ -152,7 +152,7 @@ class Zombie;
 class GridItem;
 class TodParticleSystem;
 
-class Plant : public __GameObject {
+class Plant : public GameObject {
 public:
     SeedType mSeedType;                        // 13
     int mPlantCol;                             // 14

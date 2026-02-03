@@ -32,7 +32,7 @@ namespace Sexy {
 
 class SexyMatrix3;
 
-class __Image {
+class Image {
 public:
     int *vTable;           // 0
     int placeHolder[2];    // 1 ~ 2
@@ -65,17 +65,11 @@ public:
     void PopTransform();
 
 protected:
-    __Image() = default;
-    ~__Image() = default;
+    Image() = default;
+    ~Image() = default;
 };
 
-class Image : public __Image {
-public:
-    Image() = delete;
-    ~Image() = delete;
-};
-
-class GLImage : public __Image {
+class GLImage : public Image {
 public:
     void PushTransform(const SexyMatrix3 &theTransform, bool concatenate);
     void PopTransform();
@@ -83,9 +77,9 @@ public:
 
 } // namespace Sexy
 
-inline void (*old_Sexy_Image_PushTransform)(Sexy::__Image *image, const Sexy::SexyMatrix3 &theTransform, bool concatenate);
+inline void (*old_Sexy_Image_PushTransform)(Sexy::Image *image, const Sexy::SexyMatrix3 &theTransform, bool concatenate);
 
-inline void (*old_Sexy_Image_PopTransform)(Sexy::__Image *image);
+inline void (*old_Sexy_Image_PopTransform)(Sexy::Image *image);
 
 inline void (*old_Sexy_GLImage_PushTransform)(Sexy::GLImage *image, const Sexy::SexyMatrix3 &theTransform, bool concatenate);
 

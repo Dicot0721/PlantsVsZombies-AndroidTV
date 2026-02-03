@@ -34,7 +34,7 @@ enum HouseType {
     BLUEPRINT_CLOWN = 4,
 };
 
-class HouseChooserDialog : public __LawnDialog {
+class HouseChooserDialog : public LawnDialog {
 public:
     HouseType mSelectedHouseType; // 191
     int unk[2];                   // 192 ~ 193

@@ -28,7 +28,7 @@ const unsigned long MEMORYCHECK_ID = 0x4BEEFADE;
 
 class SexyMatrix3;
 
-class MemoryImage : public __Image {
+class MemoryImage : public Image {
 public:
     LawnApp *mApp;         // 28
     int unkMems4;          // 29

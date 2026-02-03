@@ -145,7 +145,7 @@ struct ServerRoomItem {
     bool full;
     bool gaming;
 };
-class WaitForSecondPlayerDialog : public __LawnDialog {
+class WaitForSecondPlayerDialog : public LawnDialog {
 public:
     bool m2PJoined;
     // 115：192，111：194。自roomName1起的成员为我新增的成员，我Hook了构造函数调用方，为构造时分配了更多内存，因此可以为WaitForSecondPlayerDialog任意地新增成员。

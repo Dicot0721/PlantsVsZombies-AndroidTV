@@ -27,7 +27,7 @@ namespace Sexy {
 class Font;
 class EditListener;
 
-class EditWidget : public __Widget {};
+class EditWidget : public Widget {};
 
 } // namespace Sexy
 

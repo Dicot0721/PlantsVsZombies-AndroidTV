@@ -26,7 +26,7 @@
 
 namespace Sexy {
 
-class Checkbox : public __Widget {
+class Checkbox : public Widget {
 public:
     int unknownMember[8];   // 64 ~ 71
     int *mListener;         // 72

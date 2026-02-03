@@ -48,7 +48,7 @@ class LawnApp;
 class Board;
 class DefaultPlayerInfo;
 
-class VSSetupMenu : public Sexy::__Widget {
+class VSSetupMenu : public Sexy::Widget {
 public:
     enum {
         VSSetupMenu_Quick_Play = 9,     // 快速游戏

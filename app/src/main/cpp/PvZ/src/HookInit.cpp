@@ -471,7 +471,7 @@ void InitHookFunction() {
 
     homura::HookFunction(NewOptionsDialog_ButtonDepressAddr, &NewOptionsDialog::ButtonDepress, &old_NewOptionsDialog_ButtonDepress);
 
-    homura::HookFunction(BaseGamepadControls_GetGamepadVelocityAddr, &__BaseGamepadControls::GetGamepadVelocity, nullptr);
+    homura::HookFunction(BaseGamepadControls_GetGamepadVelocityAddr, &BaseGamepadControls::GetGamepadVelocity, nullptr);
 
     homura::HookFunction(LookupFoleyAddr, &LookupFoley, &old_LookupFoley);
 

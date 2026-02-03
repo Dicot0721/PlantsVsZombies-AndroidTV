@@ -25,13 +25,16 @@
 #include "SexyCommonApp.h"
 
 namespace Sexy {
-class __GamepadApp : public __SexyCommonApp {};
 
-class GamepadApp : public __GamepadApp {
+class GamepadApp : public SexyCommonApp {
 public:
     bool HasGamepad() {
-        return reinterpret_cast<bool (*)(__GamepadApp *)>(Sexy_GamepadApp_HasGamepadAddr)(this);
+        return reinterpret_cast<bool (*)(GamepadApp *)>(Sexy_GamepadApp_HasGamepadAddr)(this);
     }
+
+protected:
+    GamepadApp() = default;
+    ~GamepadApp() = default;
 };
 
 } // namespace Sexy

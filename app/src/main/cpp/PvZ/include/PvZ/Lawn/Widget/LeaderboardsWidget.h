@@ -55,7 +55,7 @@ struct LeaderboardReanimations {
     Reanimation *achievementReanim[12];
 };
 
-class LeaderboardsWidget : public Sexy::__Widget {
+class LeaderboardsWidget : public Sexy::Widget {
 public:
     LeaderboardsWidget(LawnApp *theApp);
 
@@ -83,7 +83,7 @@ private:
 
 }; // 我想用LeaderboardsWidget取代DaveHelp。
 
-class DaveHelp : public Sexy::__Widget {
+class DaveHelp : public Sexy::Widget {
 public:
     DaveHelp(LawnApp *theApp) {
         _constructor(theApp);

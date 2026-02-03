@@ -27,7 +27,7 @@
 #include "PvZ/SexyAppFramework/Misc/PerfTimer.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 
-class CreditScreen : public Sexy::__Widget {
+class CreditScreen : public Sexy::Widget {
 public:
     enum CreditsPhase {
         CREDITS_MAIN1 = 0,
@@ -72,16 +72,16 @@ public:
 
 static GameButton *gCreditScreenBackButton;
 
-inline void (*old_CreditScreen_CreditScreen)(Sexy::__Widget *a, LawnApp *a2, bool a3);
+inline void (*old_CreditScreen_CreditScreen)(Sexy::Widget *a, LawnApp *a2, bool a3);
 
-inline void (*old_CreditScreen_RemovedFromManager)(Sexy::__Widget *creditScreen, int a2);
+inline void (*old_CreditScreen_RemovedFromManager)(Sexy::Widget *creditScreen, int a2);
 
-inline void (*old_CreditScreen_Delete2)(Sexy::__Widget *creditScreen);
+inline void (*old_CreditScreen_Delete2)(Sexy::Widget *creditScreen);
 
-void CreditScreen_CreditScreen(Sexy::__Widget *creditScreen, LawnApp *a2, bool a3);
+void CreditScreen_CreditScreen(Sexy::Widget *creditScreen, LawnApp *a2, bool a3);
 
-void CreditScreen_RemovedFromManager(Sexy::__Widget *creditScreen, int a2);
+void CreditScreen_RemovedFromManager(Sexy::Widget *creditScreen, int a2);
 
-void CreditScreen_Delete2(Sexy::__Widget *creditScreen);
+void CreditScreen_Delete2(Sexy::Widget *creditScreen);
 
 #endif // PVZ_LAWN_WIDGET_CREDIT_SCREEN_H

@@ -23,7 +23,7 @@
 #include "LawnDialog.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 
-class ImitaterDialog : public __LawnDialog {
+class ImitaterDialog : public LawnDialog {
 public:
     SeedType SeedHitTest(int x, int y) {
         return reinterpret_cast<SeedType (*)(ImitaterDialog *, int, int)>(ImitaterDialog_SeedHitTestAddr)(this, x, y);

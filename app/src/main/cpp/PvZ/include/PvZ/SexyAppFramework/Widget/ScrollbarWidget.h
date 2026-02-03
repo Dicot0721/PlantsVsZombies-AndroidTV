@@ -26,7 +26,7 @@
 
 namespace Sexy {
 
-class ScrollbarWidget : public __Widget {
+class ScrollbarWidget : public Widget {
 public:
     int unkMem;             // 64
     Widget *mUpButton;      // 65

@@ -22,7 +22,7 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/PlayerInfo.h"
 
-void Sexy::__SexyAppBase::_constructor() {
+void Sexy::SexyAppBase::_constructor() {
     old_Sexy_SexyAppBase_SexyAppBase(this);
     // LOGD("%d",*((uint32_t *)appBase + 464));
     // *((uint32_t *)appBase + 464) = 0; ;
@@ -34,7 +34,6 @@ void Sexy::__SexyAppBase::_constructor() {
     // *((uint32_t *)appBase + 403) = 600;
     // *((uint32_t *)appBase + 402) = 800;
 }
-
 
 bool Sexy::SexyAppBase::UpdateApp() {
     return old_Sexy_SexyAppBase_UpdateApp(this);

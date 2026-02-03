@@ -31,7 +31,7 @@ struct ShopSeedPacket {
 
 
 class HitResult;
-class SeedBank : public __GameObject {
+class SeedBank : public GameObject {
 public:
     int mNumPackets;                    // 13
     int mCutSceneDarken;                // 14

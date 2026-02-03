@@ -43,7 +43,7 @@ bool ImitaterDialog_KeyDown(ImitaterDialog *a, int a2) {
         LawnApp *lawnApp = a->mApp;
         SeedChooserScreen *seedChooserScreen = lawnApp->mSeedChooserScreen;
         seedChooserScreen->RemoveWidget(a);
-        (*(void (**)(LawnApp *, Sexy::__Widget *))(*(uint32_t *)lawnApp + 188))(lawnApp, a);
+        (*(void (**)(LawnApp *, Sexy::Widget *))(*(uint32_t *)lawnApp + 188))(lawnApp, a);
         seedChooserScreen->mImitaterDialogOpened = 0;
         return true;
     }
@@ -65,7 +65,7 @@ void ImitaterDialog::MouseDown(int x, int y, int theCount) {
             aSeedChooser->UpdateImitaterButton();
             // (*(void (**)(int, int)) (*(uint32_t *) a[184] + 428))(a[184], a[179]);
             aSeedChooser->RemoveWidget(this);
-            (*(void (**)(LawnApp *, Sexy::__Widget *))(*(uint32_t *)mApp + 188))(mApp, this);
+            (*(void (**)(LawnApp *, Sexy::Widget *))(*(uint32_t *)mApp + 188))(mApp, this);
             aSeedChooser->mImitaterDialogOpened = 0;
         }
     }

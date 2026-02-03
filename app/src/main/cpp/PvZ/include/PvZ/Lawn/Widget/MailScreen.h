@@ -24,7 +24,7 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Symbols.h"
 
-class MailScreen : public __LawnDialog {
+class MailScreen : public LawnDialog {
 public:
     int unk[3];   // 191 ~ 193
     int mPage;    // 194

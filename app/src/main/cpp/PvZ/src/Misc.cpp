@@ -80,7 +80,7 @@ void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, See
     return g->PopState();
 }
 
-void HelpBarWidget_HelpBarWidget(Sexy::__Widget *theWidget) {
+void HelpBarWidget_HelpBarWidget(Sexy::Widget *theWidget) {
     // 缩小HelpBar，以防止它挡住触控区域。
     old_HelpBarWidget_HelpBarWidget(theWidget);
 

@@ -32,7 +32,7 @@ class DialogButton;
 class Font;
 class Image;
 
-class __Dialog : public Sexy::__Widget {
+class Dialog : public Sexy::Widget {
 public:
     ButtonListener mButtonListener; // 64
     int *mDialogListener;           // 65
@@ -66,21 +66,15 @@ public:
     // 大小184个整数
 
     int WaitForResult(bool unk) {
-        return reinterpret_cast<int (*)(__Dialog *, bool)>(Sexy_Dialog_WaitForResultAddr)(this, unk);
+        return reinterpret_cast<int (*)(Dialog *, bool)>(Sexy_Dialog_WaitForResultAddr)(this, unk);
     }
     void ButtonDepress(int id) {
-        return reinterpret_cast<void (*)(__Dialog *, int)>(Sexy_Dialog_ButtonDepressAddr)(this, id);
+        return reinterpret_cast<void (*)(Dialog *, int)>(Sexy_Dialog_ButtonDepressAddr)(this, id);
     }
 
 protected:
-    __Dialog() = default;
-    ~__Dialog() = default;
-};
-
-class Dialog : public __Dialog {
-public:
-    Dialog() = delete;
-    ~Dialog() = delete;
+    Dialog() = default;
+    ~Dialog() = default;
 };
 
 } // namespace Sexy

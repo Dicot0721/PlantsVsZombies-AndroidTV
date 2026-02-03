@@ -57,9 +57,9 @@ public:
     int unkMem2;            // 203
     // 大小204个整数
 
-    ButtonWidget(int theId, ButtonListener *theButtonListener) {
-        reinterpret_cast<void (*)(ButtonWidget *, int, ButtonListener *)>(Sexy_ButtonWidget_ButtonWidgetAddr)(this, theId, theButtonListener);
-    }
+protected:
+    ButtonWidget() = default;
+    ~ButtonWidget() = default;
 };
 
 } // namespace Sexy

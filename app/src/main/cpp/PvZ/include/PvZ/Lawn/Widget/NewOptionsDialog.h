@@ -22,7 +22,7 @@
 
 #include "LawnDialog.h"
 
-class NewOptionsDialog : public __LawnDialog {
+class NewOptionsDialog : public LawnDialog {
 
 public:
     void ButtonDepress(int buttonId);

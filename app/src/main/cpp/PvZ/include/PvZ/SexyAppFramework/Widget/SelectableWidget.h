@@ -24,7 +24,7 @@
 
 namespace Sexy {
 
-class SelectableWidget : public __Widget {
+class SelectableWidget : public Widget {
 public:
     Color mUnkColor;  // 64 ~ 67
     float unkMems[4]; // 68 ~ 71

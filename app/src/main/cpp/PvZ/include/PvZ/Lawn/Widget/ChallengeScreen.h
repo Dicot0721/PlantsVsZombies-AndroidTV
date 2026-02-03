@@ -31,7 +31,7 @@ struct Curve1DUtil {
     int unk[16];
 };
 
-class ChallengeScreen : public Sexy::__Widget {
+class ChallengeScreen : public Sexy::Widget {
 public:
     Sexy::ButtonListener mButtonListener; // 64
     Sexy::ButtonWidget *mButtons[94];     // 65 ~ 158

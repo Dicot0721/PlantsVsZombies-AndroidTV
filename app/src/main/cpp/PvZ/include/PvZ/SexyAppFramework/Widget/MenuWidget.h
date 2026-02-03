@@ -25,7 +25,7 @@
 
 namespace Sexy {
 
-class MenuWidget : public __Widget {
+class MenuWidget : public Widget {
 public:
     ButtonListener mButtonListener; // 64
     bool mIsFading;                 // 260

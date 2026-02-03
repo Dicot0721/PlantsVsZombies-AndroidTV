@@ -176,8 +176,8 @@ void LawnApp::DoConfirmBackToMain(bool theIsSave) {
         return;
     }
     auto *aBackDialog = new ConfirmBackToMainDialog(theIsSave);
-    (*(void (**)(LawnApp *, int, Sexy::__Widget *))(*(uint32_t *)this + 416))(this, Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN, aBackDialog);
-    (*(void (**)(uint32_t, Sexy::__Widget *))(**((uint32_t **)this + 165) + 48))(*((uint32_t *)this + 165), aBackDialog);
+    (*(void (**)(LawnApp *, int, Sexy::Widget *))(*(uint32_t *)this + 416))(this, Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN, aBackDialog);
+    (*(void (**)(uint32_t, Sexy::Widget *))(**((uint32_t **)this + 165) + 48))(*((uint32_t *)this + 165), aBackDialog);
 }
 
 
@@ -855,7 +855,7 @@ void LawnApp::KillLeaderboards() {
         return;
 
     mWidgetManager->RemoveWidget(gMainMenuLeaderboardsWidget);
-    (*((void (**)(LawnApp *, Sexy::__Widget *))vTable + 47))(this, gMainMenuLeaderboardsWidget); // MSGBOX()
+    (*((void (**)(LawnApp *, Sexy::Widget *))vTable + 47))(this, gMainMenuLeaderboardsWidget); // MSGBOX()
     gMainMenuLeaderboardsWidget = nullptr;
 }
 
@@ -871,7 +871,7 @@ void LawnApp::KillZombatarScreen() {
         return;
 
     mWidgetManager->RemoveWidget(gMainMenuZombatarWidget);
-    (*((void (**)(LawnApp *, Sexy::__Widget *))vTable + 47))(this, gMainMenuZombatarWidget); // MSGBOX()
+    (*((void (**)(LawnApp *, Sexy::Widget *))vTable + 47))(this, gMainMenuZombatarWidget); // MSGBOX()
     gMainMenuZombatarWidget = nullptr;
 }
 

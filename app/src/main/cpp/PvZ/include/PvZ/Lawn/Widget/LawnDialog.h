@@ -25,7 +25,7 @@
 
 class GameButton;
 
-class __LawnDialog : public Sexy::__Dialog {
+class LawnDialog : public Sexy::Dialog {
 public:
     LawnApp *mApp; // 184
 #if PVZ_VERSION == 111
@@ -52,39 +52,20 @@ public:
     // const pvzstl::string &theDialogLines,
     // const pvzstl::string &theDialogFooter,
     // int theButtonMode) {
-    // reinterpret_cast<void (*)(__LawnDialog *, LawnApp *, Sexy::Image *, int, bool, const pvzstl::string &, const pvzstl::string &, const pvzstl::string &, int)>(LawnDialog_LawnDialogAddr)(
+    // reinterpret_cast<void (*)(LawnDialog *, LawnApp *, Sexy::Image *, int, bool, const pvzstl::string &, const pvzstl::string &, const pvzstl::string &, int)>(LawnDialog_LawnDialogAddr)(
     // this, theApp, theImage, theId, isModal, theDialogHeader, theDialogLines, theDialogFooter, theButtonMode);
     // }
     // void _destructor() {
-    // reinterpret_cast<void(*)(__LawnDialog*)>(LawnDialog_Delete2Addr)(this);
+    // reinterpret_cast<void(*)(LawnDialog*)>(LawnDialog_Delete2Addr)(this);
     // }
 
     void Resize(int theX, int theY, int theWidth, int theHeight) {
-        reinterpret_cast<void (*)(__LawnDialog *, int, int, int, int)>(LawnDialog_ResizeAddr)(this, theX, theY, theWidth, theHeight);
+        reinterpret_cast<void (*)(LawnDialog *, int, int, int, int)>(LawnDialog_ResizeAddr)(this, theX, theY, theWidth, theHeight);
     }
 
 protected:
-    __LawnDialog() = default;
-    ~__LawnDialog() = default;
-};
-
-class LawnDialog : public __LawnDialog {
-public:
-    LawnDialog() = delete;
-    ~LawnDialog() = delete;
-    // LawnDialog(LawnApp *theApp,
-    // Sexy::Image *theImage,
-    // int theId,
-    // bool isModal,
-    // const pvzstl::string &theDialogHeader,
-    // const pvzstl::string &theDialogLines,
-    // const pvzstl::string &theDialogFooter,
-    // int theButtonMode) {
-    // __LawnDialog::_constructor(theApp, theImage, theId, isModal, theDialogHeader, theDialogLines, theDialogFooter, theButtonMode);
-    // }
-    // ~LawnDialog() {
-    // __LawnDialog::_destructor();
-    // };
+    LawnDialog() = default;
+    ~LawnDialog() = default;
 };
 
 #endif // PVZ_LAWN_WIDGET_LAWN_DIALOG_H

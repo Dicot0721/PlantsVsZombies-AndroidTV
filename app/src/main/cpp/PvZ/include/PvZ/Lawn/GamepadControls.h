@@ -52,7 +52,7 @@ enum GamepadButton {
 
 class Zombie;
 
-class GamepadControls : public __BaseGamepadControls {
+class GamepadControls : public BaseGamepadControls {
 public:
     float mRangeFrom0to30UpdateFresh;  // 43
     int *mSelectorParticle;            // 44
@@ -110,6 +110,9 @@ public:
 
 protected:
     friend void InitHookFunction();
+
+    GamepadControls() = default;
+    ~GamepadControls() = default;
 
     void _constructor(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2);
 };

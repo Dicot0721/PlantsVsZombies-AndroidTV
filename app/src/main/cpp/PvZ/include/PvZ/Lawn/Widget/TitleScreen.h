@@ -24,7 +24,7 @@
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 
-class TitleScreen : public Sexy::__Widget {
+class TitleScreen : public Sexy::Widget {
 
 public:
     enum TitleState {

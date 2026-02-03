@@ -1118,7 +1118,6 @@ bool LoadGameMain() {
     MakeButtonAddr = dlsym(handle, "_Z10MakeButtoniPN4Sexy14ButtonListenerEPNS_6WidgetERKSs");
     MakeNewButtonAddr = dlsym(handle, "_Z13MakeNewButtoniPN4Sexy14ButtonListenerEPNS_6WidgetERKSsPNS_4FontEPNS_5ImageES9_S9_");
     MakeNewCheckboxAddr = dlsym(handle, "_Z15MakeNewCheckboxiPN4Sexy16CheckboxListenerEPNS_6WidgetEb");
-    Sexy_ButtonWidget_ButtonWidgetAddr = dlsym(handle, "_ZN4Sexy12ButtonWidgetC2EiPNS_14ButtonListenerE");
     SaveGameContext_SyncIntAddr = dlsym(handle, "_ZN15SaveGameContext7SyncIntERi");
     SaveGameContext_SyncReanimationDefAddr = dlsym(handle, "_ZN15SaveGameContext18SyncReanimationDefERP20ReanimatorDefinition");
     EffectSystem_EffectSystemInitializeAddr = dlsym(handle, "_ZN12EffectSystem22EffectSystemInitializeEv");

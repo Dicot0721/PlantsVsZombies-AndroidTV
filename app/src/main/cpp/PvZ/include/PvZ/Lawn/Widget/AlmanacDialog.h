@@ -43,7 +43,7 @@ constexpr int ALMANAC_RECT_PLANT_Y = 127;
 
 class Plant;
 class Zombie;
-class AlmanacDialog : public __LawnDialog {
+class AlmanacDialog : public LawnDialog {
 private:
     enum {
         ALMANAC_BUTTON_BACK = 110,

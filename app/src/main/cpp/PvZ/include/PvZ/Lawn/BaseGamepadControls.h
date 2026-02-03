@@ -24,7 +24,7 @@
 
 class SeedBank;
 
-class __BaseGamepadControls {
+class BaseGamepadControls {
 public:
     int *mVtable;                    // 0
     GameObject mGameObject;          // 1 ~ 13
@@ -55,16 +55,11 @@ public:
     int unkMems[2];                // 41 ~ 42
     // 大小43个整数
 
-    __BaseGamepadControls() = delete;
-    ~__BaseGamepadControls() = delete;
-
     void GetGamepadVelocity(float *horizontal, float *vertical);
-};
 
-class BaseGamepadControls : public __BaseGamepadControls {
-public:
-    BaseGamepadControls() = delete;
-    ~BaseGamepadControls() = delete;
+protected:
+    BaseGamepadControls() = default;
+    ~BaseGamepadControls() = default;
 };
 
 #endif // PVZ_LAWN_BASE_GAMEPAD_CONTROLS_H

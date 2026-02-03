@@ -37,7 +37,7 @@ inline int (*old_SexyDialog_AddedToManager)(void *instance, void *instance1);
 
 inline int (*old_SexyDialog_RemovedFromManager)(void *instance, void *instance1);
 
-inline void (*old_HelpBarWidget_HelpBarWidget)(Sexy::__Widget *a);
+inline void (*old_HelpBarWidget_HelpBarWidget)(Sexy::Widget *a);
 
 inline void (*old_Sexy_ExtractLoadingSoundsResources)(int *a, int *theManager);
 
@@ -54,6 +54,6 @@ void Sexy_ExtractLoadingSoundsResources(int *a, int *theManager);
 
 void WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(int *a, int *a2);
 
-void HelpBarWidget_HelpBarWidget(Sexy::__Widget *a);
+void HelpBarWidget_HelpBarWidget(Sexy::Widget *a);
 
 #endif // PVZ_MISC_H
