@@ -2084,3 +2084,71 @@ bool Plant::FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
 
     return result;
 }
+
+void Plant::UpdateChomper() {
+    Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+    if (mState == PlantState::STATE_READY) {
+        if (FindTargetZombie(mRow, PlantWeapon::WEAPON_PRIMARY)) {
+            PlayBodyReanim("anim_bite", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
+            mState = PlantState::STATE_CHOMPER_BITING;
+            mStateCountdown = 70;
+        }
+    } else if (mState == PlantState::STATE_CHOMPER_BITING) {
+        if (mStateCountdown == 0) {
+            mApp->PlayFoley(FoleyType::FOLEY_BIGCHOMP);
+
+            Zombie *aZombie = FindTargetZombie(mRow, PlantWeapon::WEAPON_PRIMARY);
+            bool doBite = false;
+            if (aZombie) {
+                if (aZombie->mZombieType == ZombieType::ZOMBIE_GARGANTUAR || aZombie->mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || aZombie->mZombieType == ZombieType::ZOMBIE_BOSS) {
+                    doBite = true;
+                }
+            }
+            bool doMiss = false;
+            if (aZombie == nullptr) {
+                doMiss = true;
+            } else if (!aZombie->IsImmobilizied()) {
+                if (aZombie->IsBouncingPogo() || aZombie->mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_IN_VAULT || aZombie->mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT) {
+                    doMiss = true;
+                }
+            }
+
+            if (doBite) {
+                mApp->PlayFoley(FoleyType::FOLEY_SPLAT);
+                aZombie->TakeDamage(40, 0U);
+                mState = PlantState::STATE_CHOMPER_BITING_MISSED;
+            } else if (doMiss) {
+                mState = PlantState::STATE_CHOMPER_BITING_MISSED;
+            } else {
+                if (tcp_connected)
+                    return;
+
+                if (tcpClientSocket >= 0) {
+                    U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mBoard->mZombies.DataArrayGetID(aZombie))};
+                    sendWithSize(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
+                }
+
+                aZombie->DieWithLoot();
+                mState = PlantState::STATE_CHOMPER_BITING_GOT_ONE;
+            }
+        }
+    } else if (mState == PlantState::STATE_CHOMPER_BITING_GOT_ONE) {
+        if (aBodyReanim->mLoopCount > 0) {
+            PlayBodyReanim("anim_chew", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
+            if (mApp->IsIZombieLevel()) {
+                aBodyReanim->SetAnimRate(0.0f);
+            }
+
+            mState = PlantState::STATE_CHOMPER_DIGESTING;
+            mStateCountdown = 4000;
+        }
+    } else if (mState == PlantState::STATE_CHOMPER_DIGESTING) {
+        if (mStateCountdown == 0) {
+            PlayBodyReanim("anim_swallow", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 12.0f);
+            mState = PlantState::STATE_CHOMPER_SWALLOWING;
+        }
+    } else if ((mState == PlantState::STATE_CHOMPER_SWALLOWING || mState == PlantState::STATE_CHOMPER_BITING_MISSED) && aBodyReanim->mLoopCount > 0) {
+        PlayIdleAnim(aBodyReanim->mDefinition->mFPS);
+        mState = PlantState::STATE_READY;
+    }
+}

@@ -1203,7 +1203,8 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL:
             return sizeof(U16_Event);
 
-        // --- 僵尸冻结、巨人投掷小鬼、僵尸状态计数 ---
+        // --- 大嘴花吞咬、僵尸冻结、巨人投掷小鬼、僵尸状态计数 ---
+        case EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT:
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP:
         case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW:
         case EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER:
@@ -1488,6 +1489,21 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 } else if (aPlant->mSeedType == SEED_STARFRUIT) {
                     aPlant->LaunchStarFruit();
                 }
+            }
+        } break;
+        case EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT: {
+            U16U16_Event *eventChomperBit = reinterpret_cast<U16U16_Event *>(event);
+            uint16_t serverPlantID = eventChomperBit->data1;
+            uint16_t serverZombieID = eventChomperBit->data2;
+            uint16_t clientPlantID;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID) && homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                tcp_connected = false;
+                aZombie->DieWithLoot();
+                aPlant->mState = PlantState::STATE_CHOMPER_BITING_GOT_ONE;
+                tcp_connected = true;
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_DIE: {

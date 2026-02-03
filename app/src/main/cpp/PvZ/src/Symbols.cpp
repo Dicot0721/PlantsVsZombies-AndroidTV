@@ -641,6 +641,7 @@ bool LoadGameMain() {
     Plant_FindTargetAndFireAddr = dlsym(handle, "_ZN5Plant17FindTargetAndFireEi11PlantWeapon");
     Plant_IceZombiesAddr = dlsym(handle, "_ZN5Plant10IceZombiesEv");
     Plant_BlowAwayFliersAddr = dlsym(handle, "_ZN5Plant14BlowAwayFliersEii");
+    Plant_UpdateChomperAddr = dlsym(handle, "_ZN5Plant13UpdateChomperEv");
 
 
     Projectile_UpdateAddr = dlsym(handle, "_ZN10Projectile6UpdateEv");

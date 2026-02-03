@@ -629,6 +629,7 @@ inline void *Plant_LaunchStarFruitAddr;
 inline void *Plant_FindTargetAndFireAddr;
 inline void *Plant_IceZombiesAddr;
 inline void *Plant_BlowAwayFliersAddr;
+inline void *Plant_UpdateChomperAddr;
 
 
 inline void *Projectile_UpdateAddr;

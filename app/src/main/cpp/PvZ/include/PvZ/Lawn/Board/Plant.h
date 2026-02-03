@@ -295,6 +295,7 @@ public:
     ReanimationID GetPlantReanimationIDByIndex(int index);
     void SyncAnimationToClient();
     void SyncPingPongAnimationToClient();
+    void UpdateChomper();
 };
 
 inline float PlantDrawHeightOffset(Board *theBoard, Plant *thePlant, SeedType theSeedType, int theCol, int theRow) {
