@@ -2461,7 +2461,7 @@ void Zombie::PickRandomSpeed() {
     if (mApp->IsVSMode() && tcp_connected)
         return;
 
-    if (mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING_IN_POOL) {
+    if (mZombiePhase == ZombiePhase::PHASE_SNORKEL_WALKING_IN_POOL || (IsFlying() && mApp->IsVSMode())) {
         mVelX = 0.3f;
     } else if (mZombiePhase == ZombiePhase::PHASE_DIGGER_WALKING) { // 矿工行走
         if (mApp->IsIZombieLevel()) {
@@ -2485,10 +2485,6 @@ void Zombie::PickRandomSpeed() {
         mVelX = RandRangeFloat(0.79f, 0.81f);
     } else if (mZombiePhase == ZombiePhase::PHASE_NEWSPAPER_MAD || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING_WITHOUT_DOLPHIN) {
         mVelX = RandRangeFloat(0.89f, 0.91f);
-    } else if (IsFlying()) {
-        if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-            mVelX = 0.3f;
-        }
     } else {
         mVelX = RandRangeFloat(0.23f, 0.37f); // 普僵
         if (mVelX < 0.3f) {
