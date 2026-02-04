@@ -1490,7 +1490,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
         switch (type) {
             case 0x81: { // ROOM_CREATED
                 if (len >= 4) {
-                    int id = homura::ReadNetI32(payload);
+                    int id = homura::ReadBEI32(payload);
                     mServerHosting = true;
                     mServerJoined = false;
                     mServerHostHasGuest = false;
@@ -1511,7 +1511,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 for (int i = 0; i < count && mServerRoomCount < 255; i++) {
                     if (off + 6 > (int)len)
                         break;
-                    int id = homura::ReadNetI32(payload + off);
+                    int id = homura::ReadBEI32(payload + off);
                     off += 4;
                     int flags = payload[off++] & 0xFF;
                     int nameLen = payload[off++] & 0xFF;
@@ -1540,7 +1540,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             }
             case 0x83: { // JOIN_RESULT
                 bool ok = (len >= 1 && payload[0] == 1);
-                int rid = (len >= 5) ? homura::ReadNetI32(payload + 1) : 0;
+                int rid = (len >= 5) ? homura::ReadBEI32(payload + 1) : 0;
                 if (ok) {
                     mServerJoined = true;
                     mServerHosting = false;
@@ -1556,7 +1556,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             }
             case 0x84: { // GUEST_JOINED
                 if (len >= 4) {
-                    int rid = homura::ReadNetI32(payload);
+                    int rid = homura::ReadBEI32(payload);
                     if (mServerHosting && rid == mServerHostedRoomId) {
                         mServerHostHasGuest = true;
                         mServerStatusText = TodStringTranslate("[STATUS_GUEST_JOINED]");
@@ -1566,7 +1566,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             }
             case 0x87: { // GUEST_LEFT
                 if (len >= 4) {
-                    int rid = homura::ReadNetI32(payload);
+                    int rid = homura::ReadBEI32(payload);
                     if (mServerHosting && rid == mServerHostedRoomId) {
                         mServerHostHasGuest = false;
                         mServerStatusText = TodStringTranslate("[STATUS_GUEST_LEFT]");
@@ -1775,7 +1775,7 @@ void WaitForSecondPlayerDialog::ServerSendJoinSelected() {
 
     uint8_t buf[1 + 4];
     buf[0] = 0x03; // JOIN
-    homura::WriteNetI32(buf + 1, roomId);
+    homura::WriteBEI32(buf + 1, roomId);
 
     if (!SendAll(mServerSock, buf, sizeof(buf))) {
         mServerStatusText = TodStringTranslate("[STATUS_SEND_JOIN_FAIL]");
