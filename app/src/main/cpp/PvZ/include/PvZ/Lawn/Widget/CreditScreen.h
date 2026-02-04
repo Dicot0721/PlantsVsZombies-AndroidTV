@@ -37,29 +37,29 @@ public:
     };
 
 public:
-    LawnApp *mApp;                        // 65
-    CreditsPhase mCreditsPhase;           // 66
-    int mCreditsPhaseCounter;             // 67
-    int mCreditsReanimID;                 // 68
-    int mFogParticleID;                   // 69
-    int mBlinkCountdown;                  // 70
-    Sexy::Widget *mOverlayWidget;         // 71
-    bool mDrawBrain;                      // 288
-    float mBrainPosX;                     // 73
-    float mBrainPosY;                     // 74
-    int mUpdateCount;                     // 75
-    int mDrawCount;                       // 76
-    int unkInt1;                          // 77
-    Sexy::PerfTimer mTimerSinceStart;     // 78 ~ 82
-    int unkInt2;                          // 83
-    bool mDontSync;                       // 336
-    bool mCreditsPaused;                  // 337
-    int unkInt3[3];                       // 85 ~ 87
-    bool mPreloaded;                      // 352
-    int unkInt4;                          // 89
-    double mScrollPositionY1;             // 90 ~ 91
-    double mScrollPositionY2;             // 92 ~ 93
-    bool mIsFromMainMenu;                 // 376,即94
+    LawnApp *mApp;                    // 65
+    CreditsPhase mCreditsPhase;       // 66
+    int mCreditsPhaseCounter;         // 67
+    int mCreditsReanimID;             // 68
+    int mFogParticleID;               // 69
+    int mBlinkCountdown;              // 70
+    Sexy::Widget *mOverlayWidget;     // 71
+    bool mDrawBrain;                  // 288
+    float mBrainPosX;                 // 73
+    float mBrainPosY;                 // 74
+    int mUpdateCount;                 // 75
+    int mDrawCount;                   // 76
+    int unkInt1;                      // 77
+    Sexy::PerfTimer mTimerSinceStart; // 78 ~ 82
+    int unkInt2;                      // 83
+    bool mDontSync;                   // 336
+    bool mCreditsPaused;              // 337
+    int unkInt3[3];                   // 85 ~ 87
+    bool mPreloaded;                  // 352
+    int unkInt4;                      // 89
+    double mScrollPositionY1;         // 90 ~ 91
+    double mScrollPositionY2;         // 92 ~ 93
+    bool mIsFromMainMenu;             // 376,即94
     // 大小95个整数
 
     void PauseCredits() {

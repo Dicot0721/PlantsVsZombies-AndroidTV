@@ -41,7 +41,7 @@ enum AchievementId {
 
 class AchievementsWidget : public Sexy::Widget, public Sexy::ButtonListener {
 public:
-    LawnApp *mApp;                        // 65
+    LawnApp *mApp; // 65
     int mMouseDownY;
     int mLastDownY;
     int mLastDownY1;
