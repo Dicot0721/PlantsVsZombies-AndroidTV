@@ -18,7 +18,7 @@
  */
 
 #include "PvZ/HookInit.h"
-#include "Homura/HookFunc.h"
+#include "Homura/HookUtils.h"
 #include "PvZ/Android/IntroVideo.h"
 #include "PvZ/Android/Native/AudioOutput.h"
 #include "PvZ/Lawn/Board/Board.h"

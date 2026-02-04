@@ -18,6 +18,7 @@
  */
 
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
+#include "Homura/BitUtils.h"
 #include "Homura/Logger.h"
 #include "Homura/TypeUtils.h"
 #include "PvZ/Android/Native/BridgeApp.h"
@@ -1270,13 +1271,6 @@ void WaitForSecondPlayerDialog::StopUdpBroadcastRoom() {
     LOG_DEBUG("[UDP] Broadcast closed\n");
 }
 
-static void WriteBE32_u32(uint8_t *p, uint32_t v) {
-    p[0] = uint8_t((v >> 24) & 0xFF);
-    p[1] = uint8_t((v >> 16) & 0xFF);
-    p[2] = uint8_t((v >> 8) & 0xFF);
-    p[3] = uint8_t((v) & 0xFF);
-}
-
 
 void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int id) {
     auto *dialog = homura::DynamicCast<Sexy::ButtonListener, WaitForSecondPlayerDialog>(listener);
@@ -1496,7 +1490,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
         switch (type) {
             case 0x81: { // ROOM_CREATED
                 if (len >= 4) {
-                    int id = (int)ReadBE32(payload);
+                    int id = homura::ReadNetI32(payload);
                     mServerHosting = true;
                     mServerJoined = false;
                     mServerHostHasGuest = false;
@@ -1517,7 +1511,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 for (int i = 0; i < count && mServerRoomCount < 255; i++) {
                     if (off + 6 > (int)len)
                         break;
-                    int id = (int)ReadBE32(payload + off);
+                    int id = homura::ReadNetI32(payload + off);
                     off += 4;
                     int flags = payload[off++] & 0xFF;
                     int nameLen = payload[off++] & 0xFF;
@@ -1546,7 +1540,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             }
             case 0x83: { // JOIN_RESULT
                 bool ok = (len >= 1 && payload[0] == 1);
-                int rid = (len >= 5) ? (int)ReadBE32(payload + 1) : 0;
+                int rid = (len >= 5) ? homura::ReadNetI32(payload + 1) : 0;
                 if (ok) {
                     mServerJoined = true;
                     mServerHosting = false;
@@ -1562,7 +1556,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             }
             case 0x84: { // GUEST_JOINED
                 if (len >= 4) {
-                    int rid = (int)ReadBE32(payload);
+                    int rid = homura::ReadNetI32(payload);
                     if (mServerHosting && rid == mServerHostedRoomId) {
                         mServerHostHasGuest = true;
                         mServerStatusText = TodStringTranslate("[STATUS_GUEST_JOINED]");
@@ -1572,7 +1566,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             }
             case 0x87: { // GUEST_LEFT
                 if (len >= 4) {
-                    int rid = (int)ReadBE32(payload);
+                    int rid = homura::ReadNetI32(payload);
                     if (mServerHosting && rid == mServerHostedRoomId) {
                         mServerHostHasGuest = false;
                         mServerStatusText = TodStringTranslate("[STATUS_GUEST_LEFT]");
@@ -1781,7 +1775,7 @@ void WaitForSecondPlayerDialog::ServerSendJoinSelected() {
 
     uint8_t buf[1 + 4];
     buf[0] = 0x03; // JOIN
-    WriteBE32_u32(buf + 1, (uint32_t)roomId);
+    homura::WriteNetI32(buf + 1, roomId);
 
     if (!SendAll(mServerSock, buf, sizeof(buf))) {
         mServerStatusText = TodStringTranslate("[STATUS_SEND_JOIN_FAIL]");
@@ -1907,9 +1901,7 @@ bool WaitForSecondPlayerDialog::ServerConnectFromInput() {
     return false;
 }
 
-void WaitForSecondPlayerDialog::ServerDisconnect(const char *why) {
-    (void)why;
-
+void WaitForSecondPlayerDialog::ServerDisconnect([[maybe_unused]] const char *why) {
     if (mServerSock >= 0) {
         shutdown(mServerSock, SHUT_RDWR);
         close(mServerSock);
@@ -1918,7 +1910,6 @@ void WaitForSecondPlayerDialog::ServerDisconnect(const char *why) {
 
     mServerConnecting = false;
     mServerConnected = false;
-
 
     mServerHosting = false;
     mServerJoined = false;
@@ -1931,10 +1922,6 @@ void WaitForSecondPlayerDialog::ServerDisconnect(const char *why) {
     mSrvRecvLen = 0;
 
     mServerStatusText = TodStringTranslate("[STATUS_NOT_CONNECTED]");
-}
-
-uint32_t WaitForSecondPlayerDialog::ReadBE32(const uint8_t *p) {
-    return (uint32_t(p[0]) << 24) | (uint32_t(p[1]) << 16) | (uint32_t(p[2]) << 8) | uint32_t(p[3]);
 }
 
 

@@ -217,7 +217,6 @@ public:
 
 
     bool ServerTryReadOneFrame(uint8_t &outType, uint8_t *outPayload, uint16_t &outLen);
-    static uint32_t ReadBE32(const uint8_t *p);
 
     // MODE3 drawing + selection
     void DrawServerRoomList(Sexy::Graphics *g);
