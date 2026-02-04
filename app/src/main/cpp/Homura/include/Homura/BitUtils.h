@@ -25,16 +25,18 @@
 
 #include <bit>
 
+static_assert((std::endian::native == std::endian::big) || (std::endian::native == std::endian::little), "Mixed endian is unsupported");
+
 namespace homura {
 
 template <std::integral T>
 [[nodiscard]] T ReadNet(const std::uint8_t *src) {
-    T value;
-    std::memcpy(&value, src, sizeof(T));
+    T dest;
+    std::memcpy(&dest, src, sizeof(T));
     if constexpr (std::endian::native != std::endian::big) {
-        value = std::byteswap(value);
+        dest = std::byteswap(dest);
     }
-    return value;
+    return dest;
 }
 
 [[nodiscard]] inline std::int16_t ReadNetI16(const std::uint8_t *src) {
@@ -62,35 +64,35 @@ template <std::integral T>
 }
 
 template <std::integral T>
-void WriteNet(std::uint8_t *dest, T value) {
+void WriteNet(std::uint8_t *dest, T src) {
     if constexpr (std::endian::native != std::endian::big) {
-        value = std::byteswap(value);
+        src = std::byteswap(src);
     }
-    std::memcpy(dest, &value, sizeof(T));
+    std::memcpy(dest, &src, sizeof(T));
 }
 
-inline void WriteNetI16(std::uint8_t *dest, std::int16_t value) {
-    WriteNet<std::int16_t>(dest, value);
+inline void WriteNetI16(std::uint8_t *dest, std::int16_t src) {
+    WriteNet<std::int16_t>(dest, src);
 }
 
-inline void WriteNetI32(std::uint8_t *dest, std::int32_t value) {
-    WriteNet<std::int32_t>(dest, value);
+inline void WriteNetI32(std::uint8_t *dest, std::int32_t src) {
+    WriteNet<std::int32_t>(dest, src);
 }
 
-inline void WriteNetI64(std::uint8_t *dest, std::int64_t value) {
-    WriteNet<std::int64_t>(dest, value);
+inline void WriteNetI64(std::uint8_t *dest, std::int64_t src) {
+    WriteNet<std::int64_t>(dest, src);
 }
 
-inline void WriteNetU16(std::uint8_t *dest, std::uint16_t value) {
-    WriteNet<std::uint16_t>(dest, value);
+inline void WriteNetU16(std::uint8_t *dest, std::uint16_t src) {
+    WriteNet<std::uint16_t>(dest, src);
 }
 
-inline void WriteNetU32(std::uint8_t *dest, std::uint32_t value) {
-    WriteNet<std::uint32_t>(dest, value);
+inline void WriteNetU32(std::uint8_t *dest, std::uint32_t src) {
+    WriteNet<std::uint32_t>(dest, src);
 }
 
-inline void WriteNetU64(std::uint8_t *dest, std::uint64_t value) {
-    WriteNet<std::uint64_t>(dest, value);
+inline void WriteNetU64(std::uint8_t *dest, std::uint64_t src) {
+    WriteNet<std::uint64_t>(dest, src);
 }
 
 } // namespace homura
