@@ -564,7 +564,7 @@ void WaitForSecondPlayerDialog::Update() {
         } else {
             // 兜底：收到输入但用途/模式不匹配
             // 防止 gInputString 永远不空导致每帧重复触发/刷日志
-            LOG_WARN("[Input] drop input='{}' purpose={} mode={}", gInputString.c_str(), (int)mInputPurpose, (int)mUIMode);
+            LOG_WARN("[Input] drop input='{}' purpose={} mode={}", gInputString, int(mInputPurpose), int(mUIMode));
             gInputString.clear();
             gHasInputContent = false;
             gHasInputContent.notify_one();
@@ -576,7 +576,6 @@ void WaitForSecondPlayerDialog::Update() {
     // 2) MODE2：WIFI 才跑 UDP 扫描/广播节拍
     // =========================================================
     if (mUIMode == UIMode::MODE2_WIFI) {
-
         bool inScanMode = (!mIsCreatingRoom && !mIsJoiningRoom);
         if (inScanMode) {
             // 扫描模式下：没房间就禁用“加入房间”
@@ -619,7 +618,6 @@ void WaitForSecondPlayerDialog::Update() {
     // 3) MODE3：服务器联机 IO（connect 完成检测 + 收包） + 自动 query
     // =========================================================
     if (mUIMode == UIMode::MODE3_SERVER) {
-
         // 网络 IO（你实现：包含 connect 完成检测、收包解析等）
         ServerUpdateIO();
 
@@ -647,7 +645,6 @@ void WaitForSecondPlayerDialog::Update() {
 
 size_t WaitForSecondPlayerDialog::getClientEventSize(EventType type) {
     switch (type) {
-
         default:
             return sizeof(BaseEvent);
     }
@@ -657,7 +654,6 @@ void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
     BaseEvent *event = (BaseEvent *)buf;
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
-
         default:
             break;
     }
@@ -666,7 +662,6 @@ void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
 size_t WaitForSecondPlayerDialog::getServerEventSize(EventType type) {
     switch (type) {
         case EVENT_START_GAME:
-            return sizeof(BaseEvent);
         default:
             return sizeof(BaseEvent);
     }
