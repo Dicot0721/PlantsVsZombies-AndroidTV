@@ -23,7 +23,7 @@
 #include <iterator>
 #include <optional>
 
-namespace homura {
+namespace homura::inline container {
 
 template <template <typename...> typename Map, typename Key, typename T>
 concept IsMap = std::is_same_v<std::iter_value_t<typename Map<Key, T>::const_iterator>, std::pair<const Key, T>> //
@@ -50,6 +50,6 @@ bool FindInMap(const Map<Key, T> &map, std::type_identity_t<const Key &> key, T 
     return true;
 }
 
-} // namespace homura
+} // namespace homura::inline container
 
 #endif // HOMURA_CONTAINER_H

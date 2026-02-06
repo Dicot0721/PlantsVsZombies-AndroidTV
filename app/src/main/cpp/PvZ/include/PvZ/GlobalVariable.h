@@ -26,6 +26,8 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/TodLib/Common/TodFoley.h"
 
+#include <atomic>
+
 inline uintptr_t gLibBaseOffset;
 
 inline bool isMainMenu = true;
@@ -68,6 +70,7 @@ inline int gGamepad1ToPlayerIndex = -1;
 inline int speedUpMode;
 inline int speedUpCounter;
 
+inline std::atomic<bool> gHasInputContent;
 inline std::string gInputString;
 
 // 重型武器角度设定

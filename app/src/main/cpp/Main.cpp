@@ -927,8 +927,14 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_NativeView_onTextInputNative2(JNIEnv *env, jobject thiz, jlong j, jstring str) {
     if (str == nullptr) {
-        gInputString.clear();
         return;
     }
-    gInputString = JStringToString(env, str);
+    while (gHasInputContent) {
+        gHasInputContent.wait(true); // 等待旧输入被消费
+    }
+    std::string input = JStringToString(env, str);
+    if (!input.empty()) {
+        gInputString = std::move(input);
+        gHasInputContent = true;
+    }
 }
