@@ -1018,17 +1018,12 @@ using u32string = basic_string<char32_t>; // `basic_string<int>` in PvZ
 
 } // namespace pvzstl
 
-
-namespace std {
-
 template <typename CharT>
-struct hash<pvzstl::basic_string<CharT>> {
+struct std::hash<pvzstl::basic_string<CharT>> {
     [[nodiscard]] size_t operator()(const pvzstl::basic_string<CharT> &val) const noexcept {
         using StringView = basic_string_view<CharT>;
         return hash<StringView>{}(StringView{val});
     }
 };
-
-} // namespace std
 
 #endif // PVZ_STL_PVZSTL_STRING_H

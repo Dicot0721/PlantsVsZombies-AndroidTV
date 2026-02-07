@@ -525,12 +525,12 @@ void WaitForSecondPlayerDialog::Update() {
         // MODE2：WIFI 房主设置房间端口
         else if (mInputPurpose == InputPurpose::HOST_SET_PORT) {
             // 取走输入并清空
-            std::string input = std::move(gInputString);
+            const std::string input = std::move(gInputString);
             gHasInputContent = false;
             gHasInputContent.notify_one();
 
             // 允许输入 0（随机端口），范围 0~65535
-            int port = std::atoi(input.c_str());
+            const int port = std::atoi(input.c_str());
             if (port < 1 || port > 65535) {
                 mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[PORT_INVALID_TITLE]", "[PORT_INVALID_DESC]", "[DIALOG_BUTTON_OK]", "", 3);
                 mInputPurpose = InputPurpose::NONE;
@@ -582,12 +582,7 @@ void WaitForSecondPlayerDialog::Update() {
             mLeftButton->mDisabled = (scanned_server_count == 0);
 
             // 选中索引修正
-            if (scanned_server_count > 0 && mSelectedServerIndex < 0)
-                mSelectedServerIndex = 0;
-            if (mSelectedServerIndex >= scanned_server_count)
-                mSelectedServerIndex = scanned_server_count - 1;
-            if (mSelectedServerIndex < 0)
-                mSelectedServerIndex = 0;
+            mSelectedServerIndex = std::clamp(mSelectedServerIndex, 0, std::max(0, scanned_server_count - 1));
         }
 
         // 创建房间时：开始游戏按钮是否可点
@@ -702,7 +697,7 @@ void WaitForSecondPlayerDialog::InitUdpScanSocket() {
         .sin_addr{.s_addr = INADDR_ANY},
     };
 
-    if (bind(udpScanSocket, (struct sockaddr *)&recv_addr, sizeof(recv_addr)) < 0) {
+    if (bind(udpScanSocket, (sockaddr *)&recv_addr, sizeof(recv_addr)) < 0) {
         LOG_DEBUG("bind ERROR");
         close(udpScanSocket);
         udpScanSocket = -1;
@@ -725,7 +720,7 @@ bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in &out_bcast, std::
     if (fd < 0)
         return false;
 
-    struct ifconf ifc;
+    ifconf ifc;
     char buf[1024];
     ifc.ifc_len = sizeof(buf);
     ifc.ifc_buf = buf;
@@ -734,8 +729,8 @@ bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in &out_bcast, std::
         return false;
     }
 
-    struct ifreq *it = (struct ifreq *)buf;
-    struct ifreq *end = (struct ifreq *)(buf + ifc.ifc_len);
+    ifreq *it = (ifreq *)buf;
+    ifreq *end = (ifreq *)(buf + ifc.ifc_len);
 
     bool found_wifi = false;
     bool found_other = false;
@@ -755,7 +750,7 @@ bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in &out_bcast, std::
 
         // 获取广播地址
         if (ioctl(fd, SIOCGIFBRDADDR, &ifr) == 0) {
-            struct sockaddr_in *sin = (struct sockaddr_in *)&ifr.ifr_broadaddr;
+            sockaddr_in *sin = (sockaddr_in *)&ifr.ifr_broadaddr;
             if (sin->sin_family != AF_INET)
                 continue;
 
@@ -848,7 +843,7 @@ void WaitForSecondPlayerDialog::CreateRoom() {
 
     // 获取实际分配的端口号（当 mVSRoomPort=0 时这里会得到随机端口）
     socklen_t addr_len = sizeof(addr);
-    getsockname(tcpListenSocket, (struct sockaddr *)&addr, &addr_len);
+    getsockname(tcpListenSocket, (sockaddr *)&addr, &addr_len);
     tcpPort = ntohs(addr.sin_port);
 
     // 2) 创建UDP广播socket
@@ -957,7 +952,7 @@ void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
         memcpy(send_buf, message, msg_len);
         memcpy(send_buf + msg_len, &tcpPort, sizeof(tcpPort));
 
-        ssize_t sent = sendto(udpBroadcastSocket, send_buf, total_len, 0, (struct sockaddr *)&broadcast_addr, sizeof(broadcast_addr));
+        ssize_t sent = sendto(udpBroadcastSocket, send_buf, total_len, 0, (sockaddr *)&broadcast_addr, sizeof(broadcast_addr));
 
         if (sent > 0)
             LOG_DEBUG("[Send] msg: '{}', num: {}\n", message, tcpPort);
@@ -1009,7 +1004,7 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
 
     // 循环读取所有可用包
     while (true) {
-        ssize_t n = recvfrom(udpScanSocket, buffer, sizeof(buffer), 0, (struct sockaddr *)&recv_addr, &addr_len);
+        ssize_t n = recvfrom(udpScanSocket, buffer, sizeof(buffer), 0, (sockaddr *)&recv_addr, &addr_len);
         if (n > 0) {
             // 解析消息
             char *msg = buffer;

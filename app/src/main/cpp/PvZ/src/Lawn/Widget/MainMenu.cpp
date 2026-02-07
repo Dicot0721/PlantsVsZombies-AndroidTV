@@ -741,7 +741,7 @@ void MaskHelpWidget_MouseDown(AchievementsWidget *achievementsWidget, int x, int
     achievementsWidget->mMouseDownY = y;
     achievementsWidget->mLastDownY = y;
     achievementsWidget->mLastDownY1 = achievementsWidget->mLastDownY;
-    struct timeval tp;
+    timeval tp;
     gettimeofday(&tp, nullptr);
     achievementsWidget->mLastTimeMs = tp.tv_sec * 1000 + tp.tv_usec / 1000; // Convert to milliseconds
     achievementsWidget->mLastTimeMs1 = achievementsWidget->mLastTimeMs;
@@ -754,14 +754,14 @@ void MaskHelpWidget_MouseDrag(AchievementsWidget *achievementsWidget, int x, int
     achievementsWidget->Move(achievementsWidget->mX, theNewY);
     achievementsWidget->mLastDownY1 = achievementsWidget->mLastDownY;
     achievementsWidget->mLastDownY = y;
-    struct timeval tp;
+    timeval tp;
     gettimeofday(&tp, nullptr);
     achievementsWidget->mLastTimeMs1 = achievementsWidget->mLastTimeMs;
     achievementsWidget->mLastTimeMs = tp.tv_sec * 1000 + tp.tv_usec / 1000; // Convert to milliseconds
 }
 
 void MaskHelpWidget_MouseUp(AchievementsWidget *achievementsWidget, int x, int y) {
-    struct timeval tp;
+    timeval tp;
     gettimeofday(&tp, nullptr);
     long currentTimeMs = tp.tv_sec * 1000 + tp.tv_usec / 1000; // Convert to milliseconds
     long deltaT = currentTimeMs - achievementsWidget->mLastTimeMs;
