@@ -39,10 +39,6 @@
 #include <numbers>
 #include <sstream>
 
-static jstring StringToJString(JNIEnv *env, std::string_view sv) {
-    return env->NewStringUTF(sv.data());
-}
-
 static std::string JStringToString(JNIEnv *env, jstring str) {
     const char *buffer = env->GetStringUTFChars(str, nullptr);
     std::string result(buffer);
@@ -652,10 +648,10 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
 
     };
 
-    int featuresCount = std::size(features);
+    constexpr int featuresCount = std::size(features);
     jobjectArray ret = env->NewObjectArray(featuresCount, env->FindClass("java/lang/String"), nullptr);
     for (int i = 0; i < featuresCount; ++i) {
-        env->SetObjectArrayElement(ret, i, StringToJString(env, features[i]));
+        env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
     }
     return ret;
 }
@@ -668,10 +664,10 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
         "-6_Button_<font color='green'>返回菜单</font>",
     };
 
-    int featuresCount = std::size(features);
+    constexpr int featuresCount = std::size(features);
     jobjectArray ret = env->NewObjectArray(featuresCount, env->FindClass("java/lang/String"), nullptr);
     for (int i = 0; i < featuresCount; ++i) {
-        env->SetObjectArrayElement(ret, i, StringToJString(env, features[i]));
+        env->SetObjectArrayElement(ret, i, env->NewStringUTF(features[i]));
     }
     return ret;
 }
@@ -735,7 +731,7 @@ static std::string generateLineupStr(const std::multimap<int, int> &theMap) {
 extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCurrentFormation(JNIEnv *env, jobject thiz) {
     Board *aBoard = (*gLawnApp_Addr)->mBoard;
     if (aBoard == nullptr) {
-        return StringToJString(env, "");
+        return env->NewStringUTF("");
     }
 
     std::multimap<int, int> map;
@@ -761,7 +757,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCu
         int value = aPlantCol | (aRow << 4);
         map.emplace(key, value);
     }
-    return StringToJString(env, generateLineupStr(map));
+    return env->NewStringUTF(generateLineupStr(map).c_str());
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native1PButtonDown(JNIEnv *env, jclass clazz, jint code) {
@@ -929,12 +925,11 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_NativeView_onText
     if (str == nullptr) {
         return;
     }
-    while (gHasInputContent) {
-        gHasInputContent.wait(true); // 等待旧输入被消费
-    }
     std::string input = JStringToString(env, str);
-    if (!input.empty()) {
-        gInputString = std::move(input);
-        gHasInputContent = true;
+    if (input.empty()) {
+        return;
     }
+    gHasInputContent.wait(true); // 若旧输入未被消费则等待
+    gInputString = std::move(input);
+    gHasInputContent = true;
 }

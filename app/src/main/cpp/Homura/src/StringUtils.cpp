@@ -29,26 +29,26 @@
 
 namespace homura::inline string {
 
-std::string ToLower(std::string_view sv) {
-    std::string result;
-    result.reserve(sv.size());
-    result.assign_range(sv | std::views::transform([](unsigned char c) { return std::tolower(c); }));
-    return result;
+[[nodiscard]] std::string ToLower(std::string_view sv) {
+    return {
+        std::from_range,
+        sv | std::views::transform([](unsigned char c) { return std::tolower(c); }),
+    };
 }
 
-std::string ToUpper(std::string_view sv) {
-    std::string result;
-    result.reserve(sv.size());
-    result.assign_range(sv | std::views::transform([](unsigned char c) { return std::toupper(c); }));
-    return result;
+[[nodiscard]] std::string ToUpper(std::string_view sv) {
+    return {
+        std::from_range,
+        sv | std::views::transform([](unsigned char c) { return std::toupper(c); }),
+    };
 }
 
-std::wstring StringToWString(std::string_view sv) {
+[[nodiscard]] std::wstring StringToWString(std::string_view sv) {
     std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
     return conv.from_bytes(sv.data());
 }
 
-std::string WStringToString(std::wstring_view sv) {
+[[nodiscard]] std::string WStringToString(std::wstring_view sv) {
     std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
     return conv.to_bytes(sv.data());
 }
