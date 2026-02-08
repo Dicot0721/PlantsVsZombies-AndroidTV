@@ -2452,7 +2452,7 @@ void Board::Pause(bool thePause) {
     // 能在这里得知游戏是否暂停
     // if (thePause) Music2_StopAllMusic((Music2*)this->mApp->mMusic);
     // else Music2_StartGameMusic((Music2*)this->mApp->mMusic, true);
-    if (mApp->mGameMode == GAMEMODE_MP_VS && !mApp->mVSSetupScreen) {
+    if (mApp->mGameMode == GAMEMODE_MP_VS && !mApp->mVSSetupMenu) {
         if (mPaused == thePause)
             return;
 
@@ -4217,7 +4217,7 @@ void Board::RemovedFromManager(WidgetManager *theManager) {
 
 void Board::UpdateButtons() {
     SeedChooserScreen *aSeedChooser = mApp->mSeedChooserScreen;
-    VSSetupMenu *aVSSetup = mApp->mVSSetupScreen;
+    VSSetupMenu *aVSSetup = mApp->mVSSetupMenu;
     GamepadControls *aGamepad = (gGamePlayerIndex == 1) ? mGamepadControls2 : mGamepadControls1;
     if (gKeyDown) {
         aGamepad->OnKeyDown(KeyCode::KEYCODE_QUICK_DIG, 1112);

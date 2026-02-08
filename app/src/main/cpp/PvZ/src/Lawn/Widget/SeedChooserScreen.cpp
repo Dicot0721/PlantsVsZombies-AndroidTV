@@ -88,7 +88,7 @@ void SeedChooserScreen::_constructor(bool theIsZombieChooser) {
             theValidChosenSeedNum++;
         }
 
-        mSeedsInBothBank = theValidChosenSeedNum;
+        mSeedsInBank = theValidChosenSeedNum;
         mSeedsIn1PBank = theValidChosenSeedNum;
         if (theValidChosenSeedNum == mNumPackets) {
             EnableStartButton(true);
@@ -108,7 +108,7 @@ void SeedChooserScreen::_constructor(bool theIsZombieChooser) {
         theChosenSeed->mStartY = theChosenSeed->mY;
         theChosenSeed->mSeedState = ChosenSeedState::SEED_IN_BANK;
         theChosenSeed->mSeedIndexInBank = 0;
-        mSeedsInBothBank += 1;
+        mSeedsInBank += 1;
         mSeedsIn1PBank += 1;
     } else if (mGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_SUNFLOWER) {
         SeedType types[] = {SeedType::SEED_WALLNUT, SeedType::SEED_STARFRUIT, SeedType::SEED_UMBRELLA};
@@ -121,7 +121,7 @@ void SeedChooserScreen::_constructor(bool theIsZombieChooser) {
             theChosenSeed->mStartY = theChosenSeed->mY;
             theChosenSeed->mSeedState = ChosenSeedState::SEED_IN_BANK;
             theChosenSeed->mSeedIndexInBank = i;
-            mSeedsInBothBank += 1;
+            mSeedsInBank += 1;
             mSeedsIn1PBank += 1;
         }
     }
@@ -262,7 +262,7 @@ int SeedChooserScreen::GetSeedPacketIndex(int theSeedIndex) {
 }
 
 void SeedChooserScreen::OnPlayerPickedSeed(int thePlayerIndex) {
-    VSSetupMenu *aVSSetupScreen = mApp->mVSSetupScreen;
+    VSSetupMenu *aVSSetupScreen = mApp->mVSSetupMenu;
     if (aVSSetupScreen)
         aVSSetupScreen->OnPlayerPickedSeed(thePlayerIndex);
 }
@@ -294,12 +294,12 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
 
     // 合作模式检查
     if (mApp->IsCoopMode()) {
-        if (mSeedsInBothBank > 8) {
+        if (mSeedsInBank > 8) {
             canPickSeed = false;
         }
     }
     // 非合作模式检查
-    else if (mSeedsInBothBank == mSeedBank1->mNumPackets) {
+    else if (mSeedsInBank == mSeedBank1->mNumPackets) {
         canPickSeed = false;
     }
 
@@ -371,8 +371,8 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
         theChosenSeed.mChosenPlayerIndex = 0;
     } else {
         if (mApp->IsVSMode()) {
-            VSSetupMenu *aVSSetupScreen = mApp->mVSSetupScreen;
-            aActualPlayerIndex = (thePlayerIndex == 1) ? aVSSetupScreen->mController2Position : aVSSetupScreen->mController1Position;
+            VSSetupMenu *aVSSetupScreen = mApp->mVSSetupMenu;
+            aActualPlayerIndex = (thePlayerIndex == 1) ? aVSSetupScreen->mSides[1] : aVSSetupScreen->mSides[0];
             theChosenSeed.mChosenPlayerIndex = aActualPlayerIndex;
         } else {
             aActualPlayerIndex = thePlayerIndex;
@@ -388,7 +388,7 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
     theChosenSeed.mSeedState = SEED_FLYING_TO_BANK;
 
     mSeedsInFlight++;
-    mSeedsInBothBank++;
+    mSeedsInBank++;
 
     if (mApp->IsCoopMode() && thePlayerIndex == 1) {
         mSeedsIn2PBank++;
@@ -401,11 +401,11 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
     mApp->PlaySample(*SOUND_TAP);
 
     // 检查是否启用开始按钮
-    if (!mApp->IsCoopMode() && mSeedsInBothBank == mSeedBank1->mNumPackets) {
+    if (!mApp->IsCoopMode() && mSeedsInBank == mSeedBank1->mNumPackets) {
         EnableStartButton(true);
     }
 
-    if (mApp->IsCoopMode() && mSeedsInBothBank == (mSeedBank2->mNumPackets + mSeedBank1->mNumPackets)) {
+    if (mApp->IsCoopMode() && mSeedsInBank == (mSeedBank2->mNumPackets + mSeedBank1->mNumPackets)) {
         EnableStartButton(true);
     }
 
@@ -455,15 +455,15 @@ void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int the
             return;
 
         SeedType aSeedType = thePlayerIndex ? mSeedType2 : mSeedType1;
-        int aSeedsInBank = mSeedsInBothBank;
+        int aSeedsInBank = mSeedsInBank;
         // 此处将判定条件改为选满8个种子时无法选取模仿者。原版游戏中此处是选满4个则无法选取，导致模仿者选取出现问题。
         if (aSeedType == SeedType::SEED_IMITATER && aSeedsInBank < 8) {
             if (mChosenSeeds[SeedType::SEED_IMITATER].mSeedState != ChosenSeedState::SEED_IN_BANK) {
                 // 先将已选种子数改为0，然后执行旧函数，这样模仿者选取界面就被打开了。
-                mSeedsInBothBank = 0;
+                mSeedsInBank = 0;
                 old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
                 // 然后再恢复已选种子数即可。
-                mSeedsInBothBank = aSeedsInBank;
+                mSeedsInBank = aSeedsInBank;
                 return;
             }
         }

@@ -281,11 +281,11 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             size_t eventSize = VSSetupMenu::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
-            if (!mVSSetupScreen) {
+            if (!mVSSetupMenu) {
                 offset += eventSize;
                 break;
             }
-            mVSSetupScreen->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
+            mVSSetupMenu->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
             offset += eventSize;
         }
 
@@ -350,11 +350,11 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
 
-            if (!mVSSetupScreen) {
+            if (!mVSSetupMenu) {
                 offset += eventSize;
                 break;
             }
-            mVSSetupScreen->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
+            mVSSetupMenu->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
             offset += eventSize;
         } else
 

@@ -88,7 +88,7 @@ public:
     Board *mBoard;                           // 932
     int mSeedChooserAge;                     // 933
     int mSeedsInFlight;                      // 934
-    int mSeedsInBothBank;                    // 935
+    int mSeedsInBank;                        // 935
     int mSeedsIn1PBank;                      // 936
     int mSeedsIn2PBank;                      // 937
     ToolTipWidget *mToolTip1;                // 938

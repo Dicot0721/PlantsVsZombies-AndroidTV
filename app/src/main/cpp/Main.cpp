@@ -805,7 +805,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivi
     if (anApp->IsCoopMode() && aSeedChooser && (aFocusWidget == reinterpret_cast<Sexy::Widget *>(aSeedChooser))) {
         return true;
     }
-    if (anApp->IsVSMode() && anApp->mVSSetupScreen && (anApp->mVSSetupScreen->mState == VS_SETUP_STATE_SIDES || anApp->mVSSetupScreen->mState == VS_SETUP_STATE_CUSTOM_BATTLE)) {
+    if (anApp->IsVSMode() && anApp->mVSSetupMenu && (anApp->mVSSetupMenu->mState == VS_SETUP_STATE_SIDES || anApp->mVSSetupMenu->mState == VS_SETUP_STATE_CUSTOM_BATTLE)) {
         return true;
     }
 
@@ -831,7 +831,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
             return;
         }
 
-        VSSetupMenu *aVSSetup = anApp->mVSSetupScreen;
+        VSSetupMenu *aVSSetup = anApp->mVSSetupMenu;
         if (is_key_down && anApp->IsVSMode() && aVSSetup && (aVSSetup->mState == VS_SETUP_STATE_SIDES || aVSSetup->mState == VS_SETUP_STATE_CUSTOM_BATTLE)) {
             gButtonDownVSSetup = true;
             gButtonCode = aButtonCode;

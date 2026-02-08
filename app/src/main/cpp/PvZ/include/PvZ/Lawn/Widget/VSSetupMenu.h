@@ -40,6 +40,11 @@ enum VSSetupMode {
     VS_SETUP_MODE_RANDOM_BATTLE = 2, // 随机战场
 };
 
+enum VSFirstPick {
+    VS_FIRST_PICK_PLANT = 0,
+    VS_FIRST_PICK_ZOMBIE = 1,
+};
+
 namespace Sexy {
 class ButtonWidget;
 }
@@ -56,16 +61,16 @@ public:
         VSSetupMenu_Random_Battle = 11, // 随机战场
     };
 
+    inline static int msNextFirstPick;
+
     int unkInt[5];            // 65 ~ 69
     int mInt70;               // 70
     int mInt71;               // 71
     int mInt72;               // 72
     LawnApp *mApp;            // 73
     VSSetupState mState;      // 74 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
-    int mController1Index;    // 75 // 0:手柄1, 1:手柄2
-    int mController2Index;    // 76 // 0:手柄1, 1:手柄2
-    int mController1Position; // 77  // -1 0 1， 分别位于中 左 右
-    int mController2Position; // 78  // -1 0 1， 分别位于中 左 右
+    int mControllerIndex[2];  // 75  // 0:手柄1, 1:手柄2
+    int mSides[2];            // 77  // -1 0 1， 分别位于中 左 右
     int unkInt79;             // 79
     int mNextFirstPick;       // 80
     int mInt81;               // 81
@@ -84,7 +89,7 @@ public:
     bool mBool316;            // 316
     bool mBool317;            // 317
     int unkInt318[2];         // 318 ~ 319
-    int mInt320;              // 320
+    int mSeedPickTurn;        // 320
     int unkInt321[3];         // 321 ~ 323
     int mInt324;              // 324
     int unkInt325[3];         // 325 ~ 327
