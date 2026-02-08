@@ -39,6 +39,8 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+
 /* loaded from: classes.dex */
 public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, ViewTreeObserver.OnGlobalLayoutListener {
     static final String TAG = "NativeView";
@@ -102,7 +104,7 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
 
     protected native void onWindowFocusChangedNative(long j, boolean z);
 
-    protected native void onTextInputNative2(long j, String str);
+    protected native void onTextInputNative2(@NonNull String text);
 
 
     void setActivity(NativeActivity activity) {
@@ -471,10 +473,14 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
 
                     builder.setPositiveButton("OK", (dialog, which) -> {
                         try {
-                            String text = (edit.getText() != null) ? edit.getText().toString() : null;
-                            Log.i(TAG, "showTextInputDialog2: OK text=" + text);
                             if (isAlive()) {
-                                onTextInputNative2(getNativeHandle(), text);
+                                if (edit.getText() != null) {
+                                    String text = edit.getText().toString();
+                                    Log.i(TAG, "showTextInputDialog2: OK text=" + text);
+                                    onTextInputNative2(text);
+                                } else {
+                                    Log.e(TAG, "showTextInputDialog2: OK edit.getText() is null");
+                                }
                             }
                         } catch (Throwable t) {
                             Log.e(TAG, "showTextInputDialog2: OK exception", t);
@@ -483,9 +489,6 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
 
                     builder.setNegativeButton("Cancel", (dialog, which) -> {
                         Log.i(TAG, "showTextInputDialog2: Cancel");
-                        if (isAlive()) {
-                            onTextInputNative2(getNativeHandle(), null);
-                        }
                     });
 
                     mTextInputDialog = builder.create();
@@ -493,9 +496,6 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
                     // 用户点返回键/点外部取消
                     mTextInputDialog.setOnCancelListener(d -> {
                         Log.i(TAG, "showTextInputDialog2: onCancel");
-                        if (isAlive()) {
-                            onTextInputNative2(getNativeHandle(), null);
-                        }
                     });
 
                     mTextInputDialog.setOnDismissListener(d -> {
@@ -511,7 +511,8 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
                         try {
                             android.view.inputmethod.InputMethodManager imm =
                                     (android.view.inputmethod.InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-                            if (imm != null) imm.showSoftInput(edit, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
+                            if (imm != null)
+                                imm.showSoftInput(edit, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT);
                         } catch (Throwable t) {
                             Log.e(TAG, "showTextInputDialog2: showSoftInput exception", t);
                         }
@@ -519,10 +520,6 @@ public class NativeView extends SurfaceView implements SurfaceHolder.Callback2, 
 
                 } catch (Throwable t) {
                     Log.e(TAG, "showTextInputDialog2: exception", t);
-                    if (isAlive()) {
-                        // 出错也回传一次 null，避免 native 等待
-                        onTextInputNative2(getNativeHandle(), null);
-                    }
                 }
             }
         });
