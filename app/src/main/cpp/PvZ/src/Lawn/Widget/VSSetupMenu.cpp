@@ -707,7 +707,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
             GoToState(VSSetupState::VS_SETUP_STATE_SIDES);
             return;
         }
-        mControllerIndex[2] = -1;
+        mControllerIndex[1] = -1;
         auto *aWaitDialog = new WaitForSecondPlayerDialog(mApp);
         mApp->AddDialog(aWaitDialog);
 
