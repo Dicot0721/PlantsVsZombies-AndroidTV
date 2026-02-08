@@ -63,44 +63,44 @@ public:
 
     inline static int msNextFirstPick;
 
-    int unkInt[5];            // 65 ~ 69
-    int mInt70;               // 70
-    int mInt71;               // 71
-    int mInt72;               // 72
-    LawnApp *mApp;            // 73
-    VSSetupState mState;      // 74 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
-    int mControllerIndex[2];  // 75  // 0:手柄1, 1:手柄2
-    int mSides[2];            // 77  // -1 0 1， 分别位于中 左 右
-    int unkInt79;             // 79
-    int mNextFirstPick;       // 80
-    int mInt81;               // 81
-    VSSetupMode mSetupMode;   // 82
-    int unkInt83[85];         // 83 ~ 167
-    int mInt168;              // 168
-    int unkInt169[59];        // 169 ~ 227
-    int mInt228;              // 228
-    int unkInt229[63];        // 229 ~ 291
-    int mInt292;              // 292
-    int unkInt293[3];         // 293 ~ 295
-    int mInt296;              // 296
-    int unkInt297[7];         // 297 ~ 303
-    int mInt304;              // 304
-    int unkInt305[11];        // 305 ~ 315
-    bool mBool316;            // 316
-    bool mBool317;            // 317
-    int unkInt318[2];         // 318 ~ 319
-    int mSeedPickTurn;        // 320
-    int unkInt321[3];         // 321 ~ 323
-    int mInt324;              // 324
-    int unkInt325[3];         // 325 ~ 327
-    int mInt328;              // 328
-    int unkInt329[3];         // 329 ~ 331
-    int mInt332;              // 332
-    int unkInt333[28];        // 333 ~ 360
-    bool mBoo361;             // 361
-    bool mBool362;            // 362
-    int unkInt363[161];       // 363 ~ 523
-    int mInt524;              // 524
+    int unkInt[5];           // 65 ~ 69
+    int mInt70;              // 70
+    int mInt71;              // 71
+    int mInt72;              // 72
+    LawnApp *mApp;           // 73
+    VSSetupState mState;     // 74 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
+    int mControllerIndex[2]; // 75  // 0:手柄1, 1:手柄2
+    int mSides[2];           // 77  // -1 0 1， 分别位于中 左 右
+    int unkInt79;            // 79
+    int mNextFirstPick;      // 80
+    int mInt81;              // 81
+    VSSetupMode mSetupMode;  // 82
+    int unkInt83[85];        // 83 ~ 167
+    int mInt168;             // 168
+    int unkInt169[59];       // 169 ~ 227
+    int mInt228;             // 228
+    int unkInt229[63];       // 229 ~ 291
+    int mInt292;             // 292
+    int unkInt293[3];        // 293 ~ 295
+    int mInt296;             // 296
+    int unkInt297[7];        // 297 ~ 303
+    int mInt304;             // 304
+    int unkInt305[11];       // 305 ~ 315
+    bool mBool316;           // 316
+    bool mBool317;           // 317
+    int unkInt318[2];        // 318 ~ 319
+    int mSeedPickTurn;       // 320
+    int unkInt321[3];        // 321 ~ 323
+    int mInt324;             // 324
+    int unkInt325[3];        // 325 ~ 327
+    int mInt328;             // 328
+    int unkInt329[3];        // 329 ~ 331
+    int mInt332;             // 332
+    int unkInt333[28];       // 333 ~ 360
+    bool mBoo361;            // 361
+    bool mBool362;           // 362
+    int unkInt363[161];      // 363 ~ 523
+    int mInt524;             // 524
 
     void GameButtonDown(GamepadButton theButton, unsigned int thePlayerIndex, int a4) {
         reinterpret_cast<void (*)(VSSetupMenu *, GamepadButton, unsigned int, int)>(VSSetupMenu_GameButtonDownAddr)(this, theButton, thePlayerIndex, a4);
