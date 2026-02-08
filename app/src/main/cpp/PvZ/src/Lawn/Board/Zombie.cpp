@@ -632,9 +632,10 @@ void Zombie::UpdateZombieGargantuar() {
     }
 
     bool doSmash = false;
-    if ((mMindControlled && FindZombieTarget()) || FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW)) {
+    if (FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW) || (mMindControlled && FindZombieTarget())) {
         doSmash = true;
-    } else if (mApp->IsScaryPotterLevel()) {
+    }
+    if (mApp->IsScaryPotterLevel()) {
         int aGridX = mBoard->PixelToGridX(mPosX, mPosY);
         if (mBoard->GetScaryPotAt(aGridX, mRow)) {
             doSmash = true;
