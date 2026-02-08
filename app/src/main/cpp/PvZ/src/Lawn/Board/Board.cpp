@@ -1113,7 +1113,7 @@ void Board::processClientEvent(void *buf, ssize_t bufSize) {
             }
 
             mApp->ShowVSResultsScreen();
-            mApp->mVSResultsScreen->InitFromBoard(this);
+            mApp->mVSResultsMenu->InitFromBoard(this);
             mApp->KillBoard();
         } break;
         default:
@@ -1803,7 +1803,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
 
             mApp->ShowVSResultsScreen();
-            mApp->mVSResultsScreen->InitFromBoard(this);
+            mApp->mVSResultsMenu->InitFromBoard(this);
             mApp->KillBoard();
         } break;
         default:

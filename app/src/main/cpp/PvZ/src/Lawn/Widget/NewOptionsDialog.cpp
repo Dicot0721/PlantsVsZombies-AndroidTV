@@ -69,7 +69,7 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
 
 
                 mApp->ShowVSResultsScreen();
-                mApp->mVSResultsScreen->InitFromBoard(mApp->mBoard);
+                mApp->mVSResultsMenu->InitFromBoard(mApp->mBoard);
                 mApp->KillBoard();
             }
         }

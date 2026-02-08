@@ -57,7 +57,7 @@ public:
     int *mHelpTextScreen;                    // 557
     int unkUnk;                              // 558
     VSSetupMenu *mVSSetupMenu;               // 559
-    VSResultsMenu *mVSResultsScreen;         // 560
+    VSResultsMenu *mVSResultsMenu;           // 560
     SeedChooserScreen *mSeedChooserScreen;   // 561
     SeedChooserScreen *mZombieChooserScreen; // 562
     int *mAwardScreen;                       // 563
