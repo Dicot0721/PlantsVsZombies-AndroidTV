@@ -6,11 +6,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 string(APPEND CMAKE_CXX_FLAGS
         " -Wall" # 开启绝大部分警告
+        " -Werror=array-bounds"
         " -Werror=return-type"
         " -Werror=unused-result"
 )
 
-if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+if ((NOT CMAKE_BUILD_TYPE STREQUAL "Debug") AND (NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo"))
     set(CMAKE_C_VISIBILITY_PRESET hidden)
     set(CMAKE_CXX_VISIBILITY_PRESET hidden) # 隐藏非 inline 符号
     set(CMAKE_VISIBILITY_INLINES_HIDDEN ON) # 隐藏 inline 符号
