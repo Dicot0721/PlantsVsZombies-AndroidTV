@@ -55,7 +55,7 @@ void CutScene::Update() {
                 mBoard->unknownBool = true;
             } else {
 
-                SeedBank *seedBank2 = mApp->mBoard->mSeedBankRight;
+                SeedBank *seedBank2 = mApp->mBoard->mSeedBank[1];
                 if (seedBank2) {
                     SeedBank *seedBank = (SeedBank *)operator new(sizeof(SeedBank));
                     seedBank->mNumPackets = seedBank2->mNumPackets;
@@ -68,13 +68,13 @@ void CutScene::Update() {
                     }
 
                     // seedBank2->~SeedBank();
-                    // mApp->mBoard->mSeedBankRight = nullptr;
+                    // mApp->mBoard->mSeedBank[1] = nullptr;
                     mApp->SetSecondPlayer(1);
                     mApp->mBoard->mGamepadControls2->mPlayerIndex2 = 1;
                     for (int i = 0; i < seedBank->mNumPackets; ++i) {
                         seedBank->mSeedPackets[i].mSeedBank = seedBank;
                     }
-                    // mApp->mBoard->mSeedBankRight = seedBank;
+                    // mApp->mBoard->mSeedBank[1] = seedBank;
                 }
             }
             return;

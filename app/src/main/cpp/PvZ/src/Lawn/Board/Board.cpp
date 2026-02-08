@@ -133,29 +133,29 @@ void Board::SetGrids() {
     }
 }
 
-int LawnSaveGame(Board *board, int *a2) {
+bool LawnSaveGame(Board *theBoard, const pvzstl::string &theFilePath) {
 
     // 结盟模式存档，将SeedBank2的4个种子放到SeedBank1里面。因为原版存档逻辑难以改动，只好出此下策，凑合着存吧。
-    if (board->mApp->IsCoopMode()) {
-        if (board->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOWLING || board->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOSS) {
-            int theSeedNum = 6;
-            SeedBank *seedBank1 = board->mSeedBankLeft;
-            SeedBank *seedBank2 = board->mSeedBankRight;
+    if (theBoard->mApp->IsCoopMode()) {
+        if (theBoard->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOWLING || theBoard->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOSS) {
+            int aNumSeeds = 6;
+            SeedBank *seedBank1 = theBoard->mSeedBank[0];
+            SeedBank *seedBank2 = theBoard->mSeedBank[1];
             seedBank1->mX = seedBank2->mX;
-            for (int i = 0; i < theSeedNum; ++i) {
+            for (int i = 0; i < aNumSeeds; ++i) {
                 seedBank1->mSeedPackets[i].mSlotMachiningNextSeed = (SeedType)seedBank2->mSeedPackets[i].mY;
                 seedBank1->mSeedPackets[i].mTimesUsed = seedBank2->mSeedPackets[i].mX;
                 seedBank1->mSeedPackets[i].mImitaterType = seedBank2->mSeedPackets[i].mPacketType;
                 seedBank1->mSeedPackets[i].mRefreshCounter = seedBank2->mSeedPackets[i].mOffsetY;
                 seedBank1->mSeedPackets[i].mSlotMachineCountDown = seedBank2->mSeedPackets[i].mIndex;
             }
-            int result = old_LawnSaveGame(board, a2);
+            bool result = old_LawnSaveGame(theBoard, theFilePath);
             seedBank1->mX = 0;
             return result;
         } else {
             int theSeedNum = 4;
-            SeedBank *seedBank1 = board->mSeedBankLeft;
-            SeedBank *seedBank2 = board->mSeedBankRight;
+            SeedBank *seedBank1 = theBoard->mSeedBank[0];
+            SeedBank *seedBank2 = theBoard->mSeedBank[1];
             seedBank1->mNumPackets = 2 * theSeedNum;
             seedBank1->mX = seedBank2->mX;
             for (int i = theSeedNum; i < 2 * theSeedNum; ++i) {
@@ -175,31 +175,31 @@ int LawnSaveGame(Board *board, int *a2) {
                 seedBank1->mSeedPackets[i].mSelected = seedBank2->mSeedPackets[i - theSeedNum].mSelected;
                 seedBank1->mSeedPackets[i].mSelectedByBothPlayer = seedBank2->mSeedPackets[i - theSeedNum].mSelectedByBothPlayer;
             }
-            int result = old_LawnSaveGame(board, a2);
+            bool result = old_LawnSaveGame(theBoard, theFilePath);
             seedBank1->mNumPackets = theSeedNum;
             seedBank1->mX = 0;
             return result;
         }
     }
     // Zombie *zombie = NULL;
-    // while (Board_IterateZombies(board, &zombie)) {
+    // while (Board_IterateZombies(theBoard, &zombie)) {
     // if (zombie->mZombieType == ZombieType::Flag) {
     // LawnApp_RemoveReanimation(zombie->mApp, zombie->mBossFireBallReanimID);
     // zombie->mBossFireBallReanimID = 0;
     // }
     // }
-    return old_LawnSaveGame(board, a2);
+    return old_LawnSaveGame(theBoard, theFilePath);
 }
 
 
-int LawnLoadGame(Board *board, int *a2) {
+bool LawnLoadGame(Board *theBoard, SaveGameContext *theFilePath) {
     // 结盟模式读档，将SeedBank2的4个种子从SeedBank1里面取出。因为原版读档逻辑难以改动，只好出此下策，凑合着读吧。
-    if (board->mApp->IsCoopMode()) {
-        if (board->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOWLING || board->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOSS) {
-            int result = old_LawnLoadGame(board, a2);
+    if (theBoard->mApp->IsCoopMode()) {
+        if (theBoard->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOWLING || theBoard->mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOSS) {
+            bool result = old_LawnLoadGame(theBoard, theFilePath);
             int theSeedNum = 6;
-            SeedBank *seedBank1 = board->mSeedBankLeft;
-            SeedBank *seedBank2 = board->mSeedBankRight;
+            SeedBank *seedBank1 = theBoard->mSeedBank[0];
+            SeedBank *seedBank2 = theBoard->mSeedBank[1];
             seedBank2->mNumPackets = theSeedNum;
             seedBank1->mNumPackets = theSeedNum;
             seedBank2->mX = seedBank1->mX;
@@ -219,10 +219,10 @@ int LawnLoadGame(Board *board, int *a2) {
             }
             return result;
         } else {
-            int result = old_LawnLoadGame(board, a2);
+            bool result = old_LawnLoadGame(theBoard, theFilePath);
             int theSeedNum = 4;
-            SeedBank *seedBank1 = board->mSeedBankLeft;
-            SeedBank *seedBank2 = board->mSeedBankRight;
+            SeedBank *seedBank1 = theBoard->mSeedBank[0];
+            SeedBank *seedBank2 = theBoard->mSeedBank[1];
             seedBank2->mNumPackets = theSeedNum;
             seedBank1->mNumPackets = theSeedNum;
             seedBank2->mX = seedBank1->mX;
@@ -249,7 +249,7 @@ int LawnLoadGame(Board *board, int *a2) {
     }
 
 
-    return old_LawnLoadGame(board, a2);
+    return old_LawnLoadGame(theBoard, theFilePath);
 }
 
 void Board::ShovelDown() {
@@ -1248,7 +1248,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_BOARD_TOUCH_DOWN_REPLY: {
             U8U8I16I16_Event *event1 = (U8U8I16I16_Event *)event;
             GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-            SeedBank *clientSeedBank = mGamepadControls2->mPlayerIndex2 == 1 ? mSeedBankRight : mSeedBankLeft;
+            SeedBank *clientSeedBank = mGamepadControls2->mPlayerIndex2 == 1 ? mSeedBank[1] : mSeedBank[0];
             if (clientGamepadControls->mSelectedSeedIndex != event1->data1) {
                 clientGamepadControls->mSelectedSeedIndex = event1->data1;
                 clientSeedBank->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
@@ -1273,7 +1273,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_BOARD_TOUCH_DOWN: {
             U8U8I16I16_Event *event1 = (U8U8I16I16_Event *)event;
             GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
-            SeedBank *serverSeedBank = mGamepadControls1->mPlayerIndex2 == 0 ? mSeedBankLeft : mSeedBankRight;
+            SeedBank *serverSeedBank = mGamepadControls1->mPlayerIndex2 == 0 ? mSeedBank[0] : mSeedBank[1];
             if (serverGamepadControls->mSelectedSeedIndex != event1->data1) {
                 serverGamepadControls->mSelectedSeedIndex = event1->data1;
                 serverSeedBank->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
@@ -1750,7 +1750,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED: {
             U8U8_Event *event1 = (U8U8_Event *)event;
-            SeedBank *theSeedBank = event1->data2 ? mSeedBankLeft : mSeedBankRight;
+            SeedBank *theSeedBank = event1->data2 ? mSeedBank[0] : mSeedBank[1];
             SeedPacket *seedPacket = &theSeedBank->mSeedPackets[event1->data1];
             seedPacket->Deactivate();
             seedPacket->WasPlanted(0);
@@ -1964,16 +1964,16 @@ void Board::Update() {
     if (setSeedPacket && choiceSeedType != SeedType::SEED_NONE) {
         if (targetSeedBank == 1) {
             if (choiceSeedType < SeedType::NUM_SEED_TYPES && !mGamepadControls1->mIsZombie) {
-                mSeedBankLeft->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
-                mSeedBankLeft->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
+                mSeedBank[0]->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
+                mSeedBank[0]->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
             } else if (choiceSeedType > SeedType::SEED_ZOMBIE_GRAVESTONE && mGamepadControls1->mIsZombie) // IZ模式里用不了墓碑
-                mSeedBankLeft->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
-        } else if (targetSeedBank == 2 && mSeedBankRight != nullptr) {
+                mSeedBank[0]->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
+        } else if (targetSeedBank == 2 && mSeedBank[1] != nullptr) {
             if (choiceSeedType < SeedType::NUM_SEED_TYPES && !mGamepadControls2->mIsZombie) {
-                mSeedBankRight->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
-                mSeedBankRight->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
+                mSeedBank[1]->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
+                mSeedBank[1]->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
             } else if (Challenge::IsZombieSeedType(choiceSeedType) && mGamepadControls2->mIsZombie)
-                mSeedBankRight->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
+                mSeedBank[1]->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
         }
         setSeedPacket = false;
     }
@@ -2817,10 +2817,10 @@ void Board::MouseDown(int x, int y, int theClickCount) {
         return;
     }
 
-    bool inRangeOf1PSeedBank = (mGamepadControls1->mPlayerIndex2 == 1 && mSeedBankRight->ContainsPoint(x, y))
-        || (mGamepadControls1->mPlayerIndex2 == 0 && (mSeedBankLeft->ContainsPoint(x, y) || TRect_Contains(&mTouchVSShovelRect, x, y)));
-    bool inRangeOf2PSeedBank = (mGamepadControls2->mPlayerIndex2 == 1 && mSeedBankRight->ContainsPoint(x, y))
-        || (mGamepadControls2->mPlayerIndex2 == 0 && (mSeedBankLeft->ContainsPoint(x, y) || TRect_Contains(&mTouchVSShovelRect, x, y)));
+    bool inRangeOf1PSeedBank = (mGamepadControls1->mPlayerIndex2 == 1 && mSeedBank[1]->ContainsPoint(x, y))
+        || (mGamepadControls1->mPlayerIndex2 == 0 && (mSeedBank[0]->ContainsPoint(x, y) || TRect_Contains(&mTouchVSShovelRect, x, y)));
+    bool inRangeOf2PSeedBank = (mGamepadControls2->mPlayerIndex2 == 1 && mSeedBank[1]->ContainsPoint(x, y))
+        || (mGamepadControls2->mPlayerIndex2 == 0 && (mSeedBank[0]->ContainsPoint(x, y) || TRect_Contains(&mTouchVSShovelRect, x, y)));
 
 
     // 如果是客户端
@@ -4419,9 +4419,9 @@ void Board::FadeOutLevel() {
     }
 
     if (mNewWallNutAndSunFlowerAndChomperOnly && !mApp->IsSurvivalMode() && !HasConveyorBeltSeedBank(0)) {
-        int num = mSeedBankLeft->mNumPackets;
+        int num = mSeedBank[0]->mNumPackets;
         for (int i = 0; i < num; ++i) {
-            SeedType theType = mSeedBankLeft->mSeedPackets[i].mPacketType;
+            SeedType theType = mSeedBank[0]->mSeedPackets[i].mPacketType;
             if (theType == SeedType::SEED_CHOMPER || theType == SeedType::SEED_WALLNUT || theType == SeedType::SEED_SUNFLOWER) {
                 GrantAchievement(AchievementId::ACHIEVEMENT_CHOMP, true);
                 break;
@@ -4445,15 +4445,15 @@ void Board::DoPlantingAchievementCheck(SeedType theSeedType) {
 void Board::DrawUITop(Sexy::Graphics *g) {
     if (seedBankPin && !mApp->IsSlotMachineLevel()) {
         if (mApp->mGameScene != GameScenes::SCENE_PLANTS_WON && mApp->mGameScene != GameScenes::SCENE_ZOMBIES_WON) {
-            if (mSeedBankLeft->BeginDraw(g)) {
-                mSeedBankLeft->SeedBank::Draw(g);
-                mSeedBankLeft->EndDraw(g);
+            if (mSeedBank[0]->BeginDraw(g)) {
+                mSeedBank[0]->SeedBank::Draw(g);
+                mSeedBank[0]->EndDraw(g);
             }
 
-            if (mSeedBankRight != nullptr) {
-                if (mSeedBankRight->BeginDraw(g)) {
-                    mSeedBankRight->SeedBank::Draw(g);
-                    mSeedBankRight->EndDraw(g);
+            if (mSeedBank[1] != nullptr) {
+                if (mSeedBank[1]->BeginDraw(g)) {
+                    mSeedBank[1]->SeedBank::Draw(g);
+                    mSeedBank[1]->EndDraw(g);
                 }
             }
         }
@@ -4468,7 +4468,7 @@ int Board::GetSeedBankExtraWidth() {
         return 0;
     }
 
-    int aNumPackets = mSeedBankLeft->mNumPackets;
+    int aNumPackets = mSeedBank[0]->mNumPackets;
     return aNumPackets <= 6 ? 0 : aNumPackets == 7 ? 60 : aNumPackets == 8 ? 76 : aNumPackets == 9 ? 112 : 153;
 }
 
@@ -4580,7 +4580,7 @@ int Board::GetNumSeedsInBank(bool isZombieBank) {
 }
 
 int Board::GetSeedPacketPositionX(int thePacketIndex, int theSeedBankIndex, bool thePlayerIndex) {
-    int aNumPackets = mSeedBankLeft->mNumPackets;
+    int aNumPackets = mSeedBank[0]->mNumPackets;
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         if (aNumPackets == 6) {
             return thePlayerIndex ? 59 * thePacketIndex + 15 : 59 * thePacketIndex + 85;

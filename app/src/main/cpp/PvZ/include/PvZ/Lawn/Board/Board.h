@@ -21,6 +21,7 @@
 #define PVZ_LAWN_BOARD_BOARD_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/Lawn/System/SaveGame.h"
 #include "PvZ/Lawn/Widget/AchievementsWidget.h"
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
@@ -149,8 +150,7 @@ public:
     PlantRbTree mFlowerPotTree;                   // 118 ~ 123
     PlantRbTree mPumpkinTree;                     // 124 ~ 129
     CustomMessageWidget *mAdvice;                 // 130
-    SeedBank *mSeedBankLeft;                      // 131
-    SeedBank *mSeedBankRight;                     // 132
+    SeedBank *mSeedBank[2];                       // 131 ~ 132
     int unknownMembers3[7];                       // 133 ~ 139
     GamepadControls *mGamepadControls1;           // 140
     GamepadControls *mGamepadControls2;           // 141
@@ -671,9 +671,9 @@ inline bool endlessLastStand;
 
 inline void (*old_FixBoardAfterLoad)(Board *board);
 
-inline int (*old_LawnSaveGame)(Board *a1, int *a2);
+inline bool (*old_LawnSaveGame)(Board *a1, const pvzstl::string &a2);
 
-inline int (*old_LawnLoadGame)(Board *a1, int *a2);
+inline bool (*old_LawnLoadGame)(Board *a1, SaveGameContext *a2);
 
 inline void (*old_Board_UpdateGame)(Board *board);
 
@@ -785,9 +785,9 @@ void FixBoardAfterLoad(Board *board);
 
 void SyncReanimation(Board *a1, Reanimation *a2, int *theSaveGameContext);
 
-int LawnSaveGame(Board *board, int *a2);
+bool LawnSaveGame(Board *theBoard, const pvzstl::string &theFilePath);
 
-int LawnLoadGame(Board *board, int *a2);
+bool LawnLoadGame(Board *theBoard, SaveGameContext *theFilePath);
 
 const char *GetNameByAchievementId(AchievementId theAchievementId);
 
