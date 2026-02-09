@@ -34,7 +34,6 @@ enum VibrationEffect {
     VIVRATION_BOSS_TAKE_DAMAGE
 };
 
-int RandomInt(int a, int b);
 void TriggerVibration(VibrationEffect theVibrationEffect);
 
 #endif // PVZ_MISC_H

@@ -20,19 +20,7 @@
 #include "PvZ/Misc.h"
 #include "PvZ/Android/Native/BridgeApp.h"
 #include "PvZ/Android/Native/NativeApp.h"
-#include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/LawnApp.h"
-
-#include <cassert>
-#include <random>
-
-int RandomInt(int a, int b) {
-    assert(a <= b);
-    static std::random_device rd;
-    static std::mt19937 gen{rd()};
-    std::uniform_int_distribution distrib{a, b};
-    return distrib(gen);
-}
 
 void TriggerVibration(VibrationEffect theVibrationEffect) {
     LawnApp *app = *gLawnApp_Addr;
