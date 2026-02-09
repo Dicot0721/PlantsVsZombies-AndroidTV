@@ -28,6 +28,7 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/MagicAddr.h"
+#include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodCommon.h"
@@ -1241,6 +1242,10 @@ Rect Zombie::GetZombieRect() {
 }
 
 void Zombie::RiseFromGrave(int theGridX, int theGridY) {
+    if (!mApp->IsWhackAZombieLevel()) {
+        TriggerVibration(VibrationEffect::VIVRATION_ZOMBIE_RISE_FROM_GRAVE);
+    }
+
     // 修复对战切换场地为泳池后的闪退BUG。但是仅仅是修复闪退，泳池对战还谈不上能玩的程度
     if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS) {
         old_Zombie_RiseFromGrave(this, theGridX, theGridY);
@@ -2309,6 +2314,12 @@ Zombie *Zombie::FindZombieTarget() {
 }
 
 void Zombie::TakeDamage(int theDamage, unsigned int theDamageFlags) {
+    if (mZombieType == ZombieType::ZOMBIE_BOSS) {
+        if (!TestBit(theDamageFlags, int(DamageFlags::DAMAGE_DOESNT_CAUSE_FLASH))) {
+            TriggerVibration(VibrationEffect::VIVRATION_BOSS_TAKE_DAMAGE);
+        }
+    }
+
     old_Zombie_TakeDamage(this, theDamage, theDamageFlags);
 }
 

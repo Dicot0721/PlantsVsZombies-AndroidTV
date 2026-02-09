@@ -159,6 +159,7 @@ public:
     void InitZombieWavesFromList(ZombieType *theZombieList, int theListLength);
     void IZombieSetupPlant(Plant *thePlant);
     void HeavyWeaponReanimUpdate();
+    void MouseDownWhackAZombie(int theX, int theY, int thePlayerIndex);
 
 protected:
     friend void InitHookFunction();

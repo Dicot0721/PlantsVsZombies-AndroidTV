@@ -30,6 +30,7 @@
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/MagicAddr.h"
+#include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Misc/SexyVector.h"
 #include "PvZ/Symbols.h"

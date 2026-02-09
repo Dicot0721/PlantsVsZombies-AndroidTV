@@ -582,6 +582,8 @@ inline void *Challenge_DrawStormNightAddr;
 inline void *Challenge_CanTargetZombieWithPortalsAddr;
 inline void *Challenge_ScaryPotterJackExplodeAddr;
 inline void *Challenge_UpdateConveyorBeltAddr;
+inline void *Challenge_MouseDownWhackAZombieAddr;
+
 
 inline void *Plant_UpdateAddr;
 inline void *Plant_DieAddr;

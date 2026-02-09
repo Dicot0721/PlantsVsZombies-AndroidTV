@@ -191,6 +191,7 @@ void InitHookFunction() {
     homura::HookFunction(Challenge_IZombieGetBrainTargetAddr, &Challenge::IZombieGetBrainTarget, &old_Challenge_IZombieGetBrainTarget);
     homura::HookFunction(Challenge_IZombieSquishBrainAddr, &Challenge::IZombieSquishBrain, &old_Challenge_IZombieSquishBrain);
     homura::HookFunction(Challenge_UpdateConveyorBeltAddr, &Challenge::UpdateConveyorBelt, &old_Challenge_UpdateConveyorBelt);
+    homura::HookFunction(Challenge_MouseDownWhackAZombieAddr, &Challenge::MouseDownWhackAZombie, nullptr);
 
 
     homura::HookFunction(ChallengeScreen_AddedToManagerAddr, &ChallengeScreen::AddedToManager, &old_ChallengeScreen_AddedToManager);

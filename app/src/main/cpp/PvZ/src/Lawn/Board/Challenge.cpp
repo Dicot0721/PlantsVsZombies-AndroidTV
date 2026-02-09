@@ -23,6 +23,7 @@
 #include "PvZ/Android/Native/NativeApp.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
+#include "PvZ/Lawn/Board/CursorObject.h"
 #include "PvZ/Lawn/Board/GridItem.h"
 #include "PvZ/Lawn/Board/Plant.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
@@ -30,6 +31,7 @@
 #include "PvZ/Lawn/Board/Zombie.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
+#include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
@@ -664,4 +666,42 @@ void Challenge::IZombieSetupPlant(Plant *thePlant) {
 
     thePlant->mBlinkCountdown = 0;
     thePlant->UpdateReanim();
+}
+
+void Challenge::MouseDownWhackAZombie(int theX, int theY, int thePlayerIndex) {
+    CursorObject *aCursorObject = (thePlayerIndex == 4) ? mBoard->mCursorObject2 : mBoard->mCursorObject1;
+    mApp->ReanimationTryToGet(aCursorObject->mReanimCursorID)->mAnimTime = 0.2f;
+    mApp->PlayFoley(FoleyType::FOLEY_SWING);
+
+    Zombie *aZombie = nullptr;
+    Zombie *aTopZombie = nullptr;
+    while (mBoard->IterateZombies(aZombie)) {
+        if (!aZombie->IsDeadOrDying()) {
+            Rect aZombieRect = aZombie->GetZombieRect();
+            if (GetCircleRectOverlap(theX, theY - 20, 45, aZombieRect)) {
+                if (aTopZombie == nullptr || aZombie->mRenderOrder >= aTopZombie->mRenderOrder) {
+                    aTopZombie = aZombie;
+                }
+            }
+        }
+    }
+
+    if (aTopZombie) {
+        if (aTopZombie->mHelmType != HelmType::HELMTYPE_NONE) {
+            if (aTopZombie->mHelmType == HelmType::HELMTYPE_PAIL) {
+                mApp->PlayFoley(FoleyType::FOLEY_SHIELD_HIT);
+            } else if (aTopZombie->mHelmType == HelmType::HELMTYPE_TRAFFIC_CONE) {
+                mApp->PlayFoley(FoleyType::FOLEY_PLASTIC_HIT);
+            }
+
+            aTopZombie->TakeHelmDamage(900, 0U);
+        } else {
+            mApp->PlayFoley(FoleyType::FOLEY_BONK);
+            mApp->AddTodParticle(theX - 3, theY + 9, RenderLayer::RENDER_LAYER_ABOVE_UI, ParticleEffect::PARTICLE_POW);
+            aTopZombie->DieWithLoot();
+            mBoard->ClearCursor(thePlayerIndex);
+        }
+
+        TriggerVibration(VibrationEffect::VIVRATION_WHACK);
+    }
 }

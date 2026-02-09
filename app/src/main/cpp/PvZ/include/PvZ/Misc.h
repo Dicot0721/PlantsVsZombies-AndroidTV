@@ -20,6 +20,21 @@
 #ifndef PVZ_MISC_H
 #define PVZ_MISC_H
 
+enum VibrationEffect {
+    VIVRATION_THUMP,
+    VIVRATION_BOWLING,
+    VIVRATION_EXPLOSION,
+    VIVRATION_WHACK,
+    VIVRATION_ICE_TRAP,
+    VIVRATION_JUMP,
+    VIVRATION_ZOMBIE_RISE_FROM_GRAVE,
+    VIVRATION_SLOT_MACHINE,
+    VIVRATION_BUNGEE_LANDING,
+    VIVRATION_BUNGEE_RISING,
+    VIVRATION_BOSS_TAKE_DAMAGE
+};
+
 int RandomInt(int a, int b);
+void TriggerVibration(VibrationEffect theVibrationEffect);
 
 #endif // PVZ_MISC_H

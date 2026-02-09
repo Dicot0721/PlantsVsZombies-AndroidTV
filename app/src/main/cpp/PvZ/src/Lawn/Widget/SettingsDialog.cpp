@@ -97,7 +97,7 @@ void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g) {
         color1.mBlue = 0;
         color1.mAlpha = 255;
     }
-    pvzstl::string str1 = TodStringTranslate("[OPTIONS_VIBRATE]");
+    pvzstl::string str1 = TodStringTranslate("[OPTIONS_HAPTIC_FEEDBACK]");
     g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
     g->SetColor(color1);
     g->DrawString(str1, gVibrateCheckbox->mX + 80, gVibrateCheckbox->mY + 20);

@@ -593,6 +593,7 @@ bool LoadGameMain() {
     Challenge_CanTargetZombieWithPortalsAddr = dlsym(handle, "_ZN9Challenge26CanTargetZombieWithPortalsEP5PlantP6Zombie");
     Challenge_ScaryPotterJackExplodeAddr = dlsym(handle, "_ZN9Challenge22ScaryPotterJackExplodeEii");
     Challenge_UpdateConveyorBeltAddr = dlsym(handle, "_ZN9Challenge18UpdateConveyorBeltEi");
+    Challenge_MouseDownWhackAZombieAddr = dlsym(handle, "_ZN9Challenge21MouseDownWhackAZombieEiii");
 
 
     Plant_UpdateAddr = dlsym(handle, "_ZN5Plant6UpdateEv");

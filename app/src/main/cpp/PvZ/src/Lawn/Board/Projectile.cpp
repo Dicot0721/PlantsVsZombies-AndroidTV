@@ -72,7 +72,11 @@ void Projectile::ProjectileInitialize(int theX, int theY, int theRenderOrder, in
             theProjectileType = ProjectileType(bulletSpinnerChosenNum);
         }
         if (randomBullet) {
-            theProjectileType = ProjectileType(RandomInt(PROJECTILE_SNOWPEA, NUM_PROJECTILES - (NUM_PROJECTILES - PROJECTILE_ZOMBIE_PEA + 1)));
+            int aNumProjectile = PROJECTILE_ZOMBIE_PEA - 1 - banCobCannon;
+            theProjectileType = ProjectileType(RandRangeInt(PROJECTILE_SNOWPEA, aNumProjectile));
+            if (banCobCannon && theProjectileType == ProjectileType::PROJECTILE_COBBIG) {
+                theProjectileType = ProjectileType(theProjectileType + 1);
+            }
         }
     }
 
@@ -184,7 +188,7 @@ void Projectile::ConvertToFireball(int theGridX) {
             return;
         }
         if (randomBullet) {
-            mProjectileType = ProjectileType(RandomInt(PROJECTILE_SNOWPEA, NUM_PROJECTILES - (NUM_PROJECTILES - PROJECTILE_ZOMBIE_PEA + 1)));
+            mProjectileType = ProjectileType(RandRangeInt(PROJECTILE_SNOWPEA, PROJECTILE_ZOMBIE_PEA - 1));
             return;
         }
     }

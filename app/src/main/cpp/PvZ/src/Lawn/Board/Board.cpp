@@ -47,6 +47,7 @@
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
+#include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/GamepadApp.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
@@ -3074,6 +3075,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
     if (mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE) { // 拉老虎机用
         if (TRect_Contains(&slotMachineRect, x, y)) {
             mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_X_BUTTON, 1112);
+            TriggerVibration(VibrationEffect::VIVRATION_SLOT_MACHINE);
             return;
         }
     }
@@ -4552,21 +4554,25 @@ bool Board::RowCanHaveZombieType(int theRow, ZombieType theZombieType) {
 }
 
 void Board::ShakeBoard(int theShakeAmountX, int theShakeAmountY) {
-    // 添加 手机震动效果
     old_Board_ShakeBoard(this, theShakeAmountX, theShakeAmountY);
 
-    if (mApp->mPlayerInfo->mIsVibrateClosed) {
-        return;
+    // 添加 手机振动效果
+    switch (theShakeAmountX, theShakeAmountY) {
+        case (1, 4):
+        case (0, 3): // GARGANTUAR_DEATH
+        case (1, 2): // BOSS_EXPLOSION, BOSS_RV_THROW
+            TriggerVibration(VibrationEffect::VIVRATION_THUMP);
+            break;
+        case (1, -2): // BOWLING_IMPACT
+            TriggerVibration(VibrationEffect::VIVRATION_BOWLING);
+            break;
+        case (3, -4):
+        case (4, -6):
+            TriggerVibration(VibrationEffect::VIVRATION_EXPLOSION);
+            break;
+        default:
+            break;
     }
-
-    Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
-    JNIEnv *env = bridgeApp->getJNIEnv();
-    jobject activity = bridgeApp->mNativeApp->getActivity();
-    jclass cls = env->GetObjectClass(activity);
-    jmethodID methodID = env->GetMethodID(cls, "vibrate", "(I)V");
-    // env->CallVoidMethod(activity, methodID, 120);
-    env->CallVoidMethod(activity, methodID, (abs(theShakeAmountX) + abs(theShakeAmountY)) * 50);
-    env->DeleteLocalRef(cls);
 }
 
 int Board::GetNumSeedsInBank(bool isZombieBank) {

@@ -29,16 +29,16 @@ class Plant;
 
 class CursorObject : public GameObject {
 public:
-    int mSeedBankIndex;        // 13
-    SeedType mType;            // 14
-    SeedType mImitaterType;    // 15
-    CursorType mCursorType;    // 16
-    Coin *mCoinID;             // 17
-    Plant *mGlovePlantID;      // 18
-    Plant *mDuplicatorPlantID; // 19
-    Plant *mCobCannonPlantID;  // 20
-    int mHammerDownCounter;    // 21
-    int mReanimCursorID;       // 22
+    int mSeedBankIndex;            // 13
+    SeedType mType;                // 14
+    SeedType mImitaterType;        // 15
+    CursorType mCursorType;        // 16
+    Coin *mCoinID;                 // 17
+    Plant *mGlovePlantID;          // 18
+    Plant *mDuplicatorPlantID;     // 19
+    Plant *mCobCannonPlantID;      // 20
+    int mHammerDownCounter;        // 21
+    ReanimationID mReanimCursorID; // 22
     // 大小23个整数
 
     void Draw(Sexy::Graphics *g) {
