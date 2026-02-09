@@ -83,6 +83,7 @@ public:
     void WasPlanted(int thePlayerIndex);
 };
 
+void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, SeedType theImitaterType, float theOffsetX, float theOffsetY, float theScale);
 void DrawSeedPacket(Sexy::Graphics *g,
                     float x,
                     float y,
@@ -92,8 +93,8 @@ void DrawSeedPacket(Sexy::Graphics *g,
                     int theGrayness,
                     bool theDrawCost,
                     bool theUseCurrentCost,
-                    bool isZombieSeed,
-                    bool isSeedPacketSelected);
+                    bool theIsZombieSeed,
+                    bool theIsPacketSelected);
 
 /***************************************************************************************************************/
 inline bool showCoolDown;

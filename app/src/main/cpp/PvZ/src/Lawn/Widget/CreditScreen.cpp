@@ -19,7 +19,6 @@
 
 #include "PvZ/Lawn/Widget/CreditScreen.h"
 #include "PvZ/Lawn/LawnApp.h"
-#include "PvZ/Misc.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
 void CreditScreen_CreditScreen(Sexy::Widget *creditScreen, LawnApp *a2, bool a3) {

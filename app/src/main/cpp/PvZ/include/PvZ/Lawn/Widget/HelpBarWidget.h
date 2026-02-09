@@ -17,27 +17,25 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "PvZ/Misc.h"
-#include "PvZ/GlobalVariable.h"
+#ifndef PVZ_LAWN_WIDGET_HELP_BAR_WIDGET_H
+#define PVZ_LAWN_WIDGET_HELP_BAR_WIDGET_H
 
-#include <cassert>
-#include <random>
+#include "PvZ/SexyAppFramework/Widget/Widget.h"
 
-int RandomInt(int a, int b) {
-    assert(a <= b);
-    static std::random_device rd;
-    static std::mt19937 gen{rd()};
-    if (banCobCannon) {
-        std::vector<int> candidates;
-        for (int projectileIndex = PROJECTILE_PEA; projectileIndex <= PROJECTILE_BUTTER; ++projectileIndex) {
-            if (projectileIndex != PROJECTILE_COBBIG) {
-                candidates.push_back(projectileIndex);
-            }
-        }
-        std::uniform_int_distribution<> distrib(0, candidates.size() - 1);
-        return candidates[distrib(gen)];
-    } else {
-        std::uniform_int_distribution distrib{a, b};
-        return distrib(gen);
+class HelpBarWidget : public Sexy::Widget {
+public:
+    char mUnk[40]; // 65 ~ 74
+
+    HelpBarWidget() {
+        _constructor();
     }
-}
+
+protected:
+    friend void InitHookFunction();
+
+    void _constructor();
+};
+
+inline void (*old_HelpBarWidget_HelpBarWidget)(HelpBarWidget *);
+
+#endif // PVZ_LAWN_WIDGET_HELP_BAR_WIDGET_H

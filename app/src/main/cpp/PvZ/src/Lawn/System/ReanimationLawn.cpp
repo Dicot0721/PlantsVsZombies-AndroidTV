@@ -21,7 +21,6 @@
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Zombie.h"
 #include "PvZ/Lawn/LawnApp.h"
-#include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Graphics/MemoryImage.h"
 #include "PvZ/TodLib/Effect/Attachment.h"

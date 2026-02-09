@@ -69,13 +69,10 @@ void Projectile::ProjectileInitialize(int theX, int theY, int theRenderOrder, in
             return;
         }
         if (bulletSpinnerChosenNum != -1) {
-            theProjectileType = (ProjectileType)bulletSpinnerChosenNum;
+            theProjectileType = ProjectileType(bulletSpinnerChosenNum);
         }
         if (randomBullet) {
-            theProjectileType = (ProjectileType)randomInt(1, 12);
-        }
-        if (theProjectileType == ProjectileType::PROJECTILE_COBBIG && banCobCannon) {
-            theProjectileType = (ProjectileType)randomInt(1, 10); // 同时降低好友玉米黄油的概率!!
+            theProjectileType = ProjectileType(RandomInt(PROJECTILE_SNOWPEA, NUM_PROJECTILES - (NUM_PROJECTILES - PROJECTILE_ZOMBIE_PEA + 1)));
         }
     }
 
@@ -187,7 +184,7 @@ void Projectile::ConvertToFireball(int theGridX) {
             return;
         }
         if (randomBullet) {
-            mProjectileType = (ProjectileType)randomInt(1, 12);
+            mProjectileType = ProjectileType(RandomInt(PROJECTILE_SNOWPEA, NUM_PROJECTILES - (NUM_PROJECTILES - PROJECTILE_ZOMBIE_PEA + 1)));
             return;
         }
     }

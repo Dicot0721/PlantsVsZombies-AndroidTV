@@ -21,7 +21,6 @@
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/LawnApp.h"
-#include "PvZ/Misc.h"
 #include "PvZ/Symbols.h"
 
 bool HouseChooserDialog::IsHouseAvaliable(HouseType houseType) {

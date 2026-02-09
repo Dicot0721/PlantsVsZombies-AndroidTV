@@ -22,7 +22,6 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
 #include "PvZ/MagicAddr.h"
-#include "PvZ/Misc.h"
 
 void HelpOptionsDialog_ButtonDepress(HelpOptionsDialog *a, int a2) {
     // 修复在游戏战斗中打开新版暂停菜单时可以切换用户

@@ -71,11 +71,18 @@ public:
         return reinterpret_cast<void (*)(Dialog *, int)>(Sexy_Dialog_ButtonDepressAddr)(this, id);
     }
 
+    void AddedToManager(WidgetManager *theWidgetManager);
+    void RemovedFromManager(WidgetManager *theWidgetManager);
+
 protected:
     Dialog() = default;
     ~Dialog() = default;
 };
 
 } // namespace Sexy
+
+inline void (*old_Sexy_Dialog_AddedToManager)(Sexy::Dialog *, Sexy::WidgetManager *);
+
+inline void (*old_Sexy_Dialog_RemovedFromManager)(Sexy::Dialog *, Sexy::WidgetManager *);
 
 #endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_DIALOG_H

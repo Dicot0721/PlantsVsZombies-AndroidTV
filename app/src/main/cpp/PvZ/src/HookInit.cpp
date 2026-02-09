@@ -27,6 +27,7 @@
 #include "PvZ/Lawn/Board/CursorObject.h"
 #include "PvZ/Lawn/Board/CutScene.h"
 #include "PvZ/Lawn/Board/GridItem.h"
+#include "PvZ/Lawn/Board/MessageWidget.h"
 #include "PvZ/Lawn/Board/Plant.h"
 #include "PvZ/Lawn/Board/Projectile.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
@@ -44,6 +45,7 @@
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
 #include "PvZ/Lawn/Widget/ConfirmBackToMainDialog.h"
 #include "PvZ/Lawn/Widget/CreditScreen.h"
+#include "PvZ/Lawn/Widget/HelpBarWidget.h"
 #include "PvZ/Lawn/Widget/HelpOptionsDialog.h"
 #include "PvZ/Lawn/Widget/HelpTextScreen.h"
 #include "PvZ/Lawn/Widget/HouseChooserDialog.h"
@@ -58,7 +60,6 @@
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
-#include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonWidget.h"
 #include "PvZ/SexyAppFramework/Widget/WidgetManager.h"
@@ -402,8 +403,8 @@ void InitHookFunction() {
     homura::HookFunction(Zombie_UpdateYuckyFaceAddr, &Zombie::UpdateYuckyFace, &old_Zombie_UpdateYuckyFace);
 
 
-    homura::HookFunction(Sexy_Dialog_AddedToManagerWidgetManagerAddr, &SexyDialog_AddedToManager, &old_SexyDialog_AddedToManager);
-    homura::HookFunction(Sexy_Dialog_RemovedFromManagerAddr, &SexyDialog_RemovedFromManager, &old_SexyDialog_RemovedFromManager);
+    homura::HookFunction(Sexy_Dialog_AddedToManagerWidgetManagerAddr, &Sexy::Dialog::AddedToManager, &old_Sexy_Dialog_AddedToManager);
+    homura::HookFunction(Sexy_Dialog_RemovedFromManagerAddr, &Sexy::Dialog::RemovedFromManager, &old_Sexy_Dialog_RemovedFromManager);
 
 
     homura::HookFunction(SeedBank_DrawAddr, &SeedBank::Draw, &old_SeedBank_Draw);
@@ -481,7 +482,7 @@ void InitHookFunction() {
     homura::HookFunction(MessageWidget_UpdateAddr, &CustomMessageWidget::Update, &old_MessageWidget_Update);
     homura::HookFunction(MessageWidget_DrawAddr, &CustomMessageWidget::Draw, &old_MessageWidget_Draw);
 
-    homura::HookFunction(Sexy_ExtractLoadingSoundsResourcesAddr, &Sexy_ExtractLoadingSoundsResources, &old_Sexy_ExtractLoadingSoundsResources);
+    homura::HookFunction(Sexy_ExtractLoadingSoundsResourcesAddr, &Sexy::ExtractLoadingSoundsResources, &old_Sexy_ExtractLoadingSoundsResources);
     // MSHookFunction(Sexy_ScrollbarWidget_MouseDownAddr, (void *) Sexy_ScrollbarWidget_MouseDown,nullptr);
 
     homura::HookFunction(CustomScrollbarWidget_RemoveScrollButtonsAddr, &Sexy::CustomScrollbarWidget::RemoveScrollButtons, nullptr);
@@ -527,7 +528,9 @@ void InitHookFunction() {
     homura::HookFunction(ReanimatorCache_DrawCachedZombieAddr, &ReanimatorCache::DrawCachedZombie, nullptr);
 
 
-    homura::HookFunction(HelpBarWidget_HelpBarWidgetAddr, &HelpBarWidget_HelpBarWidget, &old_HelpBarWidget_HelpBarWidget);
+    homura::HookFunction(HelpBarWidget_HelpBarWidgetAddr, &HelpBarWidget::_constructor, &old_HelpBarWidget_HelpBarWidget);
+
+
     homura::HookFunction(DrawSeedTypeAddr, &DrawSeedType, nullptr);
     homura::HookFunction(DrawSeedPacketAddr, &DrawSeedPacket, nullptr);
 

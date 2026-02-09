@@ -17,27 +17,16 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "PvZ/Misc.h"
-#include "PvZ/GlobalVariable.h"
+#include "PvZ/SexyAppFramework/Widget/Dialog.h"
 
-#include <cassert>
-#include <random>
+using namespace Sexy;
 
-int RandomInt(int a, int b) {
-    assert(a <= b);
-    static std::random_device rd;
-    static std::mt19937 gen{rd()};
-    if (banCobCannon) {
-        std::vector<int> candidates;
-        for (int projectileIndex = PROJECTILE_PEA; projectileIndex <= PROJECTILE_BUTTER; ++projectileIndex) {
-            if (projectileIndex != PROJECTILE_COBBIG) {
-                candidates.push_back(projectileIndex);
-            }
-        }
-        std::uniform_int_distribution<> distrib(0, candidates.size() - 1);
-        return candidates[distrib(gen)];
-    } else {
-        std::uniform_int_distribution distrib{a, b};
-        return distrib(gen);
-    }
+void Dialog::AddedToManager(WidgetManager *theWidgetManager) {
+    // 记录当前游戏状态
+    old_Sexy_Dialog_AddedToManager(this, theWidgetManager);
+}
+
+void Dialog::RemovedFromManager(WidgetManager *theWidgetManager) {
+    // 记录当前游戏状态
+    old_Sexy_Dialog_RemovedFromManager(this, theWidgetManager);
 }
