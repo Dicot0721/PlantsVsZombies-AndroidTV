@@ -68,9 +68,9 @@ public:
     void Deactivate() {
         reinterpret_cast<void (*)(SeedPacket *)>(SeedPacket_DeactivateAddr)(this);
     }
-    // void WasPlanted(int thePlayerIndex) {
-    // reinterpret_cast<void (*)(SeedPacket *, int)>(SeedPacket_WasPlantedAddr)(this, thePlayerIndex);
-    // }
+    void PickNextSlotMachineSeed() {
+        reinterpret_cast<void (*)(SeedPacket *)>(SeedPacket_PickNextSlotMachineSeedAddr)(this);
+    }
 
     void Update();
     void UpdateSelected();
@@ -81,6 +81,7 @@ public:
     void EndDraw(Sexy::Graphics *g);
     void SetPacketType(SeedType theSeedType, SeedType theImitaterType);
     void WasPlanted(int thePlayerIndex);
+    void SlotMachineStart();
 };
 
 void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, SeedType theImitaterType, float theOffsetX, float theOffsetY, float theScale);

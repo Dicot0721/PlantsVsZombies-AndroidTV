@@ -696,6 +696,7 @@ void Plant::DoSpecial() {
             mApp->AddTodParticle(aPosX, aPosY, (int)RenderLayer::RENDER_LAYER_TOP, ParticleEffect::PARTICLE_ICE_TRAP);
 
             Die();
+            TriggerVibration(VibrationEffect::VIVRATION_ICE_TRAP);
             break;
         }
         case SeedType::SEED_POTATOMINE: {
@@ -2150,5 +2151,13 @@ void Plant::UpdateChomper() {
     } else if ((mState == PlantState::STATE_CHOMPER_SWALLOWING || mState == PlantState::STATE_CHOMPER_BITING_MISSED) && aBodyReanim->mLoopCount > 0) {
         PlayIdleAnim(aBodyReanim->mDefinition->mFPS);
         mState = PlantState::STATE_READY;
+    }
+}
+
+void Plant::UpdateSquash() {
+    old_Plant_UpdateSquash(this);
+
+    if (mState == PlantState::STATE_SQUASH_PRE_LAUNCH && mStateCountdown == 1) {
+        TriggerVibration(VibrationEffect::VIVRATION_JUMP); // 这窝瓜有力气!!
     }
 }

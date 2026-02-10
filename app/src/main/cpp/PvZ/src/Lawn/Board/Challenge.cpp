@@ -702,6 +702,8 @@ void Challenge::MouseDownWhackAZombie(int theX, int theY, int thePlayerIndex) {
             mBoard->ClearCursor(thePlayerIndex);
         }
 
-        TriggerVibration(VibrationEffect::VIVRATION_WHACK);
+        TriggerVibration(VibrationEffect::VIVRATION_WHACK_HIT);
+    } else {
+        TriggerVibration(VibrationEffect::VIVRATION_WHACK_MISS);
     }
 }

@@ -2316,7 +2316,7 @@ Zombie *Zombie::FindZombieTarget() {
 void Zombie::TakeDamage(int theDamage, unsigned int theDamageFlags) {
     if (mZombieType == ZombieType::ZOMBIE_BOSS) {
         if (!TestBit(theDamageFlags, int(DamageFlags::DAMAGE_DOESNT_CAUSE_FLASH))) {
-            TriggerVibration(VibrationEffect::VIVRATION_BOSS_TAKE_DAMAGE);
+            TriggerVibration(VibrationEffect::VIVRATION_BOSS_HIT);
         }
     }
 

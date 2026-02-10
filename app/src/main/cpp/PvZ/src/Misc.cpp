@@ -32,7 +32,6 @@ void TriggerVibration(VibrationEffect theVibrationEffect) {
     JNIEnv *env = bridgeApp->getJNIEnv();
     jobject activity = bridgeApp->mNativeApp->getActivity();
     jclass clazz = env->GetObjectClass(activity);
-    //    jmethodID methodID = env->GetMethodID(clazz, "startVibration", "(Lcom/transmension/mobile/EnhanceActivity$HapiticEffect;)V");
     jmethodID methodID = env->GetMethodID(clazz, "startVibration", "(I)V");
     env->CallVoidMethod(activity, methodID, theVibrationEffect);
     env->DeleteLocalRef(clazz);

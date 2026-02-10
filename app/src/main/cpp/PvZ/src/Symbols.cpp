@@ -643,6 +643,7 @@ bool LoadGameMain() {
     Plant_IceZombiesAddr = dlsym(handle, "_ZN5Plant10IceZombiesEv");
     Plant_BlowAwayFliersAddr = dlsym(handle, "_ZN5Plant14BlowAwayFliersEii");
     Plant_UpdateChomperAddr = dlsym(handle, "_ZN5Plant13UpdateChomperEv");
+    Plant_UpdateSquashAddr = dlsym(handle, "_ZN5Plant12UpdateSquashEv");
 
 
     Projectile_UpdateAddr = dlsym(handle, "_ZN10Projectile6UpdateEv");
@@ -684,6 +685,8 @@ bool LoadGameMain() {
     SeedPacket_DeactivateAddr = dlsym(handle, "_ZN10SeedPacket10DeactivateEv");
     SeedPacket_WasPlantedAddr = dlsym(handle, "_ZN10SeedPacket10WasPlantedEi");
     SeedPacket_SetPacketTypeAddr = dlsym(handle, "_ZN10SeedPacket13SetPacketTypeE8SeedTypeS0_");
+    SeedPacket_PickNextSlotMachineSeedAddr = dlsym(handle, "_ZN10SeedPacket23PickNextSlotMachineSeedEv");
+    SeedPacket_SlotMachineStartAddr = dlsym(handle, "_ZN10SeedPacket16SlotMachineStartEv");
 
 
     VSSetupMenu_VSSetupMenuAddr = dlsym(handle, "_ZN11VSSetupMenuC2Ev");

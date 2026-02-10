@@ -3075,7 +3075,6 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
     if (mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE) { // 拉老虎机用
         if (TRect_Contains(&slotMachineRect, x, y)) {
             mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_X_BUTTON, 1112);
-            TriggerVibration(VibrationEffect::VIVRATION_SLOT_MACHINE);
             return;
         }
     }
@@ -4557,17 +4556,17 @@ void Board::ShakeBoard(int theShakeAmountX, int theShakeAmountY) {
     old_Board_ShakeBoard(this, theShakeAmountX, theShakeAmountY);
 
     // 添加 手机振动效果
-    switch (theShakeAmountX, theShakeAmountY) {
-        case (1, 4):
-        case (0, 3): // GARGANTUAR_DEATH
-        case (1, 2): // BOSS_EXPLOSION, BOSS_RV_THROW
+    switch (theShakeAmountY) {
+        case 4: // PHASE_SQUASH_FALLING
+        case 3: // GARGANTUAR_DEATH
+        case 2: // BOSS_EXPLOSION, BOSS_RV_THROW
             TriggerVibration(VibrationEffect::VIVRATION_THUMP);
             break;
-        case (1, -2): // BOWLING_IMPACT
+        case -2: // WALLNUT_BOWLING_IMPACT
             TriggerVibration(VibrationEffect::VIVRATION_BOWLING);
             break;
-        case (3, -4):
-        case (4, -6):
+        case -4: // PLANT_BURN
+        case -6: // JACK_IN_THE_BOX_POPPING
             TriggerVibration(VibrationEffect::VIVRATION_EXPLOSION);
             break;
         default:

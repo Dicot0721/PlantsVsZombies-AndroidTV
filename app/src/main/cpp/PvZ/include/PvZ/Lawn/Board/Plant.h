@@ -296,6 +296,7 @@ public:
     void SyncAnimationToClient();
     void SyncPingPongAnimationToClient();
     void UpdateChomper();
+    void UpdateSquash();
 };
 
 inline float PlantDrawHeightOffset(Board *theBoard, Plant *thePlant, SeedType theSeedType, int theCol, int theRow) {
@@ -351,6 +352,8 @@ inline void (*old_Plant_UpdateProductionPlant)(Plant *);
 inline void (*old_Plant_UpdateShooter)(Plant *);
 
 inline bool (*old_Plant_FindTargetAndFire)(Plant *, int, PlantWeapon);
+
+inline void (*old_Plant_UpdateSquash)(Plant *);
 
 // inline void (*old_Plant_CobCannonFire)(Plant* plant, int x, int y);
 

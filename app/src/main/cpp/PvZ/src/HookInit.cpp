@@ -318,6 +318,7 @@ void InitHookFunction() {
     homura::HookFunction(Plant_IceZombiesAddr, &Plant::IceZombies, nullptr);
     homura::HookFunction(Plant_FindTargetAndFireAddr, &Plant::FindTargetAndFire, &old_Plant_FindTargetAndFire);
     homura::HookFunction(Plant_UpdateChomperAddr, &Plant::UpdateChomper, nullptr);
+    homura::HookFunction(Plant_UpdateSquashAddr, &Plant::UpdateSquash, &old_Plant_UpdateSquash);
 
     // MSHookFunction(Plant_CobCannonFireAddr, (void *) Plant_CobCannonFire, (void **) &old_Plant_CobCannonFire);
     // MSHookFunction(Plant_UpdateReanimAddr, (void *) Plant_UpdateReanim, (void **) &old_Plant_UpdateReanim);
@@ -343,6 +344,7 @@ void InitHookFunction() {
     homura::HookFunction(SeedPacket_SetPacketTypeAddr, &SeedPacket::SetPacketType, &old_SeedPacket_SetPacketType);
     // MSHookFunction(SeedPacket_MouseDownAddr, (void *) SeedPacket_MouseDown, (void **) &old_SeedPacket_MouseDown);
     homura::HookFunction(SeedPacket_WasPlantedAddr, &SeedPacket::WasPlanted, &old_SeedPacket_WasPlanted);
+    homura::HookFunction(SeedPacket_SlotMachineStartAddr, &SeedPacket::SlotMachineStart, nullptr);
 
 
     homura::HookFunction(Zombie_UpdateAddr, &Zombie::Update, &old_Zombie_Update);

@@ -632,6 +632,7 @@ inline void *Plant_FindTargetAndFireAddr;
 inline void *Plant_IceZombiesAddr;
 inline void *Plant_BlowAwayFliersAddr;
 inline void *Plant_UpdateChomperAddr;
+inline void *Plant_UpdateSquashAddr;
 
 
 inline void *Projectile_UpdateAddr;
@@ -673,6 +674,8 @@ inline void *SeedPacket_DrawAddr;
 inline void *SeedPacket_DeactivateAddr;
 inline void *SeedPacket_WasPlantedAddr;
 inline void *SeedPacket_SetPacketTypeAddr;
+inline void *SeedPacket_PickNextSlotMachineSeedAddr;
+inline void *SeedPacket_SlotMachineStartAddr;
 
 
 inline void *VSSetupMenu_VSSetupMenuAddr;

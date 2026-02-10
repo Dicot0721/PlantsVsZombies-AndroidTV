@@ -28,6 +28,7 @@
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/MagicAddr.h"
+#include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Font.h"
 #include "PvZ/SexyAppFramework/Misc/SexyMatrix.h"
 #include "PvZ/Symbols.h"
@@ -521,8 +522,17 @@ void DrawSeedPacket(Sexy::Graphics *g,
 
 void SeedPacket::WasPlanted(int thePlayerIndex) {
     old_SeedPacket_WasPlanted(this, thePlayerIndex);
+
     if (tcpClientSocket >= 0) {
         U8U8_Event event = {{EventType::EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED}, uint8_t(mIndex), mSeedBank == mBoard->mSeedBank[0]};
         sendWithSize(tcpClientSocket, &event, sizeof(U8U8_Event), 0);
     }
+}
+
+void SeedPacket::SlotMachineStart() {
+    mSlotMachiningPosition = 0.0f;
+    mSlotMachineCountDown = 400;
+    PickNextSlotMachineSeed();
+
+    TriggerVibration(VibrationEffect::VIVRATION_SLOT_MACHINE);
 }
