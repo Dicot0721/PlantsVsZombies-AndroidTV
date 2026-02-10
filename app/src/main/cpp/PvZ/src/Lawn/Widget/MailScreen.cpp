@@ -93,7 +93,7 @@ void MailScreen::ButtonDepress(int theId) {
     if (theId == 1002) {
         aRealMailScreen->KeyDown(Sexy::KEYCODE_RETURN, 0, 0);
     } else if (theId == 1001) {
-        aRealMailScreen->KeyDown(307, 0, 0);
+        aRealMailScreen->KeyDown(Sexy::KEYCODE_GAMEPAD_X, 0, 0);
         bool isAtInBox = aRealMailScreen->mPage == 0;
         gMailScreenReadButton->mDisabled = !isAtInBox;
         gMailScreenReadButton->mBtnNoDraw = !isAtInBox;
@@ -119,13 +119,9 @@ void MailScreen::MouseDrag(int x, int y) {}
 
 void MailScreen::MouseUp(int x, int y) {
     const int distance = x - mMailTouchDownX;
-    if (distance > MAIL_TRIGGER_DISTANCE) {
-        KeyDown(37, 0, 0);
-    } else if (-distance > MAIL_TRIGGER_DISTANCE) {
-        KeyDown(39, 0, 0);
-    } else if (mMailTouchDownX < 400) {
-        KeyDown(37, 0, 0);
+    if (distance > MAIL_TRIGGER_DISTANCE || (-distance <= MAIL_TRIGGER_DISTANCE && mMailTouchDownX < 400)) {
+        KeyDown(Sexy::KEYCODE_LEFT, 0, 0);
     } else {
-        KeyDown(39, 0, 0);
+        KeyDown(Sexy::KEYCODE_RIGHT, 0, 0);
     }
 }

@@ -59,6 +59,8 @@ public:
     int mSize = 0;
     TodAllocator *mpAllocator = nullptr;
 
+    TodList() = default;
+
     ~TodList() {
         RemoveAll();
     }

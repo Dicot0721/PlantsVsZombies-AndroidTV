@@ -48,6 +48,8 @@ public:
     uint32_t mNextKey = 1u;
     const char *mName = nullptr;
 
+    DataArray() = default;
+
     ~DataArray() {
         DataArrayDispose();
     }
