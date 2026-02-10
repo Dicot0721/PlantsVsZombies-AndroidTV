@@ -764,7 +764,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     Board *aBoard = (*gLawnApp_Addr)->mBoard;
     if (aBoard) {
         gButtonDownP1 = true;
-        gButtonCodeP1 = GamepadButton(code);
+        gButtonCodeP1 = Sexy::GamepadButton(code);
     }
 }
 
@@ -772,7 +772,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     Board *aBoard = (*gLawnApp_Addr)->mBoard;
     if (aBoard) {
         gButtonDownP2 = true;
-        gButtonCodeP2 = GamepadButton(code);
+        gButtonCodeP2 = Sexy::GamepadButton(code);
     }
 }
 
@@ -816,7 +816,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivi
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeSendButtonEvent(JNIEnv *env, jclass clazz, jboolean is_key_down, jint button_code) {
     bool aIsPlayer2 = button_code >= 256;
     bool aGamepad1Is2P = gGamepad1ToPlayerIndex == 1;
-    GamepadButton aButtonCode = GamepadButton(aIsPlayer2 ? button_code - 256 : button_code);
+    Sexy::GamepadButton aButtonCode = Sexy::GamepadButton(aIsPlayer2 ? button_code - 256 : button_code);
 
     LawnApp *anApp = *gLawnApp_Addr;
     Board *aBoard = anApp->mBoard;
@@ -845,20 +845,20 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     float &aY = aIsPlayer2 ? gGamepadP2VelY : gGamepadP1VelY;
     if (is_key_down) {
         switch (aButtonCode) {
-            case GamepadButton::GAMEPAD_BUTTON_B:
+            case Sexy::GamepadButton::GAMEPAD_BUTTON_B:
                 gKeyDown = true;
                 gGamePlayerIndex = aIsPlayer2 ? 1 : 0;
                 break;
-            case GamepadButton::GAMEPAD_BUTTON_DPAD_UP:
+            case Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_UP:
                 aY = -400;
                 break;
-            case GamepadButton::GAMEPAD_BUTTON_DPAD_DOWN:
+            case Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_DOWN:
                 aY = 400;
                 break;
-            case GamepadButton::GAMEPAD_BUTTON_DPAD_LEFT:
+            case Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_LEFT:
                 aX = -400;
                 break;
-            case GamepadButton::GAMEPAD_BUTTON_DPAD_RIGHT:
+            case Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_RIGHT:
                 aX = 400;
                 break;
             default:
@@ -873,12 +873,12 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
         }
     } else {
         switch (aButtonCode) {
-            case GamepadButton::GAMEPAD_BUTTON_DPAD_UP:
-            case GamepadButton::GAMEPAD_BUTTON_DPAD_DOWN:
+            case Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_UP:
+            case Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_DOWN:
                 aY = 0;
                 break;
-            case GamepadButton::GAMEPAD_BUTTON_DPAD_LEFT:
-            case GamepadButton::GAMEPAD_BUTTON_DPAD_RIGHT:
+            case Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_LEFT:
+            case Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_RIGHT:
                 aX = 0;
                 break;
             default:

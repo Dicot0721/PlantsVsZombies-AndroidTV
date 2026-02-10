@@ -102,8 +102,8 @@ public:
     int unkInt363[161];      // 363 ~ 523
     int mInt524;             // 524
 
-    void GameButtonDown(GamepadButton theButton, unsigned int thePlayerIndex, int a4) {
-        reinterpret_cast<void (*)(VSSetupMenu *, GamepadButton, unsigned int, int)>(VSSetupMenu_GameButtonDownAddr)(this, theButton, thePlayerIndex, a4);
+    void GameButtonDown(Sexy::GamepadButton theButton, unsigned int thePlayerIndex, int a4) {
+        reinterpret_cast<void (*)(VSSetupMenu *, Sexy::GamepadButton, unsigned int, int)>(VSSetupMenu_GameButtonDownAddr)(this, theButton, thePlayerIndex, a4);
     }
     void SetSecondPlayerIndex(int thePlayerIndex) {
         reinterpret_cast<void (*)(VSSetupMenu *, int)>(VSSetupMenu_SetSecondPlayerIndexAddr)(this, thePlayerIndex);

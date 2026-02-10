@@ -174,7 +174,7 @@ public:
     SeedType FindSeedInBank(int theIndexInBank, int thePlayerIndex);
     void ClickedSeedInBank(ChosenSeed *theChosenSeed, unsigned int thePlayerIndex);
     void OnKeyDown(Sexy::KeyCode theKey, unsigned int thePlayerIndex);
-    void GameButtonDown(GamepadButton theButton, unsigned int thePlayerIndex);
+    void GameButtonDown(Sexy::GamepadButton theButton, unsigned int thePlayerIndex);
     void
     DrawPacket(Sexy::Graphics *g, int x, int y, SeedType theSeedType, SeedType theImitaterType, float thePercentDark, int theGrayness, Sexy::Color *theColor, bool theDrawCost, bool theUseCurrentCost);
     void ButtonDepress(int theId);
@@ -225,7 +225,7 @@ inline void (*old_SeedChooserScreen_CrazyDavePickSeeds)(SeedChooserScreen *a);
 
 inline void (*old_SeedChooserScreen_ClickedSeedInBank)(SeedChooserScreen *seedChooserScreen, ChosenSeed *theChosenSeed, unsigned int playerIndex);
 
-inline void (*old_SeedChooserScreen_GameButtonDown)(SeedChooserScreen *a1, GamepadButton a2, unsigned int a3);
+inline void (*old_SeedChooserScreen_GameButtonDown)(SeedChooserScreen *a1, Sexy::GamepadButton a2, unsigned int a3);
 
 inline void (*old_SeedChooserScreen_ButtonDepress)(SeedChooserScreen *seedChooserScreen, int id);
 

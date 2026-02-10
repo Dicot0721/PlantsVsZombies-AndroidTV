@@ -22,31 +22,8 @@
 
 #include "BaseGamepadControls.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/SexyAppFramework/Misc/GamepadButtons.h"
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
-
-enum GamepadButton {
-    GAMEPAD_BUTTON_NONE = -1,
-    GAMEPAD_BUTTON_UP = 0,
-    GAMEPAD_BUTTON_DOWN = 1,
-    GAMEPAD_BUTTON_LEFT = 2,
-    GAMEPAD_BUTTON_RIGHT = 3,
-    GAMEPAD_BUTTON_SELECT = 4, // GAMEPAD_BUTTON_Z
-    GAMEPAD_BUTTON_START = 5,  // GAMEPAD_BUTTON_C
-    GAMEPAD_BUTTON_A = 6,
-    GAMEPAD_BUTTON_B = 7,
-    GAMEPAD_BUTTON_X = 8,
-    GAMEPAD_BUTTON_Y = 9,
-    GAMEPAD_BUTTON_TL = 10,
-    GAMEPAD_BUTTON_TR = 11,
-    GAMEPAD_BUTTON_TL2 = 12,
-    GAMEPAD_BUTTON_TR2 = 13,
-    GAMEPAD_BUTTON_THUMBL = 14,
-    GAMEPAD_BUTTON_THUMBR = 15,
-    GAMEPAD_BUTTON_DPAD_UP = 16,
-    GAMEPAD_BUTTON_DPAD_DOWN = 17,
-    GAMEPAD_BUTTON_DPAD_LEFT = 18,
-    GAMEPAD_BUTTON_DPAD_RIGHT = 19,
-};
 
 class Zombie;
 
@@ -80,8 +57,8 @@ public:
     SeedBank *GetSeedBank() {
         return reinterpret_cast<SeedBank *(*)(GamepadControls *)>(GamepadControls_GetSeedBankAddr)(this);
     }
-    void OnButtonUp(GamepadButton theButton, int theGamepadIndex, unsigned int a4) {
-        reinterpret_cast<void (*)(GamepadControls *, GamepadButton, int, unsigned int)>(GamepadControls_OnButtonUpAddr)(this, theButton, theGamepadIndex, a4);
+    void OnButtonUp(Sexy::GamepadButton theButton, int theGamepadIndex, unsigned int a4) {
+        reinterpret_cast<void (*)(GamepadControls *, Sexy::GamepadButton, int, unsigned int)>(GamepadControls_OnButtonUpAddr)(this, theButton, theGamepadIndex, a4);
     }
     // theGamepadIndex 根据手柄决定是0还是1
     // a4 恒定为0
@@ -104,7 +81,7 @@ public:
     void Update(float a2);
     void DrawPreview(Sexy::Graphics *g);
     void UpdatePreviewReanim();
-    void OnButtonDown(GamepadButton theButton, int thePlayerIndex, unsigned int unk);
+    void OnButtonDown(Sexy::GamepadButton theButton, int thePlayerIndex, unsigned int unk);
 
     GamepadControls() = delete;
     ~GamepadControls() = delete;
@@ -138,7 +115,7 @@ inline void (*old_GamepadControls_UpdatePreviewReanim)(GamepadControls *gamePad)
 
 inline void (*old_GamepadControls_DrawPreview)(GamepadControls *gamePad, Sexy::Graphics *graphics);
 
-inline void (*old_GamepadControls_OnButtonDown)(GamepadControls *, GamepadButton theButton, int thePlayerIndex, unsigned int unk);
+inline void (*old_GamepadControls_OnButtonDown)(GamepadControls *, Sexy::GamepadButton theButton, int thePlayerIndex, unsigned int unk);
 
 inline void (*old_ZenGardenControls_Update)(ZenGardenControls *a1, float a2);
 

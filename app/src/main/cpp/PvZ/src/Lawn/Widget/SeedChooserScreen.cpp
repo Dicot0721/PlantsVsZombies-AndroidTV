@@ -442,9 +442,9 @@ void SeedChooserScreen::OnKeyDown(KeyCode theKey, unsigned int thePlayerIndex) {
     old_SeedChooserScreen_OnKeyDown(this, theKey, thePlayerIndex);
 }
 
-void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int thePlayerIndex) {
+void SeedChooserScreen::GameButtonDown(Sexy::GamepadButton theButton, unsigned int thePlayerIndex) {
     // 修复结盟2P无法选择模仿者
-    if (mApp->IsCoopMode() && theButton == GamepadButton::GAMEPAD_BUTTON_A) {
+    if (mApp->IsCoopMode() && theButton == Sexy::GamepadButton::GAMEPAD_BUTTON_A) {
         if (mChooseState == SeedChooserState::CHOOSE_VIEW_LAWN) {
             old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
             return;
@@ -752,7 +752,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
                 mCursorPositionY2 = mImitaterPositionY;
                 mSeedType2 = SeedType::SEED_IMITATER;
             }
-            GameButtonDown(GAMEPAD_BUTTON_A, !m1PChoosingSeeds);
+            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, !m1PChoosingSeeds);
             return;
         }
     }
@@ -840,9 +840,9 @@ void SeedChooserScreen::MouseUp(int x, int y) {
             break;
         case SeedChooserTouchState::SeedChooser:
             if (!mIsZombieChooser && m1PChoosingSeeds && mApp->IsCoopMode()) {
-                GameButtonDown(GAMEPAD_BUTTON_A, 0);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0);
             } else {
-                GameButtonDown(GAMEPAD_BUTTON_A, 1);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
             }
             break;
         case SeedChooserTouchState::StoreButton:

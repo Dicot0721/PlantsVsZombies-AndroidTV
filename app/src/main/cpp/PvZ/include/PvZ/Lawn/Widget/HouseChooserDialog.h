@@ -40,8 +40,8 @@ public:
     int unk[2];                   // 192 ~ 193
     // 115: 194, 111: 196
 
-    void GameButtonDown(GamepadButton theButton, int thePlayerIndex, bool a4) {
-        reinterpret_cast<void (*)(HouseChooserDialog *, GamepadButton, int, bool)>(HouseChooserDialog_GameButtonDownAddr)(this, theButton, thePlayerIndex, a4);
+    void GameButtonDown(Sexy::GamepadButton theButton, int thePlayerIndex, bool a4) {
+        reinterpret_cast<void (*)(HouseChooserDialog *, Sexy::GamepadButton, int, bool)>(HouseChooserDialog_GameButtonDownAddr)(this, theButton, thePlayerIndex, a4);
     }
 
     static bool IsHouseAvaliable(HouseType houseType);

@@ -287,7 +287,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         Sexy::Widget *theController1Widget = FindWidget(7);
         int newController1Position = theController1Widget->mX > 400 ? 1 : theController1Widget->mX > 250 ? -1 : 0;
         if (newController1Position == mSides[0]) {
-            GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
+            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
         }
         mSides[0] = newController1Position;
         if (tcpClientSocket >= 0) {
@@ -302,7 +302,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         int newController2Position = theController2Widget->mX > 400 ? 1 : theController2Widget->mX > 250 ? -1 : 0;
 
         if (newController2Position == mSides[1]) {
-            GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
+            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
         }
         mSides[1] = newController2Position;
         if (tcpServerSocket >= 0) {
@@ -313,8 +313,8 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
     }
     touchingOnWhichController = 0;
     if (mSides[0] != -1 && mSides[1] != -1 && mSides[0] != mSides[1]) {
-        GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
-        GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
+        GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
+        GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
     }
 }
 
@@ -346,8 +346,8 @@ void VSSetupMenu::Update() {
         // 自动分配阵营
         //        mSides[0] = 0;
         //        mSides[1] = 1;
-        //        GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
-        //        GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
+        //        GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
+        //        GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
         return;
     }
 }
@@ -532,7 +532,7 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX1, screen->mCursorPositionY1);
             screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX2, screen->mCursorPositionY2);
             (mIsZombieChooser ? screen->mSeedType2 : screen->mSeedType1) = theSeedType;
-            screen->GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, screen->mPlayerIndex);
+            screen->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, screen->mPlayerIndex);
         } break;
         case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND: {
             U8_Event *event1 = (U8_Event *)event;
@@ -553,13 +553,13 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             U8_Event *event1 = (U8_Event *)event;
             int realData = event1->data == 2 ? -1 : event1->data;
             if (mSides[1] == realData) {
-                GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
             }
             mSides[1] = realData;
             is2PControllerMoving = false;
             if (mSides[0] != -1 && mSides[1] != -1 && mSides[0] != mSides[1]) {
-                GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
-                GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
             }
         } break;
         default:
@@ -618,7 +618,7 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX1, screen->mCursorPositionY1);
             screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX2, screen->mCursorPositionY2);
             (mIsZombieChooser ? screen->mSeedType2 : screen->mSeedType1) = theSeedType;
-            screen->GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, screen->mPlayerIndex);
+            screen->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, screen->mPlayerIndex);
         } break;
         case EVENT_VSSETUPMENU_RANDOM_PICK: {
             U16x12_Event *event1 = (U16x12_Event *)event;
@@ -646,13 +646,13 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             U8_Event *event1 = (U8_Event *)event;
             int realData = event1->data == 2 ? -1 : event1->data;
             if (mSides[0] == realData) {
-                GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
             }
             mSides[0] = realData;
             is1PControllerMoving = false;
             if (mSides[0] != -1 && mSides[1] != -1 && mSides[0] != mSides[1]) {
-                GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
-                GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
             }
         } break;
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT: {
@@ -742,19 +742,19 @@ void VSSetupMenu::ButtonPress(int theId) {
 void VSSetupMenu::ButtonDepress(int theId) {
     if (!isKeyboardTwoPlayerMode && mState == VS_SETUP_STATE_SIDES) {
         // 自动分配阵营
-        // GameButtonDown(GamepadButton::GAMEPAD_BUTTON_DPAD_LEFT, 0, 0);
-        // GameButtonDown(GamepadButton::GAMEPAD_BUTTON_DPAD_RIGHT, 1, 0);
+        // GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_LEFT, 0, 0);
+        // GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_RIGHT, 1, 0);
         if (mSides[0] != -1 && mSides[1] != -1 && mSides[0] != mSides[1]) {
-            GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
-            GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
+            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
+            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
         }
         //        else {
         //            return;
         // // 自动分配阵营
         // mSides[0] = 0;
         // mSides[1] = 1;
-        // GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
-        // GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
+        // GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
+        // GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
         //        }
     }
 

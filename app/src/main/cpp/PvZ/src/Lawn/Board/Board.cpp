@@ -2879,7 +2879,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
 
     SeedChooserScreen *mSeedChooserScreen = mApp->mSeedChooserScreen;
     if (mGameScene == GameScenes::SCENE_LEVEL_INTRO && mSeedChooserScreen != nullptr && mSeedChooserScreen->mChooseState == SeedChooserState::CHOOSE_VIEW_LAWN) {
-        mSeedChooserScreen->GameButtonDown(GAMEPAD_BUTTON_A, 0);
+        mSeedChooserScreen->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0);
         return;
     }
     if (mGameScene == GameScenes::SCENE_LEVEL_INTRO) {
@@ -3450,7 +3450,7 @@ void Board::__MouseUp(int x, int y, int theClickCount) {
                 } else if ((mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mChallenge->mChallengeState == ChallengeState::STATECHALLENGE_NORMAL
                             && mApp->mGameScene == GameScenes::SCENE_PLAYING)
                            || mGameMode == GameMode::GAMEMODE_MP_VS) {
-                    mGamepadControls1->OnButtonDown(GamepadButton::GAMEPAD_BUTTON_A, mGamepadControls1->mPlayerIndex1, 0);
+                    mGamepadControls1->OnButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, mGamepadControls1->mPlayerIndex1, 0);
                 } else {
                     mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                 }
@@ -3487,7 +3487,7 @@ void Board::__MouseUp(int x, int y, int theClickCount) {
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
                 } else if ((mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mChallengeState == ChallengeState::STATECHALLENGE_NORMAL && mApp->mGameScene == GameScenes::SCENE_PLAYING)
                            || mGameMode == GameMode::GAMEMODE_MP_VS) {
-                    mGamepadControls2->OnButtonDown(GamepadButton::GAMEPAD_BUTTON_A, mGamepadControls2->mPlayerIndex1, 0);
+                    mGamepadControls2->OnButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, mGamepadControls2->mPlayerIndex1, 0);
                 } else {
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                 }
@@ -3550,7 +3550,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
 
     SeedChooserScreen *mSeedChooserScreen = mApp->mSeedChooserScreen;
     if (mGameScene == GameScenes::SCENE_LEVEL_INTRO && mSeedChooserScreen != nullptr && mSeedChooserScreen->mChooseState == SeedChooserState::CHOOSE_VIEW_LAWN) {
-        mSeedChooserScreen->GameButtonDown(GAMEPAD_BUTTON_A, 0);
+        mSeedChooserScreen->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0);
         return;
     }
     if (mGameScene == GameScenes::SCENE_LEVEL_INTRO) {
@@ -4091,7 +4091,7 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
                     mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
                 } else if ((aGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && aChallengeState == ChallengeState::STATECHALLENGE_NORMAL && aGameScene == GameScenes::SCENE_PLAYING)
                            || aGameMode == GameMode::GAMEMODE_MP_VS) {
-                    mGamepadControls1->OnButtonDown(GamepadButton::GAMEPAD_BUTTON_A, mGamepadControls1->mPlayerIndex1, 0);
+                    mGamepadControls1->OnButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, mGamepadControls1->mPlayerIndex1, 0);
                 } else {
                     mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                 }
@@ -4117,7 +4117,7 @@ void Board::MouseUpSecond(int x, int y, int theClickCount) {
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
                 } else if ((aGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && aChallengeState == ChallengeState::STATECHALLENGE_NORMAL && aGameScene == GameScenes::SCENE_PLAYING)
                            || aGameMode == GameMode::GAMEMODE_MP_VS) {
-                    mGamepadControls2->OnButtonDown(GamepadButton::GAMEPAD_BUTTON_A, mGamepadControls2->mPlayerIndex1, 0);
+                    mGamepadControls2->OnButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, mGamepadControls2->mPlayerIndex1, 0);
                 } else {
                     mGamepadControls2->OnKeyDown(KeyCode::KEYCODE_RETURN, 1096);
                 }
@@ -4229,31 +4229,31 @@ void Board::UpdateButtons() {
     if (gButtonDown) {
         aGamepad->OnButtonDown(gButtonCode, gGamePlayerIndex, 0);
         gButtonDown = false;
-        gButtonCode = GamepadButton::GAMEPAD_BUTTON_NONE;
+        gButtonCode = Sexy::GamepadButton::GAMEPAD_BUTTON_NONE;
         gGamePlayerIndex = -1;
     }
     if (gButtonDownP1) {
         mGamepadControls1->OnButtonDown(gButtonCodeP1, 0, 0);
         gButtonDownP1 = false;
-        gButtonCodeP1 = GamepadButton::GAMEPAD_BUTTON_NONE;
+        gButtonCodeP1 = Sexy::GamepadButton::GAMEPAD_BUTTON_NONE;
     }
     if (gButtonDownP2) {
         mGamepadControls2->OnButtonDown(gButtonCodeP2, 0, 0);
         gButtonDownP2 = false;
-        gButtonCodeP2 = GamepadButton::GAMEPAD_BUTTON_NONE;
+        gButtonCodeP2 = Sexy::GamepadButton::GAMEPAD_BUTTON_NONE;
     }
     if (gButtonDownSeedChooser) {
         aSeedChooser->GameButtonDown(gButtonCode, gGamePlayerIndex);
         gButtonDownSeedChooser = false;
-        gButtonCode = GamepadButton::GAMEPAD_BUTTON_NONE;
+        gButtonCode = Sexy::GamepadButton::GAMEPAD_BUTTON_NONE;
         gGamePlayerIndex = -1;
     }
     if (gButtonDownVSSetup) {
-        if (!(aVSSetup->mState == VSSetupState::VS_SETUP_STATE_CUSTOM_BATTLE && gButtonCode == GamepadButton::GAMEPAD_BUTTON_B)) { // 修复对战选卡阶段按下 B 键崩溃
+        if (!(aVSSetup->mState == VSSetupState::VS_SETUP_STATE_CUSTOM_BATTLE && gButtonCode == Sexy::GamepadButton::GAMEPAD_BUTTON_B)) { // 修复对战选卡阶段按下 B 键崩溃
             aVSSetup->GameButtonDown(gButtonCode, gGamePlayerIndex, 0);
         }
         gButtonDownVSSetup = false;
-        gButtonCode = GamepadButton::GAMEPAD_BUTTON_NONE;
+        gButtonCode = Sexy::GamepadButton::GAMEPAD_BUTTON_NONE;
         gGamePlayerIndex = -1;
     }
 

@@ -228,8 +228,8 @@ public:
     // 弹输入框（可复用一个函数，用不同 title）
     void ShowTextInput(const char *title, const char *hint);
 
-    void GameButtonDown(GamepadButton theButton, unsigned int thePlayerIndex) {
-        reinterpret_cast<void (*)(WaitForSecondPlayerDialog *, GamepadButton, unsigned int)>(WaitForSecondPlayerDialog_GameButtonDownAddr)(this, theButton, thePlayerIndex);
+    void GameButtonDown(Sexy::GamepadButton theButton, unsigned int thePlayerIndex) {
+        reinterpret_cast<void (*)(WaitForSecondPlayerDialog *, Sexy::GamepadButton, unsigned int)>(WaitForSecondPlayerDialog_GameButtonDownAddr)(this, theButton, thePlayerIndex);
     }
 
     WaitForSecondPlayerDialog(LawnApp *theApp) {

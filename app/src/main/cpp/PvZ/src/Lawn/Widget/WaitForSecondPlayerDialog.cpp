@@ -207,8 +207,8 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(this, theApp);
 
     if (mApp->mGameMode != GAMEMODE_MP_VS) {
-        GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1);
-        GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1);
+        GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
+        GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
         return;
     }
 
@@ -667,8 +667,8 @@ void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_START_GAME:
-            GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1);
-            GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1);
+            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
+            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
             break;
         default:
             break;
@@ -1233,14 +1233,14 @@ void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int
             switch (aUIMode) {
                 case UIMode::MODE1_INIT:
                     // 本地游戏：按两下A
-                    dialog->GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1);
-                    dialog->GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1);
+                    dialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
+                    dialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
                     break;
                 case UIMode::MODE2_WIFI:
                     if (dialog->mIsCreatingRoom) {
                         // 开始游戏（房主）：根据是否有玩家加入决定是否可点（RefreshButtons里已禁用）
-                        dialog->GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1);
-                        dialog->GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1);
+                        dialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
+                        dialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
                         if (tcpClientSocket >= 0) {
                             BaseEvent event = {EventType::EVENT_START_GAME};
                             sendWithSize(tcpClientSocket, &event, sizeof(BaseEvent), 0);
@@ -1580,8 +1580,8 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 }
 
                 // 进入对战：按两下A
-                GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1);
-                GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 1);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
                 return;
             }
 

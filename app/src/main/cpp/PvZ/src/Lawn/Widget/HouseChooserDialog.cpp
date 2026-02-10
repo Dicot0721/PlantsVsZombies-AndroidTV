@@ -45,10 +45,10 @@ void HouseChooserDialog::MouseDown(int x, int y, int theClickCount) {
         return;
     int currentHouseType = mSelectedHouseType;
     if (currentHouseType == houseIdToSelect) {
-        GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 0, false);
+        GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, false);
     } else {
         while (mSelectedHouseType != houseIdToSelect) {
-            GameButtonDown(GamepadButton::GAMEPAD_BUTTON_LEFT, 0, false);
+            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_LEFT, 0, false);
         }
     }
 }
@@ -59,19 +59,19 @@ void HouseChooserDialog::KeyDown(Sexy::KeyCode theKey) {
     using Sexy::KeyCode;
     switch (theKey) {
         case KeyCode::KEYCODE_LEFT:
-            return GameButtonDown(GamepadButton::GAMEPAD_BUTTON_LEFT, 0, false);
+            return GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_LEFT, 0, false);
         case KeyCode::KEYCODE_UP:
-            return GameButtonDown(GamepadButton::GAMEPAD_BUTTON_UP, 0, false);
+            return GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_UP, 0, false);
         case KeyCode::KEYCODE_RIGHT:
-            return GameButtonDown(GamepadButton::GAMEPAD_BUTTON_RIGHT, 0, false);
+            return GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_RIGHT, 0, false);
         case KeyCode::KEYCODE_DOWN:
-            return GameButtonDown(GamepadButton::GAMEPAD_BUTTON_DOWN, 0, false);
+            return GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_DOWN, 0, false);
         case KeyCode::KEYCODE_ESCAPE:
         case KeyCode::KEYCODE_GAMEPAD_B:
-            return GameButtonDown(GamepadButton::GAMEPAD_BUTTON_B, 0, false);
+            return GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_B, 0, false);
         case KeyCode::KEYCODE_RETURN:
         case KeyCode::KEYCODE_GAMEPAD_A:
-            return GameButtonDown(GamepadButton::GAMEPAD_BUTTON_A, 0, false);
+            return GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, false);
         default:
             break;
     }
