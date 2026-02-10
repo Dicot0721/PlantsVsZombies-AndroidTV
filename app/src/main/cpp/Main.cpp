@@ -845,20 +845,20 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     float &aY = aIsPlayer2 ? gGamepadP2VelY : gGamepadP1VelY;
     if (is_key_down) {
         switch (aButtonCode) {
-            case GamepadButton::BUTTONCODE_B:
+            case GamepadButton::GAMEPAD_BUTTON_B:
                 gKeyDown = true;
                 gGamePlayerIndex = aIsPlayer2 ? 1 : 0;
                 break;
-            case GamepadButton::BUTTONCODE_UP:
+            case GamepadButton::GAMEPAD_BUTTON_DPAD_UP:
                 aY = -400;
                 break;
-            case GamepadButton::BUTTONCODE_DOWN:
+            case GamepadButton::GAMEPAD_BUTTON_DPAD_DOWN:
                 aY = 400;
                 break;
-            case GamepadButton::BUTTONCODE_LEFT:
+            case GamepadButton::GAMEPAD_BUTTON_DPAD_LEFT:
                 aX = -400;
                 break;
-            case GamepadButton::BUTTONCODE_RIGHT:
+            case GamepadButton::GAMEPAD_BUTTON_DPAD_RIGHT:
                 aX = 400;
                 break;
             default:
@@ -873,12 +873,12 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
         }
     } else {
         switch (aButtonCode) {
-            case GamepadButton::BUTTONCODE_UP:
-            case GamepadButton::BUTTONCODE_DOWN:
+            case GamepadButton::GAMEPAD_BUTTON_DPAD_UP:
+            case GamepadButton::GAMEPAD_BUTTON_DPAD_DOWN:
                 aY = 0;
                 break;
-            case GamepadButton::BUTTONCODE_LEFT:
-            case GamepadButton::BUTTONCODE_RIGHT:
+            case GamepadButton::GAMEPAD_BUTTON_DPAD_LEFT:
+            case GamepadButton::GAMEPAD_BUTTON_DPAD_RIGHT:
                 aX = 0;
                 break;
             default:

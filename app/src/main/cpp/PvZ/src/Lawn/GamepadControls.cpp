@@ -671,7 +671,7 @@ void GamepadControls::OnButtonDown(GamepadButton theButton, int thePlayerIndex, 
     SeedPacket *aSeedPacket = &aSeedBank->mSeedPackets[mSelectedSeedIndex];
     SeedType aPacketType = aSeedPacket->mPacketType;
     int aCost = mBoard->GetCurrentPlantCost(aSeedPacket->mPacketType, SeedType::SEED_NONE);
-    if (mGameObject.mApp->mGameMode == GameMode::GAMEMODE_MP_VS && theButton == GamepadButton::BUTTONCODE_A) {
+    if (mGameObject.mApp->mGameMode == GameMode::GAMEMODE_MP_VS && theButton == GamepadButton::GAMEPAD_BUTTON_A) {
 
         if (mIsZombie) {
             if (aPacketType == SeedType::SEED_ZOMBIE_GRAVESTONE)

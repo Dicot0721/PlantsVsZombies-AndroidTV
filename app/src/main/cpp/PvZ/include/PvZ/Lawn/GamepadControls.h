@@ -22,32 +22,30 @@
 
 #include "BaseGamepadControls.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
-// #include "PvZ/TodLib/Effect/FilterEffect.h"
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 
-// buttonCode 是按键键值，对应关系如下：
 enum GamepadButton {
-    BUTTONCODE_LUP = 0,     // 左摇杆上 0
-    BUTTONCODE_LDOWN = 1,   // 左摇杆下 1
-    BUTTONCODE_LLEFT = 2,   // 左摇杆左 2
-    BUTTONCODE_LRIGHT = 3,  // 左摇杆右 3
-    BUTTONCODE_UNKNOWN = 4, // 未知键 4
-    BUTTONCODE_PAUSE = 5,   // 暂停键 5
-    BUTTONCODE_A = 6,       // A 6
-    BUTTONCODE_B = 7,       // B 7
-    BUTTONCODE_X = 8,       // X 8
-    BUTTONCODE_Y = 9,       // Y 9
-    BUTTONCODE_L1 = 10,     // L1 10
-    BUTTONCODE_R1 = 11,     // R1 11
-    BUTTONCODE_L2 = 12,     // L2 12
-    BUTTONCODE_R2 = 13,     // R2 13
-    BUTTONCODE_TL = 14,     // TL 14
-    BUTTONCODE_TR = 15,     // TR 15
-    BUTTONCODE_UP = 16,     // 上 16
-    BUTTONCODE_DOWN = 17,   // 下 17
-    BUTTONCODE_LEFT = 18,   // 左 18
-    BUTTONCODE_RIGHT = 19,  // 右 19
-    BUTTONCODE_NONE = -1
+    GAMEPAD_BUTTON_NONE = -1,
+    GAMEPAD_BUTTON_UP = 0,
+    GAMEPAD_BUTTON_DOWN = 1,
+    GAMEPAD_BUTTON_LEFT = 2,
+    GAMEPAD_BUTTON_RIGHT = 3,
+    GAMEPAD_BUTTON_SELECT = 4, // GAMEPAD_BUTTON_Z
+    GAMEPAD_BUTTON_START = 5,  // GAMEPAD_BUTTON_C
+    GAMEPAD_BUTTON_A = 6,
+    GAMEPAD_BUTTON_B = 7,
+    GAMEPAD_BUTTON_X = 8,
+    GAMEPAD_BUTTON_Y = 9,
+    GAMEPAD_BUTTON_TL = 10,
+    GAMEPAD_BUTTON_TR = 11,
+    GAMEPAD_BUTTON_TL2 = 12,
+    GAMEPAD_BUTTON_TR2 = 13,
+    GAMEPAD_BUTTON_THUMBL = 14,
+    GAMEPAD_BUTTON_THUMBR = 15,
+    GAMEPAD_BUTTON_DPAD_UP = 16,
+    GAMEPAD_BUTTON_DPAD_DOWN = 17,
+    GAMEPAD_BUTTON_DPAD_LEFT = 18,
+    GAMEPAD_BUTTON_DPAD_RIGHT = 19,
 };
 
 class Zombie;
