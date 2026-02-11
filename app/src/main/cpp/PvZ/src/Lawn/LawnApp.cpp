@@ -622,13 +622,15 @@ void LawnApp::Init() {
         bool readSuccess = RegistryReadString("CurUser", &value);
         if (readSuccess) {
             mPlayerInfo = mProfileMgr->GetProfile(value);
-        } else {
-            mPlayerInfo = mProfileMgr->GetProfile(defaultName);
         }
+    }
 
-        if (mPlayerInfo == nullptr && mProfileMgr->mNumProfiles > 0) {
-            mPlayerInfo = mProfileMgr->GetAnyProfile();
-        }
+    if (mPlayerInfo == nullptr) {
+        mPlayerInfo = mProfileMgr->GetProfile(defaultName);
+    }
+
+    if (mPlayerInfo == nullptr && mProfileMgr->mNumProfiles > 0) {
+        mPlayerInfo = mProfileMgr->GetAnyProfile();
     }
 
     mMaxExecutions = GetInteger("MaxExecutions", 0);

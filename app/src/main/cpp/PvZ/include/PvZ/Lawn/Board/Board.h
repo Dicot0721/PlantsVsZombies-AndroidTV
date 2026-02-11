@@ -604,6 +604,9 @@ protected:
     friend void InitHookFunction();
 
     void _constructor(LawnApp *theApp);
+    void ClientMouseDownLocal(int x, int y, bool isInBank);
+    void ClientMouseDragLocal(int x, int y);
+    void ClientMouseUpLocal(int x, int y);
 };
 
 int GetRectOverlap(const Sexy::Rect &rect1, const Sexy::Rect &rect2);

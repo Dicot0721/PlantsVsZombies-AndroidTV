@@ -1255,14 +1255,14 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 clientSeedBank->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
             }
             clientGamepadControls->mGamepadState = event1->data2;
-            clientGamepadControls->mCursorPositionX = event1->data3;
-            clientGamepadControls->mCursorPositionY = event1->data4;
+            //            clientGamepadControls->mCursorPositionX = event1->data3;
+            //            clientGamepadControls->mCursorPositionY = event1->data4;
         } break;
         case EVENT_BOARD_TOUCH_DRAG_REPLY: {
             U16U16_Event *event1 = (U16U16_Event *)event;
             GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-            clientGamepadControls->mCursorPositionX = event1->data1;
-            clientGamepadControls->mCursorPositionY = event1->data2;
+            //            clientGamepadControls->mCursorPositionX = event1->data1;
+            //            clientGamepadControls->mCursorPositionY = event1->data2;
         } break;
         case EVENT_BOARD_TOUCH_UP_REPLY: {
             U8U8_Event *event1 = (U8U8_Event *)event;
@@ -2808,7 +2808,51 @@ bool mSendKeyWhenTouchUp;
 TouchState mTouchState = TouchState::TOUCHSTATE_NONE;
 float mHeavyWeaponX;
 Rect slotMachineRect = {250, 0, 320, 100};
+
+bool gClientMouseInBank = false;
+bool gClientMouseInBoard = false;
 } // namespace
+
+
+void Board::ClientMouseDownLocal(int x, int y, bool isInBank) {
+    gClientMouseInBank = isInBank;
+    gClientMouseInBoard = !isInBank;
+    if (gClientMouseInBoard) {
+        GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+        clientGamepadControls->mCursorPositionX = x;
+        clientGamepadControls->mCursorPositionY = y;
+    }
+}
+
+void Board::ClientMouseDragLocal(int x, int y) {
+
+    GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+    SeedBank *seedBank = clientGamepadControls->GetSeedBank();
+    bool isInBank = seedBank->ContainsPoint(x, y);
+
+    if (gClientMouseInBank) {
+        if (!isInBank) {
+            gClientMouseInBank = false;
+            gClientMouseInBoard = true;
+        }
+    }
+
+    if (gClientMouseInBoard) {
+        int seedBankHeight = seedBank->mY + seedBank->mHeight;
+        if (y < seedBankHeight) {
+            gClientMouseInBoard = false;
+            return;
+        }
+        clientGamepadControls->mCursorPositionX = x;
+        clientGamepadControls->mCursorPositionY = y;
+    }
+}
+
+void Board::ClientMouseUpLocal(int x, int y) {
+    gClientMouseInBank = false;
+    gClientMouseInBoard = false;
+}
+
 
 // 触控落下手指在此处理
 void Board::MouseDown(int x, int y, int theClickCount) {
@@ -2830,10 +2874,11 @@ void Board::MouseDown(int x, int y, int theClickCount) {
             return;
         I16I16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_DOWN}, int16_t(x), int16_t(y)};
         sendWithSize(tcpServerSocket, &event, sizeof(I16I16_Event), 0);
+        ClientMouseDownLocal(x, y, inRangeOf2PSeedBank);
         return;
     }
 
-    // 如果是客户端
+    // 如果是主机端
     if (tcpClientSocket >= 0) {
         if (inRangeOf2PSeedBank)
             return;
@@ -3219,6 +3264,7 @@ void Board::MouseDrag(int x, int y) {
     if (tcp_connected) {
         I16I16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_DRAG}, int16_t(x), int16_t(y)};
         sendWithSize(tcpServerSocket, &event, sizeof(I16I16_Event), 0);
+        ClientMouseDragLocal(x, y);
         return;
     }
     __MouseDrag(x, y);
@@ -3408,6 +3454,7 @@ void Board::MouseUp(int x, int y, int theClickCount) {
     if (tcp_connected) {
         I16I16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_UP}, int16_t(x), int16_t(y)};
         sendWithSize(tcpServerSocket, &event, sizeof(I16I16_Event), 0);
+        ClientMouseUpLocal(x, y);
         return;
     }
     __MouseUp(x, y, theClickCount);
