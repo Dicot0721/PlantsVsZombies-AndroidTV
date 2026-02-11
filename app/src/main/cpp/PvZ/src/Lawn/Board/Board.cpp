@@ -2236,6 +2236,58 @@ bool Board::IsFlagWave(int theWaveNumber) {
     return theWaveNumber % aWavesPerFlag == aWavesPerFlag - 1;
 }
 
+int Board::GetGraveStonesCount() {
+    int aCount = 0;
+
+    GridItem *aGridItem = nullptr;
+    while (IterateGridItems(aGridItem)) {
+        if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
+            aCount++;
+        }
+    }
+
+    return aCount;
+}
+
+void Board::SpawnZombiesFromGraves() {
+    if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_WAR_AND_PEAS || mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_WAR_AND_PEAS_2)
+        return;
+
+    if (StageHasRoof()) {
+        SpawnZombiesFromSky();
+        TriggerVibration(VibrationEffect::VIVRATION_BUNGEE_LANDING);
+    } else if (StageHasPool()) {
+        SpawnZombiesFromPool();
+        TriggerVibration(VibrationEffect::VIVRATION_ZOMBIE_RISE_FROM_POOL);
+        return;
+    }
+
+    int aZombiePoints = GetGraveStonesCount();
+    GridItem *aGridItem = nullptr;
+    while (IterateGridItems(aGridItem)) {
+        if (aGridItem->mGridItemType != GridItemType::GRIDITEM_GRAVESTONE || aGridItem->mGridItemCounter < 100) {
+            continue;
+        }
+        if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_GRAVE_DANGER && Rand(mNumWaves) > mCurrentWave) {
+            continue;
+        }
+
+        ZombieType aZombieType = PickGraveRisingZombieType(aZombiePoints);
+        Zombie *aZombie = AddZombie(aZombieType, mCurrentWave, false);
+        if (aZombie == nullptr) {
+            return;
+        }
+
+        aZombie->RiseFromGrave(aGridItem->mGridX, aGridItem->mGridY);
+        aZombiePoints -= GetZombieDefinition(aZombieType).mZombieValue;
+        if (aZombieType < 1) {
+            aZombiePoints = 1;
+        }
+    }
+
+    TriggerVibration(VibrationEffect::VIVRATION_ZOMBIE_RISE_FROM_GRAVE);
+}
+
 void Board::SpawnZombieWave() {
     // 在对战模式中放出一大波僵尸时播放大波僵尸音效
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {

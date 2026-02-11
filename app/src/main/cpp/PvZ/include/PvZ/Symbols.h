@@ -193,7 +193,9 @@ inline void *Board_ChooseSeedsOnCurrentLevelAddr;
 inline void *Board_RowCanHaveZombiesAddr;
 inline void *Board_AddMPTargetAddr;
 inline void *Board_PlaceRakeAddr;
-
+inline void *Board_SpawnZombiesFromSkyAddr;
+inline void *Board_SpawnZombiesFromPoolAddr;
+inline void *Board_PickGraveRisingZombieTypeAddr;
 
 inline void *SyncBoardAddr;
 inline void *FixBoardAfterLoadAddr;

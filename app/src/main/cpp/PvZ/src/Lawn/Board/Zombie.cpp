@@ -1242,10 +1242,6 @@ Rect Zombie::GetZombieRect() {
 }
 
 void Zombie::RiseFromGrave(int theGridX, int theGridY) {
-    if (!mApp->IsWhackAZombieLevel()) {
-        TriggerVibration(VibrationEffect::VIVRATION_ZOMBIE_RISE_FROM_GRAVE);
-    }
-
     // 修复对战切换场地为泳池后的闪退BUG。但是仅仅是修复闪退，泳池对战还谈不上能玩的程度
     if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS) {
         old_Zombie_RiseFromGrave(this, theGridX, theGridY);

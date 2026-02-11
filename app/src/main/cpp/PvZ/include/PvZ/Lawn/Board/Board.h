@@ -419,9 +419,6 @@ public:
     bool CanDropLoot() {
         return reinterpret_cast<bool (*)(Board *)>(Board_CanDropLootAddr)(this);
     }
-    void SpawnZombiesFromGraves() {
-        reinterpret_cast<void (*)(Board *)>(Board_SpawnZombiesFromGravesAddr)(this);
-    }
     void ClearAdvice(AdviceType theHelpIndex) {
         reinterpret_cast<void (*)(Board *)>(Board_ClearAdviceAddr)(this);
     }
@@ -473,6 +470,15 @@ public:
     void PlaceRake() {
         reinterpret_cast<void (*)(Board *)>(Board_PlaceRakeAddr)(this);
     }
+    void SpawnZombiesFromSky() {
+        reinterpret_cast<void (*)(Board *)>(Board_SpawnZombiesFromSkyAddr)(this);
+    }
+    void SpawnZombiesFromPool() {
+        reinterpret_cast<void (*)(Board *)>(Board_SpawnZombiesFromPoolAddr)(this);
+    }
+    ZombieType PickGraveRisingZombieType(int theZombiePoints) {
+        return reinterpret_cast<ZombieType (*)(Board *, int)>(Board_PickGraveRisingZombieTypeAddr)(this, theZombiePoints);
+    }
 
     Board(LawnApp *theApp);
     void InitLevel();
@@ -499,6 +505,8 @@ public:
     void UpdateGame();
     void UpdateGameObjects();
     bool IsFlagWave(int theWaveNumber);
+    int GetGraveStonesCount();
+    void SpawnZombiesFromGraves();
     void SpawnZombieWave();
     void DrawProgressMeter(Sexy::Graphics *g, int theX, int theY);
     int GetNumWavesPerFlag();

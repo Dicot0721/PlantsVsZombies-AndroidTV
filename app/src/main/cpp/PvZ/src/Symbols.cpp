@@ -202,6 +202,9 @@ bool LoadGameMain() {
     Board_RowCanHaveZombiesAddr = dlsym(handle, "_ZN5Board17RowCanHaveZombiesEi");
     Board_AddMPTargetAddr = dlsym(handle, "_ZN5Board11AddMPTargetEii");
     Board_PlaceRakeAddr = dlsym(handle, "_ZN5Board9PlaceRakeEv");
+    Board_SpawnZombiesFromSkyAddr = dlsym(handle, "_ZN5Board19SpawnZombiesFromSkyEv");
+    Board_SpawnZombiesFromPoolAddr = dlsym(handle, "_ZN5Board20SpawnZombiesFromPoolEv");
+    Board_PickGraveRisingZombieTypeAddr = dlsym(handle, "_ZN5Board25PickGraveRisingZombieTypeEi");
 
 
     SyncBoardAddr = dlsym(handle, "_Z9SyncBoardP15SaveGameContextP5Board");

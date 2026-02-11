@@ -1121,9 +1121,10 @@ public class EnhanceActivity extends MainActivity {
     static final int HAPITIC_ICE_TRAP = 6;
     static final int HAPITIC_JUMP = 7;
     static final int HAPITIC_ZOMBIE_RISE_FROM_GRAVE = 8;
-    static final int HAPITIC_BUNGEE_LANDING = 9;
-    static final int HAPITIC_BUNGEE_RISING = 10;
-    static final int HAPITIC_BOSS_HIT = 11;
+    static final int HAPITIC_ZOMBIE_RISE_FROM_POOL = 9;
+    static final int HAPITIC_BUNGEE_LANDING = 10;
+    static final int HAPITIC_BUNGEE_RISING = 11;
+    static final int HAPITIC_BOSS_HIT = 12;
 
     private void startVibration(int hapiticEffect) {
         Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
@@ -1160,6 +1161,7 @@ public class EnhanceActivity extends MainActivity {
                     composition.amplitudes = new int[]{0, 128, 64, 32, 16};
                     break;
                 case HAPITIC_ICE_TRAP:
+                case HAPITIC_ZOMBIE_RISE_FROM_POOL:
                     composition.timings = new long[]
                             {200, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10,
                                     40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10, 40, 10,
