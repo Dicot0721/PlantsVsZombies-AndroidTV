@@ -1086,9 +1086,9 @@ void Board::processClientEvent(void *buf, ssize_t bufSize) {
         case EVENT_CLIENT_BOARD_TOUCH_DRAG: {
             I16I16_Event *event1 = (I16I16_Event *)event;
             MouseDragSecond(event1->data1, event1->data2);
-            GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
-            I16I16_Event eventReply = {{EventType::EVENT_BOARD_TOUCH_DRAG_REPLY}, int16_t(clientGamepadControls->mCursorPositionX), int16_t(clientGamepadControls->mCursorPositionY)};
-            sendWithSize(tcpClientSocket, &eventReply, sizeof(I16I16_Event), 0);
+            //            GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+            //            I16I16_Event eventReply = {{EventType::EVENT_BOARD_TOUCH_DRAG_REPLY}, int16_t(clientGamepadControls->mCursorPositionX), int16_t(clientGamepadControls->mCursorPositionY)};
+            //            sendWithSize(tcpClientSocket, &eventReply, sizeof(I16I16_Event), 0);
         } break;
         case EVENT_CLIENT_BOARD_TOUCH_UP: {
             I16I16_Event *event1 = (I16I16_Event *)event;
@@ -2891,7 +2891,7 @@ void Board::ClientMouseDragLocal(int x, int y) {
 
     if (gClientMouseInBoard) {
         int seedBankHeight = seedBank->mY + seedBank->mHeight;
-        if (y < seedBankHeight) {
+        if (y < seedBankHeight && clientGamepadControls->mGamepadState == 7) {
             gClientMouseInBoard = false;
             return;
         }
