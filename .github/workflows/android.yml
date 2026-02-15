@@ -9,6 +9,13 @@ on:
     paths-ignore:
       - '**/*.md'
 
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,15 +23,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [ V111, V115 ]
-        build_type: [ Release ]
+        version: [ v111, v115 ]
+        build_type: [ release ]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Checkout assets
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: ${{ secrets.ASSETS_REPO }}
           path: app/src/main/assets
@@ -39,7 +46,7 @@ jobs:
           cache: gradle
 
       - name: Decode keystore
-        if: matrix.build_type == 'Release'
+        if: matrix.build_type == 'release'
         env:
           KEYSTORE_ENCODED: ${{ secrets.KEYSTORE }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -55,35 +62,41 @@ jobs:
           fi
 
       - name: Build with Gradle
+        env:
+          VERSION: ${{ matrix.version }}
+          BUILD_TYPE: ${{ matrix.build_type }}
         run: |
           chmod +x gradlew
-          ./gradlew assemble${{ matrix.version }}${{ matrix.build_type }}
+          ./gradlew assemble${VERSION^}${BUILD_TYPE^}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: PvZ-TV-${{ matrix.version }}-${{ matrix.build_type }}
-          path: app/build/outputs/apk/**/PvZ-TV-*.apk
+          path: app/build/outputs/apk/${{ matrix.version }}/${{ matrix.build_type }}/*.apk
+
+      - name: Publish pre-release
+        uses: marvinpinto/action-automatic-releases@latest
+        if: >
+          github.ref == 'refs/heads/dev' &&
+          github.repository_owner == 'Dicot0721' &&
+          matrix.version == 'v115' &&
+          matrix.build_type == 'release'
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          automatic_release_tag: nightly
+          title: Nightly Build
+          files: app/build/outputs/apk/${{ matrix.version }}/${{ matrix.build_type }}/*.apk
 
   release:
-    permissions:
-      contents: write
-
     needs: [ build ]
-
-    if: >
-      github.ref == 'refs/heads/main' &&
-      github.repository == 'Dicot0721/PlantsVsZombies-AndroidTV'
-
+    if: github.ref == 'refs/heads/main' && github.repository_owner == 'Dicot0721'
     runs-on: ubuntu-latest
-
-    concurrency:
-      group: release
-      cancel-in-progress: false
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -94,22 +107,12 @@ jobs:
           echo "commits_count=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Download artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
+          name: PvZ-TV-v115-release
           path: artifact
-          pattern: PvZ-TV-*-Release
-          merge-multiple: true
 
       - name: Publish release
-        uses: marvinpinto/action-automatic-releases@latest
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: true
-          automatic_release_tag: nightly
-          title: Nightly Build
-          files: artifact/**/*.apk
-
-      - name: Archive builds
         uses: softprops/action-gh-release@v2
         with:
           repository: Dicot0721/PvZ-TV-builds
@@ -118,4 +121,4 @@ jobs:
           make_latest: true
           tag_name: ${{ steps.build_vars.outputs.date }}-${{ steps.build_vars.outputs.commits_count }}
           body: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
-          files: artifact/**/*.apk
+          files: artifact/*.apk
