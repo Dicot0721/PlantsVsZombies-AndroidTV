@@ -58,7 +58,7 @@ public:
     }
 
 protected:
-    [[gnu::visibility("default")]] static inline android_LogPriority _level = ANDROID_LOG_DEBUG;
+    static inline android_LogPriority _level = ANDROID_LOG_DEBUG;
 };
 
 } // namespace homura

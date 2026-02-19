@@ -31,7 +31,7 @@
 extern uintptr_t gLibBaseOffset;
 #endif
 
-namespace [[gnu::visibility("default")]] pvzstl {
+namespace pvzstl {
 
 template <typename SV, typename CharT>
 concept _convertible_to_string_view = std::is_convertible_v<const SV &, std::basic_string_view<CharT>> && !std::is_convertible_v<const SV &, const CharT *>;
@@ -1031,32 +1031,30 @@ struct std::hash<pvzstl::basic_string<CharT>> {
     }
 };
 
-namespace [[gnu::visibility("default")]] pvzstl {
-inline namespace literals {
-    inline namespace string_literals {
-        [[nodiscard]] inline string operator""_s(const char *str, std::size_t len) {
-            return string(str, len);
-        }
+namespace pvzstl::inline literals::inline string_literals {
 
-        [[nodiscard]] inline wstring operator""_s(const wchar_t *str, std::size_t len) {
-            return wstring(str, len);
-        }
+[[nodiscard]] inline string operator""_s(const char *str, std::size_t len) {
+    return string(str, len);
+}
+
+[[nodiscard]] inline wstring operator""_s(const wchar_t *str, std::size_t len) {
+    return wstring(str, len);
+}
 
 #ifndef PVZ_VERSION
-        [[nodiscard]] inline u8string operator""_s(const char8_t *str, std::size_t len) {
-            return u8string(str, len);
-        }
+[[nodiscard]] inline u8string operator""_s(const char8_t *str, std::size_t len) {
+    return u8string(str, len);
+}
 
-        [[nodiscard]] inline u16string operator""_s(const char16_t *str, std::size_t len) {
-            return u16string(str, len);
-        }
+[[nodiscard]] inline u16string operator""_s(const char16_t *str, std::size_t len) {
+    return u16string(str, len);
+}
 #endif // PVZ_VERSION
 
-        [[nodiscard]] inline u32string operator""_s(const char32_t *str, std::size_t len) {
-            return u32string(str, len);
-        }
-    } // namespace string_literals
-} // namespace literals
-} // namespace pvzstl
+[[nodiscard]] inline u32string operator""_s(const char32_t *str, std::size_t len) {
+    return u32string(str, len);
+}
+
+} // namespace pvzstl::inline literals::inline string_literals
 
 #endif // PVZ_STL_PVZSTL_STRING_H
