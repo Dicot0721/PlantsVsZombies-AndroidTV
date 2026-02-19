@@ -12,6 +12,9 @@ on:
 permissions:
   contents: write
 
+env:
+  SCCACHE_GHA_ENABLED: "true"
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
@@ -44,6 +47,11 @@ jobs:
           java-version: 17
           distribution: temurin
           cache: gradle
+
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.9
+        with:
+          disable_annotations: true
 
       - name: Decode keystore
         if: matrix.build_type == 'release'
