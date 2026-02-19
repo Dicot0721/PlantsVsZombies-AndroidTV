@@ -31,7 +31,7 @@
 extern uintptr_t gLibBaseOffset;
 #endif
 
-namespace pvzstl {
+namespace [[gnu::visibility("default")]] pvzstl {
 
 template <typename SV, typename CharT>
 concept _convertible_to_string_view = std::is_convertible_v<const SV &, std::basic_string_view<CharT>> && !std::is_convertible_v<const SV &, const CharT *>;
@@ -1008,13 +1008,18 @@ template <typename CharT>
     return std::move(lhs);
 }
 
+template <typename CharT>
+void swap(basic_string<CharT> &lhs, basic_string<CharT> &rhs) noexcept(noexcept(lhs.swap(rhs))) {
+    lhs.swap(rhs);
+}
+
 using string = basic_string<char>;
-using wstring = basic_string<wchar_t>; // `basic_string<int>` in PvZ
+using wstring = basic_string<wchar_t>;    // `basic_string<int>` in PvZ
+using u32string = basic_string<char32_t>; // `basic_string<int>` in PvZ
 #ifndef PVZ_VERSION
 using u8string = basic_string<char8_t>;
 using u16string = basic_string<char16_t>;
-#endif
-using u32string = basic_string<char32_t>; // `basic_string<int>` in PvZ
+#endif // PVZ_VERSION
 
 } // namespace pvzstl
 
@@ -1025,5 +1030,33 @@ struct std::hash<pvzstl::basic_string<CharT>> {
         return hash<StringView>{}(StringView{val});
     }
 };
+
+namespace [[gnu::visibility("default")]] pvzstl {
+inline namespace literals {
+    inline namespace string_literals {
+        [[nodiscard]] inline string operator""_s(const char *str, std::size_t len) {
+            return string(str, len);
+        }
+
+        [[nodiscard]] inline wstring operator""_s(const wchar_t *str, std::size_t len) {
+            return wstring(str, len);
+        }
+
+#ifndef PVZ_VERSION
+        [[nodiscard]] inline u8string operator""_s(const char8_t *str, std::size_t len) {
+            return u8string(str, len);
+        }
+
+        [[nodiscard]] inline u16string operator""_s(const char16_t *str, std::size_t len) {
+            return u16string(str, len);
+        }
+#endif // PVZ_VERSION
+
+        [[nodiscard]] inline u32string operator""_s(const char32_t *str, std::size_t len) {
+            return u32string(str, len);
+        }
+    } // namespace string_literals
+} // namespace literals
+} // namespace pvzstl
 
 #endif // PVZ_STL_PVZSTL_STRING_H

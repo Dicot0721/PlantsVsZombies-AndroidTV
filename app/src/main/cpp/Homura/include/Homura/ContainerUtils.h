@@ -25,23 +25,22 @@
 
 namespace homura::inline container {
 
-template <template <typename...> typename Map, typename Key, typename T>
-concept IsMap = std::is_same_v<std::iter_value_t<typename Map<Key, T>::const_iterator>, std::pair<const Key, T>> //
-    && requires(const Map<Key, T> &map, const Key &key) {
-           { map.find(key) } -> std::same_as<typename Map<Key, T>::const_iterator>;
-           { map.end() } -> std::same_as<typename Map<Key, T>::const_iterator>;
+template <typename T>
+concept IsMapType = (std::is_same_v<typename T::value_type, std::pair<typename T::key_type, typename T::mapped_type>>
+                     || std::is_same_v<typename T::value_type, std::pair<const typename T::key_type, typename T::mapped_type>>)
+    && requires(const T &map, const typename T::key_type &key) {
+           { map.find(key) } -> std::same_as<typename T::const_iterator>;
+           { map.end() } -> std::same_as<typename T::const_iterator>;
        };
 
-template <template <typename...> typename Map, typename Key, typename T>
-    requires IsMap<Map, Key, T>
-[[nodiscard]] std::optional<T> FindInMap(const Map<Key, T> &map, std::type_identity_t<const Key &> key) {
+template <IsMapType T>
+[[nodiscard]] auto FindInMap(const T &map, const typename T::key_type &key) -> std::optional<typename T::mapped_type> {
     auto it = map.find(key);
-    return (it != map.end()) ? std::optional<T>(it->second) : std::nullopt;
+    return (it != map.end()) ? std::optional<typename T::mapped_type>(it->second) : std::nullopt;
 }
 
-template <template <typename...> typename Map, typename Key, typename T>
-    requires IsMap<Map, Key, T>
-bool FindInMap(const Map<Key, T> &map, std::type_identity_t<const Key &> key, T &output) {
+template <IsMapType T>
+bool FindInMap(const T &map, const typename T::key_type &key, std::assignable_from<typename T::mapped_type> auto &&output) {
     auto it = map.find(key);
     if (it == map.end()) {
         return false;
