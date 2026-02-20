@@ -46,12 +46,7 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
-
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v5
-        with:
-          cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/dev' }}
-          add-job-summary: on-failure
+          cache: gradle
 
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
