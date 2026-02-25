@@ -695,8 +695,7 @@ void LawnApp::Init() {
 }
 
 void LawnApp::Load(const char *theGroupName) {
-    pvzstl::string str = StrFormat("%s", theGroupName);
-    TodLoadResources(str);
+    TodLoadResources(theGroupName);
 }
 
 // void LawnApp::DoConvertImitaterImages() {

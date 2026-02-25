@@ -267,21 +267,18 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
 
     if (leaderboardsWidget->mApp->HasFinishedAdventure()) {
         leaderboardsWidget->mLeaderboardReanimations->backgroundReanim[1]->DrawRenderGroup(g, 1);
-        pvzstl::string str = TodStringTranslate("[LEADERBOARD_STREAK]");
-        pvzstl::string str1 = TodReplaceNumberString(str, "{STREAK}", leaderboardsWidget->mLongestRecordPool);
-        Sexy::Rect theRect = {317, 658, 120, 50};
-        Sexy::Font *theFont = *Sexy_FONT_CONTINUUMBOLD14_Addr;
-        TodDrawStringWrapped(g, str1, theRect, theFont, yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
+        pvzstl::string aStr = TodReplaceNumberString(TodStringTranslate("[LEADERBOARD_STREAK]"), "{STREAK}", leaderboardsWidget->mLongestRecordPool);
+        Sexy::Rect aRect = {317, 658, 120, 50};
+        Sexy::Font *aFont = *Sexy_FONT_CONTINUUMBOLD14_Addr;
+        TodDrawStringWrapped(g, aStr, aRect, aFont, yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
     }
 
     // DrawImage(g, addonImages.survival_button, 270, 579);
 
-    pvzstl::string str2 = TodStringTranslate("[PLAYERS_HOUSE]");
-    Sexy::Rect theRect1 = {240, 70, 800, 70};
-    pvzstl::string str3 = StrFormat("%s", leaderboardsWidget->mApp->mPlayerInfo->mName);
-    pvzstl::string str4 = TodReplaceString(str2, "{PLAYER}", str3);
-    Sexy::Font *theFont1 = *Sexy_FONT_HOUSEOFTERROR28_Addr;
-    TodDrawStringWrapped(g, str4, theRect1, theFont1, white, DrawStringJustification::DS_ALIGN_CENTER, false);
+    Sexy::Rect aRect = {240, 70, 800, 70};
+    pvzstl::string aStr = TodReplaceString(TodStringTranslate("[PLAYERS_HOUSE]"), "{PLAYER}", leaderboardsWidget->mApp->mPlayerInfo->mName);
+    Sexy::Font *aFont = *Sexy_FONT_HOUSEOFTERROR28_Addr;
+    TodDrawStringWrapped(g, aStr, aRect, aFont, white, DrawStringJustification::DS_ALIGN_CENTER, false);
 
     // int plantHeight = plantPileHeight * leaderboardsWidget->mPlantTrashBin->mPileNum;
     // int zombieHeight = zombiePileHeight * leaderboardsWidget->mZombieTrashBin->mPileNum;
