@@ -71,6 +71,7 @@ protected:
 #define LOG_INFO(...) LOGGER_CALL(ANDROID_LOG_INFO, __VA_ARGS__)
 #define LOG_WARN(...) LOGGER_CALL(ANDROID_LOG_WARN, __VA_ARGS__)
 #define LOG_ERROR(...) LOGGER_CALL(ANDROID_LOG_ERROR, __VA_ARGS__)
+#define LOG_FATAL(...) LOGGER_CALL(ANDROID_LOG_FATAL, __VA_ARGS__)
 
 
 #define LOG_IF(logFunc, flag, ...) \
@@ -84,6 +85,7 @@ protected:
 #define LOG_INFO_IF(flag, ...) LOG_IF(LOG_INFO, flag, __VA_ARGS__)
 #define LOG_WARN_IF(flag, ...) LOG_IF(LOG_WARN, flag, __VA_ARGS__)
 #define LOG_ERROR_IF(flag, ...) LOG_IF(LOG_ERROR, flag, __VA_ARGS__)
+#define LOG_FATAL_IF(flag, ...) LOG_IF(LOG_FATAL, flag, __VA_ARGS__)
 
 
 #define LOG_ONCE(logFunc, ...)             \
@@ -98,5 +100,6 @@ protected:
 #define LOG_INFO_ONCE(...) LOG_ONCE(LOG_INFO, __VA_ARGS__)
 #define LOG_WARN_ONCE(...) LOG_ONCE(LOG_WARN, __VA_ARGS__)
 #define LOG_ERROR_ONCE(...) LOG_ONCE(LOG_ERROR, __VA_ARGS__)
+#define LOG_FATAL_ONCE(...) LOG_ONCE(LOG_FATAL, __VA_ARGS__)
 
 #endif // HOMURA_LOGGER_H
