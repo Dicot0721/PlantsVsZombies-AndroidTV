@@ -1945,6 +1945,7 @@ void Zombie::DrawReanim(Sexy::Graphics *g, ZombieDrawPosition &theDrawPos, int t
     Color aColorOverride(255, 255, 255, aFadeAlpha);
     Color aExtraAdditiveColor = Color::Black;
     bool aEnableExtraAdditiveDraw = false;
+    bool aColorChanged = false;
     if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_BURNED) {
         aColorOverride = Color(0, 0, 0, aFadeAlpha);
         aExtraAdditiveColor = Color::Black;
@@ -1982,9 +1983,12 @@ void Zombie::DrawReanim(Sexy::Graphics *g, ZombieDrawPosition &theDrawPos, int t
         aEnableExtraAdditiveDraw = true;
     }
 
-    aBodyReanim->mColorOverride = aColorOverride;
-    aBodyReanim->mExtraAdditiveColor = aExtraAdditiveColor;
-    aBodyReanim->mEnableExtraAdditiveDraw = aEnableExtraAdditiveDraw;
+    if (aColorOverride != aBodyReanim->mColorOverride || aExtraAdditiveColor != aBodyReanim->mExtraAdditiveColor || aEnableExtraAdditiveDraw != aBodyReanim->mEnableExtraAdditiveDraw) {
+        aColorChanged = true;
+        aBodyReanim->mColorOverride = aColorOverride;
+        aBodyReanim->mExtraAdditiveColor = aExtraAdditiveColor;
+        aBodyReanim->mEnableExtraAdditiveDraw = aEnableExtraAdditiveDraw;
+    }
 
     if (mZombieType == ZombieType::ZOMBIE_BOBSLED) {
         DrawBobsledReanim(g, theDrawPos, true);
@@ -1996,32 +2000,29 @@ void Zombie::DrawReanim(Sexy::Graphics *g, ZombieDrawPosition &theDrawPos, int t
         DrawDancerReanim(g, theDrawPos);
     } else {
         aBodyReanim->DrawRenderGroup(g, theBaseRenderGroup);
-
-        Reanimation *aHeadReanim = mApp->ReanimationGet(mSpecialHeadReanimID);
-        if (aHeadReanim && IsZombotany(mZombieType)) {
-            aHeadReanim->mColorOverride = aColorOverride;
-            aHeadReanim->mExtraAdditiveColor = aExtraAdditiveColor;
-            aHeadReanim->mEnableExtraAdditiveDraw = aEnableExtraAdditiveDraw;
-            if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_BURNED) {
-                aHeadReanim->DrawRenderGroup(g, theBaseRenderGroup);
-            }
-        }
     }
 
     if (mShieldType != ShieldType::SHIELDTYPE_NONE) {
         if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_BURNED) {
+            aColorChanged = true;
             aBodyReanim->mColorOverride = Color(0, 0, 0, aFadeAlpha);
             aBodyReanim->mExtraAdditiveColor = Color::Black;
             aBodyReanim->mEnableExtraAdditiveDraw = false;
-        } else if (mShieldJustGotShotCounter > 0) {
-            int aGrayness = mShieldJustGotShotCounter * 10;
-            aBodyReanim->mColorOverride = Color(aGrayness, aGrayness, aGrayness, aFadeAlpha);
-            aBodyReanim->mExtraAdditiveColor = Color::White;
-            aBodyReanim->mEnableExtraAdditiveDraw = true;
         } else {
-            aBodyReanim->mColorOverride = Color(255, 255, 255, aFadeAlpha);
-            aBodyReanim->mExtraAdditiveColor = Color::Black;
-            aBodyReanim->mEnableExtraAdditiveDraw = false;
+            if (mShieldJustGotShotCounter > 0) {
+                int aGrayness = mShieldJustGotShotCounter * 10;
+                aBodyReanim->mColorOverride = Color(aGrayness, aGrayness, aGrayness, aFadeAlpha);
+                aBodyReanim->mExtraAdditiveColor = Color::White;
+                aBodyReanim->mEnableExtraAdditiveDraw = true;
+                aColorChanged = true;
+            } else {
+                if (!aColorChanged) {
+                    aColorChanged = aBodyReanim->mEnableExtraAdditiveDraw || aBodyReanim->mColorOverride.mRed != 255;
+                }
+                aBodyReanim->mColorOverride = Color(255, 255, 255, aFadeAlpha);
+                aBodyReanim->mExtraAdditiveColor = Color::Black;
+                aBodyReanim->mEnableExtraAdditiveDraw = false;
+            }
         }
 
         float aShieldHitOffset = 0.0f;
@@ -2032,19 +2033,21 @@ void Zombie::DrawReanim(Sexy::Graphics *g, ZombieDrawPosition &theDrawPos, int t
         g->mTransX += aShieldHitOffset;
         aBodyReanim->DrawRenderGroup(g, RENDER_GROUP_SHIELD);
         g->mTransX -= aShieldHitOffset;
-    } else {
-        if (aEnableExtraAdditiveDraw) {
-            aBodyReanim->PropogateColorToAttachments();
+
+        if (mShieldType == ShieldType::SHIELDTYPE_NEWSPAPER || mShieldType == ShieldType::SHIELDTYPE_DOOR || mShieldType == ShieldType::SHIELDTYPE_LADDER
+            || mShieldType == ShieldType::SHIELDTYPE_TRASHCAN) {
+            aBodyReanim->mColorOverride = aColorOverride;
+            aBodyReanim->mExtraAdditiveColor = aExtraAdditiveColor;
+            aBodyReanim->mEnableExtraAdditiveDraw = aEnableExtraAdditiveDraw;
+            aBodyReanim->DrawRenderGroup(g, RENDER_GROUP_OVER_SHIELD);
         }
     }
 
-    if (mShieldType == ShieldType::SHIELDTYPE_NEWSPAPER || mShieldType == ShieldType::SHIELDTYPE_DOOR || mShieldType == ShieldType::SHIELDTYPE_LADDER
-        || mShieldType == ShieldType::SHIELDTYPE_TRASHCAN) {
-        aBodyReanim->mColorOverride = aColorOverride;
-        aBodyReanim->mExtraAdditiveColor = aExtraAdditiveColor;
-        aBodyReanim->mEnableExtraAdditiveDraw = aEnableExtraAdditiveDraw;
-        aBodyReanim->DrawRenderGroup(g, RENDER_GROUP_OVER_SHIELD);
+    if (aColorChanged) {
+        aBodyReanim->PropogateColorToAttachments();
     }
+
+    g->ClearClipRect();
 
     // 大头贴专门Draw一下
     if (IsZombatarZombie(mZombieType)) {
@@ -2053,8 +2056,6 @@ void Zombie::DrawReanim(Sexy::Graphics *g, ZombieDrawPosition &theDrawPos, int t
             aZombatarReanim->Draw(g);
         }
     }
-
-    g->ClearClipRect();
 }
 
 bool Zombie::CanLoseBodyParts() {
