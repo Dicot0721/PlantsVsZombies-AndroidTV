@@ -133,15 +133,12 @@ MemoryImage *ReanimatorCache::MakeBlankMemoryImage(int theWidth, int theHeight) 
 }
 
 Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieType) {
-    int maxWidth = 200;
-    int maxHeight = 210;
+    // TODO: 修复 BLANK 绘制异常（旗帜、植物僵尸等头部透明图绘制为乱码）
+    int maxWidth = 256;
+    int maxHeight = 256;
 
     if (theZombieType == ZombieType::ZOMBIE_ZAMBONI)
-        maxWidth = 300;
-    if (theZombieType == ZombieType::ZOMBIE_CACHED_POLEVAULTER_WITH_POLE)
-        maxWidth = 250;
-    if (theZombieType == ZombieType::ZOMBIE_BUNGEE)
-        maxHeight = 810;
+        maxWidth = 512;
 
     MemoryImage *aMemoryImage = MakeBlankCanvasImage(maxWidth, maxHeight);
     Graphics aMemoryGraphics((Image *)aMemoryImage);
