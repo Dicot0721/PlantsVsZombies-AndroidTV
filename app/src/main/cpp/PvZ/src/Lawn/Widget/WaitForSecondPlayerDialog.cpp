@@ -21,7 +21,6 @@
 #include "Homura/BitUtils.h"
 #include "Homura/Logger.h"
 #include "Homura/StringUtils.h"
-#include "Homura/TypeUtils.h"
 #include "PvZ/Android/Native/BridgeApp.h"
 #include "PvZ/Android/Native/NativeApp.h"
 #include "PvZ/GlobalVariable.h"
@@ -1226,7 +1225,7 @@ void WaitForSecondPlayerDialog::StopUdpBroadcastRoom() {
 
 
 void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int id) {
-    auto *dialog = homura::DynamicCast<Sexy::ButtonListener, WaitForSecondPlayerDialog>(listener);
+    auto *dialog = static_cast<WaitForSecondPlayerDialog *>(listener);
     const UIMode aUIMode = dialog->mUIMode;
     switch (id) {
         case 1000: // YesButton
