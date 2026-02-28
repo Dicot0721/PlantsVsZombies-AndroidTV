@@ -46,18 +46,28 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
 }
 
 VSSetupAddonWidget::~VSSetupAddonWidget() {
-    mApp->mBoard->RemoveWidget(mExtraPacketsButton);
-    mApp->mBoard->RemoveWidget(mExtraSeedsButton);
-    mApp->mBoard->RemoveWidget(mBanModeButton);
-    mApp->mBoard->RemoveWidget(mBalancePatchButton);
-    mExtraPacketsButton->_destructor();
-    mExtraPacketsButton = nullptr;
-    mExtraSeedsButton->_destructor();
-    mExtraSeedsButton = nullptr;
-    mBanModeButton->_destructor();
-    mBanModeButton = nullptr;
-    mBalancePatchButton->_destructor();
-    mBalancePatchButton = nullptr;
+    if (mApp->mBoard) {
+        if (mExtraPacketsButton) {
+            mApp->mBoard->RemoveWidget(mExtraPacketsButton);
+            mExtraPacketsButton->_destructor();
+            mExtraPacketsButton = nullptr;
+        }
+        if (mExtraSeedsButton) {
+            mApp->mBoard->RemoveWidget(mExtraSeedsButton);
+            mExtraSeedsButton->_destructor();
+            mExtraSeedsButton = nullptr;
+        }
+        if (mBanModeButton) {
+            mApp->mBoard->RemoveWidget(mBanModeButton);
+            mBanModeButton->_destructor();
+            mBanModeButton = nullptr;
+        }
+        if (mBalancePatchButton) {
+            mApp->mBoard->RemoveWidget(mBalancePatchButton);
+            mBalancePatchButton->_destructor();
+            mBalancePatchButton = nullptr;
+        }
+    }
 
     gVSSetupAddonWidget = nullptr;
 }
