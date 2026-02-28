@@ -997,7 +997,7 @@ bool LoadGameMain() {
     Sexy_MenuWidget_DrawAddr = dlsym(handle, "_ZN4Sexy10MenuWidget4DrawEPNS_8GraphicsE");
     Sexy_Widget_DeferOverlayAddr = dlsym(handle, "_ZN4Sexy6Widget12DeferOverlayEi");
     Sexy_SexyMatrix3_SexyMatrix3Addr = dlsym(handle, "_ZN4Sexy11SexyMatrix3C2Ev");
-    Sexy_ButtonWidget___DestructorAddr = dlsym(handle, "_ZN4Sexy12ButtonWidgetD2Ev");
+    Sexy_ButtonWidget__destructorAddr = dlsym(handle, "_ZN4Sexy12ButtonWidgetD2Ev");
 
 
     TodScaleTransformMatrixAddr = dlsym(handle, "_Z23TodScaleTransformMatrixRN4Sexy11SexyMatrix3Effff");

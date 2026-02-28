@@ -83,14 +83,14 @@ void ReanimatorCache::ReanimatorCacheDispose() {
 
 void ReanimatorCache::DrawCachedPlant(Graphics *graphics, float thePosX, float thePosY, SeedType theSeedType, DrawVariation theDrawVariation) {
     if (theDrawVariation == DrawVariation::VARIATION_IMITATER_LESS || theDrawVariation == DrawVariation::VARIATION_IMITATER || theDrawVariation == DrawVariation::VARIATION_NORMAL) {
-        Image *image = (Image *)mPlantImages[theSeedType];
-        if (image == nullptr) {
+        Image *aPlantImage = mPlantImages[theSeedType];
+        if (aPlantImage == nullptr) {
             return;
         }
         if (theDrawVariation == DrawVariation::VARIATION_IMITATER) {
-            image = FilterEffectGetImage(image, FilterEffect::FILTEREFFECT_WASHED_OUT);
+            aPlantImage = FilterEffectGetImage(aPlantImage, FilterEffect::FILTEREFFECT_WASHED_OUT);
         } else if (theDrawVariation == DrawVariation::VARIATION_IMITATER_LESS) {
-            image = FilterEffectGetImage(image, FilterEffect::FILTEREFFECT_LESS_WASHED_OUT);
+            aPlantImage = FilterEffectGetImage(aPlantImage, FilterEffect::FILTEREFFECT_LESS_WASHED_OUT);
         }
         int a, b, c, d;
         GetPlantImageSize(theSeedType, a, b, c, d);
@@ -98,10 +98,10 @@ void ReanimatorCache::DrawCachedPlant(Graphics *graphics, float thePosX, float t
         float yScaled = graphics->mScaleY;
         // 修复关闭3D加速后SeedPacket上不显示植物
         // if (Sexy_SexyAppBase_Is3DAccelerated(a1->mApp)) {
-        TodDrawImageScaledF(graphics, image, thePosX + xScaled * a, thePosY + yScaled * b, xScaled, yScaled);
+        TodDrawImageScaledF(graphics, aPlantImage, thePosX + xScaled * a, thePosY + yScaled * b, xScaled, yScaled);
         // } else {
         // if (xScaled == 1.0 && yScaled == 1.0) {
-        // DrawImage(graphics, image, thePosX + a, thePosY + b);
+        // DrawImage(graphics, aPlantImage, thePosX + a, thePosY + b);
         // return;
         // }
         // }
@@ -111,11 +111,8 @@ void ReanimatorCache::DrawCachedPlant(Graphics *graphics, float thePosX, float t
 }
 
 void ReanimatorCache::DrawCachedZombie(Graphics *g, float thePosX, float thePosY, ZombieType theZombieType) {
-    if (theZombieType < NUM_CACHED_ZOMBIE_TYPES) {
-        if (mZombieImages[(int)theZombieType] == nullptr)
-            mZombieImages[(int)theZombieType] = MakeCachedZombieFrame(theZombieType);
-        TodDrawImageScaledF(g, (Image *)mZombieImages[(int)theZombieType], thePosX, thePosY, g->mScaleX, g->mScaleY);
-    }
+    if (mZombieImages[theZombieType])
+        TodDrawImageScaledF(g, mZombieImages[theZombieType], thePosX, thePosY, g->mScaleX, g->mScaleY);
 }
 
 MemoryImage *ReanimatorCache::MakeBlankMemoryImage(int theWidth, int theHeight) {
@@ -141,7 +138,7 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
         maxWidth = 512;
 
     MemoryImage *aMemoryImage = MakeBlankCanvasImage(maxWidth, maxHeight);
-    Graphics aMemoryGraphics((Image *)aMemoryImage);
+    Graphics aMemoryGraphics(aMemoryImage);
     aMemoryGraphics.SetLinearBlend(true);
 
     ZombieType aUseZombieType = theZombieType;

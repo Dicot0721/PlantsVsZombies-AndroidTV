@@ -524,7 +524,7 @@ void InitHookFunction() {
 
 
     //    homura::HookFunction(ReanimatorCache_ReanimatorCacheInitializeAddr, &ReanimatorCache::ReanimatorCacheInitialize, nullptr);
-    homura::HookFunction(ReanimatorCache_ReanimatorCacheDisposeAddr, &ReanimatorCache::ReanimatorCacheDispose, nullptr);
+    //    homura::HookFunction(ReanimatorCache_ReanimatorCacheDisposeAddr, &ReanimatorCache::ReanimatorCacheDispose, nullptr);
     homura::HookFunction(ReanimatorCache_DrawCachedPlantAddr, &ReanimatorCache::DrawCachedPlant, &old_ReanimatorCache_DrawCachedPlant);
     homura::HookFunction(ReanimatorCache_UpdateReanimationForVariationAddr, &ReanimatorCache::UpdateReanimationForVariation, &old_ReanimatorCache_UpdateReanimationForVariation);
     homura::HookFunction(ReanimatorCache_LoadCachedImagesAddr, &ReanimatorCache::LoadCachedImages, &old_ReanimatorCache_LoadCachedImages);
