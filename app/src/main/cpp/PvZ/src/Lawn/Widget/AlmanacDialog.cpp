@@ -66,7 +66,7 @@ void AlmanacDialog::_constructor(LawnApp *theApp) {
     Sexy::Image *gPlantBackImage = *Sexy_IMAGE_ALMANAC_PLANTBACK_Addr;
     Sexy::Image *gPoolBackImage = *Sexy_IMAGE_ALMANAC_GROUNDNIGHTPOOL_Addr;
     Sexy::Rect aBlankRect = Rect(ALMANAC_RECT_PLANT_X + 240, ALMANAC_RECT_PLANT_Y + 60, gPoolBackImage->mWidth, gPoolBackImage->mHeight);
-    reinterpret_cast<MemoryImage *>(gPlantBackImage)->ClearRect(aBlankRect);
+    static_cast<MemoryImage *>(gPlantBackImage)->ClearRect(aBlankRect);
 }
 
 void AlmanacDialog::_destructor() {

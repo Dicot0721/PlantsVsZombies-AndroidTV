@@ -828,18 +828,18 @@ void ZombatarWidget::ButtonDepress(this ZombatarWidget &self, int id) {
             return;
 
         if (addonImages.zombatar_portrait != nullptr) {
-            reinterpret_cast<MemoryImage *>(addonImages.zombatar_portrait)->~MemoryImage();
+            static_cast<MemoryImage *>(addonImages.zombatar_portrait)->~MemoryImage();
         }
 
         MemoryImage *aImage = new MemoryImage();
         aImage->Create(addonZombatarImages.zombatar_background_blank->mWidth, addonZombatarImages.zombatar_background_blank->mHeight);
         aImage->SetImageMode(true, true);
         aImage->mIsVolatile = true;
-        Graphics graphics = Graphics(reinterpret_cast<Image *>(aImage));
+        Graphics graphics = Graphics(aImage);
         TestMenuWidget_DrawPortrait(gMainMenuZombatarWidget, &graphics, 0, 0);
         aImage->WriteToPng("ZOMBATAR.PNG");
         // StringDelete(holder);
-        addonImages.zombatar_portrait = reinterpret_cast<Image *>(aImage);
+        addonImages.zombatar_portrait = aImage;
         gMainMenuZombatarWidget->mShowExistingZombatarPortrait = true;
         gMainMenuZombatarWidget->mShowZombieTypeSelection = false;
 
@@ -883,7 +883,7 @@ void ZombatarWidget::ButtonDepress(this ZombatarWidget &self, int id) {
             return;
         gMainMenuZombatarWidget->mShowExistingZombatarPortrait = false;
         if (addonImages.zombatar_portrait != nullptr) {
-            reinterpret_cast<MemoryImage *>(addonImages.zombatar_portrait)->~MemoryImage();
+            static_cast<MemoryImage *>(addonImages.zombatar_portrait)->~MemoryImage();
             addonImages.zombatar_portrait = nullptr;
             lawnApp->EraseFile("ZOMBATAR.PNG");
         }

@@ -1175,9 +1175,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
     }
 
     // Draw UI widgets
-    GamepadApp *aGamepadApp = reinterpret_cast<GamepadApp *>(mApp);
-    bool aHasGamepad = aGamepadApp->HasGamepad();
-    if (!aHasGamepad && (!mApp->mGamePad1IsOn || !mApp->mGamePad2IsOn)) {
+    if (!mApp->HasGamepad() && (!mApp->mGamePad1IsOn || !mApp->mGamePad2IsOn)) {
         // Draw button widgets
         for (size_t i = 0; i < 4; i++) {
             GameButton *aButton[4] = {mViewLawnButton, mStoreButton, mStartButton, mAlmanacButton};

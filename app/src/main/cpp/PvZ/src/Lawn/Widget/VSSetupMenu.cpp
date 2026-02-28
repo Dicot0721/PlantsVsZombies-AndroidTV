@@ -604,7 +604,7 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             tcp_connected = true;
         } break;
         case EVENT_VSSETUPMENU_ENTER_STATE: {
-            [[maybe_unused]] int aState = reinterpret_cast<U8_Event *>(event)->data;
+            [[maybe_unused]] int aState = static_cast<U8_Event *>(event)->data;
             LOG_DEBUG("theState={}", aState);
             // GoToState(aState);
         } break;
@@ -656,7 +656,7 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT: {
-            U8U8U8U8_Event *eventButtonInit = reinterpret_cast<U8U8U8U8_Event *>(event);
+            U8U8U8U8_Event *eventButtonInit = static_cast<U8U8U8U8_Event *>(event);
             gVSSetupAddonWidget->mExtraPacketsMode = eventButtonInit->data1;
             gVSSetupAddonWidget->mExtraSeedsMode = eventButtonInit->data2;
             gVSSetupAddonWidget->mBanMode = eventButtonInit->data3;

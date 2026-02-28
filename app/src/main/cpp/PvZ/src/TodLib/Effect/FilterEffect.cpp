@@ -29,10 +29,10 @@ using namespace Sexy;
 
 MemoryImage *FilterEffectCreateImage(Image *theImage, FilterEffect theFilterEffect) {
     // MemoryImage* aImage = new MemoryImage();
-    MemoryImage *aImage = reinterpret_cast<MemoryImage *>((*gLawnApp_Addr)->CopyImage(theImage));
+    MemoryImage *aImage = static_cast<MemoryImage *>((*gLawnApp_Addr)->CopyImage(theImage));
     aImage->mWidth = theImage->mWidth;
     aImage->mHeight = theImage->mHeight;
-    FixPixelsOnAlphaEdgeForBlending(reinterpret_cast<Image *>(aImage));
+    FixPixelsOnAlphaEdgeForBlending(aImage);
 
     switch (theFilterEffect) {
         case FilterEffect::FILTEREFFECT_WASHED_OUT:
@@ -73,7 +73,7 @@ Image *FilterEffectGetImage(Image *theImage, FilterEffect theFilterEffect) {
     if (it != currentMap.end()) {
         return it->second;
     } else {
-        Sexy::Image *aFilterEffectImage = reinterpret_cast<Image *>(FilterEffectCreateImage(theImage, theFilterEffect));
+        Sexy::Image *aFilterEffectImage = FilterEffectCreateImage(theImage, theFilterEffect);
         currentMap.emplace(theImage, aFilterEffectImage);
         return aFilterEffectImage;
     }

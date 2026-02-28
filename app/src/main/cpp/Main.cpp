@@ -804,11 +804,11 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivi
     LawnApp *anApp = *gLawnApp_Addr;
     Board *aBoard = anApp->mBoard;
     auto *aFocusWidget = anApp->mWidgetManager->mFocusWidget;
-    if (aBoard && aFocusWidget == reinterpret_cast<Sexy::Widget *>(aBoard)) {
+    if (aBoard && aFocusWidget == aBoard) {
         return true;
     }
     SeedChooserScreen *aSeedChooser = anApp->mSeedChooserScreen;
-    if (anApp->IsCoopMode() && aSeedChooser && (aFocusWidget == reinterpret_cast<Sexy::Widget *>(aSeedChooser))) {
+    if (anApp->IsCoopMode() && aSeedChooser && (aFocusWidget == aSeedChooser)) {
         return true;
     }
     if (anApp->IsVSMode() && anApp->mVSSetupMenu && (anApp->mVSSetupMenu->mState == VS_SETUP_STATE_SIDES || anApp->mVSSetupMenu->mState == VS_SETUP_STATE_CUSTOM_BATTLE)) {
@@ -828,9 +828,9 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     Board *aBoard = anApp->mBoard;
     auto *aFocusWidget = anApp->mWidgetManager->mFocusWidget;
 
-    if (!aBoard || aFocusWidget != reinterpret_cast<Sexy::Widget *>(aBoard)) {
+    if (!aBoard || aFocusWidget != aBoard) {
         SeedChooserScreen *aSeedChooser = anApp->mSeedChooserScreen;
-        if (is_key_down && anApp->IsCoopMode() && aSeedChooser && aFocusWidget == reinterpret_cast<Sexy::Widget *>(aSeedChooser)) {
+        if (is_key_down && anApp->IsCoopMode() && aSeedChooser && aFocusWidget == aSeedChooser) {
             gButtonDownSeedChooser = true;
             gButtonCode = aButtonCode;
             gGamePlayerIndex = aIsPlayer2 ? 1 : 0;

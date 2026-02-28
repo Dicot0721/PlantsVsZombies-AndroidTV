@@ -252,7 +252,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             size_t eventSize = sizeof(U8_Event);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
-            U8_Event *eventPing = reinterpret_cast<U8_Event *>(base);
+            U8_Event *eventPing = static_cast<U8_Event *>(base);
 
             if (eventPing->data == 1) {
                 U8_Event eventPong = {{EVENT_SERVER_PONG}, 1};
