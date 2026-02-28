@@ -1124,7 +1124,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
         int aGrayness = 255;
         if (aChosenSeed.mSeedState != SEED_IN_CHOOSER)
             aGrayness = 55;
-        if (((SeedNotRecommendedToPick(mSeedType1) || SeedNotAllowedToPick(mSeedType1)) && aChosenSeed.mSeedState == SEED_IN_CHOOSER) || SeedNotAllowedDuringTrial(mSeedType1))
+        if ((!mIsZombieChooser && ((SeedNotRecommendedToPick(mSeedType1) || SeedNotAllowedToPick(mSeedType1))) && aChosenSeed.mSeedState == SEED_IN_CHOOSER) || SeedNotAllowedDuringTrial(mSeedType1))
             aGrayness = 115;
 
         DrawPacket(g, x, y + 5, aDisplaySeedType, SEED_NONE, 0.0f, aGrayness, &aBaseColor, true, true);
@@ -1139,7 +1139,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
         int aGrayness = 255;
         if (aChosenSeed.mSeedState != SEED_IN_CHOOSER)
             aGrayness = 55;
-        if (((SeedNotRecommendedToPick(mSeedType2) || SeedNotAllowedToPick(mSeedType2)) && aChosenSeed.mSeedState == SEED_IN_CHOOSER) || SeedNotAllowedDuringTrial(mSeedType2))
+        if ((!mIsZombieChooser && ((SeedNotRecommendedToPick(mSeedType2) || SeedNotAllowedToPick(mSeedType2))) && aChosenSeed.mSeedState == SEED_IN_CHOOSER) || SeedNotAllowedDuringTrial(mSeedType2))
             aGrayness = 115;
         DrawPacket(g, x, y + 5, aDisplaySeedType, SEED_NONE, 0.0f, aGrayness, &aBaseColor, true, true);
     }
