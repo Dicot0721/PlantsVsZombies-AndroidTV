@@ -62,6 +62,7 @@ public:
     };
 
     inline static int msNextFirstPick;
+    inline static SeedType *msRandomPools = VSSetupMenu_msRandomPools_Addr;
 
     int unkInt[5];           // 65 ~ 69
     int mInt70;              // 70

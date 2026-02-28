@@ -353,27 +353,23 @@ void VSSetupMenu::Update() {
 }
 
 void VSSetupMenu::PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
-    // 一共要选 5 个
-    //    for (int pickIndex = 0; pickIndex < 5; ++pickIndex) {
-    for (int pickIndex = 0; pickIndex < mApp->mBoard->GetNumSeedsInBank(false) - 1; ++pickIndex) {
+    // 原一共要选 5 个，此处改为 (卡槽数 - 1) 个
+    for (int num_possible = 0; num_possible < mApp->mBoard->GetNumSeedsInBank(false) - 1; ++num_possible) {
         // ------------------------------------------------------------
         // 1) 选择使用哪个 pool 组（原 v5），规则与 IDA 一致
-        // pickIndex: 0,1 -> group 0
-        //           2,3 -> group 1
-        //           4   -> group 2
+        // num_possible: 0,1 -> group 0
+        //               2,3 -> group 1
+        //               4   -> group 2
+        //        5（额外卡槽） -> group 2
         // ------------------------------------------------------------
-        int poolGroup = 0;
-        if (pickIndex >= 2) {
-            if (pickIndex <= 3)
-                poolGroup = 1;
-            else if (pickIndex == 4)
-                poolGroup = 2;
-            else
-                poolGroup = 0;
-        }
+        int pool = 0;
+        if (num_possible == 2 || num_possible == 3)
+            pool = 1;
+        else if (num_possible == 4 || num_possible == 5)
+            pool = 2;
 
         // zombies 的 pool 从 msRandomPools[48] 开始，每组 8 个
-        const int poolBase = 48 + 8 * poolGroup;
+        const int poolBase = 48 + 8 * pool;
 
         // ------------------------------------------------------------
         // 2) 统计该池有效元素个数 validCount（<=8，遇到 -1 截断）
@@ -381,8 +377,8 @@ void VSSetupMenu::PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
         // ------------------------------------------------------------
         int validCount = 0;
         for (int i = 0; i < 8; ++i) {
-            const SeedType seed = VSSetupMenu_msRandomPools_Addr[poolBase + i];
-            if (seed == SEED_NONE)
+            const SeedType aSeedType = msRandomPools[poolBase + i];
+            if (aSeedType == SEED_NONE)
                 break;
 
             ++validCount;
@@ -393,20 +389,20 @@ void VSSetupMenu::PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
         //    (1) 不能与 theZombieSeeds 重复
         //    (2) mApp->HasSeedType(seed, 1) 必须为真
         // ------------------------------------------------------------
-        SeedType chosen = SEED_NONE;
+        SeedType aSeedType = SEED_NONE;
         while (true) {
             // 挑到一个不重复的候选
             do {
                 const int idx = Sexy::Rand(validCount);
-                chosen = VSSetupMenu_msRandomPools_Addr[poolBase + idx];
-            } while (std::find(theZombieSeeds.begin(), theZombieSeeds.end(), chosen) != theZombieSeeds.end());
+                aSeedType = msRandomPools[poolBase + idx];
+            } while (std::find(theZombieSeeds.begin(), theZombieSeeds.end(), aSeedType) != theZombieSeeds.end());
 
             // 校验可用
-            if (mApp->HasSeedType(chosen, 1))
+            if (mApp->HasSeedType(aSeedType, 1))
                 break;
         }
 
-        theZombieSeeds.push_back(chosen);
+        theZombieSeeds.push_back(aSeedType);
     }
 }
 
@@ -424,30 +420,25 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
     const int poolGroupOffset = 3 * alreadyPicked; // 0 或 3
 
     // ------------------------------------------------------------
-    // 2) 从随机池中继续挑，直到总共 5 个 plant seed
+    // 2) 从随机池中继续挑，直到总共 (卡槽数 - 1) 个 plant seed
     // ------------------------------------------------------------
 
-    //    for (int pickIndex = alreadyPicked; pickIndex < 5; ++pickIndex) {
-    for (int pickIndex = alreadyPicked; pickIndex < mApp->mBoard->GetNumSeedsInBank(true) - 1; ++pickIndex) {
-        // 原 v6：根据 pickIndex 选择池子变体
-        int poolVariantIndex = 0;
-        if (pickIndex >= 2) {
-            if (pickIndex <= 3)
-                poolVariantIndex = 1;
-            else if (pickIndex == 4)
-                poolVariantIndex = 2;
-            else
-                poolVariantIndex = 0;
-        }
+    for (int num_possible = alreadyPicked; num_possible < mApp->mBoard->GetNumSeedsInBank(true) - 1; ++num_possible) {
+        // 原 v6：根据 num_possible 选择池子变体
+        int pool = 0;
+        if (num_possible == 2 || num_possible == 3)
+            pool = 1;
+        else if (num_possible == 4 || num_possible == 5)
+            pool = 2;
 
         // 池子基址：8 个一组
-        const int poolBase = 8 * (poolGroupOffset + poolVariantIndex);
+        const int poolBase = 8 * (poolGroupOffset + pool);
 
         // 统计有效元素数：最多 8 个，遇到 -1 截断
         int validCount = 0;
         for (int i = 0; i < 8; ++i) {
-            const SeedType seed = VSSetupMenu_msRandomPools_Addr[poolBase + i];
-            if (seed == -1)
+            const SeedType aSeedType = msRandomPools[poolBase + i];
+            if (aSeedType == SeedType::SEED_NONE)
                 break;
 
             ++validCount;
@@ -456,24 +447,24 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
         // 从该池里随机挑一个：
         // 1) 不与 thePlantSeeds 重复
         // 2) mApp->HasSeedType 为真
-        SeedType chosen = SEED_NONE;
+        SeedType aSeedType = SEED_NONE;
         while (true) {
             // 先挑一个不重复的
             do {
                 const int idx = Sexy::Rand(validCount);
-                chosen = (SeedType)VSSetupMenu_msRandomPools_Addr[poolBase + idx];
-            } while (std::find(thePlantSeeds.begin(), thePlantSeeds.end(), chosen) != thePlantSeeds.end());
+                aSeedType = (SeedType)msRandomPools[poolBase + idx];
+            } while (std::find(thePlantSeeds.begin(), thePlantSeeds.end(), aSeedType) != thePlantSeeds.end());
 
             // 再确认可用
-            if (mApp->HasSeedType(chosen, 0))
+            if (mApp->HasSeedType(aSeedType, 0))
                 break;
         }
 
-        thePlantSeeds.push_back(chosen);
+        thePlantSeeds.push_back(aSeedType);
     }
 
     // ------------------------------------------------------------
-    // 3) 如果 zombieSeeds 里包含 75，则做“3 -> 23”替换（前提拥有 seed 3）
+    // 3) 如果 zombieSeeds 里包含蹦蹦僵尸，则做 “坚果 -> 高坚果” 替换（前提拥有坚果）
     // ------------------------------------------------------------
     const bool zombieHasPogo = (std::find(theZombieSeeds.begin(), theZombieSeeds.end(), SEED_ZOMBIE_POGO) != theZombieSeeds.end());
 
