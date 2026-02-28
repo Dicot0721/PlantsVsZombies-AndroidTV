@@ -998,6 +998,9 @@ inline void *Sexy_WidgetContainer_MarkDirtyAddr;
 inline void *Sexy_MenuWidget_DrawAddr;
 inline void *Sexy_Widget_DeferOverlayAddr;
 inline void *Sexy_SexyMatrix3_SexyMatrix3Addr;
+inline void *Sexy_ButtonWidget___DestructorAddr;
+
+
 inline void *TodScaleTransformMatrixAddr;
 inline void *TodDrawStringWrappedAddr;
 inline void *TodDrawStringMatrixAddr;

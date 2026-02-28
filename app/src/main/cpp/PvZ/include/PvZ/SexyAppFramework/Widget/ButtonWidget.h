@@ -57,6 +57,10 @@ public:
     int unkMem2;            // 203
     // 大小204个整数
 
+    void _destructor() {
+        reinterpret_cast<void (*)(ButtonWidget *)>(Sexy_ButtonWidget___DestructorAddr)(this);
+    }
+
 protected:
     ButtonWidget() = default;
     ~ButtonWidget() = default;

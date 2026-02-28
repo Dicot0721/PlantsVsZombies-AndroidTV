@@ -46,7 +46,19 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
 }
 
 VSSetupAddonWidget::~VSSetupAddonWidget() {
-    SetDisable();
+    mApp->mBoard->RemoveWidget(mExtraPacketsButton);
+    mApp->mBoard->RemoveWidget(mExtraSeedsButton);
+    mApp->mBoard->RemoveWidget(mBanModeButton);
+    mApp->mBoard->RemoveWidget(mBalancePatchButton);
+    mExtraPacketsButton->_destructor();
+    mExtraPacketsButton = nullptr;
+    mExtraSeedsButton->_destructor();
+    mExtraSeedsButton = nullptr;
+    mBanModeButton->_destructor();
+    mBanModeButton = nullptr;
+    mBalancePatchButton->_destructor();
+    mBalancePatchButton = nullptr;
+
     gVSSetupAddonWidget = nullptr;
 }
 
