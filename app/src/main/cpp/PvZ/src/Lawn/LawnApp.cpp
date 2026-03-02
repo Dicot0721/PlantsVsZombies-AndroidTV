@@ -41,72 +41,79 @@ using namespace Sexy;
 
 // 此处写明具体每个贴图对应哪个文件.
 void LawnApp::LoadAddonImages() {
-    addonImages.pole_night = GetImageByFileName("addonFiles/images/pole_night");
-    addonImages.trees_night = GetImageByFileName("addonFiles/images/trees_night");
-    addonImages.googlyeye = GetImageByFileName("addonFiles/images/googlyeye");
-    addonImages.squirrel = GetImageByFileName("addonFiles/images/squirrel");
-    addonImages.stripe_day_coop = GetImageByFileName("addonFiles/images/stripe_day_coop");
-    addonImages.stripe_pool_coop = GetImageByFileName("addonFiles/images/stripe_pool_coop");
-    addonImages.stripe_roof_left = GetImageByFileName("addonFiles/images/stripe_roof_left");
-    addonImages.butter_glove = GetImageByFileName("addonFiles/images/butter_glove");
-    addonImages.custom_cobcannon = GetImageByFileName("addonFiles/images/custom_cobcannon");
-    addonImages.hood1_house = GetImageByFileName("addonFiles/images/hood1_house");
-    addonImages.hood2_house = GetImageByFileName("addonFiles/images/hood2_house");
-    addonImages.hood3_house = GetImageByFileName("addonFiles/images/hood3_house");
-    addonImages.hood4_house = GetImageByFileName("addonFiles/images/hood4_house");
-    addonImages.house_hill_house = GetImageByFileName("addonFiles/images/house_hill_house");
-    addonImages.achievement_homeLawnsecurity = GetImageByFileName("addonFiles/images/achievement_homeLawnsecurity");
-    addonImages.achievement_chomp = GetImageByFileName("addonFiles/images/achievement_chomp");
-    addonImages.achievement_closeshave = GetImageByFileName("addonFiles/images/achievement_closeshave");
-    addonImages.achievement_coop = GetImageByFileName("addonFiles/images/achievement_coop");
-    addonImages.achievement_explodonator = GetImageByFileName("addonFiles/images/achievement_explodonator");
-    addonImages.achievement_garg = GetImageByFileName("addonFiles/images/achievement_garg");
-    addonImages.achievement_immortal = GetImageByFileName("addonFiles/images/achievement_immortal");
-    addonImages.achievement_shop = GetImageByFileName("addonFiles/images/achievement_shop");
-    addonImages.achievement_soilplants = GetImageByFileName("addonFiles/images/achievement_soilplants");
-    addonImages.achievement_tree = GetImageByFileName("addonFiles/images/achievement_tree");
-    addonImages.achievement_versusz = GetImageByFileName("addonFiles/images/achievement_versusz");
-    addonImages.achievement_morticulturalist = GetImageByFileName("addonFiles/images/achievement_morticulturalist");
-    addonImages.hole = GetImageByFileName("addonFiles/images/hole");
-    addonImages.hole_bjorn = GetImageByFileName("addonFiles/images/hole_bjorn");
-    addonImages.hole_china = GetImageByFileName("addonFiles/images/hole_china");
-    addonImages.hole_gems = GetImageByFileName("addonFiles/images/hole_gems");
-    addonImages.hole_chuzzle = GetImageByFileName("addonFiles/images/hole_chuzzle");
-    addonImages.hole_heavyrocks = GetImageByFileName("addonFiles/images/hole_heavyrocks");
-    addonImages.hole_duwei = GetImageByFileName("addonFiles/images/hole_duwei");
-    addonImages.hole_pipe = GetImageByFileName("addonFiles/images/hole_pipe");
-    addonImages.hole_tiki = GetImageByFileName("addonFiles/images/hole_tiki");
-    addonImages.hole_worm = GetImageByFileName("addonFiles/images/hole_worm");
-    addonImages.hole_top = GetImageByFileName("addonFiles/images/hole_top");
-    addonImages.plant_can = GetImageByFileName("addonFiles/images/plant_can");
-    addonImages.zombie_can = GetImageByFileName("addonFiles/images/zombie_can");
-    addonImages.plant_pile01_stack01 = GetImageByFileName("addonFiles/images/plant_pile01_stack01");
-    addonImages.plant_pile01_stack02 = GetImageByFileName("addonFiles/images/plant_pile01_stack02");
-    addonImages.plant_pile02_stack01 = GetImageByFileName("addonFiles/images/plant_pile02_stack01");
-    addonImages.plant_pile02_stack02 = GetImageByFileName("addonFiles/images/plant_pile02_stack02");
-    addonImages.plant_pile03_stack01 = GetImageByFileName("addonFiles/images/plant_pile03_stack01");
-    addonImages.plant_pile03_stack02 = GetImageByFileName("addonFiles/images/plant_pile03_stack02");
-    addonImages.zombie_pile01_stack01 = GetImageByFileName("addonFiles/images/zombie_pile01_stack01");
-    addonImages.zombie_pile01_stack02 = GetImageByFileName("addonFiles/images/zombie_pile01_stack02");
-    addonImages.zombie_pile01_stack03 = GetImageByFileName("addonFiles/images/zombie_pile01_stack03");
-    addonImages.zombie_pile02_stack01 = GetImageByFileName("addonFiles/images/zombie_pile02_stack01");
-    addonImages.zombie_pile02_stack02 = GetImageByFileName("addonFiles/images/zombie_pile02_stack02");
-    addonImages.zombie_pile02_stack03 = GetImageByFileName("addonFiles/images/zombie_pile02_stack03");
-    addonImages.zombie_pile03_stack01 = GetImageByFileName("addonFiles/images/zombie_pile03_stack01");
-    addonImages.zombie_pile03_stack02 = GetImageByFileName("addonFiles/images/zombie_pile03_stack02");
-    addonImages.zombie_pile03_stack03 = GetImageByFileName("addonFiles/images/zombie_pile03_stack03");
-    addonImages.survival_button = GetImageByFileName("addonFiles/images/survival_button");
-    addonImages.leaderboards = GetImageByFileName("addonFiles/images/leaderboards");
-    addonImages.SelectorScreen_WoodSign3 = GetImageByFileName("addonFiles/images/ZombatarWidget/SelectorScreen_WoodSign3");
-    addonImages.SelectorScreen_WoodSign3_press = GetImageByFileName("addonFiles/images/ZombatarWidget/SelectorScreen_WoodSign3_press");
-    addonImages.zombatar_portrait = GetImageByFileName("ZOMBATAR");
-    addonImages.crater_night_roof_center = GetImageByFileName("addonFiles/images/crater_night_roof_center");
-    addonImages.crater_night_roof_center->mNumRows = 1;
-    addonImages.crater_night_roof_center->mNumCols = 2;
-    addonImages.crater_night_roof_left = GetImageByFileName("addonFiles/images/crater_night_roof_left");
-    addonImages.crater_night_roof_left->mNumRows = 1;
-    addonImages.crater_night_roof_left->mNumCols = 2;
-    addonImages.leaderboard_selector = GetImageByFileName("images/leaderboard_selector");
+    /*   贴图           路径          行数           列数    */
+    static constexpr std::tuple<Sexy::Image *&, const char *, unsigned int, unsigned int> initList[] = {
+        {addonImages.pole_night, "addonFiles/images/trees_night", 1, 1},
+        {addonImages.trees_night, "addonFiles/images/trees_night", 1, 1},
+        {addonImages.googlyeye, "addonFiles/images/googlyeye", 1, 1},
+        {addonImages.squirrel, "addonFiles/images/squirrel", 1, 1},
+        {addonImages.stripe_day_coop, "addonFiles/images/stripe_day_coop", 1, 1},
+        {addonImages.stripe_pool_coop, "addonFiles/images/stripe_pool_coop", 1, 1},
+        {addonImages.stripe_roof_left, "addonFiles/images/stripe_roof_left", 1, 1},
+        {addonImages.butter_glove, "addonFiles/images/butter_glove", 1, 1},
+        {addonImages.custom_cobcannon, "addonFiles/images/custom_cobcannon", 1, 1},
+        {addonImages.hood1_house, "addonFiles/images/hood1_house", 1, 1},
+        {addonImages.hood2_house, "addonFiles/images/hood2_house", 1, 1},
+        {addonImages.hood3_house, "addonFiles/images/hood3_house", 1, 1},
+        {addonImages.hood4_house, "addonFiles/images/hood4_house", 1, 1},
+        {addonImages.house_hill_house, "addonFiles/images/house_hill_house", 1, 1},
+        {addonImages.achievement_homeLawnsecurity, "addonFiles/images/achievement_homeLawnsecurity", 1, 1},
+        {addonImages.achievement_chomp, "addonFiles/images/achievement_chomp", 1, 1},
+        {addonImages.achievement_closeshave, "addonFiles/images/achievement_closeshave", 1, 1},
+        {addonImages.achievement_coop, "addonFiles/images/achievement_coop", 1, 1},
+        {addonImages.achievement_explodonator, "addonFiles/images/achievement_explodonator", 1, 1},
+        {addonImages.achievement_garg, "addonFiles/images/achievement_garg", 1, 1},
+        {addonImages.achievement_immortal, "addonFiles/images/achievement_immortal", 1, 1},
+        {addonImages.achievement_shop, "addonFiles/images/achievement_shop", 1, 1},
+        {addonImages.achievement_soilplants, "addonFiles/images/achievement_soilplants", 1, 1},
+        {addonImages.achievement_tree, "addonFiles/images/achievement_tree", 1, 1},
+        {addonImages.achievement_versusz, "addonFiles/images/achievement_versusz", 1, 1},
+        {addonImages.achievement_morticulturalist, "addonFiles/images/achievement_morticulturalist", 1, 1},
+        {addonImages.hole, "addonFiles/images/hole", 1, 1},
+        {addonImages.hole_bjorn, "addonFiles/images/hole_bjorn", 1, 1},
+        {addonImages.hole_china, "addonFiles/images/hole_china", 1, 1},
+        {addonImages.hole_gems, "addonFiles/images/hole_gems", 1, 1},
+        {addonImages.hole_chuzzle, "addonFiles/images/hole_chuzzle", 1, 1},
+        {addonImages.hole_heavyrocks, "addonFiles/images/hole_heavyrocks", 1, 1},
+        {addonImages.hole_duwei, "addonFiles/images/hole_duwei", 1, 1},
+        {addonImages.hole_pipe, "addonFiles/images/hole_pipe", 1, 1},
+        {addonImages.hole_tiki, "addonFiles/images/hole_tiki", 1, 1},
+        {addonImages.hole_worm, "addonFiles/images/hole_worm", 1, 1},
+        {addonImages.hole_top, "addonFiles/images/hole_top", 1, 1},
+        {addonImages.plant_can, "addonFiles/images/plant_can", 1, 1},
+        {addonImages.zombie_can, "addonFiles/images/zombie_can", 1, 1},
+        {addonImages.plant_pile01_stack01, "addonFiles/images/plant_pile01_stack01", 1, 1},
+        {addonImages.plant_pile01_stack02, "addonFiles/images/plant_pile01_stack02", 1, 1},
+        {addonImages.plant_pile02_stack01, "addonFiles/images/plant_pile02_stack01", 1, 1},
+        {addonImages.plant_pile02_stack02, "addonFiles/images/plant_pile02_stack02", 1, 1},
+        {addonImages.plant_pile03_stack01, "addonFiles/images/plant_pile03_stack01", 1, 1},
+        {addonImages.plant_pile03_stack02, "addonFiles/images/plant_pile03_stack02", 1, 1},
+        {addonImages.zombie_pile01_stack01, "addonFiles/images/zombie_pile01_stack01", 1, 1},
+        {addonImages.zombie_pile01_stack02, "addonFiles/images/zombie_pile01_stack02", 1, 1},
+        {addonImages.zombie_pile01_stack03, "addonFiles/images/zombie_pile01_stack03", 1, 1},
+        {addonImages.zombie_pile02_stack01, "addonFiles/images/zombie_pile02_stack01", 1, 1},
+        {addonImages.zombie_pile02_stack02, "addonFiles/images/zombie_pile02_stack02", 1, 1},
+        {addonImages.zombie_pile02_stack03, "addonFiles/images/zombie_pile02_stack03", 1, 1},
+        {addonImages.zombie_pile03_stack01, "addonFiles/images/zombie_pile03_stack01", 1, 1},
+        {addonImages.zombie_pile03_stack02, "addonFiles/images/zombie_pile03_stack02", 1, 1},
+        {addonImages.zombie_pile03_stack03, "addonFiles/images/zombie_pile03_stack03", 1, 1},
+        {addonImages.survival_button, "addonFiles/images/survival_button", 1, 1},
+        {addonImages.leaderboards, "addonFiles/images/leaderboards", 1, 1},
+        {addonImages.SelectorScreen_WoodSign3, "addonFiles/images/ZombatarWidget/SelectorScreen_WoodSign3", 1, 1},
+        {addonImages.SelectorScreen_WoodSign3_press, "addonFiles/images/ZombatarWidget/SelectorScreen_WoodSign3_press", 1, 1},
+        {addonImages.zombatar_portrait, "ZOMBATAR", 1, 1},
+        {addonImages.crater_night_roof_center, "addonFiles/images/crater_night_roof_center", 1, 2},
+        {addonImages.crater_night_roof_left, "addonFiles/images/crater_night_roof_left", 1, 2},
+        {addonImages.leaderboard_selector, "images/leaderboard_selector", 1, 1}};
+
+    for (const auto &[imagePtr, filePath, rows, cols] : initList) {
+        imagePtr = GetImageByFileName(filePath);
+        if (imagePtr != nullptr && (rows > 1 || cols > 1)) {
+            // 如果图片包含多行或多列，则设置其mNumRows和mNumCols属性
+            imagePtr->mNumRows = rows;
+            imagePtr->mNumCols = cols;
+        }
+    }
 
     //    addonImages.IMAGE_SEEDCHOOSER_LARGE_BACKGROUND2 = GetImageByFileName("addonFiles/images/SeedChooser_Large_Background2");
     //    addonImages.IMAGE_ZOMBIEJACKSONHEAD = GetImageByFileName("addonFiles/particles/ZombieJacksonHead");
@@ -126,7 +133,7 @@ void LawnApp::LoadAddonImages() {
     //    addonImages.VSRoof = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
     //    addonImages.VSRoofNight = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
 
-    int addonImagesNum = (sizeof(AddonImages) / sizeof(Sexy::Image *));
+    constexpr unsigned int addonImagesNum = (sizeof(AddonImages) / sizeof(Sexy::Image *));
     mCompletedLoadingThreadTasks += 9 * addonImagesNum;
 
     // for (int i = 0; i < addonImagesNum; ++i) {

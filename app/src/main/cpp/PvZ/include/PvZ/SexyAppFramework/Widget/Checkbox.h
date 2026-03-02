@@ -26,9 +26,8 @@
 
 namespace Sexy {
 
-class Checkbox : public Widget {
+class Checkbox : public Sexy::SelectableWidget {
 public:
-    int unknownMember[8];   // 64 ~ 71
     int *mListener;         // 72
     Image *mUncheckedImage; // 73
     Image *mCheckedImage;   // 74

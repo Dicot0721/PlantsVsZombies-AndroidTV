@@ -1106,7 +1106,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
     // Draw cursor selectors for two players
     for (int aPlayerIndex = 0; aPlayerIndex < 2; aPlayerIndex++) {
         int aPlayerState = (aPlayerIndex ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1)->mPlayerIndex2;
-        if (aPlayerState != -1 && !unkMems3[3]) {
+        if (aPlayerState != -1 && !unkMems3) {
             if (aPlayerState == mPlayerIndex || !mApp->IsVSMode()) {
                 Image *aSelectorImage = (aPlayerState == mApp->mTwoPlayerState) ? *Sexy::IMAGE_SEED_SELECTOR_BLUE : *Sexy::IMAGE_SEED_SELECTOR;
 

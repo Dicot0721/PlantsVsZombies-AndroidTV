@@ -22,13 +22,13 @@
 
 #include "PvZ/Symbols.h"
 
+#include "ButtonListener.h"
 #include "Widget.h"
 
 namespace Sexy {
 
-class ScrollbarWidget : public Widget {
+class ScrollbarWidget : public Widget, public ButtonListener {
 public:
-    int unkMem;             // 64
     Widget *mUpButton;      // 65
     Widget *mDownButton;    // 66
     bool mInvisIfNoScroll;  // 268

@@ -12,6 +12,9 @@ build/
 # CXX compile cache
 .cxx/
 
+# Visual Studio Code
+.vscode/
+
 # Generated files
 bin/
 

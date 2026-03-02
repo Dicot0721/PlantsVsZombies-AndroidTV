@@ -721,7 +721,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
     old_VSSetupMenu_OnStateEnter(this, theState);
 
     if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
-        mNextFirstPick = msNextFirstPick;
+        mSeedPickTurn = msNextFirstPick;
     }
 }
 
