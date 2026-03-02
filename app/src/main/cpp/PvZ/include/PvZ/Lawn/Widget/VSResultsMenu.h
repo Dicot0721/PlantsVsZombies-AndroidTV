@@ -38,7 +38,9 @@ public:
     int mSparkleCounter;                 // 73
     int mSmokeCounter;                   // 74
     int mResultsButtonId;                // 75
-    int unk2[6];                         // 76 ~ 81
+    int unk2[2];                         // 76 ~ 77
+    int mSides[2];                       // 78 ~ 79
+    int unk3[2];                         // 80 ~ 81
     ParticleSystemID mSparkleParticleID; // 82
     ParticleSystemID mSmokeParticleID;   // 83
     int mUpdateCounter;                  // 84

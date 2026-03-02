@@ -32,7 +32,7 @@ using namespace Sexy;
 
 void VSSetupMenu::_constructor() {
     old_VSSetupMenu_Constructor(this);
-    msNextFirstPick = VS_FIRST_PICK_ZOMBIE;
+    msNextFirstPick = VSPickTurn::VS_PICK_TURN_ZOMBIE;
 
     // 拓展卡槽,禁选模式
     gVSSetupAddonWidget = new VSSetupAddonWidget(this);
@@ -721,7 +721,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
     old_VSSetupMenu_OnStateEnter(this, theState);
 
     if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
-        mNextFirstPick = msNextFirstPick;
+        mSeedPickTurn = msNextFirstPick;
     }
 }
 
@@ -730,24 +730,6 @@ void VSSetupMenu::ButtonPress(int theId) {
 }
 
 void VSSetupMenu::ButtonDepress(int theId) {
-    if (!isKeyboardTwoPlayerMode && mState == VS_SETUP_STATE_SIDES) {
-        // 自动分配阵营
-        // GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_LEFT, 0, 0);
-        // GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_DPAD_RIGHT, 1, 0);
-        if (mSides[0] != -1 && mSides[1] != -1 && mSides[0] != mSides[1]) {
-            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
-            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
-        }
-        //        else {
-        //            return;
-        // // 自动分配阵营
-        // mSides[0] = 0;
-        // mSides[1] = 1;
-        // GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
-        // GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
-        //        }
-    }
-
     if (gVSSetupRequestState == theId) {
         gVSSetupRequestState = 0;
     }
@@ -764,40 +746,102 @@ void VSSetupMenu::ButtonDepress(int theId) {
         sendWithSize(tcpClientSocket, &event, sizeof(U8_Event), 0);
     }
 
-    old_VSSetupMenu_ButtonDepress(this, theId);
-
-    // 对战额外卡槽
     int aNumPackets = mApp->mBoard->GetNumSeedsInBank(false);
 
-    SeedBank *aSeedBank1 = mApp->mBoard->mSeedBank[0];
-    SeedBank *aSeedBank2 = mApp->mBoard->mSeedBank[1];
+    SeedBank *aPlantBank = mApp->mBoard->mSeedBank[0];
+    SeedBank *aZombieBank = mApp->mBoard->mSeedBank[1];
 
-    aSeedBank1->mNumPackets = aNumPackets;
-    aSeedBank2->mNumPackets = aNumPackets;
+    aPlantBank->mNumPackets = aZombieBank->mNumPackets = aNumPackets;
+
+    // 修复“额外卡槽”开启后卡槽位置不正确
+    for (int i = 0; i < SEEDBANK_MAX; i++) {
+        SeedPacket *aPlantPacket = &aPlantBank->mSeedPackets[i];
+        SeedPacket *aZombiePacket = &aZombieBank->mSeedPackets[i];
+        aPlantPacket->mIndex = i;
+        aPlantPacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 0, false);
+        aZombiePacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 1, true);
+    }
 
     switch (theId) {
-        case VSSetupMenu_Quick_Play:
-            if (mState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE && aNumPackets == 7) {
-                aSeedBank1->mSeedPackets[3].SetPacketType(SeedType::SEED_TORCHWOOD, SeedType::SEED_NONE);
-                aSeedBank1->mSeedPackets[4].SetPacketType(SeedType::SEED_POTATOMINE, SeedType::SEED_NONE);
-                aSeedBank1->mSeedPackets[5].SetPacketType(SeedType::SEED_SQUASH, SeedType::SEED_NONE);
-                aSeedBank1->mSeedPackets[6].SetPacketType(SeedType::SEED_JALAPENO, SeedType::SEED_NONE);
-                aSeedBank2->mSeedPackets[4].SetPacketType(SeedType::SEED_ZOMBIE_PAIL, SeedType::SEED_NONE);
-                aSeedBank2->mSeedPackets[5].SetPacketType(SeedType::SEED_ZOMBIE_FOOTBALL, SeedType::SEED_NONE);
-                aSeedBank2->mSeedPackets[6].SetPacketType(SeedType::SEED_ZOMBIE_FLAG, SeedType::SEED_NONE);
-            }
-            break;
-        case VSSetupMenu_Custom_Battle:
-            if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
-                gVSSetupAddonWidget->SetDisable();
-                PickBackgroundImmediately();
-            }
-            if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBanMode) { // 禁选模式下交换双方控制权
-                mApp->mBoard->SwitchGamepadControls();
-            }
-            break;
-        case VSSetupMenu_Random_Battle:
-            break;
+        if (mState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE) {
+            case VSSetupMenu_Quick_Play: {
+                for (int aPlayerIndex = 0; aPlayerIndex < 2; ++aPlayerIndex) {
+                    for (int aPacketIndex = 0; aPacketIndex < 6; ++aPacketIndex) {
+                        SeedType aSeedType = msQuickPlayDecks[aPlayerIndex][aPacketIndex];
+                        mApp->mBoard->mSeedBank[aPlayerIndex]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
+                    }
+                }
+
+                mSetupMode = VSSetupMode::VS_SETUP_MODE_QUICK_PLAY;
+                CloseVSSetup(false);
+
+                if (mApp->mPlayerInfo->mVS7PacketsMode) { // 额外卡槽
+                    aPlantBank->mSeedPackets[6].SetPacketType(SeedType::SEED_TORCHWOOD, SeedType::SEED_NONE);
+                    aZombieBank->mSeedPackets[6].SetPacketType(SeedType::SEED_ZOMBIE_PAIL, SeedType::SEED_NONE);
+                }
+            } break;
+
+            case VSSetupMenu_Custom_Battle: {
+                mApp->ShowSeedChooserScreen();
+                mApp->ShowZombieChooserScreen();
+
+                for (int aPlayerIndex = 0; aPlayerIndex < 2; ++aPlayerIndex) {
+                    int aSides = mSides[aPlayerIndex];
+                    int aControllerIdx = mControllerIndex[aPlayerIndex];
+
+                    if (aSides == 1) {
+                        mApp->mZombieChooserScreen->mPlayerIndex = aControllerIdx;
+                    } else if (aSides == 0) {
+                        mApp->mSeedChooserScreen->mPlayerIndex = aControllerIdx;
+                    }
+                }
+
+                mSetupMode = VSSetupMode::VS_SETUP_MODE_CUSTOM_BATTLE;
+                GoToState(VSSetupState::VS_SETUP_STATE_CUSTOM_BATTLE);
+
+                if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
+                    gVSSetupAddonWidget->SetDisable();
+                    PickBackgroundImmediately();
+                }
+                if (mApp->mPlayerInfo->mVSBanMode) { // 禁选模式下交换双方控制权
+                    mApp->mBoard->SwitchGamepadControls();
+                }
+            } break;
+
+            case VSSetupMenu_Random_Battle: {
+                std::vector<SeedType> aZombieSeeds;
+                aZombieSeeds.clear();
+
+                PickRandomZombies(aZombieSeeds);
+
+                mApp->mBoard->mSeedBank[1]->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE, SeedType::SEED_NONE);
+
+                if (!aZombieSeeds.empty()) {
+                    for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
+                        SeedType aZombieSeed = aZombieSeeds[aPacketIndex - 1];
+                        mApp->mBoard->mSeedBank[1]->mSeedPackets[aPacketIndex].SetPacketType(aZombieSeed, SeedType::SEED_NONE);
+                    }
+                }
+
+                std::vector<SeedType> aPlantSeeds;
+                aPlantSeeds.clear();
+
+                PickRandomPlants(aPlantSeeds, aZombieSeeds);
+
+                mApp->mBoard->mSeedBank[0]->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
+
+                if (!aPlantSeeds.empty()) {
+                    for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
+                        SeedType currentPlantSeed = aPlantSeeds[aPacketIndex - 1];
+                        mApp->mBoard->mSeedBank[0]->mSeedPackets[aPacketIndex].SetPacketType(currentPlantSeed, SeedType::SEED_NONE);
+                    }
+                }
+
+                mSetupMode = VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE;
+                CloseVSSetup(false);
+            } break;
+        }
+
         case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets: // 额外卡槽
         case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds:   // 拓展选卡
         case VSSetupAddonWidget::VSSetupAddonWidget_BanMode:      // 禁选模式
@@ -806,15 +850,6 @@ void VSSetupMenu::ButtonDepress(int theId) {
             break;
         default:
             break;
-    }
-
-    // 修复“额外卡槽”开启后卡槽位置不正确
-    for (int i = 0; i < SEEDBANK_MAX; i++) {
-        SeedPacket *aPacket = &aSeedBank1->mSeedPackets[i];
-        SeedPacket *aPacket2 = &aSeedBank2->mSeedPackets[i];
-        aPacket->mIndex = i;
-        aPacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 0, false);
-        aPacket2->mX = mApp->mBoard->GetSeedPacketPositionX(i, 1, true);
     }
 }
 

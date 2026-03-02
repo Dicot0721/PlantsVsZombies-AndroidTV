@@ -23,6 +23,7 @@
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/Widget/VSSetupAddonWidget.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
+#include "PvZ/SexyAppFramework/Widget/MenuWidget.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
 #include "WaitForSecondPlayerDialog.h"
@@ -40,9 +41,9 @@ enum VSSetupMode {
     VS_SETUP_MODE_RANDOM_BATTLE = 2, // 随机战场
 };
 
-enum VSFirstPick {
-    VS_FIRST_PICK_PLANT = 0,
-    VS_FIRST_PICK_ZOMBIE = 1,
+enum VSPickTurn {
+    VS_PICK_TURN_PLANT = 0,
+    VS_PICK_TURN_ZOMBIE = 1,
 };
 
 namespace Sexy {
@@ -53,7 +54,7 @@ class LawnApp;
 class Board;
 class DefaultPlayerInfo;
 
-class VSSetupMenu : public Sexy::Widget, public Sexy::ButtonListener {
+class VSSetupMenu : public Sexy::MenuWidget {
 public:
     enum {
         VSSetupMenu_Quick_Play = 9,     // 快速游戏
@@ -61,7 +62,13 @@ public:
         VSSetupMenu_Random_Battle = 11, // 随机战场
     };
 
-    inline static int msNextFirstPick;
+    inline static VSPickTurn msNextFirstPick;
+    static constexpr SeedType msQuickPlayDecks[2][6] = {
+        // DeckPlant
+        {SEED_SUNFLOWER, SEED_PEASHOOTER, SEED_WALLNUT, SEED_POTATOMINE, SEED_JALAPENO, SEED_SQUASH},
+        // DeckZombie
+        {SEED_ZOMBIE_GRAVESTONE, SEED_ZOMBIE_NORMAL, SEED_ZOMBIE_TRASHCAN, SEED_ZOMBIE_TRAFFIC_CONE, SEED_ZOMBIE_FOOTBALL, SEED_ZOMBIE_FLAG},
+    };
     static constexpr SeedType msRandomPools[9][8] = {
         // PoolPlants_Normal
         {SEED_PEASHOOTER, SEED_REPEATER, SEED_CABBAGEPULT, SEED_KERNELPULT, SEED_REPEATER, SEED_SNOWPEA, SEED_NONE, SEED_PEASHOOTER}, // pool 0
@@ -77,44 +84,43 @@ public:
         {SEED_ZOMBONI, SEED_ZOMBIE_CATAPULT, SEED_ZOMBIE_GARGANTUAR, SEED_ZOMBIE_FLAG, SEED_ZOMBIE_JACK_IN_THE_BOX, SEED_ZOMBIE_DIGGER, SEED_NONE, SEED_PEASHOOTER}   // pool 2
     };
 
-    int unkInt[5];           // 65 ~ 69
-    int mInt70;              // 70
-    int mInt71;              // 71
-    int mInt72;              // 72
-    LawnApp *mApp;           // 73
-    VSSetupState mState;     // 74 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
-    int mControllerIndex[2]; // 75  // 0:手柄1, 1:手柄2
-    int mSides[2];           // 77  // -1 0 1， 分别位于中 左 右
-    int unkInt79;            // 79
-    int mNextFirstPick;      // 80
-    int mInt81;              // 81
-    VSSetupMode mSetupMode;  // 82
-    int unkInt83[85];        // 83 ~ 167
-    int mInt168;             // 168
-    int unkInt169[59];       // 169 ~ 227
-    int mInt228;             // 228
-    int unkInt229[63];       // 229 ~ 291
-    int mInt292;             // 292
-    int unkInt293[3];        // 293 ~ 295
-    int mInt296;             // 296
-    int unkInt297[7];        // 297 ~ 303
-    int mInt304;             // 304
-    int unkInt305[11];       // 305 ~ 315
-    bool mBool316;           // 316
-    bool mBool317;           // 317
-    int unkInt318[2];        // 318 ~ 319
-    int mSeedPickTurn;       // 320
-    int unkInt321[3];        // 321 ~ 323
-    int mInt324;             // 324
-    int unkInt325[3];        // 325 ~ 327
-    int mInt328;             // 328
-    int unkInt329[3];        // 329 ~ 331
-    int mInt332;             // 332
-    int unkInt333[28];       // 333 ~ 360
-    bool mBoo361;            // 361
-    bool mBool362;           // 362
-    int unkInt363[161];      // 363 ~ 523
-    int mInt524;             // 524
+    int mInt70;                   // 70
+    int mInt71;                   // 71
+    int mInt72;                   // 72
+    LawnApp *mApp;                // 73
+    VSSetupState mState;          // 74  // 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
+    int mControllerIndex[2];      // 75  // 0:手柄1, 1:手柄2
+    int mSides[2];                // 77  // -1 0 1， 分别位于中 左 右
+    int unkInt79;                 // 79
+    VSPickTurn mSeedPickTurn;     // 80
+    int mChooserAnimateUpdateCnt; // 81
+    VSSetupMode mSetupMode;       // 82
+    int unkInt83[85];             // 83 ~ 167
+    int mInt168;                  // 168
+    int unkInt169[59];            // 169 ~ 227
+    int mInt228;                  // 228
+    int unkInt229[63];            // 229 ~ 291
+    int mInt292;                  // 292
+    int unkInt293[3];             // 293 ~ 295
+    int mInt296;                  // 296
+    int unkInt297[7];             // 297 ~ 303
+    int mInt304;                  // 304
+    int unkInt305[11];            // 305 ~ 315
+    bool mBool316;                // 316
+    bool mBool317;                // 317
+    int unkInt318[2];             // 318 ~ 319
+    int mInt320;                  // 320
+    int unkInt321[3];             // 321 ~ 323
+    int mInt324;                  // 324
+    int unkInt325[3];             // 325 ~ 327
+    int mInt328;                  // 328
+    int unkInt329[3];             // 329 ~ 331
+    int mInt332;                  // 332
+    int unkInt333[28];            // 333 ~ 360
+    bool mBoo361;                 // 361
+    bool mBool362;                // 362
+    int unkInt363[161];           // 363 ~ 523
+    int mInt524;                  // 524
 
     void GameButtonDown(Sexy::GamepadButton theButton, unsigned int thePlayerIndex, int a4) {
         reinterpret_cast<void (*)(VSSetupMenu *, Sexy::GamepadButton, unsigned int, int)>(VSSetupMenu_GameButtonDownAddr)(this, theButton, thePlayerIndex, a4);
