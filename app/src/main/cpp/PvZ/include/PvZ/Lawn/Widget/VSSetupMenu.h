@@ -29,10 +29,10 @@
 #include "WaitForSecondPlayerDialog.h"
 
 enum VSSetupState {
-    VS_SETUP_STATE_CONTROLLERS = 0,
-    VS_SETUP_STATE_SIDES = 1,
-    VS_SETUP_STATE_SELECT_BATTLE = 2,
-    VS_SETUP_STATE_CUSTOM_BATTLE = 3,
+    VS_SETUP_STATE_CONTROLLERS = 0,   // WaitForSecondPlayerDialog
+    VS_SETUP_STATE_SIDES = 1,         // 未分配手柄阵营
+    VS_SETUP_STATE_SELECT_BATTLE = 2, // 已分配手柄阵营
+    VS_SETUP_STATE_CUSTOM_BATTLE = 3, // 自定义战场选卡中
 };
 
 enum VSSetupMode {
@@ -44,6 +44,12 @@ enum VSSetupMode {
 enum VSPickTurn {
     VS_PICK_TURN_PLANT = 0,
     VS_PICK_TURN_ZOMBIE = 1,
+};
+
+enum VSSide {
+    VS_SIDE_NONE = -1,  // 未分配阵营
+    VS_SIDE_PLANT = 0,  // 植物方
+    VS_SIDE_ZOMBIE = 1, // 僵尸方
 };
 
 namespace Sexy {
@@ -88,9 +94,9 @@ public:
     int mInt71;                   // 71
     int mInt72;                   // 72
     LawnApp *mApp;                // 73
-    VSSetupState mState;          // 74  // 0:WaitForSecondPlayerDialog,1:未分配手柄阵营,2:已分配手柄阵营,3:自定义战场选卡中
+    VSSetupState mState;          // 74
     int mControllerIndex[2];      // 75  // 0:手柄1, 1:手柄2
-    int mSides[2];                // 77  // -1 0 1， 分别位于中 左 右
+    VSSide mSides[2];             // 77
     int unkInt79;                 // 79
     VSPickTurn mSeedPickTurn;     // 80
     int mChooserAnimateUpdateCnt; // 81

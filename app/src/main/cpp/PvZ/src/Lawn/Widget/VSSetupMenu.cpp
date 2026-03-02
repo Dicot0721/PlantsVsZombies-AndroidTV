@@ -34,7 +34,7 @@ void VSSetupMenu::_constructor() {
     old_VSSetupMenu_Constructor(this);
     msNextFirstPick = VSPickTurn::VS_PICK_TURN_ZOMBIE;
 
-    // 拓展卡槽,禁选模式
+    // 拓展卡槽,禁选模式 etc.
     gVSSetupAddonWidget = new VSSetupAddonWidget(this);
 
     //    gVSSelectBgDayButton = MakeNewButton(9000,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
@@ -78,14 +78,14 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
         g->SetColorizeImages(true);
         g->SetColor(theColor);
 
-        if (!tcp_connected && mSides[0] == -1) {
+        if (!tcp_connected && mSides[0] == VSSide::VS_SIDE_NONE) {
             Sexy::Widget *theController1Widget = FindWidget(7);
             g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController1Widget->mX + 160, theController1Widget->mY + 40);
             g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController1Widget->mX - 50, theController1Widget->mY + 40, true);
         }
 
 
-        if (tcpClientSocket < 0 && mSides[1] == -1) {
+        if (tcpClientSocket < 0 && mSides[1] == VSSide::VS_SIDE_NONE) {
             Sexy::Widget *theController2Widget = FindWidget(8);
             g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController2Widget->mX + 160, theController2Widget->mY + 40);
             g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController2Widget->mX - 50, theController2Widget->mY + 40, true);
@@ -284,12 +284,12 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
     if (touchingOnWhichController == 1) {
         if (tcp_connected)
             return;
-        Sexy::Widget *theController1Widget = FindWidget(7);
-        int newController1Position = theController1Widget->mX > 400 ? 1 : theController1Widget->mX > 250 ? -1 : 0;
-        if (newController1Position == mSides[0]) {
+        Sexy::Widget *aControllerWidgetP1 = FindWidget(7);
+        VSSide aSideP1 = aControllerWidgetP1->mX > 400 ? VS_SIDE_ZOMBIE : aControllerWidgetP1->mX > 250 ? VS_SIDE_NONE : VS_SIDE_PLANT;
+        if (aSideP1 == mSides[0]) {
             GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
         }
-        mSides[0] = newController1Position;
+        mSides[0] = aSideP1;
         if (tcpClientSocket >= 0) {
             U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mSides[0] == -1 ? uint8_t(2) : uint8_t(mSides[0])};
             sendWithSize(tcpClientSocket, &event, sizeof(U8_Event), 0);
@@ -298,21 +298,21 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
     } else if (touchingOnWhichController == 2) {
         if (tcpClientSocket >= 0)
             return;
-        Sexy::Widget *theController2Widget = FindWidget(8);
-        int newController2Position = theController2Widget->mX > 400 ? 1 : theController2Widget->mX > 250 ? -1 : 0;
+        Sexy::Widget *aControllerWidgetP2 = FindWidget(8);
+        VSSide aSideP2 = aControllerWidgetP2->mX > 400 ? VS_SIDE_ZOMBIE : aControllerWidgetP2->mX > 250 ? VS_SIDE_NONE : VS_SIDE_PLANT;
 
-        if (newController2Position == mSides[1]) {
+        if (aSideP2 == mSides[1]) {
             GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
         }
-        mSides[1] = newController2Position;
+        mSides[1] = aSideP2;
         if (tcpServerSocket >= 0) {
-            U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mSides[1] == -1 ? uint8_t(2) : uint8_t(mSides[1])};
+            U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mSides[1] == VS_SIDE_NONE ? uint8_t(2) : uint8_t(mSides[1])};
             sendWithSize(tcpServerSocket, &event, sizeof(U8_Event), 0);
         }
         is2PControllerMoving = false;
     }
     touchingOnWhichController = 0;
-    if (mSides[0] != -1 && mSides[1] != -1 && mSides[0] != mSides[1]) {
+    if (mSides[0] != VS_SIDE_NONE && mSides[1] != VS_SIDE_NONE && mSides[0] != mSides[1]) {
         GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
         GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
     }
@@ -541,13 +541,13 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_VSSETUPMENU_SET_CONTROLLER: {
             U8_Event *event1 = (U8_Event *)event;
-            int realData = event1->data == 2 ? -1 : event1->data;
-            if (mSides[1] == realData) {
+            VSSide aSide = event1->data == 2 ? VS_SIDE_NONE : VSSide(event1->data);
+            if (mSides[1] == aSide) {
                 GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
             }
-            mSides[1] = realData;
+            mSides[1] = aSide;
             is2PControllerMoving = false;
-            if (mSides[0] != -1 && mSides[1] != -1 && mSides[0] != mSides[1]) {
+            if (mSides[0] != VS_SIDE_NONE && mSides[1] != VS_SIDE_NONE && mSides[0] != mSides[1]) {
                 GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
                 GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
             }
@@ -634,13 +634,13 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_VSSETUPMENU_SET_CONTROLLER: {
             U8_Event *event1 = (U8_Event *)event;
-            int realData = event1->data == 2 ? -1 : event1->data;
-            if (mSides[0] == realData) {
+            VSSide aSide = event1->data == 2 ? VS_SIDE_NONE : VSSide(event1->data);
+            if (mSides[0] == aSide) {
                 GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
             }
-            mSides[0] = realData;
+            mSides[0] = aSide;
             is1PControllerMoving = false;
-            if (mSides[0] != -1 && mSides[1] != -1 && mSides[0] != mSides[1]) {
+            if (mSides[0] != VS_SIDE_NONE && mSides[1] != VS_SIDE_NONE && mSides[0] != mSides[1]) {
                 GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
                 GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
             }
@@ -786,12 +786,12 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 mApp->ShowZombieChooserScreen();
 
                 for (int aPlayerIndex = 0; aPlayerIndex < 2; ++aPlayerIndex) {
-                    int aSides = mSides[aPlayerIndex];
+                    VSSide aSides = mSides[aPlayerIndex];
                     int aControllerIdx = mControllerIndex[aPlayerIndex];
 
-                    if (aSides == 1) {
+                    if (aSides == VSSide::VS_SIDE_ZOMBIE) {
                         mApp->mZombieChooserScreen->mPlayerIndex = aControllerIdx;
-                    } else if (aSides == 0) {
+                    } else if (aSides == VSSide::VS_SIDE_PLANT) {
                         mApp->mSeedChooserScreen->mPlayerIndex = aControllerIdx;
                     }
                 }
