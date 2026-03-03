@@ -712,8 +712,8 @@ protected:
         // 故将 `_max_size` 定义为静态成员函数.
         [[nodiscard]] static consteval size_type _max_size() noexcept {
             // npos = (m + 1) * sizeof(CharT) + sizeof(_rep)
-            // max_size = m / 4
-            return (((npos - sizeof(_rep)) / sizeof(CharT)) - 1) / 4;
+            constexpr size_type m = ((npos - sizeof(_rep)) / sizeof(CharT)) - 1;
+            return m / 4;
         }
 
         [[nodiscard]] static _rep &_empty_rep() noexcept {
@@ -814,6 +814,10 @@ protected:
 
     mutable CharT *_dataplus;
 
+    // NB: This is the special case for Input Iterators, used in
+    // istreambuf_iterators, etc.
+    // Input Iterators have a cost structure very different from
+    // pointers, calling for a different coding style.
     template <std::input_iterator InputIt>
     [[nodiscard]] static CharT *_construct(InputIt first, InputIt last) {
         if (first == last) {
@@ -853,6 +857,7 @@ protected:
             return _rep::_empty_rep()._data;
         }
         if constexpr (std::is_pointer_v<InputIt>) {
+            // NB: Not required, but considered best practice.
             if (first == nullptr) {
                 throw std::logic_error{"basic_string::_construct null not valid"};
             }
@@ -860,7 +865,9 @@ protected:
         const size_type dnew = static_cast<size_type>(std::distance(first, last));
         _rep *r = _rep::_create(dnew, 0);
         try {
-            std::copy(first, last, r->_data);
+            for (CharT *p = r->_data; first != last; ++first) {
+                *p++ = *first;
+            }
         } catch (...) {
             r->_destroy();
             throw;
