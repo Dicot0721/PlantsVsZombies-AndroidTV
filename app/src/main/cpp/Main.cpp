@@ -57,11 +57,13 @@ static std::string JStringToString(JNIEnv *env, jstring str) {
     homura::RegisterAccessViolationHandler();
 
     // 获取符号地址
-    GetFunctionAddr();
+    if (!GetFunctionAddr()) {
+        return;
+    }
 
     // 部分安卓4设备无法获取到基址，暂不清楚原因, 但仅影响 Patch 而不影响Hook, 影响不大.
     if ((Board_UpdateAddr != nullptr) && (uintptr_t(Board_UpdateAddr) > BOARD_UPDATE_ADDR_RELATIVE + 1)) {
-        gLibBaseOffset = (uintptr_t(Board_UpdateAddr) - BOARD_UPDATE_ADDR_RELATIVE - 1);
+        gLibBaseOffset = uintptr_t(Board_UpdateAddr) - BOARD_UPDATE_ADDR_RELATIVE - 1;
     }
 
     // Hook

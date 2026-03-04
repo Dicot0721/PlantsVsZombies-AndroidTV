@@ -1411,9 +1411,8 @@ inline void *j_AGVideoCloseAddr;
 bool LoadGameMain();
 bool LoadNativeCode();
 
-inline void GetFunctionAddr() {
-    LoadGameMain();
-    LoadNativeCode();
+inline bool GetFunctionAddr() {
+    return LoadGameMain() && LoadNativeCode();
 }
 
 #endif // PVZ_SYMBOLS_H
