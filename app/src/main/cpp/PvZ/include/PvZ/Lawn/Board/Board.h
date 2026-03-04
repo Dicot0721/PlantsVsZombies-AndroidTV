@@ -670,6 +670,8 @@ inline bool FreePlantAt;
 inline bool ZombieCanNotWon;
 inline bool PumpkinWithLadder; // AddPlant
 inline bool endlessLastStand;
+inline BackgroundType gVSBackground; // 对战模式战场
+
 
 // isLongPress的数值为：首次按下为0，后续按下为1
 // playerIndex为0或者1，代表玩家1或者2

@@ -107,79 +107,27 @@ void CutScene::AddFlowerPots() {
 }
 
 void CutScene::PlaceLawnItems() {
+    if (mPlacedLawnItems) {
+        return;
+    }
+    mPlacedLawnItems = true;
 
-    if (mApp->mGameMode == GAMEMODE_MP_VS) {
-        if (mPlacedLawnItems)
-            return;
-
-        mPlacedLawnItems = true;
-
-        // ===== TwoPlayerVS 专用：放 MPTarget + 墓碑/植物 =====
-        if (mApp->mGameMode == GAMEMODE_MP_VS) {
-            const int rows = mBoard->StageHas6Rows() ? 6 : 5;
-
-            // ---------- 1) AddMPTarget: x=8, row=r ----------
-            for (int r = 0; r < rows; r++) {
-                bool shouldAddTarget = false;
-
-                if (*Challenge_gVSWinModeAddr == 2) {
-                    if (rows == 6) {
-                        // rows==6: r==1 or r==4
-                        shouldAddTarget = (r == 1 || r == 4);
-                    } else {
-                        // rows == 5: r == 1 or r == 3
-                        shouldAddTarget = (r == 1 || r == 3);
-                    }
-                } else if (*Challenge_gVSWinModeAddr == 3) {
-                    if (rows == 6) {
-                        // rows==6: add at r==0,2,3,5
-                        shouldAddTarget = (r == 0 || r == 2 || r == 3 || r == 5);
-                    } else {
-                        // rows==5: r==1 or r==4
-                        shouldAddTarget = (r == 1 || r == 4);
-                    }
-                } else {
-                    // 其他 winmode：默认 add
-                    shouldAddTarget = true;
-                }
-
-                if (shouldAddTarget) {
-                    mBoard->AddMPTarget(8, r);
-                }
-            }
-
-            // ---------- 2) AddAGraveStone + AddPlant ----------
-            SeedType seedToPlant = (mApp->mVsInitialPlantMode == 1 || mApp->mVsInitialPlantMode == 3) ? SEED_SUNSHROOM : SEED_SUNFLOWER;
-
-            for (int r = 0; r < rows; r++) {
-                bool shouldPlace = false;
-                if (rows == 5) {
-                    if (r == 1 || r == 3) // r==1 or r==3
-                    {
-                        shouldPlace = true;
-                    }
-                } else {
-                    if (r == 1 || r == 4) {
-                        shouldPlace = true;
-                    }
-                }
-
-                if (shouldPlace) {
-                    mBoard->AddAGraveStone(8, r);
-                    mBoard->AddPlant(0, r, seedToPlant, (SeedType)-1, -1, true);
-                }
-            }
-        }
-
-        if (this->IsSurvivalRepick()) {
-            return;
-        }
-
+    if (!IsSurvivalRepick()) {
         mBoard->InitLawnMowers();
         AddFlowerPots();
         mBoard->PlaceRake();
-        return;
     }
 
-    return old_CutScene_PlaceLawnItems(this);
+    if (mApp->IsVSMode()) {
+        int aNumRows = mBoard->StageHas6Rows() ? 6 : 5;
+        SeedType aSunPlantSeed = mBoard->StageIsNight() ? SeedType::SEED_SUNSHROOM : SeedType::SEED_SUNFLOWER;
+        for (int aRow = 0; aRow < aNumRows; ++aRow) {
+            if (aRow != 5) // TODO: 修复泳池六路靶子被投手击中崩溃
+                mBoard->AddMPTarget(8, aRow);
+            if (aRow == 1 || aRow == aNumRows - 2) {
+                mBoard->AddAGraveStone(8, aRow);
+                mBoard->AddPlant(0, aRow, aSunPlantSeed, SeedType::SEED_NONE, -1, true);
+            }
+        }
+    }
 }

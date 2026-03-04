@@ -782,7 +782,8 @@ void Board::DrawCoverLayer(Sexy::Graphics *g, int theRow) {
                 break;
             case BackgroundType::BACKGROUND_5_ROOF: // 屋顶白天
                 g->DrawImage(*Sexy_IMAGE_ROOF_TREE_Addr, mOffsetMoved * 1.5f + 628, -60);
-                g->DrawImage(*Sexy_IMAGE_ROOF_POLE_Addr, mOffsetMoved * 2.0f + 628, -60);
+                // 对战模式电线杆会遮挡僵尸卡槽，严重影响游戏体验
+                g->DrawImage(*Sexy_IMAGE_ROOF_POLE_Addr, mOffsetMoved * 2.0f + 628 + (mApp->IsVSMode() ? 65 : 0), -60);
                 break;
             case BackgroundType::BACKGROUND_6_BOSS:
                 // 可在此处添加代码绘制月夜电线杆喔
@@ -821,8 +822,28 @@ void Board::PickBackground() {
         mPlantRow[5] = PlantRowType::PLANTROW_NORMAL;
         InitCoverLayer();
         SetGrids();
-        // } else if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-
+    } else if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+        mBackground = gVSBackground;
+        LoadBackgroundImages();
+        mPlantRow[0] = PlantRowType::PLANTROW_NORMAL;
+        mPlantRow[1] = PlantRowType::PLANTROW_NORMAL;
+        mPlantRow[2] = PlantRowType::PLANTROW_NORMAL;
+        mPlantRow[3] = PlantRowType::PLANTROW_NORMAL;
+        mPlantRow[4] = PlantRowType::PLANTROW_NORMAL;
+        mPlantRow[5] = PlantRowType::PLANTROW_DIRT;
+        if (StageHas6Rows()) {
+            mPlantRow[2] = PlantRowType::PLANTROW_POOL;
+            mPlantRow[3] = PlantRowType::PLANTROW_POOL;
+            mPlantRow[5] = PlantRowType::PLANTROW_NORMAL;
+        } else if (StageHasRoof()) {
+            //            mPlantRow[0] = PlantRowType::PLANTROW_HIGH_GROUND;
+            //            mPlantRow[1] = PlantRowType::PLANTROW_HIGH_GROUND;
+            //            mPlantRow[2] = PlantRowType::PLANTROW_HIGH_GROUND;
+            //            mPlantRow[3] = PlantRowType::PLANTROW_HIGH_GROUND;
+            //            mPlantRow[4] = PlantRowType::PLANTROW_HIGH_GROUND;
+        }
+        InitCoverLayer();
+        SetGrids();
     } else {
         switch (VSBackGround) {
             case 1:

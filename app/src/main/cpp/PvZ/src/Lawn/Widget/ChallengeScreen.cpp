@@ -20,6 +20,7 @@
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
+#include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodCommon.h"
@@ -41,20 +42,16 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
         // 把按钮全部缩小至长宽为0
         button->Resize(button->mX, button->mY, 0, 0);
     }
-
-    //    if (mPageIndex == CHALLENGE_PAGE_VS) {
-    //        SetUnlockChallengeIndex(mPageIndex, false);
-    //    }
 }
 
 namespace {
 ChallengeDefinition gButteredPopcornDef = {GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN, 37, ChallengePage::CHALLENGE_PAGE_CHALLENGE, 6, 1, "[BUTTERED_POPCORN]"};
 [[maybe_unused]] ChallengeDefinition gPoolPartyDef = {GameMode::GAMEMODE_CHALLENGE_POOL_PARTY, 37, ChallengePage::CHALLENGE_PAGE_CHALLENGE, 6, 2, "[POOL_PARTY]"};
-[[maybe_unused]] ChallengeDefinition gVSDayDef = {GameMode::GAMEMODE_MP_VS_DAY, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_DAY]"};
-[[maybe_unused]] ChallengeDefinition gVSNightDef = {GameMode::GAMEMODE_MP_VS_NIGHT, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_NIGHT]"};
-[[maybe_unused]] ChallengeDefinition gVSPoolDayDef = {GameMode::GAMEMODE_MP_VS_POOL_DAY, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_POOL_DAY]"};
-[[maybe_unused]] ChallengeDefinition gVSPoolNightDef = {GameMode::GAMEMODE_MP_VS_POOL_NIGHT, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_POOL_NIGHT]"};
-[[maybe_unused]] ChallengeDefinition gVSRoofDef = {GameMode::GAMEMODE_MP_VS_ROOF, 37, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_ROOF]"};
+ChallengeDefinition gVSDayDef = {GameMode::GAMEMODE_MP_VS, 0, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_DAY]"};
+ChallengeDefinition gVSNightDef = {GameMode::GAMEMODE_MP_VS, 1, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_NIGHT]"};
+ChallengeDefinition gVSPoolDayDef = {GameMode::GAMEMODE_MP_VS, 2, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_POOL_DAY]"};
+ChallengeDefinition gVSPoolNightDef = {GameMode::GAMEMODE_MP_VS, 3, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_POOL_NIGHT]"};
+ChallengeDefinition gVSRoofDef = {GameMode::GAMEMODE_MP_VS, 4, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_ROOF]"};
 } // namespace
 
 ChallengeDefinition &GetChallengeDefinition(int theChallengeMode) {
@@ -66,50 +63,125 @@ ChallengeDefinition &GetChallengeDefinition(int theChallengeMode) {
     // return gPoolPartyDef;
     // }
 
-    //     if (theChallengeMode + 4 == GameMode::GAMEMODE_MP_VS) {
-    //     return gVSDayDef;
-    //     } else if (theChallengeMode + 3 == GameMode::GAMEMODE_MP_VS) {
-    //     return gVSNightDef;
-    //     } else if (theChallengeMode + 2 == GameMode::GAMEMODE_MP_VS) {
-    //     return gVSPoolDayDef;
-    //     } else if (theChallengeMode + 1 == GameMode::GAMEMODE_MP_VS) {
-    //     return gVSPoolNightDef;
-    //     } else if (theChallengeMode == GameMode::GAMEMODE_MP_VS) {
-    //     return gVSRoofDef;
-    //     }
+    if (theChallengeMode + 7 == GameMode::GAMEMODE_MP_VS) {
+        gVSBackground = BackgroundType::BACKGROUND_1_DAY;
+        return gVSDayDef;
+    } else if (theChallengeMode + 6 == GameMode::GAMEMODE_MP_VS) {
+        gVSBackground = BackgroundType::BACKGROUND_2_NIGHT;
+        return gVSNightDef;
+    } else if (theChallengeMode + 5 == GameMode::GAMEMODE_MP_VS) {
+        gVSBackground = BackgroundType::BACKGROUND_3_POOL;
+        return gVSPoolDayDef;
+    } else if (theChallengeMode + 4 == GameMode::GAMEMODE_MP_VS) {
+        gVSBackground = BackgroundType::BACKGROUND_4_FOG;
+        return gVSPoolNightDef;
+    } else if (theChallengeMode + 3 == GameMode::GAMEMODE_MP_VS) {
+        gVSBackground = BackgroundType::BACKGROUND_5_ROOF;
+        return gVSRoofDef;
+    }
 
     return old_GetChallengeDefinition(theChallengeMode);
 }
 
-void ChallengeScreen::Draw(Sexy::Graphics *graphics) {
-    // 修复小游戏界面显示奖杯数不正确
-    old_ChallengeScreen_Draw(this, graphics);
+void ChallengeScreen::Draw(Sexy::Graphics *g) {
+    g->DrawImage(*Sexy::IMAGE_CHALLENGE_BACKGROUND, *LawnApp_FULLSCREEN_RECT_Addr, -60);
 
-    int mTotalTrophiesInPage = 0;
-    switch (mPageIndex) {
-        case ChallengePage::CHALLENGE_PAGE_SURVIVAL:
-            mTotalTrophiesInPage = 10;
-            break;
-        case ChallengePage::CHALLENGE_PAGE_CHALLENGE:
-            for (int i = 0; i < 94; ++i) {
-                if (GetChallengeDefinition(i).mPage == ChallengePage::CHALLENGE_PAGE_CHALLENGE) {
-                    mTotalTrophiesInPage++;
-                }
+    pvzstl::string aTitleString = mPageIndex == CHALLENGE_PAGE_SURVIVAL ? "[PICK_AREA]"
+        : mPageIndex == CHALLENGE_PAGE_PUZZLE                           ? "[SCARY_POTTER]"
+        : mPageIndex == CHALLENGE_PAGE_VS                               ? "[VS_MODE]"
+        : mPageIndex == CHALLENGE_PAGE_COOP                             ? "[XBOX_COOP]"
+                                                                        : "[PICK_CHALLENGE]";
+    TodDrawString(g, aTitleString, 400, 45, *Sexy::FONT_HOUSEOFTERROR28, Color(220, 220, 220), DS_ALIGN_CENTER);
+
+    int aTrophiesGot = mApp->GetNumTrophies(mPageIndex);
+    int aTrophiesTotal = (mPageIndex == CHALLENGE_PAGE_SURVIVAL || mPageIndex == CHALLENGE_PAGE_COOP) ? 10 : mPageIndex == CHALLENGE_PAGE_PUZZLE ? 18 : 0;
+    if (mPageIndex == CHALLENGE_PAGE_CHALLENGE) {
+        for (int i = 0; i < 94; ++i) {
+            if (GetChallengeDefinition(i).mPage == ChallengePage::CHALLENGE_PAGE_CHALLENGE) {
+                aTrophiesTotal++;
             }
-            break;
-        case ChallengePage::CHALLENGE_PAGE_COOP:
-            mTotalTrophiesInPage = 10;
-            break;
-        case ChallengePage::CHALLENGE_PAGE_PUZZLE:
-            mTotalTrophiesInPage = 18;
-            break;
-        default:
-            break;
+        }
+    }
+    if (aTrophiesTotal > 0) {
+        pvzstl::string aTrophyString = StrFormat("%d/%d", aTrophiesGot, aTrophiesTotal);
+        TodDrawString(g, aTrophyString, 711, 62, *Sexy::FONT_BRIANNETOD16, Color(255, 240, 0), DS_ALIGN_CENTER);
+    }
+    TodDrawImageScaledF(g, *Sexy::IMAGE_TROPHY, 690.0f, 15.0f, 0.5f, 0.5f);
+
+    g->PushState();
+
+    int scrollBarX = 760;
+    int scrollBarY = 80;
+    int scrollBarWidth = 40;
+    int scrollBarHeight = 460;
+    int scrollBarRectX = 766;
+    int scrollBarRectY = 28;
+
+    float scrollPosition = float(mScreenTopChallengeIndex);
+    float scrollBarHeightFloat = float(scrollBarHeight);
+
+    if (mScreenTopChallengeIndex == mSelectedChallengeIndex) {
+        // 未滚动时的状态
+        scrollBarHeightFloat = 448.0f;
+        scrollBarHeight = 448;
+        scrollBarY = 86;
+    } else {
+        // 滚动时的动画效果
+        scrollPosition = TodAnimateCurveFloatTime(0.0f, 0.15f, mUnkFloat, scrollPosition, mSelectedChallengeIndex, TodCurves::CURVE_LINEAR);
+        scrollBarHeight = scrollBarHeight - 12;
+        scrollBarY = scrollBarY + 6;
+        scrollBarRectX = scrollBarX + 6;
+        scrollBarRectY = scrollBarWidth - 12;
+        scrollBarHeightFloat = float(scrollBarHeight);
     }
 
-    pvzstl::string str = StrFormat("%d/%d", mApp->GetNumTrophies(mPageIndex), mTotalTrophiesInPage);
-    Color theColor = {255, 240, 0, 255};
-    TodDrawString(graphics, str, 711, 62, *Sexy_FONT_BRIANNETOD16_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
+    int thumbPosition = int((scrollPosition / mTotalGameInPage) * scrollBarHeightFloat);
+    int thumbHeight = int(scrollBarHeightFloat * (5.0f / mTotalGameInPage));
+
+    int thumbY = scrollBarY + thumbPosition;
+    int actualThumbHeight = (thumbHeight > scrollBarHeight) ? scrollBarHeight : thumbHeight;
+
+    // 设置裁剪区域并绘制滚动条
+    g->ClipRect(scrollBarRectX, scrollBarY, scrollBarRectY, scrollBarHeight);
+
+    Color scrollBarBgColor(0, 128);
+    g->SetColor(scrollBarBgColor);
+    g->FillRect(Rect(scrollBarX + 6, scrollBarY + 6, scrollBarWidth - 12, scrollBarHeight - 12));
+
+    Color scrollBarThumbColor(140, 140, 140, 255);
+    g->SetColor(scrollBarThumbColor);
+    g->FillRect(Rect(scrollBarRectX, thumbY, scrollBarRectY, actualThumbHeight));
+
+    g->ClearClipRect();
+    g->SetColorizeImages(false);
+    g->DrawImageBox(Rect(scrollBarX, scrollBarY, scrollBarWidth, scrollBarHeight), *Sexy::IMAGE_DLG_SELECTORFRAME);
+
+    g->PopState();
+
+    g->PushState();
+    g->ClipRect(-20, 80, 1000, 475);
+    g->TranslateF(0.0f, -(scrollPosition * 120.0f));
+
+    if (mTotalGameInPage > 0) {
+        float *unkFloatPtr = &mUnkFloat;
+
+        if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS) {
+            mTotalGameInPage = 5;
+        }
+        for (int aChallengeMode = 0; aChallengeMode < mTotalGameInPage; ++aChallengeMode) {
+            int challengeId = *reinterpret_cast<int *>(unkFloatPtr + 1);
+            DrawButton(g, challengeId, aChallengeMode);
+            unkFloatPtr += 1;
+        }
+    }
+
+    g->ClearClipRect();
+
+    if (mToolTip) {
+        mToolTip->Draw(g);
+    }
+
+    g->PopState();
 }
 
 void ChallengeScreen::AddedToManager(int *theWidgetManager) {

@@ -164,7 +164,9 @@ public:
     void SetWrapMode(int theHorizonWrapMode, int theVertWrapMode) {
         reinterpret_cast<void (*)(Graphics *, int, int)>(Sexy_GLGraphics_SetWrapModeAddr)(this, theHorizonWrapMode, theVertWrapMode);
     }
-
+    void DrawImageBox(const Rect &theRect, Image *theImage) {
+        reinterpret_cast<void (*)(Graphics *, const Rect &, Image *)>(Sexy_DrawImageBoxAddr)(this, theRect, theImage);
+    }
 
     void SetFont(Font *theFont);
     Font *GetFont();
@@ -177,6 +179,7 @@ public:
     void SetLinearBlend(bool linear); // for DrawImageMatrix, DrawImageTransform, etc...
     bool GetLinearBlend();
     void Translate(int theTransX, int theTransY);
+    void TranslateF(float theTransX, float theTransY);
     void SetScale(float theScaleX, float theScaleY, float theOrigX, float theOrigY);
     void PushTransform(int *theTransform, bool concatenate);
     void PopTransform();

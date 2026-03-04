@@ -166,9 +166,6 @@ public:
     void KillChallengeScreen() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillChallengeScreenAddr)(this);
     }
-    void PreNewGame(GameMode theGameMode, bool theLookForSavedGame) {
-        reinterpret_cast<void (*)(LawnApp *, GameMode, bool)>(LawnApp_PreNewGameAddr)(this, theGameMode, theLookForSavedGame);
-    }
     void PlayFoleyPitch(FoleyType theFoleyType, float thePitch) {
         reinterpret_cast<void (*)(LawnApp *, FoleyType, float)>(LawnApp_PreNewGameAddr)(this, theFoleyType, thePitch);
     }
@@ -223,7 +220,7 @@ public:
         reinterpret_cast<void (*)(LawnApp *, int)>(LawnApp_ShowHelpTextScreenAddr)(this, a);
     }
     void ShowChallengeScreen(ChallengePage thePage) {
-        reinterpret_cast<void (*)(LawnApp *, ChallengePage)>(LawnApp_ShowHelpTextScreenAddr)(this, thePage);
+        reinterpret_cast<void (*)(LawnApp *, ChallengePage)>(LawnApp_ShowChallengeScreenAddr)(this, thePage);
     }
     void CrazyDaveStopTalking() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_CrazyDaveStopTalkingAddr)(this);
@@ -288,6 +285,13 @@ public:
     void SafeDeleteWidget(Sexy::Widget *widget) { // vTable + 4 * 47
         reinterpret_cast<void (*)(LawnApp *, Sexy::Widget *)>(LawnApp_SafeDeleteWidgetAddr)(this, widget);
     }
+    void MakeNewBoard() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_MakeNewBoardAddr)(this);
+    }
+    void ShowVSSetupScreen() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ShowVSSetupScreenAddr)(this);
+    }
+
     LawnApp() {
         _constructor();
     };
@@ -362,6 +366,8 @@ public:
     void ShowSeedChooserScreen();
     void ShowZombieChooserScreen();
     void KillZombieChooserScreen();
+    void PreNewGame(GameMode theGameMode, bool theLookForSavedGame);
+    void NewGame();
 
 protected:
     friend void InitHookFunction();
@@ -418,5 +424,7 @@ inline void (*old_LawnApp_DoNewOptions)(LawnApp *lawnApp, bool a2, unsigned int 
 inline void (*old_LawnApp_UpdateFrames)(LawnApp *lawnApp);
 
 inline void (*old_LawnApp_KillSeedChooserScreen)(LawnApp *lawnApp);
+
+inline void (*old_LawnApp_PreNewGame)(LawnApp *, GameMode theGameMode, bool theLookForSavedGame);
 
 #endif // PVZ_LAWN_LAWN_APP_H

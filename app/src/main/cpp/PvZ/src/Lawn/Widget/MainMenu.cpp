@@ -477,18 +477,18 @@ void MainMenu::OnExit() {
         mApp->ShowZombatarScreen();
     }
 
-    //    if (mPressedButtonId == VS_BUTTON) {
-    //        mApp->KillMainMenu();
-    //        mApp->mVsInitialPlantMode = 0;
-    //        //        TODO:为对战添加选择场景
-    //        mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS);
-    //        if (mRetainWidgetsOnExit) {
-    //            mIsFading = false;
-    //            mRetainWidgetsOnExit = false;
-    //            Enter();
-    //        }
-    //        return;
-    //    }
+    if (mPressedButtonId == VS_BUTTON) {
+        mApp->KillMainMenu();
+        mApp->mVsInitialPlantMode = 0;
+        mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS); // 为对战模式新增选择战场界面
+
+        if (mRetainWidgetsOnExit) {
+            mIsFading = false;
+            mRetainWidgetsOnExit = false;
+            Enter();
+        }
+        return;
+    }
 
     old_MainMenu_OnExit(this);
 }

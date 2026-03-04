@@ -212,6 +212,7 @@ inline void *CutScene_MouseDownAddr;
 inline void *CutScene_IsBeforePreloadingAddr;
 inline void *CutScene_AddFlowerPotsAddr;
 inline void *CutScene_PlaceLawnItemsAddr;
+inline void *CutScene_StartLevelIntroAddr;
 
 
 inline void *MainMenu_UpdateAddr;
@@ -324,6 +325,9 @@ inline void *LawnApp_ShowGameSelectorAddr;
 inline void *LawnApp_SetSecondPlayerAddr;
 inline void *LawnApp_PlayerToGamepadIndexAddr;
 inline void *LawnApp_SafeDeleteWidgetAddr;
+inline void *LawnApp_NewGameAddr;
+inline void *LawnApp_MakeNewBoardAddr;
+inline void *LawnApp_ShowVSSetupScreenAddr;
 
 
 inline void *ChallengeScreen_UpdateAddr;
@@ -338,6 +342,7 @@ inline void *ChallengeScreen_UpdateButtonsAddr;
 inline void *ChallengeScreen_ButtonPressAddr;
 inline void *ChallengeScreen_ButtonDepressAddr;
 inline void *ChallengeScreen_SetUnlockChallengeIndexAddr;
+inline void *ChallengeScreen_DrawButtonAddr;
 
 
 inline void *GamepadControls_ButtonDownFireCobcannonTestAddr;
@@ -777,6 +782,7 @@ inline void *Sexy_Graphics_DrawImageMirror2Addr;
 inline void *Sexy_Graphics_SetLinearBlendAddr;
 inline void *Sexy_Graphics_PushStateAddr;
 inline void *Sexy_Graphics_PopStateAddr;
+inline void *Sexy_DrawImageBoxAddr;
 
 
 inline void *Reanimation_ReanimationAddr;
@@ -1266,10 +1272,14 @@ inline Image **IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONE;
 inline Image **IMAGE_REANIM_ZOMBIE_IMP_ARM2;
 inline Image **IMAGE_PEA_SHADOWS;
 inline Image **IMAGE_MP_TARGETS_X;
+inline Image **IMAGE_CHALLENGE_BACKGROUND;
+inline Image **IMAGE_TROPHY;
+inline Image **IMAGE_DLG_SELECTORFRAME;
 
 inline Font **FONT_DWARVENTODCRAFT18;
 inline Font **FONT_HOUSEOFTERROR28;
 inline Font **FONT_DWARVENTODCRAFT24;
+inline Font **FONT_BRIANNETOD16;
 
 inline int *SOUND_BALLOON_POP;
 inline int *SOUND_BOING;

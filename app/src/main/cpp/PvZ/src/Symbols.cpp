@@ -208,6 +208,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN8CutScene18IsBeforePreloadingEv", CutScene_IsBeforePreloadingAddr);
     libGameMain.GetSymbol("_ZN8CutScene13AddFlowerPotsEv", CutScene_AddFlowerPotsAddr);
     libGameMain.GetSymbol("_ZN8CutScene14PlaceLawnItemsEv", CutScene_PlaceLawnItemsAddr);
+    libGameMain.GetSymbol("_ZN8CutScene15StartLevelIntroEv", CutScene_StartLevelIntroAddr);
 
 
     libGameMain.GetSymbol("_ZN8MainMenu6UpdateEv", MainMenu_UpdateAddr);
@@ -320,6 +321,9 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN7LawnApp15SetSecondPlayerEi", LawnApp_SetSecondPlayerAddr);
     libGameMain.GetSymbol("_ZN7LawnApp20PlayerToGamepadIndexEi", LawnApp_PlayerToGamepadIndexAddr);
     libGameMain.GetSymbol("_ZN7LawnApp16SafeDeleteWidgetEPN4Sexy6WidgetE", LawnApp_SafeDeleteWidgetAddr);
+    libGameMain.GetSymbol("_ZN7LawnApp7NewGameEv", LawnApp_NewGameAddr);
+    libGameMain.GetSymbol("_ZN7LawnApp12MakeNewBoardEv", LawnApp_MakeNewBoardAddr);
+    libGameMain.GetSymbol("_ZN7LawnApp17ShowVSSetupScreenEv", LawnApp_ShowVSSetupScreenAddr);
 
 
     libGameMain.GetSymbol("_ZN15ChallengeScreen6UpdateEv", ChallengeScreen_UpdateAddr);
@@ -334,6 +338,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN15ChallengeScreen11ButtonPressEi", ChallengeScreen_ButtonPressAddr);
     libGameMain.GetSymbol("_ZN15ChallengeScreen13ButtonDepressEi", ChallengeScreen_ButtonDepressAddr);
     libGameMain.GetSymbol("_ZN15ChallengeScreen23SetUnlockChallengeIndexE13ChallengePageb", ChallengeScreen_SetUnlockChallengeIndexAddr);
+    libGameMain.GetSymbol("_ZN15ChallengeScreen10DrawButtonEPN4Sexy8GraphicsEii", ChallengeScreen_DrawButtonAddr);
 
 
     libGameMain.GetSymbol("_ZN15GamepadControls27ButtonDownFireCobcannonTestEv", GamepadControls_ButtonDownFireCobcannonTestAddr);
@@ -775,6 +780,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy8Graphics14SetLinearBlendEb", Sexy_Graphics_SetLinearBlendAddr);
     libGameMain.GetSymbol("_ZN4Sexy8Graphics9PushStateEv", Sexy_Graphics_PushStateAddr);
     libGameMain.GetSymbol("_ZN4Sexy8Graphics8PopStateEv", Sexy_Graphics_PopStateAddr);
+    libGameMain.GetSymbol("_ZN4Sexy8Graphics12DrawImageBoxERKNS_5TRectIiEEPNS_5ImageE", Sexy_DrawImageBoxAddr);
 
 
     libGameMain.GetSymbol("_ZN11ReanimationC2Ev", Reanimation_ReanimationAddr);
@@ -1248,10 +1254,14 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy28IMAGE_REANIM_ZOMBIE_IMP_ARM2E", Sexy::IMAGE_REANIM_ZOMBIE_IMP_ARM2);
     libGameMain.GetSymbol("_ZN4Sexy17IMAGE_PEA_SHADOWSE", Sexy::IMAGE_PEA_SHADOWS);
     libGameMain.GetSymbol("_ZN4Sexy18IMAGE_MP_TARGETS_XE", Sexy::IMAGE_MP_TARGETS_X);
+    libGameMain.GetSymbol("_ZN4Sexy26IMAGE_CHALLENGE_BACKGROUNDE", Sexy::IMAGE_CHALLENGE_BACKGROUND);
+    libGameMain.GetSymbol("_ZN4Sexy12IMAGE_TROPHYE", Sexy::IMAGE_TROPHY);
+    libGameMain.GetSymbol("_ZN4Sexy23IMAGE_DLG_SELECTORFRAMEE", Sexy::IMAGE_DLG_SELECTORFRAME);
 
     libGameMain.GetSymbol("_ZN4Sexy22FONT_DWARVENTODCRAFT18E", Sexy::FONT_DWARVENTODCRAFT18);
     libGameMain.GetSymbol("_ZN4Sexy20FONT_HOUSEOFTERROR28E", Sexy::FONT_HOUSEOFTERROR28);
     libGameMain.GetSymbol("_ZN4Sexy22FONT_DWARVENTODCRAFT24E", Sexy::FONT_DWARVENTODCRAFT24);
+    libGameMain.GetSymbol("_ZN4Sexy17FONT_BRIANNETOD16E", Sexy::FONT_BRIANNETOD16);
 
     libGameMain.GetSymbol("_ZN4Sexy17SOUND_BALLOON_POPE", Sexy::SOUND_BALLOON_POP);
 

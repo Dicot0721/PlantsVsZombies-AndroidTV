@@ -21,6 +21,7 @@
 #include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
+#include "PvZ/Lawn/Board/CutScene.h"
 #include "PvZ/Lawn/System/Music.h"
 #include "PvZ/Lawn/System/TypingCheck.h"
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
@@ -1039,6 +1040,33 @@ void LawnApp::KillZombieChooserScreen() {
         SafeDeleteWidget(mZombieChooserScreen);
         mZombieChooserScreen = nullptr;
     }
+}
+
+void LawnApp::PreNewGame(GameMode theGameMode, bool theLookForSavedGame) {
+    old_LawnApp_PreNewGame(this, theGameMode, theLookForSavedGame);
+}
+
+void LawnApp::NewGame() {
+    mFirstTimeGameSelector = false;
+
+    MakeNewBoard();
+    mBoard->InitLevel();
+    mBoardResult = BoardResult::BOARDRESULT_NONE;
+    mGameScene = GameScenes::SCENE_LEVEL_INTRO;
+
+    if (mGameMode == GameMode::GAMEMODE_MULTI_PLAYER) {
+        ShowSeedChooserScreen();
+        ShowZombieChooserScreen();
+    } else {
+        if (IsVSMode()) {
+            ShowVSSetupScreen();
+            mBoard->mCutScene->StartLevelIntro();
+            return;
+        }
+        ShowSeedChooserScreen();
+    }
+
+    mBoard->mCutScene->StartLevelIntro();
 }
 
 static bool zombatarResLoaded;

@@ -762,8 +762,8 @@ void VSSetupMenu::ButtonDepress(int theId) {
         aZombiePacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 1, true);
     }
 
-    switch (theId) {
-        if (mState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE) {
+    if (mState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE) {
+        switch (theId) {
             case VSSetupMenu_Quick_Play: {
                 for (int aPlayerIndex = 0; aPlayerIndex < 2; ++aPlayerIndex) {
                     for (int aPacketIndex = 0; aPacketIndex < 6; ++aPacketIndex) {
@@ -840,8 +840,13 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 mSetupMode = VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE;
                 CloseVSSetup(false);
             } break;
-        }
 
+            default:
+                break;
+        }
+    }
+
+    switch (theId) {
         case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets: // 额外卡槽
         case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds:   // 拓展选卡
         case VSSetupAddonWidget::VSSetupAddonWidget_BanMode:      // 禁选模式

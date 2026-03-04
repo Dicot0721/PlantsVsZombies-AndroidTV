@@ -91,6 +91,11 @@ void Graphics::Translate(int theTransX, int theTransY) {
     mTransY += theTransY;
 }
 
+void Graphics::TranslateF(float theTransX, float theTransY) {
+    mTransX += theTransX;
+    mTransY += theTransY;
+}
+
 void Graphics::SetScale(float theScaleX, float theScaleY, float theOrigX, float theOrigY) {
     mScaleX = theScaleX;
     mScaleY = theScaleY;
