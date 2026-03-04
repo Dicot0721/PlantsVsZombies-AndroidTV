@@ -42,18 +42,9 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
         button->Resize(button->mX, button->mY, 0, 0);
     }
 
-    // if (thePage == CHALLENGE_PAGE_VS) {
-    ////        SetUnlockChallengeIndex(thePage, false);
-    // mUnlockState = UNLOCK_SHAKING;
-    // mUnlockStateCounter = 100;
-    // mUnlockChallengeIndex = 0;
-    //
-    // for (int aChallengeMode = 0; aChallengeMode < NUM_CHALLENGE_MODES; aChallengeMode++) {
-    // ChallengeDefinition& aDef = GetChallengeDefinition(aChallengeMode);
-    // if (aDef.mPage == thePage)
-    // mUnlockChallengeIndex = aChallengeMode;
-    // }
-    // }
+    //    if (mPageIndex == CHALLENGE_PAGE_VS) {
+    //        SetUnlockChallengeIndex(mPageIndex, false);
+    //    }
 }
 
 namespace {
@@ -75,17 +66,17 @@ ChallengeDefinition &GetChallengeDefinition(int theChallengeMode) {
     // return gPoolPartyDef;
     // }
 
-    // if (theChallengeMode + 4 == GameMode::GAMEMODE_MP_VS) {
-    // return gVSDayDef;
-    // } else if (theChallengeMode + 3 == GameMode::GAMEMODE_MP_VS) {
-    // return gVSNightDef;
-    // } else if (theChallengeMode + 2 == GameMode::GAMEMODE_MP_VS) {
-    // return gVSPoolDayDef;
-    // } else if (theChallengeMode + 1 == GameMode::GAMEMODE_MP_VS) {
-    // return gVSPoolNightDef;
-    // } else if (theChallengeMode == GameMode::GAMEMODE_MP_VS) {
-    // return gVSRoofDef;
-    // }
+    //     if (theChallengeMode + 4 == GameMode::GAMEMODE_MP_VS) {
+    //     return gVSDayDef;
+    //     } else if (theChallengeMode + 3 == GameMode::GAMEMODE_MP_VS) {
+    //     return gVSNightDef;
+    //     } else if (theChallengeMode + 2 == GameMode::GAMEMODE_MP_VS) {
+    //     return gVSPoolDayDef;
+    //     } else if (theChallengeMode + 1 == GameMode::GAMEMODE_MP_VS) {
+    //     return gVSPoolNightDef;
+    //     } else if (theChallengeMode == GameMode::GAMEMODE_MP_VS) {
+    //     return gVSRoofDef;
+    //     }
 
     return old_GetChallengeDefinition(theChallengeMode);
 }

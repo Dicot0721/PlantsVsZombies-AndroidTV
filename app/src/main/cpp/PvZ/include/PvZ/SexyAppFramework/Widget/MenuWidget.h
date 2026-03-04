@@ -38,6 +38,9 @@ public:
     void Draw(Graphics *g) {
         reinterpret_cast<void (*)(MenuWidget *, Graphics *)>(Sexy_MenuWidget_DrawAddr)(this, g);
     }
+    void Exit() {
+        reinterpret_cast<void (*)(MenuWidget *)>(Sexy_MenuWidget_ExitAddr)(this);
+    }
 };
 
 } // namespace Sexy

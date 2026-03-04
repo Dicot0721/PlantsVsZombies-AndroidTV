@@ -117,8 +117,8 @@ void StoreScreen::ButtonDepress(int theId) {
     }
 }
 
-void StoreScreen::PurchaseItem(StoreItem item) {
-    old_StoreScreen_PurchaseItem(this, item);
+void StoreScreen::PurchaseItem(StoreItem theStoreItem) {
+    old_StoreScreen_PurchaseItem(this, theStoreItem);
 
     DefaultPlayerInfo *aPlayerInfo = mApp->mPlayerInfo;
 
@@ -128,7 +128,7 @@ void StoreScreen::PurchaseItem(StoreItem item) {
             return;
         }
     }
-    mApp->GrantAchievement(AchievementId::ACHIEVEMENT_SHOP);
+    mApp->GrantAchievement(AchievementId::ACHIEVEMENT_MORTICULTURALIST);
 }
 
 void StoreScreen::Draw(Sexy::Graphics *g) {

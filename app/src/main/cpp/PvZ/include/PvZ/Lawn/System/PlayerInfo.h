@@ -21,6 +21,7 @@
 #define PVZ_LAWN_SYSTEM_PLAYER_INFO_H
 
 #include "../Common/ConstEnums.h"
+#include "PvZ/Lawn/Widget/AchievementsWidget.h"
 #include "PvZ/Lawn/Widget/LeaderboardsWidget.h"
 
 class PottedPlant {
@@ -54,21 +55,21 @@ public:
 
 class PlayerInfo {
 public:
-    int *vTable;                // 0
-    int unk1;                   // 1
-    int *mProFileMgr;           // 2
-    int unk2;                   // 3
-    char *mName;                // 4
-    int mUseSeq;                // 5
-    int mId;                    // 6
-    int mProfileId;             // 7
-    int mFlags;                 // 8
-    int mLevel;                 // 9
-    int mCoins;                 // 10
-    int mChallengeRecords[100]; // 11 ~ 110 ， 但末尾6个完全不会用到，可以成为我的自己存数据的空间。
-    int mPurchases[36];         // 111 ~ 146 ，本应该是mPurchases[80]，111 ~ 190，但仅用到了前36个。
-    bool mAchievements[12];     // 147 ~ 149, 从mPurchases[80]分出来的
-    unsigned short mVSRoomPort; // 150 ~
+    int *vTable;                                         // 0
+    int unk1;                                            // 1
+    int *mProFileMgr;                                    // 2
+    int unk2;                                            // 3
+    char *mName;                                         // 4
+    int mUseSeq;                                         // 5
+    int mId;                                             // 6
+    int mProfileId;                                      // 7
+    int mFlags;                                          // 8
+    int mLevel;                                          // 9
+    int mCoins;                                          // 10
+    int mChallengeRecords[100];                          // 11 ~ 110 ， 但末尾6个完全不会用到，可以成为我的自己存数据的空间。
+    int mPurchases[36];                                  // 111 ~ 146 ，本应该是mPurchases[80]，111 ~ 190，但仅用到了前36个。
+    bool mAchievements[AchievementId::MAX_ACHIEVEMENTS]; // 147 ~ 149, 从mPurchases[80]分出来的
+    unsigned short mVSRoomPort;                          // 150 ~
     bool mVS7PacketsMode;
     bool mVSExtraSeedsMode;
     bool mVSBanMode;

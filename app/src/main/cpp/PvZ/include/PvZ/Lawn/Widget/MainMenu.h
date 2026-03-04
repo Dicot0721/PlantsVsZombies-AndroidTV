@@ -26,6 +26,7 @@
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 #include "PvZ/SexyAppFramework/Widget/MenuWidget.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/TodLib/Common/TodFoley.h"
 #include "ZombatarWidget.h"
 
 enum MainMenuButtonId {
@@ -114,6 +115,7 @@ public:
     MainMenu(LawnApp *theApp) {
         _constructor(theApp);
     }
+    static FoleyType GetFoleyTypeByScene(int theScene);
     void KeyDown(Sexy::KeyCode theKeyCode);
     void ButtonDepress(MainMenuButtonId theSelectedButton);
     void Update();
@@ -125,8 +127,8 @@ public:
     void OnScene(int theScene);
     void SyncButtons();
     void UpdateCameraPosition();
-    void AddedToManager(int *a2);
-    void RemovedFromManager(int *a2);
+    void AddedToManager(Sexy::WidgetManager *theWidgetManager);
+    void RemovedFromManager(Sexy::WidgetManager *theWidgetManager);
     void DrawOverlay(Sexy::Graphics *g);
     void DrawFade(Sexy::Graphics *g);
     void Draw(Sexy::Graphics *g);
@@ -166,9 +168,9 @@ inline void (*old_MainMenu_MainMenu)(MainMenu *mainMenu, LawnApp *);
 
 inline void (*old_MainMenu_UpdateCameraPosition)(MainMenu *mainMenu);
 
-inline void (*old_MainMenu_AddedToManager)(MainMenu *instance, int *a2);
+inline void (*old_MainMenu_AddedToManager)(MainMenu *instance, Sexy::WidgetManager *a2);
 
-inline void (*old_MainMenu_RemovedFromManager)(MainMenu *instance, int *a2);
+inline void (*old_MainMenu_RemovedFromManager)(MainMenu *instance, Sexy::WidgetManager *a2);
 
 inline void (*old_MainMenu_Delete2)(MainMenu *mainMenu);
 

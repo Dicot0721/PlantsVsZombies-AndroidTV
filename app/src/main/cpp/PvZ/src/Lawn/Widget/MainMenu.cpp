@@ -28,7 +28,6 @@
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Graphics/MemoryImage.h"
 #include "PvZ/Symbols.h"
-#include "PvZ/TodLib/Common/TodFoley.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 #include "PvZ/TodLib/Effect/Attachment.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
@@ -75,10 +74,13 @@ int gFoleyVolumeCounter;
 
 } // namespace
 
+void MainMenu::_constructor(LawnApp *theApp) {
+    old_MainMenu_MainMenu(this, theApp);
+}
 
-static FoleyType MainMenu_GetFoleyTypeByScene(int scene) {
+FoleyType MainMenu::GetFoleyTypeByScene(int theScene) {
     FoleyType theType = FoleyType::FOLEY_MENU_CENTRE;
-    switch (scene) {
+    switch (theScene) {
         case 0:
             theType = FoleyType::FOLEY_MENU_LEFT;
             break;
@@ -112,8 +114,8 @@ void MainMenu::Update() {
 
         if (InTransition()) {
             gFoleyVolumeCounter++;
-            FoleyType aType = MainMenu_GetFoleyTypeByScene(mScene);
-            FoleyType aNextType = MainMenu_GetFoleyTypeByScene(mSceneNext);
+            FoleyType aType = GetFoleyTypeByScene(mScene);
+            FoleyType aNextType = GetFoleyTypeByScene(mSceneNext);
             if (!mApp->mSoundSystem->IsFoleyPlaying(aNextType)) {
                 mApp->PlayFoley(aNextType);
                 mApp->SetFoleyVolume(aNextType, 0);
@@ -129,7 +131,7 @@ void MainMenu::Update() {
             }
         } else {
             gFoleyVolumeCounter = 0;
-            FoleyType aType = MainMenu_GetFoleyTypeByScene(mScene);
+            FoleyType aType = GetFoleyTypeByScene(mScene);
             if (gAchievementState == NOT_SHOWING) {
                 if (!mApp->mSoundSystem->IsFoleyPlaying(aType) && mExitCounter == 0) {
                     // mApp->PlayFoley(aType);
@@ -262,14 +264,14 @@ void MainMenu::ButtonDepress(MainMenuButtonId theSelectedButton) {
         case ADVENTURE_BUTTON:
         case START_ADVENTURE_BUTTON:
             StartAdventureMode();
-            if (aPlayerInfo->GetFlag(4096) && mApp->mPlayerInfo->mLevel == 35) {
+            if (aPlayerInfo->GetFlag(4096) && aPlayerInfo->mLevel == 35) {
                 mPressedButtonId = STORE_BUTTON;
                 unkBool3 = true;
-                (*(void (**)(MainMenu *))(*(uint32_t *)this + 496))(this);
+                Exit();
             } else {
                 mPressedButtonId = ADVENTURE_BUTTON;
                 mApp->mGameMode = GameMode::GAMEMODE_ADVENTURE;
-                (*(void (**)(MainMenu *))(*(uint32_t *)this + 496))(this);
+                Exit();
             }
             return;
         case VS_BUTTON: // 如果按下了对战按钮
@@ -279,7 +281,7 @@ void MainMenu::ButtonDepress(MainMenuButtonId theSelectedButton) {
                 return;
             }
             mPressedButtonId = theSelectedButton;
-            (*(int (**)(MainMenu *))(*(uint32_t *)this + 496))(this);
+            Exit();
             return;
         case VS_COOP_BUTTON: // 如果按下了结盟按钮
             if (mCoopModeLocked) {
@@ -288,7 +290,7 @@ void MainMenu::ButtonDepress(MainMenuButtonId theSelectedButton) {
                 return;
             }
             mPressedButtonId = theSelectedButton;
-            (*(void (**)(MainMenu *))(*(uint32_t *)this + 496))(this);
+            Exit();
             return;
         case ACHIEVEMENTS_BUTTON:
         case ACHIEVEMENTS_BACK_BUTTON:
@@ -309,11 +311,11 @@ void MainMenu::ButtonDepress(MainMenuButtonId theSelectedButton) {
             return;
         case HOUSE_BUTTON:
             mPressedButtonId = theSelectedButton;
-            (*(void (**)(MainMenu *))(*(uint32_t *)this + 496))(this);
+            Exit();
             return;
         case UNLOCK_BUTTON:
             mPressedButtonId = theSelectedButton;
-            (*(void (**)(MainMenu *))(*(uint32_t *)this + 496))(this);
+            Exit();
             return;
         default:
             old_MainMenu_ButtonDepress(this, theSelectedButton);
@@ -475,12 +477,18 @@ void MainMenu::OnExit() {
         mApp->ShowZombatarScreen();
     }
 
-    // if (mPressedButtonId == VS_BUTTON) {
-    // KillMainMenu(mApp);
-    ////        TODO:为对战添加选择场景
-    // LawnApp_ShowChallengeScreen(mApp, CHALLENGE_PAGE_VS);
-    // return;
-    // }
+    //    if (mPressedButtonId == VS_BUTTON) {
+    //        mApp->KillMainMenu();
+    //        mApp->mVsInitialPlantMode = 0;
+    //        //        TODO:为对战添加选择场景
+    //        mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS);
+    //        if (mRetainWidgetsOnExit) {
+    //            mIsFading = false;
+    //            mRetainWidgetsOnExit = false;
+    //            Enter();
+    //        }
+    //        return;
+    //    }
 
     old_MainMenu_OnExit(this);
 }
@@ -495,11 +503,6 @@ void MainMenu::SyncButtons() {
     UpdateHouseReanim();
     EnableButtons();
 }
-
-void MainMenu::_constructor(LawnApp *theApp) {
-    old_MainMenu_MainMenu(this, theApp);
-}
-
 
 namespace {
 int theOffsetX = 1792;
@@ -518,8 +521,8 @@ void MainMenu::UpdateCameraPosition() {
     }
 }
 
-void MainMenu::AddedToManager(int *a2) {
-    old_MainMenu_AddedToManager(this, a2);
+void MainMenu::AddedToManager(WidgetManager *theWidgetManager) {
+    old_MainMenu_AddedToManager(this, theWidgetManager);
     if (!showHouse)
         return;
     Reanimation *reanimation = mApp->AddReanimation(0, 0, 0, ReanimationType::REANIM_LEADERBOARDS_HOUSE);
@@ -533,7 +536,7 @@ void MainMenu::AddedToManager(int *a2) {
     mHouseReanimID = mApp->ReanimationGetID(reanimation);
 }
 
-void MainMenu::RemovedFromManager(int *a2) {
+void MainMenu::RemovedFromManager(WidgetManager *theWidgetManager) {
     // 记录当前游戏状态
     if (gMainMenuAchievementsWidget != nullptr) {
         RemoveWidget(gMainMenuAchievementsWidget);
@@ -541,7 +544,7 @@ void MainMenu::RemovedFromManager(int *a2) {
     if (gMainMenuAchievementsBack != nullptr) {
         RemoveWidget((Widget *)gMainMenuAchievementsBack);
     }
-    old_MainMenu_RemovedFromManager(this, a2);
+    old_MainMenu_RemovedFromManager(this, theWidgetManager);
 }
 
 void MainMenu::_destructor2() {

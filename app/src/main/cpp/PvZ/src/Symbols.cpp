@@ -995,6 +995,7 @@ bool LoadGameMain() {
     Sexy_Image_SetWrapModeAddr = dlsym(handle, "_ZN4Sexy5Image11SetWrapModeENS_8WrapModeES1_");
     Sexy_WidgetContainer_MarkDirtyAddr = dlsym(handle, "_ZN4Sexy15WidgetContainer9MarkDirtyEv");
     Sexy_MenuWidget_DrawAddr = dlsym(handle, "_ZN4Sexy10MenuWidget4DrawEPNS_8GraphicsE");
+    Sexy_MenuWidget_ExitAddr = dlsym(handle, "_ZN4Sexy10MenuWidget4ExitEv");
     Sexy_Widget_DeferOverlayAddr = dlsym(handle, "_ZN4Sexy6Widget12DeferOverlayEi");
     Sexy_SexyMatrix3_SexyMatrix3Addr = dlsym(handle, "_ZN4Sexy11SexyMatrix3C2Ev");
     Sexy_ButtonWidget__destructorAddr = dlsym(handle, "_ZN4Sexy12ButtonWidgetD2Ev");
