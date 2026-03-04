@@ -22,8 +22,6 @@
 
 #include <dlfcn.h>
 
-#include <cassert>
-
 SharedLibLoader::SharedLibLoader(const char *filename)
     : handle_{dlopen(filename, RTLD_NOW | RTLD_NOLOAD)} {
     if (!IsOpen()) {
@@ -43,7 +41,9 @@ SharedLibLoader &SharedLibLoader::operator=(SharedLibLoader &&other) noexcept {
 }
 
 void SharedLibLoader::GetSymbolImpl(const char *name, void *&output) const {
-    void *ptr = dlsym(handle_, name);
-    assert((ptr != nullptr) && "failed to get symbol");
-    output = ptr;
+    output = dlsym(handle_, name);
+    if (output == nullptr) [[unlikely]] {
+        // a NULL return from dlsym() need not indicate an error
+        LOG_WARN("a NULL return from dlsym({:?})", name);
+    }
 }
