@@ -51,6 +51,7 @@ bool homura::WriteMemory(uintptr_t address, const std::vector<uint8_t> &buffer) 
 }
 
 uintptr_t homura::GetLibBaseAddr(const std::string &libName) {
+    assert(!libName.empty());
     static std::unordered_map<std::string, uintptr_t> baseAddrMap;
     if (auto it = baseAddrMap.find(libName); it != baseAddrMap.end()) {
         return it->second;
@@ -58,7 +59,7 @@ uintptr_t homura::GetLibBaseAddr(const std::string &libName) {
 
     constexpr auto &mapsPath = "/proc/self/maps";
     std::ifstream mapsFile{mapsPath};
-    if (!mapsFile.is_open()) {
+    if (!mapsFile.is_open()) [[unlikely]] {
         LOG_ERROR("Failed to open {:?}", mapsPath);
         return 0;
     }
@@ -80,19 +81,19 @@ homura::Patcher::Patcher(std::string libName, uintptr_t offset, std::vector<uint
     if (uintptr_t baseAddr = GetLibBaseAddr(libName_)) {
         address_ = baseAddr + offset;
     } else {
-        LOG_ERROR("Failed to get base address of {:?}", libName);
+        LOG_ERROR("Failed to get base address of {:?}", libName_);
     }
     if (address_ != 0 && !patchBytes_.empty()) {
         std::memcpy(originBytes_.data(), reinterpret_cast<void *>(address_), patchBytes_.size());
     }
 }
 
-[[nodiscard]] auto homura::Patcher::CreateWithStr(std::string libName, uintptr_t offset, std::string patchBytesStr) -> Patcher {
+auto homura::Patcher::CreateWithStr(std::string libName, uintptr_t offset, std::string patchBytesStr) -> Patcher {
+    assert(!patchBytesStr.empty() && "cannot call 'CreateWithStr()' with empty 'patchBytesStr'");
     std::vector<uint8_t> patchCode;
+    patchCode.reserve((patchBytesStr.size() + 1) / 3);
     std::istringstream stream{std::move(patchBytesStr)};
     bool isOutOfRange = false;
-
-    patchCode.reserve((patchBytesStr.size() + 1) / 3);
 
     // 'byte' cannot be uint8_t (aka: unsigned char)
     for (int16_t byte; !stream.eof() && (stream >> std::hex >> byte);) {
