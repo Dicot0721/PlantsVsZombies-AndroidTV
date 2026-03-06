@@ -91,7 +91,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
         : mPageIndex == CHALLENGE_PAGE_VS                               ? "[VS_MODE]"
         : mPageIndex == CHALLENGE_PAGE_COOP                             ? "[XBOX_COOP]"
                                                                         : "[PICK_CHALLENGE]";
-    TodDrawString(g, aTitleString, 400, 45, *Sexy::FONT_HOUSEOFTERROR28, Color(220, 220, 220), DS_ALIGN_CENTER);
+    TodDrawString(g, aTitleString, 400, 45, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(220, 220, 220), DS_ALIGN_CENTER);
 
     int aTrophiesGot = mApp->GetNumTrophies(mPageIndex);
     int aTrophiesTotal = (mPageIndex == CHALLENGE_PAGE_SURVIVAL || mPageIndex == CHALLENGE_PAGE_COOP) ? 10 : mPageIndex == CHALLENGE_PAGE_PUZZLE ? 18 : 0;
@@ -104,7 +104,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
     }
     if (aTrophiesTotal > 0) {
         pvzstl::string aTrophyString = StrFormat("%d/%d", aTrophiesGot, aTrophiesTotal);
-        TodDrawString(g, aTrophyString, 711, 62, *Sexy::FONT_BRIANNETOD16, Color(255, 240, 0), DS_ALIGN_CENTER);
+        TodDrawString(g, aTrophyString, 711, 62, *Sexy_FONT_BRIANNETOD16_Addr, Color(255, 240, 0), DS_ALIGN_CENTER);
     }
     TodDrawImageScaledF(g, *Sexy::IMAGE_TROPHY, 690.0f, 15.0f, 0.5f, 0.5f);
 

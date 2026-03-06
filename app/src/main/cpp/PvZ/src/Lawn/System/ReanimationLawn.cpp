@@ -244,7 +244,7 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
         } else if (theZombieType == ZombieType::ZOMBIE_TRASHCAN) {
             aReanim.AssignRenderGroupToTrack("anim_screendoor", RENDER_GROUP_NORMAL);
             aReanim.AssignRenderGroupToTrack("Zombie_outerarm_screendoor", RENDER_GROUP_NORMAL);
-            aReanim.SetImageOverride("anim_screendoor", *IMAGE_REANIM_ZOMBIE_TRASHCAN1);
+            aReanim.SetImageOverride("anim_screendoor", *Sexy_IMAGE_REANIM_ZOMBIE_TRASHCAN1_Addr);
         } else if (theZombieType == ZombieType::ZOMBIE_FLAG) {
             Reanimation aReanimFlag;
             aReanimFlag.ReanimationInitializeType(aPosX, aPosY, ReanimationType::REANIM_ZOMBIE_FLAGPOLE);

@@ -304,7 +304,7 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
 
     // VS模式检查
     if (mApp->IsVSMode() && !CanPickNow()) {
-        mApp->PlaySample(*SOUND_BUZZER);
+        mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
         canPickSeed = false;
     }
 
@@ -343,7 +343,7 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
                 mBoard->SwitchGamepadControls();
             }
 
-            mApp->PlaySample(*SOUND_TAP);
+            mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
             OnPlayerPickedSeed(aGamepadIndex);
         }
         return;
@@ -397,7 +397,7 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
 
     // 播放音效并更新UI
     RemoveToolTip(thePlayerIndex);
-    mApp->PlaySample(*SOUND_TAP);
+    mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
 
     // 检查是否启用开始按钮
     if (!mApp->IsCoopMode() && mSeedsInBank == mSeedBank1->mNumPackets) {
@@ -933,7 +933,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
     }
 
     // Draw background
-    Image *aBackgroundImage = mIsZombieChooser ? *Sexy::IMAGE_SEEDCHOOSER_BACKGROUND2 : *Sexy::IMAGE_SEEDCHOOSER_BACKGROUND;
+    Image *aBackgroundImage = mIsZombieChooser ? *Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr : *Sexy_IMAGE_SEEDCHOOSER_BACKGROUND_Addr;
     g->DrawImage(aBackgroundImage, 0, 87);
 
     // Draw imitater addon for plant chooser
@@ -953,7 +953,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
     }
 
     pvzstl::string aTitleString = TodStringTranslate(aTitleText.c_str());
-    TodDrawString(g, aTitleString, aBackgroundImage->mWidth / 2, 114, *Sexy::FONT_DWARVENTODCRAFT18, aTitleColor, DS_ALIGN_CENTER);
+    TodDrawString(g, aTitleString, aBackgroundImage->mWidth / 2, 114, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aTitleColor, DS_ALIGN_CENTER);
 
     bool isExtraSeedsMode = gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode;
 

@@ -22,6 +22,8 @@
 
 #include <dlfcn.h>
 
+#include <unordered_set>
+
 homura::SharedLibLoader::SharedLibLoader(const char *filename)
     : handle_{dlopen(filename, RTLD_NOW | RTLD_NOLOAD)} {
     if (!IsOpen()) {
@@ -41,6 +43,14 @@ auto homura::SharedLibLoader::operator=(SharedLibLoader &&other) noexcept -> Sha
 }
 
 bool homura::SharedLibLoader::GetSymbolImpl(const char *name, void *&output) const {
+#ifdef PVZ_DEBUG
+    static std::unordered_set<std::string_view> symbolSet;
+    if (!symbolSet.contains(name)) {
+        symbolSet.emplace(name);
+    } else {
+        LOG_WARN("Rebinding symbol {:?}", name);
+    }
+#endif
     if (void *ptr = dlsym(handle_, name)) {
         output = ptr;
         return true;

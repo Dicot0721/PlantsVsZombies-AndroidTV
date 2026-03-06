@@ -655,7 +655,7 @@ void Plant::DoSpecial() {
             break;
         }
         case SeedType::SEED_DOOMSHROOM: {
-            mApp->PlaySample(*SOUND_DOOMSHROOM);
+            mApp->PlaySample(*Sexy_SOUND_DOOMSHROOM_Addr);
 
             mBoard->CustomKillAllZombiesInRadius(mRow, aPosX, aPosY, 250, 3, true, aDamageRangeFlags);
             KillAllPlantsNearDoom();

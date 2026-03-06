@@ -972,12 +972,12 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy6Widget10SetVisibleEb", Sexy_Widget_SetVisibleAddr);
     libGameMain.GetSymbol("_ZN4Sexy6Widget4MoveEii", Sexy_Widget_MoveAddr);
     libGameMain.GetSymbol("_ZN4Sexy13WidgetManager11GetWidgetAtEiiPiS1_", Sexy_WidgetManager_GetWidgetAtAddr);
-    libGameMain.GetSymbol("_ZN4Sexy13WidgetManager11GetWidgetAtEiiPiS1_", Sexy_WidgetManager_SetFocusAddr);
+    libGameMain.GetSymbol("_ZN4Sexy13WidgetManager8SetFocusEPNS_6WidgetE", Sexy_WidgetManager_SetFocusAddr);
     libGameMain.GetSymbol("_ZN4Sexy15WidgetContainer9AddWidgetEPNS_6WidgetE", Sexy_WidgetContainer_AddWidgetAddr);
     libGameMain.GetSymbol("_ZN4Sexy15WidgetContainer12RemoveWidgetEPNS_6WidgetE", Sexy_WidgetContainer_RemoveWidgetAddr);
     libGameMain.GetSymbol("_ZN4Sexy15WidgetContainer12BringToFrontEPNS_6WidgetE", Sexy_WidgetContainer_BringToFrontAddr);
     libGameMain.GetSymbol("_ZN4Sexy15WidgetContainer8SetFocusEPNS_6WidgetE", Sexy_WidgetContainer_SetFocusAddr);
-    libGameMain.GetSymbol("_ZN4Sexy13WidgetManager8SetFocusEPNS_6WidgetE", Sexy_WidgetManager_MouseDownAddr);
+    libGameMain.GetSymbol("_ZN4Sexy13WidgetManager9MouseDownEiii", Sexy_WidgetManager_MouseDownAddr);
     libGameMain.GetSymbol("_ZN4Sexy13WidgetManager9MouseDragEii", Sexy_WidgetManager_MouseDragAddr);
     libGameMain.GetSymbol("_ZN4Sexy13WidgetManager7MouseUpEiii", Sexy_WidgetManager_MouseUpAddr);
     libGameMain.GetSymbol("_ZN4Sexy13WidgetManager9AxisMovedERKNS_5EventE", Sexy_WidgetManager_AxisMovedAddr);
@@ -1070,7 +1070,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN11TypingCheckC2Ev", TypingCheck_TypingCheckAddr);
     libGameMain.GetSymbol("_ZN17ZenGardenControls6UpdateEf", ZenGardenControls_UpdateAddr);
 
-    libGameMain.GetSymbol("_ZN17ZenGardenControls6UpdateEf", AwardScreen_GameButtonDownAddr);
+    libGameMain.GetSymbol("_ZN11AwardScreen14GameButtonDownEN4Sexy13GamepadButtonEij", AwardScreen_GameButtonDownAddr);
     libGameMain.GetSymbol("_ZN11AwardScreen9MouseDownEiii", AwardScreen_MouseDownAddr);
     libGameMain.GetSymbol("_ZN11AwardScreen7MouseUpEiii", AwardScreen_MouseUpAddr);
     libGameMain.GetSymbol("_ZN11AwardScreen18StartButtonPressedEv", AwardScreen_StartButtonPressedAddr);
@@ -1233,8 +1233,6 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy23IMAGE_OPTIONS_CHECKBOX1E", Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr);
     // libGameMain.GetSymbol("_ZN4Sexy11IMAGE_BLANKE", Sexy_IMAGE_BLANK_Addr);
     libGameMain.GetSymbol("_ZN4Sexy11IMAGE_BLANKE", Sexy::IMAGE_BLANK);
-    libGameMain.GetSymbol("_ZN4Sexy28IMAGE_SEEDCHOOSER_BACKGROUNDE", Sexy::IMAGE_SEEDCHOOSER_BACKGROUND);
-    libGameMain.GetSymbol("_ZN4Sexy29IMAGE_SEEDCHOOSER_BACKGROUND2E", Sexy::IMAGE_SEEDCHOOSER_BACKGROUND2);
     libGameMain.GetSymbol("_ZN4Sexy31IMAGE_SEEDCHOOSER_IMITATERADDONE", Sexy::IMAGE_SEEDCHOOSER_IMITATERADDON);
     libGameMain.GetSymbol("_ZN4Sexy26IMAGE_SEEDPACKETSILHOUETTEE", Sexy::IMAGE_SEEDPACKETSILHOUETTE);
     libGameMain.GetSymbol("_ZN4Sexy19IMAGE_SEED_SELECTORE", Sexy::IMAGE_SEED_SELECTOR);
@@ -1244,14 +1242,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy20IMAGE_CURSOR_P1_TEXTE", Sexy::IMAGE_CURSOR_P1_TEXT);
     libGameMain.GetSymbol("_ZN4Sexy20IMAGE_CURSOR_P2_TEXTE", Sexy::IMAGE_CURSOR_P2_TEXT);
     libGameMain.GetSymbol("_ZN4Sexy22IMAGE_PUFFSHROOM_PUFF1E", Sexy::IMAGE_PUFFSHROOM_PUFF1);
-    libGameMain.GetSymbol("_ZN4Sexy29IMAGE_REANIM_WALLNUT_CRACKED1E", Sexy::IMAGE_REANIM_WALLNUT_CRACKED1);
-    libGameMain.GetSymbol("_ZN4Sexy29IMAGE_REANIM_WALLNUT_CRACKED2E", Sexy::IMAGE_REANIM_WALLNUT_CRACKED2);
-    libGameMain.GetSymbol("_ZN4Sexy29IMAGE_REANIM_ZOMBIE_TRASHCAN1E", Sexy::IMAGE_REANIM_ZOMBIE_TRASHCAN1);
     libGameMain.GetSymbol("_ZN4Sexy19IMAGE_ZOMBIEIMPHEADE", Sexy::IMAGE_ZOMBIEIMPHEAD);
-    libGameMain.GetSymbol("_ZN4Sexy35IMAGE_REANIM_ZOMBIE_OUTERARM_UPPER2E", Sexy::IMAGE_REANIM_ZOMBIE_OUTERARM_UPPER2);
-    libGameMain.GetSymbol("_ZN4Sexy43IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_UPPER2E", Sexy::IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_UPPER2);
     libGameMain.GetSymbol("_ZN4Sexy41IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_HANDE", Sexy::IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_HAND);
-    libGameMain.GetSymbol("_ZN4Sexy33IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONEE", Sexy::IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONE);
     libGameMain.GetSymbol("_ZN4Sexy28IMAGE_REANIM_ZOMBIE_IMP_ARM2E", Sexy::IMAGE_REANIM_ZOMBIE_IMP_ARM2);
     libGameMain.GetSymbol("_ZN4Sexy17IMAGE_PEA_SHADOWSE", Sexy::IMAGE_PEA_SHADOWS);
     libGameMain.GetSymbol("_ZN4Sexy18IMAGE_MP_TARGETS_XE", Sexy::IMAGE_MP_TARGETS_X);
@@ -1259,10 +1251,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy12IMAGE_TROPHYE", Sexy::IMAGE_TROPHY);
     libGameMain.GetSymbol("_ZN4Sexy23IMAGE_DLG_SELECTORFRAMEE", Sexy::IMAGE_DLG_SELECTORFRAME);
 
-    libGameMain.GetSymbol("_ZN4Sexy22FONT_DWARVENTODCRAFT18E", Sexy::FONT_DWARVENTODCRAFT18);
-    libGameMain.GetSymbol("_ZN4Sexy20FONT_HOUSEOFTERROR28E", Sexy::FONT_HOUSEOFTERROR28);
     libGameMain.GetSymbol("_ZN4Sexy22FONT_DWARVENTODCRAFT24E", Sexy::FONT_DWARVENTODCRAFT24);
-    libGameMain.GetSymbol("_ZN4Sexy17FONT_BRIANNETOD16E", Sexy::FONT_BRIANNETOD16);
 
     libGameMain.GetSymbol("_ZN4Sexy17SOUND_BALLOON_POPE", Sexy::SOUND_BALLOON_POP);
 
@@ -1329,9 +1318,6 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy12gSexyAppBaseE", Sexy_gSexyAppBase_Addr);
     libGameMain.GetSymbol("_ZN4Sexy11SOUND_PAUSEE", Sexy_SOUND_PAUSE_Addr);
     libGameMain.GetSymbol("_ZN4Sexy11SOUND_BOINGE", Sexy::SOUND_BOING);
-    libGameMain.GetSymbol("_ZN4Sexy12SOUND_BUZZERE", Sexy::SOUND_BUZZER);
-    libGameMain.GetSymbol("_ZN4Sexy9SOUND_TAPE", Sexy::SOUND_TAP);
-    libGameMain.GetSymbol("_ZN4Sexy16SOUND_DOOMSHROOME", Sexy::SOUND_DOOMSHROOM);
     libGameMain.GetSymbol("_ZN4Sexy17SOUND_POTATO_MINEE", Sexy::SOUND_POTATO_MINE);
     libGameMain.GetSymbol("_ZN4Sexy12SOUND_FROZENE", Sexy_SOUND_FROZEN_Addr);
     libGameMain.GetSymbol("_ZN4Sexy9SOUND_TAPE", Sexy_SOUND_TAP_Addr);

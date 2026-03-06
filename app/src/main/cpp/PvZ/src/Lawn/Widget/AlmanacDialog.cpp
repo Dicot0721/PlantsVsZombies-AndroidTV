@@ -123,13 +123,13 @@ void AlmanacDialog::MouseDown(int x, int y, int theClickCount) {
     if (aSeedType != SeedType::SEED_NONE && aSeedType != mSelectedSeed) {
         mSelectedSeed = aSeedType;
         SetupPlant();
-        mApp->PlaySample(*SOUND_TAP);
+        mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
     }
     ZombieType aZombieType = ZombieHitTest(x, y);
     if (aZombieType != -1 && aZombieType != mSelectedZombie) {
         mSelectedZombie = aZombieType;
         SetupZombie();
-        mApp->PlaySample(*SOUND_TAP);
+        mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
     }
 }
 
