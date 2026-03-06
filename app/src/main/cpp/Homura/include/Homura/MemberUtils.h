@@ -17,8 +17,8 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef HOMURA_STRUCT_WRAPPER_H
-#define HOMURA_STRUCT_WRAPPER_H
+#ifndef HOMURA_MEMBERUTILS_H
+#define HOMURA_MEMBERUTILS_H
 
 #include <cstdint>
 
@@ -147,4 +147,4 @@ R CallVirtualFunc(T *thiz, std::type_identity_t<Args &&>... args) {
 
 } // namespace homura
 
-#endif // HOMURA_STRUCT_WRAPPER_H
+#endif // HOMURA_MEMBERUTILS_H

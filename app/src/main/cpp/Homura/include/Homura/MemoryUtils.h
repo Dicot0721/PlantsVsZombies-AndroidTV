@@ -17,14 +17,13 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef HOMURA_PATCHER_H
-#define HOMURA_PATCHER_H
+#ifndef HOMURA_MEMORYUTILS_H
+#define HOMURA_MEMORYUTILS_H
 
 #include <cstdint>
 
 #include <sys/mman.h>
 
-#include <map>
 #include <string>
 #include <vector>
 
@@ -40,11 +39,18 @@ namespace homura {
  */
 bool SetProtection(uintptr_t address, size_t length, int prot);
 
+bool WriteMemory(uintptr_t address, const std::vector<uint8_t> &buffer);
+
+/**
+ * @brief 获取动态库的加载地址.
+ */
+[[nodiscard]] uintptr_t GetLibBaseAddr(const std::string &libName);
+
 class Patcher {
 public:
     Patcher() = default;
 
-    Patcher(std::string libName, uintptr_t offset, bool isUseMap, std::vector<uint8_t> patchCode);
+    Patcher(std::string libName, uintptr_t offset, std::vector<uint8_t> patchBytes);
 
     Patcher(const Patcher &) = delete;
     Patcher &operator=(const Patcher &) = delete;
@@ -52,37 +58,27 @@ public:
     Patcher(Patcher &&) = default;
     Patcher &operator=(Patcher &&) = default;
 
-    [[nodiscard]] static Patcher CreateWithStr(std::string libName, uintptr_t offset, bool isUseMap, std::string patchCodeStr);
-
-    /**
-     * @brief 获取动态库的加载地址与偏移 offset 相加得到的地址.
-     *
-     * @param [in] isUseMap 是否使用已存在的加载地址.
-     */
-    [[nodiscard]] static uintptr_t GetBaseAddress(const std::string &libName, bool isUseMap);
-
-    static void UpdateBaseAddrMap(const std::string &libName, uintptr_t baseAddr);
+    [[nodiscard]] static Patcher CreateWithStr(std::string libName, uintptr_t offset, std::string patchBytesStr);
 
     [[nodiscard]] bool HasModified() const noexcept {
-        return _hasModified;
+        return hasModified_;
     }
 
-    void Modify();
+    bool Modify();
+    bool Restore();
 
-    void Restore();
+    bool Switch() {
+        return !HasModified() ? Modify() : Restore();
+    }
 
 protected:
-    static bool WriteMemory(uintptr_t address, const std::vector<uint8_t> &buffer);
-
-    static inline std::map<std::string, uintptr_t> _baseAddrMap;
-
-    std::string _libName;
-    uintptr_t _address = 0;
-    std::vector<uint8_t> _patchCode;
-    std::vector<uint8_t> _originCode;
-    bool _hasModified = false;
+    std::string libName_;
+    uintptr_t address_ = 0;
+    std::vector<uint8_t> patchBytes_;
+    std::vector<uint8_t> originBytes_;
+    bool hasModified_ = false;
 };
 
 } // namespace homura
 
-#endif // HOMURA_PATCHER_H
+#endif // HOMURA_MEMORYUTILS_H

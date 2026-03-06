@@ -68,16 +68,6 @@ namespace homura::inline string {
     return result;
 }
 
-/**
- * @warning 字符串含非 ASCII 字符时可能会出现意外
- */
-[[nodiscard]] std::string ToLower(std::string_view sv);
-
-/**
- * @warning 字符串含非 ASCII 字符时可能会出现意外
- */
-[[nodiscard]] std::string ToUpper(std::string_view sv);
-
 [[nodiscard]] constexpr bool IsSpace(char c) noexcept {
     using namespace std::string_view_literals;
     // Whitespace characters as classified by the classic "C" locale
@@ -113,9 +103,6 @@ namespace homura::inline string {
         | std::views::reverse;
     return {std::from_range, view};
 }
-
-[[nodiscard]] std::wstring StringToWString(std::string_view sv);
-[[nodiscard]] std::string WStringToString(std::wstring_view sv);
 
 } // namespace homura::inline string
 

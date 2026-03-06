@@ -17,16 +17,19 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef HOMURA_HOOK_FUNC_H
-#define HOMURA_HOOK_FUNC_H
+#ifndef HOMURA_HOOKUTILS_H
+#define HOMURA_HOOKUTILS_H
 
-#include "Homura/Logger.h"
-#include "Homura/Patcher.h"
-#include "SubstrateHook.h"
-
+#include <string>
 #include <type_traits>
 
 namespace homura {
+
+namespace details {
+    void HookFunctionImpl(void *symbol, void *newFunc, void **oldFuncAddr);
+    bool HookVirtualFuncImpl(void *vTableSymbol, size_t index, void *newFunc, void **oldFuncAddr);
+    bool HookPltFunctionImpl(const std::string &libName, uintptr_t offset, void *newFunc, void **oldFuncAddr);
+} // namespace details
 
 /**
  * @brief 替换全局函数/静态成员函数.
@@ -37,17 +40,10 @@ namespace homura {
  * @param [in] symbol 通过 dlsym 函数获取的函数符号地址.
  * @param [in] newFunc 用于替换的新函数.
  * @param [out] oldFuncAddr 一个函数指针的地址, 用于保留旧函数. (可传入 nullptr 字面量, 代表不保留)
- *
- * @return 是否成功替换.
  */
 template <typename R, typename... Args>
-bool HookFunction(void *symbol, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
-    if (symbol == nullptr || newFunc == nullptr) {
-        LOG_ERROR("Is nullptr: symbol: {}, newFunc: {}", symbol == nullptr, newFunc == nullptr);
-        return false;
-    }
-    MSHookFunction(symbol, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
-    return true;
+void HookFunction(void *symbol, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
+    details::HookFunctionImpl(symbol, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
 /**
@@ -60,17 +56,10 @@ bool HookFunction(void *symbol, R (*newFunc)(Args...), std::add_pointer_t<declty
  * @param [in] symbol 通过 dlsym 函数获取的函数符号地址.
  * @param [in] newFunc 用于替换的新函数.
  * @param [out] oldFuncAddr 一个函数指针的地址, 用于保留旧函数. (可传入 nullptr 字面量, 代表不保留)
- *
- * @return 是否成功替换.
  */
 template <typename R, typename T, typename... Args>
-bool HookFunction(void *symbol, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
-    if (symbol == nullptr || newFunc == nullptr) {
-        LOG_ERROR("Is nullptr: symbol: {}, newFunc: {}", symbol == nullptr, newFunc == nullptr);
-        return false;
-    }
-    MSHookFunction(symbol, *reinterpret_cast<void **>(&newFunc), reinterpret_cast<void **>(oldFuncAddr));
-    return true;
+void HookFunction(void *symbol, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
+    details::HookFunctionImpl(symbol, *reinterpret_cast<void **>(&newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
 /**
@@ -90,22 +79,7 @@ bool HookFunction(void *symbol, R (T::*newFunc)(Args...), std::type_identity_t<R
  */
 template <typename R, typename... Args>
 bool HookVirtualFunc(void *vTableSymbol, size_t index, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
-    if (vTableSymbol == nullptr || newFunc == nullptr) {
-        LOG_ERROR("Is nullptr: vTableSymbol: {}, newFunc: {}", vTableSymbol == nullptr, newFunc == nullptr);
-        return false;
-    }
-    auto funcPtrAddr = reinterpret_cast<decltype(oldFuncAddr)>(vTableSymbol) + index;
-    if (!SetProtection(uintptr_t(funcPtrAddr), sizeof(void *), PROT_READ | PROT_WRITE)) {
-        return false;
-    }
-
-    if (oldFuncAddr != nullptr) {
-        *oldFuncAddr = *funcPtrAddr;
-    }
-    *funcPtrAddr = newFunc;
-
-    SetProtection(uintptr_t(funcPtrAddr), sizeof(void *), PROT_READ);
-    return true;
+    return details::HookVirtualFuncImpl(vTableSymbol, index, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
 /**
@@ -123,23 +97,7 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (*newFunc)(Args...), st
  */
 template <typename R, typename T, typename... Args>
 bool HookVirtualFunc(void *vTableSymbol, size_t index, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
-    if (vTableSymbol == nullptr || newFunc == nullptr) {
-        LOG_ERROR("Is nullptr: vTableSymbol: {}, newFunc: {}", vTableSymbol == nullptr, newFunc == nullptr);
-        return false;
-    }
-    using FuncPtrAddr = decltype(oldFuncAddr);
-    auto funcPtrAddr = reinterpret_cast<FuncPtrAddr>(vTableSymbol) + index;
-    if (!SetProtection(uintptr_t(funcPtrAddr), sizeof(void *), PROT_READ | PROT_WRITE)) {
-        return false;
-    }
-
-    if (oldFuncAddr != nullptr) {
-        *oldFuncAddr = *funcPtrAddr;
-    }
-    *funcPtrAddr = *reinterpret_cast<FuncPtrAddr>(&newFunc);
-
-    SetProtection(uintptr_t(funcPtrAddr), sizeof(void *), PROT_READ);
-    return true;
+    return details::HookVirtualFuncImpl(vTableSymbol, index, *reinterpret_cast<void **>(&newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
 /**
@@ -157,29 +115,9 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (T::*newFunc)(Args...),
  */
 template <typename R, typename... Args>
 bool HookPltFunction(const std::string &libName, uintptr_t offset, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
-    if (newFunc == nullptr) {
-        LOG_ERROR("newFunc is nullptr");
-        return false;
-    }
-    uintptr_t baseAddr = Patcher::GetBaseAddress(libName, false);
-    if (baseAddr == 0) {
-        LOG_ERROR("Failed to get base address.");
-        return false;
-    }
-    auto funcPtrAddr = reinterpret_cast<decltype(oldFuncAddr)>(baseAddr + offset);
-    if (!SetProtection(uintptr_t(funcPtrAddr), sizeof(void *), PROT_READ | PROT_WRITE)) {
-        return false;
-    }
-
-    if (oldFuncAddr != nullptr) {
-        *oldFuncAddr = *funcPtrAddr;
-    }
-    *funcPtrAddr = newFunc;
-
-    SetProtection(funcPtrAddr, sizeof(void *), PROT_READ);
-    return true;
+    return details::HookPltFunctionImpl(libName, offset, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
 } // namespace homura
 
-#endif // HOMURA_HOOK_FUNC_H
+#endif // HOMURA_HOOKUTILS_H

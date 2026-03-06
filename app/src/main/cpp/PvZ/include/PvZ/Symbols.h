@@ -1421,7 +1421,7 @@ inline void *j_AGVideoCloseAddr;
 bool LoadGameMain();
 bool LoadNativeCode();
 
-inline bool GetFunctionAddr() {
+inline bool InitSymbols() {
     return LoadGameMain() && LoadNativeCode();
 }
 

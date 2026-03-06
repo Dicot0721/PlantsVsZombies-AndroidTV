@@ -17,10 +17,11 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef HOMURA_CONTAINER_H
-#define HOMURA_CONTAINER_H
+#ifndef HOMURA_CONTAINERUTILS_H
+#define HOMURA_CONTAINERUTILS_H
 
 #include <concepts>
+#include <iterator>
 #include <optional>
 
 namespace homura::inline container {
@@ -28,6 +29,7 @@ namespace homura::inline container {
 template <typename T>
 concept IsMapType = (std::is_same_v<typename T::value_type, std::pair<typename T::key_type, typename T::mapped_type>>
                      || std::is_same_v<typename T::value_type, std::pair<const typename T::key_type, typename T::mapped_type>>)
+    && std::is_same_v<std::iter_value_t<typename T::const_iterator>, typename T::value_type> //
     && requires(const T &map, const typename T::key_type &key) {
            { map.find(key) } -> std::same_as<typename T::const_iterator>;
            { map.end() } -> std::same_as<typename T::const_iterator>;
@@ -52,4 +54,4 @@ bool FindInMap(const T &map, const typename T::key_type &key, std::assignable_fr
 
 } // namespace homura::inline container
 
-#endif // HOMURA_CONTAINER_H
+#endif // HOMURA_CONTAINERUTILS_H

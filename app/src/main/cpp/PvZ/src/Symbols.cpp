@@ -19,10 +19,11 @@
 
 #include "PvZ/Symbols.h"
 #include "Homura/SharedLibUtils.h"
+#include "PvZ/GlobalVariable.h"
 #include "PvZ/MagicAddr.h"
 
 bool LoadGameMain() {
-    static SharedLibLoader libGameMain{"libGameMain.so"};
+    static homura::SharedLibLoader libGameMain{"libGameMain.so"};
     if (!libGameMain.IsOpen()) {
         return false;
     }
@@ -381,8 +382,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN6Zombie15BossSpawnAttackEv", Zombie_BossSpawnAttackAddr);
     libGameMain.GetSymbol("_ZN6Zombie14DrawBungeeCordEPN4Sexy8GraphicsEii", Zombie_DrawBungeeCordAddr);
     // libGameMain.GetSymbol("_ZN6Zombie18IsTanglekelpTargetEv", Zombie_IsTangleKelpTargetAddr);
-    Zombie_IsTangleKelpTargetAddr = (void *)((uintptr_t)Board_UpdateAddr - (uintptr_t)BOARD_UPDATE_ADDR_RELATIVE + (uintptr_t)ZOMBIE_ISTANGLEKELPTARGET_ADDR_RELATIVE);
-    Zombie_IsTangleKelpTarget2Addr = (void *)((uintptr_t)Board_UpdateAddr - (uintptr_t)BOARD_UPDATE_ADDR_RELATIVE + (uintptr_t)ZOMBIE_ISTANGLEKELPTARGET2_ADDR_RELATIVE);
+    Zombie_IsTangleKelpTargetAddr = reinterpret_cast<void *>(gLibGameMainBaseAddr + ZOMBIE_ISTANGLEKELPTARGET_ADDR_RELATIVE);
+    Zombie_IsTangleKelpTarget2Addr = reinterpret_cast<void *>(gLibGameMainBaseAddr + ZOMBIE_ISTANGLEKELPTARGET2_ADDR_RELATIVE);
     libGameMain.GetSymbol("_ZN6Zombie14IsImmobiliziedEv", Zombie_IsImmobiliziedAddr);
     libGameMain.GetSymbol("_ZN6Zombie14GetDancerFrameEv", Zombie_GetDancerFrameAddr);
     libGameMain.GetSymbol("_ZN6Zombie13RiseFromGraveEii", Zombie_RiseFromGraveAddr);
@@ -1386,7 +1387,7 @@ bool LoadGameMain() {
 }
 
 bool LoadNativeCode() {
-    static SharedLibLoader libnative_code{"libnative_code.so"};
+    static homura::SharedLibLoader libnative_code{"libnative_code.so"};
     if (!libnative_code.IsOpen()) {
         return false;
     }
@@ -1394,7 +1395,7 @@ bool LoadNativeCode() {
     libnative_code.GetSymbol("_ZN6Native11AudioOutput5setupEiii", Native_AudioOutput_setupAddr);
     libnative_code.GetSymbol("_ZN6Native11AudioOutput8shutdownEv", Native_AudioOutput_shutdownAddr);
     libnative_code.GetSymbol("_ZN6Native11AudioOutput5writeEPKvi", Native_AudioOutput_writeAddr);
-    j_AGAudioWriteAddr = reinterpret_cast<void *>(uintptr_t(Board_UpdateAddr) - BOARD_UPDATE_ADDR_RELATIVE + J_AUDIOWRITE_ADDR_RELATIVE);
+    j_AGAudioWriteAddr = reinterpret_cast<void *>(gLibGameMainBaseAddr + J_AUDIOWRITE_ADDR_RELATIVE);
 
     libnative_code.GetSymbol("_ZN6Native9BridgeApp9getJNIEnvEv", Native_BridgeApp_getJNIEnvAddr);
     libnative_code.GetSymbol("_ZNK6Native9NativeApp11getActivityEv", Native_NativeApp_getActivityAddr);

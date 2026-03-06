@@ -17,6 +17,9 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef HOMURA_LOGGER_H
+#define HOMURA_LOGGER_H
+
 /**
  * @file Logger.h
  * @brief 简单的日志工具. (接口已封装为宏)
@@ -24,9 +27,6 @@
  * 调试时可在命令行工具中输入命令 `adb logcat -s pvztv` 查看日志.
  * 也可以输入 `adb logcat *:S [pvztv:D] [pvztv:I] [pvztv:W] [pvztv:E]` 控制输出级别 (`[]` 中为可选项).
  */
-
-#ifndef HOMURA_LOGGER_H
-#define HOMURA_LOGGER_H
 
 #include <android/log.h>
 

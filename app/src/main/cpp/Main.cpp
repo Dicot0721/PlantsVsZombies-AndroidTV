@@ -18,6 +18,7 @@
  */
 
 #include "Homura/ExceptionUtils.h"
+#include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/HookInit.h"
 #include "PvZ/Lawn/Board/Board.h"
@@ -56,20 +57,12 @@ static std::string JStringToString(JNIEnv *env, jstring str) {
     homura::RegisterExceptionHandler();
     homura::RegisterAccessViolationHandler();
 
-    // 获取符号地址
-    if (!GetFunctionAddr()) {
-        return;
+    gLibGameMainBaseAddr = homura::GetLibBaseAddr("libGameMain.so");
+    assert(gLibGameMainBaseAddr != 0);
+
+    if (InitSymbols()) {
+        CallHook();
     }
-
-    // 部分安卓4设备无法获取到基址，暂不清楚原因, 但仅影响 Patch 而不影响Hook, 影响不大.
-    if ((Board_UpdateAddr != nullptr) && (uintptr_t(Board_UpdateAddr) > BOARD_UPDATE_ADDR_RELATIVE + 1)) {
-        gLibBaseOffset = uintptr_t(Board_UpdateAddr) - BOARD_UPDATE_ADDR_RELATIVE - 1;
-    }
-
-    // Hook
-    CallHook();
-
-    homura::Patcher::UpdateBaseAddrMap("libGameMain.so", gLibBaseOffset);
     ApplyPatches();
 }
 

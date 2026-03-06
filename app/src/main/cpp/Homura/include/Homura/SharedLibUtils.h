@@ -17,8 +17,10 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef HOMURA_SHAREDLIBLOADER_H
-#define HOMURA_SHAREDLIBLOADER_H
+#ifndef HOMURA_SHAREDLIBUTILS_H
+#define HOMURA_SHAREDLIBUTILS_H
+
+namespace homura {
 
 class SharedLibLoader {
 public:
@@ -40,14 +42,21 @@ public:
         return handle_ != nullptr;
     }
 
-    void GetSymbol(const char *name, auto *&output) const {
-        GetSymbolImpl(name, reinterpret_cast<void *&>(output));
+    bool GetSymbol(const char *name, auto *&output) const {
+        return GetSymbolImpl(name, reinterpret_cast<void *&>(output));
+    }
+
+    template <typename T, typename R, typename... Args>
+    bool GetSymbol(const char *name, R (T::*&output)(Args...)) const {
+        return GetSymbolImpl(name, reinterpret_cast<void *&>(output));
     }
 
 protected:
     void *handle_ = nullptr;
 
-    void GetSymbolImpl(const char *name, void *&output) const;
+    bool GetSymbolImpl(const char *name, void *&output) const;
 };
 
-#endif // HOMURA_SHAREDLIBLOADER_H
+} // namespace homura
+
+#endif // HOMURA_SHAREDLIBUTILS_H

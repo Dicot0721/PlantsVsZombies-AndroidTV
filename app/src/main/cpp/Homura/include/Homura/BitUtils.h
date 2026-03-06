@@ -25,9 +25,9 @@
 
 #include <bit>
 
-static_assert((std::endian::native == std::endian::big) || (std::endian::native == std::endian::little), "Mixed endian is unsupported");
-
 namespace homura {
+
+static_assert((std::endian::native == std::endian::big) || (std::endian::native == std::endian::little), "Mixed endian is unsupported");
 
 template <std::integral T>
 [[nodiscard]] T ReadBE(const std::uint8_t *src) {

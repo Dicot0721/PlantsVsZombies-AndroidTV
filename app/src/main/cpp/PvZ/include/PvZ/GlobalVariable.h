@@ -28,7 +28,7 @@
 
 #include <atomic>
 
-inline uintptr_t gLibBaseOffset;
+inline uintptr_t gLibGameMainBaseAddr;
 
 inline bool isMainMenu = true;
 inline int mBackgroundType = -1; // 当前的场景，白天、黑夜、泳池、雾夜、屋顶、月夜、花园、蘑菇园、水族馆、智慧树

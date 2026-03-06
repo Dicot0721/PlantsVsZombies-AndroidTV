@@ -22,28 +22,31 @@
 
 #include <dlfcn.h>
 
-SharedLibLoader::SharedLibLoader(const char *filename)
+homura::SharedLibLoader::SharedLibLoader(const char *filename)
     : handle_{dlopen(filename, RTLD_NOW | RTLD_NOLOAD)} {
     if (!IsOpen()) {
         LOG_ERROR("Failed to load shared library '{}': {}", filename, dlerror());
     }
 }
 
-SharedLibLoader::~SharedLibLoader() {
+homura::SharedLibLoader::~SharedLibLoader() {
     if (IsOpen()) {
         dlclose(handle_);
     }
 }
 
-SharedLibLoader &SharedLibLoader::operator=(SharedLibLoader &&other) noexcept {
+auto homura::SharedLibLoader::operator=(SharedLibLoader &&other) noexcept -> SharedLibLoader & {
     std::swap(handle_, other.handle_);
     return *this;
 }
 
-void SharedLibLoader::GetSymbolImpl(const char *name, void *&output) const {
-    output = dlsym(handle_, name);
-    if (output == nullptr) [[unlikely]] {
+bool homura::SharedLibLoader::GetSymbolImpl(const char *name, void *&output) const {
+    if (void *ptr = dlsym(handle_, name)) {
+        output = ptr;
+        return true;
+    } else {
         // a NULL return from dlsym() need not indicate an error
         LOG_WARN("a NULL return from dlsym({:?})", name);
+        return false;
     }
 }
