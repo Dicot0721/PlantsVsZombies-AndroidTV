@@ -185,7 +185,7 @@ protected:
 /***************************************************************************************************************/
 inline int targetWavesToJump = 1;
 inline bool requestJumpSurvivalStage;
-inline bool stopSpawning; // 暂停刷怪
+inline bool stopSpawning;            // 暂停刷怪
 inline int gVSAddUnderPlantsCounter; // 对战自动种植睡莲、花盆的间隔
 
 
