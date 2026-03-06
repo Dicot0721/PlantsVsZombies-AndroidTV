@@ -91,19 +91,7 @@ void CutScene::UpdatePlantsWon() {}
 
 
 void CutScene::AddFlowerPots() {
-    // 对战添加初始花盆
-    if (mApp->mGameMode == GAMEMODE_MP_VS) {
-        if (mBoard->StageHasRoof()) {
-            mBoard->AddPlant(0, 1, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, false);
-            mBoard->AddPlant(0, 3, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, false);
-            for (int i = 3; i < 4; ++i) {
-                for (int j = 0; j < 5; ++j) {
-                    mBoard->AddPlant(i, j, SeedType::SEED_FLOWERPOT, SeedType::SEED_NONE, 1, false);
-                }
-            }
-        }
-    }
-    return old_CutScene_AddFlowerPots(this);
+    old_CutScene_AddFlowerPots(this);
 }
 
 void CutScene::PlaceLawnItems() {
@@ -120,13 +108,16 @@ void CutScene::PlaceLawnItems() {
 
     if (mApp->IsVSMode()) {
         int aNumRows = mBoard->StageHas6Rows() ? 6 : 5;
-        SeedType aSunPlantSeed = mBoard->StageIsNight() ? SeedType::SEED_SUNSHROOM : SeedType::SEED_SUNFLOWER;
+        SeedType aSunPlantType = mBoard->StageIsNight() ? SeedType::SEED_SUNSHROOM : SeedType::SEED_SUNFLOWER;
         for (int aRow = 0; aRow < aNumRows; ++aRow) {
             if (aRow != 5) // TODO: 修复泳池六路靶子被投手击中崩溃
                 mBoard->AddMPTarget(8, aRow);
             if (aRow == 1 || aRow == aNumRows - 2) {
                 mBoard->AddAGraveStone(8, aRow);
-                mBoard->AddPlant(0, aRow, aSunPlantSeed, SeedType::SEED_NONE, -1, true);
+                mBoard->AddPlant(0, aRow, aSunPlantType, SeedType::SEED_NONE, -1, true);
+            }
+            if (mBoard->StageHasPool() && (aRow == 2 || aRow == 3)) {
+                mBoard->AddPlant(0, aRow, SeedType::SEED_LILYPAD, SeedType::SEED_NONE, -1, true);
             }
         }
     }

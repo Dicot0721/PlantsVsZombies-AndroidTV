@@ -46,51 +46,63 @@ class Zombie;
 class GridItem;
 class SeedPacket;
 class HitResult;
+class HelpBarWidget;
+
+enum BeghouledUpgrade {
+    BEGHOULED_UPGRADE_REPEATER,
+    BEGHOULED_UPGRADE_FUMESHROOM,
+    BEGHOULED_UPGRADE_TALLNUT,
+    NUM_BEGHOULED_UPGRADES = 3,
+};
+
+struct BeghouledBoardState {
+    SeedType mSeedType[9][6];
+};
 
 class Challenge {
 public:
-    int *vTable;                          // 0
-    int unk1[3];                          // 1 ~ 3
-    LawnApp *mApp;                        // 4
-    Board *mBoard;                        // 5
-    int *mHelpBarWidget;                  // 6
-    bool mBeghouledMouseCapture;          // 28
-    int mBeghouledMouseDownX;             // 8
-    int mBeghouledMouseDownY;             // 9
-    bool mBeghouledEated[9][6];           // 40 ~  93
-    bool mBeghouledPurcasedUpgrade[3];    // 94 ~ 96
-    int mBeghouledMatchesThisMove;        // 25
-    ChallengeState mChallengeState;       // 26
-    int mChallengeStateCounter;           // 27
-    int mConveyorBeltCounter1;            // 28
-    int mConveyorBeltCounter2;            // 29
-    int mChallengeScore;                  // 30
-    bool mShowBowlingLine;                // 124
-    SeedType mLastConveyorSeedType;       // 32
-    int mSurvivalStage;                   // 33
-    int mSlotMachineRollCount;            // 34
-    int mReanimChallenge;                 // 35
-    int mReanimCloud[6];                  // 36 ~ 41
-    int mCloudCounter[6];                 // 42 ~ 47
-    int mChallengeGridX;                  // 48
-    int mChallengeGridY;                  // 49
-    int mScaryPotterPots;                 // 50
-    int mRainCounter;                     // 51
-    int mTreeOfWisdomTalkIndex;           // 52
-    int unk3[14];                         // 53 ~ 66
-    float mHeavyWeaponX;                  // 67
-    float mHeavyWeaponY;                  // 68
-    float mHeavyWeaponAngle;              // 69
-    int unkHeavyWeaponWithInitValue1000;  // 70
-    int mHeavyWeaponCatTailAttackCounter; // 71
-    int mHeavyWeaponCatTailLevel;         // 72
-    int mHeavyWeaponPeaLevel;             // 73
-    int mHeavyWeaponSnowPeaCounter;       // 74
-    int mHeavyWeaponTorchWoodCounter;     // 75
-    int unkHeavyWeaponWithInitValue10;    // 76
-    ReanimationID mReanimHeavyWeaponID1;  // 77
-    ReanimationID mReanimHeavyWeaponID2;  // 78
-    ReanimationID mReanimHeavyWeaponID3;  // 79
+    int *vTable;                                            // 0
+    int unk1[3];                                            // 1 ~ 3
+    LawnApp *mApp;                                          // 4
+    Board *mBoard;                                          // 5
+    HelpBarWidget *mHelpBar;                                // 6
+    bool mBeghouledMouseCapture;                            // 28
+    int mBeghouledMouseDownX;                               // 8
+    int mBeghouledMouseDownY;                               // 9
+    bool mBeghouledEated[9][6];                             // 40 ~  93
+    bool mBeghouledPurcasedUpgrade[NUM_BEGHOULED_UPGRADES]; // 94 ~ 96
+    int mBeghouledMatchesThisMove;                          // 25
+    ChallengeState mChallengeState;                         // 26
+    int mChallengeStateCounter;                             // 27
+    int mConveyorBeltCounter1;                              // 28
+    int mConveyorBeltCounter2;                              // 29
+    int mChallengeScore;                                    // 30
+    bool mShowBowlingLine;                                  // 124
+    SeedType mLastConveyorSeedType;                         // 32
+    int mSurvivalStage;                                     // 33
+    int mSlotMachineRollCount;                              // 34
+    int mReanimChallenge;                                   // 35
+    int mReanimCloud[6];                                    // 36 ~ 41
+    int mCloudCounter[6];                                   // 42 ~ 47
+    int mChallengeGridX;                                    // 48
+    int mChallengeGridY;                                    // 49
+    int mScaryPotterPots;                                   // 50
+    int mRainCounter;                                       // 51
+    int mTreeOfWisdomTalkIndex;                             // 52
+    int unk3[14];                                           // 53 ~ 66
+    float mHeavyWeaponX;                                    // 67
+    float mHeavyWeaponY;                                    // 68
+    float mHeavyWeaponAngle;                                // 69
+    int unkHeavyWeaponWithInitValue1000;                    // 70
+    int mHeavyWeaponCatTailAttackCounter;                   // 71
+    int mHeavyWeaponCatTailLevel;                           // 72
+    int mHeavyWeaponPeaLevel;                               // 73
+    int mHeavyWeaponSnowPeaCounter;                         // 74
+    int mHeavyWeaponTorchWoodCounter;                       // 75
+    int unkHeavyWeaponWithInitValue10;                      // 76
+    ReanimationID mReanimHeavyWeaponID1;                    // 77
+    ReanimationID mReanimHeavyWeaponID2;                    // 78
+    ReanimationID mReanimHeavyWeaponID3;                    // 79
     // 大小80个整数
 
     bool MouseDown(int x, int y, int theClickCount, HitResult *theHitResult, int thePlayerIndex) {
@@ -132,6 +144,7 @@ public:
 
     Challenge();
     void Update();
+    Plant *FindUnderPlantTarget(int theRow);
     void HeavyWeaponFire(float a2, float a3);
     void IZombieDrawPlant(Sexy::Graphics *g, Plant *thePlant);
     void HeavyWeaponUpdate();
@@ -173,6 +186,7 @@ protected:
 inline int targetWavesToJump = 1;
 inline bool requestJumpSurvivalStage;
 inline bool stopSpawning; // 暂停刷怪
+inline int gVSAddUnderPlantsCounter; // 对战自动种植睡莲、花盆的间隔
 
 
 inline void (*old_Challenge_Update)(Challenge *a);

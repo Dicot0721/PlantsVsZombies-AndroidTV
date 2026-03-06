@@ -95,8 +95,8 @@ void Challenge::Update() {
         requestJumpSurvivalStage = false;
     }
 
-    GameMode gameMode = mApp->mGameMode;
-    if (gameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || gameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
+    GameMode aGameMode = mApp->mGameMode;
+    if (aGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || aGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
         TutorialState mTutorialState = mBoard->mTutorialState;
         if (mTutorialState == TutorialState::TUTORIAL_ZEN_GARDEN_PICKUP_WATER || mTutorialState == TutorialState::TUTORIAL_ZEN_GARDEN_WATER_PLANT
             || mTutorialState == TutorialState::TUTORIAL_ZEN_GARDEN_KEEP_WATERING) {
@@ -122,11 +122,48 @@ void Challenge::Update() {
         }
     }
 
+    if (mApp->IsVSMode()) {
+        if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING)
+            return;
+
+        gVSAddUnderPlantsCounter--;
+        if (gVSAddUnderPlantsCounter <= 0) {
+            gVSAddUnderPlantsCounter = 3000;
+            int aNumRows = mBoard->StageHas6Rows() ? 6 : 5;
+            SeedType aUnderPlantType = mBoard->StageHasPool() ? SEED_LILYPAD : mBoard->StageHasRoof() ? SEED_FLOWERPOT : SEED_NONE;
+            // 若第一列无垫子植物则在第一列生成垫子, 否则在最前列的垫子植物的前一列生成
+            for (int aRow = 0; aRow < aNumRows; ++aRow) {
+                Plant *aPlant = FindUnderPlantTarget(aRow);
+                if (mBoard->CanPlantAt(0, aRow, aUnderPlantType) == PLANTING_OK) {
+                    mBoard->AddPlant(0, aRow, aUnderPlantType, SeedType::SEED_NONE, -1, true);
+                } else if (aPlant && CanPlantAt(aPlant->mPlantCol + 1, aPlant->mRow, aUnderPlantType) == PLANTING_OK) {
+                    mBoard->AddPlant(aPlant->mPlantCol + 1, aPlant->mRow, aUnderPlantType, SeedType::SEED_NONE, -1, true);
+                }
+            }
+        }
+    }
+
     if (requestPause) {
         return;
     }
 
     old_Challenge_Update(this);
+}
+
+Plant *Challenge::FindUnderPlantTarget(int theRow) {
+    Plant *aTarget = nullptr;
+
+    Plant *aPlant = nullptr;
+    while (mBoard->IteratePlants(aPlant)) {
+        SeedType aUnderPlantType = mBoard->StageHasPool() ? SEED_LILYPAD : mBoard->StageHasRoof() ? SEED_FLOWERPOT : SEED_NONE;
+        if (aPlant->mSeedType == aUnderPlantType && aPlant->mRow == theRow && !aPlant->NotOnGround()) {
+            if (aTarget == nullptr || aPlant->mPlantCol > aTarget->mPlantCol) {
+                aTarget = mBoard->GetTopPlantAt(aPlant->mPlantCol, aPlant->mRow, PlantPriority::TOPPLANT_ONLY_UNDER_PLANT);
+            }
+        }
+    }
+
+    return aTarget;
 }
 
 void Challenge::HeavyWeaponFire(float a2, float a3) {
@@ -352,6 +389,10 @@ void Challenge::InitLevel() {
         mBoard->mSeedBank[1]->AddSeed(SeedType::SEED_CABBAGEPULT, false);
         mBoard->mSeedBank[1]->AddSeed(SeedType::SEED_ICESHROOM, false);
         mConveyorBeltCounter2 = 1000;
+    }
+
+    if (mApp->IsVSMode()) {
+        gVSAddUnderPlantsCounter = 2000;
     }
 }
 
