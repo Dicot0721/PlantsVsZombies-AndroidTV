@@ -23,6 +23,8 @@
 
 #include "SubstrateHook.h"
 
+#include <sys/mman.h>
+
 #include <cassert>
 #include <cerrno>
 #include <cstring>
@@ -50,7 +52,8 @@ bool homura::details::HookVirtualFuncImpl(void *vTableSymbol, size_t index, void
     return true;
 }
 
-bool homura::details::HookPltFunctionImpl(const std::string &libName, uintptr_t offset, void *newFunc, void **oldFuncAddr) {
+bool homura::details::HookPltFunctionImpl(std::string_view libName, uintptr_t offset, void *newFunc, void **oldFuncAddr) {
+    assert(offset > 0);
     assert(newFunc != nullptr);
 
     const uintptr_t baseAddr = GetLibBaseAddr(libName);

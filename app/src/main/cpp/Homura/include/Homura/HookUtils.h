@@ -20,7 +20,7 @@
 #ifndef HOMURA_HOOKUTILS_H
 #define HOMURA_HOOKUTILS_H
 
-#include <string>
+#include <string_view>
 #include <type_traits>
 
 namespace homura {
@@ -28,7 +28,7 @@ namespace homura {
 namespace details {
     void HookFunctionImpl(void *symbol, void *newFunc, void **oldFuncAddr);
     bool HookVirtualFuncImpl(void *vTableSymbol, size_t index, void *newFunc, void **oldFuncAddr);
-    bool HookPltFunctionImpl(const std::string &libName, uintptr_t offset, void *newFunc, void **oldFuncAddr);
+    bool HookPltFunctionImpl(std::string_view libName, uintptr_t offset, void *newFunc, void **oldFuncAddr);
 } // namespace details
 
 /**
@@ -114,7 +114,7 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (T::*newFunc)(Args...),
  * @return 是否成功替换.
  */
 template <typename R, typename... Args>
-bool HookPltFunction(const std::string &libName, uintptr_t offset, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
+bool HookPltFunction(std::string_view libName, uintptr_t offset, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
     return details::HookPltFunctionImpl(libName, offset, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 

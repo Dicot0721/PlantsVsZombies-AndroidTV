@@ -19,17 +19,25 @@
 
 #include "Homura/SharedLibUtils.h"
 #include "Homura/Logger.h"
+#include "Homura/StringUtils.h"
 
 #include <dlfcn.h>
 
+#include <cassert>
+
+#include <map>
 #include <unordered_set>
 
-homura::SharedLibLoader::SharedLibLoader(const char *filename)
-    : handle_{dlopen(filename, RTLD_NOW | RTLD_NOLOAD)} {
-    if (!IsOpen()) {
+homura::SharedLibLoader::SharedLibLoader(const char *filename, int flag) {
+    assert((filename != nullptr) && (*filename != '\0') && !homura::IsBlank(filename));
+    handle_ = dlopen(filename, flag | RTLD_NOW);
+    if (!IsOpen()) [[unlikely]] {
         LOG_ERROR("Failed to load shared library '{}': {}", filename, dlerror());
     }
 }
+
+homura::SharedLibLoader::SharedLibLoader(const char *filename)
+    : SharedLibLoader{filename, RTLD_NOLOAD} {}
 
 homura::SharedLibLoader::~SharedLibLoader() {
     if (IsOpen()) {
@@ -43,12 +51,15 @@ auto homura::SharedLibLoader::operator=(SharedLibLoader &&other) noexcept -> Sha
 }
 
 bool homura::SharedLibLoader::GetSymbolImpl(const char *name, void *&output) const {
+    assert((name != nullptr) && (*name != '\0') && !homura::IsBlank(name));
 #ifdef PVZ_DEBUG
-    static std::unordered_set<std::string_view> symbolSet;
-    if (!symbolSet.contains(name)) {
-        symbolSet.emplace(name);
+    // Using 'string_view' is usually safe, because we usually call this function with a string literal
+    static std::map<void *, std::unordered_set<std::string_view>> symbolMap;
+    auto &symbolSet = symbolMap[handle_];
+    if (std::string_view view{name}; !symbolSet.contains(view)) {
+        symbolSet.emplace(view);
     } else {
-        LOG_WARN("Rebinding symbol {:?}", name);
+        LOG_WARN("Rebinding symbol {:?}", view);
     }
 #endif
     if (void *ptr = dlsym(handle_, name)) {

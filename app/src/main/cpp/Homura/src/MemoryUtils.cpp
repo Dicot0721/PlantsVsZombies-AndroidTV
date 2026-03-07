@@ -19,6 +19,9 @@
 
 #include "Homura/MemoryUtils.h"
 #include "Homura/Logger.h"
+#include "Homura/StringUtils.h"
+
+#include <sys/mman.h>
 
 #include <cassert>
 #include <cerrno>
@@ -50,9 +53,9 @@ bool homura::WriteMemory(uintptr_t address, const std::vector<uint8_t> &buffer) 
     return std::memcmp(ptr, buffer.data(), buffer.size()) == 0;
 }
 
-uintptr_t homura::GetLibBaseAddr(const std::string &libName) {
-    assert(!libName.empty());
-    static std::unordered_map<std::string, uintptr_t> baseAddrMap;
+uintptr_t homura::GetLibBaseAddr(std::string_view libName) {
+    assert(!libName.empty() && !homura::IsBlank(libName));
+    static std::unordered_map<std::string, uintptr_t, StringHash, std::equal_to<>> baseAddrMap;
     if (auto it = baseAddrMap.find(libName); it != baseAddrMap.end()) {
         return it->second;
     }
@@ -74,41 +77,32 @@ uintptr_t homura::GetLibBaseAddr(const std::string &libName) {
     return 0;
 }
 
-homura::Patcher::Patcher(std::string libName, uintptr_t offset, std::vector<uint8_t> patchBytes)
-    : libName_(std::move(libName))
-    , patchBytes_(std::move(patchBytes))
+homura::Patcher::Patcher(std::string_view libName, uintptr_t offset, std::vector<uint8_t> patchBytes)
+    : patchBytes_(std::move(patchBytes))
     , originBytes_(patchBytes_.size()) {
-    if (uintptr_t baseAddr = GetLibBaseAddr(libName_)) {
+    if (uintptr_t baseAddr = GetLibBaseAddr(libName)) {
         address_ = baseAddr + offset;
     } else {
-        LOG_ERROR("Failed to get base address of {:?}", libName_);
+        LOG_ERROR("Failed to get base address of {:?}", libName);
     }
     if (address_ != 0 && !patchBytes_.empty()) {
         std::memcpy(originBytes_.data(), reinterpret_cast<void *>(address_), patchBytes_.size());
     }
 }
 
-auto homura::Patcher::CreateWithStr(std::string libName, uintptr_t offset, std::string patchBytesStr) -> Patcher {
-    assert(!patchBytesStr.empty() && "cannot call 'CreateWithStr()' with empty 'patchBytesStr'");
+auto homura::Patcher::CreateWithStr(std::string_view libName, uintptr_t offset, std::string patchBytesStr) -> Patcher {
+    assert(!patchBytesStr.empty() && !homura::IsBlank(patchBytesStr));
     std::vector<uint8_t> patchCode;
     patchCode.reserve((patchBytesStr.size() + 1) / 3);
-    std::istringstream stream{std::move(patchBytesStr)};
-    bool isOutOfRange = false;
+    std::istringstream iss{std::move(patchBytesStr)};
 
     // 'byte' cannot be uint8_t (aka: unsigned char)
-    for (int16_t byte; !stream.eof() && (stream >> std::hex >> byte);) {
-        if (!std::in_range<uint8_t>(byte)) [[unlikely]] {
-            isOutOfRange = true;
-            break;
-        }
+    for (int16_t byte; !iss.eof() && (iss >> std::hex >> byte);) {
+        assert(std::in_range<uint8_t>(byte));
         patchCode.push_back(byte);
     }
-
-    if (stream.fail() || isOutOfRange) [[unlikely]] {
-        assert(false && "failed to convert patch code string into bytes");
-        return {};
-    }
-    return {std::move(libName), offset, std::move(patchCode)};
+    assert(!iss.fail() && "failed to convert patch bytes string into bytes");
+    return {libName, offset, std::move(patchCode)};
 }
 
 bool homura::Patcher::Modify() {

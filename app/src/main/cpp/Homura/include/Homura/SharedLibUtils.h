@@ -20,6 +20,8 @@
 #ifndef HOMURA_SHAREDLIBUTILS_H
 #define HOMURA_SHAREDLIBUTILS_H
 
+#include <type_traits>
+
 namespace homura {
 
 class SharedLibLoader {
@@ -31,6 +33,7 @@ public:
         other.handle_ = nullptr;
     }
 
+    SharedLibLoader(const char *filename, int flag);
     explicit SharedLibLoader(const char *filename);
     ~SharedLibLoader();
 
@@ -42,12 +45,9 @@ public:
         return handle_ != nullptr;
     }
 
-    bool GetSymbol(const char *name, auto *&output) const {
-        return GetSymbolImpl(name, reinterpret_cast<void *&>(output));
-    }
-
-    template <typename T, typename R, typename... Args>
-    bool GetSymbol(const char *name, R (T::*&output)(Args...)) const {
+    template <typename T>
+        requires(!std::is_const_v<T> && (std::is_pointer_v<T> || std::is_member_function_pointer_v<T>))
+    bool GetSymbol(const char *name, T &output) const {
         return GetSymbolImpl(name, reinterpret_cast<void *&>(output));
     }
 

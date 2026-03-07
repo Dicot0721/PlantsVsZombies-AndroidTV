@@ -22,8 +22,6 @@
 
 #include <cstdint>
 
-#include <sys/mman.h>
-
 #include <string>
 #include <vector>
 
@@ -44,13 +42,13 @@ bool WriteMemory(uintptr_t address, const std::vector<uint8_t> &buffer);
 /**
  * @brief 获取动态库的加载地址.
  */
-[[nodiscard]] uintptr_t GetLibBaseAddr(const std::string &libName);
+[[nodiscard]] uintptr_t GetLibBaseAddr(std::string_view libName);
 
 class Patcher {
 public:
     Patcher() = default;
 
-    Patcher(std::string libName, uintptr_t offset, std::vector<uint8_t> patchBytes);
+    Patcher(std::string_view libName, uintptr_t offset, std::vector<uint8_t> patchBytes);
 
     Patcher(const Patcher &) = delete;
     Patcher &operator=(const Patcher &) = delete;
@@ -58,7 +56,7 @@ public:
     Patcher(Patcher &&) = default;
     Patcher &operator=(Patcher &&) = default;
 
-    [[nodiscard]] static Patcher CreateWithStr(std::string libName, uintptr_t offset, std::string patchBytesStr);
+    [[nodiscard]] static Patcher CreateWithStr(std::string_view libName, uintptr_t offset, std::string patchBytesStr);
 
     [[nodiscard]] bool HasModified() const noexcept {
         return hasModified_;
@@ -72,7 +70,6 @@ public:
     }
 
 protected:
-    std::string libName_;
     uintptr_t address_ = 0;
     std::vector<uint8_t> patchBytes_;
     std::vector<uint8_t> originBytes_;
