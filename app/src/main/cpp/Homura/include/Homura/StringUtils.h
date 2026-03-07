@@ -68,33 +68,39 @@ namespace homura::inline string {
     return result;
 }
 
-[[nodiscard]] constexpr bool IsBlankChr(char c) noexcept {
-    // Blank characters as classified by the classic "C" locale
-    return (c == ' ') || (c == '\t');
-}
+class {
+public:
+    [[nodiscard]] constexpr bool operator()(char c) const noexcept {
+        // Blank characters as classified by the classic "C" locale
+        return (c == ' ') || (c == '\t');
+    }
 
-[[nodiscard]] constexpr bool IsBlank(std::string_view sv) noexcept {
-    return std::ranges::all_of(sv, IsBlankChr);
-}
+    [[nodiscard]] constexpr bool operator()(std::string_view sv) const noexcept {
+        return std::ranges::all_of(sv, *this);
+    }
+} constexpr IsBlank{};
 
-[[nodiscard]] constexpr bool IsSpaceChr(char c) noexcept {
-    using namespace std::string_view_literals;
-    // Whitespace characters as classified by the classic "C" locale
-    return " \f\n\r\t\v"sv.contains(c);
-}
+class {
+public:
+    [[nodiscard]] constexpr bool operator()(char c) const noexcept {
+        using namespace std::string_view_literals;
+        // Whitespace characters as classified by the classic "C" locale
+        return " \f\n\r\t\v"sv.contains(c);
+    }
 
-[[nodiscard]] constexpr bool IsSpace(std::string_view sv) noexcept {
-    return std::ranges::all_of(sv, IsSpaceChr);
-}
+    [[nodiscard]] constexpr bool operator()(std::string_view sv) const noexcept {
+        return std::ranges::all_of(sv, *this);
+    }
+} constexpr IsSpace{};
 
 /**
  * @warning 字符串含非 ASCII 字符时可能会出现意外
  */
 [[nodiscard]] constexpr std::string Trim(std::string_view sv) {
-    auto view = sv                           //
-        | std::views::drop_while(IsSpaceChr) //
-        | std::views::reverse                //
-        | std::views::drop_while(IsSpaceChr) //
+    auto view = sv                        //
+        | std::views::drop_while(IsSpace) //
+        | std::views::reverse             //
+        | std::views::drop_while(IsSpace) //
         | std::views::reverse;
     return {std::from_range, view};
 }
@@ -103,16 +109,16 @@ namespace homura::inline string {
  * @warning 字符串含非 ASCII 字符时可能会出现意外
  */
 [[nodiscard]] constexpr std::string TrimLeft(std::string_view sv) {
-    return {std::from_range, std::views::drop_while(sv, IsSpaceChr)};
+    return {std::from_range, std::views::drop_while(sv, IsSpace)};
 }
 
 /**
  * @warning 字符串含非 ASCII 字符时可能会出现意外
  */
 [[nodiscard]] constexpr std::string TrimRight(std::string_view sv) {
-    auto view = sv                           //
-        | std::views::reverse                //
-        | std::views::drop_while(IsSpaceChr) //
+    auto view = sv                        //
+        | std::views::reverse             //
+        | std::views::drop_while(IsSpace) //
         | std::views::reverse;
     return {std::from_range, view};
 }

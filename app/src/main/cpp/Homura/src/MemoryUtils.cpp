@@ -39,7 +39,7 @@ bool homura::SetProtection(uintptr_t address, size_t length, int prot) {
 }
 
 bool homura::WriteMemory(uintptr_t address, const std::vector<uint8_t> &buffer) {
-    if (address == 0 || buffer.empty()) [[unlikely]] {
+    if ((address == 0) || buffer.empty()) [[unlikely]] {
         LOG_ERROR("Invalid argument(s)");
         return false;
     }
@@ -85,7 +85,7 @@ homura::Patcher::Patcher(std::string_view libName, uintptr_t offset, std::vector
     } else {
         LOG_ERROR("Failed to get base address of {:?}", libName);
     }
-    if (address_ != 0 && !patchBytes_.empty()) {
+    if ((address_ != 0) && !patchBytes_.empty()) {
         std::memcpy(originBytes_.data(), reinterpret_cast<void *>(address_), patchBytes_.size());
     }
 }
