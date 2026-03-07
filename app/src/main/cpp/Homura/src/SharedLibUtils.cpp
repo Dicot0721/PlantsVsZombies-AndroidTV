@@ -29,7 +29,7 @@
 #include <unordered_set>
 
 homura::SharedLibLoader::SharedLibLoader(const char *filename, int flag) {
-    assert((filename != nullptr) && (*filename != '\0') && !homura::IsBlank(filename));
+    assert((filename != nullptr) && (*filename != '\0') && !IsBlank(filename));
     handle_ = dlopen(filename, flag | RTLD_NOW);
     if (!IsOpen()) [[unlikely]] {
         LOG_ERROR("Failed to load shared library '{}': {}", filename, dlerror());
@@ -51,7 +51,7 @@ auto homura::SharedLibLoader::operator=(SharedLibLoader &&other) noexcept -> Sha
 }
 
 bool homura::SharedLibLoader::GetSymbolImpl(const char *name, void *&output) const {
-    assert((name != nullptr) && (*name != '\0') && !homura::IsBlank(name));
+    assert((name != nullptr) && (*name != '\0') && !IsBlank(name));
 #ifdef PVZ_DEBUG
     // Using 'string_view' is usually safe, because we usually call this function with a string literal
     static std::map<void *, std::unordered_set<std::string_view>> symbolMap;

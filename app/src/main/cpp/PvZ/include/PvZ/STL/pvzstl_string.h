@@ -23,6 +23,7 @@
 #include <cassert>
 
 #include <atomic>
+#include <ranges>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -35,6 +36,9 @@ namespace pvzstl {
 
 template <typename SV, typename CharT>
 concept _convertible_to_string_view = std::is_convertible_v<const SV &, std::basic_string_view<CharT>> && !std::is_convertible_v<const SV &, const CharT *>;
+
+template <typename Range, typename Tp>
+concept _container_compatible_range = std::ranges::input_range<Range> && std::convertible_to<std::ranges::range_reference_t<Range>, Tp>;
 
 /**
  * @class 采用写时复制 (COW) 实现的字符串类模板
@@ -99,6 +103,20 @@ public:
     basic_string(basic_string &&str, size_type pos)
         : basic_string(std::move(str.assign(str, pos))) {}
 
+    template <typename SV>
+        requires std::is_convertible_v<const SV &, std::basic_string_view<CharT>>
+    basic_string(const SV &t, size_type pos, size_type n) {
+        const _self_view sv0 = t;
+        const _self_view sv = sv0.substr(pos, n);
+        _dataplus = _construct(sv.begin(), sv.end());
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    explicit basic_string(const SV &t) {
+        const _self_view sv = t;
+        _dataplus = _construct(sv.begin(), sv.end());
+    }
+
     basic_string(const CharT *s, size_type n)
         : _dataplus{_construct(s, s + n)} {}
 
@@ -113,6 +131,10 @@ public:
     template <std::input_iterator InputIt>
     basic_string(InputIt first, InputIt last)
         : _dataplus{_construct(first, last)} {}
+
+    template <_container_compatible_range<CharT> Range>
+    basic_string(std::from_range_t, Range &&range)
+        : _dataplus{_construct(std::ranges::begin(range), std::ranges::end(range))} {}
 
     basic_string(std::initializer_list<CharT> il)
         : _dataplus{_construct(il.begin(), il.end())} {}
@@ -1075,7 +1097,7 @@ using u32string = basic_string<char32_t>; // `basic_string<int>` in PvZ
 #ifndef PVZ_VERSION
 using u8string = basic_string<char8_t>;
 using u16string = basic_string<char16_t>;
-#endif // PVZ_VERSION
+#endif
 
 } // namespace pvzstl
 

@@ -54,7 +54,7 @@ bool homura::WriteMemory(uintptr_t address, const std::vector<uint8_t> &buffer) 
 }
 
 uintptr_t homura::GetLibBaseAddr(std::string_view libName) {
-    assert(!libName.empty() && !homura::IsBlank(libName));
+    assert(!libName.empty() && !IsBlank(libName));
     static std::unordered_map<std::string, uintptr_t, StringHash, std::equal_to<>> baseAddrMap;
     if (auto it = baseAddrMap.find(libName); it != baseAddrMap.end()) {
         return it->second;
@@ -91,7 +91,7 @@ homura::Patcher::Patcher(std::string_view libName, uintptr_t offset, std::vector
 }
 
 auto homura::Patcher::CreateWithStr(std::string_view libName, uintptr_t offset, std::string patchBytesStr) -> Patcher {
-    assert(!patchBytesStr.empty() && !homura::IsBlank(patchBytesStr));
+    assert(!patchBytesStr.empty() && !IsBlank(patchBytesStr));
     std::vector<uint8_t> patchCode;
     patchCode.reserve((patchBytesStr.size() + 1) / 3);
     std::istringstream iss{std::move(patchBytesStr)};
