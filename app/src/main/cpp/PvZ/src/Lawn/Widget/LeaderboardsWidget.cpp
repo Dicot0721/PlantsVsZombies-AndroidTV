@@ -270,7 +270,7 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
         pvzstl::string aStr = TodReplaceNumberString(TodStringTranslate("[LEADERBOARD_STREAK]"), "{STREAK}", leaderboardsWidget->mLongestRecordPool);
         Sexy::Rect aRect = {317, 658, 120, 50};
         Sexy::Font *aFont = *Sexy_FONT_CONTINUUMBOLD14_Addr;
-        TodDrawStringWrapped(g, aStr, aRect, aFont, yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
+        TodDrawStringWrapped(g, aStr, aRect, aFont, colorYellow, DrawStringJustification::DS_ALIGN_CENTER, false);
     }
 
     // DrawImage(g, addonImages.survival_button, 270, 579);
@@ -278,7 +278,7 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
     Sexy::Rect aRect = {240, 70, 800, 70};
     pvzstl::string aStr = TodReplaceString(TodStringTranslate("[PLAYERS_HOUSE]"), "{PLAYER}", leaderboardsWidget->mApp->mPlayerInfo->mName);
     Sexy::Font *aFont = *Sexy_FONT_HOUSEOFTERROR28_Addr;
-    TodDrawStringWrapped(g, aStr, aRect, aFont, white, DrawStringJustification::DS_ALIGN_CENTER, false);
+    TodDrawStringWrapped(g, aStr, aRect, aFont, colorWhite, DrawStringJustification::DS_ALIGN_CENTER, false);
 
     // int plantHeight = plantPileHeight * leaderboardsWidget->mPlantTrashBin->mPileNum;
     // int zombieHeight = zombiePileHeight * leaderboardsWidget->mZombieTrashBin->mPileNum;

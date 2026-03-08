@@ -591,7 +591,7 @@ void GamepadControls::UpdatePreviewReanim() {
         mPreviewReanim4->Update();
     if (flagDrawGray) {
         newGraphics.SetColorizeImages(true);
-        (newGraphics).SetColor(gray);
+        (newGraphics).SetColor(colorGray);
     }
     mPreviewReanim4->Draw(&newGraphics);
     mPreviewReanim4->DrawRenderGroup(&newGraphics, 2);

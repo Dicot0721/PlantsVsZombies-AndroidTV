@@ -85,7 +85,7 @@ void SeedPacket::DrawOverlay(Sexy::Graphics *g) {
         // 如果玩家开启了“显示冷却倒计时”，则绘制倒计时
         int coolDownRemaining = mRefreshTime - mRefreshCounter;
         pvzstl::string str = StrFormat("%1.1f", coolDownRemaining / 100.0f);
-        g->SetColor(GetPlayerIndex() ? yellow : blue);
+        g->SetColor(GetPlayerIndex() ? colorYellow : colorBlue);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
         g->DrawString(str, coolDownRemaining < 1000 ? 10 : 0, 39);
         g->SetFont(nullptr);

@@ -1280,8 +1280,8 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             //            clientGamepadControls->mCursorPositionY = event1->data4;
         } break;
         case EVENT_BOARD_TOUCH_DRAG_REPLY: {
-            U16U16_Event *event1 = (U16U16_Event *)event;
-            GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
+            // U16U16_Event *event1 = (U16U16_Event *)event;
+            // GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
             //            clientGamepadControls->mCursorPositionX = event1->data1;
             //            clientGamepadControls->mCursorPositionY = event1->data2;
         } break;
@@ -5108,7 +5108,7 @@ void Board::FixReanimErrorAfterLoad() {
     while (IterateParticles(aParticle)) {
         if (aParticle->mEffectType == ParticleEffect::PARTICLE_ZOMBIE_DAISIES || aParticle->mEffectType == ParticleEffect::PARTICLE_ZOMBIE_PINATA) {
             // 设置颜色
-            aParticle->OverrideColor(nullptr, white);
+            aParticle->OverrideColor(nullptr, colorWhite);
         } else if (aParticle->mEffectType == ParticleEffect::PARTICLE_POOL_SPARKLY) {
             // 直接删除泳池闪光特效
             aParticle->ParticleSystemDie();

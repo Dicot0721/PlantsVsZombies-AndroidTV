@@ -21,6 +21,7 @@ A mod of _Plants vs. Zombies_ Android TV version.
 - Clone the repository.
     ```sh
     git clone https://github.com/Dicot0721/PlantsVsZombies-AndroidTV.git
+    cd PlantsVsZombies-AndroidTV
     ```
 
 - Copy assets files to the path `PlantsVsZombies-AndroidTV/app/src/main/assets/`.
@@ -30,7 +31,6 @@ A mod of _Plants vs. Zombies_ Android TV version.
     * Android Studio: Click on the build button.
     * Command line: Run the following command:
         ```sh
-        cd PlantsVsZombies-AndroidTV
         ./gradlew assembleDebug
         ```
 

@@ -484,19 +484,19 @@ void Plant::Draw(Sexy::Graphics *g) {
         pvzstl::string str = StrFormat("%d/%d", mPlantHealth, mPlantMaxHealth);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT12_Addr);
         if (mSeedType == SeedType::SEED_PUMPKINSHELL) {
-            g->SetColor(yellow);
+            g->SetColor(colorYellow);
             g->DrawString(str, 0, 52);
         } else if (mSeedType == SeedType::SEED_FLOWERPOT) {
-            g->SetColor(brown);
+            g->SetColor(colorBrown);
             g->DrawString(str, 0, 93);
         } else if (mSeedType == SeedType::SEED_LILYPAD) {
-            g->SetColor(green);
+            g->SetColor(colorGreen);
             g->DrawString(str, 0, 100);
         } else if (mSeedType == SeedType::SEED_COBCANNON) {
-            g->SetColor(white);
+            g->SetColor(colorWhite);
             g->DrawString(str, 40, 34);
         } else {
-            g->SetColor(white);
+            g->SetColor(colorWhite);
             g->DrawString(str, 0, 34);
         }
         g->SetFont(nullptr);

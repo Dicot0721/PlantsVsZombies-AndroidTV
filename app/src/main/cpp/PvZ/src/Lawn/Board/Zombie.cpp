@@ -1133,7 +1133,7 @@ void Zombie::Draw(Sexy::Graphics *g) {
     pvzstl::string str;
     if (showZombieBodyHealth || (showGargantuarHealth && (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR))) { // 如果玩家开了"僵尸显血"
         str = StrFormat("%d/%d", mBodyHealth, mBodyMaxHealth);
-        g->SetColor(white);
+        g->SetColor(colorWhite);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
         if (mZombieType == ZombieType::ZOMBIE_BOSS) {
             // 如果是僵王,将血量绘制到僵王头顶。从而修复图鉴中僵王血量绘制位置不正确。
@@ -1148,7 +1148,7 @@ void Zombie::Draw(Sexy::Graphics *g) {
     if (showHelmAndShieldHealth) {
         if (mHelmHealth > 0) { // 如果有头盔，绘制头盔血量
             str = StrFormat("%d/%d", mHelmHealth, mHelmMaxHealth);
-            g->SetColor(yellow);
+            g->SetColor(colorYellow);
             g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
             g->DrawString(str, 0, drawHeightOffset);
             g->SetFont(nullptr);
@@ -1156,7 +1156,7 @@ void Zombie::Draw(Sexy::Graphics *g) {
         }
         if (mShieldHealth > 0) { // 如果有盾牌，绘制盾牌血量
             str = StrFormat("%d/%d", mShieldHealth, mShieldMaxHealth);
-            g->SetColor(blue);
+            g->SetColor(colorBlue);
             g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
             g->DrawString(str, 0, drawHeightOffset);
             g->SetFont(nullptr);
@@ -1172,7 +1172,7 @@ void Zombie::DrawBossPart(Sexy::Graphics *g, int theBossPart) {
         // 我们只在theBossPart==3时(绘制最后一个部分时)绘制一次血量，免去每次都绘制。
         if (showZombieBodyHealth) { // 如果玩家开了"僵尸显血"
             pvzstl::string str = StrFormat("%d/%d", mBodyHealth, mBodyMaxHealth);
-            g->SetColor(white);
+            g->SetColor(colorWhite);
             g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
             float tmpTransX = g->mTransX;
             float tmpTransY = g->mTransY;

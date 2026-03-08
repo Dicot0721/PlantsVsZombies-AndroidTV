@@ -130,7 +130,7 @@ public:
         DataArrayItem *aNewItem = &mBlock[aNext];
         std::memset(aNewItem, 0, sizeof(DataArrayItem));
         aNewItem->mID = (mNextKey++ << DATA_ARRAY_KEY_SHIFT) | aNext;
-        if (mNextKey == DATA_ARRAY_MAX_SIZE) {
+        if (mNextKey >= DATA_ARRAY_MAX_SIZE) {
             mNextKey = 1;
         }
         ++mSize;

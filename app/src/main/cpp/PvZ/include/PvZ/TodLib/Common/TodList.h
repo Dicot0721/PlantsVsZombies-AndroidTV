@@ -45,7 +45,6 @@ public:
 
 template <typename T>
 struct TodListNode {
-public:
     T mValue;
     TodListNode *mNext;
     TodListNode *mPrev;

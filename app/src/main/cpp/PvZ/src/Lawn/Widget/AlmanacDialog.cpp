@@ -191,7 +191,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
                 g->SetColor(v39);
             }
             g->DrawImage(*Sexy_IMAGE_ALMANAC_IMITATER_Addr, 18, 20);
-            g->SetColor(white);
+            g->SetColor(colorWhite);
             g->SetColorizeImages(tmp);
         } else {
             if (mSelectedSeed == aSeedType) {
@@ -202,7 +202,7 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
                 Color v39 = {255, 255, 0, theAlpha};
                 g->SetColor(v39);
                 g->DrawImage(*Sexy_IMAGE_SEEDPACKETFLASH_Addr, x - 3, y - 5);
-                g->SetColor(white);
+                g->SetColor(colorWhite);
                 g->SetColorizeImages(tmp);
                 g->SetScale(1.0, 1.0, 0.0, 0.0);
             } else {
@@ -255,8 +255,8 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
     TodDrawString(g, mNameString, 617, 108, *Sexy_FONT_DWARVENTODCRAFT18_Addr, color, DrawStringJustification::DS_ALIGN_CENTER);
 
     if (mSelectedSeed != SeedType::SEED_IMITATER) {
-        TodDrawStringWrapped(g, mCostString, mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_LEFT, false);
-        TodDrawStringWrapped(g, mWaitTimeString, mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_RIGHT, false);
+        TodDrawStringWrapped(g, mCostString, mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, colorWhite, DrawStringJustification::DS_ALIGN_LEFT, false);
+        TodDrawStringWrapped(g, mWaitTimeString, mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, colorWhite, DrawStringJustification::DS_ALIGN_RIGHT, false);
     }
 
     g->PushState();
@@ -320,7 +320,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
                     g->SetColor(Color(255, 255, 255, 64));
                 }
                 g->DrawImage(*Sexy_IMAGE_ALMANAC_IMITATER_Addr, 18, 20);
-                g->SetColor(white);
+                g->SetColor(colorWhite);
                 g->SetColorizeImages(g->GetColorizeImages());
             } else {
                 if (mSelectedSeed == aSeedType) {
@@ -329,7 +329,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
                     g->SetColorizeImages(true);
                     g->SetColor(Color(255, 255, 0, aAlpha));
                     g->DrawImage(*Sexy_IMAGE_SEEDPACKETFLASH_Addr, aPosX - 3, aPosY - 5);
-                    g->SetColor(white);
+                    g->SetColor(colorWhite);
                     g->SetColorizeImages(g->GetColorizeImages());
                     g->SetScale(1.0, 1.0, 0.0, 0.0);
                 } else {
@@ -351,8 +351,8 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     TodDrawString(g, mNameString, 617, 108, *Sexy_FONT_DWARVENTODCRAFT18_Addr, Color(213, 159, 43, 255), DrawStringJustification::DS_ALIGN_CENTER);
 
     if (mSelectedSeed != SeedType::SEED_IMITATER) {
-        TodDrawStringWrapped(g, mCostString, mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_LEFT, false);
-        TodDrawStringWrapped(g, mWaitTimeString, mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, white, DrawStringJustification::DS_ALIGN_RIGHT, false);
+        TodDrawStringWrapped(g, mCostString, mCostRect, *Sexy_FONT_BRIANNETOD16_Addr, colorWhite, DrawStringJustification::DS_ALIGN_LEFT, false);
+        TodDrawStringWrapped(g, mWaitTimeString, mWaitTimeRect, *Sexy_FONT_BRIANNETOD16_Addr, colorWhite, DrawStringJustification::DS_ALIGN_RIGHT, false);
     }
 
     g->PushState();
