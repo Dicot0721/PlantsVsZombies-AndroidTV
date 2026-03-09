@@ -122,48 +122,60 @@ void Challenge::Update() {
         }
     }
 
-    if (mApp->IsVSMode()) {
-        if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING)
-            return;
-
-        gVSAddUnderPlantsCounter--;
-        if (gVSAddUnderPlantsCounter <= 0) {
-            gVSAddUnderPlantsCounter = 3000;
-            int aNumRows = mBoard->StageHas6Rows() ? 6 : 5;
-            SeedType aUnderPlantType = mBoard->StageHasPool() ? SEED_LILYPAD : mBoard->StageHasRoof() ? SEED_FLOWERPOT : SEED_NONE;
-            // 若第一列无垫子植物则在第一列生成垫子, 否则在最前列的垫子植物的前一列生成
-            for (int aRow = 0; aRow < aNumRows; ++aRow) {
-                Plant *aPlant = FindUnderPlantTarget(aRow);
-                if (mBoard->CanPlantAt(0, aRow, aUnderPlantType) == PLANTING_OK) {
-                    mBoard->AddPlant(0, aRow, aUnderPlantType, SeedType::SEED_NONE, -1, true);
-                } else if (aPlant && CanPlantAt(aPlant->mPlantCol + 1, aPlant->mRow, aUnderPlantType) == PLANTING_OK) {
-                    mBoard->AddPlant(aPlant->mPlantCol + 1, aPlant->mRow, aUnderPlantType, SeedType::SEED_NONE, -1, true);
-                }
-            }
-        }
-    }
-
     if (requestPause) {
         return;
     }
 
     old_Challenge_Update(this);
+
+    if (mApp->IsVSMode()) {
+        UpdateVS();
+    }
 }
 
-Plant *Challenge::FindUnderPlantTarget(int theRow) {
-    Plant *aTarget = nullptr;
+void Challenge::UpdateVS() {
+    if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING)
+        return;
+
+    gVSAddUnderPlantsCounter--;
+    if (gVSAddUnderPlantsCounter <= 0) {
+        gVSAddUnderPlantsCounter = 3000;
+        int aNumRows = mBoard->StageHas6Rows() ? 6 : 5;
+        SeedType aUnderPlantType = mBoard->StageHasPool() ? SEED_LILYPAD : mBoard->StageHasRoof() ? SEED_FLOWERPOT : SEED_NONE;
+        // 在每一行最左列的空格上生成垫子植物
+        for (int aRow = 0; aRow < aNumRows; ++aRow) {
+            int aCol = GetUnderPlantCol(aRow);
+            if (mBoard->CanPlantAt(aCol, aRow, aUnderPlantType) == PLANTING_OK && CanPlantAt(aCol, aRow, aUnderPlantType) == PLANTING_OK) {
+                mBoard->AddPlant(aCol, aRow, aUnderPlantType, SeedType::SEED_NONE, -1, true);
+            }
+        }
+    }
+}
+
+int Challenge::GetUnderPlantCol(int theRow) {
+    bool aHasBasePlant = false;
+    int aTargetCol = -1;
 
     Plant *aPlant = nullptr;
     while (mBoard->IteratePlants(aPlant)) {
         SeedType aUnderPlantType = mBoard->StageHasPool() ? SEED_LILYPAD : mBoard->StageHasRoof() ? SEED_FLOWERPOT : SEED_NONE;
         if (aPlant->mSeedType == aUnderPlantType && aPlant->mRow == theRow && !aPlant->NotOnGround()) {
-            if (aTarget == nullptr || aPlant->mPlantCol > aTarget->mPlantCol) {
-                aTarget = mBoard->GetTopPlantAt(aPlant->mPlantCol, aPlant->mRow, PlantPriority::TOPPLANT_ONLY_UNDER_PLANT);
+            // 检查第一列是否有植物
+            if (aPlant->mPlantCol == 0) {
+                aHasBasePlant = true;
+            }
+            // 检查右边相邻位置的是否有植物
+            Plant *aPlantOnRight = mBoard->GetTopPlantAt(aPlant->mPlantCol + 1, aPlant->mRow, PlantPriority::TOPPLANT_ONLY_UNDER_PLANT);
+            if (aPlantOnRight == nullptr) {
+                // 右边无植物, 比较列号寻找最左边(列号最小)的植物, 取其右一列
+                if (aTargetCol == -1 || aPlant->mPlantCol < aTargetCol) {
+                    aTargetCol = mBoard->GetTopPlantAt(aPlant->mPlantCol, aPlant->mRow, PlantPriority::TOPPLANT_ONLY_UNDER_PLANT)->mPlantCol + 1;
+                }
             }
         }
     }
-
-    return aTarget;
+    // 若第一个无植物则返回0, 否则返回目标列
+    return aHasBasePlant ? aTargetCol : 0;
 }
 
 void Challenge::HeavyWeaponFire(float a2, float a3) {

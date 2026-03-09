@@ -144,7 +144,8 @@ public:
 
     Challenge();
     void Update();
-    Plant *FindUnderPlantTarget(int theRow);
+    void UpdateVS();
+    int GetUnderPlantCol(int theRow);
     void HeavyWeaponFire(float a2, float a3);
     void IZombieDrawPlant(Sexy::Graphics *g, Plant *thePlant);
     void HeavyWeaponUpdate();
