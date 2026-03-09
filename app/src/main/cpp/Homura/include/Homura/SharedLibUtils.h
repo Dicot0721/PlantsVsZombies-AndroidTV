@@ -45,6 +45,11 @@ public:
         return handle_ != nullptr;
     }
 
+    /**
+     * Note: 即使未发生错误, 输出仍可能为空指针. (此时找到的符号的值本身就是 NULL)
+     *
+     * @retval false 仅在发生错误时返回 false.
+     */
     template <typename T>
         requires(!std::is_const_v<T> && (std::is_pointer_v<T> || std::is_member_function_pointer_v<T>))
     bool GetSymbol(const char *name, T &output) const {

@@ -62,12 +62,14 @@ bool homura::SharedLibLoader::GetSymbolImpl(const char *name, void *&output) con
         LOG_WARN("Rebinding symbol {:?}", view);
     }
 #endif
-    if (void *ptr = dlsym(handle_, name)) {
-        output = ptr;
+    dlerror(); // clear the error
+    if ((output = dlsym(handle_, name)) != nullptr) {
         return true;
-    } else {
-        // a NULL return from dlsym() need not indicate an error
-        LOG_WARN("a NULL return from dlsym({:?})", name);
+    }
+    if (const char *msg = dlerror()) {
+        LOG_ERROR("Failed to get symbol {:?}: {}", name, msg);
         return false;
     }
+    LOG_WARN("The value of symbol {:?} is NULL", name);
+    return true;
 }
