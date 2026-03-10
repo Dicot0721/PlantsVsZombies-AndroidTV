@@ -24,6 +24,7 @@
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/CutScene.h"
 #include "PvZ/Lawn/Board/GridItem.h"
+#include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/ReanimationLawn.h"
@@ -1187,7 +1188,18 @@ PlantDefinition &GetPlantDefinition(SeedType theSeedType) {
 
 int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
     LawnApp *gLawnApp = *gLawnApp_Addr;
-    if (gLawnApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+    if (gLawnApp->IsVSMode()) {
+        if (theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
+            if (gFreeForFristShuffle[0])
+                return 0;
+            return 25;
+        }
+        if (theSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
+            if (gFreeForFristShuffle[1])
+                return 0;
+            return 25;
+        }
+
         if (theSeedType == SeedType::SEED_IMITATER && theImitaterType != SeedType::SEED_NONE) {
             theSeedType = theImitaterType;
         }
@@ -1266,7 +1278,10 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
     }
 
     LawnApp *gLawnApp = *gLawnApp_Addr;
-    if (gLawnApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+    if (gLawnApp->IsVSMode()) {
+        if (theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || theSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)
+            return 3000;
+
         if (theSeedType == SeedType::SEED_IMITATER && theImitaterType != SeedType::SEED_NONE) {
             theSeedType = theImitaterType;
         }

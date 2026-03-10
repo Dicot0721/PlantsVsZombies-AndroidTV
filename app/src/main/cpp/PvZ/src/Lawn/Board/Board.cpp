@@ -428,6 +428,13 @@ PlantingReason Board::CanPlantAt(int theGridX, int theGridY, SeedType theSeedTyp
     if (FreePlantAt) {
         return PlantingReason::PLANTING_OK;
     }
+
+    if (mApp->IsVSMode() && (theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || theSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)) {
+        if (isKeyboardTwoPlayerMode)
+            return PlantingReason::PLANTING_OK;
+        return PlantingReason::PLANTING_NOT_HERE;
+    }
+
     return old_Board_CanPlantAt(this, theGridX, theGridY, theSeedType);
 }
 
@@ -3044,6 +3051,29 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                 if (!isTwoSeedBankMode)
                     mGamepadControls1->mIsInShopSeedBank = true;
             }
+
+            if (mApp->IsVSMode()) {
+                SeedType aPacketType = seedPacket->mPacketType;
+                int aPacketCost = GetCurrentPlantCost(seedPacket->mPacketType, SeedType::SEED_NONE);
+                if (!CanTakeSunMoney(aPacketCost, 0) || !seedPacket->CanPickUp() || HasLevelAwardDropped())
+                    return;
+                if (aPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
+                    std::vector<SeedType> aPlantSeeds;
+                    std::vector<SeedType> aZombieSeeds;
+                    mChallenge->PickRandomSeeds(aPlantSeeds, aZombieSeeds, false);
+                    if (!aPlantSeeds.empty()) {
+                        for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
+                            SeedType aSeedType = aPlantSeeds[aPacketIndex - 1];
+                            mSeedBank[0]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
+                        }
+                    }
+                    TakeSunMoney(aPacketCost, 0);
+                    seedPacket->Deactivate();
+                    seedPacket->WasPlanted(0);
+                    gFreeForFristShuffle[0] = false;
+                    return;
+                }
+            }
         } else {
             requestDrawButterInCursor = false; // 不再绘制黄油
             SeedPacket *seedPacket = (SeedPacket *)hitResult.mObject;
@@ -3079,6 +3109,29 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                     mGamepadControls2->mIsInShopSeedBank = true;
             }
         }
+
+        if (mApp->IsVSMode()) {
+            SeedType aPacketType = seedPacket->mPacketType;
+            int aPacketCost = GetCurrentPlantCost(seedPacket->mPacketType, SeedType::SEED_NONE);
+            if (!CanTakeDeathMoney(aPacketCost) || !seedPacket->CanPickUp() || HasLevelAwardDropped())
+                return;
+            if (aPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
+                std::vector<SeedType> aPlantSeeds;
+                std::vector<SeedType> aZombieSeeds;
+                mChallenge->PickRandomSeeds(aPlantSeeds, aZombieSeeds, true);
+                if (!aZombieSeeds.empty()) {
+                    for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
+                        SeedType aSeedType = aZombieSeeds[aPacketIndex - 1];
+                        mSeedBank[1]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
+                    }
+                }
+                TakeDeathMoney(aPacketCost);
+                seedPacket->Deactivate();
+                seedPacket->WasPlanted(1);
+                gFreeForFristShuffle[1] = false;
+            }
+        }
+
         return;
     }
 
@@ -3363,6 +3416,13 @@ void Board::__MouseDrag(int x, int y) {
     GameMode mGameMode = mApp->mGameMode;
     bool isTwoSeedBankMode = (mGameMode == GameMode::GAMEMODE_MP_VS || (mGameMode >= GameMode::GAMEMODE_TWO_PLAYER_COOP_DAY && mGameMode <= GameMode::GAMEMODE_TWO_PLAYER_COOP_ENDLESS));
     int seedBankHeight = mApp->IsChallengeWithoutSeedBank() ? 87 : seedBank->mY + seedBank->mHeight;
+
+    if (mTouchState == TouchState::TOUCHSTATE_SEED_BANK && mApp->IsVSMode()) {
+        if (mGamepadControls1->mSelectedSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || mGamepadControls2->mSelectedSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE
+            || mGamepadControls1->mSelectedSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE || mGamepadControls2->mSelectedSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)
+            return;
+    }
+
     if (mTouchState == TouchState::TOUCHSTATE_SEED_BANK && mTouchLastY < seedBankHeight && y >= seedBankHeight) {
         mTouchState = TouchState::TOUCHSTATE_BOARD_MOVED_FROM_SEED_BANK;
         if (gPlayerIndex == TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
@@ -5283,10 +5343,11 @@ GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
     return mGamepadControls1;
 }
 
-GridItem *Board::AddAGraveStone(int gridX, int gridY) {
-    GridItem *result = old_Board_AddAGraveStone(this, gridX, gridY);
+GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {
+    GridItem *result = old_Board_AddAGraveStone(this, theGridX, theGridY);
     if (tcpClientSocket >= 0 && mApp->mGameScene == SCENE_PLAYING) {
-        U8U8U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE}, uint8_t(gridX), uint8_t(gridY), uint16_t(mGridItems.DataArrayGetID(result)), uint16_t(result->mLaunchCounter)};
+        U8U8U16U16_Event event = {
+            {EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE}, uint8_t(theGridX), uint8_t(theGridY), uint16_t(mGridItems.DataArrayGetID(result)), uint16_t(result->mLaunchCounter)};
         sendWithSize(tcpClientSocket, &event, sizeof(U8U8U16U16_Event), 0);
     }
     return result;

@@ -82,6 +82,8 @@ public:
     void SetPacketType(SeedType theSeedType, SeedType theImitaterType);
     void WasPlanted(int thePlayerIndex);
     void SlotMachineStart();
+
+    void MouseDown(int x, int y, int theClickCount, int thePlayerIndex);
 };
 
 void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, SeedType theImitaterType, float theOffsetX, float theOffsetY, float theScale);
@@ -109,7 +111,7 @@ inline void (*old_SeedPacket_DrawOverlay)(SeedPacket *seedPacket, Sexy::Graphics
 
 inline void (*old_SeedPacket_Draw)(SeedPacket *seedPacket, Sexy::Graphics *graphics);
 
-inline void (*old_SeedPacket_MouseDown)(SeedPacket *seedPacket, int x, int y, int c, int unk);
+inline void (*old_SeedPacket_MouseDown)(SeedPacket *seedPacket, int x, int y, int theClickCount, int thePlayerIndex);
 
 inline bool (*old_SeedPacket_BeginDraw)(SeedPacket *, Sexy::Graphics *);
 

@@ -480,6 +480,9 @@ public:
     ZombieType PickGraveRisingZombieType(int theZombiePoints) {
         return reinterpret_cast<ZombieType (*)(Board *, int)>(Board_PickGraveRisingZombieTypeAddr)(this, theZombiePoints);
     }
+    bool CanAddGraveStoneAt(int theGridX, int theGridY) {
+        return reinterpret_cast<bool (*)(Board *, int, int)>(Board_CanAddGraveStoneAtAddr)(this, theGridX, theGridY);
+    }
 
     Board(LawnApp *theApp);
     void InitLevel();
@@ -582,6 +585,11 @@ public:
     void DrawButterButton(Sexy::Graphics *g, LawnApp *theApp);
     void Draw(Sexy::Graphics *g);
     int GetSeedPacketPositionX(int thePacketIndex, int theSeedBankIndex, bool thePlayerIndex);
+    Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion);
+    bool TakeDeathMoney(int theAmount);
+    GridItem *AddAGraveStone(int theGridX, int theGridY);
+    bool TakeSunMoney(int theAmount, int thePlayer);
+    void SwitchGamepadControls();
 
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);
@@ -590,24 +598,17 @@ public:
     void MouseUpSecond(int x, int y, int theClickCount);
     void MouseDrag(int x, int y);
     void MouseDragSecond(int x, int y);
-    void ButtonDepress(int theId);
-    void KeyDown(Sexy::KeyCode theKey);
-    Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion);
-    bool TakeDeathMoney(int theAmount);
-    GridItem *AddAGraveStone(int gridX, int gridY);
-    bool TakeSunMoney(int theAmount, int thePlayer);
-    void SwitchGamepadControls();
-
-    static size_t getClientEventSize(EventType type);
-    static size_t getServerEventSize(EventType type);
     void __MouseDown(int x, int y, int theClickCount);
     void __MouseDrag(int x, int y);
     void __MouseUp(int x, int y, int theClickCount);
-    void PauseFromSecondPlayer(bool thePause);
+    void ButtonDepress(int theId);
+    void KeyDown(Sexy::KeyCode theKey);
 
+    static size_t getClientEventSize(EventType type);
+    static size_t getServerEventSize(EventType type);
     void processClientEvent(void *buf, ssize_t bufSize);
     void processServerEvent(void *buf, ssize_t bufSize);
-
+    void PauseFromSecondPlayer(bool thePause);
 
 protected:
     friend void InitHookFunction();

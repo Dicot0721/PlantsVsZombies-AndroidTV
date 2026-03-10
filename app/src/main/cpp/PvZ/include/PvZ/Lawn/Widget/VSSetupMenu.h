@@ -154,18 +154,19 @@ public:
     void Draw(Sexy::Graphics *g);
     void DrawOverlay(Sexy::Graphics *g);
     void Update();
-    void KeyDown(Sexy::KeyCode theKey);
     void OnStateEnter(VSSetupState theState);
-    void ButtonPress(int theId);
-    void ButtonDepress(int theId);
+    void AddedToManager(Sexy::WidgetManager *a2);
+    void CloseVSSetup(bool a2);
+
     void MouseDown(int x, int y, int theCount);
     void MouseDrag(int x, int y);
     void MouseUp(int x, int y, int theCount);
-    void AddedToManager(Sexy::WidgetManager *a2);
+    void ButtonPress(int theId);
+    void ButtonDepress(int theId);
+    void KeyDown(Sexy::KeyCode theKey);
 
     void processClientEvent(void *buf, ssize_t bufSize);
     void processServerEvent(void *buf, ssize_t bufSize);
-    void CloseVSSetup(bool a2);
 
 protected:
     friend void InitHookFunction();
@@ -206,10 +207,6 @@ inline void (*old_VSSetupMenu_OnStateEnter)(VSSetupMenu *menu, VSSetupState theS
 inline void (*old_VSSetupMenu_ButtonPress)(VSSetupMenu *, int theId);
 
 inline void (*old_VSSetupMenu_ButtonDepress)(VSSetupMenu *, int theId);
-
-inline void (*old_VSSetupMenu_PickRandomZombies)(VSSetupMenu *, std::vector<SeedType> &theVector);
-
-inline void (*old_VSSetupMenu_PickRandomPlants)(VSSetupMenu *, std::vector<SeedType> &theVector1, std::vector<SeedType> const &theVector2);
 
 inline void (*old_VSSetupMenu_AddedToManager)(VSSetupMenu *, Sexy::WidgetManager *a2);
 

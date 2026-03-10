@@ -344,7 +344,7 @@ void InitHookFunction() {
     homura::HookFunction(SeedPacket_DrawAddr, &SeedPacket::Draw, &old_SeedPacket_Draw);
     homura::HookFunction(SeedPacket_FlashIfReadyAddr, &SeedPacket::FlashIfReady, &old_SeedPacket_FlashIfReady);
     homura::HookFunction(SeedPacket_SetPacketTypeAddr, &SeedPacket::SetPacketType, &old_SeedPacket_SetPacketType);
-    // MSHookFunction(SeedPacket_MouseDownAddr, (void *) SeedPacket_MouseDown, (void **) &old_SeedPacket_MouseDown);
+    //    homura::HookFunction(SeedPacket_MouseDownAddr, &SeedPacket::MouseDown, &old_SeedPacket_MouseDown);
     homura::HookFunction(SeedPacket_WasPlantedAddr, &SeedPacket::WasPlanted, &old_SeedPacket_WasPlanted);
     homura::HookFunction(SeedPacket_SlotMachineStartAddr, &SeedPacket::SlotMachineStart, nullptr);
 
@@ -435,8 +435,8 @@ void InitHookFunction() {
     homura::HookFunction(VSSetupMenu_OnStateEnterAddr, &VSSetupMenu::OnStateEnter, &old_VSSetupMenu_OnStateEnter);
     // homura::HookFunction(VSSetupMenu_ButtonPressAddr, &VSSetupMenu::ButtonPress, &old_VSSetupMenu_ButtonPress);
     homura::HookFunction(VSSetupMenu_ButtonDepressAddr, &VSSetupMenu::ButtonDepress, &old_VSSetupMenu_ButtonDepress);
-    homura::HookFunction(VSSetupMenu_PickRandomZombiesAddr, &VSSetupMenu::PickRandomZombies, &old_VSSetupMenu_PickRandomZombies);
-    homura::HookFunction(VSSetupMenu_PickRandomPlantsAddr, &VSSetupMenu::PickRandomPlants, &old_VSSetupMenu_PickRandomPlants);
+    homura::HookFunction(VSSetupMenu_PickRandomZombiesAddr, &VSSetupMenu::PickRandomZombies, nullptr);
+    homura::HookFunction(VSSetupMenu_PickRandomPlantsAddr, &VSSetupMenu::PickRandomPlants, nullptr);
 
 
     homura::HookFunction(VSResultsMenu_VSResultsMenuAddr, &VSResultsMenu::_constructor, &old_VSResultsMenu_Constructor);

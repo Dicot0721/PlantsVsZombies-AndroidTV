@@ -31,6 +31,7 @@
 #include "PvZ/Lawn/Board/Zombie.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
+#include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Misc.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
@@ -137,16 +138,18 @@ void Challenge::UpdateVS() {
     if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING)
         return;
 
-    gVSAddUnderPlantsCounter--;
-    if (gVSAddUnderPlantsCounter <= 0) {
-        gVSAddUnderPlantsCounter = 3000;
-        int aNumRows = mBoard->StageHas6Rows() ? 6 : 5;
-        SeedType aUnderPlantType = mBoard->StageHasPool() ? SEED_LILYPAD : mBoard->StageHasRoof() ? SEED_FLOWERPOT : SEED_NONE;
-        // 在每一行最左列的空格上生成垫子植物
-        for (int aRow = 0; aRow < aNumRows; ++aRow) {
-            int aCol = GetUnderPlantCol(aRow);
-            if (mBoard->CanPlantAt(aCol, aRow, aUnderPlantType) == PLANTING_OK && CanPlantAt(aCol, aRow, aUnderPlantType) == PLANTING_OK) {
-                mBoard->AddPlant(aCol, aRow, aUnderPlantType, SeedType::SEED_NONE, -1, true);
+    if (mBoard->StageHasPool() || mBoard->StageHasRoof()) {
+        gVSAddUnderPlantsCounter--;
+        if (gVSAddUnderPlantsCounter <= 0) {
+            gVSAddUnderPlantsCounter = 3000;
+            int aNumRows = mBoard->StageHas6Rows() ? 6 : 5;
+            SeedType aUnderPlantType = mBoard->StageHasPool() ? SEED_LILYPAD : mBoard->StageHasRoof() ? SEED_FLOWERPOT : SEED_NONE;
+            // 在每一行最左列的空格上生成垫子植物
+            for (int aRow = 0; aRow < aNumRows; ++aRow) {
+                int aCol = GetUnderPlantCol(aRow);
+                if (mBoard->CanPlantAt(aCol, aRow, aUnderPlantType) == PLANTING_OK && CanPlantAt(aCol, aRow, aUnderPlantType) == PLANTING_OK) {
+                    mBoard->AddPlant(aCol, aRow, aUnderPlantType, SeedType::SEED_NONE, -1, true);
+                }
             }
         }
     }
@@ -176,6 +179,72 @@ int Challenge::GetUnderPlantCol(int theRow) {
     }
     // 若第一个无植物则返回0, 否则返回目标列
     return aHasBasePlant ? aTargetCol : 0;
+}
+
+void Challenge::PickRandomSeeds(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie) {
+    thePlantSeeds.clear();
+    theZombieSeeds.clear();
+
+    int alreadyPicked = 0;
+    if ((mApp->mPlayerInfo->mLevel > 20 || mApp->HasFinishedAdventure()) && Sexy::Rand(5) == 1) {
+        thePlantSeeds.push_back(SEED_INSTANT_COFFEE);
+        alreadyPicked = theIsZombie ? 0 : 1;
+    }
+
+    const int poolGroupOffset = 3 * alreadyPicked;
+
+    for (int num_possible = alreadyPicked; num_possible < mApp->mBoard->GetNumSeedsInBank(true) - 1; ++num_possible) {
+        int pool = 0;
+        if (num_possible == 2 || num_possible == 3)
+            pool = 1;
+        else if (num_possible == 4)
+            pool = 2;
+
+        const int poolBase = theIsZombie ? 6 + pool : poolGroupOffset + pool;
+
+        int validCount = 0;
+        for (int i = 0; i < 8; ++i) {
+            const SeedType aSeedType = VSSetupMenu::msRandomPools[poolBase][i];
+            if (aSeedType == SeedType::SEED_NONE)
+                break;
+
+            ++validCount;
+        }
+
+        SeedType aSeedType = SEED_NONE;
+        if (theIsZombie) {
+            for (;;) {
+                do {
+                    const int idx = Sexy::Rand(validCount);
+                    aSeedType = VSSetupMenu::msRandomPools[poolBase][idx];
+                } while (std::ranges::contains(theZombieSeeds, aSeedType));
+
+                if (mApp->HasSeedType(aSeedType, 1))
+                    break;
+            }
+        } else {
+            for (;;) {
+                do {
+                    const int idx = Sexy::Rand(validCount);
+                    aSeedType = VSSetupMenu::msRandomPools[poolBase][idx];
+                } while (std::ranges::contains(thePlantSeeds, aSeedType));
+
+                if (mApp->HasSeedType(aSeedType, 0))
+                    break;
+            }
+        }
+
+        if (theIsZombie) {
+            theZombieSeeds.push_back(aSeedType);
+        } else {
+            thePlantSeeds.push_back(aSeedType);
+        }
+    }
+}
+
+SeedType Challenge::PickNextRandomSeed(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie, int theSeedIndex) {
+    PickRandomSeeds(thePlantSeeds, theZombieSeeds, theIsZombie);
+    return theIsZombie ? theZombieSeeds[theSeedIndex - 1] : thePlantSeeds[theSeedIndex - 1];
 }
 
 void Challenge::HeavyWeaponFire(float a2, float a3) {
@@ -404,7 +473,13 @@ void Challenge::InitLevel() {
     }
 
     if (mApp->IsVSMode()) {
-        gVSAddUnderPlantsCounter = 2000;
+        if (mBoard->StageHasPool() || mBoard->StageHasRoof()) {
+            gVSAddUnderPlantsCounter = 2000;
+        }
+        if (mApp->mPlayerInfo->mVSShuffleMode) {
+            gFreeForFristShuffle[0] = true;
+            gFreeForFristShuffle[1] = true;
+        }
     }
 }
 

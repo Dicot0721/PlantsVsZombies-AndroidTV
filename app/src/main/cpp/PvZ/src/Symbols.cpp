@@ -191,6 +191,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN5Board19SpawnZombiesFromSkyEv", Board_SpawnZombiesFromSkyAddr);
     libGameMain.GetSymbol("_ZN5Board20SpawnZombiesFromPoolEv", Board_SpawnZombiesFromPoolAddr);
     libGameMain.GetSymbol("_ZN5Board25PickGraveRisingZombieTypeEi", Board_PickGraveRisingZombieTypeAddr);
+    libGameMain.GetSymbol("_ZN5Board18CanAddGraveStoneAtEii", Board_CanAddGraveStoneAtAddr);
 
 
     libGameMain.GetSymbol("_Z9SyncBoardP15SaveGameContextP5Board", SyncBoardAddr);

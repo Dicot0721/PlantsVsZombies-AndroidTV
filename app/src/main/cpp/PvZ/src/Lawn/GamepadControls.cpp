@@ -661,45 +661,105 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
         return;
     }
 
+    if (mSelectedSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || mSelectedSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)
+        return;
+
     old_GamepadControls_DrawPreview(this, g);
 }
 
 void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerIndex, unsigned int unk) {
-    old_GamepadControls_OnButtonDown(this, theButton, thePlayerIndex, unk);
-
     SeedBank *aSeedBank = GetSeedBank();
     SeedPacket *aSeedPacket = &aSeedBank->mSeedPackets[mSelectedSeedIndex];
     SeedType aPacketType = aSeedPacket->mPacketType;
     int aCost = mBoard->GetCurrentPlantCost(aSeedPacket->mPacketType, SeedType::SEED_NONE);
-    if (mGameObject.mApp->mGameMode == GameMode::GAMEMODE_MP_VS && theButton == Sexy::GamepadButton::GAMEPAD_BUTTON_A) {
-
+    if (mGameObject.mApp->IsVSMode() && theButton == Sexy::GamepadButton::GAMEPAD_BUTTON_A) {
         if (mIsZombie) {
-            if (aPacketType == SeedType::SEED_ZOMBIE_GRAVESTONE)
-                return;
-
             int aGridX = mBoard->PixelToGridXKeepOnBoard((int)mCursorPositionX, (int)mCursorPositionY);
             int aGridY = mBoard->PixelToGridYKeepOnBoard((int)mCursorPositionX, (int)mCursorPositionY);
+
+            if (aPacketType == SeedType::SEED_ZOMBIE_GRAVESTONE || aPacketType == SeedType::SEED_ZOMBIE_BUNGEE) {
+                old_GamepadControls_OnButtonDown(this, theButton, thePlayerIndex, unk);
+                return;
+                //                if (!mBoard->CanPlantAt(aGridX, aGridY, aPacketType) && mBoard->CanAddGraveStoneAt(aGridX, aGridY) && mBoard->TakeDeathMoney(aCost)) {
+                //                    GridItem *aGraveStone = mBoard->AddAGraveStone(aGridX, aGridY);
+                //                    aGraveStone->unkBool1 = false;
+                //                    aGraveStone->mVSGraveStoneHealth = 350;
+                //                    aSeedPacket->Deactivate();
+                //                    aSeedPacket->WasPlanted(mPlayerIndex1);
+                //                }
+            }
 
             if (!mBoard->CanTakeDeathMoney(aCost) || !aSeedPacket->CanPickUp() || mBoard->CanPlantAt(aGridX, aGridY, aPacketType) || mBoard->HasLevelAwardDropped())
                 return;
 
+            if (aPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
+                std::vector<SeedType> aPlantSeeds;
+                std::vector<SeedType> aZombieSeeds;
+                mBoard->mChallenge->PickRandomSeeds(aPlantSeeds, aZombieSeeds, true);
+                if (!aZombieSeeds.empty()) {
+                    for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
+                        SeedType aSeedType = aZombieSeeds[aPacketIndex - 1];
+                        aSeedPacket[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
+                    }
+                }
+                mBoard->TakeDeathMoney(aCost);
+                aSeedPacket->Deactivate();
+                aSeedPacket->WasPlanted(mPlayerIndex2);
+                gFreeForFristShuffle[1] = false;
+                return;
+            }
+
             ZombieType aZombieType = Challenge::IZombieSeedTypeToZombieType(aPacketType);
             if (mBoard->TakeDeathMoney(aCost)) {
-                if (aZombieType == ZombieType::ZOMBIE_DUCKY_TUBE || aZombieType == ZombieType::ZOMBIE_SNORKEL || aZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER
+                if (aZombieType == ZombieType::ZOMBIE_DANCER || aZombieType == ZombieType::ZOMBIE_ZAMBONI || aZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX
+                    || aZombieType == ZombieType::ZOMBIE_DIGGER || aZombieType == ZombieType::ZOMBIE_CATAPULT || aZombieType == ZombieType::ZOMBIE_GARGANTUAR
+                    || aZombieType == ZombieType::ZOMBIE_DUCKY_TUBE || aZombieType == ZombieType::ZOMBIE_SNORKEL || aZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER
                     || aZombieType == ZombieType::ZOMBIE_BALLOON || aZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || aZombieType == ZombieType::ZOMBIE_BOBSLED) {
                     mBoard->AddZombieInRow(aZombieType, aGridY, -5, true);
-                } else if (aZombieType == ZombieType::ZOMBIE_IMP || aZombieType == ZombieType::ZOMBIE_YETI || aZombieType == ZombieType::ZOMBIE_PEA_HEAD
-                           || aZombieType == ZombieType::ZOMBIE_WALLNUT_HEAD || aZombieType == ZombieType::ZOMBIE_JALAPENO_HEAD || aZombieType == ZombieType::ZOMBIE_GATLING_HEAD
-                           || aZombieType == ZombieType::ZOMBIE_SQUASH_HEAD || aZombieType == ZombieType::ZOMBIE_TALLNUT_HEAD) {
+                } else if (aZombieType == ZombieType::ZOMBIE_FLAG) {
+                    mBoard->DisplayAdviceAgain("[ADVICE_HUGE_WAVE]", MessageStyle::MESSAGE_STYLE_HUGE_WAVE, AdviceType::ADVICE_HUGE_WAVE);
+                    mBoard->SpawnZombieWave();
+                } else {
                     Zombie *aZombie = mBoard->AddZombie(aZombieType, -5, false);
                     if (aZombie)
                         aZombie->RiseFromGrave(aGridX, aGridY);
                 }
+
                 aSeedPacket->Deactivate();
                 aSeedPacket->WasPlanted(mPlayerIndex2);
+                return;
+            }
+        } else {
+            int aGridX = mBoard->PixelToGridXKeepOnBoard((int)mCursorPositionX, (int)mCursorPositionY);
+            int aGridY = mBoard->PixelToGridYKeepOnBoard((int)mCursorPositionX, (int)mCursorPositionY);
+
+            if (!mBoard->CanTakeSunMoney(aCost, 0) || !aSeedPacket->CanPickUp() || mBoard->CanPlantAt(aGridX, aGridY, aPacketType) || mBoard->HasLevelAwardDropped())
+                return;
+
+            if (aPacketType < SeedType::NUM_SEED_TYPES) {
+                old_GamepadControls_OnButtonDown(this, theButton, thePlayerIndex, unk);
+                return;
+            }
+
+            if (aPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
+                std::vector<SeedType> aPlantSeeds;
+                std::vector<SeedType> aZombieSeeds;
+                mBoard->mChallenge->PickRandomSeeds(aPlantSeeds, aZombieSeeds, false);
+                if (!aPlantSeeds.empty()) {
+                    for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
+                        SeedType aSeedType = aPlantSeeds[aPacketIndex - 1];
+                        aSeedPacket[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
+                    }
+                }
+                mBoard->TakeSunMoney(aCost, 0);
+                aSeedPacket->Deactivate();
+                aSeedPacket->WasPlanted(mPlayerIndex1);
+                gFreeForFristShuffle[0] = false;
             }
         }
     }
+
+    old_GamepadControls_OnButtonDown(this, theButton, thePlayerIndex, unk);
 }
 
 void ZenGardenControls::Update(float a2) {

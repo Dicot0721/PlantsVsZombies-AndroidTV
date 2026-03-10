@@ -146,6 +146,8 @@ public:
     void Update();
     void UpdateVS();
     int GetUnderPlantCol(int theRow);
+    void PickRandomSeeds(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie);
+    SeedType PickNextRandomSeed(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie, int theSeedIndex);
     void HeavyWeaponFire(float a2, float a3);
     void IZombieDrawPlant(Sexy::Graphics *g, Plant *thePlant);
     void HeavyWeaponUpdate();
@@ -188,6 +190,7 @@ inline int targetWavesToJump = 1;
 inline bool requestJumpSurvivalStage;
 inline bool stopSpawning;            // 暂停刷怪
 inline int gVSAddUnderPlantsCounter; // 对战自动种植睡莲、花盆的间隔
+inline bool gFreeForFristShuffle[2]; // 刷牌模式首次刷新免费
 
 
 inline void (*old_Challenge_Update)(Challenge *a);

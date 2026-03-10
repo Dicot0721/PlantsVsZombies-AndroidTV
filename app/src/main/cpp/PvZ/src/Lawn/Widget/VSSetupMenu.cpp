@@ -212,6 +212,7 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
             g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SEEDS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_SEEDS_Y + 25);
             g->DrawString(TodStringTranslate("[VS_UI_BAN_MODE]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_BAN_MODE_Y + 25);
             g->DrawString(TodStringTranslate("[VS_UI_BALANCE_PATCH]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_BALANCE_PATCH_Y + 25);
+            g->DrawString(TodStringTranslate("[VS_UI_SHUFFLE_MODE]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_SHUFFLE_MODE_Y + 25);
 
             if (gVSSetupAddonWidget->mBanMode) {
                 g->SetColor(Color(205, 0, 0, 255));
@@ -753,15 +754,6 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
     aPlantBank->mNumPackets = aZombieBank->mNumPackets = aNumPackets;
 
-    // 修复“额外卡槽”开启后卡槽位置不正确
-    for (int i = 0; i < SEEDBANK_MAX; i++) {
-        SeedPacket *aPlantPacket = &aPlantBank->mSeedPackets[i];
-        SeedPacket *aZombiePacket = &aZombieBank->mSeedPackets[i];
-        aPlantPacket->mIndex = i;
-        aPlantPacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 0, false);
-        aZombiePacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 1, true);
-    }
-
     if (mState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE) {
         switch (theId) {
             case VSSetupMenu_Quick_Play: {
@@ -818,8 +810,8 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
                 if (!aZombieSeeds.empty()) {
                     for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
-                        SeedType aZombieSeed = aZombieSeeds[aPacketIndex - 1];
-                        mApp->mBoard->mSeedBank[1]->mSeedPackets[aPacketIndex].SetPacketType(aZombieSeed, SeedType::SEED_NONE);
+                        SeedType aSeedType = aZombieSeeds[aPacketIndex - 1];
+                        mApp->mBoard->mSeedBank[1]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
                     }
                 }
 
@@ -832,9 +824,15 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
                 if (!aPlantSeeds.empty()) {
                     for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
-                        SeedType currentPlantSeed = aPlantSeeds[aPacketIndex - 1];
-                        mApp->mBoard->mSeedBank[0]->mSeedPackets[aPacketIndex].SetPacketType(currentPlantSeed, SeedType::SEED_NONE);
+                        SeedType aSeedType = aPlantSeeds[aPacketIndex - 1];
+                        mApp->mBoard->mSeedBank[0]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
                     }
+                }
+
+                if (mApp->mPlayerInfo->mVSShuffleMode) {
+                    aPlantBank->mNumPackets = aZombieBank->mNumPackets = 7;
+                    aPlantBank->mSeedPackets[6].SetPacketType(SEED_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
+                    aZombieBank->mSeedPackets[6].SetPacketType(SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
                 }
 
                 mSetupMode = VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE;
@@ -851,10 +849,20 @@ void VSSetupMenu::ButtonDepress(int theId) {
         case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds:   // 拓展选卡
         case VSSetupAddonWidget::VSSetupAddonWidget_BanMode:      // 禁选模式
         case VSSetupAddonWidget::VSSetupAddonWidget_BalancePatch: // 平衡调整
+        case VSSetupAddonWidget::VSSetupAddonWidget_ShuffleMode:  // 刷牌模式
             gVSSetupAddonWidget->ButtonDepress(theId);
             break;
         default:
             break;
+    }
+
+    // 修复“额外卡槽”开启后卡槽位置不正确
+    for (int i = 0; i < SEEDBANK_MAX; i++) {
+        SeedPacket *aPlantPacket = &aPlantBank->mSeedPackets[i];
+        SeedPacket *aZombiePacket = &aZombieBank->mSeedPackets[i];
+        aPlantPacket->mIndex = i;
+        aPlantPacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 0, false);
+        aZombiePacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 1, true);
     }
 }
 

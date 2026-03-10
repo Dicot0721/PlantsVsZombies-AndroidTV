@@ -58,6 +58,30 @@ void SeedPacket::Update() {
         }
     }
 
+    if (mApp->IsVSMode() && mApp->mPlayerInfo->mVSShuffleMode && mIndex > 0 && mIndex < 6) {
+        if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING)
+            return;
+
+        if (!mActive && mRefreshing) {
+            mTimesUsed++;
+        }
+        int aRefreshTime = Plant::GetRefreshTime(mPacketType, SeedType::SEED_NONE);
+        if (mTimesUsed > aRefreshTime) {
+            if (mSeedBank->mIsZombie) {
+                std::vector<SeedType> aPlantSeeds;
+                std::vector<SeedType> aZombieSeeds;
+                SeedType aSeedType = mBoard->mChallenge->PickNextRandomSeed(aPlantSeeds, aZombieSeeds, true, mIndex);
+                SetPacketType(aSeedType, SeedType::SEED_NONE);
+            } else {
+                std::vector<SeedType> aPlantSeeds;
+                std::vector<SeedType> aZombieSeeds;
+                SeedType aSeedType = mBoard->mChallenge->PickNextRandomSeed(aPlantSeeds, aZombieSeeds, false, mIndex);
+                SetPacketType(aSeedType, SeedType::SEED_NONE);
+            }
+            mTimesUsed = 0;
+        }
+    }
+
     old_SeedPacket_Update(this);
 }
 
@@ -97,9 +121,8 @@ void SeedPacket::Draw(Sexy::Graphics *g) {
     old_SeedPacket_Draw(this, g);
 }
 
-void SeedPacket_MouseDown(SeedPacket *seedPacket, int x, int y, int c, int unk) {
-    // LOGD("SeedPacket_MouseDown:%d %d %d %d", x, y, c, unk);
-    old_SeedPacket_MouseDown(seedPacket, x, y, c, unk);
+void SeedPacket::MouseDown(int x, int y, int theClickCount, int thePlayerIndex) {
+    old_SeedPacket_MouseDown(this, x, y, theClickCount, thePlayerIndex);
 }
 
 bool SeedPacket::BeginDraw(Sexy::Graphics *g) {
@@ -146,7 +169,7 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
     old_SeedPacket_SetPacketType(this, theSeedType, theImitaterType);
 
     // 此处修改对战开局的初始冷却
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+    if (mApp->IsVSMode()) {
         switch (theSeedType) {
             case SEED_SUNSHROOM:
                 if (mApp->mPlayerInfo->mVSBalancePatchMode) { // 清除阳光菇的初始冷却
@@ -155,8 +178,22 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
                     mActive = true;
                 }
                 break;
+            case SEED_BEGHOULED_BUTTON_SHUFFLE:
+            case SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE:
+                mRefreshTime = 0;
+                mRefreshing = false;
+                mActive = true;
+                break;
             default:
                 break;
+        }
+
+        if (mApp->mPlayerInfo->mVSShuffleMode) {
+            if (mIndex > 0 && mIndex < 6) {
+                mRefreshTime = 0;
+                mRefreshing = false;
+                mActive = true;
+            }
         }
     }
 }
@@ -209,7 +246,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
         celToDraw = 1;
     } else if (theSeedType == SeedType::SEED_BEGHOULED_BUTTON_CRATER) {
         celToDraw = 3;
-    } else if (theSeedType == SeedType::SEED_BEGHOULED_BUTTON_SHUFFLE) {
+    } else if (theSeedType == SeedType::SEED_BEGHOULED_BUTTON_SHUFFLE || theSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
         celToDraw = 4;
     } else if (theSeedType == SeedType::SEED_SLOT_MACHINE_SUN) {
         celToDraw = 5;
@@ -231,7 +268,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
             } else {
                 TodDrawImageCelScaledF(g, *Sexy_IMAGE_SEEDS_Addr, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
             }
-        } else if (theIsZombieSeed) {
+        } else if (theIsZombieSeed && theSeedType != SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
             float heightOffset = g->mScaleX > 1.2 ? -1.5f : 0.0f;
             TodDrawImageScaledF(g, *Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr, x, y + heightOffset, g->mScaleX, g->mScaleY);
         } else {

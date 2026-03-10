@@ -1154,6 +1154,7 @@ enum SeedType { // 直接从WP复制过来的，怀疑其中有错误，因为TV
     SEED_ZOMBIE_BOSS,
     SEED_ZOMBIE_REDEYE_GARGANTUAR,
     NUM_ZOMBIE_SEED_TYPES,
+    SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE,
     SEED_NONE = -1
 };
 enum ShieldType {

@@ -25,24 +25,32 @@ using namespace Sexy;
 
 VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     mButtonListener = theVSSetupMenu;
+
     mExtraPacketsMode = mApp->mPlayerInfo->mVS7PacketsMode;
     mExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
     mBanMode = mApp->mPlayerInfo->mVSBanMode;
     mBalancePatchMode = mApp->mPlayerInfo->mVSBalancePatchMode;
+    mShuffleMode = mApp->mPlayerInfo->mVSShuffleMode;
+
     Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
     Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
     mExtraPacketsButton = MakeNewButton(VSSetupAddonWidget_ExtraPackets, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
     mExtraSeedsButton = MakeNewButton(VSSetupAddonWidget_ExtraSeeds, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
     mBanModeButton = MakeNewButton(VSSetupAddonWidget_BanMode, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
     mBalancePatchButton = MakeNewButton(VSSetupAddonWidget_BalancePatch, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
+    mShuffleModeButton = MakeNewButton(VSSetupAddonWidget_ShuffleMode, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
+
     mExtraPacketsButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTRA_PACKETS_Y, 175, 50);
     mExtraSeedsButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTRA_SEEDS_Y, 175, 50);
     mBanModeButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
     mBalancePatchButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BALANCE_PATCH_Y, 175, 50);
+    mShuffleModeButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_SHUFFLE_MODE_Y, 175, 50);
+
     mApp->mBoard->AddWidget(mExtraPacketsButton);
     mApp->mBoard->AddWidget(mExtraSeedsButton);
     mApp->mBoard->AddWidget(mBanModeButton);
     mApp->mBoard->AddWidget(mBalancePatchButton);
+    mApp->mBoard->AddWidget(mShuffleModeButton);
 }
 
 VSSetupAddonWidget::~VSSetupAddonWidget() {
@@ -67,6 +75,11 @@ VSSetupAddonWidget::~VSSetupAddonWidget() {
             mBalancePatchButton->_destructor();
             mBalancePatchButton = nullptr;
         }
+        if (mShuffleModeButton) {
+            mApp->mBoard->RemoveWidget(mShuffleModeButton);
+            mShuffleModeButton->_destructor();
+            mShuffleModeButton = nullptr;
+        }
     }
 
     gVSSetupAddonWidget = nullptr;
@@ -79,14 +92,17 @@ void VSSetupAddonWidget::Update() {
     Image *aExtraSeedsImage = mExtraSeedsMode ? aCheckboxPressed : aCheckbox;
     Image *aBanModeImage = mBanMode ? aCheckboxPressed : aCheckbox;
     Image *aBalancePatchImage = mBalancePatchMode ? aCheckboxPressed : aCheckbox;
+    Image *aShuffleModeImage = mShuffleMode ? aCheckboxPressed : aCheckbox;
     if (mButtonImage[VS_SETUP_ADDON_BUTTON_EXTRA_PACKETS] != a7PacketsImage)
         mExtraPacketsButton->mButtonImage = a7PacketsImage;
     if (mButtonImage[VS_SETUP_ADDON_BUTTON_EXTRA_SEEDS] != aExtraSeedsImage)
         mExtraSeedsButton->mButtonImage = aExtraSeedsImage;
-    if (mButtonImage[VS_SETUP_ADDON_BUTTON_BAN] != aBanModeImage)
+    if (mButtonImage[VS_SETUP_ADDON_BUTTON_BAN_MODE] != aBanModeImage)
         mBanModeButton->mButtonImage = aBanModeImage;
     if (mButtonImage[VS_SETUP_ADDON_BUTTON_BALANCE_PATCH] != aBalancePatchImage)
         mBalancePatchButton->mButtonImage = aBalancePatchImage;
+    if (mButtonImage[VS_SETUP_ADDON_BUTTON_SHUFFLE_MODE] != aShuffleModeImage)
+        mShuffleModeButton->mButtonImage = aShuffleModeImage;
 }
 
 void VSSetupAddonWidget::SetDisable() {
@@ -98,6 +114,8 @@ void VSSetupAddonWidget::SetDisable() {
     mBanModeButton->mDisabled = true;
     mBalancePatchButton->mBtnNoDraw = true;
     mBalancePatchButton->mDisabled = true;
+    mShuffleModeButton->mBtnNoDraw = true;
+    mShuffleModeButton->mDisabled = true;
     mDrawString = false;
 }
 
@@ -113,6 +131,9 @@ void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId)
     }
     if (theId == VSSetupAddonWidget_BalancePatch) {
         self.CheckboxChecked(VSSetupAddonWidget_BalancePatch, self.mBalancePatchMode);
+    }
+    if (theId == VSSetupAddonWidget_ShuffleMode) {
+        self.CheckboxChecked(VSSetupAddonWidget_ShuffleMode, self.mShuffleMode);
     }
 }
 
@@ -133,6 +154,10 @@ void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
         case VSSetupAddonWidget_BalancePatch:
             mBalancePatchMode = !checked;
             mApp->mPlayerInfo->mVSBalancePatchMode = mBalancePatchMode;
+            break;
+        case VSSetupAddonWidget_ShuffleMode:
+            mShuffleMode = !checked;
+            mApp->mPlayerInfo->mVSShuffleMode = mShuffleMode;
             break;
         default:
             break;
