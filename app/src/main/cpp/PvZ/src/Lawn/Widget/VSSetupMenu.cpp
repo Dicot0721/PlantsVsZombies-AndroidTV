@@ -20,6 +20,7 @@
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
+#include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/CutScene.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/LawnApp.h"
@@ -830,6 +831,9 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 }
 
                 if (mApp->mPlayerInfo->mVSShuffleMode) {
+                    gVSIsShuffleMode = true;
+                    gFreeForFristShuffle[0] = true;
+                    gFreeForFristShuffle[1] = true;
                     aPlantBank->mNumPackets = aZombieBank->mNumPackets = 7;
                     aPlantBank->mSeedPackets[6].SetPacketType(SEED_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
                     aZombieBank->mSeedPackets[6].SetPacketType(SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);

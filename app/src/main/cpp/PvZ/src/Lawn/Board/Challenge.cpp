@@ -476,10 +476,8 @@ void Challenge::InitLevel() {
         if (mBoard->StageHasPool() || mBoard->StageHasRoof()) {
             gVSAddUnderPlantsCounter = 2000;
         }
-        if (mApp->mPlayerInfo->mVSShuffleMode) {
-            gFreeForFristShuffle[0] = true;
-            gFreeForFristShuffle[1] = true;
-        }
+
+        gVSIsShuffleMode = false;
     }
 }
 

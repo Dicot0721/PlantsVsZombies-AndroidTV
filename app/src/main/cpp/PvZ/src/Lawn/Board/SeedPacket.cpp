@@ -58,7 +58,7 @@ void SeedPacket::Update() {
         }
     }
 
-    if (mApp->IsVSMode() && mApp->mPlayerInfo->mVSShuffleMode && mIndex > 0 && mIndex < 6) {
+    if (mApp->IsVSMode() && gVSIsShuffleMode && mIndex > 0 && mIndex < 6) {
         if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING)
             return;
 
@@ -188,7 +188,7 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
                 break;
         }
 
-        if (mApp->mPlayerInfo->mVSShuffleMode) {
+        if (gVSIsShuffleMode) {
             if (mIndex > 0 && mIndex < 6) {
                 mRefreshTime = 0;
                 mRefreshing = false;
