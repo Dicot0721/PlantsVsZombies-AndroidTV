@@ -135,7 +135,7 @@ void Challenge::Update() {
 }
 
 void Challenge::UpdateVS() {
-    if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING)
+    if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING || mBoard->HasLevelAwardDropped())
         return;
 
     if (mBoard->StageHasPool() || mBoard->StageHasRoof()) {
