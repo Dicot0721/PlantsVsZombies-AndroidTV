@@ -91,7 +91,15 @@ void VSResultsMenu::Update() {
 }
 
 void VSResultsMenu::OnExit() {
-    old_VSResultsMenu_OnExit(this);
+    LawnApp *gLawnApp = *gLawnApp_Addr;
+    if (mResultsButtonId == VSResultsMenu_Quit_VS) {
+        gLawnApp->ShowMainMenuScreen();
+        gLawnApp->KillVSResultsScreen();
+    } else if (mResultsButtonId == VSResultsMenu_Play_Again) {
+        //        gLawnApp->PreNewGame(GameMode::GAMEMODE_MP_VS, false);
+        gLawnApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS);
+        gLawnApp->KillVSResultsScreen();
+    }
 }
 
 void VSResultsMenu::ButtonDepress(int theId) {
@@ -119,14 +127,6 @@ void VSResultsMenu::ButtonDepress(int theId) {
 
     mResultsButtonId = theId;
     OnExit();
-
-    // if (theId == 1) {
-    // LawnApp_DoBackToMain((int *) *gLawnApp_Addr);
-    // LawnApp_KillVSResultsScreen((int *) *gLawnApp_Addr);
-    // } else if (theId == 0) {
-    // LawnApp_PreNewGame(*gLawnApp_Addr, 76, 0);
-    // LawnApp_KillVSResultsScreen((int *) *gLawnApp_Addr);
-    // }
 }
 
 void VSResultsMenu::Draw(Graphics *g) {

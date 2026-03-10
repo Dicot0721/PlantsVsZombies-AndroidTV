@@ -75,8 +75,6 @@ inline int gVSResultRequestState = -1;
 
 inline void (*old_VSResultsMenu_Update)(VSResultsMenu *a);
 
-inline void (*old_VSResultsMenu_OnExit)(VSResultsMenu *a);
-
 inline void (*old_VSResultsMenu_Draw)(VSResultsMenu *, Sexy::Graphics *);
 
 inline void (*old_VSResultsMenu_DrawInfoBox)(VSResultsMenu *a, Sexy::Graphics *a2, int a3);

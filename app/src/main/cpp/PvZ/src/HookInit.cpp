@@ -441,7 +441,7 @@ void InitHookFunction() {
 
     homura::HookFunction(VSResultsMenu_VSResultsMenuAddr, &VSResultsMenu::_constructor, &old_VSResultsMenu_Constructor);
     homura::HookFunction(VSResultsMenu_UpdateAddr, &VSResultsMenu::Update, &old_VSResultsMenu_Update);
-    homura::HookFunction(VSResultsMenu_OnExitAddr, &VSResultsMenu::OnExit, &old_VSResultsMenu_OnExit);
+    homura::HookFunction(VSResultsMenu_OnExitAddr, &VSResultsMenu::OnExit, nullptr);
     homura::HookFunction(VSResultsMenu_DrawAddr, &VSResultsMenu::Draw, &old_VSResultsMenu_Draw);
     homura::HookFunction(VSResultsMenu_DrawInfoBoxAddr, &VSResultsMenu::DrawInfoBox, &old_VSResultsMenu_DrawInfoBox);
     homura::HookFunction(VSResultsMenu_ButtonDepressAddr, &VSResultsMenu::ButtonDepress, nullptr);
