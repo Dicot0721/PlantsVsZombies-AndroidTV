@@ -755,6 +755,8 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
     aPlantBank->mNumPackets = aZombieBank->mNumPackets = aNumPackets;
 
+    SeedType aSunPlantType = mApp->mBoard->StageIsNight() ? SeedType::SEED_SUNSHROOM : SeedType::SEED_SUNFLOWER;
+
     if (mState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE) {
         switch (theId) {
             case VSSetupMenu_Quick_Play: {
@@ -764,6 +766,8 @@ void VSSetupMenu::ButtonDepress(int theId) {
                         mApp->mBoard->mSeedBank[aPlayerIndex]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
                     }
                 }
+
+                mApp->mBoard->mSeedBank[0]->mSeedPackets[0].SetPacketType(aSunPlantType, SeedType::SEED_NONE);
 
                 mSetupMode = VSSetupMode::VS_SETUP_MODE_QUICK_PLAY;
                 CloseVSSetup(false);
@@ -821,7 +825,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
                 PickRandomPlants(aPlantSeeds, aZombieSeeds);
 
-                mApp->mBoard->mSeedBank[0]->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
+                mApp->mBoard->mSeedBank[0]->mSeedPackets[0].SetPacketType(aSunPlantType, SeedType::SEED_NONE);
 
                 if (!aPlantSeeds.empty()) {
                     for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {

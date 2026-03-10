@@ -492,6 +492,7 @@ inline void *SeedChooserScreen_SeedNotRecommendedToPickAddr;
 inline void *SeedChooserScreen_SeedNotAllowedDuringTrialAddr;
 inline void *SeedChooserScreen_CanPickNowAddr;
 inline void *SeedChooserScreen_ShouldDisplayCursorAddr;
+inline void *SeedChooserScreen_VSAutoPickResourceGenAddr;
 
 
 inline void *Coin_CoinInitializeAddr;

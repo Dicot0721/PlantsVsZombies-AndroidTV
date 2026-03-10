@@ -187,6 +187,7 @@ public:
     void Draw(Sexy::Graphics *g);
     void DrawBanIcon(Sexy::Graphics *g);
     SeedType SeedHitTest(int x, int y);
+    void VSAutoPickResourceGen();
 
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);

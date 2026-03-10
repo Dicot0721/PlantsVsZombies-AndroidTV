@@ -490,6 +490,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN17SeedChooserScreen25SeedNotAllowedDuringTrialE8SeedType", SeedChooserScreen_SeedNotAllowedDuringTrialAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreen10CanPickNowEv", SeedChooserScreen_CanPickNowAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreen19ShouldDisplayCursorEi", SeedChooserScreen_ShouldDisplayCursorAddr);
+    libGameMain.GetSymbol("_ZN17SeedChooserScreen21VSAutoPickResourceGenEv", SeedChooserScreen_VSAutoPickResourceGenAddr);
 
 
     libGameMain.GetSymbol("_ZN4Coin14CoinInitializeEii8CoinType10CoinMotion", Coin_CoinInitializeAddr);

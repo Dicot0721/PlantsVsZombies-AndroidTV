@@ -1267,3 +1267,25 @@ void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
 SeedType SeedChooserScreen::SeedHitTest(int x, int y) {
     return old_SeedChooserScreen_SeedHitTest(this, x, y);
 }
+
+void SeedChooserScreen::VSAutoPickResourceGen() {
+    SeedType aSeedType;
+    int aX, aY;
+    if (mSeedsInBank == 0) {
+        if (mIsZombieChooser) {
+            aSeedType = SeedType::SEED_ZOMBIE_GRAVESTONE;
+        } else {
+            aSeedType = mBoard->StageIsNight() ? SeedType::SEED_SUNSHROOM : SeedType::SEED_SUNFLOWER;
+        }
+        int aIndex = GetSeedPacketIndex(aSeedType);
+        GetSeedPositionInBank(0, aX, aY, 0);
+        mChosenSeeds[aIndex].mX = mChosenSeeds[aIndex].mStartX = mChosenSeeds[aIndex].mEndX = aX;
+        mChosenSeeds[aIndex].mY = mChosenSeeds[aIndex].mStartY = mChosenSeeds[aIndex].mEndY = aY;
+        mChosenSeeds[aIndex].mChosenPlayerIndex = mIsZombieChooser;
+        mChosenSeeds[aIndex].mSeedIndexInBank = 0;
+        mChosenSeeds[aIndex].mSeedState = ChosenSeedState::SEED_IN_BANK;
+        mChosenSeeds[aIndex].mCrazyDavePicked = true;
+        ++mSeedsInBank;
+        ++mSeedsIn1PBank;
+    }
+}
