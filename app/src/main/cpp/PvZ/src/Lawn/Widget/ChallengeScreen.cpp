@@ -42,6 +42,10 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
         // 把按钮全部缩小至长宽为0
         button->Resize(button->mX, button->mY, 0, 0);
     }
+
+    if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS) {
+        mTotalGameInPage = 5;
+    }
 }
 
 namespace {
@@ -103,10 +107,12 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
         }
     }
     if (aTrophiesTotal > 0) {
-        pvzstl::string aTrophyString = StrFormat("%d/%d", aTrophiesGot, aTrophiesTotal);
+        pvzstl::string aTrophyString = StrFormat("[NUMBER_OF_TROPHIES]", aTrophiesGot, aTrophiesTotal);
         TodDrawString(g, aTrophyString, 711, 62, *Sexy_FONT_BRIANNETOD16_Addr, Color(255, 240, 0), DS_ALIGN_CENTER);
     }
-    TodDrawImageScaledF(g, *Sexy::IMAGE_TROPHY, 690.0f, 15.0f, 0.5f, 0.5f);
+    if (mPageIndex != CHALLENGE_PAGE_VS) {
+        TodDrawImageScaledF(g, *Sexy::IMAGE_TROPHY, 690.0f, 15.0f, 0.5f, 0.5f);
+    }
 
     g->PushState();
 
@@ -164,13 +170,9 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
 
     if (mTotalGameInPage > 0) {
         float *unkFloatPtr = &mUnkFloat;
-
-        if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS) {
-            mTotalGameInPage = 5;
-        }
         for (int aChallengeMode = 0; aChallengeMode < mTotalGameInPage; ++aChallengeMode) {
-            int challengeId = *reinterpret_cast<int *>(unkFloatPtr + 1);
-            DrawButton(g, challengeId, aChallengeMode);
+            int aChallengeId = *reinterpret_cast<int *>(unkFloatPtr + 1);
+            DrawButton(g, aChallengeId, aChallengeMode);
             unkFloatPtr += 1;
         }
     }
