@@ -27,7 +27,10 @@
 #include "PvZ/Lawn/Widget/SeedChooserScreen.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
+
 #include <unistd.h>
+
+#include <cassert>
 
 using namespace Sexy;
 
@@ -355,122 +358,83 @@ void VSSetupMenu::Update() {
 }
 
 void VSSetupMenu::PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
-    // 原一共要选 5 个，此处改为 (卡槽数 - 1) 个
-    for (int num_possible = 0; num_possible < mApp->mBoard->GetNumSeedsInBank(false) - 1; ++num_possible) {
-        // ------------------------------------------------------------
-        // 1) 选择使用哪个 pool 组（原 v5），规则与 IDA 一致
-        // num_possible: 0,1 -> group 0
-        //               2,3 -> group 1
-        //               4   -> group 2
-        //        5（额外卡槽） -> group 2
-        // ------------------------------------------------------------
-        int pool = 0;
-        if (num_possible == 2 || num_possible == 3)
-            pool = 1;
-        else if (num_possible == 4 || num_possible == 5)
-            pool = 2;
+    assert(theZombieSeeds.empty());
 
-        // zombies 的 pool 从 msRandomPools[48] 开始，每组 8 个
-        const int poolBase = 6 + pool;
+    // 原本选 5 个, 扩展为 (卡槽数 - 1) 个
+    const int numSeedsInBank = mApp->mBoard->GetNumSeedsInBank(true) - 1;
+    theZombieSeeds.reserve(numSeedsInBank);
 
-        // ------------------------------------------------------------
-        // 2) 统计该池有效元素个数 validCount（<=8，遇到 -1 截断）
-        //    并保留 IDA 里那次“无用但可能有副作用”的 HasSeedType 调用
-        // ------------------------------------------------------------
+    for (int seedIdx = 0; seedIdx < numSeedsInBank; ++seedIdx) {
+        // 0 1 -> 0
+        // 2 3 -> 1
+        // 4 5 -> 2
+        int poolIdx = (seedIdx <= 5) ? seedIdx / 2 : 0;
+        poolIdx += 6; // 僵尸卡池从池 6 开始
+
+        // 统计该池有效元素个数
         int validCount = 0;
-        for (int i = 0; i < 8; ++i) {
-            const SeedType aSeedType = msRandomPools[poolBase][i];
-            if (aSeedType == SEED_NONE)
-                break;
-
+        while (validCount < 8 && msRandomPools[poolIdx][validCount] != SEED_NONE) {
             ++validCount;
         }
 
-        // ------------------------------------------------------------
-        // 3) 从该池中随机挑一个：
-        //    (1) 不能与 theZombieSeeds 重复
-        //    (2) mApp->HasSeedType(seed, 1) 必须为真
-        // ------------------------------------------------------------
         SeedType aSeedType = SEED_NONE;
-        for (;;) {
-            // 挑到一个不重复的候选
+        do {
             do {
-                const int idx = Sexy::Rand(validCount);
-                aSeedType = msRandomPools[poolBase][idx];
-            } while (std::ranges::contains(theZombieSeeds, aSeedType));
-            // 校验可用
-            if (mApp->HasSeedType(aSeedType, 1))
-                break;
-        }
-
+                aSeedType = msRandomPools[poolIdx][Sexy::Rand(validCount)];
+            } while (std::ranges::contains(theZombieSeeds, aSeedType)); // 重复则重选
+        } while (!mApp->HasSeedType(aSeedType, 1)); // 未获得则重选
         theZombieSeeds.push_back(aSeedType);
     }
 }
 
 void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const std::vector<SeedType> &theZombieSeeds) {
-    // ------------------------------------------------------------
-    // 1) 有概率先塞一个固定种子 SEED_INSTANT_COFFEE
-    // ------------------------------------------------------------
-    int alreadyPicked = 0;
-    if ((mApp->mPlayerInfo->mLevel > 20 || mApp->HasFinishedAdventure()) && Sexy::Rand(5) == 1) {
-        thePlantSeeds.push_back(SEED_INSTANT_COFFEE);
-        alreadyPicked = 1;
+    assert(thePlantSeeds.empty() && (theZombieSeeds.size() == mApp->mBoard->GetNumSeedsInBank(true) - 1));
+
+    // 原本选 5 个, 扩展为 (卡槽数 - 1) 个
+    const int numSeedsInBank = mApp->mBoard->GetNumSeedsInBank(false) - 1;
+    thePlantSeeds.reserve(numSeedsInBank);
+
+    int seedIdx = 0;
+    int poolOffset = 0;
+
+    // 是否为含蘑菇卡组
+    if (mApp->mPlayerInfo->mLevel > 20 || /* 二周目 */ mApp->HasFinishedAdventure()) {
+        bool isStageNight = mApp->mBoard->StageIsNight();
+        bool flag = Sexy::Rand(5) == 1;
+        if (!isStageNight && /* 1/5 */ flag) {
+            thePlantSeeds.push_back(SEED_INSTANT_COFFEE);
+            ++seedIdx;
+            poolOffset = 3;
+        } else if (isStageNight && /* 4/5 */ !flag) {
+            poolOffset = 3;
+        }
     }
 
-    // IDA：v26 = 3 * v5（v5 是 0/1）
-    const int poolGroupOffset = 3 * alreadyPicked; // 0 或 3
+    for (; seedIdx < numSeedsInBank; ++seedIdx) {
+        // 0 1 -> 0
+        // 2 3 -> 1
+        // 4 5 -> 2
+        int poolIdx = (seedIdx <= 5) ? seedIdx / 2 : 0;
+        poolIdx += poolOffset; // 含蘑菇卡池从池 3 开始
 
-    // ------------------------------------------------------------
-    // 2) 从随机池中继续挑，直到总共 (卡槽数 - 1) 个 plant seed
-    // ------------------------------------------------------------
-
-    for (int num_possible = alreadyPicked; num_possible < mApp->mBoard->GetNumSeedsInBank(true) - 1; ++num_possible) {
-        // 原 v6：根据 num_possible 选择池子变体
-        int pool = 0;
-        if (num_possible == 2 || num_possible == 3)
-            pool = 1;
-        else if (num_possible == 4 || num_possible == 5)
-            pool = 2;
-
-        // 池子基址：8 个一组
-        const int poolBase = poolGroupOffset + pool;
-
-        // 统计有效元素数：最多 8 个，遇到 -1 截断
+        // 统计该池有效元素个数
         int validCount = 0;
-        for (int i = 0; i < 8; ++i) {
-            const SeedType aSeedType = msRandomPools[poolBase][i];
-            if (aSeedType == SeedType::SEED_NONE)
-                break;
-
+        while (validCount < 8 && msRandomPools[poolIdx][validCount] != SEED_NONE) {
             ++validCount;
         }
 
-        // 从该池里随机挑一个：
-        // 1) 不与 thePlantSeeds 重复
-        // 2) mApp->HasSeedType 为真
         SeedType aSeedType = SEED_NONE;
-        for (;;) {
-            // 先挑一个不重复的
+        do {
             do {
-                const int idx = Sexy::Rand(validCount);
-                aSeedType = msRandomPools[poolBase][idx];
-            } while (std::ranges::contains(thePlantSeeds, aSeedType));
-
-            // 再确认可用
-            if (mApp->HasSeedType(aSeedType, 0))
-                break;
-        }
-
+                aSeedType = msRandomPools[poolIdx][Sexy::Rand(validCount)];
+            } while (std::ranges::contains(thePlantSeeds, aSeedType)); // 重复则重选
+        } while (!mApp->HasSeedType(aSeedType, 0)); // 未获得则重选
         thePlantSeeds.push_back(aSeedType);
     }
 
-    // ------------------------------------------------------------
-    // 3) 如果 zombieSeeds 里包含蹦蹦僵尸，则做 “坚果 -> 高坚果” 替换（前提拥有坚果）
-    // ------------------------------------------------------------
-    const bool zombieHasPogo = (std::find(theZombieSeeds.begin(), theZombieSeeds.end(), SEED_ZOMBIE_POGO) != theZombieSeeds.end());
-
-    if (zombieHasPogo && mApp->HasSeedType(SEED_WALLNUT, 0)) {
-        auto it = std::find(thePlantSeeds.begin(), thePlantSeeds.end(), SEED_WALLNUT);
+    // 原代码疑点: 前面已检查过 HasSeedType()
+    if (std::ranges::contains(theZombieSeeds, SEED_ZOMBIE_POGO) /* && mApp->HasSeedType(SEED_WALLNUT, 0) */) {
+        auto it = std::ranges::find(thePlantSeeds, SEED_WALLNUT);
         if (it != thePlantSeeds.end()) {
             *it = SEED_TALLNUT;
         }
@@ -479,14 +443,8 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
     if (tcpClientSocket >= 0) {
         U16x12_Event event;
         event.type = EventType::EVENT_VSSETUPMENU_RANDOM_PICK;
-        for (int i = 0; i < thePlantSeeds.size(); ++i) {
-            event.data[i] = thePlantSeeds[i];
-        }
-
-        for (int i = 0; i < theZombieSeeds.size(); ++i) {
-            event.data[i + 6] = theZombieSeeds[i];
-        }
-
+        std::ranges::copy(thePlantSeeds, event.data);
+        std::ranges::copy(theZombieSeeds, event.data + 6);
         sendWithSize(tcpClientSocket, &event, sizeof(U16x12_Event), 0);
     }
 }
@@ -620,12 +578,12 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
 
             mApp->mBoard->mSeedBank[0]->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
             for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(false) - 1; ++i) {
-                mApp->mBoard->mSeedBank[0]->mSeedPackets[i + 1].SetPacketType((SeedType)event1->data[i], SeedType::SEED_NONE);
+                mApp->mBoard->mSeedBank[0]->mSeedPackets[i + 1].SetPacketType(SeedType(event1->data[i]), SeedType::SEED_NONE);
             }
 
             mApp->mBoard->mSeedBank[1]->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE, SeedType::SEED_NONE);
             for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(true) - 1; ++i) {
-                mApp->mBoard->mSeedBank[1]->mSeedPackets[i + 1].SetPacketType((SeedType)event1->data[i + 6], SeedType::SEED_NONE);
+                mApp->mBoard->mSeedBank[1]->mSeedPackets[i + 1].SetPacketType(SeedType(event1->data[i + 6]), SeedType::SEED_NONE);
             }
         } break;
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
@@ -807,8 +765,6 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
             case VSSetupMenu_Random_Battle: {
                 std::vector<SeedType> aZombieSeeds;
-                aZombieSeeds.clear();
-
                 PickRandomZombies(aZombieSeeds);
 
                 mApp->mBoard->mSeedBank[1]->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE, SeedType::SEED_NONE);
@@ -821,8 +777,6 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 }
 
                 std::vector<SeedType> aPlantSeeds;
-                aPlantSeeds.clear();
-
                 PickRandomPlants(aPlantSeeds, aZombieSeeds);
 
                 mApp->mBoard->mSeedBank[0]->mSeedPackets[0].SetPacketType(aSunPlantType, SeedType::SEED_NONE);
