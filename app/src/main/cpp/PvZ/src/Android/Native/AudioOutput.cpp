@@ -145,9 +145,6 @@ bool Native::AudioOutput::setup(int sampleRate, int channels, int bits) {
     bool result = old_Native_AudioOutput_setup(this, sampleRate, channels, bits);
     opensl::setup(sampleRate, channels, bits);
     opensl::play();
-    // int *mAudioOutput = *(int **)(*(uint32_t *)mNativeApp + 188);
-    *(uint32_t *)(*(uint32_t *)mNativeApp + 188) = 0;
-
     return result;
 }
 
