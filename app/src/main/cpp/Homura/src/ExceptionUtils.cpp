@@ -43,18 +43,18 @@ void homura::RegisterExceptionHandler() noexcept {
     std::set_terminate(&ExceptionHandler);
 }
 
-static void AccessViolationHandler(int sig, siginfo_t *info, void *uct) {
+[[noreturn]] static void AccessViolationHandler(int sig, siginfo_t *info, void *uct) {
     LOG_FATAL("Unhandled access to 0x{:X}", reinterpret_cast<uintptr_t>(info->si_addr));
-    std::raise(SIGTRAP);
+    std::abort();
 }
 
 void homura::RegisterAccessViolationHandler() {
-    struct sigaction act{
+    struct sigaction sa{
         .sa_sigaction = &AccessViolationHandler,
         .sa_flags = SA_SIGINFO,
     };
-    sigemptyset(&act.sa_mask);
-    if (sigaction(SIGSEGV, &act, nullptr) == -1) {
+    sigemptyset(&sa.sa_mask);
+    if (sigaction(SIGSEGV, &sa, nullptr) == -1) {
         LOG_ERROR("Failed to register an exception handler");
     }
 }
