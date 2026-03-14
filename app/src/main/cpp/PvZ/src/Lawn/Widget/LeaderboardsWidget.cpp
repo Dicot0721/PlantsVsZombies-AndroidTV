@@ -202,8 +202,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     mLongestRecordPool = theApp->mPlayerInfo->mChallengeRecords[GameMode::GAMEMODE_SURVIVAL_ENDLESS_STAGE_3 - 2];
     // this_->mLongestRecordPool = theApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ENDLESS_FLAGS];
 
-    pvzstl::string str = TodStringTranslate("[CLOSE]");
-    GameButton *aBackButton = MakeButton(1000, mButtonListener, this, str);
+    GameButton *aBackButton = MakeButton(1000, mButtonListener, this, "[CLOSE]");
     aBackButton->Resize(1040, 590, 120, 50);
     AddWidget(aBackButton);
     mBackButton = aBackButton;

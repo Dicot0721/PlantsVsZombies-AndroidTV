@@ -38,8 +38,7 @@ GameButton *gHelpTextScreenCloseButton;
 
 void HelpTextScreen_Update(HelpTextScreen *helpTextScreen) {
     if (gHelpTextScreenCloseButton == nullptr) {
-        pvzstl::string str = TodStringTranslate("[CLOSE]");
-        gHelpTextScreenCloseButton = MakeButton(1000, (Sexy::ButtonListener *)helpTextScreen + 64, helpTextScreen, str);
+        gHelpTextScreenCloseButton = MakeButton(1000, (Sexy::ButtonListener *)helpTextScreen + 64, helpTextScreen, "[CLOSE]");
         helpTextScreen->AddWidget(gHelpTextScreenCloseButton);
     }
     gHelpTextScreenCloseButton->Resize(650 - helpTextScreen->mX, 540 - helpTextScreen->mY, 170, 50);

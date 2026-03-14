@@ -51,12 +51,12 @@ void AlmanacDialog::_constructor(LawnApp *theApp) {
 
     old_AlmanacDialog_AlmanacDialog(this, theApp);
 
-    gAlmanacBackButton = MakeButton(ALMANAC_BUTTON_BACK, this, this, TodStringTranslate("[ALMANAC_INDEX]"));
+    gAlmanacBackButton = MakeButton(ALMANAC_BUTTON_BACK, this, this, "[ALMANAC_INDEX]");
     gAlmanacBackButton->Resize(0, 0, 0, 0);
     gAlmanacBackButton->mBtnNoDraw = true;
     gAlmanacBackButton->mDisabled = true;
 
-    gAlmanacCloseButton = MakeButton(ALMANAC_BUTTON_CLOSE, this, this, TodStringTranslate("[CLOSE]"));
+    gAlmanacCloseButton = MakeButton(ALMANAC_BUTTON_CLOSE, this, this, "[CLOSE]");
     gAlmanacCloseButton->Resize(ALMANAC_BUTTON_CLOSE_X, ALMANAC_BUTTON_CLOSE_Y, ALMANAC_BUTTON_WIDTH, ALMANAC_BUTTON_HEIGHT);
     AddWidget(gAlmanacBackButton);
     AddWidget(gAlmanacCloseButton);
@@ -173,9 +173,8 @@ void AlmanacDialog::DrawPlants_Unmodified(Sexy::Graphics *g) {
 
     // TODO:解决PoolEffect图层问题，和部分植物的介绍文本显示不全问题
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTBACK_Addr, -240, -60);
-    pvzstl::string aHeaderText = TodStringTranslate("[SUBURBAN_ALMANAC_PLANTS]");
     Color aHeaderColor = {213, 159, 43, 255};
-    TodDrawString(g, aHeaderText, 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, aHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
+    TodDrawString(g, "[SUBURBAN_ALMANAC_PLANTS]", 400, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, aHeaderColor, DrawStringJustification::DS_ALIGN_CENTER);
     int theAlpha = std::sin((mUpdateCnt % 100) * 0.01 * std::numbers::pi) * 255.0;
     int x, y;
     for (SeedType aSeedType = SeedType::SEED_PEASHOOTER; aSeedType < SeedType::NUM_SEEDS_IN_CHOOSER; aSeedType = (SeedType)(aSeedType + 1)) {
@@ -304,8 +303,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     }
 
     g->DrawImage(*Sexy_IMAGE_ALMANAC_PLANTBACK_Addr, -240, -60);
-    pvzstl::string aHeaderText = TodStringTranslate("[SUBURBAN_ALMANAC_PLANTS]");
-    TodDrawString(g, aHeaderText, BOARD_WIDTH / 2, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, Color(213, 159, 43), DrawStringJustification::DS_ALIGN_CENTER);
+    TodDrawString(g, "[SUBURBAN_ALMANAC_PLANTS]", BOARD_WIDTH / 2, 50, *Sexy_FONT_HOUSEOFTERROR20_Addr, Color(213, 159, 43), DrawStringJustification::DS_ALIGN_CENTER);
 
     int aAlpha = sin((mUpdateCnt % 100) * 0.01 * std::numbers::pi) * 255.0;
     for (SeedType aSeedType = SeedType::SEED_PEASHOOTER; aSeedType < NUM_ALMANAC_SEEDS; aSeedType = (SeedType)(aSeedType + 1)) {

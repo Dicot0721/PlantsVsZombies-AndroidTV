@@ -107,7 +107,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
         }
     }
     if (aTrophiesTotal > 0) {
-        pvzstl::string aTrophyString = StrFormat("[NUMBER_OF_TROPHIES]", aTrophiesGot, aTrophiesTotal);
+        pvzstl::string aTrophyString = StrFormat(TodStringTranslate("[NUMBER_OF_TROPHIES]").c_str(), aTrophiesGot, aTrophiesTotal);
         TodDrawString(g, aTrophyString, 711, 62, *Sexy_FONT_BRIANNETOD16_Addr, Color(255, 240, 0), DS_ALIGN_CENTER);
     }
     if (mPageIndex != CHALLENGE_PAGE_VS) {
@@ -188,8 +188,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
 
 void ChallengeScreen::AddedToManager(int *theWidgetManager) {
     // 记录当前游戏状态
-    pvzstl::string str = TodStringTranslate("[CLOSE]");
-    gChallengeScreenCloseButton = MakeButton(1000, this, this, str);
+    gChallengeScreenCloseButton = MakeButton(1000, this, this, "[CLOSE]");
     gChallengeScreenCloseButton->Resize(800, 520, 170, 50);
     AddWidget(gChallengeScreenCloseButton);
 

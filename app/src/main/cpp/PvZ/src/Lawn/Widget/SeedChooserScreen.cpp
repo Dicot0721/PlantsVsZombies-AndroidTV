@@ -155,8 +155,7 @@ void SeedChooserScreen::_constructor(bool theIsZombieChooser) {
     }
 
     if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS && !mIsZombieChooser) {
-        pvzstl::string str = TodStringTranslate("[MENU_BUTTON]");
-        gSeedChooserScreenMainMenuButton = MakeButton(104, this, this, str);
+        gSeedChooserScreenMainMenuButton = MakeButton(104, this, this, "[MENU_BUTTON]");
         gSeedChooserScreenMainMenuButton->Resize(mApp->IsCoopMode() ? 345 : 650, -3, 120, 80);
         AddWidget(gSeedChooserScreenMainMenuButton);
     }
@@ -587,45 +586,41 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
         if (mIsZombieChooser) {
             if (mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_GRAVESTONE].mSeedState == ChosenSeedState::SEED_IN_BANK && mChosenSeeds[aSeedType - SeedType::SEED_ZOMBIE_GRAVESTONE].mCrazyDavePicked) {
                 bool seedIsGrave = mToolTipSeed1 == SeedType::SEED_ZOMBIE_GRAVESTONE || mToolTipSeed2 == SeedType::SEED_ZOMBIE_GRAVESTONE;
-                pvzstl::string str = seedIsGrave ? TodStringTranslate("[ZOMBIE_BOSS_WANTS]") : "";
-                aTolTip->SetWarningText(str);
+                aTolTip->SetWarningText(seedIsGrave ? "[ZOMBIE_BOSS_WANTS]" : "");
             }
             // 对战显示隐藏僵尸卡信息
             if (aSeedType > SeedType::SEED_ZOMBIE_GARGANTUAR && aSeedType < SeedType::NUM_ZOMBIE_SEED_IN_CHOOSER) {
-                pvzstl::string aTitle, aLabel;
+                const char *aTitle = nullptr;
+                const char *aLabel = nullptr;
                 switch (aSeedType) {
-                        // case SeedType::SEED_ZOMBIE_REDEYE_GARGANTUAR: // 红眼巨人僵尸
-                        // aTitle = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE]");
-                        // aLabel = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE_DESCRIPTION_HEADER]");
-                        // break;
                     case SeedType::SEED_ZOMBIE_REDEYE_GARGANTUAR: // 红眼巨人僵尸
-                        aTitle = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE]");
-                        aLabel = TodStringTranslate("[REDEYE_GARGANTUAR_ZOMBIE_DESCRIPTION_HEADER]");
+                        aTitle = "[REDEYE_GARGANTUAR_ZOMBIE]";
+                        aLabel = "[REDEYE_GARGANTUAR_ZOMBIE_DESCRIPTION_HEADER]";
                         break;
                     case SeedType::SEED_ZOMBIE_PEA_HEAD: // 豌豆射手僵尸
-                        aTitle = TodStringTranslate("[PEA_HEAD_ZOMBIE]");
-                        aLabel = TodStringTranslate("[PEA_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
+                        aTitle = "[PEA_HEAD_ZOMBIE]";
+                        aLabel = "[PEA_HEAD_ZOMBIE_DESCRIPTION_HEADER]";
                         break;
                     case SeedType::SEED_ZOMBIE_WALLNUT_HEAD: // 坚果僵尸
-                        aTitle = TodStringTranslate("[WALLNUT_HEAD_ZOMBIE]");
-                        aLabel = TodStringTranslate("[WALLNUT_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
+                        aTitle = "[WALLNUT_HEAD_ZOMBIE]";
+                        aLabel = "[WALLNUT_HEAD_ZOMBIE_DESCRIPTION_HEADER]";
                         break;
                     case SeedType::SEED_ZOMBIE_JALAPENO_HEAD: // 火爆辣椒僵尸
-                        aTitle = TodStringTranslate("[JALAPENO_HEAD_ZOMBIE]");
-                        aLabel = TodStringTranslate("[JALAPENO_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
+                        aTitle = "[JALAPENO_HEAD_ZOMBIE]";
+                        aLabel = "[JALAPENO_HEAD_ZOMBIE_DESCRIPTION_HEADER]";
                         break;
                     case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD: // 机枪射手僵尸
-                        aTitle = TodStringTranslate("[GATLING_HEAD_ZOMBIE]");
-                        aLabel = TodStringTranslate("[GATLING_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
+                        aTitle = "[GATLING_HEAD_ZOMBIE]";
+                        aLabel = "[GATLING_HEAD_ZOMBIE_DESCRIPTION_HEADER]";
                         break;
                     case SeedType::SEED_ZOMBIE_SQUASH_HEAD: // 窝瓜僵尸
-                        aTitle = TodStringTranslate("[SQUASH_HEAD_ZOMBIE]");
-                        aLabel = TodStringTranslate("[SQUASH_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
+                        aTitle = "[SQUASH_HEAD_ZOMBIE]";
+                        aLabel = "[SQUASH_HEAD_ZOMBIE_DESCRIPTION_HEADER]";
                         break;
                     case SeedType::SEED_ZOMBIE_TALLNUT_HEAD: // 高坚果僵尸
                     {
-                        aTitle = TodStringTranslate("[TALLNUT_HEAD_ZOMBIE]");
-                        aLabel = TodStringTranslate("[TALLNUT_HEAD_ZOMBIE_DESCRIPTION_HEADER]");
+                        aTitle = "[TALLNUT_HEAD_ZOMBIE]";
+                        aLabel = "[TALLNUT_HEAD_ZOMBIE_DESCRIPTION_HEADER]";
                         int aSeedX, aSeedY;
                         SeedType aZombieSeedType = GetZombieIndexBySeedType(aSeedType);
                         GetSeedPositionInChooser(aZombieSeedType, aSeedX, aSeedY);
@@ -952,8 +947,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
         aTitleText = "[CHOOSE_YOUR_PLANTS]";
     }
 
-    pvzstl::string aTitleString = TodStringTranslate(aTitleText.c_str());
-    TodDrawString(g, aTitleString, aBackgroundImage->mWidth / 2, 114, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aTitleColor, DS_ALIGN_CENTER);
+    TodDrawString(g, aTitleText, aBackgroundImage->mWidth / 2, 114, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aTitleColor, DS_ALIGN_CENTER);
 
     bool isExtraSeedsMode = gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode;
 
@@ -1188,7 +1182,6 @@ void SeedChooserScreen::Draw(Graphics *g) {
     } else if (mShowHelpText && !mApp->IsVSMode()) {
         // Draw help text with flashing effect
         int aFlashPhase = mSeedChooserAge % 100;
-        pvzstl::string aHelpText = TodStringTranslate("[HELP_TEXT_2_START]");
         int aTextX = aBackgroundImage->mWidth / 2;
         int aTextY = aBackgroundImage->mHeight - 63;
 
@@ -1198,7 +1191,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
         else
             aTextColor = Color::White;
 
-        TodDrawString(g, aHelpText, aTextX, aTextY, *Sexy::FONT_DWARVENTODCRAFT24, aTextColor, DS_ALIGN_CENTER);
+        TodDrawString(g, "[HELP_TEXT_2_START]", aTextX, aTextY, *Sexy::FONT_DWARVENTODCRAFT24, aTextColor, DS_ALIGN_CENTER);
     }
     //    else {
     //        // Check for disconnected controller warning
