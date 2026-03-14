@@ -151,9 +151,7 @@ void LawnApp::LoadAddonSounds() {
 Image *LawnApp::GetImageByFileName(const char *theFileName) {
     // 根据贴图文件路径获得贴图
     Image *theImage = GetImage(theFileName, true);
-    if (theImage == nullptr) {
-        LOG_DEBUG("没成功: {}", theFileName);
-    }
+    LOG_DEBUG_IF(theImage == nullptr, "Failed to get image of {:?}", theFileName);
     return theImage;
 }
 

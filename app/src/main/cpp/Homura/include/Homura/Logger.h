@@ -64,7 +64,7 @@ protected:
 } // namespace homura
 
 
-// `__func__` 生成的函数签名不够完整.
+// '__func__' 与 '__FUNCTION__' 生成的函数签名不够完整.
 #define LOGGER_CALL(level, ...) homura::Logger::Log(std::source_location::current().function_name(), level, __VA_ARGS__)
 
 #define LOG_DEBUG(...) LOGGER_CALL(ANDROID_LOG_DEBUG, __VA_ARGS__)
@@ -74,12 +74,7 @@ protected:
 #define LOG_FATAL(...) LOGGER_CALL(ANDROID_LOG_FATAL, __VA_ARGS__)
 
 
-#define LOG_IF(logFunc, flag, ...) \
-    do {                           \
-        if (flag) {                \
-            logFunc(__VA_ARGS__);  \
-        }                          \
-    } while (0)
+#define LOG_IF(logFunc, flag, ...) ((flag) ? logFunc(__VA_ARGS__) : static_cast<void>(0))
 
 #define LOG_DEBUG_IF(flag, ...) LOG_IF(LOG_DEBUG, flag, __VA_ARGS__)
 #define LOG_INFO_IF(flag, ...) LOG_IF(LOG_INFO, flag, __VA_ARGS__)
