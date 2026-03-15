@@ -23,7 +23,6 @@
 #include <cassert>
 
 #include <atomic>
-#include <ranges>
 #include <stdexcept>
 #include <string>
 #include <type_traits>
@@ -160,6 +159,12 @@ public:
         return *this;
     }
 
+    template <_convertible_to_string_view<CharT> SV>
+    basic_string &operator=(const SV &t) {
+        const _self_view sv = t;
+        return assign(sv);
+    }
+
     basic_string &operator=(const CharT *s) {
         return assign(s);
     }
@@ -185,6 +190,18 @@ public:
 
     basic_string &assign(basic_string &&str) noexcept {
         return *this = std::move(str);
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    basic_string &assign(const SV &t, size_type pos, size_type n = npos) {
+        const _self_view sv = t;
+        return assign(sv.substr(pos, n));
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    basic_string &assign(const SV &t) {
+        const _self_view sv = t;
+        return assign(sv.data(), sv.size());
     }
 
     basic_string &assign(const CharT *s, size_type n) {
@@ -344,6 +361,18 @@ public:
         return insert(pos, str.c_str(), str.size());
     }
 
+    template <_convertible_to_string_view<CharT> SV>
+    basic_string &insert(size_type pos1, const SV &t, size_type pos2, size_type n = npos) {
+        const _self_view sv = t;
+        return insert(pos1, sv.substr(pos2, n));
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    basic_string &insert(size_type pos, const SV &t) {
+        const _self_view sv = t;
+        return insert(pos, sv.data(), sv.size());
+    }
+
     basic_string &insert(size_type pos, const CharT *s, size_type n) {
         assert((s != nullptr || n == 0) && "basic_string::insert received nullptr");
         _check_range(pos, "basic_string::insert");
@@ -402,6 +431,18 @@ public:
         return append(str.c_str(), str.size());
     }
 
+    template <_convertible_to_string_view<CharT> SV>
+    basic_string &append(const SV &t, size_type pos, size_type n = npos) {
+        const _self_view sv = t;
+        return append(sv.substr(pos, n));
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    basic_string &append(const SV &t) {
+        const _self_view sv = t;
+        return append(sv.data(), sv.size());
+    }
+
     basic_string &append(const CharT *s, size_type n) {
         assert((s != nullptr || n == 0) && "basic_string::append received nullptr");
         if (n == 0) {
@@ -445,6 +486,12 @@ public:
         return append(str);
     }
 
+    template <_convertible_to_string_view<CharT> SV>
+    basic_string &operator+=(const SV &t) {
+        const _self_view sv = t;
+        return append(sv);
+    }
+
     basic_string &operator+=(const CharT *s) {
         return append(s);
     }
@@ -465,6 +512,18 @@ public:
 
     basic_string &replace(size_type pos, size_type n, const basic_string &str) {
         return replace(pos, n, str.c_str(), str.size());
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    basic_string &replace(size_type pos1, size_type n1, const SV &t, size_type pos2, size_type n2 = npos) {
+        const _self_view sv = t;
+        return replace(pos1, n1, sv.substr(pos2, n2));
+    }
+
+    template <_convertible_to_string_view<CharT> SV>
+    basic_string &replace(size_type pos, size_type n, const SV &t) {
+        const _self_view sv = t;
+        return replace(pos, n, sv.data(), sv.size());
     }
 
     basic_string &replace(size_type pos, size_type n1, const CharT *s, size_type n2) {
@@ -878,13 +937,14 @@ protected:
         if (first == last) {
             return _rep::_empty_rep()._data;
         }
+        // NB: Not required, but considered best practice.
         if constexpr (std::is_pointer_v<InputIt>) {
-            // NB: Not required, but considered best practice.
             if (first == nullptr) {
                 throw std::logic_error{"basic_string::_construct null not valid"};
             }
         }
         const size_type dnew = static_cast<size_type>(std::distance(first, last));
+        // Check for out_of_range and length_error exceptions.
         _rep *r = _rep::_create(dnew, 0);
         try {
             for (CharT *p = r->_data; first != last; ++first) {
