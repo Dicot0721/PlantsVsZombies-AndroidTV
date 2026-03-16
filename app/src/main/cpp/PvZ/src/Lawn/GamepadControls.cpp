@@ -28,6 +28,7 @@
 #include "PvZ/Lawn/Board/ZenGarden.h"
 #include "PvZ/Lawn/Board/Zombie.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/VSSetupAddonWidget.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/MagicAddr.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -695,7 +696,7 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
             if (aPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
                 std::vector<SeedType> aPlantSeeds;
                 std::vector<SeedType> aZombieSeeds;
-                mBoard->mChallenge->PickRandomSeeds(aPlantSeeds, aZombieSeeds, true);
+                PickMPRandomSeeds(mGameObject.mApp, aPlantSeeds, aZombieSeeds, true);
                 if (!aZombieSeeds.empty()) {
                     for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
                         SeedType aSeedType = aZombieSeeds[aPacketIndex - 1];
@@ -744,7 +745,7 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
             if (aPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
                 std::vector<SeedType> aPlantSeeds;
                 std::vector<SeedType> aZombieSeeds;
-                mBoard->mChallenge->PickRandomSeeds(aPlantSeeds, aZombieSeeds, false);
+                PickMPRandomSeeds(mGameObject.mApp, aPlantSeeds, aZombieSeeds, false);
                 if (!aPlantSeeds.empty()) {
                     for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
                         SeedType aSeedType = aPlantSeeds[aPacketIndex - 1];

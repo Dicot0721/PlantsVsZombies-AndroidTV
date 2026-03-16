@@ -165,3 +165,69 @@ void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
 
     mApp->mPlayerInfo->SaveDetails();
 }
+
+void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie) {
+    thePlantSeeds.clear();
+    theZombieSeeds.clear();
+
+    int alreadyPicked = 0;
+    if ((theApp->mPlayerInfo->mLevel > 20 || theApp->HasFinishedAdventure()) && Sexy::Rand(5) == 1) {
+        thePlantSeeds.push_back(SEED_INSTANT_COFFEE);
+        alreadyPicked = theIsZombie ? 0 : 1;
+    }
+
+    const int poolGroupOffset = 3 * alreadyPicked;
+
+    for (int num_possible = alreadyPicked; num_possible < theApp->mBoard->GetNumSeedsInBank(true) - 1; ++num_possible) {
+        int pool = 0;
+        if (num_possible == 2 || num_possible == 3)
+            pool = 1;
+        else if (num_possible == 4)
+            pool = 2;
+
+        const int poolBase = theIsZombie ? 6 + pool : poolGroupOffset + pool;
+
+        int validCount = 0;
+        for (int i = 0; i < 8; ++i) {
+            const SeedType aSeedType = VSSetupMenu::msRandomPools[poolBase][i];
+            if (aSeedType == SeedType::SEED_NONE)
+                break;
+
+            ++validCount;
+        }
+
+        SeedType aSeedType = SEED_NONE;
+        if (theIsZombie) {
+            for (;;) {
+                do {
+                    const int idx = Sexy::Rand(validCount);
+                    aSeedType = VSSetupMenu::msRandomPools[poolBase][idx];
+                } while (std::ranges::contains(theZombieSeeds, aSeedType));
+
+                if (theApp->HasSeedType(aSeedType, 1))
+                    break;
+            }
+        } else {
+            for (;;) {
+                do {
+                    const int idx = Sexy::Rand(validCount);
+                    aSeedType = VSSetupMenu::msRandomPools[poolBase][idx];
+                } while (std::ranges::contains(thePlantSeeds, aSeedType));
+
+                if (theApp->HasSeedType(aSeedType, 0))
+                    break;
+            }
+        }
+
+        if (theIsZombie) {
+            theZombieSeeds.push_back(aSeedType);
+        } else {
+            thePlantSeeds.push_back(aSeedType);
+        }
+    }
+}
+
+SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie, int theSeedIndex) {
+    PickMPRandomSeeds(theApp, thePlantSeeds, theZombieSeeds, theIsZombie);
+    return theIsZombie ? theZombieSeeds[theSeedIndex - 1] : thePlantSeeds[theSeedIndex - 1];
+}

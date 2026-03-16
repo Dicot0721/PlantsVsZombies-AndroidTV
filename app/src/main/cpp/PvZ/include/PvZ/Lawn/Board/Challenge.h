@@ -146,8 +146,6 @@ public:
     void Update();
     void UpdateVS();
     int GetUnderPlantCol(int theRow);
-    void PickRandomSeeds(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie);
-    SeedType PickNextRandomSeed(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie, int theSeedIndex);
     void HeavyWeaponFire(float a2, float a3);
     void IZombieDrawPlant(Sexy::Graphics *g, Plant *thePlant);
     void HeavyWeaponUpdate();

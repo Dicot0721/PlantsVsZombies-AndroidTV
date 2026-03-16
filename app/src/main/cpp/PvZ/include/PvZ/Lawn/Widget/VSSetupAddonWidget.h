@@ -99,6 +99,9 @@ private:
     static inline Sexy::ButtonListener sButtonListener{&sButtonListenerVtable};
 };
 
+void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie);
+SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie, int theSeedIndex);
+
 inline Sexy::ButtonWidget *gVSSelectBgDayButton;
 inline Sexy::ButtonWidget *gVSSelectBgNightButton;
 inline Sexy::ButtonWidget *gVSSelectBgPoolButton;

@@ -3057,7 +3057,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                 if (aPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
                     std::vector<SeedType> aPlantSeeds;
                     std::vector<SeedType> aZombieSeeds;
-                    mChallenge->PickRandomSeeds(aPlantSeeds, aZombieSeeds, false);
+                    PickMPRandomSeeds(mApp, aPlantSeeds, aZombieSeeds, false);
                     if (!aPlantSeeds.empty()) {
                         for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
                             SeedType aSeedType = aPlantSeeds[aPacketIndex - 1];
@@ -3115,7 +3115,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
             if (aPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
                 std::vector<SeedType> aPlantSeeds;
                 std::vector<SeedType> aZombieSeeds;
-                mChallenge->PickRandomSeeds(aPlantSeeds, aZombieSeeds, true);
+                PickMPRandomSeeds(mApp, aPlantSeeds, aZombieSeeds, true);
                 if (!aZombieSeeds.empty()) {
                     for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
                         SeedType aSeedType = aZombieSeeds[aPacketIndex - 1];

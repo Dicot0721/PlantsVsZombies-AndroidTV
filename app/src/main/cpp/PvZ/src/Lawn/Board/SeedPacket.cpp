@@ -70,12 +70,12 @@ void SeedPacket::Update() {
             if (mSeedBank->mIsZombie) {
                 std::vector<SeedType> aPlantSeeds;
                 std::vector<SeedType> aZombieSeeds;
-                SeedType aSeedType = mBoard->mChallenge->PickNextRandomSeed(aPlantSeeds, aZombieSeeds, true, mIndex);
+                SeedType aSeedType = PickNextRandomSeed(mApp, aPlantSeeds, aZombieSeeds, true, mIndex);
                 SetPacketType(aSeedType, SeedType::SEED_NONE);
             } else {
                 std::vector<SeedType> aPlantSeeds;
                 std::vector<SeedType> aZombieSeeds;
-                SeedType aSeedType = mBoard->mChallenge->PickNextRandomSeed(aPlantSeeds, aZombieSeeds, false, mIndex);
+                SeedType aSeedType = PickNextRandomSeed(mApp, aPlantSeeds, aZombieSeeds, false, mIndex);
                 SetPacketType(aSeedType, SeedType::SEED_NONE);
             }
             mTimesUsed = 0;
