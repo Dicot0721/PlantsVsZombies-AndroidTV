@@ -102,12 +102,5 @@ private:
 void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie);
 SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie, int theSeedIndex);
 
-inline Sexy::ButtonWidget *gVSSelectBgDayButton;
-inline Sexy::ButtonWidget *gVSSelectBgNightButton;
-inline Sexy::ButtonWidget *gVSSelectBgPoolButton;
-inline Sexy::ButtonWidget *gVSSelectBgPoolNightButton;
-inline Sexy::ButtonWidget *gVSSelectBgRoofButton;
-inline Sexy::ButtonWidget *gVSSelectBgRoofNightButton;
-
 
 #endif // PVZ_LAWN_WIDGET_VSSETUPADDONWIDGET_H

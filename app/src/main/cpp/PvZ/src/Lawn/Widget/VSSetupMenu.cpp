@@ -41,13 +41,6 @@ void VSSetupMenu::_constructor() {
     // 拓展卡槽,禁选模式 etc.
     gVSSetupAddonWidget = new VSSetupAddonWidget(this);
 
-    //    gVSSelectBgDayButton = MakeNewButton(9000,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
-    //    gVSSelectBgNightButton = MakeNewButton(9001,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
-    //    gVSSelectBgPoolButton = MakeNewButton(9002,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
-    //    gVSSelectBgPoolNightButton = MakeNewButton(9003,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
-    //    gVSSelectBgRoofButton = MakeNewButton(9004,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
-    //    gVSSelectBgRoofNightButton = MakeNewButton(9005,&mButtonListener, this, "", nullptr, aCheckbox, aCheckbox, aCheckbox);
-    //
     is1PControllerMoving = false;
     is2PControllerMoving = false;
     touchingOnWhichController = 0;
