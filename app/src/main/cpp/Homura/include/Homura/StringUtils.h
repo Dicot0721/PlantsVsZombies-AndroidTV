@@ -70,7 +70,7 @@ namespace homura::inline string {
 
 class {
 public:
-    [[nodiscard]] constexpr bool operator()(char c) const noexcept {
+    [[nodiscard]] static constexpr bool operator()(char c) noexcept {
         // Blank characters as classified by the classic "C" locale
         return (c == ' ') || (c == '\t');
     }
@@ -82,7 +82,7 @@ public:
 
 class {
 public:
-    [[nodiscard]] constexpr bool operator()(char c) const noexcept {
+    [[nodiscard]] static constexpr bool operator()(char c) noexcept {
         using namespace std::string_view_literals;
         // Whitespace characters as classified by the classic "C" locale
         return " \f\n\r\t\v"sv.contains(c);
@@ -123,21 +123,24 @@ public:
     return {std::from_range, view};
 }
 
-struct StringHash {
+class StringHash {
+public:
     using is_transparent = void;
+
+    [[nodiscard]] static std::size_t operator()(const char *str) noexcept {
+        return HashType{}(str);
+    }
+
+    [[nodiscard]] static std::size_t operator()(std::string_view str) noexcept {
+        return HashType{}(str);
+    }
+
+    [[nodiscard]] static std::size_t operator()(const std::string &str) noexcept {
+        return HashType{}(str);
+    }
+
+protected:
     using HashType = std::hash<std::string_view>;
-
-    std::size_t operator()(const char *str) const {
-        return HashType{}(str);
-    }
-
-    std::size_t operator()(std::string_view str) const {
-        return HashType{}(str);
-    }
-
-    std::size_t operator()(const std::string &str) const {
-        return HashType{}(str);
-    }
 };
 
 } // namespace homura::inline string

@@ -1163,7 +1163,7 @@ using u16string = basic_string<char16_t>;
 
 template <typename CharT>
 struct std::hash<pvzstl::basic_string<CharT>> {
-    [[nodiscard]] size_t operator()(const pvzstl::basic_string<CharT> &val) const noexcept {
+    [[nodiscard]] static size_t operator()(const pvzstl::basic_string<CharT> &val) noexcept {
         using StringView = basic_string_view<CharT>;
         return hash<StringView>{}(StringView{val});
     }
