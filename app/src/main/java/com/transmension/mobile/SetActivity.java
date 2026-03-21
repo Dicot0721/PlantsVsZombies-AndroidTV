@@ -999,17 +999,17 @@ public class SetActivity extends Activity {
         } catch (ClassNotFoundException ignored) {
         }
 
-        final Button customBalanceAdjustment = new Button(this);
-        customBalanceAdjustment.setText(R.string.addon_custom_balance_adjustment);
-        customBalanceAdjustment.setOnClickListener(view -> {
-            startActivity(new Intent(SetActivity.this, CustomBalanceAdjustment.class));
-            finish();
-        });
+        // final Button customBalanceAdjustment = new Button(this);
+        // customBalanceAdjustment.setText(R.string.addon_custom_balance_adjustment);
+        // customBalanceAdjustment.setOnClickListener(view -> {
+        //     startActivity(new Intent(SetActivity.this, CustomBalanceAdjustment.class));
+        //     finish();
+        // });
 
-        TextView customBalanceAdjustmentInfo = new TextView(this);
-        customBalanceAdjustmentInfo.setGravity(Gravity.CENTER);
-        customBalanceAdjustmentInfo.setText(R.string.addon_custom_balance_adjustment_info);
-        customBalanceAdjustmentInfo.setTextSize(15f);
+        // TextView customBalanceAdjustmentInfo = new TextView(this);
+        // customBalanceAdjustmentInfo.setGravity(Gravity.CENTER);
+        // customBalanceAdjustmentInfo.setText(R.string.addon_custom_balance_adjustment_info);
+        // customBalanceAdjustmentInfo.setTextSize(15f);
 
         inGameLayout.setVisibility(View.GONE);
         inGameLayout.setOrientation(LinearLayout.VERTICAL);

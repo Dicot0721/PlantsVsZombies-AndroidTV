@@ -157,9 +157,11 @@
     <string name="secondplayer_default">默认</string>
     <string name="secondplayer_edit">重新设置</string>
     <string name="secondplayer_edit_toast">请按下新的按键</string>
-    <string name="addon_custom_balance_adjustment">自定义平衡调整</string>
-    <string name="addon_custom_balance_adjustment_info">ⓘ自定义修改卡片的费用和冷却。</string>
-    <string name="custom_balance_title">自定义平衡设置</string>
-    <string name="addon_seed_chooser">选择卡片类型</string>
-    <string name="seed_chooser_title">选择卡片类型</string>
+
+    <!-- 恢复后需要在 values/strings 中添加对应翻译 -->
+    <!-- <string name="addon_custom_balance_adjustment">自定义平衡调整</string> -->
+    <!-- <string name="addon_custom_balance_adjustment_info">ⓘ自定义修改卡片的费用和冷却。</string> -->
+    <!-- <string name="custom_balance_title">自定义平衡设置</string> -->
+    <!-- <string name="addon_seed_chooser">选择卡片类型</string> -->
+    <!-- <string name="seed_chooser_title">选择卡片类型</string> -->
 </resources>

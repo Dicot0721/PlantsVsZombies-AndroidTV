@@ -44,8 +44,6 @@
  import android.widget.TextView;
  import android.widget.Toast;
 
- import com.trans.pvztv.R;
-
  public class CustomBalanceAdjustment extends Activity {
 
      private SharedPreferences sharedPreferences;
@@ -76,7 +74,7 @@
          }
 
          // 配置标题
-         setTitle(getString(R.string.custom_balance_title));
+         // setTitle(getString(R.string.custom_balance_title));
 
          // 初始化SharedPreferences
          sharedPreferences = getSharedPreferences("data", 0);
@@ -85,7 +83,7 @@
          LinearLayout linearLayout = new LinearLayout(this);
          TextView intro = new TextView(this);
          intro.setGravity(Gravity.CENTER);
-         intro.setText(R.string.addon_custom_balance_adjustment_info);
+         // intro.setText(R.string.addon_custom_balance_adjustment_info);
          intro.setTextSize(20f);
 
          TableLayout tableLayout = new TableLayout(this);
