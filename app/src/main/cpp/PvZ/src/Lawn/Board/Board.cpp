@@ -1261,6 +1261,10 @@ size_t Board::getServerEventSize(EventType type) {
             return sizeof(BaseEvent);
         case EVENT_SERVER_BOARD_ZOMBIE_YUCKY_SETROW:
             return sizeof(U16U16_Event);
+        case EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK:
+            return sizeof(U16x6_Event);
+        case EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT:
+            return sizeof(U8U8U16U16_Event);
         default:
             return sizeof(BaseEvent);
     }
@@ -1831,6 +1835,20 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             mApp->ShowVSResultsScreen();
             mApp->mVSResultsMenu->InitFromBoard(this);
             mApp->KillBoard();
+        } break;
+        case EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK: {
+            U16x6_Event *eventRandomPick = static_cast<U16x6_Event *>(event);
+            int isZombie = eventRandomPick->data[5];
+            for (int i = 0; i < 5; ++i) {
+                mSeedBank[isZombie]->mSeedPackets[i + 1].SetPacketType(SeedType(eventRandomPick->data[i]), SeedType::SEED_NONE);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT: {
+            U8U8U16U16_Event *eventRandomPickNext = static_cast<U8U8U16U16_Event *>(event);
+            int isZombie = int(eventRandomPickNext->data1);
+            SeedType seedType = SeedType(eventRandomPickNext->data3);
+            int seedIndex = eventRandomPickNext->data4;
+            mSeedBank[isZombie]->mSeedPackets[seedIndex].SetPacketType(seedType, SeedType::SEED_NONE);
         } break;
         default:
             break;
@@ -3048,29 +3066,6 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                 if (!isTwoSeedBankMode)
                     mGamepadControls1->mIsInShopSeedBank = true;
             }
-
-            if (mApp->IsVSMode()) {
-                SeedType aPacketType = seedPacket->mPacketType;
-                int aPacketCost = GetCurrentPlantCost(seedPacket->mPacketType, SeedType::SEED_NONE);
-                if (!CanTakeSunMoney(aPacketCost, 0) || !seedPacket->CanPickUp() || HasLevelAwardDropped())
-                    return;
-                if (aPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
-                    std::vector<SeedType> aPlantSeeds;
-                    std::vector<SeedType> aZombieSeeds;
-                    PickMPRandomSeeds(mApp, aPlantSeeds, aZombieSeeds, false);
-                    if (!aPlantSeeds.empty()) {
-                        for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
-                            SeedType aSeedType = aPlantSeeds[aPacketIndex - 1];
-                            mSeedBank[0]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
-                        }
-                    }
-                    TakeSunMoney(aPacketCost, 0);
-                    seedPacket->Deactivate();
-                    seedPacket->WasPlanted(0);
-                    gFreeForFristShuffle[0] = false;
-                    return;
-                }
-            }
         } else {
             requestDrawButterInCursor = false; // 不再绘制黄油
             SeedPacket *seedPacket = (SeedPacket *)hitResult.mObject;
@@ -3107,27 +3102,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
             }
         }
 
-        if (mApp->IsVSMode()) {
-            SeedType aPacketType = seedPacket->mPacketType;
-            int aPacketCost = GetCurrentPlantCost(seedPacket->mPacketType, SeedType::SEED_NONE);
-            if (!CanTakeDeathMoney(aPacketCost) || !seedPacket->CanPickUp() || HasLevelAwardDropped())
-                return;
-            if (aPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
-                std::vector<SeedType> aPlantSeeds;
-                std::vector<SeedType> aZombieSeeds;
-                PickMPRandomSeeds(mApp, aPlantSeeds, aZombieSeeds, true);
-                if (!aZombieSeeds.empty()) {
-                    for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
-                        SeedType aSeedType = aZombieSeeds[aPacketIndex - 1];
-                        mSeedBank[1]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
-                    }
-                }
-                TakeDeathMoney(aPacketCost);
-                seedPacket->Deactivate();
-                seedPacket->WasPlanted(1);
-                gFreeForFristShuffle[1] = false;
-            }
-        }
+        ShuffleButtonDown(seedPacket);
 
         return;
     }
@@ -3811,6 +3786,9 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
                     mGamepadControls2->mIsInShopSeedBank = true;
             }
         }
+
+        ShuffleButtonDown(seedPacket);
+
         return;
     }
 
@@ -5372,4 +5350,71 @@ void Board::SwitchGamepadControls() {
     GamepadControls *aGamepad = mGamepadControls1;
     mGamepadControls1 = mGamepadControls2;
     mGamepadControls2 = aGamepad;
+}
+
+void Board::ShuffleButtonDown(SeedPacket *theSeedPacket) {
+    if (!gIsVSShuffleMode)
+        return;
+
+    if (tcp_connected)
+        return;
+
+    SeedType aPacketType = theSeedPacket->mPacketType;
+    int aPacketCost = GetCurrentPlantCost(theSeedPacket->mPacketType, SeedType::SEED_NONE);
+    if (aPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
+        if (!CanTakeSunMoney(aPacketCost, 0) || !theSeedPacket->CanPickUp() || HasLevelAwardDropped())
+            return;
+
+        std::vector<SeedType> aPlantSeeds;
+        std::vector<SeedType> aZombieSeeds;
+        PickMPRandomSeeds(mApp, aPlantSeeds, aZombieSeeds, false);
+        if (!aPlantSeeds.empty()) {
+            for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
+                SeedType aSeedType = aPlantSeeds[aPacketIndex - 1];
+                mSeedBank[0]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
+            }
+        }
+        TakeSunMoney(aPacketCost, 0);
+        theSeedPacket->Deactivate();
+        theSeedPacket->WasPlanted(0);
+        gFreeForFristShuffle[0] = false;
+
+        if (tcpClientSocket >= 0) {
+            U16x6_Event event;
+            event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK;
+            for (int i = 0; i < 5; ++i) {
+                event.data[i] = aPlantSeeds[i];
+            }
+            event.data[5] = 0;
+            sendWithSize(tcpClientSocket, &event, sizeof(U16x6_Event), 0);
+        }
+    }
+    if (aPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
+        if (!CanTakeDeathMoney(aPacketCost) || !theSeedPacket->CanPickUp() || HasLevelAwardDropped())
+            return;
+
+        std::vector<SeedType> aPlantSeeds;
+        std::vector<SeedType> aZombieSeeds;
+        PickMPRandomSeeds(mApp, aPlantSeeds, aZombieSeeds, true);
+        if (!aZombieSeeds.empty()) {
+            for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
+                SeedType aSeedType = aZombieSeeds[aPacketIndex - 1];
+                mSeedBank[1]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
+            }
+        }
+        TakeDeathMoney(aPacketCost);
+        theSeedPacket->Deactivate();
+        theSeedPacket->WasPlanted(1);
+        gFreeForFristShuffle[1] = false;
+
+        if (tcpClientSocket >= 0) {
+            U16x6_Event event;
+            event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK;
+            for (int i = 0; i < 5; ++i) {
+                event.data[i] = aZombieSeeds[i];
+            }
+            event.data[5] = 1;
+            sendWithSize(tcpClientSocket, &event, sizeof(U16x6_Event), 0);
+        }
+    }
 }

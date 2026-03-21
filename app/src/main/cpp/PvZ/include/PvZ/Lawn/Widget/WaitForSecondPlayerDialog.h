@@ -46,7 +46,6 @@ enum EventType : uint8_t {
     EVENT_VSSETUPMENU_RANDOM_PICK,
     EVENT_VSSETUPMENU_MOVE_CONTROLLER,
     EVENT_VSSETUPMENU_SET_CONTROLLER,
-
     EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT,
 
     EVENT_SEEDCHOOSER_SELECT_SEED,
@@ -120,6 +119,11 @@ enum EventType : uint8_t {
 
     EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED,
     EVENT_SERVER_BOARD_START_LEVEL,
+
+    EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK,
+    EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT,
+
+    NUM_EVENT_SERVER_BOARD,
 
     EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS,
     EVENT_SERVER_VSRESULT_BUTTON_DEPRESS,
@@ -389,12 +393,14 @@ public:
     int16_t data4;
 };
 
-class U8U8U8U8_Event : public BaseEvent {
+class U8x5_Event : public BaseEvent {
 public:
-    uint8_t data1;
-    uint8_t data2;
-    uint8_t data3;
-    uint8_t data4;
+    uint8_t data[5];
+};
+
+class U16x6_Event : public BaseEvent {
+public:
+    uint16_t data[6];
 };
 
 class U16Buf32_Event : public BaseEvent {

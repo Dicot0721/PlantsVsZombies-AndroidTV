@@ -53,6 +53,7 @@ class CursorPreview;
 class GameButton;
 class CustomMessageWidget;
 class SeedBank;
+class SeedPacket;
 class ToolTipWidget;
 class CutScene;
 class Challenge;
@@ -590,6 +591,7 @@ public:
     GridItem *AddAGraveStone(int theGridX, int theGridY);
     bool TakeSunMoney(int theAmount, int thePlayer);
     void SwitchGamepadControls();
+    void ShuffleButtonDown(SeedPacket *theSeedPacket);
 
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);

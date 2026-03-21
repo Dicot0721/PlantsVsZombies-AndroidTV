@@ -263,7 +263,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             }
 
             offset += eventSize;
-        } else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type <= EVENT_SERVER_BOARD_START_LEVEL) {
+        } else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type < NUM_EVENT_SERVER_BOARD) {
             size_t eventSize = Board::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -328,7 +328,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             sendWithSize(tcpServerSocket, &eventPing, sizeof(U8_Event), 0);
 
             offset += eventSize;
-        } else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type <= EVENT_SERVER_BOARD_START_LEVEL) {
+        } else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type < NUM_EVENT_SERVER_BOARD) {
             size_t eventSize = Board::getServerEventSize(base->type);
 
 

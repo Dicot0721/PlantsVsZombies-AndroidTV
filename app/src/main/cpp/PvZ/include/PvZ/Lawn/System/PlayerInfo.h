@@ -70,7 +70,7 @@ public:
     int mPurchases[36];                                  // 111 ~ 146 ，本应该是mPurchases[80]，111 ~ 190，但仅用到了前36个。
     bool mAchievements[AchievementId::MAX_ACHIEVEMENTS]; // 147 ~ 149, 从mPurchases[80]分出来的
     unsigned short mVSRoomPort;                          // 150 ~
-    bool mVS7PacketsMode;
+    bool mVSExtraPacketsMode;
     bool mVSExtraSeedsMode;
     bool mVSBanMode;
     bool mVSBalancePatchMode;

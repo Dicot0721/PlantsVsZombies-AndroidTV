@@ -26,7 +26,7 @@ using namespace Sexy;
 VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     mButtonListener = theVSSetupMenu;
 
-    mExtraPacketsMode = mApp->mPlayerInfo->mVS7PacketsMode;
+    mExtraPacketsMode = mApp->mPlayerInfo->mVSExtraPacketsMode;
     mExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
     mBanMode = mApp->mPlayerInfo->mVSBanMode;
     mBalancePatchMode = mApp->mPlayerInfo->mVSBalancePatchMode;
@@ -141,7 +141,7 @@ void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
     switch (theId) {
         case VSSetupAddonWidget_ExtraPackets:
             mExtraPacketsMode = !checked;
-            mApp->mPlayerInfo->mVS7PacketsMode = mExtraPacketsMode;
+            mApp->mPlayerInfo->mVSExtraPacketsMode = mExtraPacketsMode;
             break;
         case VSSetupAddonWidget_ExtraSeeds:
             mExtraSeedsMode = !checked;
@@ -176,6 +176,7 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
         alreadyPicked = theIsZombie ? 0 : 1;
     }
 
+    std::vector<SeedType> &aSeeds = theIsZombie ? theZombieSeeds : thePlantSeeds;
     const int poolGroupOffset = 3 * alreadyPicked;
 
     for (int num_possible = alreadyPicked; num_possible < theApp->mBoard->GetNumSeedsInBank(true) - 1; ++num_possible) {
@@ -197,37 +198,22 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
         }
 
         SeedType aSeedType = SEED_NONE;
-        if (theIsZombie) {
-            for (;;) {
-                do {
-                    const int idx = Sexy::Rand(validCount);
-                    aSeedType = VSSetupMenu::msRandomPools[poolBase][idx];
-                } while (std::ranges::contains(theZombieSeeds, aSeedType));
+        for (;;) {
+            do {
+                const int idx = Sexy::Rand(validCount);
+                aSeedType = VSSetupMenu::msRandomPools[poolBase][idx];
+            } while (std::ranges::contains(aSeeds, aSeedType));
 
-                if (theApp->HasSeedType(aSeedType, 1))
-                    break;
-            }
-        } else {
-            for (;;) {
-                do {
-                    const int idx = Sexy::Rand(validCount);
-                    aSeedType = VSSetupMenu::msRandomPools[poolBase][idx];
-                } while (std::ranges::contains(thePlantSeeds, aSeedType));
-
-                if (theApp->HasSeedType(aSeedType, 0))
-                    break;
-            }
+            if (theApp->HasSeedType(aSeedType, theIsZombie))
+                break;
         }
 
-        if (theIsZombie) {
-            theZombieSeeds.push_back(aSeedType);
-        } else {
-            thePlantSeeds.push_back(aSeedType);
-        }
+        aSeeds.push_back(aSeedType);
     }
 }
 
 SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie, int theSeedIndex) {
     PickMPRandomSeeds(theApp, thePlantSeeds, theZombieSeeds, theIsZombie);
-    return theIsZombie ? theZombieSeeds[theSeedIndex - 1] : thePlantSeeds[theSeedIndex - 1];
+    SeedType aSeedType = theIsZombie ? theZombieSeeds[theSeedIndex - 1] : thePlantSeeds[theSeedIndex - 1];
+    return aSeedType;
 }

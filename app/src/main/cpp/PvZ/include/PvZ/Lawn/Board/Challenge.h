@@ -174,6 +174,7 @@ public:
     void IZombieSetupPlant(Plant *thePlant);
     void HeavyWeaponReanimUpdate();
     void MouseDownWhackAZombie(int theX, int theY, int thePlayerIndex);
+    bool IsMPResourceProducer(SeedType theSeedType);
 
 protected:
     friend void InitHookFunction();
@@ -188,7 +189,7 @@ inline int targetWavesToJump = 1;
 inline bool requestJumpSurvivalStage;
 inline bool stopSpawning;            // 暂停刷怪
 inline int gVSAddUnderPlantsCounter; // 对战自动种植睡莲、花盆的间隔
-inline bool gVSIsShuffleMode;        // 对战刷牌模式
+inline bool gIsVSShuffleMode;        // 对战刷牌模式
 inline bool gFreeForFristShuffle[2]; // 刷牌模式首次刷新免费
 
 

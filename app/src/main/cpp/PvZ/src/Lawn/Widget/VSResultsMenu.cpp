@@ -96,8 +96,9 @@ void VSResultsMenu::OnExit() {
         gLawnApp->ShowMainMenuScreen();
         gLawnApp->KillVSResultsScreen();
     } else if (mResultsButtonId == VSResultsMenu_Play_Again) {
-        //        gLawnApp->PreNewGame(GameMode::GAMEMODE_MP_VS, false);
-        gLawnApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS);
+        gLawnApp->PreNewGame(GameMode::GAMEMODE_MP_VS, false);
+        // TODO:计划改为返回关卡选择页面
+        //        gLawnApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS);
         gLawnApp->KillVSResultsScreen();
     }
 }

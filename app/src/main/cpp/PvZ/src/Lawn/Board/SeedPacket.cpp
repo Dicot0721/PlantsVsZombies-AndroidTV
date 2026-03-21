@@ -58,8 +58,15 @@ void SeedPacket::Update() {
         }
     }
 
-    if (mApp->IsVSMode() && gVSIsShuffleMode && mIndex > 0 && mIndex < 6) {
+    old_SeedPacket_Update(this);
+
+    bool aIsProducer = mBoard->mChallenge->IsMPResourceProducer(mPacketType);
+    bool aIsShuffle = mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE || mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE;
+    if (mApp->IsVSMode() && gIsVSShuffleMode && !aIsProducer && !aIsShuffle) {
         if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING)
+            return;
+
+        if (tcp_connected)
             return;
 
         if (!mActive && mRefreshing) {
@@ -72,17 +79,33 @@ void SeedPacket::Update() {
                 std::vector<SeedType> aZombieSeeds;
                 SeedType aSeedType = PickNextRandomSeed(mApp, aPlantSeeds, aZombieSeeds, true, mIndex);
                 SetPacketType(aSeedType, SeedType::SEED_NONE);
+
+                if (tcpClientSocket >= 0) {
+                    U8U8U16U16_Event event;
+                    event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
+                    event.data1 = true;
+                    event.data3 = aSeedType;
+                    event.data4 = mIndex;
+                    sendWithSize(tcpClientSocket, &event, sizeof(U8U8U16U16_Event), 0);
+                }
             } else {
                 std::vector<SeedType> aPlantSeeds;
                 std::vector<SeedType> aZombieSeeds;
                 SeedType aSeedType = PickNextRandomSeed(mApp, aPlantSeeds, aZombieSeeds, false, mIndex);
                 SetPacketType(aSeedType, SeedType::SEED_NONE);
+
+                if (tcpClientSocket >= 0) {
+                    U8U8U16U16_Event event;
+                    event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
+                    event.data1 = false;
+                    event.data3 = aSeedType;
+                    event.data4 = mIndex;
+                    sendWithSize(tcpClientSocket, &event, sizeof(U8U8U16U16_Event), 0);
+                }
             }
             mTimesUsed = 0;
         }
     }
-
-    old_SeedPacket_Update(this);
 }
 
 void SeedPacket::UpdateSelected() {
@@ -170,9 +193,11 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
 
     // 此处修改对战开局的初始冷却
     if (mApp->IsVSMode()) {
+        bool aIsBalancePatch = mApp->mPlayerInfo->mVSBalancePatchMode;
+        bool aIsStageNight = mBoard->StageIsNight();
         switch (theSeedType) {
             case SEED_SUNSHROOM:
-                if (mApp->mPlayerInfo->mVSBalancePatchMode) { // 清除阳光菇的初始冷却
+                if (aIsBalancePatch || aIsStageNight) { // 清除阳光菇的初始冷却
                     mRefreshTime = 0;
                     mRefreshing = false;
                     mActive = true;
@@ -188,8 +213,10 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
                 break;
         }
 
-        if (gVSIsShuffleMode) {
-            if (mIndex > 0 && mIndex < 6) {
+        bool aIsProducer = mBoard->mChallenge->IsMPResourceProducer(mPacketType);
+        bool aIsShuffle = mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE || mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE;
+        if (gIsVSShuffleMode) {
+            if (!aIsProducer && !aIsShuffle) {
                 mRefreshTime = 0;
                 mRefreshing = false;
                 mActive = true;

@@ -411,7 +411,7 @@ void Challenge::InitLevel() {
             gVSAddUnderPlantsCounter = 2000;
         }
 
-        gVSIsShuffleMode = false;
+        gIsVSShuffleMode = false;
     }
 }
 
@@ -766,4 +766,8 @@ void Challenge::MouseDownWhackAZombie(int theX, int theY, int thePlayerIndex) {
     } else {
         TriggerVibration(VibrationEffect::VIVRATION_WHACK_MISS);
     }
+}
+
+bool Challenge::IsMPResourceProducer(SeedType theSeedType) {
+    return theSeedType == SeedType::SEED_SUNFLOWER || theSeedType == SeedType::SEED_SUNSHROOM || theSeedType == SeedType::SEED_TWINSUNFLOWER || theSeedType == SeedType::SEED_ZOMBIE_GRAVESTONE;
 }
