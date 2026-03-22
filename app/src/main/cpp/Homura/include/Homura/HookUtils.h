@@ -27,8 +27,8 @@ namespace homura {
 
 namespace details {
     void HookFunctionImpl(void *symbol, void *newFunc, void **oldFuncAddr);
-    bool HookVirtualFuncImpl(void *vTableSymbol, size_t index, void *newFunc, void **oldFuncAddr);
-    bool HookPltFunctionImpl(std::string_view libName, uintptr_t offset, void *newFunc, void **oldFuncAddr);
+    bool HookVirtualFuncImpl(void *vTableSymbol, std::size_t index, void *newFunc, void **oldFuncAddr);
+    bool HookPltFunctionImpl(std::string_view libName, std::uintptr_t offset, void *newFunc, void **oldFuncAddr);
 } // namespace details
 
 /**
@@ -78,7 +78,7 @@ void HookFunction(void *symbol, R (T::*newFunc)(Args...), std::type_identity_t<R
  * @return 是否成功替换.
  */
 template <typename R, typename... Args>
-bool HookVirtualFunc(void *vTableSymbol, size_t index, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
+bool HookVirtualFunc(void *vTableSymbol, std::size_t index, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
     return details::HookVirtualFuncImpl(vTableSymbol, index, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
@@ -96,7 +96,7 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (*newFunc)(Args...), st
  * @return 是否成功替换.
  */
 template <typename R, typename T, typename... Args>
-bool HookVirtualFunc(void *vTableSymbol, size_t index, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
+bool HookVirtualFunc(void *vTableSymbol, std::size_t index, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
     return details::HookVirtualFuncImpl(vTableSymbol, index, *reinterpret_cast<void **>(&newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
@@ -114,7 +114,7 @@ bool HookVirtualFunc(void *vTableSymbol, size_t index, R (T::*newFunc)(Args...),
  * @return 是否成功替换.
  */
 template <typename R, typename... Args>
-bool HookPltFunction(std::string_view libName, uintptr_t offset, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
+bool HookPltFunction(std::string_view libName, std::uintptr_t offset, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
     return details::HookPltFunctionImpl(libName, offset, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 

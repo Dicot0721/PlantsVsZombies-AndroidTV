@@ -33,7 +33,6 @@ public:
         other.handle_ = nullptr;
     }
 
-    SharedLibLoader(const char *filename, int flag);
     explicit SharedLibLoader(const char *filename);
     ~SharedLibLoader();
 
@@ -57,9 +56,9 @@ public:
     }
 
 protected:
-    void *handle_ = nullptr;
-
     bool GetSymbolImpl(const char *name, void *&output) const;
+
+    void *handle_ = nullptr;
 };
 
 } // namespace homura

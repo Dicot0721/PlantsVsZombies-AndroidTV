@@ -5,6 +5,10 @@
 *.iml
 .idea/
 
+# Other IDEs
+.vs/
+.vscode/
+
 # Gradle files
 build/
 .gradle/

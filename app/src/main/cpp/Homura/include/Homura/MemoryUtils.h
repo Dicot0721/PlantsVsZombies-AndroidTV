@@ -20,6 +20,8 @@
 #ifndef HOMURA_MEMORYUTILS_H
 #define HOMURA_MEMORYUTILS_H
 
+#include <sys/mman.h>
+
 #include <cstdint>
 
 #include <string>
@@ -35,20 +37,20 @@ namespace homura {
  * @param [in] prot 新的内存保护标志.
  * @return 修改是否成功.
  */
-bool SetProtection(uintptr_t address, size_t length, int prot);
+bool SetProtection(std::uintptr_t address, std::size_t length, int prot);
 
-bool WriteMemory(uintptr_t address, const std::vector<uint8_t> &buffer);
+bool WriteMemory(std::uintptr_t address, const std::vector<std::uint8_t> &buffer);
 
 /**
  * @brief 获取动态库的加载地址.
  */
-[[nodiscard]] uintptr_t GetLibBaseAddr(std::string_view libName);
+[[nodiscard]] std::uintptr_t GetLibBaseAddr(std::string_view libName);
 
 class Patcher {
 public:
     Patcher() = default;
 
-    Patcher(std::string_view libName, uintptr_t offset, std::vector<uint8_t> patchBytes);
+    Patcher(std::string_view libName, std::uintptr_t offset, std::vector<std::uint8_t> patchBytes);
 
     Patcher(const Patcher &) = delete;
     Patcher &operator=(const Patcher &) = delete;
@@ -56,7 +58,7 @@ public:
     Patcher(Patcher &&) = default;
     Patcher &operator=(Patcher &&) = default;
 
-    [[nodiscard]] static Patcher CreateWithStr(std::string_view libName, uintptr_t offset, std::string patchBytesStr);
+    [[nodiscard]] static Patcher CreateWithStr(std::string_view libName, std::uintptr_t offset, std::string patchBytesStr);
 
     [[nodiscard]] bool HasModified() const noexcept {
         return hasModified_;
@@ -70,9 +72,9 @@ public:
     }
 
 protected:
-    uintptr_t address_ = 0;
-    std::vector<uint8_t> patchBytes_;
-    std::vector<uint8_t> originBytes_;
+    std::uintptr_t address_ = 0;
+    std::vector<std::uint8_t> patchBytes_;
+    std::vector<std::uint8_t> originBytes_;
     bool hasModified_ = false;
 };
 

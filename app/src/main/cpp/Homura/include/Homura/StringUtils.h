@@ -32,7 +32,7 @@ namespace homura::inline string {
  */
 [[nodiscard]] constexpr std::string Replace(std::string_view sv, std::string_view old, std::string_view new_) {
     std::string result(sv);
-    for (size_t pos = 0; (pos = result.find(old, pos)) != std::string::npos;) {
+    for (std::size_t pos = 0; (pos = result.find(old, pos)) != std::string::npos;) {
         result.replace(pos, old.length(), new_);
         pos += new_.length();
     }
@@ -46,8 +46,8 @@ namespace homura::inline string {
     std::vector<std::string> result;
     result.reserve(std::ranges::count(sv, delim) + 1);
 
-    size_t start = 0;
-    for (size_t pos; (pos = sv.find(delim, start)) != std::string_view::npos;) {
+    std::size_t start = 0;
+    for (std::size_t pos; (pos = sv.find(delim, start)) != std::string_view::npos;) {
         result.emplace_back(sv.substr(start, pos - start));
         start = pos + 1;
     }

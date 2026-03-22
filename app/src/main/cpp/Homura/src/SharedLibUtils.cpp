@@ -28,16 +28,13 @@
 #include <map>
 #include <unordered_set>
 
-homura::SharedLibLoader::SharedLibLoader(const char *filename, int flag) {
+homura::SharedLibLoader::SharedLibLoader(const char *filename) {
     assert((filename != nullptr) && (*filename != '\0') && !IsBlank(filename));
-    handle_ = dlopen(filename, flag | RTLD_NOW);
+    handle_ = dlopen(filename, RTLD_NOW | RTLD_NOLOAD);
     if (!IsOpen()) [[unlikely]] {
         LOG_ERROR("Failed to load shared library '{}': {}", filename, dlerror());
     }
 }
-
-homura::SharedLibLoader::SharedLibLoader(const char *filename)
-    : SharedLibLoader{filename, RTLD_NOLOAD} {}
 
 homura::SharedLibLoader::~SharedLibLoader() {
     if (IsOpen()) {

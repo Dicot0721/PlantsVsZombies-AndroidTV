@@ -46,10 +46,10 @@ private:
         self.ButtonPress(theId);
     }
     void ButtonDepress(this ButtonListener &self, int theId) {}
-    void ButtonDownTick(this ButtonListener &self, int id) {}
-    void ButtonMouseEnter(this ButtonListener &self, int id) {}
-    void ButtonMouseLeave(this ButtonListener &self, int id) {}
-    void ButtonMouseMove(this ButtonListener &self, int id, int x, int y) {}
+    void ButtonDownTick(this ButtonListener &self, int theId) {}
+    void ButtonMouseEnter(this ButtonListener &self, int theId) {}
+    void ButtonMouseLeave(this ButtonListener &self, int theId) {}
+    void ButtonMouseMove(this ButtonListener &self, int theId, int theX, int theY) {}
 };
 
 } // namespace Sexy

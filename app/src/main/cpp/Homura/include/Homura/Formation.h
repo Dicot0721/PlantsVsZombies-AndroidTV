@@ -409,7 +409,7 @@ constexpr const char *_lineups[] = {
     "6,2 6,3 4,4 ; 30 8,2 8,3",
 };
 
-constexpr const char *GetLineup(size_t index) {
+constexpr const char *GetLineup(std::size_t index) noexcept {
     if (index < std::size(_lineups)) {
         return _lineups[index];
     } else {

@@ -23,8 +23,6 @@
 
 #include "SubstrateHook.h"
 
-#include <sys/mman.h>
-
 #include <cassert>
 #include <cerrno>
 #include <cstring>
@@ -34,11 +32,11 @@ void homura::details::HookFunctionImpl(void *symbol, void *newFunc, void **oldFu
     MSHookFunction(symbol, newFunc, oldFuncAddr);
 }
 
-bool homura::details::HookVirtualFuncImpl(void *vTableSymbol, size_t index, void *newFunc, void **oldFuncAddr) {
+bool homura::details::HookVirtualFuncImpl(void *vTableSymbol, std::size_t index, void *newFunc, void **oldFuncAddr) {
     assert((vTableSymbol != nullptr) && (newFunc != nullptr));
 
     auto funcPtrAddr = reinterpret_cast<void **>(vTableSymbol) + index;
-    if (!SetProtection(uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ | PROT_WRITE)) [[unlikely]] {
+    if (!SetProtection(std::uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ | PROT_WRITE)) [[unlikely]] {
         LOG_ERROR("Failed to set protection: {}", std::strerror(errno));
         return false;
     }
@@ -48,22 +46,22 @@ bool homura::details::HookVirtualFuncImpl(void *vTableSymbol, size_t index, void
     }
     *funcPtrAddr = newFunc;
 
-    SetProtection(uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ);
+    SetProtection(std::uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ);
     return true;
 }
 
-bool homura::details::HookPltFunctionImpl(std::string_view libName, uintptr_t offset, void *newFunc, void **oldFuncAddr) {
+bool homura::details::HookPltFunctionImpl(std::string_view libName, std::uintptr_t offset, void *newFunc, void **oldFuncAddr) {
     assert(offset > 0);
     assert(newFunc != nullptr);
 
-    const uintptr_t baseAddr = GetLibBaseAddr(libName);
+    const std::uintptr_t baseAddr = GetLibBaseAddr(libName);
     if (baseAddr == 0) [[unlikely]] {
         LOG_ERROR("Failed to get base address of {:?}", libName);
         return false;
     }
 
     auto funcPtrAddr = reinterpret_cast<void **>(baseAddr + offset);
-    if (!SetProtection(uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ | PROT_WRITE)) [[unlikely]] {
+    if (!SetProtection(std::uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ | PROT_WRITE)) [[unlikely]] {
         LOG_ERROR("Failed to set protection: {}", std::strerror(errno));
         return false;
     }
@@ -73,6 +71,6 @@ bool homura::details::HookPltFunctionImpl(std::string_view libName, uintptr_t of
     }
     *funcPtrAddr = newFunc;
 
-    SetProtection(uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ);
+    SetProtection(std::uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ);
     return true;
 }

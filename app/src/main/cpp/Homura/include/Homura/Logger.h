@@ -38,19 +38,22 @@ namespace homura {
 
 class Logger {
 public:
-    static constexpr const char *PVZ_LOG_TAG = "pvztv";
+    static constexpr auto &PVZ_LOG_TAG = "pvztv";
+
+    Logger() = delete;
+    ~Logger() = delete;
 
     static void SetLevel(android_LogPriority level) noexcept {
-        _level = level;
+        level_ = level;
     }
 
     [[nodiscard]] static android_LogPriority GetLevel() noexcept {
-        return _level;
+        return level_;
     }
 
     template <typename... Args>
     static void Log(const char *funcName, android_LogPriority level, std::format_string<Args...> format, Args &&...args) {
-        if (level < _level) {
+        if (level < level_) {
             return;
         }
         const std::string message = std::vformat(format.get(), std::make_format_args(args...));
@@ -58,7 +61,7 @@ public:
     }
 
 protected:
-    static inline android_LogPriority _level = ANDROID_LOG_DEBUG;
+    static inline android_LogPriority level_ = ANDROID_LOG_DEBUG;
 };
 
 } // namespace homura
