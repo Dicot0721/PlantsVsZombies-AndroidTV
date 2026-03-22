@@ -28,13 +28,6 @@
 #include "PvZ/Symbols.h"
 #include "WaitForSecondPlayerDialog.h"
 
-enum VSSetupState {
-    VS_SETUP_STATE_CONTROLLERS = 0,   // WaitForSecondPlayerDialog
-    VS_SETUP_STATE_SIDES = 1,         // 未分配手柄阵营
-    VS_SETUP_STATE_SELECT_BATTLE = 2, // 已分配手柄阵营
-    VS_SETUP_STATE_CUSTOM_BATTLE = 3, // 自定义战场选卡中
-};
-
 enum VSSetupMode {
     VS_SETUP_MODE_QUICK_PLAY = 0,    // 快速游戏
     VS_SETUP_MODE_CUSTOM_BATTLE = 1, // 自定义战场
@@ -66,6 +59,12 @@ public:
         VSSetupMenu_Quick_Play = 9,     // 快速游戏
         VSSetupMenu_Custom_Battle = 10, // 自定义战场
         VSSetupMenu_Random_Battle = 11, // 随机战场
+    };
+    enum VSSetupState {
+        VS_SETUP_STATE_CONTROLLERS = 0,   // WaitForSecondPlayerDialog
+        VS_SETUP_STATE_SIDES = 1,         // 未分配手柄阵营
+        VS_SETUP_STATE_SELECT_BATTLE = 2, // 已分配手柄阵营
+        VS_SETUP_STATE_CUSTOM_BATTLE = 3, // 自定义战场选卡中
     };
 
     static constexpr SeedType msQuickPlayDecks[2][6] = {
@@ -202,7 +201,7 @@ inline void (*old_VSSetupMenu_Update)(VSSetupMenu *a);
 
 inline void (*old_VSSetupMenu_KeyDown)(VSSetupMenu *a, Sexy::KeyCode a2);
 
-inline void (*old_VSSetupMenu_OnStateEnter)(VSSetupMenu *menu, VSSetupState theState);
+inline void (*old_VSSetupMenu_OnStateEnter)(VSSetupMenu *menu, VSSetupMenu::VSSetupState theState);
 
 inline void (*old_VSSetupMenu_ButtonPress)(VSSetupMenu *, int theId);
 

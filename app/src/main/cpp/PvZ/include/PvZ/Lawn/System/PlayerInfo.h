@@ -74,8 +74,7 @@ public:
     bool mVSExtraSeedsMode;
     bool mVSBanMode;
     bool mVSBalancePatchMode;
-    bool mVSShuffleMode;
-    bool mUnused[138];
+    bool mUnused[139];
     bool mIsVibrateClosed;
     bool mZombatarEnabled;
     unsigned char mZombatarHat;

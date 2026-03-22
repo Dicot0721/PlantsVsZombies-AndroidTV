@@ -38,7 +38,6 @@ enum VSSetupAddonButton {
     VS_SETUP_ADDON_BUTTON_EXTRA_SEEDS,
     VS_SETUP_ADDON_BUTTON_BAN_MODE,
     VS_SETUP_ADDON_BUTTON_BALANCE_PATCH,
-    VS_SETUP_ADDON_BUTTON_SHUFFLE_MODE,
     NUM_VS_SETUP_ADDON_BUTTON,
 };
 
@@ -62,7 +61,6 @@ public:
         VSSetupAddonWidget_ExtraSeeds,
         VSSetupAddonWidget_BanMode,
         VSSetupAddonWidget_BalancePatch,
-        VSSetupAddonWidget_ShuffleMode,
     };
 
 public:
@@ -72,13 +70,11 @@ public:
     Sexy::ButtonWidget *mExtraSeedsButton = nullptr;
     Sexy::ButtonWidget *mBanModeButton = nullptr;
     Sexy::ButtonWidget *mBalancePatchButton = nullptr;
-    Sexy::ButtonWidget *mShuffleModeButton = nullptr;
     Sexy::Image *mButtonImage[NUM_VS_SETUP_ADDON_BUTTON] = {nullptr};
     bool mExtraPacketsMode = false;
     bool mExtraSeedsMode = false;
     bool mBanMode = false;
     bool mBalancePatchMode = false;
-    bool mShuffleMode = false;
     int mNumBanPackets = NUM_VS_BAN_PACKETS;
     int mSeedsInBothBanned = 0;
     BannedSeed mBannedSeed[NUM_ZOMBIE_SEED_TYPES];
@@ -87,9 +83,10 @@ public:
     VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu);
     ~VSSetupAddonWidget();
     void Update();
-    void SetDisable();
+    void SetDisable(Sexy::ButtonWidget *theButton);
     void ButtonDepress(this VSSetupAddonWidget &self, int theId);
     void CheckboxChecked(int theId, bool checked);
+    void Draw(Sexy::Graphics *g);
 
 private:
     static constexpr Sexy::ButtonListener::VTable sButtonListenerVtable{

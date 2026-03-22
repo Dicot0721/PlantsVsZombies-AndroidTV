@@ -18,8 +18,10 @@
  */
 
 #include "PvZ/Lawn/Widget/VSSetupAddonWidget.h"
+#include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 
 using namespace Sexy;
 
@@ -30,7 +32,6 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     mExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
     mBanMode = mApp->mPlayerInfo->mVSBanMode;
     mBalancePatchMode = mApp->mPlayerInfo->mVSBalancePatchMode;
-    mShuffleMode = mApp->mPlayerInfo->mVSShuffleMode;
 
     Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
     Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
@@ -38,19 +39,23 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     mExtraSeedsButton = MakeNewButton(VSSetupAddonWidget_ExtraSeeds, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
     mBanModeButton = MakeNewButton(VSSetupAddonWidget_BanMode, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
     mBalancePatchButton = MakeNewButton(VSSetupAddonWidget_BalancePatch, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
-    mShuffleModeButton = MakeNewButton(VSSetupAddonWidget_ShuffleMode, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
 
     mExtraPacketsButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTRA_PACKETS_Y, 175, 50);
     mExtraSeedsButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTRA_SEEDS_Y, 175, 50);
     mBanModeButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
     mBalancePatchButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BALANCE_PATCH_Y, 175, 50);
-    mShuffleModeButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_SHUFFLE_MODE_Y, 175, 50);
 
+    mApp->mBoard->AddWidget(mBalancePatchButton);
     mApp->mBoard->AddWidget(mExtraPacketsButton);
     mApp->mBoard->AddWidget(mExtraSeedsButton);
     mApp->mBoard->AddWidget(mBanModeButton);
-    mApp->mBoard->AddWidget(mBalancePatchButton);
-    mApp->mBoard->AddWidget(mShuffleModeButton);
+
+    if (gIsVSShuffleMode) {
+        SetDisable(mExtraPacketsButton);
+        SetDisable(mExtraSeedsButton);
+        SetDisable(mBanModeButton);
+        mBanMode = false;
+    }
 }
 
 VSSetupAddonWidget::~VSSetupAddonWidget() {
@@ -75,11 +80,6 @@ VSSetupAddonWidget::~VSSetupAddonWidget() {
             mBalancePatchButton->_destructor();
             mBalancePatchButton = nullptr;
         }
-        if (mShuffleModeButton) {
-            mApp->mBoard->RemoveWidget(mShuffleModeButton);
-            mShuffleModeButton->_destructor();
-            mShuffleModeButton = nullptr;
-        }
     }
 
     gVSSetupAddonWidget = nullptr;
@@ -92,7 +92,6 @@ void VSSetupAddonWidget::Update() {
     Image *aExtraSeedsImage = mExtraSeedsMode ? aCheckboxPressed : aCheckbox;
     Image *aBanModeImage = mBanMode ? aCheckboxPressed : aCheckbox;
     Image *aBalancePatchImage = mBalancePatchMode ? aCheckboxPressed : aCheckbox;
-    Image *aShuffleModeImage = mShuffleMode ? aCheckboxPressed : aCheckbox;
     if (mButtonImage[VS_SETUP_ADDON_BUTTON_EXTRA_PACKETS] != a7PacketsImage)
         mExtraPacketsButton->mButtonImage = a7PacketsImage;
     if (mButtonImage[VS_SETUP_ADDON_BUTTON_EXTRA_SEEDS] != aExtraSeedsImage)
@@ -101,22 +100,11 @@ void VSSetupAddonWidget::Update() {
         mBanModeButton->mButtonImage = aBanModeImage;
     if (mButtonImage[VS_SETUP_ADDON_BUTTON_BALANCE_PATCH] != aBalancePatchImage)
         mBalancePatchButton->mButtonImage = aBalancePatchImage;
-    if (mButtonImage[VS_SETUP_ADDON_BUTTON_SHUFFLE_MODE] != aShuffleModeImage)
-        mShuffleModeButton->mButtonImage = aShuffleModeImage;
 }
 
-void VSSetupAddonWidget::SetDisable() {
-    mExtraPacketsButton->mBtnNoDraw = true;
-    mExtraPacketsButton->mDisabled = true;
-    mExtraSeedsButton->mBtnNoDraw = true;
-    mExtraSeedsButton->mDisabled = true;
-    mBanModeButton->mBtnNoDraw = true;
-    mBanModeButton->mDisabled = true;
-    mBalancePatchButton->mBtnNoDraw = true;
-    mBalancePatchButton->mDisabled = true;
-    mShuffleModeButton->mBtnNoDraw = true;
-    mShuffleModeButton->mDisabled = true;
-    mDrawString = false;
+void VSSetupAddonWidget::SetDisable(Sexy::ButtonWidget *theButton) {
+    theButton->mBtnNoDraw = true;
+    theButton->mDisabled = true;
 }
 
 void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId) {
@@ -131,9 +119,6 @@ void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId)
     }
     if (theId == VSSetupAddonWidget_BalancePatch) {
         self.CheckboxChecked(VSSetupAddonWidget_BalancePatch, self.mBalancePatchMode);
-    }
-    if (theId == VSSetupAddonWidget_ShuffleMode) {
-        self.CheckboxChecked(VSSetupAddonWidget_ShuffleMode, self.mShuffleMode);
     }
 }
 
@@ -155,15 +140,31 @@ void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
             mBalancePatchMode = !checked;
             mApp->mPlayerInfo->mVSBalancePatchMode = mBalancePatchMode;
             break;
-        case VSSetupAddonWidget_ShuffleMode:
-            mShuffleMode = !checked;
-            mApp->mPlayerInfo->mVSShuffleMode = mShuffleMode;
-            break;
         default:
             break;
     }
 
     mApp->mPlayerInfo->SaveDetails();
+}
+
+void VSSetupAddonWidget::Draw(Graphics *g) {
+    if (mDrawString) {
+        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        g->SetColor(Color(0, 205, 0, 255));
+        if (!mExtraPacketsButton->mBtnNoDraw)
+            g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SLOTS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_PACKETS_Y + 25);
+        if (!mExtraSeedsButton->mBtnNoDraw)
+            g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SEEDS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_SEEDS_Y + 25);
+        if (!mBanModeButton->mBtnNoDraw)
+            g->DrawString(TodStringTranslate("[VS_UI_BAN_MODE]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_BAN_MODE_Y + 25);
+        if (!mBalancePatchButton->mBtnNoDraw)
+            g->DrawString(TodStringTranslate("[VS_UI_BALANCE_PATCH]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_BALANCE_PATCH_Y + 25);
+
+        if (mBanMode) {
+            g->SetColor(Color(205, 0, 0, 255));
+            g->DrawString(TodStringTranslate("[VS_UI_BAN_PHASE_BIG]"), 200, 45);
+        }
+    }
 }
 
 void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie) {

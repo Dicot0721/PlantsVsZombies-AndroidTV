@@ -410,8 +410,6 @@ void Challenge::InitLevel() {
         if (mBoard->StageHasPool() || mBoard->StageHasRoof()) {
             gVSAddUnderPlantsCounter = 2000;
         }
-
-        gIsVSShuffleMode = false;
     }
 }
 

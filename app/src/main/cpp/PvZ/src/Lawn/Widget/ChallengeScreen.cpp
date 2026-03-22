@@ -18,6 +18,7 @@
  */
 
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
+#include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
@@ -44,7 +45,8 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
     }
 
     if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS) {
-        mTotalGameInPage = 5;
+        mTotalGameInPage = 6;
+        gIsVSShuffleMode = false;
     }
 }
 
@@ -56,6 +58,7 @@ ChallengeDefinition gVSNightDef = {GameMode::GAMEMODE_MP_VS, 1, ChallengePage::C
 ChallengeDefinition gVSPoolDayDef = {GameMode::GAMEMODE_MP_VS, 2, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_POOL_DAY]"};
 ChallengeDefinition gVSPoolNightDef = {GameMode::GAMEMODE_MP_VS, 3, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_POOL_NIGHT]"};
 ChallengeDefinition gVSRoofDef = {GameMode::GAMEMODE_MP_VS, 4, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_ROOF]"};
+ChallengeDefinition gVSShuffleModeDef = {GameMode::GAMEMODE_MP_VS, 0, ChallengePage::CHALLENGE_PAGE_VS, 6, 1, "[MP_VS_SHUFFLE_MODE]"};
 } // namespace
 
 ChallengeDefinition &GetChallengeDefinition(int theChallengeMode) {
@@ -67,21 +70,25 @@ ChallengeDefinition &GetChallengeDefinition(int theChallengeMode) {
     // return gPoolPartyDef;
     // }
 
-    if (theChallengeMode + 7 == GameMode::GAMEMODE_MP_VS) {
+    const int offset = 3;
+    if (theChallengeMode + offset + 5 == GameMode::GAMEMODE_MP_VS) {
         gVSBackground = BackgroundType::BACKGROUND_1_DAY;
         return gVSDayDef;
-    } else if (theChallengeMode + 6 == GameMode::GAMEMODE_MP_VS) {
+    } else if (theChallengeMode + offset + 4 == GameMode::GAMEMODE_MP_VS) {
         gVSBackground = BackgroundType::BACKGROUND_2_NIGHT;
         return gVSNightDef;
-    } else if (theChallengeMode + 5 == GameMode::GAMEMODE_MP_VS) {
+    } else if (theChallengeMode + offset + 3 == GameMode::GAMEMODE_MP_VS) {
         gVSBackground = BackgroundType::BACKGROUND_3_POOL;
         return gVSPoolDayDef;
-    } else if (theChallengeMode + 4 == GameMode::GAMEMODE_MP_VS) {
+    } else if (theChallengeMode + offset + 2 == GameMode::GAMEMODE_MP_VS) {
         gVSBackground = BackgroundType::BACKGROUND_4_FOG;
         return gVSPoolNightDef;
-    } else if (theChallengeMode + 3 == GameMode::GAMEMODE_MP_VS) {
+    } else if (theChallengeMode + offset + 1 == GameMode::GAMEMODE_MP_VS) {
         gVSBackground = BackgroundType::BACKGROUND_5_ROOF;
         return gVSRoofDef;
+    } else if (theChallengeMode + offset == GameMode::GAMEMODE_MP_VS) {
+        gVSBackground = BackgroundType::BACKGROUND_1_DAY;
+        return gVSShuffleModeDef;
     }
 
     return old_GetChallengeDefinition(theChallengeMode);
@@ -303,4 +310,8 @@ void ChallengeScreen::MouseUp(int x, int y) {
     }
     gTouchOutSide = false;
     gChallengeItemMoved = false;
+
+    if (mSelectedMode == 73) {
+        gIsVSShuffleMode = true;
+    }
 }

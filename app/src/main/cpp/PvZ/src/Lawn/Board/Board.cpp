@@ -4402,7 +4402,7 @@ void Board::UpdateButtons() {
         gGamePlayerIndex = -1;
     }
     if (gButtonDownVSSetup) {
-        if (!(aVSSetup->mState == VSSetupState::VS_SETUP_STATE_CUSTOM_BATTLE && gButtonCode == Sexy::GamepadButton::GAMEPAD_BUTTON_B)) { // 修复对战选卡阶段按下 B 键崩溃
+        if (!(aVSSetup->mState == VSSetupMenu::VS_SETUP_STATE_CUSTOM_BATTLE && gButtonCode == Sexy::GamepadButton::GAMEPAD_BUTTON_B)) { // 修复对战选卡阶段按下 B 键崩溃
             aVSSetup->GameButtonDown(gButtonCode, gGamePlayerIndex, 0);
         }
         gButtonDownVSSetup = false;
