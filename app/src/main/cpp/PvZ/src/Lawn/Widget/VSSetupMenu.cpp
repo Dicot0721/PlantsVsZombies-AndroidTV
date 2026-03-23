@@ -505,7 +505,7 @@ size_t VSSetupMenu::getServerEventSize(EventType type) {
         case EVENT_SEEDCHOOSER_SELECT_SEED:
             return sizeof(U8U8_Event);
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT:
-            return sizeof(U8x4_Event);
+            return sizeof(B1x8_Event);
         case EVENT_VSSETUPMENU_RANDOM_PICK:
             return sizeof(U16x12_Event);
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER:
@@ -585,11 +585,17 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT: {
-            U8x4_Event *eventButtonInit = static_cast<U8x4_Event *>(event);
-            mApp->mPlayerInfo->mVSExtraPacketsMode = eventButtonInit->data[0];
-            mApp->mPlayerInfo->mVSExtraSeedsMode = eventButtonInit->data[1];
-            mApp->mPlayerInfo->mVSBanMode = eventButtonInit->data[2];
-            mApp->mPlayerInfo->mVSBalancePatchMode = eventButtonInit->data[3];
+            B1x8_Event *eventButtonInit = static_cast<B1x8_Event *>(event);
+            if (gVSSetupAddonWidget) {
+                gVSSetupAddonWidget->mExtraPacketsMode = eventButtonInit->data1;
+                gVSSetupAddonWidget->mExtraSeedsMode = eventButtonInit->data2;
+                gVSSetupAddonWidget->mBanMode = eventButtonInit->data3;
+                gVSSetupAddonWidget->mBalancePatchMode = eventButtonInit->data4;
+            }
+            mApp->mPlayerInfo->mVSExtraPacketsMode = eventButtonInit->data1;
+            mApp->mPlayerInfo->mVSExtraSeedsMode = eventButtonInit->data2;
+            mApp->mPlayerInfo->mVSBanMode = eventButtonInit->data3;
+            mApp->mPlayerInfo->mVSBalancePatchMode = eventButtonInit->data4;
         } break;
         default:
             break;
@@ -621,12 +627,14 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         drawTipArrowAlphaCounter = 0;
 
         if (tcpClientSocket >= 0) {
-            U8x4_Event event = {{EventType::EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT},
-                                uint8_t(gVSSetupAddonWidget->mExtraPacketsMode),
-                                uint8_t(gVSSetupAddonWidget->mExtraSeedsMode),
-                                uint8_t(gVSSetupAddonWidget->mBanMode),
-                                uint8_t(gVSSetupAddonWidget->mBalancePatchMode)};
-            sendWithSize(tcpClientSocket, &event, sizeof(U8x4_Event), 0);
+            B1x8_Event event = {
+                {EventType::EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT},
+                uint8_t(gVSSetupAddonWidget->mExtraPacketsMode),
+                uint8_t(gVSSetupAddonWidget->mExtraSeedsMode),
+                uint8_t(gVSSetupAddonWidget->mBanMode),
+                uint8_t(gVSSetupAddonWidget->mBalancePatchMode),
+            };
+            sendWithSize(tcpClientSocket, &event, sizeof(B1x8_Event), 0);
         }
     }
     if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {
@@ -655,21 +663,6 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
 
         if (gIsVSShuffleMode) {
             ButtonDepress(VSSetupMenu_Random_Battle);
-
-            SeedBank *aPlantBank = mApp->mBoard->mSeedBank[0];
-            SeedBank *aZombieBank = mApp->mBoard->mSeedBank[1];
-            gFreeForFristShuffle[0] = true;
-            gFreeForFristShuffle[1] = true;
-            aPlantBank->mNumPackets = aZombieBank->mNumPackets = 7;
-            aPlantBank->mSeedPackets[6].SetPacketType(SEED_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
-            aZombieBank->mSeedPackets[6].SetPacketType(SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
-            for (int i = 0; i < SEEDBANK_MAX; i++) {
-                SeedPacket *aPlantPacket = &aPlantBank->mSeedPackets[i];
-                SeedPacket *aZombiePacket = &aZombieBank->mSeedPackets[i];
-                aPlantPacket->mIndex = i;
-                aPlantPacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 0, false);
-                aZombiePacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 1, true);
-            }
         }
     } else if (tcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_VSSETUPMENU_ENTER_STATE}, uint8_t(theState)};
@@ -766,6 +759,14 @@ void VSSetupMenu::ButtonDepress(int theId) {
             } break;
 
             case VSSetupMenu_Random_Battle: {
+                if (gIsVSShuffleMode) {
+                    gFreeForFristShuffle[0] = true;
+                    gFreeForFristShuffle[1] = true;
+                    aPlantBank->mNumPackets = aZombieBank->mNumPackets = 7;
+                    aPlantBank->mSeedPackets[6].SetPacketType(SEED_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
+                    aZombieBank->mSeedPackets[6].SetPacketType(SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
+                }
+
                 std::vector<SeedType> aZombieSeeds;
                 PickRandomZombies(aZombieSeeds);
 

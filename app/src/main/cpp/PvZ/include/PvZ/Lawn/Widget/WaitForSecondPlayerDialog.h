@@ -393,9 +393,16 @@ public:
     int16_t data4;
 };
 
-class U8x4_Event : public BaseEvent {
+class B1x8_Event : public BaseEvent {
 public:
-    uint8_t data[4];
+    uint8_t data1 : 1;
+    uint8_t data2 : 1;
+    uint8_t data3 : 1;
+    uint8_t data4 : 1;
+    uint8_t data5 : 1;
+    uint8_t data6 : 1;
+    uint8_t data7 : 1;
+    uint8_t data8 : 1;
 };
 
 class U16x6_Event : public BaseEvent {
