@@ -69,7 +69,15 @@ protected:
     }
 };
 
-class NewLawnButton : public Sexy::DialogButton {};
+class NewLawnButton : public Sexy::DialogButton {
+public:
+    Sexy::Font *mHiliteFont; // 210
+    int mTextDownOffsetX;    // 211
+    int mTextDownOffsetY;    // 212
+    int mButtonOffsetX;      // 213
+    int mButtonOffsetY;      // 214
+    bool mUsePolygonShape;   // 215
+};
 
 inline GameButton *MakeButton(int theId, Sexy::ButtonListener *theListener, Sexy::Widget *theParent, const pvzstl::string &theText) {
     return reinterpret_cast<GameButton *(*)(int, Sexy::ButtonListener *, Sexy::Widget *, const pvzstl::string &)>(MakeButtonAddr)(theId, theListener, theParent, theText);

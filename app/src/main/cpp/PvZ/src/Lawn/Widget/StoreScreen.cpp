@@ -26,12 +26,12 @@
 
 using namespace Sexy;
 
-void StoreScreen::AddedToManager(int a2) {
-    old_StoreScreen_AddedToManager(this, a2);
+void StoreScreen::AddedToManager(WidgetManager *theWidgetManager) {
+    old_StoreScreen_AddedToManager(this, theWidgetManager);
 }
 
-void StoreScreen::RemovedFromManager(int a2) {
-    old_StoreScreen_RemovedFromManager(this, a2);
+void StoreScreen::RemovedFromManager(WidgetManager *theWidgetManager) {
+    old_StoreScreen_RemovedFromManager(this, theWidgetManager);
 }
 
 void StoreScreen::Update() {

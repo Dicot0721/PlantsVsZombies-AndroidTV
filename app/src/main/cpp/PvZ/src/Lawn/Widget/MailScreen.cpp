@@ -25,6 +25,8 @@
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
+using namespace Sexy;
+
 namespace {
 GameButton *gMailScreenCloseButton;
 GameButton *gMailScreenReadButton;
@@ -55,18 +57,18 @@ void MailScreen::_constructor(LawnApp *theApp) {
     Resize(0, 0, 800, 600);
 }
 
-void MailScreen::AddedToManager(int *theWidgetManager) {
+void MailScreen::AddedToManager(WidgetManager *theWidgetManager) {
     old_MailScreen_AddedToManager(this, theWidgetManager);
     // Sexy_Widget_Resize(mailScreen, -240, -60, 1280, 720);
 }
 
-void MailScreen::RemovedFromManager(int *widgetManager) {
+void MailScreen::RemovedFromManager(WidgetManager *theWidgetManager) {
     // 修复MailScreen的可触控区域不为全屏
     RemoveWidget(gMailScreenCloseButton);
     RemoveWidget(gMailScreenReadButton);
     RemoveWidget(gMailScreenSwitchButton);
 
-    old_MailScreen_RemovedFromManager(this, widgetManager);
+    old_MailScreen_RemovedFromManager(this, theWidgetManager);
 }
 
 void MailScreen::_destructor2() {

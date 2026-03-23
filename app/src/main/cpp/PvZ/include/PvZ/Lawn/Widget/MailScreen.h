@@ -36,8 +36,8 @@ public:
     }
 
     MailScreen(LawnApp *theApp);
-    void AddedToManager(int *theWidgetManager);
-    void RemovedFromManager(int *widgetManager);
+    void AddedToManager(Sexy::WidgetManager *theWidgetManager);
+    void RemovedFromManager(Sexy::WidgetManager *widgetManager);
 
     void MouseDown(int x, int y, int theClickCount);
     void MouseUp(int x, int y);
@@ -64,9 +64,9 @@ public:
 
 inline void (*old_MailScreen_MailScreen)(MailScreen *mailScreen, LawnApp *lawnApp);
 
-inline void (*old_MailScreen_AddedToManager)(MailScreen *mailScreen, int *widgetManager);
+inline void (*old_MailScreen_AddedToManager)(MailScreen *mailScreen, Sexy::WidgetManager *widgetManager);
 
-inline void (*old_MailScreen_RemovedFromManager)(MailScreen *mailScreen, int *widgetManager);
+inline void (*old_MailScreen_RemovedFromManager)(MailScreen *mailScreen, Sexy::WidgetManager *widgetManager);
 
 inline void (*old_MailScreen_Delete2)(MailScreen *mailScreen);
 

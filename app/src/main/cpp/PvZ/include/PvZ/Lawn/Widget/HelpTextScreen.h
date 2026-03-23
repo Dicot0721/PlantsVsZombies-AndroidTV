@@ -39,11 +39,11 @@ inline void (*old_HelpTextScreen_Draw)(HelpTextScreen *helpTextScreen, Sexy::Gra
 
 inline void (*old_HelpTextScreen_HelpTextScreen)(HelpTextScreen *helpTextScreen, int *lawnApp, int pageIndex);
 
-inline void (*old_HelpTextScreen_AddedToManager)(HelpTextScreen *helpTextScreen, int *manager);
+inline void (*old_HelpTextScreen_AddedToManager)(HelpTextScreen *helpTextScreen, Sexy::WidgetManager *manager);
 
 inline void (*old_HelpTextScreen_MouseDown)(HelpTextScreen *helpTextScreen, int x, int y, int theClickCount);
 
-inline void (*old_HelpTextScreen_RemovedFromManager)(HelpTextScreen *helpTextScreen, int *widgetManager);
+inline void (*old_HelpTextScreen_RemovedFromManager)(HelpTextScreen *helpTextScreen, Sexy::WidgetManager *widgetManager);
 
 inline void (*old_HelpTextScreen_Delete2)(HelpTextScreen *helpTextScreen);
 
@@ -56,11 +56,11 @@ void HelpTextScreen_Draw(HelpTextScreen *helpTextScreen, Sexy::Graphics *graphic
 
 void HelpTextScreen_HelpTextScreen(HelpTextScreen *helpTextScreen, int *lawnApp, int pageIndex);
 
-void HelpTextScreen_AddedToManager(HelpTextScreen *helpTextScreen, int *manager);
+void HelpTextScreen_AddedToManager(HelpTextScreen *helpTextScreen, Sexy::WidgetManager *theWidgetNanager);
 
 void HelpTextScreen_MouseDown(HelpTextScreen *helpTextScreen, int x, int y, int theClickCount);
 
-void HelpTextScreen_RemovedFromManager(HelpTextScreen *helpTextScreen, int *widgetManager);
+void HelpTextScreen_RemovedFromManager(HelpTextScreen *helpTextScreen, Sexy::WidgetManager *widgetManager);
 
 void HelpTextScreen_Delete2(HelpTextScreen *helpTextScreen);
 

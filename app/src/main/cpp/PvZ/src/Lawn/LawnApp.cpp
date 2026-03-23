@@ -639,7 +639,7 @@ void LawnApp::Init() {
     TodLoadResources("Init");
     mTitleScreen = new TitleScreen(this);
 
-    mTitleScreen->Resize(0, 0, unkMem1_1[18], unkMem1_1[19]);
+    mTitleScreen->Resize(0, 0, mWidth, mHeight);
     mWidgetManager->AddWidget(mTitleScreen);
     mWidgetManager->SetFocus(mTitleScreen);
     mEffectSystem->EffectSystemInitialize();
@@ -1036,6 +1036,16 @@ void LawnApp::KillZombieChooserScreen() {
         SafeDeleteWidget(mZombieChooserScreen);
         mZombieChooserScreen = nullptr;
     }
+}
+
+void LawnApp::ShowChallengeScreen(ChallengePage thePage) { // 创建小游戏界面，并将页码调整至第 thePage 页。
+    mGameScene = GameScenes::SCENE_CHALLENGE;
+    //    mPlayerInfo->GetId(); // IDA伪C代码，意义不明故注释
+    mChallengeScreen = new ChallengeScreen(this, thePage);
+    mChallengeScreen->Resize(0, 0, mWidth, mHeight);
+    mWidgetManager->AddWidget(mChallengeScreen);
+    mWidgetManager->BringToBack(mChallengeScreen);
+    mWidgetManager->SetFocus(mChallengeScreen);
 }
 
 void LawnApp::PreNewGame(GameMode theGameMode, bool theLookForSavedGame) {

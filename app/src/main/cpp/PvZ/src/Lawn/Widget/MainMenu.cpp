@@ -543,6 +543,7 @@ void MainMenu::RemovedFromManager(WidgetManager *theWidgetManager) {
     if (gMainMenuAchievementsBack != nullptr) {
         RemoveWidget((Widget *)gMainMenuAchievementsBack);
     }
+
     old_MainMenu_RemovedFromManager(this, theWidgetManager);
 }
 
@@ -2994,8 +2995,9 @@ void TestMenuWidget_Draw(ZombatarWidget *zombatarWidget, Sexy::Graphics *g) {
 }
 
 
-void TestMenuWidget_RemovedFromManager(ZombatarWidget *zombatarWidget, int *manager) {
-    old_TestMenuWidget_RemovedFromManager(zombatarWidget, manager);
+void TestMenuWidget_RemovedFromManager(ZombatarWidget *zombatarWidget, WidgetManager *theWidgetManager) {
+    old_TestMenuWidget_RemovedFromManager(zombatarWidget, theWidgetManager);
+
     zombatarWidget->RemoveWidget(zombatarWidget->mBackButton);
     zombatarWidget->RemoveWidget(zombatarWidget->mFinishButton);
     zombatarWidget->RemoveWidget(zombatarWidget->mViewPortraitButton);

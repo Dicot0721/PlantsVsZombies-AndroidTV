@@ -35,8 +35,9 @@ Sexy::Checkbox *gVibrateCheckbox;
 } // namespace
 
 
-void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, int *manager) {
-    old_SettingsDialog_AddedToManager(settingsDialog, manager);
+void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, WidgetManager *theWidgetManager) {
+    old_SettingsDialog_AddedToManager(settingsDialog, theWidgetManager);
+
     LawnApp *lawnApp = *gLawnApp_Addr;
     Sexy::Widget *mSoundSlider = settingsDialog->mSoundSlider;
     Sexy::Widget *mBackButton = settingsDialog->mBackButton;
@@ -60,8 +61,9 @@ void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, int *manager)
     g3DAccleratedCheckbox->mFocusLinks[0] = mSoundSlider;
 }
 
-void SettingsDialog_RemovedFromManager(SettingsDialog *settingsDialog, int *manager) {
-    old_SettingsDialog_RemovedFromManager(settingsDialog, manager);
+void SettingsDialog_RemovedFromManager(SettingsDialog *settingsDialog, WidgetManager *theWidgetManager) {
+    old_SettingsDialog_RemovedFromManager(settingsDialog, theWidgetManager);
+
     settingsDialog->RemoveWidget(g3DAccleratedCheckbox);
     settingsDialog->RemoveWidget(gVibrateCheckbox);
 }

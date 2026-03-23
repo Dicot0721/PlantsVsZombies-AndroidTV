@@ -32,7 +32,13 @@ struct Curve1DUtil {
     int unk[16];
 };
 
+class NewLawnButton;
 class ChallengeScreen : public Sexy::Widget, public Sexy::ButtonListener {
+private:
+    enum {
+        ChallengeScreen_Back = 1000,
+    };
+
 public:
     Sexy::ButtonWidget *mButtons[94]; // 65 ~ 158
     LawnApp *mApp;                    // 159
@@ -55,7 +61,8 @@ public:
     int mSelectedChallenge;           // 377 其值固定比mSelectedMode小2
     GameMode mSelectedMode;           // 378
     int unk4;                         // 379
-    // 大小380个整数
+    // 大小380个整数, 以下是新增成员!
+    NewLawnButton *mBackButton;
 
     void SetUnlockChallengeIndex(ChallengePage thePage, bool theIsIZombie = false) {
         reinterpret_cast<void (*)(ChallengeScreen *, ChallengePage, bool)>(ChallengeScreen_SetUnlockChallengeIndexAddr)(this, thePage, theIsIZombie);
@@ -72,9 +79,9 @@ public:
 
     ChallengeScreen(LawnApp *theApp, ChallengePage thePage);
     void Draw(Sexy::Graphics *g);
-    void AddedToManager(int *theWidgetManager);
+    void AddedToManager(Sexy::WidgetManager *theWidgetManager);
     void Update();
-    void RemovedFromManager(int *theWidgetManager);
+    void RemovedFromManager(Sexy::WidgetManager *theWidgetManager);
     void ButtonPress(int theButtonId);
     void ButtonDepress(int theId);
     void UpdateButtons();
@@ -108,11 +115,11 @@ inline void (*old_ChallengeScreen_ChallengeScreen)(ChallengeScreen *challengeScr
 
 inline void (*old_ChallengeScreen_Draw)(ChallengeScreen *challengeScreen, Sexy::Graphics *graphics);
 
-inline void (*old_ChallengeScreen_AddedToManager)(ChallengeScreen *a, int *a2);
+inline void (*old_ChallengeScreen_AddedToManager)(ChallengeScreen *a, Sexy::WidgetManager *a2);
 
 inline void (*old_ChallengeScreen_Update)(ChallengeScreen *a);
 
-inline void (*old_ChallengeScreen_RemovedFromManager)(ChallengeScreen *a, int *a2);
+inline void (*old_ChallengeScreen_RemovedFromManager)(ChallengeScreen *a, Sexy::WidgetManager *a2);
 
 inline void (*old_ChallengeScreen_Delete2)(ChallengeScreen *challengeScreen);
 

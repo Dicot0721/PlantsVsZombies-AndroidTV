@@ -29,8 +29,6 @@
 
 using namespace Sexy;
 
-static GameButton *gChallengeScreenCloseButton;
-
 ChallengeScreen::ChallengeScreen(LawnApp *theApp, ChallengePage thePage) {
     _constructor(theApp, thePage);
 }
@@ -38,6 +36,17 @@ ChallengeScreen::ChallengeScreen(LawnApp *theApp, ChallengePage thePage) {
 void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
     // 去除按钮对触控的遮挡
     old_ChallengeScreen_ChallengeScreen(this, theApp, thePage);
+
+    mBackButton =
+        MakeNewButton(ChallengeScreen::ChallengeScreen_Back, this, this, "[CLOSE]", nullptr, *Sexy::IMAGE_SEEDCHOOSER_BUTTON, *Sexy::IMAGE_SEEDCHOOSER_BUTTON, *Sexy::IMAGE_SEEDCHOOSER_BUTTON);
+    mBackButton->mTextOffsetX = -2;
+    mBackButton->mTextOffsetY = -4;
+    mBackButton->mTextDownOffsetX = 1;
+    mBackButton->mTextDownOffsetY = 1;
+    mBackButton->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+    //    mBackButton->mColors[ButtonWidget::COLOR_LABEL] = Color(42, 42, 90);
+    //    mBackButton->mColors[ButtonWidget::COLOR_LABEL_HILITE] = Color(42, 42, 90);
+    mBackButton->Resize(800, 520, 160, 50);
 
     for (auto *button : mButtons) {
         // 把按钮全部缩小至长宽为0
@@ -48,6 +57,13 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
         mTotalGameInPage = 6;
         gIsVSShuffleMode = false;
     }
+}
+
+void ChallengeScreen::_destructor2() {
+    // 删除按钮
+    old_ChallengeScreen_Delete2(this);
+
+    delete mBackButton;
 }
 
 namespace {
@@ -193,37 +209,23 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
     g->PopState();
 }
 
-void ChallengeScreen::AddedToManager(int *theWidgetManager) {
-    // 记录当前游戏状态
-    gChallengeScreenCloseButton = MakeButton(1000, this, this, "[CLOSE]");
-    gChallengeScreenCloseButton->Resize(800, 520, 170, 50);
-    AddWidget(gChallengeScreenCloseButton);
-
-    old_ChallengeScreen_AddedToManager(this, theWidgetManager);
-}
-
 void ChallengeScreen::Update() {
     // 记录当前游戏状态
     old_ChallengeScreen_Update(this);
 }
 
-void ChallengeScreen::RemovedFromManager(int *theWidgetManager) {
+void ChallengeScreen::AddedToManager(WidgetManager *theWidgetManager) {
+    // 记录当前游戏状态
+    old_ChallengeScreen_AddedToManager(this, theWidgetManager);
+
+    AddWidget(mBackButton);
+}
+
+void ChallengeScreen::RemovedFromManager(WidgetManager *theWidgetManager) {
     // 记录当前游戏状态
     old_ChallengeScreen_RemovedFromManager(this, theWidgetManager);
 
-    if (gChallengeScreenCloseButton != nullptr) {
-        RemoveWidget(gChallengeScreenCloseButton);
-    }
-}
-
-void ChallengeScreen::_destructor2() {
-    // 删除按钮
-    old_ChallengeScreen_Delete2(this);
-
-    if (gChallengeScreenCloseButton != nullptr) {
-        gChallengeScreenCloseButton->~GameButton();
-        gChallengeScreenCloseButton = nullptr;
-    }
+    RemoveWidget(mBackButton);
 }
 
 void ChallengeScreen::ButtonPress(int theButtonId) {
@@ -232,7 +234,7 @@ void ChallengeScreen::ButtonPress(int theButtonId) {
 
 void ChallengeScreen::ButtonDepress(int theId) {
     // 去除原有的点击进入关卡的功能
-    if (theId == 1000) {
+    if (theId == ChallengeScreen::ChallengeScreen_Back) {
         mApp->KillChallengeScreen();
         mApp->DoBackToMain();
     }

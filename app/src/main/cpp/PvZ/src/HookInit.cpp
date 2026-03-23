@@ -95,6 +95,7 @@ void InitHookFunction() {
     homura::HookFunction(LawnApp_KillSeedChooserScreenAddr, &LawnApp::KillSeedChooserScreen, nullptr);
     homura::HookFunction(LawnApp_ShowZombieChooserScreenAddr, &LawnApp::ShowZombieChooserScreen, nullptr);
     homura::HookFunction(LawnApp_KillZombieChooserScreenAddr, &LawnApp::KillZombieChooserScreen, nullptr);
+    homura::HookFunction(LawnApp_ShowChallengeScreenAddr, &LawnApp::ShowChallengeScreen, nullptr);
     homura::HookFunction(LawnApp_PreNewGameAddr, &LawnApp::PreNewGame, &old_LawnApp_PreNewGame);
     homura::HookFunction(LawnApp_NewGameAddr, &LawnApp::NewGame, nullptr);
 
@@ -474,6 +475,7 @@ void InitHookFunction() {
     homura::HookFunction(CutScene_UpdateAddr, &CutScene::Update, &old_CutScene_Update);
     homura::HookFunction(CutScene_PlaceLawnItemsAddr, &CutScene::PlaceLawnItems, &old_CutScene_PlaceLawnItems);
     homura::HookFunction(CutScene_AddFlowerPotsAddr, &CutScene::AddFlowerPots, &old_CutScene_AddFlowerPots);
+    homura::HookFunction(CutScene_LoadUpsellChallengeScreenAddr, &CutScene::LoadUpsellChallengeScreen, nullptr);
 
 
     homura::HookFunction(NewOptionsDialog_ButtonDepressAddr, &NewOptionsDialog::ButtonDepress, &old_NewOptionsDialog_ButtonDepress);
@@ -688,7 +690,7 @@ void InitVTableHookFunction() {
     homura::HookVirtualFunc(vTableForMainMenuAddr, 139, &MainMenu::ButtonPress, nullptr);
 
 
-    homura::HookVirtualFunc(vTableForWaitForSecondPlayerDialogAddr, 142, &WaitForSecondPlayerDialog_ButtonDepress, &old_WaitForSecondPlayerDialog_ButtonDepress);
+    homura::HookVirtualFunc(vTableForWaitForSecondPlayerDialogAddr, 142, &WaitForSecondPlayerDialog::ButtonDepress, &old_WaitForSecondPlayerDialog_ButtonDepress);
     homura::HookVirtualFunc(vTableForWaitForSecondPlayerDialogAddr, 33, &WaitForSecondPlayerDialog::Update, nullptr);
     homura::HookVirtualFunc(vTableForWaitForSecondPlayerDialogAddr, 38, &WaitForSecondPlayerDialog::Draw, &old_WaitForSecondPlayerDialog_Draw);
     homura::HookVirtualFunc(vTableForWaitForSecondPlayerDialogAddr, 52, &WaitForSecondPlayerDialog::Resize, nullptr);

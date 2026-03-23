@@ -42,7 +42,10 @@ class Dialog;
 class SexyAppBase {
 public:
     int *vTable;                            // 0
-    int unkMem1_1[30];                      // 1 ~ 30
+    int unkMem1_1[18];                      // 1 ~ 18
+    int mWidth;                             // 19
+    int mHeight;                            // 20
+    int unkMem1_1_2[10];                    // 21 ~ 30
     bool unkBool_1[4];                      // 31
     int unkMem1_2[133];                     // 32 ~ 164
     WidgetManager *mWidgetManager;          // 165

@@ -25,6 +25,8 @@
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
+using namespace Sexy;
+
 namespace {
 constexpr int nextPageButtonX = 836;
 constexpr int nextPageButtonY = 318;
@@ -58,9 +60,9 @@ void HelpTextScreen_HelpTextScreen(HelpTextScreen *helpTextScreen, int *lawnApp,
     helpTextScreen->Resize(helpTextScreen->mX, helpTextScreen->mY, 3000, helpTextScreen->mHeight);
 }
 
-void HelpTextScreen_AddedToManager(HelpTextScreen *helpTextScreen, int *manager) {
+void HelpTextScreen_AddedToManager(HelpTextScreen *helpTextScreen, WidgetManager *theWidgetNanager) {
     // 创建按钮
-    old_HelpTextScreen_AddedToManager(helpTextScreen, manager);
+    old_HelpTextScreen_AddedToManager(helpTextScreen, theWidgetNanager);
 }
 
 void HelpTextScreen::MouseDown(int x, int y, int theClickCount) {
@@ -84,12 +86,13 @@ void HelpTextScreen::MouseDown(int x, int y, int theClickCount) {
     }
 }
 
-void HelpTextScreen_RemovedFromManager(HelpTextScreen *helpTextScreen, int *widgetManager) {
+void HelpTextScreen_RemovedFromManager(HelpTextScreen *helpTextScreen, WidgetManager *theWidgetManager) {
     // 修复MailScreen的可触控区域不为全屏
     if (gHelpTextScreenCloseButton != nullptr) {
         helpTextScreen->RemoveWidget(gHelpTextScreenCloseButton);
     }
-    old_HelpTextScreen_RemovedFromManager(helpTextScreen, widgetManager);
+
+    old_HelpTextScreen_RemovedFromManager(helpTextScreen, theWidgetManager);
 }
 
 void HelpTextScreen_Delete2(HelpTextScreen *helpTextScreen) {

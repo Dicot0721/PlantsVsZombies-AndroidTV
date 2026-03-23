@@ -21,6 +21,8 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
+using namespace Sexy;
+
 void CreditScreen_CreditScreen(Sexy::Widget *creditScreen, LawnApp *a2, bool a3) {
     old_CreditScreen_CreditScreen(creditScreen, a2, a3);
 
@@ -29,10 +31,11 @@ void CreditScreen_CreditScreen(Sexy::Widget *creditScreen, LawnApp *a2, bool a3)
     creditScreen->AddWidget(gCreditScreenBackButton);
 }
 
-void CreditScreen_RemovedFromManager(Sexy::Widget *creditScreen, int a2) {
+void CreditScreen_RemovedFromManager(Sexy::Widget *creditScreen, WidgetManager *theWidgetManager) {
     creditScreen->mFocusedChildWidget = gCreditScreenBackButton; // 修复触摸CreditScreen后点击按钮退出就会闪退的BUG,虽然不知道为什么
     creditScreen->RemoveWidget(gCreditScreenBackButton);
-    old_CreditScreen_RemovedFromManager(creditScreen, a2);
+
+    old_CreditScreen_RemovedFromManager(creditScreen, theWidgetManager);
 }
 
 void CreditScreen_Delete2(Sexy::Widget *creditScreen) {

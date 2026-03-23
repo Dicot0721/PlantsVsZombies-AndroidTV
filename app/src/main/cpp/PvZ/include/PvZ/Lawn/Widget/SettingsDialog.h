@@ -36,18 +36,18 @@ public:
     int unk[5];                               // 198 ~ 202
 }; // 115: 203, 111: 205
 
-inline void (*old_SettingsDialog_AddedToManager)(SettingsDialog *settingsDialog, int *manager);
+inline void (*old_SettingsDialog_AddedToManager)(SettingsDialog *settingsDialog, Sexy::WidgetManager *manager);
 
-inline void (*old_SettingsDialog_RemovedFromManager)(SettingsDialog *settingsDialog, int *manager);
+inline void (*old_SettingsDialog_RemovedFromManager)(SettingsDialog *settingsDialog, Sexy::WidgetManager *manager);
 
 inline void (*old_SettingsDialog_Delete2)(SettingsDialog *settingsDialog);
 
 inline void (*old_SettingsDialog_Draw)(SettingsDialog *settingsDialog, Sexy::Graphics *graphics);
 
 
-void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, int *manager);
+void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, Sexy::WidgetManager *manager);
 
-void SettingsDialog_RemovedFromManager(SettingsDialog *settingsDialog, int *manager);
+void SettingsDialog_RemovedFromManager(SettingsDialog *settingsDialog, Sexy::WidgetManager *theWidgetManager);
 
 void SettingsDialog_Delete2(SettingsDialog *settingsDialog);
 

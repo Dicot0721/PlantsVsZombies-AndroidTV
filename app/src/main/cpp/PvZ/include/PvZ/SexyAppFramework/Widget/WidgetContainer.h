@@ -71,6 +71,9 @@ public:
     void BringToFront(Widget *theWidget) { // vTable + 60
         reinterpret_cast<void (*)(WidgetContainer *, Widget *)>(Sexy_WidgetContainer_BringToFrontAddr)(this, theWidget);
     }
+    void BringToBack(Widget *theWidget) { // vTable + 64
+        reinterpret_cast<void (*)(WidgetContainer *, Widget *)>(Sexy_WidgetContainer_BringToBackAddr)(this, theWidget);
+    }
 
 protected:
     WidgetContainer() = default;

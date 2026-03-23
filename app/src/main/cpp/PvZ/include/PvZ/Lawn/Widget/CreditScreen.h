@@ -73,13 +73,13 @@ inline GameButton *gCreditScreenBackButton;
 
 inline void (*old_CreditScreen_CreditScreen)(Sexy::Widget *a, LawnApp *a2, bool a3);
 
-inline void (*old_CreditScreen_RemovedFromManager)(Sexy::Widget *creditScreen, int a2);
+inline void (*old_CreditScreen_RemovedFromManager)(Sexy::Widget *creditScreen, Sexy::WidgetManager *a2);
 
 inline void (*old_CreditScreen_Delete2)(Sexy::Widget *creditScreen);
 
 void CreditScreen_CreditScreen(Sexy::Widget *creditScreen, LawnApp *a2, bool a3);
 
-void CreditScreen_RemovedFromManager(Sexy::Widget *creditScreen, int a2);
+void CreditScreen_RemovedFromManager(Sexy::Widget *creditScreen, Sexy::WidgetManager *a2);
 
 void CreditScreen_Delete2(Sexy::Widget *creditScreen);
 

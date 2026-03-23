@@ -214,6 +214,8 @@ inline void *CutScene_IsBeforePreloadingAddr;
 inline void *CutScene_AddFlowerPotsAddr;
 inline void *CutScene_PlaceLawnItemsAddr;
 inline void *CutScene_StartLevelIntroAddr;
+inline void *CutScene_ClearUpsellBoardAddr;
+inline void *CutScene_LoadUpsellChallengeScreenAddr;
 
 
 inline void *MainMenu_UpdateAddr;
@@ -992,6 +994,7 @@ inline void *Sexy_WidgetContainer_SetFocusAddr;
 inline void *Sexy_WidgetContainer_AddWidgetAddr;
 inline void *Sexy_WidgetContainer_RemoveWidgetAddr;
 inline void *Sexy_WidgetContainer_BringToFrontAddr;
+inline void *Sexy_WidgetContainer_BringToBackAddr;
 inline void *Sexy_WidgetManager_GetWidgetAtAddr;
 inline void *Sexy_WidgetManager_SetFocusAddr;
 inline void *Sexy_WidgetManager_MouseDownAddr;
@@ -1008,6 +1011,7 @@ inline void *Sexy_MenuWidget_ExitAddr;
 inline void *Sexy_Widget_DeferOverlayAddr;
 inline void *Sexy_SexyMatrix3_SexyMatrix3Addr;
 inline void *Sexy_ButtonWidget__destructorAddr;
+inline void *Sexy_ButtonWidget_SetFontAddr;
 
 
 inline void *TodScaleTransformMatrixAddr;
@@ -1104,6 +1108,7 @@ inline void *AwardScreen_MouseDownAddr;
 inline void *AwardScreen_MouseUpAddr;
 inline void *AwardScreen_StartButtonPressedAddr;
 inline void *Sexy_DefaultPlayerInfo_SaveDetailsAddr;
+inline void *Sexy_DefaultPlayerInfo_GetIdAddr;
 inline void *LawnPlayerInfo_GetFlagAddr;
 inline void *LawnPlayerInfo_AddCoinsAddr;
 inline void *GetFlashingColorAddr;
@@ -1269,6 +1274,7 @@ inline Image **IMAGE_MP_TARGETS_X;
 inline Image **IMAGE_CHALLENGE_BACKGROUND;
 inline Image **IMAGE_TROPHY;
 inline Image **IMAGE_DLG_SELECTORFRAME;
+inline Image **IMAGE_SEEDCHOOSER_BUTTON;
 
 inline Font **FONT_DWARVENTODCRAFT24;
 

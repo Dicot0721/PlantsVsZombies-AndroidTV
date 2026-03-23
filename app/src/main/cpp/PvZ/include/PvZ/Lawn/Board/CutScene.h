@@ -72,6 +72,9 @@ public:
     void StartLevelIntro() {
         reinterpret_cast<void (*)(CutScene *)>(CutScene_StartLevelIntroAddr)(this);
     }
+    void ClearUpsellBoard() {
+        reinterpret_cast<void (*)(CutScene *)>(CutScene_ClearUpsellBoardAddr)(this);
+    }
 
     void MouseDown(int x, int y) {
         reinterpret_cast<bool (*)(CutScene *, int, int)>(CutScene_MouseDownAddr)(this, x, y);
@@ -83,6 +86,7 @@ public:
     void UpdatePlantsWon();
     void PlaceLawnItems();
     void AddFlowerPots();
+    void LoadUpsellChallengeScreen();
 };
 
 

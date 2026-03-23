@@ -32,6 +32,16 @@ class ButtonListener;
 
 class ButtonWidget : public SelectableWidget {
 public:
+    enum {
+        COLOR_LABEL,
+        COLOR_LABEL_HILITE,
+        COLOR_DARK_OUTLINE,
+        COLOR_LIGHT_OUTLINE,
+        COLOR_MEDIUM_OUTLINE,
+        COLOR_BKG,
+        NUM_COLORS,
+    };
+
     int *mLabel;            // 72
     int *mStringUnk2;       // 73
     TextLayout mTextLayout; // 74 ~ 157
@@ -59,6 +69,9 @@ public:
 
     void _destructor() {
         reinterpret_cast<void (*)(ButtonWidget *)>(Sexy_ButtonWidget__destructorAddr)(this);
+    }
+    void SetFont(Font *theFont) {
+        reinterpret_cast<void (*)(ButtonWidget *, Font *)>(Sexy_ButtonWidget_SetFontAddr)(this, theFont);
     }
 
 protected:

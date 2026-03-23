@@ -219,9 +219,6 @@ public:
     void ShowHelpTextScreen(int a) {
         reinterpret_cast<void (*)(LawnApp *, int)>(LawnApp_ShowHelpTextScreenAddr)(this, a);
     }
-    void ShowChallengeScreen(ChallengePage thePage) {
-        reinterpret_cast<void (*)(LawnApp *, ChallengePage)>(LawnApp_ShowChallengeScreenAddr)(this, thePage);
-    }
     void CrazyDaveStopTalking() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_CrazyDaveStopTalkingAddr)(this);
     }
@@ -366,6 +363,7 @@ public:
     void ShowSeedChooserScreen();
     void ShowZombieChooserScreen();
     void KillZombieChooserScreen();
+    void ShowChallengeScreen(ChallengePage thePage);
     void PreNewGame(GameMode theGameMode, bool theLookForSavedGame);
     void NewGame();
 

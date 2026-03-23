@@ -54,12 +54,16 @@ class Board;
 class DefaultPlayerInfo;
 
 class VSSetupMenu : public Sexy::MenuWidget {
-public:
+private:
     enum {
         VSSetupMenu_Quick_Play = 9,     // 快速游戏
         VSSetupMenu_Custom_Battle = 10, // 自定义战场
         VSSetupMenu_Random_Battle = 11, // 随机战场
+        VSSetupMenu_Enter = 1000,
+        VSSetupMenu_Back = 1001,
     };
+
+public:
     enum VSSetupState {
         VS_SETUP_STATE_CONTROLLERS = 0,   // WaitForSecondPlayerDialog
         VS_SETUP_STATE_SIDES = 1,         // 未分配手柄阵营
@@ -154,8 +158,8 @@ public:
     void DrawOverlay(Sexy::Graphics *g);
     void Update();
     void OnStateEnter(VSSetupState theState);
-    void AddedToManager(Sexy::WidgetManager *a2);
-    void CloseVSSetup(bool a2);
+    void AddedToManager(Sexy::WidgetManager *theWidgetManager);
+    void CloseVSSetup(bool theShowGameSelector);
 
     void MouseDown(int x, int y, int theCount);
     void MouseDrag(int x, int y);

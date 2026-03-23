@@ -22,6 +22,7 @@
 #include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/ChallengeScreen.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/SexyAppFramework/Widget/WidgetManager.h"
 
@@ -124,4 +125,9 @@ void CutScene::PlaceLawnItems() {
             }
         }
     }
+}
+
+void CutScene::LoadUpsellChallengeScreen() {
+    ClearUpsellBoard();
+    mUpsellChallengeScreen = new ChallengeScreen(mApp, ChallengePage::CHALLENGE_PAGE_CHALLENGE);
 }

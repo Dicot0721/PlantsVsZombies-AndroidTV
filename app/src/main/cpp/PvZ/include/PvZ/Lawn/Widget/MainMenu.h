@@ -180,7 +180,7 @@ inline void (*old_MainMenu_DrawOverlay)(MainMenu *mainMenu, Sexy::Graphics *a2);
 
 inline void (*old_MainMenu_DrawFade)(MainMenu *mainMenu, Sexy::Graphics *a2);
 
-inline void (*old_TestMenuWidget_RemovedFromManager)(ZombatarWidget *zombatarWidget, int *manager);
+inline void (*old_TestMenuWidget_RemovedFromManager)(ZombatarWidget *zombatarWidget, Sexy::WidgetManager *manager);
 
 inline void (*old_TestMenuWidget_Delete2)(ZombatarWidget *zombatarWidget);
 
@@ -207,7 +207,7 @@ void MaskHelpWidget_MouseUp(AchievementsWidget *achievementsWidget, int x, int y
 
 void MaskHelpWidget_MouseDrag(AchievementsWidget *achievementsWidget, int x, int y);
 
-void TestMenuWidget_RemovedFromManager(ZombatarWidget *zombatarWidget, int *manager);
+void TestMenuWidget_RemovedFromManager(ZombatarWidget *zombatarWidget, Sexy::WidgetManager *manager);
 
 void TestMenuWidget_Update(ZombatarWidget *zombatarWidget);
 

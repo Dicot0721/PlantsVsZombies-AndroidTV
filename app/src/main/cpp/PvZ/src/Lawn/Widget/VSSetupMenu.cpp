@@ -206,8 +206,9 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
 }
 
 
-void VSSetupMenu::AddedToManager(Sexy::WidgetManager *a2) {
-    old_VSSetupMenu_AddedToManager(this, a2);
+void VSSetupMenu::AddedToManager(Sexy::WidgetManager *theWidgetManager) {
+    old_VSSetupMenu_AddedToManager(this, theWidgetManager);
+
     // 缩小Widget，使得触控可传递给VSSetupMenu自身
     for (int i = 0; i < 9; ++i) {
         Sexy::Widget *aWidget = FindWidget(i);
@@ -649,13 +650,14 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         mApp->AddDialog(aWaitDialog);
 
         int aButtonId = aWaitDialog->WaitForResult(true);
-        if (aButtonId == 1000) {
+        if (aButtonId == VSSetupMenu::VSSetupMenu_Enter) {
             SetSecondPlayerIndex(mApp->mTwoPlayerState);
             GoToState(VSSetupState::VS_SETUP_STATE_SIDES);
-        } else if (aButtonId == 1001) {
+        } else if (aButtonId == VSSetupMenu::VSSetupMenu_Back) {
             CloseVSSetup(true);
             mApp->KillBoard();
-            mApp->ShowGameSelector();
+            //            mApp->ShowGameSelector();
+            mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS); // 返回主菜单改为返回战场选择
         }
         return;
     } else if (theState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE) {
@@ -848,8 +850,8 @@ void VSSetupMenu::PickBackgroundImmediately() {
     }
 }
 
-void VSSetupMenu::CloseVSSetup(bool a2) {
+void VSSetupMenu::CloseVSSetup(bool theShowGameSelector) {
     PickBackgroundImmediately();
 
-    old_VSSetupMenu_CloseVSSetup(this, a2);
+    old_VSSetupMenu_CloseVSSetup(this, theShowGameSelector);
 }

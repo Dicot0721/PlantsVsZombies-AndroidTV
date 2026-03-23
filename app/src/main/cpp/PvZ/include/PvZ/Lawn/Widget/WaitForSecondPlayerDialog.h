@@ -153,6 +153,14 @@ struct ServerRoomItem {
 };
 
 class WaitForSecondPlayerDialog : public LawnDialog {
+private:
+    enum {
+        WaitForSecondPlayerDialog_Enter = 1000,
+        WaitForSecondPlayerDialog_Back = 1001,
+        WaitForSecondPlayerDialog_Left = 1002,
+        WaitForSecondPlayerDialog_Right = 1003,
+    };
+
 public:
     bool m2PJoined;
     // 115：192，111：194。自roomName1起的成员为我新增的成员，我Hook了构造函数调用方，为构造时分配了更多内存，因此可以为WaitForSecondPlayerDialog任意地新增成员。
@@ -260,6 +268,7 @@ public:
     void ScanUdpBroadcastRoom();
     void TryTcpConnect();
     void StopUdpBroadcastRoom();
+    void ButtonDepress(this Sexy::ButtonListener *self, int theId);
     void InitUdpScanSocket();
     void CloseUdpScanSocket();
     void LeaveRoom();
@@ -278,8 +287,6 @@ protected:
     bool GetActiveBroadcast(sockaddr_in &out_bcast, std::string *out_ifname);
     bool ServerSendU8(uint8_t b);
 };
-
-void WaitForSecondPlayerDialog_ButtonDepress(Sexy::ButtonListener *listener, int id);
 
 inline void (*old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog)(WaitForSecondPlayerDialog *a, LawnApp *theApp);
 

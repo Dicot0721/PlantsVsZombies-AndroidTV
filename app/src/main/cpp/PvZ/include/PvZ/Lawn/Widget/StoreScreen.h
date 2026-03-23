@@ -28,7 +28,11 @@ enum StoreScreenTouchState { Prev, Next, Back, None };
 
 class StoreScreen : public Sexy::Dialog {
 private:
-    enum { StoreScreen_Back = 100, StoreScreen_Prev = 101, StoreScreen_Next = 102 };
+    enum {
+        StoreScreen_Back = 100,
+        StoreScreen_Prev = 101,
+        StoreScreen_Next = 102,
+    };
 
 public:
     LawnApp *mApp;                    // 184
@@ -80,8 +84,8 @@ public:
     }
 
 
-    void AddedToManager(int a2);
-    void RemovedFromManager(int a2);
+    void AddedToManager(Sexy::WidgetManager *theWidgetManager);
+    void RemovedFromManager(Sexy::WidgetManager *theWidgetManager);
     void Update();
     void SetupPage();
     void DrawItem(Sexy::Graphics *g, int a3, StoreItem theStoreItem);
@@ -95,9 +99,9 @@ public:
 };
 
 
-inline void (*old_StoreScreen_AddedToManager)(StoreScreen *a, int a2);
+inline void (*old_StoreScreen_AddedToManager)(StoreScreen *a, Sexy::WidgetManager *theWidgetManager);
 
-inline void (*old_StoreScreen_RemovedFromManager)(StoreScreen *a, int a2);
+inline void (*old_StoreScreen_RemovedFromManager)(StoreScreen *a, Sexy::WidgetManager *theWidgetManager);
 
 inline void (*old_StoreScreen_Update)(StoreScreen *a);
 

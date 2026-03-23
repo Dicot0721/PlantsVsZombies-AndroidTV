@@ -117,7 +117,10 @@ public:
 class DefaultPlayerInfo : public PlayerInfo {
 public:
     void SaveDetails() {
-        return reinterpret_cast<void (*)(DefaultPlayerInfo *)>(Sexy_DefaultPlayerInfo_SaveDetailsAddr)(this);
+        reinterpret_cast<void (*)(DefaultPlayerInfo *)>(Sexy_DefaultPlayerInfo_SaveDetailsAddr)(this);
+    }
+    int GetId() { // vTable + 2
+        return reinterpret_cast<int (*)(DefaultPlayerInfo *)>(Sexy_DefaultPlayerInfo_GetIdAddr)(this);
     }
 };
 
