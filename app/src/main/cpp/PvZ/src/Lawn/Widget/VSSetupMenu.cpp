@@ -248,7 +248,7 @@ void VSSetupMenu::MouseDrag(int x, int y) {
         theController1Widget->Move(theController1Widget->mX + x - touchDownX, theController1Widget->mY);
         if (tcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController1Widget->mX)};
-            sendWithSize(tcpClientSocket, &event, sizeof(U16_Event), 0);
+            SendEvent(tcpClientSocket, event);
         }
     } else if (touchingOnWhichController == 2) {
         if (tcpClientSocket >= 0)
@@ -257,7 +257,7 @@ void VSSetupMenu::MouseDrag(int x, int y) {
         theController2Widget->Move(theController2Widget->mX + x - touchDownX, theController2Widget->mY);
         if (tcpServerSocket >= 0) {
             U16_Event event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController2Widget->mX)};
-            sendWithSize(tcpServerSocket, &event, sizeof(U16_Event), 0);
+            SendEvent(tcpServerSocket, event);
         }
     }
     touchDownX = x;
@@ -276,7 +276,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         mSides[0] = aSideP1;
         if (tcpClientSocket >= 0) {
             U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mSides[0] == -1 ? uint8_t(2) : uint8_t(mSides[0])};
-            sendWithSize(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            SendEvent(tcpClientSocket, event);
         }
         is1PControllerMoving = false;
     } else if (touchingOnWhichController == 2) {
@@ -291,7 +291,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         mSides[1] = aSideP2;
         if (tcpServerSocket >= 0) {
             U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mSides[1] == VS_SIDE_NONE ? uint8_t(2) : uint8_t(mSides[1])};
-            sendWithSize(tcpServerSocket, &event, sizeof(U8_Event), 0);
+            SendEvent(tcpServerSocket, event);
         }
         is2PControllerMoving = false;
     }
@@ -424,7 +424,7 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
         event.type = EventType::EVENT_VSSETUPMENU_RANDOM_PICK;
         std::ranges::copy(thePlantSeeds, event.data);
         std::ranges::copy(theZombieSeeds, event.data + 6);
-        sendWithSize(tcpClientSocket, &event, sizeof(U16x12_Event), 0);
+        SendEvent(tcpClientSocket, event);
     }
 }
 
@@ -634,7 +634,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
                 gVSSetupAddonWidget->mBanMode,
                 gVSSetupAddonWidget->mBalancePatchMode,
             };
-            sendWithSize(tcpClientSocket, &event, sizeof(B1x8_Event), 0);
+            SendEvent(tcpClientSocket, event);
         }
     }
     if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {
@@ -666,7 +666,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         }
     } else if (tcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_VSSETUPMENU_ENTER_STATE}, uint8_t(theState)};
-        sendWithSize(tcpClientSocket, &event, sizeof(U8_Event), 0);
+        SendEvent(tcpClientSocket, event);
     }
 
     old_VSSetupMenu_OnStateEnter(this, theState);
@@ -687,14 +687,14 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
     if (tcp_connected) {
         U8_Event event = {{EventType::EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
-        sendWithSize(tcpServerSocket, &event, sizeof(U8_Event), 0);
+        SendEvent(tcpServerSocket, event);
         gVSSetupRequestState = theId;
         return;
     }
 
     if (tcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
-        sendWithSize(tcpClientSocket, &event, sizeof(U8_Event), 0);
+        SendEvent(tcpClientSocket, event);
     }
 
     int aNumPackets = mApp->mBoard->GetNumSeedsInBank(false);
@@ -843,7 +843,7 @@ void VSSetupMenu::PickBackgroundImmediately() {
 
         if (tcpClientSocket >= 0) {
             U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND}, uint8_t(VSBackGround)};
-            sendWithSize(tcpClientSocket, &event, sizeof(U8_Event), 0);
+            SendEvent(tcpClientSocket, event);
         }
     }
 }

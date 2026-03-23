@@ -35,7 +35,7 @@ void LawnMower::StartMower() {
 
         if (tcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_LAWNMOWER_START}, uint16_t(mRow)};
-            sendWithSize(tcpClientSocket, &event, sizeof(U16_Event), 0);
+            SendEvent(tcpClientSocket, event);
         }
     }
 

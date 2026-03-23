@@ -85,7 +85,7 @@ void SeedPacket::Update() {
                     event.data1 = true;
                     event.data3 = aSeedType;
                     event.data4 = mIndex;
-                    sendWithSize(tcpClientSocket, &event, sizeof(U8U8U16U16_Event), 0);
+                    SendEvent(tcpClientSocket, event);
                 }
             } else {
                 std::vector<SeedType> aPlantSeeds;
@@ -99,7 +99,7 @@ void SeedPacket::Update() {
                     event.data1 = false;
                     event.data3 = aSeedType;
                     event.data4 = mIndex;
-                    sendWithSize(tcpClientSocket, &event, sizeof(U8U8U16U16_Event), 0);
+                    SendEvent(tcpClientSocket, event);
                 }
             }
             mTimesUsed = 0;
@@ -588,7 +588,7 @@ void SeedPacket::WasPlanted(int thePlayerIndex) {
 
     if (tcpClientSocket >= 0) {
         U8U8_Event event = {{EventType::EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED}, uint8_t(mIndex), mSeedBank == mBoard->mSeedBank[0]};
-        sendWithSize(tcpClientSocket, &event, sizeof(U8U8_Event), 0);
+        SendEvent(tcpClientSocket, event);
     }
 }
 

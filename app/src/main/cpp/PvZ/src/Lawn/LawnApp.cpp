@@ -256,7 +256,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             if (eventPing->data == 1) {
                 U8_Event eventPong = {{EVENT_SERVER_PONG}, 1};
                 gPingNetDelayCounter = 0; // 开始计时
-                sendWithSize(tcpClientSocket, &eventPong, sizeof(U8_Event), 0);
+                SendEvent(tcpClientSocket, eventPong);
             } else if (eventPing->data == 2) {
                 gNetDelayNow = gPingNetDelayCounter;
                 gPingNetDelayCounter = -1;
@@ -325,7 +325,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             gNetDelayNow = gPingNetDelayCounter;
             gPingNetDelayCounter = -1; // 停止计时
             gPingNetPingPongCounter = 0;
-            sendWithSize(tcpServerSocket, &eventPing, sizeof(U8_Event), 0);
+            SendEvent(tcpServerSocket, eventPing);
 
             offset += eventSize;
         } else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type < NUM_EVENT_SERVER_BOARD) {
@@ -456,7 +456,7 @@ void LawnApp::UpdateFrames() {
         if (gPingNetPingPongCounter == 100) {
             gPingNetDelayCounter = 0; // 开始计时
             U8_Event eventPing = {{EVENT_CLIENT_PING}, 1};
-            sendWithSize(tcpServerSocket, &eventPing, sizeof(U8_Event), 0);
+            SendEvent(tcpServerSocket, eventPing);
         }
         char buf[1024];
         while (true) {

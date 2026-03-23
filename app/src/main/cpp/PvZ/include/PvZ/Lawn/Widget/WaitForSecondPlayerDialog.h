@@ -31,6 +31,9 @@
 #include <cstddef>
 #include <cstdint>
 
+#include <concepts>
+#include <utility>
+
 enum EventType : uint8_t {
     EVENT_NULL,
 
@@ -467,13 +470,12 @@ inline int tcpServerSocket = -1;
 inline bool tcp_connecting = false; // 正在尝试连接
 inline bool tcp_connected = false;
 
-inline ssize_t sendWithSize(int socket, BaseEvent *event, size_t len, int flags) {
-
-    //    如果后续出现了大于255byte的数据包，记得改这里
-    //    assert(len <= 255);
-
-    event->size = len;
-    return send(socket, event, len, flags);
+template <typename Event>
+    requires(!std::is_const_v<std::remove_reference_t<Event>> && std::derived_from<std::remove_reference_t<Event>, BaseEvent>)
+ssize_t SendEvent(int socket, Event &&event) {
+    static_assert(std::in_range<decltype(event.size)>(sizeof(Event)), "Please update the type of 'BaseEvent::size' to a larger integral type");
+    event.size = sizeof(Event);
+    return send(socket, &event, sizeof(Event), 0);
 }
 
 #endif // PVZ_LAWN_WIDGET_WAIT_FOR_SECOND_PLAYER_DIALOG_H

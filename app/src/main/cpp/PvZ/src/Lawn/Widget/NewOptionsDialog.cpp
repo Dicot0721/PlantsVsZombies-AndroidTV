@@ -44,7 +44,7 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                 if (tcp_connected) {
                     // 客户端点击投降
                     BaseEvent event = {EventType::EVENT_CLIENT_BOARD_CONCEDE};
-                    sendWithSize(tcpServerSocket, &event, sizeof(BaseEvent), 0);
+                    SendEvent(tcpServerSocket, event);
                     if (mApp->mBoard->mGamepadControls2->mPlayerIndex2 == 1) {
                         mApp->SetBoardResult(7);
                         mApp->mGameScene = SCENE_ZOMBIES_WON;
@@ -57,7 +57,7 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                 if (tcpClientSocket >= 0) {
                     // 主机端点击投降
                     BaseEvent event = {EventType::EVENT_SERVER_BOARD_CONCEDE};
-                    sendWithSize(tcpClientSocket, &event, sizeof(BaseEvent), 0);
+                    SendEvent(tcpClientSocket, event);
                     if (mApp->mBoard->mGamepadControls1->mPlayerIndex2 == 1) {
                         mApp->SetBoardResult(7);
                         mApp->mGameScene = SCENE_ZOMBIES_WON;

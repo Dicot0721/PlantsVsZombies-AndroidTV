@@ -114,7 +114,7 @@ void Plant::PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, Se
 
         if (tcpClientSocket >= 0) {
             U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
-            sendWithSize(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
+            SendEvent(tcpClientSocket, event);
         }
     }
 
@@ -625,7 +625,7 @@ void Plant::DoSpecial() {
 
         if (tcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_DO_SPECIAL}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-            sendWithSize(tcpClientSocket, &event, sizeof(U16_Event), 0);
+            SendEvent(tcpClientSocket, event);
         }
     }
 
@@ -755,7 +755,7 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
             } else {
                 event.data5.u16x2.u16_1 = theTargetGridItem == nullptr ? uint16_t(GRIDITEMID_NULL) : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
             }
-            sendWithSize(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
+            SendEvent(tcpClientSocket, event);
             //            SyncPingPongAnimationToClient();
             //            SyncAnimationToClient();
         }
@@ -1151,7 +1151,7 @@ void Plant::Die() {
 
         if (tcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_DIE}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-            sendWithSize(tcpClientSocket, &event, sizeof(U16_Event), 0);
+            SendEvent(tcpClientSocket, event);
         }
     }
 
@@ -1741,7 +1741,7 @@ void Plant::UpdateProductionPlant() {
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if (tcpClientSocket >= 0) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
-                sendWithSize(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
+                SendEvent(tcpClientSocket, event);
             }
             mApp->PlayFoley(FoleyType::FOLEY_SPAWN_SUN);
             if (mSeedType == SeedType::SEED_SUNSHROOM) {
@@ -1957,7 +1957,7 @@ void Plant::UpdateShooter() {
         mLaunchCounter = mLaunchRate - Sexy::Rand(15);
         if (tcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-            sendWithSize(tcpClientSocket, &event, sizeof(U16_Event), 0);
+            SendEvent(tcpClientSocket, event);
         }
         if (mSeedType == SeedType::SEED_THREEPEATER) {
             LaunchThreepeater();
@@ -2065,7 +2065,7 @@ void Plant::SyncPingPongAnimationToClient() {
     event.data4.u32 = mFrame;
     event.data5.u32 = mAnimCounter;
 
-    sendWithSize(tcpClientSocket, &event, sizeof(U16U16U16Buf32Buf32_Event), 0);
+    SendEvent(tcpClientSocket, event);
 }
 
 void Plant::SyncAnimationToClient() {
@@ -2086,7 +2086,7 @@ void Plant::SyncAnimationToClient() {
         event2.data3 = theReanim->mLoopType;
         event2.data4.f32 = theReanim->mAnimTime;
         event2.data5.f32 = theReanim->mAnimRate;
-        sendWithSize(tcpClientSocket, &event2, sizeof(U16U16U16Buf32Buf32_Event), 0);
+        SendEvent(tcpClientSocket, event2);
     }
 }
 
@@ -2105,10 +2105,10 @@ bool Plant::FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
             if (mSeedType == SEED_KERNELPULT) {
                 U8U8U16U16_Event event = {
                     {EventType::EVENT_SERVER_BOARD_PLANT_KERNELPLUT_FINDTARGETANDFIRE}, uint8_t(theRow), uint8_t(thePlantWeapon), uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mState)};
-                sendWithSize(tcpClientSocket, &event, sizeof(U8U8U16U16_Event), 0);
+                SendEvent(tcpClientSocket, event);
             } else {
                 U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_FINDTARGETANDFIRE}, uint8_t(theRow), uint8_t(thePlantWeapon), uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-                sendWithSize(tcpClientSocket, &event, sizeof(U8U8U16_Event), 0);
+                SendEvent(tcpClientSocket, event);
             }
         }
     }
@@ -2157,7 +2157,7 @@ void Plant::UpdateChomper() {
 
                 if (tcpClientSocket >= 0) {
                     U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mBoard->mZombies.DataArrayGetID(aZombie))};
-                    sendWithSize(tcpClientSocket, &event, sizeof(U16U16_Event), 0);
+                    SendEvent(tcpClientSocket, event);
                 }
 
                 aZombie->DieWithLoot();
