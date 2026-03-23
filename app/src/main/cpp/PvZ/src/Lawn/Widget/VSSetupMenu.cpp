@@ -505,7 +505,7 @@ size_t VSSetupMenu::getServerEventSize(EventType type) {
         case EVENT_SEEDCHOOSER_SELECT_SEED:
             return sizeof(U8U8_Event);
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT:
-            return sizeof(U8x5_Event);
+            return sizeof(U8x4_Event);
         case EVENT_VSSETUPMENU_RANDOM_PICK:
             return sizeof(U16x12_Event);
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER:
@@ -585,7 +585,7 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT: {
-            U8x5_Event *eventButtonInit = static_cast<U8x5_Event *>(event);
+            U8x4_Event *eventButtonInit = static_cast<U8x4_Event *>(event);
             mApp->mPlayerInfo->mVSExtraPacketsMode = eventButtonInit->data[0];
             mApp->mPlayerInfo->mVSExtraSeedsMode = eventButtonInit->data[1];
             mApp->mPlayerInfo->mVSBanMode = eventButtonInit->data[2];
@@ -621,12 +621,12 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         drawTipArrowAlphaCounter = 0;
 
         if (tcpClientSocket >= 0) {
-            U8x5_Event event = {{EventType::EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT},
+            U8x4_Event event = {{EventType::EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT},
                                 uint8_t(gVSSetupAddonWidget->mExtraPacketsMode),
                                 uint8_t(gVSSetupAddonWidget->mExtraSeedsMode),
                                 uint8_t(gVSSetupAddonWidget->mBanMode),
                                 uint8_t(gVSSetupAddonWidget->mBalancePatchMode)};
-            sendWithSize(tcpClientSocket, &event, sizeof(U8x5_Event), 0);
+            sendWithSize(tcpClientSocket, &event, sizeof(U8x4_Event), 0);
         }
     }
     if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {

@@ -81,7 +81,10 @@ void ReanimatorCache::ReanimatorCacheDispose() {
         delete mZombieImage;
 }
 
-void ReanimatorCache::DrawCachedPlant(Graphics *graphics, float thePosX, float thePosY, SeedType theSeedType, DrawVariation theDrawVariation) {
+void ReanimatorCache::DrawCachedPlant(Graphics *g, float thePosX, float thePosY, SeedType theSeedType, DrawVariation theDrawVariation) {
+    if (theSeedType == SEED_NONE || theSeedType > NUM_SEED_TYPES)
+        return;
+
     if (theDrawVariation == DrawVariation::VARIATION_IMITATER_LESS || theDrawVariation == DrawVariation::VARIATION_IMITATER || theDrawVariation == DrawVariation::VARIATION_NORMAL) {
         Image *aPlantImage = mPlantImages[theSeedType];
         if (aPlantImage == nullptr) {
@@ -94,23 +97,26 @@ void ReanimatorCache::DrawCachedPlant(Graphics *graphics, float thePosX, float t
         }
         int a, b, c, d;
         GetPlantImageSize(theSeedType, a, b, c, d);
-        float xScaled = graphics->mScaleX;
-        float yScaled = graphics->mScaleY;
+        float xScaled = g->mScaleX;
+        float yScaled = g->mScaleY;
         // 修复关闭3D加速后SeedPacket上不显示植物
         // if (Sexy_SexyAppBase_Is3DAccelerated(a1->mApp)) {
-        TodDrawImageScaledF(graphics, aPlantImage, thePosX + xScaled * a, thePosY + yScaled * b, xScaled, yScaled);
+        TodDrawImageScaledF(g, aPlantImage, thePosX + xScaled * a, thePosY + yScaled * b, xScaled, yScaled);
         // } else {
         // if (xScaled == 1.0 && yScaled == 1.0) {
-        // DrawImage(graphics, aPlantImage, thePosX + a, thePosY + b);
+        // DrawImage(g, aPlantImage, thePosX + a, thePosY + b);
         // return;
         // }
         // }
     } else {
-        old_ReanimatorCache_DrawCachedPlant(this, graphics, thePosX, thePosY, theSeedType, theDrawVariation);
+        old_ReanimatorCache_DrawCachedPlant(this, g, thePosX, thePosY, theSeedType, theDrawVariation);
     }
 }
 
 void ReanimatorCache::DrawCachedZombie(Graphics *g, float thePosX, float thePosY, ZombieType theZombieType) {
+    if (theZombieType == ZOMBIE_INVALID || theZombieType > NUM_CACHED_ZOMBIE_TYPES)
+        return;
+
     if (mZombieImages[theZombieType])
         TodDrawImageScaledF(g, mZombieImages[theZombieType], thePosX, thePosY, g->mScaleX, g->mScaleY);
 }
