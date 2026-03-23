@@ -629,10 +629,10 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         if (tcpClientSocket >= 0) {
             B1x8_Event event = {
                 {EventType::EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT},
-                uint8_t(gVSSetupAddonWidget->mExtraPacketsMode),
-                uint8_t(gVSSetupAddonWidget->mExtraSeedsMode),
-                uint8_t(gVSSetupAddonWidget->mBanMode),
-                uint8_t(gVSSetupAddonWidget->mBalancePatchMode),
+                gVSSetupAddonWidget->mExtraPacketsMode,
+                gVSSetupAddonWidget->mExtraSeedsMode,
+                gVSSetupAddonWidget->mBanMode,
+                gVSSetupAddonWidget->mBalancePatchMode,
             };
             sendWithSize(tcpClientSocket, &event, sizeof(B1x8_Event), 0);
         }

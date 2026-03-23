@@ -213,8 +213,9 @@ bool SeedChooserScreen::SeedNotAllowedToPick(SeedType theSeedType) {
         if (theSeedType == gVSSetupAddonWidget->mBannedSeed[theSeedType].mSeedType) {
             return true;
         }
-        if (gVSSetupAddonWidget->mBanMode && theSeedType == SeedType::SEED_INSTANT_COFFEE) {
-            return true;
+        if (theSeedType == SeedType::SEED_INSTANT_COFFEE) {
+            if (mBoard->StageIsNight() || gVSSetupAddonWidget->mBanMode)
+                return true;
         }
         if (mBoard->StageHasPool()) {
             if (theSeedType == SeedType::SEED_LILYPAD || theSeedType == SeedType::SEED_TANGLEKELP || theSeedType == SeedType::SEED_SEASHROOM) {

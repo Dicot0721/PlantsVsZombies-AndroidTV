@@ -60,7 +60,7 @@ void SeedPacket::Update() {
 
     old_SeedPacket_Update(this);
 
-    bool aIsProducer = mBoard->mChallenge->IsMPResourceProducer(mPacketType);
+    bool aIsProducer = Challenge::IsMPResourceProducer(mPacketType);
     bool aIsShuffle = mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE || mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE;
     if (mApp->IsVSMode() && gIsVSShuffleMode && !aIsProducer && !aIsShuffle) {
         if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING)
@@ -69,11 +69,10 @@ void SeedPacket::Update() {
         if (tcp_connected)
             return;
 
-        if (!mActive && mRefreshing) {
+        if (!mActive && mRefreshing)
             mTimesUsed++;
-        }
-        int aRefreshTime = Plant::GetRefreshTime(mPacketType, SeedType::SEED_NONE);
-        if (mTimesUsed > aRefreshTime) {
+
+        if (mTimesUsed > mRefreshTime) { // 冷却结束后替换为另一张卡
             if (mSeedBank->mIsZombie) {
                 std::vector<SeedType> aPlantSeeds;
                 std::vector<SeedType> aZombieSeeds;
@@ -213,7 +212,7 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
                 break;
         }
 
-        bool aIsProducer = mBoard->mChallenge->IsMPResourceProducer(mPacketType);
+        bool aIsProducer = Challenge::IsMPResourceProducer(mPacketType);
         bool aIsShuffle = mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE || mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE;
         if (gIsVSShuffleMode) {
             if (!aIsProducer && !aIsShuffle) {

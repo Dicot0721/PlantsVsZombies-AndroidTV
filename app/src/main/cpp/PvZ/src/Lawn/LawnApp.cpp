@@ -1002,9 +1002,8 @@ PottedPlant *LawnApp::GetPottedPlantByIndex(int thePottedPlantIndex) {
 }
 
 void LawnApp::ShowSeedChooserScreen() {
-    SeedChooserScreen *theChooser = new SeedChooserScreen(false);
-    mSeedChooserScreen = theChooser;
-    theChooser->Resize(0, 0, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND_Addr)->mWidth, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND_Addr)->mHeight);
+    mSeedChooserScreen = new SeedChooserScreen(false);
+    mSeedChooserScreen->Resize(0, 0, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND_Addr)->mWidth, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND_Addr)->mHeight);
     mWidgetManager->AddWidget(mSeedChooserScreen);
     mWidgetManager->BringToFront(mSeedChooserScreen);
 }
@@ -1025,9 +1024,8 @@ void LawnApp::KillSeedChooserScreen() {
 }
 
 void LawnApp::ShowZombieChooserScreen() {
-    SeedChooserScreen *theChooser = new SeedChooserScreen(true);
-    mZombieChooserScreen = theChooser;
-    theChooser->Resize(800 - (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mWidth, 0, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mWidth, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mHeight);
+    mZombieChooserScreen = new SeedChooserScreen(true);
+    mZombieChooserScreen->Resize(800 - (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mWidth, 0, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mWidth, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mHeight);
     mWidgetManager->AddWidget(mZombieChooserScreen);
     mWidgetManager->BringToFront(mZombieChooserScreen);
 }

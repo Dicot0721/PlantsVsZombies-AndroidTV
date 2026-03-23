@@ -1381,15 +1381,19 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
 }
 
 int Plant::GetCostBalanced(SeedType theSeedType) {
+    LawnApp *gLawnApp = *gLawnApp_Addr;
+    int aCost;
     switch (theSeedType) {
         case SeedType::SEED_SUNSHROOM:
-            return 0;
+            aCost = 0;
+            break;
         case SeedType::SEED_ICESHROOM: // 75 -> 25
         case SeedType::SEED_INSTANT_COFFEE:
         case SeedType::SEED_ZOMBIE_NORMAL:
         case SeedType::SEED_ZOMBIE_DUCKY_TUBE:
         case SeedType::SEED_ZOMBIE_IMP:
-            return 25;
+            aCost = 25;
+            break;
         case SeedType::SEED_GRAVEBUSTER:  // 75 -> 50
         case SeedType::SEED_HYPNOSHROOM:  // 75 -> 50
         case SeedType::SEED_BLOVER:       // 100 -> 50
@@ -1401,14 +1405,16 @@ int Plant::GetCostBalanced(SeedType theSeedType) {
         case SeedType::SEED_ZOMBIE_YETI:
         case SeedType::SEED_ZOMBIE_PEA_HEAD:
         case SeedType::SEED_ZOMBIE_SQUASH_HEAD:
-            return 50;
+            aCost = 50;
+            break;
         case SeedType::SEED_PEASHOOTER: // 100 -> 75
         case SeedType::SEED_KERNELPULT: // 100 -> 75
         case SeedType::SEED_GARLIC:
         case SeedType::SEED_ZOMBIE_POLEVAULTER:     // 100 -> 75
         case SeedType::SEED_ZOMBIE_JACK_IN_THE_BOX: // 100 -> 75
         case SeedType::SEED_ZOMBIE_SNORKEL:
-            return 75;
+            aCost = 75;
+            break;
         case SeedType::SEED_SQUASH:  // 75 -> 100 削弱窝瓜!!!
         case SeedType::SEED_TALLNUT: // 125 -> 100
         case SeedType::SEED_CACTUS:
@@ -1418,7 +1424,8 @@ int Plant::GetCostBalanced(SeedType theSeedType) {
         case SeedType::SEED_ZOMBIE_DOLPHIN_RIDER:
         case SeedType::SEED_ZOMBIE_BALLOON:
         case SeedType::SEED_ZOMBIE_WALLNUT_HEAD:
-            return 100;
+            aCost = 100;
+            break;
         case SeedType::SEED_SNOWPEA: // 150 -> 125
         case SeedType::SEED_CHOMPER: // 150 -> 125
         case SeedType::SEED_JALAPENO:
@@ -1427,7 +1434,8 @@ int Plant::GetCostBalanced(SeedType theSeedType) {
         case SeedType::SEED_ZOMBIE_BUNGEE:
         case SeedType::SEED_ZOMBIE_LADDER: // 150 -> 125
         case SeedType::SEED_ZOMBIE_JALAPENO_HEAD:
-            return 125;
+            aCost = 125;
+            break;
         case SeedType::SEED_REPEATER:
         case SeedType::SEED_ZOMBIE_FOOTBALL:
         case SeedType::SEED_ZOMBIE_DANCER:
@@ -1435,21 +1443,29 @@ int Plant::GetCostBalanced(SeedType theSeedType) {
         case SeedType::SEED_ZOMBIE_CATAPULT: // 200 -> 150
         case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD:
         case SeedType::SEED_ZOMBIE_TALLNUT_HEAD:
-            return 150;
+            aCost = 150;
+            break;
         case SeedType::SEED_DOOMSHROOM: // 125 -> 175
         case SeedType::SEED_STARFRUIT:
         case SeedType::SEED_ZOMBIE_POGO: // 225 -> 175
-            return 175;
+            aCost = 175;
+            break;
         case SeedType::SEED_THREEPEATER:
         case SeedType::SEED_MELONPULT:         // 300 -> 200
         case SeedType::SEED_ZOMBIE_FLAG:       // 300 -> 200
         case SeedType::SEED_ZOMBIE_GARGANTUAR: // 250 -> 200
-            return 200;
+            aCost = 200;
+            break;
         default:
-            return GetPlantDefinition(theSeedType).mSeedCost;
+            aCost = GetPlantDefinition(theSeedType).mSeedCost;
+            break;
     }
 
-    return GetPlantDefinition(theSeedType).mSeedCost;
+    if (gLawnApp->mBoard->StageIsNight() && IsNocturnal(theSeedType)) {
+        aCost += 25;
+    }
+
+    return aCost;
 }
 
 int Plant::GetRefreshTimeBalanced(SeedType theSeedType) {
@@ -1462,6 +1478,7 @@ int Plant::GetRefreshTimeBalanced(SeedType theSeedType) {
                 return 6000;
             case SeedType::SEED_ZOMBIE_TRASHCAN:
             case SeedType::SEED_ZOMBIE_TRAFFIC_CONE:
+            case SeedType::SEED_ZOMBIE_POLEVAULTER:
             case SeedType::SEED_ZOMBIE_PAIL:
             case SeedType::SEED_ZOMBIE_FLAG:
             case SeedType::SEED_ZOMBIE_FOOTBALL:
@@ -1476,7 +1493,6 @@ int Plant::GetRefreshTimeBalanced(SeedType theSeedType) {
             case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD:
             case SeedType::SEED_ZOMBIE_TALLNUT_HEAD:
                 return 3000;
-                //            case SeedType::SEED_ZOMBIE_POLEVAULTER: // 30 -> 15
             case SeedType::SEED_ZOMBIE_NEWSPAPER:
             case SeedType::SEED_ZOMBIE_SCREEN_DOOR:
             case SeedType::SEED_ZOMBIE_JACK_IN_THE_BOX: // 30 -> 15

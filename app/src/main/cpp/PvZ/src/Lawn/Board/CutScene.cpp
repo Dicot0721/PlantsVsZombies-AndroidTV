@@ -114,7 +114,10 @@ void CutScene::PlaceLawnItems() {
                 mBoard->AddMPTarget(8, aRow);
             if (aRow == 1 || aRow == aNumRows - 2) {
                 mBoard->AddAGraveStone(8, aRow);
-                mBoard->AddPlant(0, aRow, aSunPlantType, SeedType::SEED_NONE, -1, true);
+                Plant *aPlant = mBoard->AddPlant(0, aRow, aSunPlantType, SeedType::SEED_NONE, -1, true);
+                if (aSunPlantType == SeedType::SEED_SUNSHROOM) {
+                    aPlant->mStateCountdown = 0;
+                }
             }
             if (mBoard->StageHasPool() && (aRow == 2 || aRow == 3)) {
                 mBoard->AddPlant(0, aRow, SeedType::SEED_LILYPAD, SeedType::SEED_NONE, -1, true);

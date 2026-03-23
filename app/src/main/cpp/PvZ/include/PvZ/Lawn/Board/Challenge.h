@@ -174,7 +174,7 @@ public:
     void IZombieSetupPlant(Plant *thePlant);
     void HeavyWeaponReanimUpdate();
     void MouseDownWhackAZombie(int theX, int theY, int thePlayerIndex);
-    bool IsMPResourceProducer(SeedType theSeedType);
+    static bool IsMPResourceProducer(SeedType theSeedType);
 
 protected:
     friend void InitHookFunction();
