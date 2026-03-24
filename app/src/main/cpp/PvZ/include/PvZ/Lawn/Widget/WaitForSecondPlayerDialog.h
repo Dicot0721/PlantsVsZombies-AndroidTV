@@ -260,7 +260,6 @@ public:
     void Update();
     void Draw(Sexy::Graphics *g);
     void Resize(int theX, int theY, int theWidth, int theHeight);
-    void MouseDown(int x, int y, int theClickCount);
     void CreateRoom();
     void JoinRoom();
     void UdpBroadcastRoom();
@@ -268,12 +267,14 @@ public:
     void ScanUdpBroadcastRoom();
     void TryTcpConnect();
     void StopUdpBroadcastRoom();
-    void ButtonDepress(this Sexy::ButtonListener *self, int theId);
     void InitUdpScanSocket();
     void CloseUdpScanSocket();
     void LeaveRoom();
     void ExitRoom();
     bool ManualIpConnect();
+
+    void MouseDown(int x, int y, int theClickCount);
+    void ButtonDepress_Thunk(this Sexy::ButtonListener &self, int theId);
 
     void processServerEvent(void *buf, ssize_t bufSize);
     void processClientEvent(void *buf, ssize_t bufSize);
@@ -292,7 +293,7 @@ inline void (*old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog)(WaitForSe
 
 inline void (*old_WaitForSecondPlayerDialog_Draw)(WaitForSecondPlayerDialog *dialog, Sexy::Graphics *graphics);
 
-inline void (*old_WaitForSecondPlayerDialog_ButtonDepress)(Sexy::ButtonListener *listener, int id);
+inline void (*old_WaitForSecondPlayerDialog_ButtonDepress)(Sexy::ButtonListener &listener, int id);
 
 inline void (*old_WaitForSecondPlayerDialog_Delete)(WaitForSecondPlayerDialog *dialog);
 

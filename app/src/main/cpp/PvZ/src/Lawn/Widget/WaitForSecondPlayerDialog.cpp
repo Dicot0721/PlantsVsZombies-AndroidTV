@@ -1222,8 +1222,8 @@ void WaitForSecondPlayerDialog::StopUdpBroadcastRoom() {
 }
 
 
-void WaitForSecondPlayerDialog::ButtonDepress(this ButtonListener *self, int theId) {
-    auto *aDialog = static_cast<WaitForSecondPlayerDialog *>(self);
+void WaitForSecondPlayerDialog::ButtonDepress_Thunk(this ButtonListener &self, int theId) {
+    auto *aDialog = static_cast<WaitForSecondPlayerDialog *>(&self);
     const UIMode aUIMode = aDialog->mUIMode;
     switch (theId) {
         case WaitForSecondPlayerDialog::WaitForSecondPlayerDialog_Enter:
