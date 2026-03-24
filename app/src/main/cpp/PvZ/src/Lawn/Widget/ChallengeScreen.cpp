@@ -37,8 +37,8 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
     // 去除按钮对触控的遮挡
     old_ChallengeScreen_ChallengeScreen(this, theApp, thePage);
 
-    mBackButton =
-        MakeNewButton(ChallengeScreen::ChallengeScreen_Back, this, this, "[CLOSE]", nullptr, *Sexy::IMAGE_SEEDCHOOSER_BUTTON, *Sexy::IMAGE_SEEDCHOOSER_BUTTON, *Sexy::IMAGE_SEEDCHOOSER_BUTTON);
+    mBackButton = MakeNewButton(
+        ChallengeScreen::ChallengeScreen_Back, this, this, "[CLOSE]", nullptr, *Sexy::IMAGE_SEEDCHOOSER_BUTTON_DISABLED, *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW, *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
     mBackButton->mTextOffsetX = -2;
     mBackButton->mTextOffsetY = -4;
     mBackButton->mTextDownOffsetX = 1;

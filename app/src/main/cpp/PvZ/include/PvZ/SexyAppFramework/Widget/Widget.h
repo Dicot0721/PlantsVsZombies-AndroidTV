@@ -20,7 +20,6 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_WIDGET_H
 #define PVZ_SEXYAPPFRAMEWORK_WIDGET_WIDGET_H
 
-// #include "PvZ/STL/pvzstl_vector.h"
 #include "PvZ/SexyAppFramework/Graphics/Color.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Misc/Common.h"
@@ -33,8 +32,6 @@ namespace Sexy {
 
 class WidgetManager;
 
-// typedef pvzstl::vector<Color> ColorVector;
-
 class Widget : public WidgetContainer {
 public:
     bool mVisible;               // 116
@@ -44,7 +41,6 @@ public:
     bool mIsDown;                // 120
     bool mIsOver;                // 121
     bool mHasTransparencies;     // 122
-                                 //    ColorVector mColors;         // 31 ~ 33
     Color *mColors[3];           // 31 ~ 33
     Insets mMouseInsets;         // 34 ~ 37
     bool mDoFinger;              // 152
