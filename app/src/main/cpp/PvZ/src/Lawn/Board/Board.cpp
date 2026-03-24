@@ -5313,7 +5313,7 @@ GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
 }
 
 GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {
-    GridItem *aGraveStone = DataArrayAlloc(reinterpret_cast<GridItem *>(&mGridItems));
+    GridItem *aGraveStone = mGridItems.DataArrayAlloc();
     aGraveStone->mGridItemType = GridItemType::GRIDITEM_GRAVESTONE;
     aGraveStone->mGridItemCounter = -Rand(50);
     aGraveStone->mRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, theGridY, 3);

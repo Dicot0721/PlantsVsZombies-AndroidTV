@@ -78,6 +78,8 @@ public:
         reinterpret_cast<void (*)(GridItem *)>(GridItem_AddGraveStoneParticlesAddr)(this);
     }
 
+    GridItem();
+    void _constructor();
     void GridItemDie();
     void DrawScaryPot(Sexy::Graphics *g);
     void Update();
@@ -88,13 +90,11 @@ public:
     void DrawGraveStone(Sexy::Graphics *g);
 };
 
-inline GridItem *DataArrayAlloc(GridItem *theGridItem) {
-    return reinterpret_cast<GridItem *(*)(GridItem *)>(GridItem_DataArrayAllocAddr)(theGridItem);
-}
-
 /***************************************************************************************************************/
 inline bool transparentVase;
 
+
+inline void (*old_GridItem_GridItem)(GridItem *);
 
 inline void (*old_GridItem_GridItemDie)(GridItem *);
 

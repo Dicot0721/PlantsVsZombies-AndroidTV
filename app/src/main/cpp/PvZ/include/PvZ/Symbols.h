@@ -1075,6 +1075,8 @@ inline void *ToolTipWidget_SetTitleAddr;
 inline void *ToolTipWidget_SetLabelAddr;
 inline void *ToolTipWidget_DrawAddr;
 
+
+inline void *GridItem_GridItemAddr;
 inline void *GridItem_UpdateAddr;
 inline void *GridItem_UpdateBrainAddr;
 inline void *GridItem_UpdateScaryPotAddr;
@@ -1086,7 +1088,6 @@ inline void *GridItem_DrawGraveStoneAddr;
 inline void *GridItem_GridItemDieAddr;
 inline void *GridItem_UpdateBurialMoundAddr;
 inline void *GridItem_AddGraveStoneParticlesAddr;
-inline void *GridItem_DataArrayAllocAddr;
 
 
 inline void *TodDrawImageCelCenterScaledFAddr;

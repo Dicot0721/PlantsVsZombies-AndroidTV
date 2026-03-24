@@ -842,6 +842,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN11TitleScreen6UpdateEv", TitleScreen_UpdateAddr);
     libGameMain.GetSymbol("_ZN11TitleScreen11SwitchStateE10TitleStatei", TitleScreen_SwitchStateAddr);
 
+
+    libGameMain.GetSymbol("_ZN8GridItemC2Ev", GridItem_GridItemAddr);
     libGameMain.GetSymbol("_ZN8GridItem6UpdateEv", GridItem_UpdateAddr);
     libGameMain.GetSymbol("_ZN8GridItem11UpdateBrainEv", GridItem_UpdateBrainAddr);
     libGameMain.GetSymbol("_ZN8GridItem14UpdateScaryPotEv", GridItem_UpdateScaryPotAddr);
@@ -853,7 +855,6 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN8GridItem11GridItemDieEv", GridItem_GridItemDieAddr);
     libGameMain.GetSymbol("_ZN8GridItem17UpdateBurialMoundEv", GridItem_UpdateBurialMoundAddr);
     libGameMain.GetSymbol("_ZN8GridItem22AddGraveStoneParticlesEv", GridItem_AddGraveStoneParticlesAddr);
-    libGameMain.GetSymbol("_ZN9DataArrayI8GridItemE14DataArrayAllocEv", GridItem_DataArrayAllocAddr);
 
 
     libGameMain.GetSymbol("_ZN4Sexy13SexyCommonApp11getGameInfoEv", Sexy_SexyCommonApp_getGameInfoAddr);
