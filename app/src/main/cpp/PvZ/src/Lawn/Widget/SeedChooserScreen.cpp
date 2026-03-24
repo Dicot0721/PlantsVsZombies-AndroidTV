@@ -225,7 +225,7 @@ bool SeedChooserScreen::SeedNotAllowedToPick(SeedType theSeedType) {
                 return false;
             }
         } else {
-            if (theSeedType == SeedType::SEED_ZOMBIE_DUCKY_TUBE || theSeedType == SeedType::SEED_ZOMBIE_SNORKEL || theSeedType == SeedType::SEED_ZOMBIE_DOLPHIN_RIDER) {
+            if (theSeedType == SeedType::SEED_ZOMBIE_SNORKEL || theSeedType == SeedType::SEED_ZOMBIE_DOLPHIN_RIDER) {
                 return true;
             }
         }

@@ -426,10 +426,17 @@ PlantingReason Board::CanPlantAt(int theGridX, int theGridY, SeedType theSeedTyp
         return PlantingReason::PLANTING_OK;
     }
 
-    if (mApp->IsVSMode() && (theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || theSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)) {
-        if (isKeyboardTwoPlayerMode)
-            return PlantingReason::PLANTING_OK;
-        return PlantingReason::PLANTING_NOT_HERE;
+    if (mApp->IsVSMode()) {
+        ZombieType aZombieType = Challenge::IZombieSeedTypeToZombieType(theSeedType);
+        if ((Challenge::IsMPZombieAddInRow(aZombieType) || aZombieType == ZombieType::ZOMBIE_POGO) && mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
+            return PlantingReason::PLANTING_ONLY_ON_GROUND; // 禁止水路放置出生点生成的僵尸和蹦蹦僵尸
+        }
+
+        if ((theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || theSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)) {
+            if (isKeyboardTwoPlayerMode)
+                return PlantingReason::PLANTING_OK;
+            return PlantingReason::PLANTING_NOT_HERE;
+        }
     }
 
     return old_Board_CanPlantAt(this, theGridX, theGridY, theSeedType);

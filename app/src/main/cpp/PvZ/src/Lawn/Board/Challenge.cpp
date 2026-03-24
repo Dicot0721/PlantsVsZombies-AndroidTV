@@ -542,8 +542,8 @@ ZombieType Challenge::IZombieSeedTypeToZombieType(SeedType theSeedType) {
             return ZOMBIE_GARGANTUAR;
         case SEED_ZOMBIE_YETI:
             return ZOMBIE_YETI;
-        case SEED_ZOMBIE_DUCKY_TUBE:
-            return ZOMBIE_DUCKY_TUBE;
+        case SEED_ZOMBIE_BOBSLED:
+            return ZOMBIE_BOBSLED;
         case SEED_ZOMBIE_SNORKEL:
             return ZOMBIE_SNORKEL;
         case SEED_ZOMBIE_DOLPHIN_RIDER:
@@ -564,8 +564,6 @@ ZombieType Challenge::IZombieSeedTypeToZombieType(SeedType theSeedType) {
             return ZOMBIE_SQUASH_HEAD; // 窝瓜僵尸
         case SEED_ZOMBIE_TALLNUT_HEAD:
             return ZOMBIE_TALLNUT_HEAD; // 高坚果僵尸
-        case SEED_ZOMBIE_BOBSLED:
-            return ZOMBIE_BOBSLED; // 雪橇车小队
         default:
             return ZOMBIE_INVALID;
     }
@@ -768,4 +766,11 @@ void Challenge::MouseDownWhackAZombie(int theX, int theY, int thePlayerIndex) {
 
 bool Challenge::IsMPResourceProducer(SeedType theSeedType) {
     return theSeedType == SeedType::SEED_SUNFLOWER || theSeedType == SeedType::SEED_SUNSHROOM || theSeedType == SeedType::SEED_TWINSUNFLOWER || theSeedType == SeedType::SEED_ZOMBIE_GRAVESTONE;
+}
+
+bool Challenge::IsMPZombieAddInRow(ZombieType theZombieType) {
+    return theZombieType == ZombieType::ZOMBIE_DANCER || theZombieType == ZombieType::ZOMBIE_ZAMBONI || theZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX
+        || theZombieType == ZombieType::ZOMBIE_DIGGER || theZombieType == ZombieType::ZOMBIE_CATAPULT || theZombieType == ZombieType::ZOMBIE_GARGANTUAR
+        || theZombieType == ZombieType::ZOMBIE_DUCKY_TUBE || theZombieType == ZombieType::ZOMBIE_SNORKEL || theZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER
+        || theZombieType == ZombieType::ZOMBIE_BALLOON || theZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || theZombieType == ZombieType::ZOMBIE_BOBSLED;
 }

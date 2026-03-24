@@ -720,10 +720,7 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                 } else if (aZombieType == ZombieType::ZOMBIE_FLAG) {
                     mBoard->DisplayAdviceAgain("[ADVICE_HUGE_WAVE]", MessageStyle::MESSAGE_STYLE_HUGE_WAVE, AdviceType::ADVICE_HUGE_WAVE);
                     mBoard->SpawnZombieWave();
-                } else if (aZombieType == ZombieType::ZOMBIE_DANCER || aZombieType == ZombieType::ZOMBIE_ZAMBONI || aZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX
-                           || aZombieType == ZombieType::ZOMBIE_DIGGER || aZombieType == ZombieType::ZOMBIE_CATAPULT || aZombieType == ZombieType::ZOMBIE_GARGANTUAR
-                           || aZombieType == ZombieType::ZOMBIE_DUCKY_TUBE || aZombieType == ZombieType::ZOMBIE_SNORKEL || aZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER
-                           || aZombieType == ZombieType::ZOMBIE_BALLOON || aZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || aZombieType == ZombieType::ZOMBIE_BOBSLED) {
+                } else if (Challenge::IsMPZombieAddInRow(aZombieType)) {
                     mBoard->AddZombieInRow(aZombieType, aGridY, -5, true);
                 } else {
                     if (mBoard->mPlantRow[aGridY] == PlantRowType::PLANTROW_POOL) { // 如果是水路则放置在出生点

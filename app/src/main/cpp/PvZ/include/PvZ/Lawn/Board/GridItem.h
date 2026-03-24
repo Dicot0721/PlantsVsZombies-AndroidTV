@@ -79,7 +79,6 @@ public:
     }
 
     GridItem();
-    void _constructor();
     void GridItemDie();
     void DrawScaryPot(Sexy::Graphics *g);
     void Update();
@@ -88,6 +87,11 @@ public:
     void DrawSquirrel(Sexy::Graphics *g);
     void DrawCrater(Sexy::Graphics *g);
     void DrawGraveStone(Sexy::Graphics *g);
+
+protected:
+    friend void InitHookFunction();
+
+    void _constructor();
 };
 
 /***************************************************************************************************************/

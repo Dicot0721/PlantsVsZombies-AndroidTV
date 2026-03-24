@@ -426,8 +426,6 @@ inline void (*old_Zombie_Draw)(Zombie *zombie, Sexy::Graphics *graphics);
 
 inline void (*old_Zombie_DrawBossPart)(Zombie *a1, Sexy::Graphics *graphics, int theBossPart);
 
-inline bool (*old_ZombieTypeCanGoInPool)(ZombieType zombieType);
-
 inline void (*old_Zombie_RiseFromGrave)(Zombie *zombie, int gridX, int gridY);
 
 inline void (*old_Zombie_EatPlant)(Zombie *a, Plant *a2);

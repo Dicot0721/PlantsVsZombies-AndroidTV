@@ -374,7 +374,7 @@ void InitHookFunction() {
     homura::HookFunction(Zombie_CheckForBoardEdgeAddr, &Zombie::CheckForBoardEdge, nullptr);
     homura::HookFunction(Zombie_DrawAddr, &Zombie::Draw, &old_Zombie_Draw);
     homura::HookFunction(Zombie_DrawBossPartAddr, &Zombie::DrawBossPart, &old_Zombie_DrawBossPart);
-    homura::HookFunction(ZombieTypeCanGoInPoolAddr, &Zombie::ZombieTypeCanGoInPool, &old_ZombieTypeCanGoInPool);
+    homura::HookFunction(ZombieTypeCanGoInPoolAddr, &Zombie::ZombieTypeCanGoInPool, nullptr);
     homura::HookFunction(Zombie_BossSpawnAttackAddr, &Zombie::BossSpawnAttack, nullptr);
     homura::HookFunction(Zombie_DrawBungeeCordAddr, &Zombie::DrawBungeeCord, nullptr);
     homura::HookFunction(Zombie_IsTangleKelpTargetAddr, &Zombie::IsTangleKelpTarget, nullptr);

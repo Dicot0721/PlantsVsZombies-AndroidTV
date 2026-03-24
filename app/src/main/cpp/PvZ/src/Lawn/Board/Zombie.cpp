@@ -1216,13 +1216,17 @@ bool Zombie::IsZombotany(ZombieType theZombieType) {
 }
 
 bool Zombie::ZombieTypeCanGoInPool(ZombieType theZombieType) {
-    // 修复泳池对战的僵尸们走水路时不攻击植物
+    // 修复泳池对战的僵尸走水路时不索敌植物
     LawnApp *lawnApp = *gLawnApp_Addr;
-    if (lawnApp->mGameMode == GameMode::GAMEMODE_MP_VS && (VSBackGround == 3 || VSBackGround == 4 || VSBackGround == 9)) {
-        return true;
+    if (lawnApp->IsVSMode()) {
+        if (gVSBackground == BackgroundType::BACKGROUND_3_POOL || gVSBackground == BackgroundType::BACKGROUND_4_FOG)
+            return true;
     }
 
-    return old_ZombieTypeCanGoInPool(theZombieType);
+    return theZombieType == ZombieType::ZOMBIE_NORMAL || theZombieType == ZombieType::ZOMBIE_TRAFFIC_CONE || theZombieType == ZombieType::ZOMBIE_PAIL || theZombieType == ZombieType::ZOMBIE_FLAG
+        || theZombieType == ZombieType::ZOMBIE_SNORKEL || theZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER || theZombieType == ZombieType::ZOMBIE_PEA_HEAD
+        || theZombieType == ZombieType::ZOMBIE_WALLNUT_HEAD || theZombieType == ZombieType::ZOMBIE_JALAPENO_HEAD || theZombieType == ZombieType::ZOMBIE_GATLING_HEAD
+        || theZombieType == ZombieType::ZOMBIE_TALLNUT_HEAD;
 }
 
 Rect Zombie::GetZombieRect() {
