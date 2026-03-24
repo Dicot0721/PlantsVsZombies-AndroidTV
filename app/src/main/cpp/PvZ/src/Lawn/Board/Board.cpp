@@ -839,12 +839,6 @@ void Board::PickBackground() {
             mPlantRow[2] = PlantRowType::PLANTROW_POOL;
             mPlantRow[3] = PlantRowType::PLANTROW_POOL;
             mPlantRow[5] = PlantRowType::PLANTROW_NORMAL;
-        } else if (StageHasRoof()) {
-            //            mPlantRow[0] = PlantRowType::PLANTROW_HIGH_GROUND;
-            //            mPlantRow[1] = PlantRowType::PLANTROW_HIGH_GROUND;
-            //            mPlantRow[2] = PlantRowType::PLANTROW_HIGH_GROUND;
-            //            mPlantRow[3] = PlantRowType::PLANTROW_HIGH_GROUND;
-            //            mPlantRow[4] = PlantRowType::PLANTROW_HIGH_GROUND;
         }
         InitCoverLayer();
         SetGrids();

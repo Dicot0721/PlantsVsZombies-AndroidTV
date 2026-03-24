@@ -26,7 +26,13 @@
 #include "PvZ/SexyAppFramework/Widget/Dialog.h"
 #include "PvZ/Symbols.h"
 
-constexpr int NUM_CHALLENGE_MODES((int)GameMode::NUM_GAME_MODES - 1);
+constexpr int NUM_CHALLENGE_MODES(int(GameMode::NUM_GAME_MODES - 1));
+constexpr int GAMEMODE_MP_VS_DAY = 68;
+constexpr int GAMEMODE_MP_VS_NIGHT = 69;
+constexpr int GAMEMODE_MP_VS_POOL_DAY = 70;
+constexpr int GAMEMODE_MP_VS_POOL_NIGHT = 71;
+constexpr int GAMEMODE_MP_VS_ROOF = 72;
+constexpr int GAMEMODE_MP_VS_SHUFFLE_MODE = 73;
 
 struct Curve1DUtil {
     int unk[16];
@@ -36,31 +42,33 @@ class NewLawnButton;
 class ChallengeScreen : public Sexy::Widget, public Sexy::ButtonListener {
 private:
     enum {
-        ChallengeScreen_Back = 1000,
+        ChallengeScreen_Back = 100,
+        ChallengeScreen_Mode = 200,
+        ChallengeScreen_Page = 300,
     };
 
 public:
-    Sexy::ButtonWidget *mButtons[94]; // 65 ~ 158
-    LawnApp *mApp;                    // 159
-    ToolTipWidget *mToolTip;          // 160
-    ChallengePage mPageIndex;         // 161
-    bool mCheatEnableChallenges;      // 648
-    UnlockingState mUnlockState;      // 163
-    int mUnlockStateCounter;          // 164
-    int mUnlockChallengeIndex;        // 165
-    float mLockShakeX;                // 166
-    float mLockShakeY;                // 167
-    Curve1DUtil mUtil;                // 168 ~ 183
-    int *mHelpBarWidget;              // 184
-    int mScreenTopChallengeIndex;     // 185
-    int mSelectedChallengeIndex;      // 186
-    float mUnkFloat;                  // 187
-    GameMode mUnk1[94];               // 188 ~ 281
-    int mUnk2[94];                    // 282 ~ 375
-    int mTotalGameInPage;             // 376
-    int mSelectedChallenge;           // 377 其值固定比mSelectedMode小2
-    GameMode mSelectedMode;           // 378
-    int unk4;                         // 379
+    Sexy::ButtonWidget *mChallengeButtons[NUM_CHALLENGE_MODES]; // 65 ~ 158
+    LawnApp *mApp;                                              // 159
+    ToolTipWidget *mToolTip;                                    // 160
+    ChallengePage mPageIndex;                                   // 161
+    bool mCheatEnableChallenges;                                // 648
+    UnlockingState mUnlockState;                                // 163
+    int mUnlockStateCounter;                                    // 164
+    int mUnlockChallengeIndex;                                  // 165
+    float mLockShakeX;                                          // 166
+    float mLockShakeY;                                          // 167
+    Curve1DUtil mUtil;                                          // 168 ~ 183
+    int *mHelpBarWidget;                                        // 184
+    int mScreenTopChallengeIndex;                               // 185
+    int mSelectedChallengeIndex;                                // 186
+    float mUnkFloat;                                            // 187
+    GameMode mUnk1[94];                                         // 188 ~ 281
+    int mUnk2[94];                                              // 282 ~ 375
+    int mTotalGameInPage;                                       // 376
+    int mSelectedChallenge;                                     // 377 其值固定比mSelectedMode小2
+    GameMode mSelectedMode;                                     // 378
+    int unk4;                                                   // 379
     // 大小380个整数, 以下是新增成员!
     NewLawnButton *mBackButton;
 
