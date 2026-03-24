@@ -1241,27 +1241,71 @@ Rect Zombie::GetZombieRect() {
     return aZombieRect;
 }
 
-void Zombie::RiseFromGrave(int theGridX, int theGridY) {
-    // 修复对战切换场地为泳池后的闪退BUG。但是仅仅是修复闪退，泳池对战还谈不上能玩的程度
-    if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS) {
-        old_Zombie_RiseFromGrave(this, theGridX, theGridY);
-        return;
+void Zombie::RiseFromGrave(int theCol, int theRow) {
+    mPosX = mBoard->GridToPixelX(theCol, mRow) - 25;
+    mPosY = GetPosYBasedOnRow(theRow);
+    SetRow(theRow);
+    mX = int(mPosX);
+    mY = int(mPosY);
+    mAltitude = CLIP_HEIGHT_OFF;
+    mZombiePhase = ZombiePhase::PHASE_RISING_FROM_GRAVE;
+    mPhaseCounter = 150;
+
+    if (mBoard->StageHasPool() && !mApp->IsVSMode()) { // 修复对战泳池战场闪退(Reanimation::GetTransformAtTime)
+        mAltitude = -150.0f;
+        mInPool = true;
+        mPhaseCounter = 50;
+        mZombieHeight = ZombieHeight::HEIGHT_ZOMBIE_NORMAL;
+
+        StartWalkAnim(0);
+        ReanimIgnoreClipRect("Zombie_duckytube", false);
+        ReanimIgnoreClipRect("Zombie_whitewater", false);
+        ReanimIgnoreClipRect("Zombie_outerarm_hand", false);
+        ReanimIgnoreClipRect("Zombie_innerarm3", false);
+
+        Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+        TodParticleSystem *aParticle = mApp->AddTodParticle(0.0f, 0.0f, 0, ParticleEffect::PARTICLE_ZOMBIE_SEAWEED);
+        OverrideParticleScale(aParticle);
+
+        if (mZombieType == ZombieType::ZOMBIE_TRAFFIC_CONE && aParticle) {
+            aBodyReanim->AttachParticleToTrack("anim_cone", aParticle, 37.0f, 20.0f);
+        } else if (mZombieType == ZombieType::ZOMBIE_PAIL && aParticle) {
+            aBodyReanim->AttachParticleToTrack("anim_bucket", aParticle, 37.0f, 20.0f);
+        } else if (aParticle) {
+            aBodyReanim->AttachParticleToTrack("anim_head1", aParticle, 30.0f, 20.0f);
+        }
+
+        TodParticleSystem *aParticle2 = mApp->AddTodParticle(0.0f, 0.0f, 0, ParticleEffect::PARTICLE_ZOMBIE_SEAWEED);
+        if (aParticle2) {
+            OverrideParticleScale(aParticle2);
+            aBodyReanim->AttachParticleToTrack("Zombie_outerarm_upper", aParticle2, 5.0f, 5.0f);
+        }
+
+        TodParticleSystem *aParticle3 = mApp->AddTodParticle(0.0f, 0.0f, 0, ParticleEffect::PARTICLE_ZOMBIE_SEAWEED);
+        if (aParticle3) {
+            OverrideParticleScale(aParticle3);
+            aBodyReanim->AttachParticleToTrack("Zombie_duckytube", aParticle3, 77.0f, 20.0f);
+        }
+
+        PoolSplash(false);
+    } else {
+        int aParticleX = mPosX + 60;
+        int aParticleY = mPosY + 110;
+        if (IsOnHighGround()) {
+            aParticleY -= HIGH_GROUND_HEIGHT;
+        }
+
+        int aRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PARTICLE, theRow, 0);
+        if (mApp->IsWhackAZombieLevel()) {
+            mApp->PlayFoley(FoleyType::FOLEY_DIRT_RISE);
+            mApp->AddTodParticle(aParticleX, aParticleY, aRenderOrder, ParticleEffect::PARTICLE_WHACK_A_ZOMBIE_RISE);
+        } else {
+            mApp->PlayFoley(FoleyType::FOLEY_GRAVESTONE_RUMBLE);
+            mApp->AddTodParticle(aParticleX, aParticleY, aRenderOrder, ParticleEffect::PARTICLE_ZOMBIE_RISE);
+        }
     }
 
-    if (mBoard->mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
-        // if (old_ZombieTypeCanGoInPool(mZombieType)) {
-        DieNoLoot();
-        mBoard->AddZombieInRow(mZombieType, theGridY, mBoard->mCurrentWave, true);
-        return;
-        // }
-    }
-
-    BackgroundType tmp = mBoard->mBackground;
-    mBoard->mBackground = BackgroundType::BACKGROUND_1_DAY;
-    old_Zombie_RiseFromGrave(this, theGridX, theGridY);
-    mBoard->mBackground = tmp;
-
-    U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE}, uint8_t(theGridX), uint8_t(theGridY), uint16_t(mBoard->mZombies.DataArrayGetID(this))};
+    U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE}, uint8_t(theCol), uint8_t(theRow), uint16_t(mBoard->mZombies.DataArrayGetID(this))};
     SendEvent(tcpClientSocket, event);
 }
 

@@ -459,6 +459,9 @@ inline void *Zombie_CanTargetPlantAddr;
 inline void *Zombie_HasYuckyFaceImageAddr;
 inline void *Zombie_ShowYuckyFaceAddr;
 inline void *Zombie_UpdateYuckyFaceAddr;
+inline void *Zombie_OverrideParticleScaleAddr;
+inline void *Zombie_PoolSplashAddr;
+inline void *Zombie_BungeeDropZombieAddr;
 
 
 inline void *SeedChooserScreen_UpdateAddr;
@@ -819,6 +822,9 @@ inline void *Reanimation_GetAttachmentOverlayMatrixAddr;
 inline void *Reanimation_AssignRenderGroupToPrefixAddr;
 inline void *Reanimation_PropogateColorToAttachmentsAddr;
 inline void *Reanimation_StartBlendAddr;
+inline void *Reanimation_AttachParticleToTrackAddr;
+inline void *Reanimation_SetTruncateDisappearingFramesAddr;
+inline void *Reanimation_IgnoreClipRectForPrefixAddr;
 
 
 inline void *Sexy_SexyCommonApp_getGameInfoAddr;
@@ -1076,8 +1082,11 @@ inline void *GridItem_DrawScaryPotAddr;
 inline void *GridItem_DrawCraterAddr;
 inline void *GridItem_DrawStinkyAddr;
 inline void *GridItem_DrawSquirrelAddr;
+inline void *GridItem_DrawGraveStoneAddr;
 inline void *GridItem_GridItemDieAddr;
 inline void *GridItem_UpdateBurialMoundAddr;
+inline void *GridItem_AddGraveStoneParticlesAddr;
+inline void *GridItem_DataArrayAllocAddr;
 
 
 inline void *TodDrawImageCelCenterScaledFAddr;
@@ -1276,6 +1285,10 @@ inline Image **IMAGE_TROPHY;
 inline Image **IMAGE_DLG_SELECTORFRAME;
 inline Image **IMAGE_SEEDCHOOSER_BUTTON_DISABLED = Sexy_IMAGE_SEEDCHOOSER_BUTTON_DISABLED_Addr;
 inline Image **IMAGE_SEEDCHOOSER_BUTTON_GLOW = Sexy_IMAGE_SEEDCHOOSER_BUTTON_Addr;
+inline Image **IMAGE_TOMBSTONES;
+inline Image **IMAGE_TOMBSTONE_MOUNDS;
+inline Image **IMAGE_VS_STONE_DIRT;
+
 
 inline Font **FONT_DWARVENTODCRAFT24;
 

@@ -193,12 +193,6 @@ public:
     float unkFloatWithInitialValue_1;           // 53
     // 大小54个整数
 
-    Reanimation() {
-        _constructor();
-    }
-    ~Reanimation() {
-        _destructor();
-    }
     void SetPosition(float theX, float theY) {
         reinterpret_cast<void (*)(Reanimation *, float, float)>(Reanimation_SetPositionAddr)(this, theX, theY);
     }
@@ -271,7 +265,23 @@ public:
     void StartBlend(int theBlendTime) {
         reinterpret_cast<void (*)(Reanimation *, int)>(Reanimation_StartBlendAddr)(this, theBlendTime);
     }
+    AttachEffect *AttachParticleToTrack(const char *theTrackName, TodParticleSystem *theParticleSystem, float thePosX, float thePosY) {
+        return reinterpret_cast<AttachEffect *(*)(Reanimation *, const char *, TodParticleSystem *, float, float)>(Reanimation_AttachParticleToTrackAddr)(
+            this, theTrackName, theParticleSystem, thePosX, thePosY);
+    }
+    void SetTruncateDisappearingFrames(const char *theTrackName, bool theTruncateDisappearingFrames) {
+        reinterpret_cast<void (*)(Reanimation *, const char *, bool)>(Reanimation_SetTruncateDisappearingFramesAddr)(this, theTrackName, theTruncateDisappearingFrames);
+    }
+    void IgnoreClipRectForPrefix(const char *theTrackName, bool theIgnoreClipRect) {
+        reinterpret_cast<void (*)(Reanimation *, const char *, bool)>(Reanimation_IgnoreClipRectForPrefixAddr)(this, theTrackName, theIgnoreClipRect);
+    }
 
+    Reanimation() {
+        _constructor();
+    }
+    ~Reanimation() {
+        _destructor();
+    }
     void Draw(Sexy::Graphics *g);
     bool DrawTrack(Sexy::Graphics *g, int theTrackIndex, int theRenderGroup, TodTriangleGroup *theTriangleGroup);
     bool ShouldTriggerTimedEvent(float theEventTime);

@@ -457,6 +457,9 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN6Zombie17HasYuckyFaceImageEv", Zombie_HasYuckyFaceImageAddr);
     libGameMain.GetSymbol("_ZN6Zombie13ShowYuckyFaceEb", Zombie_ShowYuckyFaceAddr);
     libGameMain.GetSymbol("_ZN6Zombie15UpdateYuckyFaceEv", Zombie_UpdateYuckyFaceAddr);
+    libGameMain.GetSymbol("_ZN6Zombie21OverrideParticleScaleEP17TodParticleSystem", Zombie_OverrideParticleScaleAddr);
+    libGameMain.GetSymbol("_ZN6Zombie10PoolSplashEb", Zombie_PoolSplashAddr);
+    libGameMain.GetSymbol("_ZN6Zombie16BungeeDropZombieEPS_ii", Zombie_BungeeDropZombieAddr);
 
 
     libGameMain.GetSymbol("_ZN17SeedChooserScreen6UpdateEv", SeedChooserScreen_UpdateAddr);
@@ -818,6 +821,9 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN11Reanimation25AssignRenderGroupToPrefixEPKci", Reanimation_AssignRenderGroupToPrefixAddr);
     libGameMain.GetSymbol("_ZN11Reanimation27PropogateColorToAttachmentsEv", Reanimation_PropogateColorToAttachmentsAddr);
     libGameMain.GetSymbol("_ZN11Reanimation10StartBlendEi", Reanimation_StartBlendAddr);
+    libGameMain.GetSymbol("_ZN11Reanimation21AttachParticleToTrackEPKcP17TodParticleSystemff", Reanimation_AttachParticleToTrackAddr);
+    libGameMain.GetSymbol("_ZN11Reanimation29SetTruncateDisappearingFramesEPKcb", Reanimation_SetTruncateDisappearingFramesAddr);
+    libGameMain.GetSymbol("_ZN11Reanimation23IgnoreClipRectForPrefixEPKcb", Reanimation_IgnoreClipRectForPrefixAddr);
 
 
     libGameMain.GetSymbol("_ZN9ZenGarden9GetStinkyEv", ZenGarden_GetStinkyAddr);
@@ -843,8 +849,11 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN8GridItem10DrawStinkyEPN4Sexy8GraphicsE", GridItem_DrawStinkyAddr);
     libGameMain.GetSymbol("_ZN8GridItem12DrawSquirrelEPN4Sexy8GraphicsE", GridItem_DrawSquirrelAddr);
     libGameMain.GetSymbol("_ZN8GridItem10DrawCraterEPN4Sexy8GraphicsE", GridItem_DrawCraterAddr);
+    libGameMain.GetSymbol("_ZN8GridItem14DrawGraveStoneEPN4Sexy8GraphicsE", GridItem_DrawGraveStoneAddr);
     libGameMain.GetSymbol("_ZN8GridItem11GridItemDieEv", GridItem_GridItemDieAddr);
     libGameMain.GetSymbol("_ZN8GridItem17UpdateBurialMoundEv", GridItem_UpdateBurialMoundAddr);
+    libGameMain.GetSymbol("_ZN8GridItem22AddGraveStoneParticlesEv", GridItem_AddGraveStoneParticlesAddr);
+    libGameMain.GetSymbol("_ZN9DataArrayI8GridItemE14DataArrayAllocEv", GridItem_DataArrayAllocAddr);
 
 
     libGameMain.GetSymbol("_ZN4Sexy13SexyCommonApp11getGameInfoEv", Sexy_SexyCommonApp_getGameInfoAddr);
@@ -1257,8 +1266,11 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy26IMAGE_CHALLENGE_BACKGROUNDE", Sexy::IMAGE_CHALLENGE_BACKGROUND);
     libGameMain.GetSymbol("_ZN4Sexy12IMAGE_TROPHYE", Sexy::IMAGE_TROPHY);
     libGameMain.GetSymbol("_ZN4Sexy23IMAGE_DLG_SELECTORFRAMEE", Sexy::IMAGE_DLG_SELECTORFRAME);
-    libGameMain.GetSymbol("_ZN4Sexy24IMAGE_SEEDCHOOSER_BUTTONE", Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
     libGameMain.GetSymbol("_ZN4Sexy33IMAGE_SEEDCHOOSER_BUTTON_DISABLEDE", Sexy::IMAGE_SEEDCHOOSER_BUTTON_DISABLED);
+    libGameMain.GetSymbol("_ZN4Sexy24IMAGE_SEEDCHOOSER_BUTTONE", Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
+    libGameMain.GetSymbol("_ZN4Sexy16IMAGE_TOMBSTONESE", Sexy::IMAGE_TOMBSTONES);
+    libGameMain.GetSymbol("_ZN4Sexy22IMAGE_TOMBSTONE_MOUNDSE", Sexy::IMAGE_TOMBSTONE_MOUNDS);
+    libGameMain.GetSymbol("_ZN4Sexy19IMAGE_VS_STONE_DIRTE", Sexy::IMAGE_VS_STONE_DIRT);
 
     libGameMain.GetSymbol("_ZN4Sexy22FONT_DWARVENTODCRAFT24E", Sexy::FONT_DWARVENTODCRAFT24);
 

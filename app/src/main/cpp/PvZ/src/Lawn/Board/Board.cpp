@@ -5313,13 +5313,42 @@ GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
 }
 
 GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {
-    GridItem *result = old_Board_AddAGraveStone(this, theGridX, theGridY);
+    GridItem *aGraveStone = DataArrayAlloc(reinterpret_cast<GridItem *>(&mGridItems));
+    aGraveStone->mGridItemType = GridItemType::GRIDITEM_GRAVESTONE;
+    aGraveStone->mGridItemCounter = -Rand(50);
+    aGraveStone->mRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, theGridY, 3);
+    aGraveStone->mGridX = theGridX;
+    aGraveStone->mGridY = theGridY;
+
+    if (mApp->IsVSMode()) {
+        aGraveStone->unkBool = true;
+        int aX = GridToPixelX(theGridX, theGridY);
+        int aY = GridToPixelY(theGridX, theGridY);
+        int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, theGridY, 0);
+        Reanimation *aReanim = mApp->AddReanimation((float)aX, (float)aY, aRenderOrder, ReanimationType::REANIM_MP_GRAVESTONE);
+        aReanim->mIsAttachment = true;
+        aReanim->SetTruncateDisappearingFrames(nullptr, false);
+        aReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 12.0);
+        aReanim->IgnoreClipRectForPrefix("chunk", true);
+        aReanim->IgnoreClipRectForPrefix("Layer", true);
+        aReanim->IgnoreClipRectForPrefix("bit", true);
+        aReanim->AssignRenderGroupToPrefix("chunk", true);
+        aReanim->AssignRenderGroupToPrefix("Layer", true);
+        aReanim->AssignRenderGroupToPrefix("bit", true);
+        aReanim->AssignRenderGroupToTrack("Stone dirt", -1);
+        aGraveStone->mGridItemReanimID = mApp->ReanimationGetID(aReanim);
+        if (!StageHasRoof()) {
+            aGraveStone->AddGraveStoneParticles();
+        }
+    }
+
     if (tcpClientSocket >= 0 && mApp->mGameScene == SCENE_PLAYING) {
         U8U8U16U16_Event event = {
-            {EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE}, uint8_t(theGridX), uint8_t(theGridY), uint16_t(mGridItems.DataArrayGetID(result)), uint16_t(result->mLaunchCounter)};
+            {EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE}, uint8_t(theGridX), uint8_t(theGridY), uint16_t(mGridItems.DataArrayGetID(aGraveStone)), uint16_t(aGraveStone->mLaunchCounter)};
         SendEvent(tcpClientSocket, event);
     }
-    return result;
+
+    return aGraveStone;
 }
 
 bool Board::TakeSunMoney(int theAmount, int thePlayer) {

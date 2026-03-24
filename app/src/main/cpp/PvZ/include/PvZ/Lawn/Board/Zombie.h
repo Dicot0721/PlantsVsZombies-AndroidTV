@@ -270,8 +270,17 @@ public:
     bool HasYuckyFaceImage() {
         return reinterpret_cast<bool (*)(Zombie *)>(Zombie_HasYuckyFaceImageAddr)(this);
     }
-    void ShowYuckyFace(bool show) {
-        reinterpret_cast<void (*)(Zombie *, bool)>(Zombie_ShowYuckyFaceAddr)(this, show);
+    void ShowYuckyFace(bool theShow) {
+        reinterpret_cast<void (*)(Zombie *, bool)>(Zombie_ShowYuckyFaceAddr)(this, theShow);
+    }
+    void OverrideParticleScale(TodParticleSystem *theParticle) {
+        reinterpret_cast<void (*)(Zombie *, TodParticleSystem *)>(Zombie_OverrideParticleScaleAddr)(this, theParticle);
+    }
+    void PoolSplash(bool theInToPoolSound) {
+        reinterpret_cast<void (*)(Zombie *, bool)>(Zombie_PoolSplashAddr)(this, theInToPoolSound);
+    }
+    void BungeeDropZombie(Zombie *theDroppedZombie, int theGridX, int theGridY) {
+        reinterpret_cast<void (*)(Zombie *, Zombie *, int, int)>(Zombie_BungeeDropZombieAddr)(this, theDroppedZombie, theGridX, theGridY);
     }
 
     Zombie() {
@@ -303,7 +312,7 @@ public:
     void BossDestroyIceballInRow(int theRow);
     void BossDestroyFireball();
     int GetDancerFrame();
-    void RiseFromGrave(int theGridX, int theGridY);
+    void RiseFromGrave(int theCol, int theRow);
     void EatPlant(Plant *thePlant);
     void DetachShield();
     void CheckForBoardEdge();

@@ -678,18 +678,6 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
             int aGridX = mBoard->PixelToGridXKeepOnBoard((int)mCursorPositionX, (int)mCursorPositionY);
             int aGridY = mBoard->PixelToGridYKeepOnBoard((int)mCursorPositionX, (int)mCursorPositionY);
 
-            if (aPacketType == SeedType::SEED_ZOMBIE_GRAVESTONE || aPacketType == SeedType::SEED_ZOMBIE_BUNGEE) {
-                old_GamepadControls_OnButtonDown(this, theButton, thePlayerIndex, unk);
-                return;
-                //                if (!mBoard->CanPlantAt(aGridX, aGridY, aPacketType) && mBoard->CanAddGraveStoneAt(aGridX, aGridY) && mBoard->TakeDeathMoney(aCost)) {
-                //                    GridItem *aGraveStone = mBoard->AddAGraveStone(aGridX, aGridY);
-                //                    aGraveStone->unkBool1 = false;
-                //                    aGraveStone->mVSGraveStoneHealth = 350;
-                //                    aSeedPacket->Deactivate();
-                //                    aSeedPacket->WasPlanted(mPlayerIndex1);
-                //                }
-            }
-
             if (!mBoard->CanTakeDeathMoney(aCost) || !aSeedPacket->CanPickUp() || mBoard->CanPlantAt(aGridX, aGridY, aPacketType) || mBoard->HasLevelAwardDropped())
                 return;
 
@@ -710,20 +698,47 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                 return;
             }
 
+            if (aPacketType == SeedType::SEED_ZOMBIE_GRAVESTONE) {
+                if (mBoard->CanAddGraveStoneAt(aGridX, aGridY) && mBoard->TakeDeathMoney(aCost)) {
+                    GridItem *aGraveStone = mBoard->AddAGraveStone(aGridX, aGridY);
+                    aGraveStone->unkBool1 = false;
+                    aGraveStone->mVSGraveStoneHealth = 350;
+                    aSeedPacket->Deactivate();
+                    aSeedPacket->WasPlanted(mPlayerIndex1);
+                }
+            }
+
             ZombieType aZombieType = Challenge::IZombieSeedTypeToZombieType(aPacketType);
-            if (mBoard->TakeDeathMoney(aCost)) {
-                if (aZombieType == ZombieType::ZOMBIE_DANCER || aZombieType == ZombieType::ZOMBIE_ZAMBONI || aZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX
-                    || aZombieType == ZombieType::ZOMBIE_DIGGER || aZombieType == ZombieType::ZOMBIE_CATAPULT || aZombieType == ZombieType::ZOMBIE_GARGANTUAR
-                    || aZombieType == ZombieType::ZOMBIE_DUCKY_TUBE || aZombieType == ZombieType::ZOMBIE_SNORKEL || aZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER
-                    || aZombieType == ZombieType::ZOMBIE_BALLOON || aZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || aZombieType == ZombieType::ZOMBIE_BOBSLED) {
-                    mBoard->AddZombieInRow(aZombieType, aGridY, -5, true);
+            if (aZombieType != ZombieType::ZOMBIE_INVALID && mBoard->TakeDeathMoney(aCost)) {
+                if (aZombieType == ZombieType::ZOMBIE_BUNGEE) {
+                    Zombie *aBungeeZombie = mBoard->AddZombieInRow(aZombieType, aGridY, 0, false);
+                    aBungeeZombie->mTargetCol = aGridX;
+                    aBungeeZombie->SetRow(aGridY);
+                    aBungeeZombie->mPosX = float(mBoard->GridToPixelX(aGridX, aGridY));
+                    aBungeeZombie->mPosY = aBungeeZombie->GetPosYBasedOnRow(aGridY);
+                    aBungeeZombie->mRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, aGridY, 7);
                 } else if (aZombieType == ZombieType::ZOMBIE_FLAG) {
                     mBoard->DisplayAdviceAgain("[ADVICE_HUGE_WAVE]", MessageStyle::MESSAGE_STYLE_HUGE_WAVE, AdviceType::ADVICE_HUGE_WAVE);
                     mBoard->SpawnZombieWave();
+                } else if (aZombieType == ZombieType::ZOMBIE_DANCER || aZombieType == ZombieType::ZOMBIE_ZAMBONI || aZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX
+                           || aZombieType == ZombieType::ZOMBIE_DIGGER || aZombieType == ZombieType::ZOMBIE_CATAPULT || aZombieType == ZombieType::ZOMBIE_GARGANTUAR
+                           || aZombieType == ZombieType::ZOMBIE_DUCKY_TUBE || aZombieType == ZombieType::ZOMBIE_SNORKEL || aZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER
+                           || aZombieType == ZombieType::ZOMBIE_BALLOON || aZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || aZombieType == ZombieType::ZOMBIE_BOBSLED) {
+                    mBoard->AddZombieInRow(aZombieType, aGridY, -5, true);
                 } else {
-                    Zombie *aZombie = mBoard->AddZombie(aZombieType, -5, false);
-                    if (aZombie)
-                        aZombie->RiseFromGrave(aGridX, aGridY);
+                    if (mBoard->mPlantRow[aGridY] == PlantRowType::PLANTROW_POOL) { // 如果是水路则放置在出生点
+                        mBoard->AddZombieInRow(aZombieType, aGridY, -5, true);
+                    } else {
+                        Zombie *aZombie = mBoard->AddZombie(aZombieType, -5, false);
+                        if (aZombie) {
+                            if (mBoard->StageHasRoof()) {
+                                Zombie *aBungeeZombie = mBoard->AddZombie(ZombieType::ZOMBIE_BUNGEE, -5, false);
+                                aBungeeZombie->BungeeDropZombie(aZombie, aGridX, aGridY);
+                            } else {
+                                aZombie->RiseFromGrave(aGridX, aGridY);
+                            }
+                        }
+                    }
                 }
 
                 aSeedPacket->Deactivate();

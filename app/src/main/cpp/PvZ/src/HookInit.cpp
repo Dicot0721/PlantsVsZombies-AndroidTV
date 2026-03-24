@@ -233,6 +233,7 @@ void InitHookFunction() {
     homura::HookFunction(GridItem_DrawSquirrelAddr, &GridItem::DrawSquirrel, nullptr);
     homura::HookFunction(GridItem_DrawScaryPotAddr, &GridItem::DrawScaryPot, nullptr);
     homura::HookFunction(GridItem_DrawCraterAddr, &GridItem::DrawCrater, nullptr);
+    homura::HookFunction(GridItem_DrawGraveStoneAddr, &GridItem::DrawGraveStone, nullptr);
 
 
     homura::HookFunction(AlmanacDialog_RemovedFromManagerAddr, &AlmanacDialog::RemovedFromManager, &old_AlmanacDialog_RemovedFromManager);

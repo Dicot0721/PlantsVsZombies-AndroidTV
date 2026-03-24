@@ -23,6 +23,7 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/TodLib/Common/DataArray.h"
 
 class Board;
 class Reanimation;
@@ -70,9 +71,11 @@ public:
     int mVSTargetZombieHealth;               // 70
     int unkMems2[4];                         // 71 ~ 74
     // 大小75个整数
-
     void UpdateBurialMound() {
         reinterpret_cast<void (*)(GridItem *)>(GridItem_UpdateBurialMoundAddr)(this);
+    }
+    void AddGraveStoneParticles() {
+        reinterpret_cast<void (*)(GridItem *)>(GridItem_AddGraveStoneParticlesAddr)(this);
     }
 
     void GridItemDie();
@@ -82,7 +85,12 @@ public:
     void DrawStinky(Sexy::Graphics *g);
     void DrawSquirrel(Sexy::Graphics *g);
     void DrawCrater(Sexy::Graphics *g);
+    void DrawGraveStone(Sexy::Graphics *g);
 };
+
+inline GridItem *DataArrayAlloc(GridItem *theGridItem) {
+    return reinterpret_cast<GridItem *(*)(GridItem *)>(GridItem_DataArrayAllocAddr)(theGridItem);
+}
 
 /***************************************************************************************************************/
 inline bool transparentVase;

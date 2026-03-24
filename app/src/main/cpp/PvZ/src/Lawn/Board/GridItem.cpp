@@ -321,3 +321,75 @@ void GridItem::DrawCrater(Sexy::Graphics *g) {
     TodDrawImageCelF(g, aImage, aXPos, aYPos, aCelCol, 0);
     g->SetColorizeImages(false);
 }
+
+void GridItem::DrawGraveStone(Graphics *g) {
+    if (mGridItemCounter <= 0)
+        return;
+
+    bool stageHasRoof = mBoard->StageHasRoof();
+    int aHeightPosition = TodAnimateCurve(0, 100, mGridItemCounter, 1000, 0, TodCurves::CURVE_EASE_IN_OUT);
+    if (stageHasRoof) {
+        aHeightPosition = TodAnimateCurve(0, 100, mGridItemCounter, 0, 1000, TodCurves::CURVE_EASE_IN_OUT);
+    }
+    int aGridCelLook = mBoard->mGridCelLook[mGridX][mGridY];
+    int aGridCelOffsetX = mBoard->mGridCelOffset[mGridX][mGridY][0];
+    int aGridCelOffsetY = mBoard->mGridCelOffset[mGridX][mGridY][1];
+    int aCelWidth = (*IMAGE_TOMBSTONES)->GetCelWidth();
+    int aCelHeight = (*IMAGE_TOMBSTONES)->GetCelHeight();
+    int aGraveCol = aGridCelLook % 5;
+    int aGraveRow;
+    if (mGridY == 0) {
+        aGraveRow = 1;
+    } else if (mGridItemState == GridItemState::GRIDITEM_STATE_GRAVESTONE_SPECIAL) {
+        aGraveRow = 0;
+    } else {
+        aGraveRow = 2 + aGridCelLook % 2;
+    }
+
+    int aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT);
+    ; // 墓碑主体在当前帧应显示的高度
+    if (stageHasRoof) {
+        aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, 0, aCelHeight, TodCurves::CURVE_EASE_IN_OUT);
+    }
+    int aExtraBottomClip = TodAnimateCurve(0, 50, aHeightPosition, 0, 14, TodCurves::CURVE_EASE_IN_OUT);
+    ; // 为模拟墓碑从地面“长出”的效果，从底部额外裁剪的高度
+    if (stageHasRoof) {
+        aExtraBottomClip = 0;
+    }
+    int aVisibleHeightDirt = TodAnimateCurve(500, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT); // 墓碑下方泥土部分应显示的高度
+    int aExtraTopClip = 0; // 当墓碑被“咬咬碑”（GraveBuster）啃食时，从顶部额外裁剪的高度，以表现被吃掉的效果
+    Plant *aPlant = mBoard->GetTopPlantAt(mGridX, mGridY, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
+    if (aPlant && aPlant->mState == PlantState::STATE_GRAVEBUSTER_EATING) {
+        aExtraTopClip = TodAnimateCurveFloat(400, 0, aPlant->mStateCountdown, 10.0f, 40.0f, TodCurves::CURVE_LINEAR);
+    }
+
+    Rect aSrcRect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip, aCelWidth, aVisibleHeight - aExtraBottomClip - aExtraTopClip);
+    Rect aSrcRectDirt(aCelWidth * aGraveCol, aCelHeight * aGraveRow, aCelWidth, aVisibleHeightDirt);
+    int x = mBoard->GridToPixelX(mGridX, mGridY) + aGridCelOffsetX - 4;
+    int y = mBoard->GridToPixelY(mGridX, mGridY) + aCelHeight + aGridCelOffsetY - 9;
+    if (stageHasRoof) {
+        int startYOffset = -200;                           // 起始位置在屏幕上方200像素
+        int endYOffset = aCelHeight + aGridCelOffsetY - 9; // 最终位置
+        int currentYOffset = TodAnimateCurve(0, 1000, aHeightPosition, startYOffset, endYOffset, TodCurves::CURVE_EASE_IN_OUT);
+        y = mBoard->GridToPixelY(mGridX, mGridY) + currentYOffset;
+    }
+    if (mApp->IsVSMode()) {
+        Reanimation *aReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+        if (aReanim) {
+            g->SetClipRect(x, y - aVisibleHeight + aExtraTopClip, 86, aVisibleHeight - aExtraBottomClip - aExtraTopClip);
+            aReanim->SetPosition(x, y - aVisibleHeight + aExtraTopClip);
+            aReanim->DrawRenderGroup(g, 0);
+            g->ClearClipRect();
+            Rect aRectDirt(0, 0, (*IMAGE_VS_STONE_DIRT)->mWidth, TodAnimateCurve(500, 1000, aHeightPosition, (*IMAGE_VS_STONE_DIRT)->mHeight, 0, TodCurves::CURVE_EASE_IN_OUT));
+            if (!stageHasRoof) {
+                g->DrawImage(*IMAGE_VS_STONE_DIRT, x, y - aVisibleHeightDirt, aRectDirt);
+            }
+            aReanim->DrawRenderGroup(g, 1);
+            g->mClipRect = Rect(g->mClipRect.mX, g->mClipRect.mY, g->mClipRect.mWidth, g->mClipRect.mHeight);
+        }
+        g->DrawString(StrFormat("%d", mVSGraveStoneHealth), x, y);
+    } else {
+        g->DrawImage(*IMAGE_TOMBSTONES, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
+        g->DrawImage(*IMAGE_TOMBSTONE_MOUNDS, x, y - aVisibleHeightDirt, aSrcRectDirt);
+    }
+}
