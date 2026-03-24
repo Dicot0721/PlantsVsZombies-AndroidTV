@@ -166,6 +166,7 @@ void InitHookFunction() {
     homura::HookFunction(Board_TakeSunMoneyAddr, &Board::TakeSunMoney, &old_Board_TakeSunMoney);
     homura::HookFunction(Board_TakeDeathMoneyAddr, &Board::TakeDeathMoney, &old_Board_TakeDeathMoney);
     homura::HookFunction(Board_SpawnZombiesFromGravesAddr, &Board::SpawnZombiesFromGraves, nullptr);
+    homura::HookFunction(Board_CanAddGraveStoneAtAddr, &Board::CanAddGraveStoneAt, nullptr);
 
 
     homura::HookFunction(FixBoardAfterLoadAddr, &FixBoardAfterLoad, &old_FixBoardAfterLoad);
@@ -235,6 +236,7 @@ void InitHookFunction() {
     homura::HookFunction(GridItem_DrawScaryPotAddr, &GridItem::DrawScaryPot, nullptr);
     homura::HookFunction(GridItem_DrawCraterAddr, &GridItem::DrawCrater, nullptr);
     homura::HookFunction(GridItem_DrawGraveStoneAddr, &GridItem::DrawGraveStone, nullptr);
+    homura::HookFunction(GridItem_AddGraveStoneParticlesAddr, &GridItem::AddGraveStoneParticles, nullptr);
 
 
     homura::HookFunction(AlmanacDialog_RemovedFromManagerAddr, &AlmanacDialog::RemovedFromManager, &old_AlmanacDialog_RemovedFromManager);

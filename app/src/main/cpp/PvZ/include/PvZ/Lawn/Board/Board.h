@@ -481,9 +481,6 @@ public:
     ZombieType PickGraveRisingZombieType(int theZombiePoints) {
         return reinterpret_cast<ZombieType (*)(Board *, int)>(Board_PickGraveRisingZombieTypeAddr)(this, theZombiePoints);
     }
-    bool CanAddGraveStoneAt(int theGridX, int theGridY) {
-        return reinterpret_cast<bool (*)(Board *, int, int)>(Board_CanAddGraveStoneAtAddr)(this, theGridX, theGridY);
-    }
 
     Board(LawnApp *theApp);
     void InitLevel();
@@ -592,6 +589,7 @@ public:
     bool TakeSunMoney(int theAmount, int thePlayer);
     void SwitchGamepadControls();
     void ShuffleButtonDown(SeedPacket *theSeedPacket);
+    bool CanAddGraveStoneAt(int theGridX, int theGridY);
 
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);

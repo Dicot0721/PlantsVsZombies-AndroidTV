@@ -108,8 +108,8 @@ void LawnApp::LoadAddonImages() {
     addonImages.crater_night_roof_left->mNumRows = 1;
     addonImages.crater_night_roof_left->mNumCols = 2;
     addonImages.leaderboard_selector = GetImageByFileName("images/leaderboard_selector");
+    addonImages.zombie_duckytube_inwater = GetImageByFileName("reanim/zombie_duckytube_inwater");
 
-    //    addonImages.IMAGE_SEEDCHOOSER_LARGE_BACKGROUND2 = GetImageByFileName("addonFiles/images/SeedChooser_Large_Background2");
     //    addonImages.IMAGE_ZOMBIEJACKSONHEAD = GetImageByFileName("addonFiles/particles/ZombieJacksonHead");
     //    addonImages.IMAGE_ZOMBIEBACKUPDANCERHEAD2 = GetImageByFileName("addonFiles/particles/ZombieBackupDancerHead2");
     //    addonImages.IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_UPPER2 = GetImageByFileName("addonFiles/reanim/NewZombies/Zombie_jackson_outerarm_upper_bone");

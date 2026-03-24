@@ -5323,6 +5323,9 @@ GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {
     GridItem *aGraveStone = mGridItems.DataArrayAlloc();
     aGraveStone->mGridItemType = GridItemType::GRIDITEM_GRAVESTONE;
     aGraveStone->mGridItemCounter = -Rand(50);
+    if (mGridSquareType[theGridX][theGridY] == GridSquareType::GRIDSQUARE_POOL) { // 泳池墓碑更快浮现
+        aGraveStone->mGridItemCounter /= 3;
+    }
     aGraveStone->mRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, theGridY, 3);
     aGraveStone->mGridX = theGridX;
     aGraveStone->mGridY = theGridY;
@@ -5344,9 +5347,7 @@ GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {
         aReanim->AssignRenderGroupToPrefix("bit", true);
         aReanim->AssignRenderGroupToTrack("Stone dirt", -1);
         aGraveStone->mGridItemReanimID = mApp->ReanimationGetID(aReanim);
-        if (!StageHasRoof()) {
-            aGraveStone->AddGraveStoneParticles();
-        }
+        aGraveStone->AddGraveStoneParticles();
     }
 
     if (tcpClientSocket >= 0 && mApp->mGameScene == SCENE_PLAYING) {
@@ -5447,4 +5448,20 @@ void Board::ShuffleButtonDown(SeedPacket *theSeedPacket) {
             SendEvent(tcpClientSocket, event);
         }
     }
+}
+
+bool Board::CanAddGraveStoneAt(int theGridX, int theGridY) {
+    if (mGridSquareType[theGridX][theGridY] != GridSquareType::GRIDSQUARE_GRASS && mGridSquareType[theGridX][theGridY] != GridSquareType::GRIDSQUARE_HIGH_GROUND) {
+        if (!(mApp->IsVSMode() && mGridSquareType[theGridX][theGridY] == GridSquareType::GRIDSQUARE_POOL)) // 允许对战水路种植墓碑
+            return false;
+    }
+
+    GridItem *aGridItem = nullptr;
+    while (IterateGridItems(aGridItem)) {
+        if (aGridItem->mGridX == theGridX && aGridItem->mGridY == theGridY) {
+            if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE || aGridItem->mGridItemType == GridItemType::GRIDITEM_CRATER || aGridItem->mGridItemType == GridItemType::GRIDITEM_LADDER)
+                return false;
+        }
+    }
+    return true;
 }

@@ -74,9 +74,6 @@ public:
     void UpdateBurialMound() {
         reinterpret_cast<void (*)(GridItem *)>(GridItem_UpdateBurialMoundAddr)(this);
     }
-    void AddGraveStoneParticles() {
-        reinterpret_cast<void (*)(GridItem *)>(GridItem_AddGraveStoneParticlesAddr)(this);
-    }
 
     GridItem();
     void GridItemDie();
@@ -87,6 +84,7 @@ public:
     void DrawSquirrel(Sexy::Graphics *g);
     void DrawCrater(Sexy::Graphics *g);
     void DrawGraveStone(Sexy::Graphics *g);
+    void AddGraveStoneParticles();
 
 protected:
     friend void InitHookFunction();

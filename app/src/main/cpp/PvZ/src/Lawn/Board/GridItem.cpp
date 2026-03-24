@@ -385,9 +385,18 @@ void GridItem::DrawGraveStone(Graphics *g) {
             aReanim->SetPosition(x, y - aVisibleHeight + aExtraTopClip);
             aReanim->DrawRenderGroup(g, 0);
             g->ClearClipRect();
-            Rect aRectDirt(0, 0, (*IMAGE_VS_STONE_DIRT)->mWidth, TodAnimateCurve(500, 1000, aHeightPosition, (*IMAGE_VS_STONE_DIRT)->mHeight, 0, TodCurves::CURVE_EASE_IN_OUT));
-            if (!stageHasRoof) {
-                g->DrawImage(*IMAGE_VS_STONE_DIRT, x, y - aVisibleHeightDirt, aRectDirt);
+
+            bool isPlantRowPool = mBoard->mPlantRow[mGridY] == PlantRowType::PLANTROW_POOL;
+            Image *bottomImage = isPlantRowPool ? addonImages.zombie_duckytube_inwater : *IMAGE_VS_STONE_DIRT;
+            int offsetX = 0, offsetY = 0;
+            if (isPlantRowPool) {
+                offsetX = -20;
+                offsetY = 40;
+            }
+
+            Rect aRectDirt(0, 0, bottomImage->mWidth, TodAnimateCurve(500, 1000, aHeightPosition, bottomImage->mHeight, 0, TodCurves::CURVE_EASE_IN_OUT));
+            if (!stageHasRoof) {                                                                     // 屋顶不绘制墓碑底部贴图
+                g->DrawImage(bottomImage, x + offsetX, y - aVisibleHeightDirt + offsetY, aRectDirt); // 泳池绘制鸭子救生圈，草坪绘制泥土
             }
             aReanim->DrawRenderGroup(g, 1);
             g->mClipRect = Rect(g->mClipRect.mX, g->mClipRect.mY, g->mClipRect.mWidth, g->mClipRect.mHeight);
@@ -396,5 +405,44 @@ void GridItem::DrawGraveStone(Graphics *g) {
     } else {
         g->DrawImage(*IMAGE_TOMBSTONES, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
         g->DrawImage(*IMAGE_TOMBSTONE_MOUNDS, x, y - aVisibleHeightDirt, aSrcRectDirt);
+    }
+}
+
+void GridItem::AddGraveStoneParticles() {
+    if (mBoard->StageHasRoof())
+        return;
+
+    int aXOffset = mBoard->mGridCelOffset[mGridX][mGridY][0];
+    int aYOffset = mBoard->mGridCelOffset[mGridX][mGridY][1];
+    int aXPos = mBoard->GridToPixelX(mGridX, mGridY) + 14 + aXOffset;
+    int aYPos = mBoard->GridToPixelY(mGridX, mGridY) + 78 + aYOffset;
+    if (mBoard->mPlantRow[mGridY] == PlantRowType::PLANTROW_POOL) { // 水路墓碑
+        // 播放出水动画和音效
+        float aX = mBoard->GridToPixelX(mGridX, mGridY);
+        float aY = mBoard->GridToPixelY(mGridX, mGridY);
+        float aOffsetY = 40.0f;
+
+        mApp->AddReanimation(aX, aY + aOffsetY, mRenderOrder + 1, ReanimationType::REANIM_SPLASH);
+        mApp->AddTodParticle(aX + 37.0f, aY + aOffsetY + 42.0f, mRenderOrder + 1, ParticleEffect::PARTICLE_PLANTING_POOL);
+
+        mApp->PlayFoley(FoleyType::FOLEY_PLANT_WATER);
+
+        // 绘制附加的海草粒子特效
+        Reanimation *aReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+        TodParticleSystem *aParticle = mApp->AddTodParticle(0.0f, 0.0f, 0, ParticleEffect::PARTICLE_ZOMBIE_SEAWEED);
+        if (aParticle) {
+            aReanim->AttachParticleToTrack("Stone", aParticle, 30.0f, 60.0f);
+        }
+        TodParticleSystem *aParticle2 = mApp->AddTodParticle(0.0f, 0.0f, 0, ParticleEffect::PARTICLE_ZOMBIE_SEAWEED);
+        if (aParticle2) {
+            aReanim->AttachParticleToTrack("eye glow left", aParticle2, 5.0f, 5.0f);
+        }
+        TodParticleSystem *aParticle3 = mApp->AddTodParticle(0.0f, 0.0f, 0, ParticleEffect::PARTICLE_ZOMBIE_SEAWEED);
+        if (aParticle3) {
+            aReanim->AttachParticleToTrack("eye glow right", aParticle3, 77.0f, 20.0f);
+        }
+    } else {
+        mApp->AddTodParticle(aXPos, aYPos, mRenderOrder + 1, ParticleEffect::PARTICLE_GRAVE_STONE_RISE);
+        mApp->PlayFoley(FoleyType::FOLEY_DIRT_RISE);
     }
 }
