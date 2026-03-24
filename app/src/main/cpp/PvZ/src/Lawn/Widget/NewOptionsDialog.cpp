@@ -22,7 +22,7 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/Music.h"
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
-#include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
+#include "PvZ/NetPlay.h"
 
 void NewOptionsDialog::ButtonDepress(int buttonId) {
 

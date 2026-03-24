@@ -23,6 +23,7 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/System/SaveGame.h"
 #include "PvZ/Lawn/Widget/AchievementsWidget.h"
+#include "PvZ/NetPlay.h"
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
@@ -35,7 +36,6 @@
 #include "LawnMower.h"
 #include "Plant.h"
 #include "Projectile.h"
-#include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "Zombie.h"
 
 constexpr int MAX_GRID_SIZE_X = 9;

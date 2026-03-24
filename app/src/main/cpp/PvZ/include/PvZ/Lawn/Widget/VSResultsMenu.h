@@ -21,9 +21,8 @@
 #define PVZ_LAWN_WIDGET_VS_RESULTS_MENU_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/NetPlay.h"
 #include "PvZ/SexyAppFramework/Widget/MenuWidget.h"
-#include "PvZ/SexyAppFramework/Widget/Widget.h"
-#include "WaitForSecondPlayerDialog.h"
 
 #include <cstddef>
 
@@ -63,9 +62,12 @@ public:
         _constructor();
     }
 
-    void InitFromBoard(Board *board) {
+    void InitFromBoard(class Board *board) {
         reinterpret_cast<void (*)(VSResultsMenu *, Board *)>(VSResultsMenu_InitFromBoardAddr)(this, board);
     }
+
+protected:
+    friend void InitHookFunction();
 
     void _constructor();
 }; // 85个整数

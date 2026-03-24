@@ -20,7 +20,7 @@
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
 #include "Homura/Logger.h"
 #include "PvZ/Lawn/LawnApp.h"
-#include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
+#include "PvZ/NetPlay.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/TodLib/Common/TodCommon.h"
 

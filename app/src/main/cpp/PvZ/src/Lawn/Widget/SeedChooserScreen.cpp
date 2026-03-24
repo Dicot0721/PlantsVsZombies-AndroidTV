@@ -27,7 +27,7 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
-#include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
+#include "PvZ/NetPlay.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 #include <unistd.h>

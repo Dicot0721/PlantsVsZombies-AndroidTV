@@ -26,7 +26,6 @@
 #include "PvZ/SexyAppFramework/Widget/MenuWidget.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
-#include "WaitForSecondPlayerDialog.h"
 
 enum VSSetupMode {
     VS_SETUP_MODE_QUICK_PLAY = 0,    // 快速游戏

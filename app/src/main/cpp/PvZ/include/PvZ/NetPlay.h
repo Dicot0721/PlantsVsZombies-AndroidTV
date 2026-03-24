@@ -1,0 +1,300 @@
+/*
+ * Copyright (C) 2023-2026  PvZ TV Touch Team
+ *
+ * This file is part of PlantsVsZombies-AndroidTV.
+ *
+ * PlantsVsZombies-AndroidTV is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * PlantsVsZombies-AndroidTV is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#ifndef PVZ_NETPLAY_H
+#define PVZ_NETPLAY_H
+
+#include <netinet/in.h>
+#include <sys/socket.h>
+
+#include <cstdint>
+
+#include <concepts>
+#include <string>
+#include <utility>
+
+enum EventType : uint8_t {
+    EVENT_NULL,
+
+    EVENT_CLIENT_PING,
+    EVENT_SERVER_PONG,
+
+    EVENT_START_GAME,
+
+    EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS,
+    EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS,
+    EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND,
+    EVENT_VSSETUPMENU_ENTER_STATE,
+    EVENT_VSSETUPMENU_RANDOM_PICK,
+    EVENT_VSSETUPMENU_MOVE_CONTROLLER,
+    EVENT_VSSETUPMENU_SET_CONTROLLER,
+    EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT,
+
+    EVENT_SEEDCHOOSER_SELECT_SEED,
+
+    EVENT_CLIENT_BOARD_TOUCH_DOWN,
+    EVENT_CLIENT_BOARD_TOUCH_DRAG,
+    EVENT_CLIENT_BOARD_TOUCH_UP,
+    EVENT_BOARD_TOUCH_DOWN_REPLY,
+    EVENT_BOARD_TOUCH_DRAG_REPLY,
+    EVENT_BOARD_TOUCH_UP_REPLY,
+    EVENT_SERVER_BOARD_TOUCH_DOWN,
+    EVENT_SERVER_BOARD_TOUCH_DRAG,
+    EVENT_SERVER_BOARD_TOUCH_UP,
+
+
+    EVENT_CLIENT_BOARD_TOUCH_CLEAR_CURSOR,
+    EVENT_SERVER_BOARD_TOUCH_CLEAR_CURSOR,
+
+    EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE,
+    EVENT_SERVER_BOARD_GAMEPAD_SET_STATE,
+
+    EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL,
+    EVENT_SERVER_BOARD_GAMEPAD_USE_SHOVEL,
+
+    EVENT_CLIENT_BOARD_PAUSE,
+    EVENT_SERVER_BOARD_PAUSE,
+
+    EVENT_CLIENT_BOARD_CONCEDE,
+    EVENT_SERVER_BOARD_CONCEDE,
+
+    EVENT_SERVER_BOARD_COIN_ADD,
+
+    EVENT_SERVER_BOARD_GRIDITEM_DIE,
+    EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER,
+    EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE,
+
+    EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER,                // 同步生产植物如向日葵、阳光菇的生产发光
+    EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH,               // 播放杨桃、三线射手的开火动画
+    EVENT_SERVER_BOARD_PLANT_FINDTARGETANDFIRE,            // 播放其他植物的开火动画
+    EVENT_SERVER_BOARD_PLANT_KERNELPLUT_FINDTARGETANDFIRE, // 黄油投手
+    EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION,           // 似乎无用，先不同步
+    EVENT_SERVER_BOARD_PLANT_OTHER_ANIMATION,              // 同步摇摆动画、开火动画的帧率和播放进度
+    EVENT_SERVER_BOARD_PLANT_FIRE,                         // 射出子弹
+    EVENT_SERVER_BOARD_PLANT_ADD,
+    EVENT_SERVER_BOARD_PLANT_DIE,
+    EVENT_SERVER_BOARD_PLANT_DO_SPECIAL, // 同步植物触发特性
+    EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT,
+
+    EVENT_SERVER_BOARD_ZOMBIE_DIE,
+    EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED,
+    EVENT_SERVER_BOARD_ZOMBIE_ADD,          // AddZombieInRow触发的同步
+    EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD,   // 蹦极僵尸在AddZombieInRow之后还会设置靶标位置，所以单独同步
+    EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT, // 修改器放置僵尸会在执行AddZombieInRow后额外设置僵尸的位置，本事件就是追加同步僵尸位置
+    EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE,
+    EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS,
+    EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED,
+    EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP,
+    EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT,      // 撑杆僵尸开始跳跃。暂时不同步此事件，因为同步后的撑杆落地会概率向前瞬移一段距离
+    EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH, // 开始播放砸地动画
+    EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW, // 开始播放扔小鬼动画
+    EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW,
+    EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE,    // 同步"一大波僵尸"提示
+    EVENT_SERVER_BOARD_ZOMBIE_YUCKY_SETROW, // 同步吃大蒜换行
+    EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER,
+    EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL, // 同步僵尸触发特性
+
+    EVENT_SERVER_BOARD_LAWNMOWER_START,
+
+    EVENT_SERVER_BOARD_TAKE_SUNMONEY,
+    EVENT_SERVER_BOARD_TAKE_DEATHMONEY,
+
+    EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED,
+    EVENT_SERVER_BOARD_START_LEVEL,
+
+    EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK,
+    EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT,
+
+    NUM_EVENT_SERVER_BOARD,
+
+    EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS,
+    EVENT_SERVER_VSRESULT_BUTTON_DEPRESS,
+};
+
+struct BaseEvent {
+    EventType type;
+    uint8_t size;
+};
+
+union Buffer32Bit {
+    struct {
+        uint8_t u8_1;
+        uint8_t u8_2;
+        uint8_t u8_3;
+        uint8_t u8_4;
+    } u8x4;
+
+    struct {
+        uint16_t u16_1;
+        uint16_t u16_2;
+    } u16x2;
+
+    struct {
+        int16_t i16_1;
+        int16_t i16_2;
+    } i16x2;
+
+    uint32_t u32;
+    int32_t i32;
+    float f32;
+};
+static_assert(sizeof(Buffer32Bit) == 4);
+
+struct U8_Event : BaseEvent {
+    uint8_t data;
+};
+
+struct U16_Event : BaseEvent {
+    uint16_t data;
+};
+
+struct U8U8_Event : BaseEvent {
+    uint8_t data1;
+    uint8_t data2;
+};
+
+struct U8U8U16_Event : BaseEvent {
+    uint8_t data1;
+    uint8_t data2;
+    uint16_t data3;
+};
+
+struct U16U16_Event : BaseEvent {
+    uint16_t data1;
+    uint16_t data2;
+};
+
+struct I16I16_Event : BaseEvent {
+    int16_t data1;
+    int16_t data2;
+};
+
+struct U8U8U16U16_Event : BaseEvent {
+    uint8_t data1;
+    uint8_t data2;
+    uint16_t data3;
+    uint16_t data4;
+};
+
+struct U8U8I16I16_Event : BaseEvent {
+    uint8_t data1;
+    uint8_t data2;
+    int16_t data3;
+    int16_t data4;
+};
+
+struct B1x8_Event : BaseEvent {
+    uint8_t data1 : 1;
+    uint8_t data2 : 1;
+    uint8_t data3 : 1;
+    uint8_t data4 : 1;
+    uint8_t data5 : 1;
+    uint8_t data6 : 1;
+    uint8_t data7 : 1;
+    uint8_t data8 : 1;
+};
+
+struct U16x6_Event : BaseEvent {
+    uint16_t data[6];
+};
+
+struct U16Buf32_Event : BaseEvent {
+    uint16_t data1;
+    Buffer32Bit data2;
+};
+
+struct U16Buf32Buf32_Event : BaseEvent {
+    uint16_t data1;
+    Buffer32Bit data2;
+    Buffer32Bit data3;
+};
+
+struct U16x9_Event : BaseEvent {
+    uint16_t data[9];
+};
+
+
+struct U16x12_Event : BaseEvent {
+    uint16_t data[12];
+};
+
+
+struct U16U16U16Buf32Buf32_Event : BaseEvent {
+    uint16_t data1;
+    uint16_t data2;
+    uint16_t data3;
+    Buffer32Bit data4;
+    Buffer32Bit data5;
+};
+
+struct U8x4U16Buf32x2_Event : BaseEvent {
+    uint8_t data1[4];
+    uint16_t data2;
+    Buffer32Bit data3[2];
+};
+
+struct U16x4U16_Event : BaseEvent {
+    uint16_t data1[4];
+    uint16_t data2;
+};
+
+template <typename Event>
+    requires(!std::is_const_v<std::remove_reference_t<Event>> &&    //
+             !std::is_volatile_v<std::remove_reference_t<Event>> && //
+             std::derived_from<std::remove_reference_t<Event>, BaseEvent>)
+ssize_t SendEvent(int socket, Event &&event) {
+    static_assert(std::in_range<decltype(event.size)>(sizeof(Event)), "Please update the type of 'BaseEvent::size' to a larger integral type");
+    event.size = sizeof(Event);
+    return send(socket, &event, sizeof(Event), 0);
+}
+
+// 双方都需要
+constexpr int UDP_PORT = 8888;
+
+// 主机端需要
+inline int udpBroadcastSocket = -1;
+inline int tcpListenSocket = -1;
+inline int tcpClientSocket = -1;
+inline int tcpPort = 0;
+inline int lastBroadcastTime = 0;
+inline sockaddr_in broadcast_addr;
+inline std::string ifname;
+
+// 客户端需要
+constexpr int MAX_SERVERS = 3;
+constexpr int UDP_TIMEOUT = 3; // 超时时间为3秒
+constexpr int NAME_LENGTH = 256;
+
+// 全局变量，用于保存发现的服务端IP和时间戳
+struct ServerInfo {
+    char ip[INET_ADDRSTRLEN];
+    int tcp_port;
+    char name[NAME_LENGTH];
+    time_t last_seen; // 记录最后一次收到广播的时间
+} inline servers[MAX_SERVERS];
+
+inline int scanned_server_count = 0; // 已发现的服务端数量
+inline int udpScanSocket = -1;
+
+// 客户端TCP socket
+inline int tcpServerSocket = -1;
+inline bool tcp_connecting = false; // 正在尝试连接
+inline bool tcp_connected = false;
+
+#endif // PVZ_NETPLAY_H
