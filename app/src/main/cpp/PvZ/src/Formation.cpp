@@ -17,10 +17,20 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef HOMURA_FORMATION_H
-#define HOMURA_FORMATION_H
+#include "PvZ/Formation.h"
+#include "Homura/Logger.h"
+#include "PvZ/Lawn/Board/Board.h"
+#include "PvZ/Lawn/Board/Challenge.h"
+#include "PvZ/Lawn/LawnApp.h"
+
+#include <cassert>
+#include <cstdint>
+#include <cstdio>
 
 #include <iterator>
+#include <map>
+#include <ranges>
+#include <sstream>
 
 // 常用的植物ID：
 // 16 荷叶
@@ -45,9 +55,7 @@
 // D Damaged轻度损坏；
 // DD DoubleDamaged重度损坏。
 
-namespace lineup {
-
-constexpr const char *_lineups[] = {
+static constexpr const char *formations[] = {
     /* 电波钟无炮 */ "16 0,2 0,3 1,2 1,3 2,2 2,3 3,2 3,3 4,2 4,3 5,2 5,3 6,2 6,3 7,2 7,3 8,2 8,3 ; 42 W 0,0 1,0 4,1 5,1 5,2 6,2 7,2 8,2 6,3 7,3 8,3 1,4 4,4 5,4 1,5 ; 10 W 3,0 4,0 3,5 4,5 ; "
                      "14 1,2 2,2 2,3 2,4 ; 44 2,0 0,1 2,1 3,1 3,4 0,5 2,5 ; 41 0,2 4,2 0,3 1,3 3,3 4,3 ; 43 3,2 5,3 ;37 1,1 0,4 ; 30 0,0 3,0 0,1 3,1 4,1 5,2 6,2 7,2 8,2 5,3 6,3 7,3 8,3 0,4 "
                      "1,4 2,4 3,4 4,4 0,5 1,5 2,5 3,5 IL 1,0 2,0 1,1 2,1",
@@ -409,14 +417,164 @@ constexpr const char *_lineups[] = {
     "6,2 6,3 4,4 ; 30 8,2 8,3",
 };
 
-constexpr const char *GetLineup(std::size_t index) noexcept {
-    if (index < std::size(_lineups)) {
-        return _lineups[index];
-    } else {
-        return "";
+std::string_view formation::GetBuiltinFormationStr(std::size_t theIndex) noexcept {
+    assert(theIndex < std::size(formations));
+    return formations[theIndex];
+}
+
+
+namespace {
+
+using FormationMap = std::multimap<std::uint32_t, std::uint32_t>;
+
+std::string GenerateFormationStrFromMap(const FormationMap &theMap) {
+    std::ostringstream ss1; // 花盆荷叶
+    std::ostringstream ss2; // 普通植物
+    std::ostringstream ss3; // 南瓜
+
+    auto it = theMap.cbegin();
+    auto end = theMap.cend();
+    while (it != end) {
+        const auto &[key, value] = *it;
+        int aSeedType = key & 0x3F;
+        std::ostringstream *ssPtr;
+        switch (aSeedType) {
+            case SeedType::SEED_LILYPAD:
+            case SeedType::SEED_FLOWERPOT:
+                ssPtr = &ss1;
+                break;
+            case SeedType::SEED_PUMPKINSHELL:
+                ssPtr = &ss3;
+                break;
+            default:
+                ssPtr = &ss2;
+                break;
+        }
+        bool isWakeUp = (key >> 6) & 1;
+        bool isImitaterMorphed = (key >> 7) & 1;
+        bool hasLadder = (key >> 8) & 1;
+        int aPlantCol = value & 0xF;
+        int aRow = value >> 4;
+        *ssPtr << aSeedType << ' ';
+        if (isWakeUp) {
+            *ssPtr << 'W';
+        }
+        if (isImitaterMorphed) {
+            *ssPtr << 'I';
+        }
+        if (hasLadder) {
+            *ssPtr << 'L';
+        }
+        if (isWakeUp || isImitaterMorphed || hasLadder) {
+            *ssPtr << ' ';
+        }
+        *ssPtr << aPlantCol << ',' << aRow;
+        while ((++it != end) && (it->first == key)) {
+            int v = it->second;
+            int col = v & 0xF;
+            int row = v >> 4;
+            *ssPtr << ' ' << col << ',' << row;
+        }
+        *ssPtr << " ; ";
+    }
+
+    ss1 << ss2.view() << ss3.view();
+    return std::move(ss1).str();
+}
+
+} // namespace
+
+std::string formation::GenerateFormationStr(Board *theBoard) {
+    FormationMap map;
+    for (Plant *aPlant = nullptr; theBoard->IteratePlants(aPlant);) {
+        if (aPlant->mDead) {
+            continue;
+        }
+        SeedType aSeedType = aPlant->mSeedType;
+        SeedType aImitaterType = aPlant->mImitaterType;
+        if (aSeedType == SeedType::SEED_IMITATER) {
+            aSeedType = aImitaterType;
+        }
+        int aPlantCol = aPlant->mPlantCol;
+        int aRow = aPlant->mRow;
+        bool aIsAsleep = aPlant->mIsAsleep;
+        bool canHaveLadder = aSeedType == SeedType::SEED_WALLNUT || aSeedType == SeedType::SEED_TALLNUT || aSeedType == SeedType::SEED_PUMPKINSHELL;
+        bool canBeAsleep = Plant::IsNocturnal(aSeedType);
+        bool isWakeUp = canBeAsleep && !aIsAsleep;
+        bool isImitaterMorphed = aSeedType == SeedType::SEED_IMITATER || aImitaterType == SeedType::SEED_IMITATER;
+        bool hasLadder = canHaveLadder && (theBoard->GetLadderAt(aPlantCol, aRow) != nullptr);
+
+        std::uint32_t key = aSeedType | (isWakeUp << 6) | (isImitaterMorphed << 7) | (hasLadder << 8);
+        std::uint32_t value = aPlantCol | (aRow << 4);
+        map.emplace(key, value);
+    }
+    return GenerateFormationStrFromMap(map);
+}
+
+
+static void ApplyFormationSnippet(Board *theBoard, std::string_view theSnippetStr) {
+    bool isIZombieLevel = theBoard->mApp->IsIZombieLevel();
+    bool isWakeUp = false;
+    bool isImitaterMorphed = false;
+    bool hasLadder = false;
+    int aDamageState = 0;
+
+    SeedType aSeedType;
+    const char *aCursor;
+    errno = 0;
+    {
+        char *end;
+        aSeedType = static_cast<SeedType>(std::strtol(theSnippetStr.data(), &end, 10));
+        if ((theSnippetStr.data() == end) || (errno == ERANGE)) {
+            LOG_ERROR("Failed to parse formation string");
+            return;
+        }
+        aCursor = end;
+    }
+
+    // Move cursor to the next position after the parsed integer
+    for (const char *end = theSnippetStr.end(); aCursor < end; ++aCursor) {
+        if (*aCursor == 'W') {
+            isWakeUp = true;
+        } else if (*aCursor == 'I') {
+            isImitaterMorphed = true;
+        } else if (*aCursor == 'L') {
+            hasLadder = true;
+        } else if (*aCursor == 'D') {
+            if (++aDamageState > 2) {
+                aDamageState = 2;
+            }
+        } else if (std::isdigit(*aCursor)) {
+            // Parse coordinates
+            int x, y;
+            if (int n; std::sscanf(aCursor, "%d,%d%n", &x, &y, &n) == 2) {
+                aCursor += n; // Skip to next coordinate
+            } else {
+                continue;
+            }
+            Plant *aPlant = old_Board_AddPlant(theBoard, x, y, aSeedType, isImitaterMorphed ? SeedType::SEED_IMITATER : SeedType::SEED_NONE, 1, false);
+            if (isImitaterMorphed) {
+                aPlant->SetImitaterFilterEffect();
+            }
+            if (isWakeUp) {
+                aPlant->SetSleeping(false);
+            }
+            if (hasLadder && theBoard->GetLadderAt(x, y) == nullptr) {
+                theBoard->AddALadder(x, y);
+            }
+            if (aDamageState > 0) {
+                aPlant->mPlantHealth = (aPlant->mPlantMaxHealth * (3 - aDamageState) / 3) - 1;
+            }
+            if (isIZombieLevel) {
+                theBoard->mChallenge->IZombieSetupPlant(aPlant);
+            }
+        }
     }
 }
 
-} // namespace lineup
-
-#endif // HOMURA_FORMATION_H
+void formation::ApplyFormation(Board *theBoard, std::string_view theFormationStr) {
+    theBoard->RemoveAllPlants();
+    for (const auto snippet : std::views::split(theFormationStr, ';')) {
+        ApplyFormationSnippet(theBoard, std::string_view{snippet});
+    }
+}

@@ -19,10 +19,10 @@
 
 #include "PvZ/Lawn/Board/Board.h"
 #include "Homura/ContainerUtils.h"
-#include "Homura/Formation.h"
 #include "Homura/Logger.h"
 #include "PvZ/Android/IntroVideo.h"
 #include "PvZ/Android/Native/NativeApp.h"
+#include "PvZ/Formation.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/Coin.h"
@@ -57,10 +57,6 @@
 
 #include <unistd.h>
 
-#include <cstddef>
-#include <cstdio>
-
-#include <sstream>
 #include <unordered_map>
 
 using namespace Sexy;
@@ -519,76 +515,6 @@ Plant *Board::AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedTyp
 
     return aPlant;
 }
-
-// 布阵用
-static void ParseFormationSegment(Board *theBoard, std::string_view theSegment) {
-    bool isIZombieLevel = theBoard->mApp->IsIZombieLevel();
-    bool wakeUp = false;
-    bool imitaterMorphed = false;
-    bool addLadder = false;
-    int damageState = 0;
-
-    SeedType seedType;
-    const char *cursor;
-    {
-        errno = 0;
-        char *end;
-        seedType = SeedType(std::strtol(theSegment.data(), &end, 10));
-        if ((theSegment.data() == end) || (errno == ERANGE)) {
-            return; // Failed to parse
-        }
-        cursor = end;
-    }
-
-    // Move cursor to the next position after the parsed integer
-    for (const char *end = theSegment.data() + theSegment.size(); cursor < end; ++cursor) {
-        if (*cursor == 'W') {
-            wakeUp = true;
-        } else if (*cursor == 'I') {
-            imitaterMorphed = true;
-        } else if (*cursor == 'L') {
-            addLadder = true;
-        } else if (*cursor == 'D') {
-            if (++damageState > 2) {
-                damageState = 2;
-            }
-        } else if (std::isdigit(*cursor)) {
-            // Parse coordinates
-            int x = 0, y = 0;
-            if (int n; std::sscanf(cursor, "%d,%d%n", &x, &y, &n) == 2) {
-                cursor += n; // Skip to next coordinate
-            } else {
-                continue;
-            }
-            Plant *plant = old_Board_AddPlant(theBoard, x, y, seedType, imitaterMorphed ? SeedType::SEED_IMITATER : SeedType::SEED_NONE, 1, false);
-            if (imitaterMorphed) {
-                plant->SetImitaterFilterEffect();
-            }
-            if (wakeUp) {
-                plant->SetSleeping(false);
-            }
-            if (addLadder && theBoard->GetLadderAt(x, y) == nullptr) {
-                theBoard->AddALadder(x, y);
-            }
-            if (damageState > 0) {
-                plant->mPlantHealth = (plant->mPlantMaxHealth * (3 - damageState) / 3) - 1;
-            }
-            if (isIZombieLevel) {
-                theBoard->mChallenge->IZombieSetupPlant(plant);
-            }
-        }
-    }
-}
-
-// 布阵用
-static void LoadFormation(Board *theBoard, std::string_view theFormation) {
-    theBoard->RemoveAllPlants();
-    std::istringstream iss(theFormation.data());
-    for (std::string aSegment; std::getline(iss, aSegment, ';');) {
-        ParseFormationSegment(theBoard, aSegment);
-    }
-}
-
 
 bool Board::ZenGardenItemNumIsZero(CursorType theCursorType) {
     // 消耗性工具的数量是否为0个
@@ -2033,7 +1959,7 @@ void Board::Update() {
     if (layChoseFormation) // 用按钮触发, 防止进入游戏时自动布阵
     {
         if (formationId >= 0) {
-            LoadFormation(this, lineup::GetLineup(formationId));
+            formation::ApplyFormation(this, formation::GetBuiltinFormationStr(formationId));
         }
         layChoseFormation = false;
     }
@@ -2041,7 +1967,7 @@ void Board::Update() {
     // 布置粘贴阵型
     if (layPastedFormation) {
         if (!customFormation.empty()) {
-            LoadFormation(this, customFormation);
+            formation::ApplyFormation(this, customFormation);
         }
         layPastedFormation = false;
     }

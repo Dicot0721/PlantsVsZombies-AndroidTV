@@ -19,6 +19,7 @@
 
 #include "Homura/ExceptionUtils.h"
 #include "Homura/Logger.h"
+#include "PvZ/Formation.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/HookInit.h"
 #include "PvZ/Lawn/Board/Board.h"
@@ -37,9 +38,7 @@
 
 #include <cmath>
 
-#include <map>
 #include <numbers>
-#include <sstream>
 
 static std::string JStringToString(JNIEnv *env, jstring str) {
     const char *buffer = env->GetStringUTFChars(str, nullptr);
@@ -673,92 +672,12 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
     return ret;
 }
 
-// 生成阵型代码字符串
-static std::string generateLineupStr(const std::multimap<int, int> &theMap) {
-    std::ostringstream ss1; // 花盆荷叶
-    std::ostringstream ss2; // 普通植物
-    std::ostringstream ss3; // 南瓜
-
-    auto it = theMap.cbegin();
-    auto end = theMap.cend();
-    while (it != end) {
-        const auto &[key, value] = *it;
-        int aSeedType = key & 0x3F;
-        std::ostringstream *ssPtr;
-        switch (aSeedType) {
-            case SeedType::SEED_LILYPAD:
-            case SeedType::SEED_FLOWERPOT:
-                ssPtr = &ss1;
-                break;
-            case SeedType::SEED_PUMPKINSHELL:
-                ssPtr = &ss3;
-                break;
-            default:
-                ssPtr = &ss2;
-                break;
-        }
-        bool wakeUp = (key >> 6) & 1;
-        bool imitaterMorphed = (key >> 7) & 1;
-        bool ladder = (key >> 8) & 1;
-        int aPlantCol = value & 0x0F;
-        int aRow = value >> 4;
-        *ssPtr << aSeedType << ' ';
-        if (wakeUp) {
-            *ssPtr << 'W';
-        }
-        if (imitaterMorphed) {
-            *ssPtr << 'I';
-        }
-        if (ladder) {
-            *ssPtr << 'L';
-        }
-        if (wakeUp || imitaterMorphed || ladder) {
-            *ssPtr << ' ';
-        }
-        *ssPtr << aPlantCol << ',' << aRow;
-        while ((++it != end) && (it->first == key)) {
-            int v = it->second;
-            int col = v & 0x0F;
-            int row = v >> 4;
-            *ssPtr << ' ' << col << ',' << row;
-        }
-        *ssPtr << " ; ";
-    }
-
-    ss1 << ss2.view() << ss3.view();
-    return std::move(ss1).str();
-}
-
 extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCurrentFormation(JNIEnv *env, jobject thiz) {
     Board *aBoard = (*gLawnApp_Addr)->mBoard;
     if (aBoard == nullptr) {
         return env->NewStringUTF("");
     }
-
-    std::multimap<int, int> map;
-    for (Plant *aPlant = nullptr; aBoard->IteratePlants(aPlant);) {
-        if (aPlant->mDead) {
-            continue;
-        }
-        SeedType aSeedType = aPlant->mSeedType;
-        SeedType aImitaterType = aPlant->mImitaterType;
-        if (aSeedType == SeedType::SEED_IMITATER) {
-            aSeedType = aImitaterType;
-        }
-        int aPlantCol = aPlant->mPlantCol;
-        int aRow = aPlant->mRow;
-        bool aIsAsleep = aPlant->mIsAsleep;
-        bool canHaveLadder = aSeedType == SeedType::SEED_WALLNUT || aSeedType == SeedType::SEED_TALLNUT || aSeedType == SeedType::SEED_PUMPKINSHELL;
-        bool canBeAsleep = Plant::IsNocturnal(aSeedType);
-        bool wakeUp = canBeAsleep && !aIsAsleep;
-        bool imitaterMorphed = aSeedType == SeedType::SEED_IMITATER || aImitaterType == SeedType::SEED_IMITATER;
-        bool ladder = canHaveLadder && (aBoard->GetLadderAt(aPlantCol, aRow) != nullptr);
-
-        int key = aSeedType | (wakeUp << 6) | (imitaterMorphed << 7) | (ladder << 8);
-        int value = aPlantCol | (aRow << 4);
-        map.emplace(key, value);
-    }
-    return env->NewStringUTF(generateLineupStr(map).c_str());
+    return env->NewStringUTF(formation::GenerateFormationStr(aBoard).c_str());
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native1PButtonDown(JNIEnv *env, jclass clazz, jint code) {
