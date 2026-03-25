@@ -259,8 +259,8 @@ template <typename Event>
              !std::is_volatile_v<std::remove_reference_t<Event>> && //
              std::derived_from<std::remove_reference_t<Event>, BaseEvent>)
 ssize_t SendEvent(int socket, Event &&event) {
-    static_assert(std::in_range<decltype(event.size)>(sizeof(Event)), "Please update the type of 'BaseEvent::size' to a larger integral type");
-    event.size = sizeof(Event);
+    static_assert(std::in_range<decltype(event.BaseEvent::size)>(sizeof(Event)), "Please update the type of 'BaseEvent::size' to a larger integral type");
+    event.BaseEvent::size = sizeof(Event);
     return send(socket, &event, sizeof(Event), 0);
 }
 
