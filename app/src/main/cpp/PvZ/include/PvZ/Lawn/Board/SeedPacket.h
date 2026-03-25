@@ -25,6 +25,9 @@
 
 #include "GameObject.h"
 
+constexpr int SLOT_MACHINE_TIME = 400;
+constexpr int CONVEYOR_SPEED = 4;
+
 class HitResult;
 class SeedBank;
 class SeedPacket : public GameObject {
@@ -43,7 +46,7 @@ public:
     int mTimesUsed;                  // 23
     SeedBank *mSeedBank;             // 24
     float mLastSelectedTime;         // 25
-    int unknownIntMember1;           // 26
+    float unknownIntMember1;         // 26
     int unknownIntMember2;           // 27
     bool mSelectedBy2P;              // 112
     bool mSelected;                  // 113
@@ -77,9 +80,11 @@ public:
     void DrawOverlay(Sexy::Graphics *g);
     void Draw(Sexy::Graphics *g);
     void FlashIfReady();
+    void Activate();
     bool BeginDraw(Sexy::Graphics *g);
     void EndDraw(Sexy::Graphics *g);
     void SetPacketType(SeedType theSeedType, SeedType theImitaterType);
+    void SetNextRandomSeed();
     void WasPlanted(int thePlayerIndex);
     void SlotMachineStart();
 
@@ -102,8 +107,6 @@ void DrawSeedPacket(Sexy::Graphics *g,
 /***************************************************************************************************************/
 inline bool showCoolDown;
 
-
-inline void (*old_SeedPacket_Update)(SeedPacket *seedPacket);
 
 inline void (*old_SeedPacket_UpdateSelected)(SeedPacket *seedPacket);
 

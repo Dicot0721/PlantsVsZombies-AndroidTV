@@ -344,7 +344,7 @@ void InitHookFunction() {
     homura::HookFunction(Projectile_DrawShadowAddr, &Projectile::DrawShadow, &old_Projectile_DrawShadow);
 
 
-    homura::HookFunction(SeedPacket_UpdateAddr, &SeedPacket::Update, &old_SeedPacket_Update);
+    homura::HookFunction(SeedPacket_UpdateAddr, &SeedPacket::Update, nullptr);
     homura::HookFunction(SeedPacket_UpdateSelectedAddr, &SeedPacket::UpdateSelected, &old_SeedPacket_UpdateSelected);
     homura::HookFunction(SeedPacket_DrawOverlayAddr, &SeedPacket::DrawOverlay, &old_SeedPacket_DrawOverlay);
     homura::HookFunction(SeedPacket_DrawAddr, &SeedPacket::Draw, &old_SeedPacket_Draw);

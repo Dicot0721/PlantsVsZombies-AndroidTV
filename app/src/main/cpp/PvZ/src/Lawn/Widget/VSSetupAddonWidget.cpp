@@ -219,8 +219,10 @@ SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeed
 
     Plant *aPlant = nullptr;
     while (theApp->mBoard->IteratePlants(aPlant)) {
-        bool hasNocturnalAsleep = Plant::IsNocturnal(aPlant->mSeedType) && aPlant->mIsAsleep;
-        if (hasNocturnalAsleep && theSeedIndex == 1) // 若场上存在未唤醒的蘑菇，则一号槽的下一抽必为咖啡豆
+        // 若场上存在未唤醒的植物，则一号槽的下一抽必为咖啡豆
+        if (theIsZombie || theSeedIndex != 1)
+            break;
+        if (aPlant->mIsAsleep)
             aSeedType = SeedType::SEED_INSTANT_COFFEE;
     }
 

@@ -43,66 +43,52 @@ void SeedPacket::Update() {
     }
 
     if (requestPause) {
-
-        if (mApp->IsIZombieLevel()) {
-            // 在IZ模式不暂停刷新种子卡片
-            old_SeedPacket_Update(this);
+        // 在IZ模式不暂停刷新种子卡片
+        if (!mApp->IsIZombieLevel()) {
             return;
-        }
-
-        if (mApp->mGameScene == GameScenes::SCENE_PLAYING && mPacketType != SeedType::SEED_NONE) {
-            mRefreshCounter--;
-        }
-        if (mSlotMachineCountDown > 0) {
-            mSlotMachineCountDown++;
         }
     }
 
-    old_SeedPacket_Update(this);
+    SeedPacket::UpdateSelected();
+    mLastSelectedTime += 0.006;
+    unknownIntMember1 += 0.006;
 
-    bool aIsProducer = Challenge::IsMPResourceProducer(mPacketType);
-    bool aIsShuffle = mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE || mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE;
-    if (mApp->IsVSMode() && gIsVSShuffleMode && !aIsProducer && !aIsShuffle) {
-        if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING)
-            return;
+    if (mApp->mGameScene != GameScenes::SCENE_PLAYING || mPacketType == SeedType::SEED_NONE) {
+        return;
+    }
 
-        if (tcp_connected)
-            return;
+    if (mBoard->mMainCounter == 0) {
+        FlashIfReady();
+    }
 
-        if (!mActive && mRefreshing)
-            mTimesUsed++;
+    if (!mActive && mRefreshing) {
+        mRefreshCounter++;
+        if (mRefreshCounter > mRefreshTime) {
+            mRefreshCounter = 0;
+            mRefreshing = false;
+            Activate();
+            FlashIfReady();
 
-        if (mTimesUsed > mRefreshTime) { // 冷却结束后替换为另一张卡
-            if (mSeedBank->mIsZombie) {
-                std::vector<SeedType> aPlantSeeds;
-                std::vector<SeedType> aZombieSeeds;
-                SeedType aSeedType = PickNextRandomSeed(mApp, aPlantSeeds, aZombieSeeds, true, mIndex);
-                SetPacketType(aSeedType, SeedType::SEED_NONE);
+            SetNextRandomSeed(); // 对战刷牌模式更换卡片
+        }
+    }
 
-                if (tcpClientSocket >= 0) {
-                    U8U8U16U16_Event event;
-                    event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
-                    event.data1 = true;
-                    event.data3 = aSeedType;
-                    event.data4 = mIndex;
-                    SendEvent(tcpClientSocket, event);
-                }
+    if (mSlotMachineCountDown > 0) {
+        mSlotMachineCountDown--;
+        float aFlipsPerSecont = TodAnimateCurveFloat(SLOT_MACHINE_TIME, 0, mSlotMachineCountDown, 6.0f, 2.0f, TodCurves::CURVE_LINEAR);
+        mSlotMachiningPosition += aFlipsPerSecont * 0.01f;
+
+        if (mSlotMachiningPosition >= 1.0f) {
+            mPacketType = mSlotMachiningNextSeed;
+            if (mSlotMachineCountDown == 0) {
+                Activate();
+                mSlotMachiningPosition = 0.0f;
             } else {
-                std::vector<SeedType> aPlantSeeds;
-                std::vector<SeedType> aZombieSeeds;
-                SeedType aSeedType = PickNextRandomSeed(mApp, aPlantSeeds, aZombieSeeds, false, mIndex);
-                SetPacketType(aSeedType, SeedType::SEED_NONE);
-
-                if (tcpClientSocket >= 0) {
-                    U8U8U16U16_Event event;
-                    event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
-                    event.data1 = false;
-                    event.data3 = aSeedType;
-                    event.data4 = mIndex;
-                    SendEvent(tcpClientSocket, event);
-                }
+                mSlotMachiningPosition -= 1.0f;
+                PickNextSlotMachineSeed();
             }
-            mTimesUsed = 0;
+        } else if (mSlotMachineCountDown == 0) {
+            mSlotMachineCountDown = 1;
         }
     }
 }
@@ -187,6 +173,11 @@ void SeedPacket::FlashIfReady() {
     }
 }
 
+void SeedPacket::Activate() {
+    if (mPacketType != SeedType::SEED_NONE)
+        mActive = true;
+}
+
 void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
     old_SeedPacket_SetPacketType(this, theSeedType, theImitaterType);
 
@@ -220,6 +211,46 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
                 mRefreshing = false;
                 mActive = true;
             }
+        }
+    }
+}
+
+void SeedPacket::SetNextRandomSeed() {
+    if (!gIsVSShuffleMode) // 仅刷牌模式生效
+        return;
+
+    // 不更换生产者和刷牌按钮
+    if (Challenge::IsMPResourceProducer(mPacketType) || mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE || mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)
+        return;
+
+    if (tcp_connected)
+        return;
+
+    if (mSeedBank->mIsZombie) {
+        std::vector<SeedType> plantSeeds, zombieSeeds;
+        SeedType seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, true, mIndex);
+        SetPacketType(seedType, SeedType::SEED_NONE);
+
+        if (tcpClientSocket >= 0) {
+            U8U8U16U16_Event event;
+            event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
+            event.data1 = true;
+            event.data3 = seedType;
+            event.data4 = mIndex;
+            SendEvent(tcpClientSocket, event);
+        }
+    } else {
+        std::vector<SeedType> plantSeeds, zombieSeeds;
+        SeedType seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, false, mIndex);
+        SetPacketType(seedType, SeedType::SEED_NONE);
+
+        if (tcpClientSocket >= 0) {
+            U8U8U16U16_Event event;
+            event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
+            event.data1 = false;
+            event.data3 = seedType;
+            event.data4 = mIndex;
+            SendEvent(tcpClientSocket, event);
         }
     }
 }
