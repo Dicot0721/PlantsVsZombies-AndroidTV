@@ -299,13 +299,13 @@ void Zombie::UpdateYeti() {
             mHasObject = true;
             mZombiePhase = PHASE_ZOMBIE_NORMAL;
         } else if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_NORMAL) {
-            if (mPhaseCounter == 500 && tcpClientSocket >= 0) {
+            if (mPhaseCounter == 500 && gTcpClientSocket >= 0) {
                 U8U8U16U16_Event event;
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER;
                 event.data1 = uint8_t(mZombiePhase);
                 event.data3 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data4 = uint16_t(mPhaseCounter);
-                SendEvent(tcpClientSocket, event);
+                SendEvent(gTcpClientSocket, event);
             }
         }
     }
@@ -413,7 +413,7 @@ void Zombie::UpdateZombiePolevaulter() {
                 return;
             }
 
-            if (mApp->IsVSMode() && tcp_connected) {
+            if (mApp->IsVSMode() && gTcpConnected) {
                 return;
             }
 
@@ -428,13 +428,13 @@ void Zombie::UpdateZombiePolevaulter() {
             mVelX = aJumpDistance / aAnimDuration;
             mHasObject = false;
 
-            if (tcpClientSocket >= 0) {
+            if (gTcpClientSocket >= 0) {
                 U16Buf32_Event event;
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT;
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2.i16x2.i16_1 = int16_t(mX);
                 event.data2.i16x2.i16_2 = int16_t(aJumpDistance);
-                SendEvent(tcpClientSocket, event);
+                SendEvent(gTcpClientSocket, event);
             }
         }
 
@@ -549,7 +549,7 @@ void Zombie::UpdateZombieGargantuar() {
             ReanimShowTrack("Zombie_gargantuar_whiterope", RENDER_GROUP_HIDDEN);
             mApp->PlayFoley(FoleyType::FOLEY_SWING);
 
-            if (mApp->IsVSMode() && tcp_connected)
+            if (mApp->IsVSMode() && gTcpConnected)
                 return;
 
             Zombie *aZombieImp = mBoard->AddZombie(ZombieType::ZOMBIE_IMP, mFromWave, false);
@@ -568,13 +568,13 @@ void Zombie::UpdateZombieGargantuar() {
                 aThrowingDistance -= aOffserDistance;
             }
 
-            if (tcpClientSocket >= 0) {
+            if (gTcpClientSocket >= 0) {
                 U16U16U16Buf32Buf32_Event event;
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW;
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombieImp));
                 event.data4.f32 = aOffserDistance;
-                SendEvent(tcpClientSocket, event);
+                SendEvent(gTcpClientSocket, event);
             }
 
             aZombieImp->mPosX = mPosX - 133.0f;
@@ -615,16 +615,16 @@ void Zombie::UpdateZombieGargantuar() {
         return;
 
     // 客机不判断是否扔小鬼、是否砸地
-    if (mApp->IsVSMode() && tcp_connected)
+    if (mApp->IsVSMode() && gTcpConnected)
         return;
 
     if (mHasObject && mBodyHealth < mBodyMaxHealth / 2 && aThrowingDistance > 40.0f) {
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16Buf32_Event event;
             event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW;
             event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
             event.data2.f32 = mPosX;
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
         mZombiePhase = ZombiePhase::PHASE_GARGANTUAR_THROWING;
         PlayZombieReanim("anim_throw", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
@@ -648,12 +648,12 @@ void Zombie::UpdateZombieGargantuar() {
 
     if (doSmash) {
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16Buf32_Event event;
             event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH;
             event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
             event.data2.f32 = mPosX;
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
 
         mZombiePhase = ZombiePhase::PHASE_GARGANTUAR_SMASHING;
@@ -1002,7 +1002,7 @@ void Zombie::UpdateZombieDancer() {
                 mApp->PlayFoley(FoleyType::FOLEY_DANCER);
             }
 
-            if (!(mApp->IsVSMode() && tcp_connected))
+            if (!(mApp->IsVSMode() && gTcpConnected))
                 SummonBackupDancers();
             mZombiePhase = ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_HOLD;
             mPhaseCounter = 200;
@@ -1310,7 +1310,7 @@ void Zombie::RiseFromGrave(int theCol, int theRow) {
     }
 
     U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE}, uint8_t(theCol), uint8_t(theRow), uint16_t(mBoard->mZombies.DataArrayGetID(this))};
-    SendEvent(tcpClientSocket, event);
+    SendEvent(gTcpClientSocket, event);
 }
 
 void Zombie::CheckForBoardEdge() {
@@ -1654,12 +1654,12 @@ void Zombie::DieWithLoot() {
 
 void Zombie::DieNoLoot() {
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (tcp_connected)
+        if (gTcpConnected)
             return;
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_DIE}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
 
@@ -2398,12 +2398,12 @@ void Zombie::SetRow(int theRow) {
 
 void Zombie::StartMindControlled() {
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (tcp_connected)
+        if (gTcpConnected)
             return;
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
 
@@ -2514,7 +2514,7 @@ void Zombie::SetupLostArmReanim() {
 }
 
 void Zombie::PickRandomSpeed() {
-    if (mApp->IsVSMode() && tcp_connected)
+    if (mApp->IsVSMode() && gTcpConnected)
         return;
 
     if (mZombiePhase == ZombiePhase::PHASE_SNORKEL_WALKING_IN_POOL || (IsFlying() && mApp->IsVSMode())) {
@@ -2552,14 +2552,14 @@ void Zombie::PickRandomSpeed() {
 
     UpdateAnimSpeed();
 
-    if (mApp->IsVSMode() && tcpClientSocket >= 0) {
+    if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
         U16U16U16Buf32Buf32_Event event;
         event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED;
         event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
         event.data2 = uint16_t(mAnimTicksPerFrame);
         event.data4.f32 = mVelX;
         event.data5.f32 = mPosX;
-        SendEvent(tcpClientSocket, event);
+        SendEvent(gTcpClientSocket, event);
     }
 }
 
@@ -2728,19 +2728,19 @@ void Zombie::HitIceTrap() {
     if (mInPool) {
         mIceTrapCounter = 300;
     } else if (cold) {
-        if (!(mApp->IsVSMode() && tcp_connected))
+        if (!(mApp->IsVSMode() && gTcpConnected))
             mIceTrapCounter = RandRangeInt(300, 400);
     } else {
-        if (!(mApp->IsVSMode() && tcp_connected))
+        if (!(mApp->IsVSMode() && gTcpConnected))
             mIceTrapCounter = RandRangeInt(400, 600);
     }
 
-    if (mApp->IsVSMode() && tcpClientSocket >= 0) {
+    if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
         U16U16_Event event;
         event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP;
         event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
         event.data2 = uint16_t(mIceTrapCounter);
-        SendEvent(tcpClientSocket, event);
+        SendEvent(gTcpClientSocket, event);
     }
 
     StopZombieSound();
@@ -2904,12 +2904,12 @@ void Zombie::SummonBackupDancers() {
         }
         mFollowerZombieID[i] = SummonBackupDancer(aRow, aPosX);
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16x4U16_Event event;
             event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS;
             event.data1[i] = uint16_t(mFollowerZombieID[i]);
             event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
 }
@@ -2946,7 +2946,7 @@ void Zombie::DropLoot() {
 }
 
 void Zombie::UpdateYuckyFace() {
-    if (mApp->mGameMode == GAMEMODE_MP_VS && (tcp_connected || tcpClientSocket >= 0)) {
+    if (mApp->mGameMode == GAMEMODE_MP_VS && (gTcpConnected || gTcpClientSocket >= 0)) {
         mYuckyFaceCounter++;
         // 20 < counter < 170 且还没有 yucky face 图时：停止吃并直接跳到 170
         if (mYuckyFaceCounter > 20 && mYuckyFaceCounter < 170 && !HasYuckyFaceImage()) {
@@ -2993,7 +2993,7 @@ void Zombie::UpdateYuckyFace() {
                 canGoUp = false;
             }
             // 客机不允许随机换行
-            if (tcp_connected) {
+            if (gTcpConnected) {
                 return;
             }
             if (canGoDown && !canGoUp) {
@@ -3010,9 +3010,9 @@ void Zombie::UpdateYuckyFace() {
                 };
             }
 
-            if (tcpClientSocket >= 0) {
+            if (gTcpClientSocket >= 0) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_YUCKY_SETROW}, uint16_t(mBoard->mZombies.DataArrayGetID(this)), uint16_t(mRow)};
-                SendEvent(tcpClientSocket, event);
+                SendEvent(gTcpClientSocket, event);
             }
         }
         return;
@@ -3022,12 +3022,12 @@ void Zombie::UpdateYuckyFace() {
 
 void Zombie::DoSpecial() {
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (tcp_connected)
+        if (gTcpConnected)
             return;
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
 

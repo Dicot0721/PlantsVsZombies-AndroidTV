@@ -585,11 +585,11 @@ void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int t
 
 
     if (mApp->mGameMode == GAMEMODE_MP_VS) {
-        if (tcp_connected) {
+        if (gTcpConnected) {
             return;
         }
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16Buf32Buf32_Event event;
             event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT;
             event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombie));
@@ -599,7 +599,7 @@ void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int t
             if (theZombieType == ZOMBIE_BUNGEE) {
                 event.data3.f32 = aZombie->mAltitude;
             }
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
 }

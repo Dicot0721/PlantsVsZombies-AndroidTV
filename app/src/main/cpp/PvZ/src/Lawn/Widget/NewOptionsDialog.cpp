@@ -26,7 +26,7 @@
 
 void NewOptionsDialog::ButtonDepress(int buttonId) {
 
-    if (buttonId == 5 && (tcp_connected || tcpClientSocket >= 0)) {
+    if (buttonId == 5 && (gTcpConnected || gTcpClientSocket >= 0)) {
         mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
 
         this->Sexy::Dialog::ButtonDepress(buttonId);
@@ -41,10 +41,10 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                 mApp->mSoundSystem->CancelPausedFoley();
                 mApp->KillNewOptionsDialog();
 
-                if (tcp_connected) {
+                if (gTcpConnected) {
                     // 客户端点击投降
                     BaseEvent event = {EventType::EVENT_CLIENT_BOARD_CONCEDE};
-                    SendEvent(tcpServerSocket, event);
+                    SendEvent(gTcpServerSocket, event);
                     if (mApp->mBoard->mGamepadControls2->mPlayerIndex2 == 1) {
                         mApp->SetBoardResult(7);
                         mApp->mGameScene = SCENE_ZOMBIES_WON;
@@ -54,10 +54,10 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                     }
                 }
 
-                if (tcpClientSocket >= 0) {
+                if (gTcpClientSocket >= 0) {
                     // 主机端点击投降
                     BaseEvent event = {EventType::EVENT_SERVER_BOARD_CONCEDE};
-                    SendEvent(tcpClientSocket, event);
+                    SendEvent(gTcpClientSocket, event);
                     if (mApp->mBoard->mGamepadControls1->mPlayerIndex2 == 1) {
                         mApp->SetBoardResult(7);
                         mApp->mGameScene = SCENE_ZOMBIES_WON;

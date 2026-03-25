@@ -268,13 +268,13 @@ ssize_t SendEvent(int socket, Event &&event) {
 constexpr int UDP_PORT = 8888;
 
 // 主机端需要
-inline int udpBroadcastSocket = -1;
-inline int tcpListenSocket = -1;
-inline int tcpClientSocket = -1;
-inline int tcpPort = 0;
-inline int lastBroadcastTime = 0;
-inline sockaddr_in broadcast_addr;
-inline std::string ifname;
+inline int gUdpBroadcastSocket = -1;
+inline int gTcpListenSocket = -1;
+inline int gTcpClientSocket = -1;
+inline int gTcpPort = 0;
+inline int gLastBroadcastTime = 0;
+inline sockaddr_in gBroadcastAddr;
+inline std::string gIfname;
 
 // 客户端需要
 constexpr int MAX_SERVERS = 3;
@@ -287,14 +287,14 @@ struct ServerInfo {
     int tcp_port;
     char name[NAME_LENGTH];
     time_t last_seen; // 记录最后一次收到广播的时间
-} inline servers[MAX_SERVERS];
+} inline gServers[MAX_SERVERS];
 
-inline int scanned_server_count = 0; // 已发现的服务端数量
-inline int udpScanSocket = -1;
+inline int gScannedServerCount = 0; // 已发现的服务端数量
+inline int gUdpScanSocket = -1;
 
 // 客户端TCP socket
-inline int tcpServerSocket = -1;
-inline bool tcp_connecting = false; // 正在尝试连接
-inline bool tcp_connected = false;
+inline int gTcpServerSocket = -1;
+inline bool gTcpConnecting = false; // 正在尝试连接
+inline bool gTcpConnected = false;
 
 #endif // PVZ_NETPLAY_H

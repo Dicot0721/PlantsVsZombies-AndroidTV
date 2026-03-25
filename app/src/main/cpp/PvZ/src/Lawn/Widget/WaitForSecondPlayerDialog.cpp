@@ -29,10 +29,8 @@
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
 #include <arpa/inet.h>
-#include <asm-generic/fcntl.h>
 #include <fcntl.h>
 #include <ifaddrs.h>
-#include <linux/in.h>
 #include <net/if.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -79,7 +77,7 @@ void WaitForSecondPlayerDialog::SetMode(UIMode mode) {
 
 void WaitForSecondPlayerDialog::RefreshButtons() {
     switch (mUIMode) {
-        case UIMode::MODE1_INIT:
+        case UIMode::MODE1_INIT: {
             mLeftButton->SetLabel("[WIFI_VS]");
             mLeftButton->mDisabled = false;
 
@@ -91,10 +89,8 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
 
             mLawnNoButton->SetLabel("[BACK]");
             mLawnNoButton->mDisabled = false;
-            break;
-
+        } break;
         case UIMode::MODE2_WIFI: {
-
             //  如果正在创建房间（Host），左按钮改成“设置房间端口”
             if (mIsCreatingRoom) {
                 // left: 设置端口
@@ -107,7 +103,7 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
 
                 // Yes: 开始游戏（有人加入才可点）
                 mLawnYesButton->SetLabel("[START_GAME]");
-                mLawnYesButton->mDisabled = (tcpClientSocket == -1);
+                mLawnYesButton->mDisabled = (gTcpClientSocket == -1);
 
                 // No: 返回模式选择
                 mLawnNoButton->SetLabel("[BACK_TO_MODE_SELECT]");
@@ -124,7 +120,7 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
                 // 扫描模式下：没房间就禁用“加入房间”
                 bool inScanMode = (!mIsCreatingRoom && !mIsJoiningRoom);
                 if (inScanMode) {
-                    mLeftButton->mDisabled = (scanned_server_count == 0);
+                    mLeftButton->mDisabled = (gScannedServerCount == 0);
                 } else {
                     // 其他情况（例如创建房间时 left 通常禁用）
                     mLeftButton->mDisabled = true;
@@ -141,11 +137,7 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
 
             mLawnNoButton->SetLabel("[BACK_TO_MODE_SELECT]");
             mLawnNoButton->mDisabled = false;
-
-            break;
-        }
-
-
+        } break;
         case UIMode::MODE3_SERVER: {
             // left: 加入 / 离开
             mLeftButton->SetLabel(mServerJoined ? "[LEAVE_ROOM_BUTTON]" : "[JOIN_ROOM_BUTTON]");
@@ -166,7 +158,6 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
                 mLawnYesButton->mDisabled = false;
             }
 
-
             mLawnNoButton->SetLabel("[BACK_TO_MODE_SELECT]");
             mLawnNoButton->mDisabled = false;
 
@@ -180,9 +171,7 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
             // 创建按钮：空闲态可创建；hosting 时可退出
             bool canCreateIdle = (mServerConnected && !mServerConnecting && !mServerJoined);
             mRightButton->mDisabled = !canCreateIdle;
-
-            break;
-        }
+        } break;
     }
 }
 
@@ -210,7 +199,6 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
         GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
         return;
     }
-
 
     // 解决此Dialog显示时背景僵尸全部聚集、且草丛大块空缺的问题
     if (theApp->mBoard != nullptr) {
@@ -285,7 +273,6 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     std::memset(mSrvRecvBuf, 0, sizeof(mSrvRecvBuf));
     mServerStatusText = TodStringTranslate("[STATUS_NOT_CONNECTED]");
 
-
     SetMode(UIMode::MODE1_INIT);
 }
 
@@ -301,30 +288,27 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
         g->DrawString(TodStringTranslate("[WIFI_VS_DESC]"), 160, 240);
         g->DrawString(TodStringTranslate("[SERVER_VS_DESC]"), 160, 280);
     } else if (mUIMode == UIMode::MODE2_WIFI) {
-
-        // =========================
         // MODE2_WIFI: Host（创建房间）
-        // =========================
         if (mIsCreatingRoom) {
             pvzstl::string fmt = TodStringTranslate("[ROOM_CREATED_FMT]");
             pvzstl::string str = StrFormat(fmt.c_str(), mApp->mPlayerInfo->mName);
             g->DrawString(str, 230, 150);
 
-            if (tcpPort != 0) {
+            if (gTcpPort != 0) {
                 pvzstl::string fmt1 = TodStringTranslate("[PORT_IF_FMT]");
-                pvzstl::string str1 = StrFormat(fmt1.c_str(), tcpPort, ifname.c_str());
+                pvzstl::string str1 = StrFormat(fmt1.c_str(), gTcpPort, gIfname.c_str());
                 g->DrawString(str1, 260, 200);
             }
 
-            pvzstl::string str2 = TodStringTranslate((udpBroadcastSocket >= 0) ? "[ROOM_SCAN_OPEN_OK]" : "[ROOM_SCAN_OPEN_FAIL]");
+            pvzstl::string str2 = TodStringTranslate((gUdpBroadcastSocket >= 0) ? "[ROOM_SCAN_OPEN_OK]" : "[ROOM_SCAN_OPEN_FAIL]");
             g->DrawString(str2, 260, 250);
 
             // 是否有玩家加入
-            pvzstl::string str3 = TodStringTranslate((tcpClientSocket == -1) ? "[WAIT_OTHER_JOIN]" : "[OTHER_JOINED]");
+            pvzstl::string str3 = TodStringTranslate((gTcpClientSocket == -1) ? "[WAIT_OTHER_JOIN]" : "[OTHER_JOINED]");
             g->DrawString(str3, 260, 300);
 
             // （可选）提示开始游戏按钮状态
-            pvzstl::string str4 = TodStringTranslate((tcpClientSocket == -1) ? "[WAIT_OTHER_JOIN_TO_START]" : "[CAN_START_CLICK_START]");
+            pvzstl::string str4 = TodStringTranslate((gTcpClientSocket == -1) ? "[WAIT_OTHER_JOIN_TO_START]" : "[CAN_START_CLICK_START]");
             g->DrawString(str4, 220, 360);
 
             return;
@@ -336,7 +320,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
         if (mIsJoiningRoom) {
             if (mUseManualTarget) {
                 // 手动连接
-                pvzstl::string str = TodStringTranslate(tcp_connected ? "[JOINED_MANUAL]" : "[JOINING_MANUAL]");
+                pvzstl::string str = TodStringTranslate(gTcpConnected ? "[JOINED_MANUAL]" : "[JOINING_MANUAL]");
                 g->DrawString(str, 280, 150);
 
                 pvzstl::string str1 = StrFormat("IP: %s:%d", mManualIp, mManualPort);
@@ -347,17 +331,17 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
                 int idx = mSelectedServerIndex;
                 if (idx < 0)
                     idx = 0;
-                if (idx >= scanned_server_count)
-                    idx = scanned_server_count - 1;
+                if (idx >= gScannedServerCount)
+                    idx = gScannedServerCount - 1;
 
-                if (scanned_server_count <= 0) {
+                if (gScannedServerCount <= 0) {
                     g->DrawString(TodStringTranslate("[NO_AVAILABLE_ROOMS]"), 280, 150);
                 } else {
-                    pvzstl::string fmtJoin = TodStringTranslate(tcp_connected ? "[JOINED_ROOM_FMT]" : "[JOINING_ROOM_FMT]");
-                    pvzstl::string str = StrFormat(fmtJoin.c_str(), servers[idx].name);
+                    pvzstl::string fmtJoin = TodStringTranslate(gTcpConnected ? "[JOINED_ROOM_FMT]" : "[JOINING_ROOM_FMT]");
+                    pvzstl::string str = StrFormat(fmtJoin.c_str(), gServers[idx].name);
                     g->DrawString(str, 280, 150);
 
-                    g->DrawString(StrFormat("IP: %s:%d", servers[idx].ip, servers[idx].tcp_port), 280, 200);
+                    g->DrawString(StrFormat("IP: %s:%d", gServers[idx].ip, gServers[idx].tcp_port), 280, 200);
                 }
             }
 
@@ -367,8 +351,8 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
         // =========================
         // MODE2_WIFI: 扫描中/列表展示（未创建、未加入）
         // =========================
-        if (scanned_server_count <= 0) {
-            pvzstl::string str1 = TodStringTranslate((udpScanSocket >= 0) ? "[SCANNING_ROOMS]" : "[SCAN_FAILED]");
+        if (gScannedServerCount <= 0) {
+            pvzstl::string str1 = TodStringTranslate((gUdpScanSocket >= 0) ? "[SCANNING_ROOMS]" : "[SCAN_FAILED]");
             g->DrawString(str1, 320, 200);
 
             g->DrawString(TodStringTranslate("[SCAN_TIP_MANUAL_JOIN]"), 55, 260);
@@ -381,8 +365,8 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
         int idx = mSelectedServerIndex;
         if (idx < 0)
             idx = 0;
-        if (idx >= scanned_server_count)
-            idx = scanned_server_count - 1;
+        if (idx >= gScannedServerCount)
+            idx = gScannedServerCount - 1;
         mSelectedServerIndex = idx;
 
         int yPos = 180;
@@ -393,7 +377,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
         // （可选）标题
         g->DrawString(TodStringTranslate("[AVAILABLE_ROOMS]"), 230, 140);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-        for (int i = 0; i < scanned_server_count; i++) {
+        for (int i = 0; i < gScannedServerCount; i++) {
             if (i == mSelectedServerIndex) {
                 // 选中高亮（你原本用 leaderboard_selector）
                 TodDrawImageScaledF(g, addonImages.leaderboard_selector, 140, yPos - 35, 0.7, 0.7);
@@ -403,7 +387,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
             }
 
             pvzstl::string fmtLine = TodStringTranslate("[ROOM_LINE_FMT]");
-            pvzstl::string line = StrFormat(fmtLine.c_str(), servers[i].name, servers[i].ip, servers[i].tcp_port);
+            pvzstl::string line = StrFormat(fmtLine.c_str(), gServers[i].name, gServers[i].ip, gServers[i].tcp_port);
             g->DrawString(line, 230, yPos);
             yPos += 50;
         }
@@ -485,13 +469,13 @@ bool WaitForSecondPlayerDialog::ManualIpConnect() {
     mLawnYesButton->mDisabled = true;
     mLawnYesButton->SetLabel("[PLAY_ONLINE]");
 
-    if (tcpServerSocket >= 0) {
-        shutdown(tcpServerSocket, SHUT_RDWR);
-        close(tcpServerSocket);
-        tcpServerSocket = -1;
+    if (gTcpServerSocket >= 0) {
+        shutdown(gTcpServerSocket, SHUT_RDWR);
+        close(gTcpServerSocket);
+        gTcpServerSocket = -1;
     }
-    tcp_connecting = false;
-    tcp_connected = false;
+    gTcpConnecting = false;
+    gTcpConnected = false;
 
     // 关闭扫描 socket（避免 scan 模式逻辑干扰）
     CloseUdpScanSocket();
@@ -539,7 +523,7 @@ void WaitForSecondPlayerDialog::Update() {
             mApp->mPlayerInfo->SaveDetails();
 
             mInputPurpose = InputPurpose::NONE;
-            // ✅ 关键：重建房间，让 tcpPort / 广播端口真正改变
+            // ✅ 关键：重建房间，让 gTcpPort / 广播端口真正改变
             ExitRoom();   // 会关 tcpClient/tcpListen/udpBroadcast
             CreateRoom(); // 你已改为使用 mVSRoomPort bind
 
@@ -576,20 +560,20 @@ void WaitForSecondPlayerDialog::Update() {
         bool inScanMode = (!mIsCreatingRoom && !mIsJoiningRoom);
         if (inScanMode) {
             // 扫描模式下：没房间就禁用“加入房间”
-            mLeftButton->mDisabled = (scanned_server_count == 0);
+            mLeftButton->mDisabled = (gScannedServerCount == 0);
 
             // 选中索引修正
-            mSelectedServerIndex = std::clamp(mSelectedServerIndex, 0, std::max(0, scanned_server_count - 1));
+            mSelectedServerIndex = std::clamp(mSelectedServerIndex, 0, std::max(0, gScannedServerCount - 1));
         }
 
         // 创建房间时：开始游戏按钮是否可点
         if (mIsCreatingRoom) {
-            mLawnYesButton->mDisabled = (tcpClientSocket == -1);
+            mLawnYesButton->mDisabled = (gTcpClientSocket == -1);
         }
 
         // UDP 广播/扫描节拍
-        lastBroadcastTime++;
-        if (lastBroadcastTime >= 100) { // ~1秒
+        gLastBroadcastTime++;
+        if (gLastBroadcastTime >= 100) { // ~1秒
             if (mIsCreatingRoom) {
                 UdpBroadcastRoom();
             } else if (!mIsJoiningRoom) {
@@ -598,10 +582,10 @@ void WaitForSecondPlayerDialog::Update() {
         }
 
         // TCP accept / connect
-        if (tcpListenSocket >= 0) {
+        if (gTcpListenSocket >= 0) {
             CheckTcpAccept();
         }
-        if (mIsJoiningRoom && !tcp_connected) {
+        if (mIsJoiningRoom && !gTcpConnected) {
             TryTcpConnect();
         }
     }
@@ -674,19 +658,19 @@ void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
 
 
 void WaitForSecondPlayerDialog::InitUdpScanSocket() {
-    scanned_server_count = 0;
-    udpScanSocket = socket(AF_INET, SOCK_DGRAM, 0);
-    if (udpScanSocket < 0) {
+    gScannedServerCount = 0;
+    gUdpScanSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    if (gUdpScanSocket < 0) {
         LOG_DEBUG("socket ERROR");
         return;
     }
 
     // 非阻塞
-    int flags = fcntl(udpScanSocket, F_GETFL, 0);
-    fcntl(udpScanSocket, F_SETFL, flags | O_NONBLOCK);
+    int flags = fcntl(gUdpScanSocket, F_GETFL, 0);
+    fcntl(gUdpScanSocket, F_SETFL, flags | O_NONBLOCK);
     // 允许地址重用
     int opt = 1;
-    setsockopt(udpScanSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    setsockopt(gUdpScanSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     // 绑定端口
     sockaddr_in recv_addr{
         .sin_family = AF_INET,
@@ -694,10 +678,10 @@ void WaitForSecondPlayerDialog::InitUdpScanSocket() {
         .sin_addr{.s_addr = INADDR_ANY},
     };
 
-    if (bind(udpScanSocket, (sockaddr *)&recv_addr, sizeof(recv_addr)) < 0) {
+    if (bind(gUdpScanSocket, (sockaddr *)&recv_addr, sizeof(recv_addr)) < 0) {
         LOG_DEBUG("bind ERROR");
-        close(udpScanSocket);
-        udpScanSocket = -1;
+        close(gUdpScanSocket);
+        gUdpScanSocket = -1;
         return;
     }
 
@@ -705,11 +689,11 @@ void WaitForSecondPlayerDialog::InitUdpScanSocket() {
 }
 
 void WaitForSecondPlayerDialog::CloseUdpScanSocket() {
-    if (udpScanSocket >= 0) {
-        close(udpScanSocket);
-        udpScanSocket = -1;
+    if (gUdpScanSocket >= 0) {
+        close(gUdpScanSocket);
+        gUdpScanSocket = -1;
     }
-    // scanned_server_count = 0;
+    // gScannedServerCount = 0;
 }
 
 bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in &out_bcast, std::string *out_ifname) {
@@ -789,15 +773,15 @@ bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in &out_bcast, std::
 
 void WaitForSecondPlayerDialog::CreateRoom() {
     // 1) 创建TCP监听socket
-    tcpListenSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (tcpListenSocket < 0) {
+    gTcpListenSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (gTcpListenSocket < 0) {
         LOG_DEBUG("TCP socket failed errno={}", errno);
         mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[CREATE_ROOM_FAIL_TITLE]", "[CREATE_ROOM_FAIL_SOCKET]", "[DIALOG_BUTTON_OK]", "", 3);
         return;
     }
 
-    int flags = fcntl(tcpListenSocket, F_GETFL, 0);
-    fcntl(tcpListenSocket, F_SETFL, flags | O_NONBLOCK);
+    int flags = fcntl(gTcpListenSocket, F_GETFL, 0);
+    fcntl(gTcpListenSocket, F_SETFL, flags | O_NONBLOCK);
 
     sockaddr_in addr{
         .sin_family = AF_INET,
@@ -805,14 +789,14 @@ void WaitForSecondPlayerDialog::CreateRoom() {
         .sin_addr{.s_addr = INADDR_ANY},
     };
     int opt = 1;
-    setsockopt(tcpListenSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    setsockopt(gTcpListenSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
-    if (bind(tcpListenSocket, (sockaddr *)&addr, sizeof(addr)) < 0) {
+    if (bind(gTcpListenSocket, (sockaddr *)&addr, sizeof(addr)) < 0) {
         LOG_DEBUG("TCP bind failed errno={}", errno);
 
         // ✅ 清理
-        close(tcpListenSocket);
-        tcpListenSocket = -1;
+        close(gTcpListenSocket);
+        gTcpListenSocket = -1;
 
         InitUdpScanSocket();
 
@@ -827,12 +811,12 @@ void WaitForSecondPlayerDialog::CreateRoom() {
         return;
     }
 
-    if (listen(tcpListenSocket, 1) < 0) {
+    if (listen(gTcpListenSocket, 1) < 0) {
         LOG_DEBUG("TCP listen failed errno={}", errno);
 
         // ✅ 清理
-        close(tcpListenSocket);
-        tcpListenSocket = -1;
+        close(gTcpListenSocket);
+        gTcpListenSocket = -1;
 
         mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[CREATE_ROOM_FAIL_TITLE]", "[CREATE_ROOM_FAIL_LISTEN]", "[DIALOG_BUTTON_OK]", "", 3);
         return;
@@ -840,35 +824,35 @@ void WaitForSecondPlayerDialog::CreateRoom() {
 
     // 获取实际分配的端口号（当 mVSRoomPort=0 时这里会得到随机端口）
     socklen_t addr_len = sizeof(addr);
-    getsockname(tcpListenSocket, (sockaddr *)&addr, &addr_len);
-    tcpPort = ntohs(addr.sin_port);
+    getsockname(gTcpListenSocket, (sockaddr *)&addr, &addr_len);
+    gTcpPort = ntohs(addr.sin_port);
 
     // 2) 创建UDP广播socket
-    udpBroadcastSocket = socket(AF_INET, SOCK_DGRAM, 0);
-    if (udpBroadcastSocket < 0) {
+    gUdpBroadcastSocket = socket(AF_INET, SOCK_DGRAM, 0);
+    if (gUdpBroadcastSocket < 0) {
         mIsCreatingRoom = true;
         LOG_DEBUG("UDP socket failed errno={}", errno);
         return;
     }
 
     int on = 1;
-    setsockopt(udpBroadcastSocket, SOL_SOCKET, SO_BROADCAST, &on, sizeof(on));
-    setsockopt(udpBroadcastSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+    setsockopt(gUdpBroadcastSocket, SOL_SOCKET, SO_BROADCAST, &on, sizeof(on));
+    setsockopt(gUdpBroadcastSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
     // 选择广播地址（失败也给提示，但仍可兜底 255.255.255.255）
     sockaddr_in bcast{};
-    if (GetActiveBroadcast(bcast, &ifname)) {
+    if (GetActiveBroadcast(bcast, &gIfname)) {
         bcast.sin_port = htons(UDP_PORT);
-        broadcast_addr = bcast;
+        gBroadcastAddr = bcast;
 
         char ipstr[INET_ADDRSTRLEN]{};
         inet_ntop(AF_INET, &bcast.sin_addr, ipstr, sizeof(ipstr));
-        LOG_DEBUG("[UDP] use if={} bcast={}", ifname.c_str(), ipstr);
+        LOG_DEBUG("[UDP] use if={} bcast={}", gIfname, ipstr);
     } else {
-        memset(&broadcast_addr, 0, sizeof(broadcast_addr));
-        broadcast_addr.sin_family = AF_INET;
-        broadcast_addr.sin_port = htons(UDP_PORT);
-        inet_pton(AF_INET, "255.255.255.255", &broadcast_addr.sin_addr);
+        memset(&gBroadcastAddr, 0, sizeof(gBroadcastAddr));
+        gBroadcastAddr.sin_family = AF_INET;
+        gBroadcastAddr.sin_port = htons(UDP_PORT);
+        inet_pton(AF_INET, "255.255.255.255", &gBroadcastAddr.sin_addr);
         LOG_WARN("[UDP] fallback broadcast 255.255.255.255:{}", UDP_PORT);
 
         // ✅ 可选：提示玩家“没找到网卡广播地址，已用兜底”
@@ -876,10 +860,10 @@ void WaitForSecondPlayerDialog::CreateRoom() {
         // ShowCreateRoomFail("[CREATE_ROOM_WARN_TITLE]", "[CREATE_ROOM_WARN_BCAST_FALLBACK]");
     }
 
-    flags = fcntl(udpBroadcastSocket, F_GETFL, 0);
-    fcntl(udpBroadcastSocket, F_SETFL, flags | O_NONBLOCK);
+    flags = fcntl(gUdpBroadcastSocket, F_GETFL, 0);
+    fcntl(gUdpBroadcastSocket, F_SETFL, flags | O_NONBLOCK);
 
-    LOG_DEBUG("[Host] Room created. TCP port={}, UDP port={}", tcpPort, UDP_PORT);
+    LOG_DEBUG("[Host] Room created. TCP port={}, UDP port={}", gTcpPort, UDP_PORT);
 
     UdpBroadcastRoom();
     mIsCreatingRoom = true;
@@ -888,21 +872,21 @@ void WaitForSecondPlayerDialog::CreateRoom() {
 void WaitForSecondPlayerDialog::ExitRoom() {
     mIsCreatingRoom = false;
 
-    if (tcpClientSocket >= 0) {
-        shutdown(tcpClientSocket, SHUT_RDWR); // 关闭读写
-        close(tcpClientSocket);
-        tcpClientSocket = -1;
+    if (gTcpClientSocket >= 0) {
+        shutdown(gTcpClientSocket, SHUT_RDWR); // 关闭读写
+        close(gTcpClientSocket);
+        gTcpClientSocket = -1;
     }
 
-    if (tcpListenSocket >= 0) {
-        shutdown(tcpListenSocket, SHUT_RDWR);
-        close(tcpListenSocket);
-        tcpListenSocket = -1;
+    if (gTcpListenSocket >= 0) {
+        shutdown(gTcpListenSocket, SHUT_RDWR);
+        close(gTcpListenSocket);
+        gTcpListenSocket = -1;
     }
 
-    if (udpBroadcastSocket >= 0) {
-        close(udpBroadcastSocket);
-        udpBroadcastSocket = -1;
+    if (gUdpBroadcastSocket >= 0) {
+        close(gUdpBroadcastSocket);
+        gUdpBroadcastSocket = -1;
     }
 
     // 其他清理操作
@@ -915,12 +899,12 @@ void WaitForSecondPlayerDialog::JoinRoom() {
 
 void WaitForSecondPlayerDialog::LeaveRoom() {
     mIsJoiningRoom = false;
-    if (tcpServerSocket >= 0) {
-        shutdown(tcpServerSocket, SHUT_RDWR); // 关闭读写
-        close(tcpServerSocket);
-        tcpServerSocket = -1;
-        tcp_connecting = false;
-        tcp_connected = false;
+    if (gTcpServerSocket >= 0) {
+        shutdown(gTcpServerSocket, SHUT_RDWR); // 关闭读写
+        close(gTcpServerSocket);
+        gTcpServerSocket = -1;
+        gTcpConnecting = false;
+        gTcpConnected = false;
     }
 
     mUseManualTarget = false;
@@ -929,8 +913,8 @@ void WaitForSecondPlayerDialog::LeaveRoom() {
 }
 
 void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
-    lastBroadcastTime = 0;
-    if (udpBroadcastSocket < 0)
+    gLastBroadcastTime = 0;
+    if (gUdpBroadcastSocket < 0)
         return;
     LawnApp *lawnApp = *gLawnApp_Addr;
     if (!lawnApp || !lawnApp->mPlayerInfo || !lawnApp->mPlayerInfo->mName)
@@ -938,54 +922,54 @@ void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
 
     const char *message = lawnApp->mPlayerInfo->mName;
 
-    if (tcpPort != 0) {
+    if (gTcpPort != 0) {
         size_t msg_len = strlen(message) + 1; // 含 '\0'
-        size_t total_len = msg_len + sizeof(tcpPort);
+        size_t total_len = msg_len + sizeof(gTcpPort);
 
         char send_buf[256];
         if (total_len > sizeof(send_buf))
             return; // 防止溢出
 
         memcpy(send_buf, message, msg_len);
-        memcpy(send_buf + msg_len, &tcpPort, sizeof(tcpPort));
+        memcpy(send_buf + msg_len, &gTcpPort, sizeof(gTcpPort));
 
-        ssize_t sent = sendto(udpBroadcastSocket, send_buf, total_len, 0, (sockaddr *)&broadcast_addr, sizeof(broadcast_addr));
+        ssize_t sent = sendto(gUdpBroadcastSocket, send_buf, total_len, 0, (sockaddr *)&gBroadcastAddr, sizeof(gBroadcastAddr));
 
         if (sent > 0)
-            LOG_DEBUG("[Send] msg: '{}', num: {}\n", message, tcpPort);
+            LOG_DEBUG("[Send] msg: '{}', num: {}", message, gTcpPort);
         else if (!(errno == EAGAIN || errno == EWOULDBLOCK))
             LOG_DEBUG("sendto ERROR {}", errno);
     }
 }
 
 bool WaitForSecondPlayerDialog::CheckTcpAccept() {
-    if (tcpListenSocket < 0)
+    if (gTcpListenSocket < 0)
         return false;
-    if (tcpClientSocket >= 0) {
+    if (gTcpClientSocket >= 0) {
         return true;
     }
     sockaddr_in clientAddr{};
     socklen_t addrlen = sizeof(clientAddr);
-    tcpClientSocket = accept(tcpListenSocket, (sockaddr *)&clientAddr, &addrlen);
-    if (tcpClientSocket < 0) {
+    gTcpClientSocket = accept(gTcpListenSocket, (sockaddr *)&clientAddr, &addrlen);
+    if (gTcpClientSocket < 0) {
         if (errno == EWOULDBLOCK || errno == EAGAIN)
             return false; // 没有连接
         LOG_DEBUG("accept ERROR");
         return false;
     }
     int one = 1;
-    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one)); // 禁用 Nagle 算法
+    setsockopt(gTcpClientSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one)); // 禁用 Nagle 算法
     int on = 1;
-    setsockopt(tcpClientSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
+    setsockopt(gTcpClientSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
     int idle = 30;
-    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
+    setsockopt(gTcpClientSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
     int intvl = 10;
-    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
+    setsockopt(gTcpClientSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
     int cnt = 3;
-    setsockopt(tcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
+    setsockopt(gTcpClientSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
 
-    int flags = fcntl(tcpClientSocket, F_GETFL, 0);
-    fcntl(tcpClientSocket, F_SETFL, flags | O_NONBLOCK);
+    int flags = fcntl(gTcpClientSocket, F_GETFL, 0);
+    fcntl(gTcpClientSocket, F_SETFL, flags | O_NONBLOCK);
 
     char ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &clientAddr.sin_addr, ip, sizeof(ip));
@@ -994,14 +978,14 @@ bool WaitForSecondPlayerDialog::CheckTcpAccept() {
 }
 
 void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
-    lastBroadcastTime = 0;
+    gLastBroadcastTime = 0;
     sockaddr_in recv_addr{};
     socklen_t addr_len = sizeof(recv_addr);
     char buffer[NAME_LENGTH + sizeof(int)] = {0};
 
     // 循环读取所有可用包
     while (true) {
-        ssize_t n = recvfrom(udpScanSocket, buffer, sizeof(buffer), 0, (sockaddr *)&recv_addr, &addr_len);
+        ssize_t n = recvfrom(gUdpScanSocket, buffer, sizeof(buffer), 0, (sockaddr *)&recv_addr, &addr_len);
         if (n > 0) {
             // 解析消息
             char *msg = buffer;
@@ -1020,11 +1004,11 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
             bool found = false;
 
             // 更新已存在的server
-            for (int i = 0; i < scanned_server_count; i++) {
-                if (strcmp(servers[i].ip, server_ip) == 0) {
-                    servers[i].tcp_port = tcp_port;
-                    strncpy(servers[i].name, msg, NAME_LENGTH);
-                    servers[i].last_seen = now;
+            for (int i = 0; i < gScannedServerCount; i++) {
+                if (strcmp(gServers[i].ip, server_ip) == 0) {
+                    gServers[i].tcp_port = tcp_port;
+                    strncpy(gServers[i].name, msg, NAME_LENGTH);
+                    gServers[i].last_seen = now;
                     found = true;
                     LOG_DEBUG("[Scan] Update server: {}:{} ({})\n", server_ip, tcp_port, msg);
                     break;
@@ -1032,12 +1016,12 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
             }
 
             // 新server
-            if (!found && scanned_server_count < MAX_SERVERS) {
-                strncpy(servers[scanned_server_count].ip, server_ip, INET_ADDRSTRLEN);
-                strncpy(servers[scanned_server_count].name, msg, NAME_LENGTH);
-                servers[scanned_server_count].tcp_port = tcp_port;
-                servers[scanned_server_count].last_seen = now;
-                scanned_server_count++;
+            if (!found && gScannedServerCount < MAX_SERVERS) {
+                strncpy(gServers[gScannedServerCount].ip, server_ip, INET_ADDRSTRLEN);
+                strncpy(gServers[gScannedServerCount].name, msg, NAME_LENGTH);
+                gServers[gScannedServerCount].tcp_port = tcp_port;
+                gServers[gScannedServerCount].last_seen = now;
+                gScannedServerCount++;
                 LOG_DEBUG("[Scan] New server: {}:{} ({})\n", server_ip, tcp_port, msg);
             }
 
@@ -1054,11 +1038,11 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
 
     // 检查超时
     time_t current_time = time(nullptr);
-    for (int i = 0; i < scanned_server_count;) {
-        if (difftime(current_time, servers[i].last_seen) > UDP_TIMEOUT) {
+    for (int i = 0; i < gScannedServerCount;) {
+        if (difftime(current_time, gServers[i].last_seen) > UDP_TIMEOUT) {
 
             // 如果选中的是最后一个，而我们要把最后一个删掉
-            int last = scanned_server_count - 1;
+            int last = gScannedServerCount - 1;
 
             // 1) 如果选中项就是被删除的 i：
             //    删除后，当前位置会被 last 覆盖，所以让选中保持在 i（继续指向“被搬过来的那一项”）
@@ -1072,14 +1056,14 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
             }
             // 3) 其他情况不用改
 
-            servers[i] = servers[last];
-            scanned_server_count--;
+            gServers[i] = gServers[last];
+            gScannedServerCount--;
 
             // 删除后防越界
-            if (scanned_server_count <= 0) {
+            if (gScannedServerCount <= 0) {
                 mSelectedServerIndex = 0;
-            } else if (mSelectedServerIndex >= scanned_server_count) {
-                mSelectedServerIndex = scanned_server_count - 1;
+            } else if (mSelectedServerIndex >= gScannedServerCount) {
+                mSelectedServerIndex = gScannedServerCount - 1;
             }
 
             continue;
@@ -1089,11 +1073,11 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
 }
 
 void WaitForSecondPlayerDialog::TryTcpConnect() {
-    if (tcp_connected)
+    if (gTcpConnected)
         return;
 
     // 既不是手动目标，也没有扫描到房间，就没法连
-    if (!mUseManualTarget && scanned_server_count == 0)
+    if (!mUseManualTarget && gScannedServerCount == 0)
         return;
 
     // 统一得到目标 ip/port（用于 connect + 日志）
@@ -1107,11 +1091,11 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
         int idx = mSelectedServerIndex;
         if (idx < 0)
             idx = 0;
-        if (idx >= scanned_server_count)
-            idx = scanned_server_count - 1;
+        if (idx >= gScannedServerCount)
+            idx = gScannedServerCount - 1;
 
-        strncpy(target_ip, servers[idx].ip, INET_ADDRSTRLEN - 1);
-        target_port = servers[idx].tcp_port;
+        strncpy(target_ip, gServers[idx].ip, INET_ADDRSTRLEN - 1);
+        target_port = gServers[idx].tcp_port;
     }
 
     // 组装 sockaddr
@@ -1121,46 +1105,46 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
     };
     inet_pton(AF_INET, target_ip, &server_addr.sin_addr);
 
-    if (!tcp_connecting) {
-        tcpServerSocket = socket(AF_INET, SOCK_STREAM, 0);
-        if (tcpServerSocket < 0) {
+    if (!gTcpConnecting) {
+        gTcpServerSocket = socket(AF_INET, SOCK_STREAM, 0);
+        if (gTcpServerSocket < 0) {
             LOG_DEBUG("[Client] socket ERROR errno={}", errno);
             return;
         }
 
         // 非阻塞
-        int flags = fcntl(tcpServerSocket, F_GETFL, 0);
-        fcntl(tcpServerSocket, F_SETFL, flags | O_NONBLOCK);
+        int flags = fcntl(gTcpServerSocket, F_GETFL, 0);
+        fcntl(gTcpServerSocket, F_SETFL, flags | O_NONBLOCK);
 
         // 发起非阻塞 connect
-        int ret = connect(tcpServerSocket, (sockaddr *)&server_addr, sizeof(server_addr));
+        int ret = connect(gTcpServerSocket, (sockaddr *)&server_addr, sizeof(server_addr));
         if (ret < 0) {
             if (errno == EINPROGRESS) {
-                tcp_connecting = true;
+                gTcpConnecting = true;
                 LOG_DEBUG("[Client] Connecting to {}:{} ...", target_ip, target_port);
             } else {
                 LOG_DEBUG("[Client] connect ERROR errno={}", errno);
-                close(tcpServerSocket);
-                tcpServerSocket = -1;
-                tcp_connecting = false;
-                tcp_connected = false;
+                close(gTcpServerSocket);
+                gTcpServerSocket = -1;
+                gTcpConnecting = false;
+                gTcpConnected = false;
             }
         } else {
             // 立即连接成功
             int one = 1;
-            setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+            setsockopt(gTcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
 
             int on = 1;
-            setsockopt(tcpServerSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
+            setsockopt(gTcpServerSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
             int idle = 30;
-            setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
+            setsockopt(gTcpServerSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
             int intvl = 10;
-            setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
+            setsockopt(gTcpServerSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
             int cnt = 3;
-            setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
+            setsockopt(gTcpServerSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
 
-            tcp_connected = true;
-            tcp_connecting = false;
+            gTcpConnected = true;
+            gTcpConnecting = false;
             LOG_DEBUG("[Client] Connected immediately to {}:{}", target_ip, target_port);
         }
 
@@ -1168,44 +1152,44 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
         // 检查连接是否完成
         fd_set writefds;
         FD_ZERO(&writefds);
-        FD_SET(tcpServerSocket, &writefds);
+        FD_SET(gTcpServerSocket, &writefds);
 
         timeval tv{0, 0};
-        int ret = select(tcpServerSocket + 1, nullptr, &writefds, nullptr, &tv);
-        if (ret > 0 && FD_ISSET(tcpServerSocket, &writefds)) {
+        int ret = select(gTcpServerSocket + 1, nullptr, &writefds, nullptr, &tv);
+        if (ret > 0 && FD_ISSET(gTcpServerSocket, &writefds)) {
             int err = 0;
             socklen_t len = sizeof(err);
-            if (getsockopt(tcpServerSocket, SOL_SOCKET, SO_ERROR, &err, &len) < 0) {
+            if (getsockopt(gTcpServerSocket, SOL_SOCKET, SO_ERROR, &err, &len) < 0) {
                 LOG_DEBUG("[Client] getsockopt ERROR errno={}", errno);
-                close(tcpServerSocket);
-                tcpServerSocket = -1;
-                tcp_connecting = false;
-                tcp_connected = false;
+                close(gTcpServerSocket);
+                gTcpServerSocket = -1;
+                gTcpConnecting = false;
+                gTcpConnected = false;
                 return;
             }
 
             if (err == 0) {
                 int one = 1;
-                setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+                setsockopt(gTcpServerSocket, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
 
                 int on = 1;
-                setsockopt(tcpServerSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
+                setsockopt(gTcpServerSocket, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
                 int idle = 30;
-                setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
+                setsockopt(gTcpServerSocket, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
                 int intvl = 10;
-                setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
+                setsockopt(gTcpServerSocket, IPPROTO_TCP, TCP_KEEPINTVL, &intvl, sizeof(intvl));
                 int cnt = 3;
-                setsockopt(tcpServerSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
+                setsockopt(gTcpServerSocket, IPPROTO_TCP, TCP_KEEPCNT, &cnt, sizeof(cnt));
 
-                tcp_connected = true;
-                tcp_connecting = false;
+                gTcpConnected = true;
+                gTcpConnecting = false;
                 LOG_DEBUG("[Client] Connected to {}:{}", target_ip, target_port);
             } else {
                 LOG_DEBUG("[Client] Connect failed to {}:{} err={}", target_ip, target_port, err);
-                close(tcpServerSocket);
-                tcpServerSocket = -1;
-                tcp_connecting = false;
-                tcp_connected = false;
+                close(gTcpServerSocket);
+                gTcpServerSocket = -1;
+                gTcpConnecting = false;
+                gTcpConnected = false;
             }
         }
         // select==0 表示还在连接中，下次 Update 再检查
@@ -1214,9 +1198,9 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
 
 
 void WaitForSecondPlayerDialog::StopUdpBroadcastRoom() {
-    if (udpBroadcastSocket >= 0) {
-        close(udpBroadcastSocket);
-        udpBroadcastSocket = -1;
+    if (gUdpBroadcastSocket >= 0) {
+        close(gUdpBroadcastSocket);
+        gUdpBroadcastSocket = -1;
     }
     LOG_DEBUG("[UDP] Broadcast closed\n");
 }
@@ -1238,9 +1222,9 @@ void WaitForSecondPlayerDialog::ButtonDepress_Thunk(this ButtonListener &self, i
                         // 开始游戏（房主）：根据是否有玩家加入决定是否可点（RefreshButtons里已禁用）
                         aDialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
                         aDialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
-                        if (tcpClientSocket >= 0) {
+                        if (gTcpClientSocket >= 0) {
                             BaseEvent event = {EventType::EVENT_START_GAME};
-                            SendEvent(tcpClientSocket, event);
+                            SendEvent(gTcpClientSocket, event);
                         }
                     } else {
                         // 加入指定IP房间：弹输入框
@@ -1548,27 +1532,27 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
 
                 // === 交接：把服务器 socket 复用给 MODE2 的全局收发 ===
                 // 先清掉 WIFI 的两个 socket，避免 UpdateFrames 同时读两路
-                if (tcpClientSocket >= 0) {
-                    close(tcpClientSocket);
-                    tcpClientSocket = -1;
+                if (gTcpClientSocket >= 0) {
+                    close(gTcpClientSocket);
+                    gTcpClientSocket = -1;
                 }
-                if (tcpServerSocket >= 0) {
-                    close(tcpServerSocket);
-                    tcpServerSocket = -1;
+                if (gTcpServerSocket >= 0) {
+                    close(gTcpServerSocket);
+                    gTcpServerSocket = -1;
                 }
-                tcp_connected = false;
-                tcp_connecting = false;
+                gTcpConnected = false;
+                gTcpConnecting = false;
 
                 if (mServerHosting) {
-                    // 我是房主：后续走 tcpClientSocket（你的 MODE2 host 收包逻辑就是读 tcpClientSocket）
-                    tcpClientSocket = mServerSock;
+                    // 我是房主：后续走 gTcpClientSocket（你的 MODE2 host 收包逻辑就是读 gTcpClientSocket）
+                    gTcpClientSocket = mServerSock;
                     // 保持非阻塞没问题：你 UpdateFrames 用 MSG_DONTWAIT，本来就非阻塞友好
                     mServerSock = -1; // ✅ 交接完成：让 WaitDialog 不再管理该 socket
                 } else if (mServerJoined) {
-                    // 我是房客：后续走 tcpServerSocket + tcp_connected=true
-                    tcpServerSocket = mServerSock;
-                    tcp_connected = true;
-                    tcp_connecting = false;
+                    // 我是房客：后续走 gTcpServerSocket + gTcpConnected=true
+                    gTcpServerSocket = mServerSock;
+                    gTcpConnected = true;
+                    gTcpConnecting = false;
                     mServerSock = -1; // ✅ 交接完成
                 } else {
                     // 理论不该发生
@@ -1880,16 +1864,16 @@ void WaitForSecondPlayerDialog::MouseDown(int x, int y, int theClickCount) {
     // ===== 下面保持你原来的 WIFI 逻辑 =====
     if (mIsCreatingRoom || mIsJoiningRoom)
         return;
-    if (scanned_server_count <= 0)
+    if (gScannedServerCount <= 0)
         return;
 
     [[maybe_unused]] const int listX = 230;
     const int listY = 180 - 30;
     const int lineH = 50;
 
-    if (y >= listY && y < listY + scanned_server_count * lineH) {
+    if (y >= listY && y < listY + gScannedServerCount * lineH) {
         int idx = (y - listY) / lineH;
-        if (idx >= 0 && idx < scanned_server_count) {
+        if (idx >= 0 && idx < gScannedServerCount) {
             if (mSelectedServerIndex != idx) {
                 mSelectedServerIndex = idx;
                 mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);

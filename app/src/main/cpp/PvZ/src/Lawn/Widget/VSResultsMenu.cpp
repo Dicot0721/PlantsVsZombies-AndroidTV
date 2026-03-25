@@ -113,17 +113,17 @@ void VSResultsMenu::ButtonDepress(int theId) {
         return;
     }
 
-    if (tcp_connected) {
+    if (gTcpConnected) {
         // 客户端点击再来一局
         U8_Event event = {{EventType::EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS}, uint8_t(theId)};
-        SendEvent(tcpServerSocket, event);
+        SendEvent(gTcpServerSocket, event);
         gVSResultRequestState = theId;
         return;
     }
 
-    if (tcpClientSocket >= 0) {
+    if (gTcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_SERVER_VSRESULT_BUTTON_DEPRESS}, uint8_t(theId)};
-        SendEvent(tcpClientSocket, event);
+        SendEvent(gTcpClientSocket, event);
     }
 
     mResultsButtonId = theId;
@@ -133,7 +133,7 @@ void VSResultsMenu::ButtonDepress(int theId) {
 void VSResultsMenu::Draw(Graphics *g) {
     old_VSResultsMenu_Draw(this, g);
 
-    if (tcp_connected) {
+    if (gTcpConnected) {
         switch (gVSResultRequestState) {
             case VSResultsMenu::VSResultsMenu_Play_Again:
                 TodDrawString(g, "[VS_RESULT_REMIND_HOST_PLAY_AGAIN]", 400, -20, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
@@ -143,7 +143,7 @@ void VSResultsMenu::Draw(Graphics *g) {
         }
     }
 
-    if (tcpClientSocket >= 0) {
+    if (gTcpClientSocket >= 0) {
         switch (gVSResultRequestState) {
             case VSResultsMenu::VSResultsMenu_Play_Again:
                 TodDrawString(g, "[VS_RESULT_OPPONENT_REQUEST_PLAY_AGAIN]", 400, -20, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);

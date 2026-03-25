@@ -112,9 +112,9 @@ void Plant::PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, Se
         //        } else
         //            mLaunchCounter = 0;
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
 
@@ -620,12 +620,12 @@ void Plant::DoSpecial() {
     // 试图修复辣椒爆炸后反而在本行的末尾处产生冰道。失败。
 
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (tcp_connected)
+        if (gTcpConnected)
             return;
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_DO_SPECIAL}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
 
@@ -738,10 +738,10 @@ void Plant::DoSpecial() {
 
 void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem) {
     if (mApp->mGameMode == GAMEMODE_MP_VS) {
-        if (tcp_connected)
+        if (gTcpConnected)
             return;
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16U16U16Buf32Buf32_Event event;
 
             event.type = EventType::EVENT_SERVER_BOARD_PLANT_FIRE;
@@ -755,7 +755,7 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
             } else {
                 event.data5.u16x2.u16_1 = theTargetGridItem == nullptr ? uint16_t(GRIDITEMID_NULL) : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
             }
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
             //            SyncPingPongAnimationToClient();
             //            SyncAnimationToClient();
         }
@@ -1146,12 +1146,12 @@ GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
 
 void Plant::Die() {
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (tcp_connected)
+        if (gTcpConnected)
             return;
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_DIE}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
 
@@ -1709,7 +1709,7 @@ bool Plant::MakesSun() {
 }
 
 void Plant::UpdateProductionPlant() {
-    if (mApp->mGameMode == GAMEMODE_MP_VS && (tcp_connected || tcpClientSocket >= 0)) {
+    if (mApp->mGameMode == GAMEMODE_MP_VS && (gTcpConnected || gTcpClientSocket >= 0)) {
         if (!IsInPlay()) {
             return;
         }
@@ -1739,13 +1739,13 @@ void Plant::UpdateProductionPlant() {
         if (mLaunchCounter <= 0)
         // 生产
         {
-            if (tcp_connected) {
+            if (gTcpConnected) {
                 return;
             }
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
-            if (tcpClientSocket >= 0) {
+            if (gTcpClientSocket >= 0) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
-                SendEvent(tcpClientSocket, event);
+                SendEvent(gTcpClientSocket, event);
             }
             mApp->PlayFoley(FoleyType::FOLEY_SPAWN_SUN);
             if (mSeedType == SeedType::SEED_SUNSHROOM) {
@@ -1952,16 +1952,16 @@ void Plant::UpdateShooting() {
 
 void Plant::UpdateShooter() {
 
-    if (mApp->mGameMode == GAMEMODE_MP_VS && tcp_connected) {
+    if (mApp->mGameMode == GAMEMODE_MP_VS && gTcpConnected) {
         return;
     }
 
     mLaunchCounter--;
     if (mLaunchCounter <= 0) {
         mLaunchCounter = mLaunchRate - Sexy::Rand(15);
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
         if (mSeedType == SeedType::SEED_THREEPEATER) {
             LaunchThreepeater();
@@ -2069,7 +2069,7 @@ void Plant::SyncPingPongAnimationToClient() {
     event.data4.u32 = mFrame;
     event.data5.u32 = mAnimCounter;
 
-    SendEvent(tcpClientSocket, event);
+    SendEvent(gTcpClientSocket, event);
 }
 
 void Plant::SyncAnimationToClient() {
@@ -2090,29 +2090,29 @@ void Plant::SyncAnimationToClient() {
         event2.data3 = theReanim->mLoopType;
         event2.data4.f32 = theReanim->mAnimTime;
         event2.data5.f32 = theReanim->mAnimRate;
-        SendEvent(tcpClientSocket, event2);
+        SendEvent(gTcpClientSocket, event2);
     }
 }
 
 
 bool Plant::FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
     // 此函数用于在mLaunchCounter到0之后播放投手的投掷动画、豌豆的发射动画
-    if (tcp_connected) {
+    if (gTcpConnected) {
         return false;
     }
 
     bool result = old_Plant_FindTargetAndFire(this, theRow, thePlantWeapon);
 
     if (result) {
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
 
             if (mSeedType == SEED_KERNELPULT) {
                 U8U8U16U16_Event event = {
                     {EventType::EVENT_SERVER_BOARD_PLANT_KERNELPLUT_FINDTARGETANDFIRE}, uint8_t(theRow), uint8_t(thePlantWeapon), uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mState)};
-                SendEvent(tcpClientSocket, event);
+                SendEvent(gTcpClientSocket, event);
             } else {
                 U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_FINDTARGETANDFIRE}, uint8_t(theRow), uint8_t(thePlantWeapon), uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-                SendEvent(tcpClientSocket, event);
+                SendEvent(gTcpClientSocket, event);
             }
         }
     }
@@ -2156,12 +2156,12 @@ void Plant::UpdateChomper() {
             } else if (doMiss) {
                 mState = PlantState::STATE_CHOMPER_BITING_MISSED;
             } else {
-                if (tcp_connected)
+                if (gTcpConnected)
                     return;
 
-                if (tcpClientSocket >= 0) {
+                if (gTcpClientSocket >= 0) {
                     U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mBoard->mZombies.DataArrayGetID(aZombie))};
-                    SendEvent(tcpClientSocket, event);
+                    SendEvent(gTcpClientSocket, event);
                 }
 
                 aZombie->DieWithLoot();

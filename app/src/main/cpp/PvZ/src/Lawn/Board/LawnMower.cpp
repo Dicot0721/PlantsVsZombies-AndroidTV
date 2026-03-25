@@ -30,12 +30,12 @@ void LawnMower::Update() {
 
 void LawnMower::StartMower() {
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (tcp_connected)
+        if (gTcpConnected)
             return;
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_LAWNMOWER_START}, uint16_t(mRow)};
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
 

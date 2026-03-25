@@ -226,7 +226,7 @@ void GamepadControls::Update(float a2) {
         }
     }
 
-    if (positionAutoFix && !anApp->IsWhackAZombieLevel() && anApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM && tcpServerSocket == -1) {
+    if (positionAutoFix && !anApp->IsWhackAZombieLevel() && anApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM && gTcpServerSocket == -1) {
         if (this == mBoard->mGamepadControls1 && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER1 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
             mCursorPositionX += (aGridCenterPosX - mCursorPositionX) / 10;
             mCursorPositionY += (aGridCenterPosY - mCursorPositionY) / 10;

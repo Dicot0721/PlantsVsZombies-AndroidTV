@@ -75,14 +75,14 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
         g->SetColorizeImages(true);
         g->SetColor(theColor);
 
-        if (!tcp_connected && mSides[0] == VSSide::VS_SIDE_NONE) {
+        if (!gTcpConnected && mSides[0] == VSSide::VS_SIDE_NONE) {
             Sexy::Widget *theController1Widget = FindWidget(7);
             g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController1Widget->mX + 160, theController1Widget->mY + 40);
             g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController1Widget->mX - 50, theController1Widget->mY + 40, true);
         }
 
 
-        if (tcpClientSocket < 0 && mSides[1] == VSSide::VS_SIDE_NONE) {
+        if (gTcpClientSocket < 0 && mSides[1] == VSSide::VS_SIDE_NONE) {
             Sexy::Widget *theController2Widget = FindWidget(8);
             g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController2Widget->mX + 160, theController2Widget->mY + 40);
             g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController2Widget->mX - 50, theController2Widget->mY + 40, true);
@@ -95,9 +95,9 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
 
         // ======================
         // 我是 guest：已提醒房主...
-        // (tcp_connected == true 代表我作为 client 连接到 host)
+        // (gTcpConnected == true 代表我作为 client 连接到 host)
         // ======================
-        if (tcp_connected) {
+        if (gTcpConnected) {
             switch (gVSSetupRequestState) {
                 case VSSetupMenu_Quick_Play: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
@@ -148,9 +148,9 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
 
         // ======================
         // 我是 host：对方想玩/想要...
-        // (tcpClientSocket >= 0 表示我作为 host 收到了 client 连接)
+        // (gTcpClientSocket >= 0 表示我作为 host 收到了 client 连接)
         // ======================
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             switch (gVSSetupRequestState) {
                 case VSSetupMenu_Quick_Play: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_PLAY_FMT]");
@@ -223,14 +223,14 @@ void VSSetupMenu::MouseDown(int x, int y, int theCount) {
         Sexy::Widget *theController1Widget = FindWidget(7);
         Sexy::Widget *theController2Widget = FindWidget(8);
         if (x > theController1Widget->mX && x < theController1Widget->mX + 170 && y > theController1Widget->mY && y < theController1Widget->mY + 122) {
-            if (tcp_connected) {
+            if (gTcpConnected) {
                 return;
             }
             is1PControllerMoving = true;
             drawTipArrowAlphaCounter = 0;
             touchingOnWhichController = 1;
         } else if (x > theController2Widget->mX && x < theController2Widget->mX + 170 && y > theController2Widget->mY && y < theController2Widget->mY + 122) {
-            if (tcpClientSocket >= 0) {
+            if (gTcpClientSocket >= 0) {
                 return;
             }
             is2PControllerMoving = true;
@@ -243,22 +243,22 @@ void VSSetupMenu::MouseDown(int x, int y, int theCount) {
 
 void VSSetupMenu::MouseDrag(int x, int y) {
     if (touchingOnWhichController == 1) {
-        if (tcp_connected)
+        if (gTcpConnected)
             return;
         Sexy::Widget *theController1Widget = FindWidget(7);
         theController1Widget->Move(theController1Widget->mX + x - touchDownX, theController1Widget->mY);
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController1Widget->mX)};
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     } else if (touchingOnWhichController == 2) {
-        if (tcpClientSocket >= 0)
+        if (gTcpClientSocket >= 0)
             return;
         Sexy::Widget *theController2Widget = FindWidget(8);
         theController2Widget->Move(theController2Widget->mX + x - touchDownX, theController2Widget->mY);
-        if (tcpServerSocket >= 0) {
+        if (gTcpServerSocket >= 0) {
             U16_Event event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController2Widget->mX)};
-            SendEvent(tcpServerSocket, event);
+            SendEvent(gTcpServerSocket, event);
         }
     }
     touchDownX = x;
@@ -267,7 +267,7 @@ void VSSetupMenu::MouseDrag(int x, int y) {
 void VSSetupMenu::MouseUp(int x, int y, int theCount) {
 
     if (touchingOnWhichController == 1) {
-        if (tcp_connected)
+        if (gTcpConnected)
             return;
         Sexy::Widget *aControllerWidgetP1 = FindWidget(7);
         VSSide aSideP1 = aControllerWidgetP1->mX > 400 ? VS_SIDE_ZOMBIE : aControllerWidgetP1->mX > 250 ? VS_SIDE_NONE : VS_SIDE_PLANT;
@@ -275,13 +275,13 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
             GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
         }
         mSides[0] = aSideP1;
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mSides[0] == -1 ? uint8_t(2) : uint8_t(mSides[0])};
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
         is1PControllerMoving = false;
     } else if (touchingOnWhichController == 2) {
-        if (tcpClientSocket >= 0)
+        if (gTcpClientSocket >= 0)
             return;
         Sexy::Widget *aControllerWidgetP2 = FindWidget(8);
         VSSide aSideP2 = aControllerWidgetP2->mX > 400 ? VS_SIDE_ZOMBIE : aControllerWidgetP2->mX > 250 ? VS_SIDE_NONE : VS_SIDE_PLANT;
@@ -290,9 +290,9 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
             GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
         }
         mSides[1] = aSideP2;
-        if (tcpServerSocket >= 0) {
+        if (gTcpServerSocket >= 0) {
             U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mSides[1] == VS_SIDE_NONE ? uint8_t(2) : uint8_t(mSides[1])};
-            SendEvent(tcpServerSocket, event);
+            SendEvent(gTcpServerSocket, event);
         }
         is2PControllerMoving = false;
     }
@@ -326,7 +326,7 @@ void VSSetupMenu::Update() {
     if (mState == VS_SETUP_STATE_CONTROLLERS) {
         return;
     }
-    if (mState == VS_SETUP_STATE_SIDES && !tcp_connected && tcpClientSocket == -1 && !isKeyboardTwoPlayerMode) {
+    if (mState == VS_SETUP_STATE_SIDES && !gTcpConnected && gTcpClientSocket == -1 && !isKeyboardTwoPlayerMode) {
         // 本地游戏
         // 自动分配阵营
         //        mSides[0] = 0;
@@ -420,12 +420,12 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
         }
     }
 
-    if (tcpClientSocket >= 0) {
+    if (gTcpClientSocket >= 0) {
         U16x12_Event event;
         event.type = EventType::EVENT_VSSETUPMENU_RANDOM_PICK;
         std::ranges::copy(thePlantSeeds, event.data);
         std::ranges::copy(theZombieSeeds, event.data + 6);
-        SendEvent(tcpClientSocket, event);
+        SendEvent(gTcpClientSocket, event);
     }
 }
 
@@ -468,9 +468,9 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             U8_Event *event1 = (U8_Event *)event;
             int tmp = VSBackGround;
             VSBackGround = event1->data;
-            tcp_connected = false;
+            gTcpConnected = false;
             PickBackgroundImmediately();
-            tcp_connected = true;
+            gTcpConnected = true;
             VSBackGround = tmp;
         } break;
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
@@ -529,9 +529,9 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             if (theId == VSSetupMenu_Random_Battle && mState == VS_SETUP_STATE_SELECT_BATTLE) { // 随机战场
                 break;
             }
-            tcp_connected = false;
+            gTcpConnected = false;
             ButtonDepress(theId);
-            tcp_connected = true;
+            gTcpConnected = true;
         } break;
         case EVENT_VSSETUPMENU_ENTER_STATE: {
             [[maybe_unused]] int aState = static_cast<U8_Event *>(event)->data;
@@ -552,9 +552,9 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_VSSETUPMENU_RANDOM_PICK: {
             U16x12_Event *event1 = (U16x12_Event *)event;
-            tcp_connected = false;
+            gTcpConnected = false;
             ButtonDepress(VSSetupMenu_Random_Battle);
-            tcp_connected = true;
+            gTcpConnected = true;
 
             mApp->mBoard->mSeedBank[0]->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
             for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(false) - 1; ++i) {
@@ -627,7 +627,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
     if (theState == VSSetupState::VS_SETUP_STATE_SIDES) {
         drawTipArrowAlphaCounter = 0;
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             B1x8_Event event = {
                 {EventType::EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT},
                 gVSSetupAddonWidget->mExtraPacketsMode,
@@ -635,12 +635,12 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
                 gVSSetupAddonWidget->mBanMode,
                 gVSSetupAddonWidget->mBalancePatchMode,
             };
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
     if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {
 
-        if (tcp_connected || tcpClientSocket >= 0) {
+        if (gTcpConnected || gTcpClientSocket >= 0) {
             SetSecondPlayerIndex(mApp->mTwoPlayerState);
             GoToState(VSSetupState::VS_SETUP_STATE_SIDES);
             return;
@@ -666,9 +666,9 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         if (gIsVSShuffleMode) {
             ButtonDepress(VSSetupMenu_Random_Battle);
         }
-    } else if (tcpClientSocket >= 0) {
+    } else if (gTcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_VSSETUPMENU_ENTER_STATE}, uint8_t(theState)};
-        SendEvent(tcpClientSocket, event);
+        SendEvent(gTcpClientSocket, event);
     }
 
     old_VSSetupMenu_OnStateEnter(this, theState);
@@ -687,16 +687,16 @@ void VSSetupMenu::ButtonDepress(int theId) {
         gVSSetupRequestState = 0;
     }
 
-    if (tcp_connected) {
+    if (gTcpConnected) {
         U8_Event event = {{EventType::EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
-        SendEvent(tcpServerSocket, event);
+        SendEvent(gTcpServerSocket, event);
         gVSSetupRequestState = theId;
         return;
     }
 
-    if (tcpClientSocket >= 0) {
+    if (gTcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
-        SendEvent(tcpClientSocket, event);
+        SendEvent(gTcpClientSocket, event);
     }
 
     int aNumPackets = mApp->mBoard->GetNumSeedsInBank(false);
@@ -827,7 +827,7 @@ void VSSetupMenu::PickBackgroundImmediately() {
     // 如果修改器里开启了更换场地
     if (VSBackGround != 0 && VSBackGround != mApp->mBoard->mBackground + 1) {
 
-        if (tcp_connected) {
+        if (gTcpConnected) {
             // 客户端
             return;
         }
@@ -843,9 +843,9 @@ void VSSetupMenu::PickBackgroundImmediately() {
         mApp->mBoard->mCutScene->PlaceLawnItems();
 
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND}, uint8_t(VSBackGround)};
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
 }

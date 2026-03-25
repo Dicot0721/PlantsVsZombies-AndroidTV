@@ -223,7 +223,7 @@ void SeedPacket::SetNextRandomSeed() {
     if (Challenge::IsMPResourceProducer(mPacketType) || mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE || mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)
         return;
 
-    if (tcp_connected)
+    if (gTcpConnected)
         return;
 
     if (mSeedBank->mIsZombie) {
@@ -231,26 +231,26 @@ void SeedPacket::SetNextRandomSeed() {
         SeedType seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, true, mIndex);
         SetPacketType(seedType, SeedType::SEED_NONE);
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U8U8U16U16_Event event;
             event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
             event.data1 = true;
             event.data3 = seedType;
             event.data4 = mIndex;
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     } else {
         std::vector<SeedType> plantSeeds, zombieSeeds;
         SeedType seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, false, mIndex);
         SetPacketType(seedType, SeedType::SEED_NONE);
 
-        if (tcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0) {
             U8U8U16U16_Event event;
             event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
             event.data1 = false;
             event.data3 = seedType;
             event.data4 = mIndex;
-            SendEvent(tcpClientSocket, event);
+            SendEvent(gTcpClientSocket, event);
         }
     }
 }
@@ -616,9 +616,9 @@ void DrawSeedPacket(Sexy::Graphics *g,
 void SeedPacket::WasPlanted(int thePlayerIndex) {
     old_SeedPacket_WasPlanted(this, thePlayerIndex);
 
-    if (tcpClientSocket >= 0) {
+    if (gTcpClientSocket >= 0) {
         U8U8_Event event = {{EventType::EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED}, uint8_t(mIndex), mSeedBank == mBoard->mSeedBank[0]};
-        SendEvent(tcpClientSocket, event);
+        SendEvent(gTcpClientSocket, event);
     }
 }
 
