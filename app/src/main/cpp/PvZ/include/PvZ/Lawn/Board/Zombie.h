@@ -466,8 +466,6 @@ inline int (*old_Zombie_GetBobsledPosition)(Zombie *);
 
 inline void (*old_Zombie_SquishAllInSquare)(Zombie *, int theX, int theY, ZombieAttackType theAttackType);
 
-inline void (*old_Zombie_UpdateZombieWalking)(Zombie *);
-
 inline void (*old_Zombie_DropLoot)(Zombie *);
 
 inline void (*old_Zombie_ApplyBurn)(Zombie *);

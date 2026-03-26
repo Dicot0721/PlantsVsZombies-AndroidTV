@@ -403,7 +403,7 @@ void InitHookFunction() {
     homura::HookFunction(Zombie_SquishAllInSquareAddr, &Zombie::SquishAllInSquare, &old_Zombie_SquishAllInSquare);
     homura::HookFunction(Zombie_StopEatingAddr, &Zombie::StopEating, nullptr);
     homura::HookFunction(Zombie_PickRandomSpeedAddr, &Zombie::PickRandomSpeed, nullptr);
-    homura::HookFunction(Zombie_UpdateZombieWalkingAddr, &Zombie::UpdateZombieWalking, &old_Zombie_UpdateZombieWalking);
+    homura::HookFunction(Zombie_UpdateZombieWalkingAddr, &Zombie::UpdateZombieWalking, nullptr);
     homura::HookFunction(Zombie_UpdateDamageStatesAddr, &Zombie::UpdateDamageStates, nullptr);
     homura::HookFunction(Zombie_DropLootAddr, &Zombie::DropLoot, &old_Zombie_DropLoot);
     homura::HookFunction(Zombie_ApplyBurnAddr, &Zombie::ApplyBurn, &old_Zombie_ApplyBurn);

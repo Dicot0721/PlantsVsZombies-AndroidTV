@@ -275,6 +275,9 @@ public:
     void IgnoreClipRectForPrefix(const char *theTrackName, bool theIgnoreClipRect) {
         reinterpret_cast<void (*)(Reanimation *, const char *, bool)>(Reanimation_IgnoreClipRectForPrefixAddr)(this, theTrackName, theIgnoreClipRect);
     }
+    float GetTrackVelocity(const char *theTrackName) {
+        return reinterpret_cast<float (*)(Reanimation *, const char *)>(Reanimation_GetTrackVelocityAddr)(this, theTrackName);
+    }
 
     Reanimation() {
         _constructor();

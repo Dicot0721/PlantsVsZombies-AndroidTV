@@ -823,6 +823,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN11Reanimation21AttachParticleToTrackEPKcP17TodParticleSystemff", Reanimation_AttachParticleToTrackAddr);
     libGameMain.GetSymbol("_ZN11Reanimation29SetTruncateDisappearingFramesEPKcb", Reanimation_SetTruncateDisappearingFramesAddr);
     libGameMain.GetSymbol("_ZN11Reanimation23IgnoreClipRectForPrefixEPKcb", Reanimation_IgnoreClipRectForPrefixAddr);
+    libGameMain.GetSymbol("_ZN11Reanimation16GetTrackVelocityEPKc", Reanimation_GetTrackVelocityAddr);
 
 
     libGameMain.GetSymbol("_ZN9ZenGarden9GetStinkyEv", ZenGarden_GetStinkyAddr);

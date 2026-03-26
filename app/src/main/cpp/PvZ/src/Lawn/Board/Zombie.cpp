@@ -2827,7 +2827,81 @@ bool Zombie::IsMovingAtChilledSpeed() {
 }
 
 void Zombie::UpdateZombieWalking() {
-    old_Zombie_UpdateZombieWalking(this);
+    if (ZombieNotWalking())
+        return;
+
+    Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+    if (aBodyReanim) {
+        float aSpeed;
+        if (IsBouncingPogo() || mZombiePhase == ZombiePhase::PHASE_BALLOON_FLYING || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_RIDING || mZombiePhase == ZombiePhase::PHASE_SNORKEL_WALKING_IN_POOL
+            || mZombieType == ZombieType::ZOMBIE_CATAPULT) {
+            aSpeed = mVelX;
+            if (IsMovingAtChilledSpeed()) {
+                aSpeed *= CHILLED_SPEED_FACTOR;
+            }
+        } else if (mZombieType == ZombieType::ZOMBIE_ZAMBONI || mZombiePhase == ZombiePhase::PHASE_DIGGER_TUNNELING || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_IN_JUMP || IsBobsledTeamWithSled()
+                   || mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_IN_VAULT || mZombiePhase == ZombiePhase::PHASE_SNORKEL_INTO_POOL) {
+            aSpeed = mVelX;
+        } else if (aBodyReanim->TrackExists("_ground")) {
+            aSpeed = aBodyReanim->GetTrackVelocity("_ground") * mScaleZombie;
+        } else {
+            aSpeed = mVelX;
+            if (IsMovingAtChilledSpeed()) {
+                aSpeed *= CHILLED_SPEED_FACTOR;
+            }
+        }
+
+        if (IsWalkingBackwards() || mZombiePhase == ZombiePhase::PHASE_DANCER_DANCING_IN) {
+            mPosX += aSpeed;
+        } else {
+            mPosX -= aSpeed;
+        }
+
+        // 奔跑扬尘的粒子效果在泳池替换为水花
+        ParticleEffect aParticleEffect = mInPool ? ParticleEffect::PARTICLE_PLANTING_POOL : ParticleEffect::PARTICLE_DUST_FOOT;
+        if (mZombieType == ZombieType::ZOMBIE_FOOTBALL && mFromWave != Zombie::ZOMBIE_WAVE_WINNER) {
+            if (aBodyReanim->ShouldTriggerTimedEvent(0.03f)) {
+                mApp->AddTodParticle(mX + 81, mY + 106, mRenderOrder - 1, aParticleEffect);
+            }
+            if (aBodyReanim->ShouldTriggerTimedEvent(0.61f)) {
+                mApp->AddTodParticle(mX + 87, mY + 110, mRenderOrder - 1, aParticleEffect);
+            }
+        }
+        if (mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT) {
+            if (aBodyReanim->ShouldTriggerTimedEvent(0.16f)) {
+                mApp->AddTodParticle(mX + 81, mY + 106, mRenderOrder - 1, aParticleEffect);
+            }
+            if (aBodyReanim->ShouldTriggerTimedEvent(0.67f)) {
+                mApp->AddTodParticle(mX + 87, mY + 110, mRenderOrder - 1, aParticleEffect);
+            }
+        }
+    } else {
+        bool doWalk = false;
+        if (mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_IN_VAULT || mZombiePhase == ZombiePhase::PHASE_DIGGER_TUNNELING || mZombieType == ZombieType::ZOMBIE_DANCER
+            || mZombieType == ZombieType::ZOMBIE_BACKUP_DANCER || mZombieType == ZombieType::ZOMBIE_BOBSLED || mZombieType == ZombieType::ZOMBIE_POGO || mZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER
+            || mZombieType == ZombieType::ZOMBIE_BALLOON) {
+            doWalk = true;
+        } else if (mZombieType == ZombieType::ZOMBIE_SNORKEL && mInPool) {
+            doWalk = true;
+        } else if (mFrame >= 0 && mFrame <= 2) {
+            doWalk = true;
+        } else if (mFrame >= 6 && mFrame <= 8) {
+            doWalk = true;
+        }
+
+        if (doWalk) {
+            float aSpeed = mVelX;
+            if (IsMovingAtChilledSpeed()) {
+                aSpeed *= CHILLED_SPEED_FACTOR;
+            }
+
+            if (IsWalkingBackwards()) {
+                mPosX += aSpeed;
+            } else {
+                mPosX -= aSpeed;
+            }
+        }
+    }
 }
 
 ZombiePhase Zombie::GetDancerPhase() {

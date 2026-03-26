@@ -824,6 +824,7 @@ inline void *Reanimation_StartBlendAddr;
 inline void *Reanimation_AttachParticleToTrackAddr;
 inline void *Reanimation_SetTruncateDisappearingFramesAddr;
 inline void *Reanimation_IgnoreClipRectForPrefixAddr;
+inline void *Reanimation_GetTrackVelocityAddr;
 
 
 inline void *Sexy_SexyCommonApp_getGameInfoAddr;
