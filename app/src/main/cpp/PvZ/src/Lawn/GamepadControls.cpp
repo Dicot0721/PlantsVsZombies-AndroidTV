@@ -720,7 +720,7 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                 } else if (aZombieType == ZombieType::ZOMBIE_FLAG) {
                     mBoard->DisplayAdviceAgain("[ADVICE_HUGE_WAVE]", MessageStyle::MESSAGE_STYLE_HUGE_WAVE, AdviceType::ADVICE_HUGE_WAVE);
                     mBoard->SpawnZombieWave();
-                } else if (Challenge::IsMPZombieAddInRow(aZombieType)) {
+                } else if (Challenge::IsMPZombieTypeAddInRow(aZombieType)) {
                     mBoard->AddZombieInRow(aZombieType, aGridY, -5, true);
                 } else {
                     if (mBoard->mPlantRow[aGridY] == PlantRowType::PLANTROW_POOL) { // 如果是水路则放置在出生点

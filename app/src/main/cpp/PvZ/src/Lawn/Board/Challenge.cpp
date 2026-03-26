@@ -770,9 +770,20 @@ bool Challenge::IsMPResourceProducer(SeedType theSeedType) {
     return theSeedType == SeedType::SEED_SUNFLOWER || theSeedType == SeedType::SEED_SUNSHROOM || theSeedType == SeedType::SEED_TWINSUNFLOWER || theSeedType == SeedType::SEED_ZOMBIE_GRAVESTONE;
 }
 
-bool Challenge::IsMPZombieAddInRow(ZombieType theZombieType) {
+bool Challenge::IsMPZombieTypeAddInRow(ZombieType theZombieType) {
     return theZombieType == ZombieType::ZOMBIE_DANCER || theZombieType == ZombieType::ZOMBIE_ZAMBONI || theZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX
         || theZombieType == ZombieType::ZOMBIE_DIGGER || theZombieType == ZombieType::ZOMBIE_CATAPULT || theZombieType == ZombieType::ZOMBIE_GARGANTUAR
         || theZombieType == ZombieType::ZOMBIE_DUCKY_TUBE || theZombieType == ZombieType::ZOMBIE_SNORKEL || theZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER
         || theZombieType == ZombieType::ZOMBIE_BALLOON || theZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || theZombieType == ZombieType::ZOMBIE_BOBSLED;
+}
+
+bool Challenge::IsMPZombieTypeCanGoInPool(ZombieType theZombieType) {
+    if (theZombieType == ZombieType::ZOMBIE_SNORKEL || theZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER)
+        return true;
+
+    if (IsMPZombieTypeAddInRow(theZombieType))
+        return false;
+
+    return theZombieType != ZombieType::ZOMBIE_DOOR && theZombieType != ZombieType::ZOMBIE_POGO && theZombieType != ZombieType::ZOMBIE_YETI && theZombieType != ZombieType::ZOMBIE_LADDER
+        && theZombieType != ZombieType::ZOMBIE_TRASHCAN;
 }

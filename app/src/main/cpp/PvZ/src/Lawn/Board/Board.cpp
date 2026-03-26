@@ -424,8 +424,10 @@ PlantingReason Board::CanPlantAt(int theGridX, int theGridY, SeedType theSeedTyp
 
     if (mApp->IsVSMode()) {
         ZombieType aZombieType = Challenge::IZombieSeedTypeToZombieType(theSeedType);
-        if ((Challenge::IsMPZombieAddInRow(aZombieType) || aZombieType == ZombieType::ZOMBIE_POGO) && mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
-            return PlantingReason::PLANTING_ONLY_ON_GROUND; // 禁止水路放置出生点生成的僵尸和蹦蹦僵尸
+        if ((!Challenge::IsMPZombieTypeCanGoInPool(aZombieType)) && mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
+            return PlantingReason::PLANTING_ONLY_ON_GROUND; // 部分僵尸类型禁止放置在水路
+        } else if ((aZombieType == ZombieType::ZOMBIE_SNORKEL || aZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER) && mPlantRow[theGridY] != PlantRowType::PLANTROW_POOL) {
+            return PlantingReason::PLANTING_ONLY_IN_POOL; // 潜水僵尸和海豚骑士僵尸禁止放置在非水路
         }
 
         if ((theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || theSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)) {

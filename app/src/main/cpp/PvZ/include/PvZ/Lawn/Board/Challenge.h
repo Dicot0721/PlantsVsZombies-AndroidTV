@@ -175,7 +175,8 @@ public:
     void HeavyWeaponReanimUpdate();
     void MouseDownWhackAZombie(int theX, int theY, int thePlayerIndex);
     static bool IsMPResourceProducer(SeedType theSeedType);
-    static bool IsMPZombieAddInRow(ZombieType theZombieType);
+    static bool IsMPZombieTypeAddInRow(ZombieType theZombieType);
+    static bool IsMPZombieTypeCanGoInPool(ZombieType theZombieType);
 
 protected:
     friend void InitHookFunction();

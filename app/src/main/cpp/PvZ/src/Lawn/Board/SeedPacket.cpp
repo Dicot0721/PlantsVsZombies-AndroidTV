@@ -216,7 +216,8 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
 }
 
 void SeedPacket::SetNextRandomSeed() {
-    if (!gIsVSShuffleMode) // 仅刷牌模式生效
+    // 仅刷牌模式生效
+    if (!gIsVSShuffleMode)
         return;
 
     // 不更换生产者和刷牌按钮
@@ -226,9 +227,12 @@ void SeedPacket::SetNextRandomSeed() {
     if (gTcpConnected)
         return;
 
+    bool isZombie = false;
+    SeedType seedType = SeedType::SEED_NONE;
+    std::vector<SeedType> plantSeeds, zombieSeeds;
     if (mSeedBank->mIsZombie) {
-        std::vector<SeedType> plantSeeds, zombieSeeds;
-        SeedType seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, true, mIndex);
+        isZombie = true;
+        seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, true, mIndex);
         SetPacketType(seedType, SeedType::SEED_NONE);
 
         if (gTcpClientSocket >= 0) {
@@ -240,9 +244,9 @@ void SeedPacket::SetNextRandomSeed() {
             SendEvent(gTcpClientSocket, event);
         }
     } else {
-        std::vector<SeedType> plantSeeds, zombieSeeds;
-        SeedType seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, false, mIndex);
+        seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, false, mIndex);
         SetPacketType(seedType, SeedType::SEED_NONE);
+    }
 
         if (gTcpClientSocket >= 0) {
             U8U8U16U16_Event event;
@@ -252,6 +256,13 @@ void SeedPacket::SetNextRandomSeed() {
             event.data4 = mIndex;
             SendEvent(gTcpClientSocket, event);
         }
+    if (gTcpClientSocket >= 0) {
+        U8U8U16U16_Event event;
+        event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
+        event.data1 = isZombie;
+        event.data3 = seedType;
+        event.data4 = mIndex;
+        SendEvent(gTcpClientSocket, event);
     }
 }
 
