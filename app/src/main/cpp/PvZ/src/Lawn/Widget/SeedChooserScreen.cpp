@@ -240,17 +240,11 @@ bool SeedChooserScreen::SeedNotAllowedToPick(SeedType theSeedType) {
     return old_SeedChooserScreen_SeedNotAllowedToPick(this, theSeedType);
 }
 
-SeedType SeedChooserScreen::GetZombieSeedType(SeedType theSeedType) {
-    int aSeedType = theSeedType + SEED_ZOMBIE_GRAVESTONE;
-    if (gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode) { // 解锁更多对战僵尸
-        return aSeedType >= NUM_ZOMBIE_SEED_IN_CHOOSER ? SEED_NONE : (SeedType)aSeedType;
-    } else {
-        return aSeedType > SEED_ZOMBIE_GARGANTUAR ? SEED_NONE : (SeedType)aSeedType;
-    }
-}
-
-ZombieType SeedChooserScreen::GetZombieType(ZombieType theZombieType) {
-    return theZombieType >= NUM_ZOMBIE_TYPES ? ZOMBIE_INVALID : theZombieType;
+SeedType SeedChooserScreen::GetZombieSeedType(int theSeedIndex) {
+    int aSeedType = theSeedIndex + SEED_ZOMBIE_GRAVESTONE;
+    // 解锁更多对战僵尸
+    // return aSeedType > SEED_ZOMBIE_GARGANTUAR ? SEED_NONE : SeedType(aSeedType);
+    return aSeedType < NUM_ZOMBIE_SEED_IN_CHOOSER ? SeedType(aSeedType) : SEED_NONE;
 }
 
 int SeedChooserScreen::GetSeedPacketIndex(int theSeedIndex) {
@@ -594,17 +588,9 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
                 const char *aTitle = nullptr;
                 const char *aLabel = nullptr;
                 switch (aSeedType) {
-                    case SeedType::SEED_ZOMBIE_REDEYE_GARGANTUAR: // 红眼巨人僵尸
-                        aTitle = "[REDEYE_GARGANTUAR_ZOMBIE]";
-                        aLabel = "[REDEYE_GARGANTUAR_ZOMBIE_DESCRIPTION_HEADER]";
-                        break;
                     case SeedType::SEED_ZOMBIE_PEA_HEAD: // 豌豆射手僵尸
                         aTitle = "[PEA_HEAD_ZOMBIE]";
                         aLabel = "[PEA_HEAD_ZOMBIE_DESCRIPTION_HEADER]";
-                        break;
-                    case SeedType::SEED_ZOMBIE_WALLNUT_HEAD: // 坚果僵尸
-                        aTitle = "[WALLNUT_HEAD_ZOMBIE]";
-                        aLabel = "[WALLNUT_HEAD_ZOMBIE_DESCRIPTION_HEADER]";
                         break;
                     case SeedType::SEED_ZOMBIE_JALAPENO_HEAD: // 火爆辣椒僵尸
                         aTitle = "[JALAPENO_HEAD_ZOMBIE]";

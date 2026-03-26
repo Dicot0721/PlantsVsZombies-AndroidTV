@@ -476,7 +476,6 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN17SeedChooserScreen8Has7RowsEv", SeedChooserScreen_Has7RowsAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreen20SeedNotAllowedToPickE8SeedType", SeedChooserScreen_SeedNotAllowedToPickAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreen17GetZombieSeedTypeEi", SeedChooserScreen_GetZombieSeedTypeAddr);
-    libGameMain.GetSymbol("_ZN17SeedChooserScreen13GetZombieTypeEi", SeedChooserScreen_GetZombieTypeAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreen14CancelLawnViewEv", SeedChooserScreen_CancelLawnViewAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreen16GetNextSeedInDirEiNS_7SeedDirE", SeedChooserScreen_GetNextSeedInDirAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreen24GetSeedPositionInChooserEiRiS0_", SeedChooserScreen_GetSeedPositionInChooserAddr);

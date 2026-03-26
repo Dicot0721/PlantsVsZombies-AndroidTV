@@ -435,7 +435,7 @@ std::string GenerateFormationStrFromMap(const FormationMap &theMap) {
     auto it = theMap.cbegin();
     auto end = theMap.cend();
     while (it != end) {
-        const auto &[key, value] = *it;
+        std::uint32_t key = it->first;
         int aSeedType = key & 0x3F;
         std::ostringstream *ssPtr;
         switch (aSeedType) {
@@ -450,32 +450,26 @@ std::string GenerateFormationStrFromMap(const FormationMap &theMap) {
                 ssPtr = &ss2;
                 break;
         }
+        *ssPtr << aSeedType << ' ';
         bool isWakeUp = (key >> 6) & 1;
         bool isImitaterMorphed = (key >> 7) & 1;
         bool hasLadder = (key >> 8) & 1;
-        int aPlantCol = value & 0xF;
-        int aRow = value >> 4;
-        *ssPtr << aSeedType << ' ';
         if (isWakeUp) {
-            *ssPtr << 'W';
+            *ssPtr << "W ";
         }
         if (isImitaterMorphed) {
-            *ssPtr << 'I';
+            *ssPtr << "I ";
         }
         if (hasLadder) {
-            *ssPtr << 'L';
+            *ssPtr << "L ";
         }
-        if (isWakeUp || isImitaterMorphed || hasLadder) {
-            *ssPtr << ' ';
-        }
-        *ssPtr << aPlantCol << ',' << aRow;
-        while ((++it != end) && (it->first == key)) {
-            int v = it->second;
-            int col = v & 0xF;
-            int row = v >> 4;
-            *ssPtr << ' ' << col << ',' << row;
-        }
-        *ssPtr << " ; ";
+        do {
+            std::uint32_t value = it->second;
+            int col = value & 0xF;
+            int row = value >> 4;
+            *ssPtr << col << ',' << row << ' ';
+        } while ((++it != end) && (it->first == key));
+        *ssPtr << "; ";
     }
 
     ss1 << ss2.view() << ss3.view();
@@ -492,16 +486,15 @@ std::string formation::GenerateFormationStr(Board *theBoard) {
         }
         SeedType aSeedType = aPlant->mSeedType;
         SeedType aImitaterType = aPlant->mImitaterType;
+        bool isImitaterMorphed = aSeedType == SeedType::SEED_IMITATER || aImitaterType == SeedType::SEED_IMITATER;
         if (aSeedType == SeedType::SEED_IMITATER) {
             aSeedType = aImitaterType;
         }
         int aPlantCol = aPlant->mPlantCol;
         int aRow = aPlant->mRow;
-        bool aIsAsleep = aPlant->mIsAsleep;
-        bool canHaveLadder = aSeedType == SeedType::SEED_WALLNUT || aSeedType == SeedType::SEED_TALLNUT || aSeedType == SeedType::SEED_PUMPKINSHELL;
         bool canBeAsleep = Plant::IsNocturnal(aSeedType);
-        bool isWakeUp = canBeAsleep && !aIsAsleep;
-        bool isImitaterMorphed = aSeedType == SeedType::SEED_IMITATER || aImitaterType == SeedType::SEED_IMITATER;
+        bool isWakeUp = canBeAsleep && !aPlant->mIsAsleep;
+        bool canHaveLadder = aSeedType == SeedType::SEED_WALLNUT || aSeedType == SeedType::SEED_TALLNUT || aSeedType == SeedType::SEED_PUMPKINSHELL;
         bool hasLadder = canHaveLadder && (theBoard->GetLadderAt(aPlantCol, aRow) != nullptr);
 
         std::uint32_t key = aSeedType | (isWakeUp << 6) | (isImitaterMorphed << 7) | (hasLadder << 8);
@@ -524,15 +517,19 @@ static void ApplyFormationSnippet(Board *theBoard, std::string_view theSnippetSt
     errno = 0;
     {
         char *end;
-        aSeedType = static_cast<SeedType>(std::strtol(theSnippetStr.data(), &end, 10));
+        long number = std::strtol(theSnippetStr.data(), &end, 10);
         if ((theSnippetStr.data() == end) || (errno == ERANGE)) {
-            LOG_ERROR("Failed to parse formation string");
+            LOG_ERROR("Failed to parse SeedType");
             return;
         }
+        if (number < SEED_PEASHOOTER || number == NUM_SEEDS_IN_CHOOSER || number >= NUM_SEED_TYPES) {
+            LOG_ERROR("Invalid SeedType: {}", number);
+            return;
+        }
+        aSeedType = static_cast<SeedType>(number);
         aCursor = end;
     }
 
-    // Move cursor to the next position after the parsed integer
     for (const char *end = theSnippetStr.end(); aCursor < end; ++aCursor) {
         if (*aCursor == 'W') {
             isWakeUp = true;
@@ -550,8 +547,10 @@ static void ApplyFormationSnippet(Board *theBoard, std::string_view theSnippetSt
             if (int n; std::sscanf(aCursor, "%d,%d%n", &x, &y, &n) == 2) {
                 aCursor += n; // Skip to next coordinate
             } else {
+                LOG_ERROR("Failed to parse coordinate");
                 continue;
             }
+            LOG_WARN_IF(x < 0 || x > MAX_GRID_SIZE_X || y < 0 || y > MAX_GRID_SIZE_Y, "Unnormal coordinate: ({}, {})", x, y);
             Plant *aPlant = old_Board_AddPlant(theBoard, x, y, aSeedType, isImitaterMorphed ? SeedType::SEED_IMITATER : SeedType::SEED_NONE, 1, false);
             if (isImitaterMorphed) {
                 aPlant->SetImitaterFilterEffect();

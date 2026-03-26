@@ -478,7 +478,6 @@ inline void *SeedChooserScreen_GameButtonDownAddr;
 inline void *SeedChooserScreen_ClickedSeedInBankAddr;
 inline void *SeedChooserScreen_SeedNotAllowedToPickAddr;
 inline void *SeedChooserScreen_GetZombieSeedTypeAddr;
-inline void *SeedChooserScreen_GetZombieTypeAddr;
 inline void *SeedChooserScreen_CancelLawnViewAddr;
 inline void *SeedChooserScreen_GetNextSeedInDirAddr;
 inline void *SeedChooserScreen_GetSeedPositionInChooserAddr;

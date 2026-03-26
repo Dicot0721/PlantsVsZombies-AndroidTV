@@ -162,8 +162,7 @@ public:
     SeedChooserScreen(bool theIsZombieChooser);
     void EnableStartButton(int theIsEnabled);
     void RebuildHelpbar();
-    SeedType GetZombieSeedType(SeedType theSeedType);
-    ZombieType GetZombieType(ZombieType theZombieType);
+    SeedType GetZombieSeedType(int theSeedIndex);
     int GetSeedPacketIndex(int theSeedIndex);
     void OnPlayerPickedSeed(int thePlayerIndex);
     void ClickedSeedInChooser(ChosenSeed &theChosenSeed, int thePlayerIndex);
