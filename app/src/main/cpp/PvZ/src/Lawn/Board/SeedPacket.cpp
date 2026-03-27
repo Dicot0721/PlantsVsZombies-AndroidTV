@@ -248,14 +248,14 @@ void SeedPacket::SetNextRandomSeed() {
         SetPacketType(seedType, SeedType::SEED_NONE);
     }
 
-        if (gTcpClientSocket >= 0) {
-            U8U8U16U16_Event event;
-            event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
-            event.data1 = false;
-            event.data3 = seedType;
-            event.data4 = mIndex;
-            SendEvent(gTcpClientSocket, event);
-        }
+    if (gTcpClientSocket >= 0) {
+        U8U8U16U16_Event event;
+        event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
+        event.data1 = false;
+        event.data3 = seedType;
+        event.data4 = mIndex;
+        SendEvent(gTcpClientSocket, event);
+    }
     if (gTcpClientSocket >= 0) {
         U8U8U16U16_Event event;
         event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;

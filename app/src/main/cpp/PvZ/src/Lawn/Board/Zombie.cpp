@@ -110,6 +110,59 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
         SetZombatarReanim();
     }
 
+    if ((mBoard && mBoard->mPlantRow[mRow] == PlantRowType::PLANTROW_POOL) && GetZombieDefinition(theType).mReanimationType != REANIM_ZOMBIE) {
+        int offsetX = 20;
+        int offsetY = -8;
+        float scale = 1.0f;
+        if (theType == ZombieType::ZOMBIE_FOOTBALL) {
+            offsetX = 30;
+            offsetY = -45;
+            scale = 1.2f;
+        } else if (theType == ZombieType::ZOMBIE_IMP) {
+            offsetX = 35;
+            offsetY = 22;
+            scale = 0.8f;
+        } else if (theType == ZombieType::ZOMBIE_GARGANTUAR) {
+            offsetX = 0;
+            offsetY = -50;
+            scale = 1.5f;
+        }
+        Reanimation *reanim = AddAttachedReanim(offsetX, offsetY, ReanimationType::REANIM_ZOMBIE);
+        SetupReanimLayers(reanim, theType);
+        reanim->OverrideScale(scale, scale);
+        reanim->PlayReanim("anim_walk", ReanimLoopType::REANIM_LOOP, 0, 0.0f);
+        reanim->AssignRenderGroupToPrefix("zombie_duckytube", RENDER_GROUP_NORMAL);
+        ReanimIgnoreClipRect("Zombie_duckytube", true);
+        ReanimatorTrackInstance *aTrackInstance = reanim->GetTrackInstanceByName("Zombie_whitewater");
+        aTrackInstance->mIgnoreExtraAdditiveColor = true;
+        aTrackInstance->mIgnoreColorOverride = true;
+        aTrackInstance->mIgnoreClipRect = true;
+        ReanimatorTrackInstance *aTrackInstance2 = reanim->GetTrackInstanceByName("Zombie_whitewater2");
+        aTrackInstance2->mIgnoreExtraAdditiveColor = true;
+        aTrackInstance2->mIgnoreColorOverride = true;
+        aTrackInstance2->mIgnoreClipRect = true;
+        // 隐藏非鸭子救生圈轨道
+        reanim->AssignRenderGroupToPrefix("anim_head", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("anim_hair", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("anim_tongue", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("anim_head1", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_neck", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_tie", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_body", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_outerarm_upper", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_outerarm_lower", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_outerarm_hand", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("anim_innerarm1", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("anim_innerarm2", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("anim_innerarm3", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_outerleg_lower", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_outerleg_foot", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_outerleg_upper", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_innerleg_lower", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_innerleg_foot", RENDER_GROUP_HIDDEN);
+        reanim->AssignRenderGroupToPrefix("Zombie_innerleg_upper", RENDER_GROUP_HIDDEN);
+    }
+
     switch (theType) {
         case ZombieType::ZOMBIE_BALLOON:
             if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
@@ -2377,7 +2430,40 @@ void Zombie::PlayZombieReanim(const char *theTrackName, ReanimLoopType theLoopTy
 }
 
 void Zombie::StartWalkAnim(int theBlendTime) {
-    old_Zombie_StartWalkAnim(this, theBlendTime);
+    Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+    if (aBodyReanim == nullptr)
+        return;
+
+    PickRandomSpeed();
+    if (mZombiePhase == ZombiePhase::PHASE_LADDER_CARRYING) {
+        PlayZombieReanim("anim_ladderwalk", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
+    } else if (mZombiePhase == ZombiePhase::PHASE_NEWSPAPER_MAD) {
+        PlayZombieReanim("anim_walk_nopaper", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
+    } else if (mInPool && mZombieHeight != ZombieHeight::HEIGHT_IN_TO_POOL && mZombieHeight != ZombieHeight::HEIGHT_OUT_OF_POOL && aBodyReanim->TrackExists("anim_swim")) {
+        PlayZombieReanim("anim_swim", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
+    } else if ((mZombieType == ZombieType::ZOMBIE_NORMAL || mZombieType == ZombieType::ZOMBIE_TRAFFIC_CONE || mZombieType == ZombieType::ZOMBIE_PAIL) && mBoard->mDanceMode) {
+        PlayZombieReanim("anim_dance", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
+    } else {
+        int aWalkAnimVariant = Rand(2);
+        if (mZombieType == ZombieType::ZOMBIE_PEA_HEAD) {
+            aWalkAnimVariant = 0;
+        }
+        if (mZombieType == ZombieType::ZOMBIE_FLAG) {
+            aWalkAnimVariant = 0;
+        }
+
+        if (aWalkAnimVariant == 0 && aBodyReanim->TrackExists("anim_walk2")) {
+            PlayZombieReanim("anim_walk2", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
+        } else if (aBodyReanim->TrackExists("anim_walk")) {
+            PlayZombieReanim("anim_walk", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
+        }
+    }
+
+    // 鸭子救生圈
+    Reanimation *reanim = FindReanimAttachment(mAttachmentID);
+    if (reanim && mInPool && mZombieHeight != ZombieHeight::HEIGHT_IN_TO_POOL && mZombieHeight != ZombieHeight::HEIGHT_OUT_OF_POOL && reanim->TrackExists("anim_swim")) {
+        reanim->PlayReanim("anim_swim", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
+    }
 }
 
 void Zombie::ReanimShowPrefix(const char *theTrackPrefix, int theRenderGroup) {
@@ -3092,6 +3178,36 @@ void Zombie::UpdateYuckyFace() {
         return;
     }
     return old_Zombie_UpdateYuckyFace(this);
+}
+
+void Zombie::UpdateZombiePool() {
+    if (mZombieHeight == ZombieHeight::HEIGHT_OUT_OF_POOL) {
+        mAltitude++;
+        if (mZombieType == ZombieType::ZOMBIE_SNORKEL) {
+            mAltitude++;
+        }
+
+        if (mAltitude >= 0.0f) {
+            mAltitude = 0.0f;
+            mZombieHeight = ZombieHeight::HEIGHT_ZOMBIE_NORMAL;
+            mInPool = false;
+        }
+    } else if (mZombieHeight == ZombieHeight::HEIGHT_IN_TO_POOL) {
+        mAltitude--;
+        int aDepth = -40 * mScaleZombie;
+        if (mZombieType == ZombieType::ZOMBIE_FOOTBALL) {
+            aDepth = -50 * mScaleZombie;
+        } else if (mZombieType == ZombieType::ZOMBIE_IMP) {
+            aDepth = -30 * mScaleZombie;
+        }
+        if (mAltitude <= aDepth) {
+            mAltitude = aDepth;
+            mZombieHeight = ZombieHeight::HEIGHT_ZOMBIE_NORMAL;
+            StartWalkAnim(0);
+        }
+    } else if (mZombieHeight == ZombieHeight::HEIGHT_DRAGGED_UNDER) {
+        mAltitude--;
+    }
 }
 
 void Zombie::DoSpecial() {

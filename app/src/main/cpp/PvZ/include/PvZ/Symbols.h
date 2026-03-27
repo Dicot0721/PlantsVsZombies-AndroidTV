@@ -462,6 +462,9 @@ inline void *Zombie_UpdateYuckyFaceAddr;
 inline void *Zombie_OverrideParticleScaleAddr;
 inline void *Zombie_PoolSplashAddr;
 inline void *Zombie_BungeeDropZombieAddr;
+inline void *Zombie_AddAttachedReanimAddr;
+inline void *Zombie_SetupWaterTrackAddr;
+inline void *Zombie_UpdateZombiePoolAddr;
 
 
 inline void *SeedChooserScreen_UpdateAddr;
@@ -941,6 +944,7 @@ inline void *AttachReanimAddr;
 inline void *AttachmentUpdateAndSetMatrixAddr;
 inline void *AttachParticleAddr;
 inline void *AttachmentDetachCrossFadeParticleTypeAddr;
+inline void *FindReanimAttachmentAddr;
 
 
 inline void *TodScaleRotateTransformMatrixAddr;

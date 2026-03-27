@@ -282,6 +282,12 @@ public:
     void BungeeDropZombie(Zombie *theDroppedZombie, int theGridX, int theGridY) {
         reinterpret_cast<void (*)(Zombie *, Zombie *, int, int)>(Zombie_BungeeDropZombieAddr)(this, theDroppedZombie, theGridX, theGridY);
     }
+    Reanimation *AddAttachedReanim(int thePosX, int thePosY, ReanimationType theReanimType) {
+        return reinterpret_cast<Reanimation *(*)(Zombie *, int, int, ReanimationType)>(Zombie_AddAttachedReanimAddr)(this, thePosX, thePosY, theReanimType);
+    }
+    void SetupWaterTrack(const char *theTrackName) {
+        reinterpret_cast<void (*)(Zombie *, const char *)>(Zombie_SetupWaterTrackAddr)(this, theTrackName);
+    }
 
     Zombie() {
         _constructor();
@@ -299,6 +305,7 @@ public:
     void UpdateYeti();
     void UpdateZombieImp();
     void UpdateZombieJackInTheBox();
+    void UpdateZombiePolevaulter();
     void UpdateZombieGargantuar();
     void ThrowZombieImp(Zombie *theThrowerZombie, float theOffsetDistance);
     void UpdateZombiePeaHead();
@@ -384,7 +391,7 @@ public:
     void SummonBackupDancers();
     bool NeedsMoreBackupDancers();
     void UpdateYuckyFace();
-    void UpdateZombiePolevaulter();
+    void UpdateZombiePool();
     void DoSpecial();
 
 protected:
@@ -447,8 +454,6 @@ inline void (*old_Zombie_TakeDamage)(Zombie *, int theDamage, unsigned int theDa
 inline int (*old_Zombie_TakeHelmDamage)(Zombie *, int theDamage, unsigned int theDamageFlags);
 
 inline void (*old_Zombie_PlayZombieReanim)(Zombie *, const char *theTrackName, ReanimLoopType theLoopType, int theBlendTime, float theAnimRate);
-
-inline void (*old_Zombie_StartWalkAnim)(Zombie *, int theBlendTime);
 
 inline void (*old_Zombie_ReanimShowPrefix)(Zombie *, const char *, int);
 

@@ -73,6 +73,10 @@ inline void AttachmentDetachCrossFadeParticleType(AttachmentID &theAttachmentID,
     reinterpret_cast<void (*)(AttachmentID &, ParticleEffect, const char *)>(AttachmentDetachCrossFadeParticleTypeAddr)(theAttachmentID, theParticleEffect, theCrossFadeName);
 }
 
+inline Reanimation *FindReanimAttachment(AttachmentID &theAttachmentID) {
+    return reinterpret_cast<Reanimation *(*)(AttachmentID &)>(FindReanimAttachmentAddr)(theAttachmentID);
+}
+
 class AttachmentHolder {};
 
 #endif // PVZ_SEXYAPPFRAMEWORK_EFFECT_ATTACHMENT_H

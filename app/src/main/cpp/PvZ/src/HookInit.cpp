@@ -392,7 +392,7 @@ void InitHookFunction() {
     homura::HookFunction(Zombie_TakeDamageAddr, &Zombie::TakeDamage, &old_Zombie_TakeDamage);
     homura::HookFunction(Zombie_TakeHelmDamageAddr, &Zombie::TakeHelmDamage, &old_Zombie_TakeHelmDamage);
     homura::HookFunction(Zombie_PlayZombieReanimAddr, &Zombie::PlayZombieReanim, &old_Zombie_PlayZombieReanim);
-    homura::HookFunction(Zombie_StartWalkAnimAddr, &Zombie::StartWalkAnim, &old_Zombie_StartWalkAnim);
+    homura::HookFunction(Zombie_StartWalkAnimAddr, &Zombie::StartWalkAnim, nullptr);
     homura::HookFunction(Zombie_ReanimShowPrefixAddr, &Zombie::ReanimShowPrefix, &old_Zombie_ReanimShowPrefix);
     homura::HookFunction(Zombie_ReanimShowTrackAddr, &Zombie::ReanimShowTrack, &old_Zombie_ReanimShowTrack);
     homura::HookFunction(Zombie_GetPosYBasedOnRowAddr, &Zombie::GetPosYBasedOnRow, &old_Zombie_GetPosYBasedOnRow);
@@ -411,6 +411,7 @@ void InitHookFunction() {
     homura::HookFunction(Zombie_CanTargetPlantAddr, &Zombie::CanTargetPlant, nullptr);
     homura::HookFunction(Zombie_HitIceTrapAddr, &Zombie::HitIceTrap, nullptr);
     homura::HookFunction(Zombie_UpdateYuckyFaceAddr, &Zombie::UpdateYuckyFace, &old_Zombie_UpdateYuckyFace);
+    homura::HookFunction(Zombie_UpdateZombiePoolAddr, &Zombie::UpdateZombiePool, nullptr);
 
 
     homura::HookFunction(Sexy_Dialog_AddedToManagerWidgetManagerAddr, &Sexy::Dialog::AddedToManager, &old_Sexy_Dialog_AddedToManager);
