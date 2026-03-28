@@ -18,6 +18,7 @@
  */
 
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
+#include "Homura/Logger.h"
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
@@ -162,10 +163,9 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
     if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS) {
         mTotalGameInPage = 6;
         gIsVSShuffleMode = false;
+        gChallengeScreenRequestState = 0;
+        mConnectDialog = nullptr;
     }
-
-    mConnectDialog = new WaitForSecondPlayerDialog(mApp);
-    mApp->AddDialog(mConnectDialog);
 }
 
 void ChallengeScreen::_destructor2() {
@@ -295,6 +295,31 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
     }
 
     g->PopState();
+
+
+    if (gChallengeScreenRequestState != 0) {
+        // ======================
+        // 我是 guest：已提醒房主...
+        // (gTcpConnected == true 代表我作为 client 连接到 host)
+        // ======================
+        char *theNames[] = {"[MP_VS_DAY]", "[MP_VS_NIGHT]", "[MP_VS_POOL_DAY]", "[MP_VS_POOL_NIGHT]", "[MP_VS_ROOF]", "[MP_VS_SHUFFLE_MODE]"};
+
+        if (gTcpConnected) {
+            pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_REMIND_HOST_FMT]");
+            pvzstl::string name = theNames[gChallengeScreenRequestState - 68];
+            TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+        }
+
+        // ======================
+        // 我是 host：对方想玩/想要...
+        // (gTcpClientSocket >= 0 表示我作为 host 收到了 client 连接)
+        // ======================
+        if (gTcpClientSocket >= 0) {
+            pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_OPPONENT_WANTS_PLAY_FMT]");
+            pvzstl::string name = theNames[gChallengeScreenRequestState - 68];
+            TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+        }
+    }
 }
 
 void ChallengeScreen::Update() {
@@ -303,28 +328,18 @@ void ChallengeScreen::Update() {
 
     // 更新对战战场选择
     if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS) {
-        switch (mSelectedMode) {
-            case GAMEMODE_MP_VS_DAY:
-                gVSBackground = BackgroundType::BACKGROUND_1_DAY;
-                break;
-            case GAMEMODE_MP_VS_NIGHT:
-                gVSBackground = BackgroundType::BACKGROUND_2_NIGHT;
-                break;
-            case GAMEMODE_MP_VS_POOL_DAY:
-                gVSBackground = BackgroundType::BACKGROUND_3_POOL;
-                break;
-            case GAMEMODE_MP_VS_POOL_NIGHT:
-                gVSBackground = BackgroundType::BACKGROUND_4_FOG;
-                break;
-            case GAMEMODE_MP_VS_ROOF:
-                gVSBackground = BackgroundType::BACKGROUND_5_ROOF;
-                break;
-            case GAMEMODE_MP_VS_SHUFFLE_MODE:
-                gVSBackground = BackgroundType::BACKGROUND_1_DAY;
-                gIsVSShuffleMode = true;
-                break;
-            default:
-                break;
+
+        if (mConnectDialog == nullptr) {
+
+            mConnectDialog = new WaitForSecondPlayerDialog(mApp);
+            mApp->AddDialog(mConnectDialog);
+
+
+            int aButtonId = mConnectDialog->WaitForResult(true);
+            if (aButtonId == VSSetupMenu::VSSetupMenu_Back) {
+                mApp->KillBoard();
+                mApp->ShowGameSelector();
+            }
         }
     }
 }
@@ -348,9 +363,12 @@ void ChallengeScreen::ButtonPress(int theButtonId) {
 }
 
 void ChallengeScreen::ButtonDepress(int theId) {
+
+
     if (theId == ChallengeScreen::ChallengeScreen_Back) {
         mApp->KillChallengeScreen();
         mApp->DoBackToMain();
+        return;
     }
 
     int aChallengeMode = theId - ChallengeScreen::ChallengeScreen_Mode;
@@ -438,4 +456,108 @@ void ChallengeScreen::MouseUp(int x, int y) {
     }
     gTouchOutSide = false;
     gChallengeItemMoved = false;
+}
+
+void ChallengeScreen::KeyDown(Sexy::KeyCode code) {
+    if (code == Sexy::KEYCODE_RETURN) {
+        // 更新对战战场选择
+        if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS) {
+
+            if (gChallengeScreenRequestState == mSelectedMode) {
+                gChallengeScreenRequestState = 0;
+            }
+
+            if (gTcpConnected) {
+                U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS}, uint16_t(mSelectedMode)};
+                SendEvent(gTcpServerSocket, event);
+                gChallengeScreenRequestState = mSelectedMode;
+                return;
+            }
+
+            if (gTcpClientSocket >= 0) {
+                U16_Event event = {{EventType::EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS}, uint16_t(mSelectedMode)};
+                SendEvent(gTcpClientSocket, event);
+            }
+
+
+            switch (mSelectedMode) {
+                case GAMEMODE_MP_VS_DAY:
+                    gVSBackground = BackgroundType::BACKGROUND_1_DAY;
+                    break;
+                case GAMEMODE_MP_VS_NIGHT:
+                    gVSBackground = BackgroundType::BACKGROUND_2_NIGHT;
+                    break;
+                case GAMEMODE_MP_VS_POOL_DAY:
+                    gVSBackground = BackgroundType::BACKGROUND_3_POOL;
+                    break;
+                case GAMEMODE_MP_VS_POOL_NIGHT:
+                    gVSBackground = BackgroundType::BACKGROUND_4_FOG;
+                    break;
+                case GAMEMODE_MP_VS_ROOF:
+                    gVSBackground = BackgroundType::BACKGROUND_5_ROOF;
+                    break;
+                case GAMEMODE_MP_VS_SHUFFLE_MODE:
+                    gVSBackground = BackgroundType::BACKGROUND_1_DAY;
+                    gIsVSShuffleMode = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    return old_ChallengeScreen_KeyDown(this, code);
+}
+
+size_t ChallengeScreen::getClientEventSize(EventType type) {
+    switch (type) {
+        // --- 触摸相关事件 ---
+        case EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS:
+            return sizeof(U16_Event);
+        default:
+            return sizeof(BaseEvent);
+    }
+}
+
+
+void ChallengeScreen::processClientEvent(void *buf, ssize_t bufSize) {
+    BaseEvent *event = (BaseEvent *)buf;
+    LOG_DEBUG("TYPE:{}", (int)event->type);
+    switch (event->type) {
+        case EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS: {
+            U16_Event *eventButtonDepress = (U16_Event *)event;
+            gChallengeScreenRequestState = eventButtonDepress->data;
+        } break;
+
+        default:
+            break;
+    }
+}
+
+size_t ChallengeScreen::getServerEventSize(EventType type) {
+    switch (type) {
+        // --- 触摸相关事件 ---
+        case EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS:
+            return sizeof(U16_Event);
+        default:
+            return sizeof(BaseEvent);
+    }
+}
+
+void ChallengeScreen::processServerEvent(void *buf, ssize_t bufSize) {
+    BaseEvent *event = (BaseEvent *)buf;
+    LOG_DEBUG("TYPE:{}", (int)event->type);
+    switch (event->type) {
+        case EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS: {
+            U16_Event *event1 = (U16_Event *)event;
+            int theId = event1->data;
+            LOG_DEBUG("theId={}", theId);
+            gTcpConnected = false;
+            mSelectedMode = GameMode(theId);
+            KeyDown(Sexy::KEYCODE_RETURN);
+            gTcpConnected = true;
+        } break;
+
+        default:
+            break;
+    }
 }

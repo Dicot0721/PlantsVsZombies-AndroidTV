@@ -711,7 +711,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     if (aBoard) {
         aBoard->mGamepadControls2->mPlayerIndex2 = -1;
     }
-    anApp->mTwoPlayerState = -1;
+    anApp->mSecondPlayerGamepadIndex = -1;
 }
 
 extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIsInGame(JNIEnv *env, jclass clazz) {

@@ -444,7 +444,7 @@ void SeedChooserScreen::GameButtonDown(Sexy::GamepadButton theButton, unsigned i
             return;
         }
 
-        if (mApp->mTwoPlayerState == -1 && mPlayerIndex != thePlayerIndex)
+        if (mApp->mSecondPlayerGamepadIndex == -1 && mPlayerIndex != thePlayerIndex)
             return;
 
         SeedType aSeedType = thePlayerIndex ? mSeedType2 : mSeedType1;
@@ -1089,7 +1089,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
         int aPlayerState = (aPlayerIndex ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1)->mPlayerIndex2;
         if (aPlayerState != -1 && !unkMems3[3]) {
             if (aPlayerState == mPlayerIndex || !mApp->IsVSMode()) {
-                Image *aSelectorImage = (aPlayerState == mApp->mTwoPlayerState) ? *Sexy::IMAGE_SEED_SELECTOR_BLUE : *Sexy::IMAGE_SEED_SELECTOR;
+                Image *aSelectorImage = (aPlayerState == mApp->mSecondPlayerGamepadIndex) ? *Sexy::IMAGE_SEED_SELECTOR_BLUE : *Sexy::IMAGE_SEED_SELECTOR;
 
                 g->DrawImage(aSelectorImage, aCursorX - 8, aCursorY - 4, 64, 85);
             }
@@ -1182,7 +1182,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
     }
     //    else {
     //        // Check for disconnected controller warning
-    //        int aTwoPlayerState = mApp->mTwoPlayerState;
+    //        int aTwoPlayerState = mApp->mSecondPlayerGamepadIndex;
     //        if (aTwoPlayerState != -1 && aTwoPlayerState == mPlayerIndex) {
     //            // if (mBoard->mGamepadControls[aTwoPlayerState] &&
     //            //     !mBoard->mGamepadControls[aTwoPlayerState]->mControllerConnected)
@@ -1202,7 +1202,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
     //                int aSeconds = (sDisconnectTimer / 60) % 60;
     //                if (aSeconds > 30) {
     //                    pvzstl::string aWarningText = TodStringTranslate("[RECONNECT_SECOND_CONTROLLER_FMT]");
-    //                    aWarningText = StrFormat(aWarningText.c_str(), aTwoPlayerState + 1); // 此处的StrFormat在TV中传入2，PSV则是mApp->mTwoPlayerState
+    //                    aWarningText = StrFormat(aWarningText.c_str(), aTwoPlayerState + 1); // 此处的StrFormat在TV中传入2，PSV则是mApp->mSecondPlayerGamepadIndex
     //
     //                    int aTextX = aBackgroundImage->mWidth / 2;
     //                    int aTextY = aBackgroundImage->mHeight - 63;

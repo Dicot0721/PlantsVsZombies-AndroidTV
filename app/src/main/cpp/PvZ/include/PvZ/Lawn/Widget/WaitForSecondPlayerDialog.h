@@ -74,8 +74,6 @@ public:
 
     int mSelectedServerIndex;
 
-    // 手动直连 UI
-    GameButton *mDirectConnectButton;
 
     // 手动直连目标
     bool mUseManualTarget;

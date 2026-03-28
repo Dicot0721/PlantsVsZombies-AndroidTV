@@ -127,7 +127,7 @@ public:
     bool mMuteSoundsForCutscene;             // 2676
     bool unkBool2;                           // 2677
     int unk11;                               // 670
-    int mTwoPlayerState;                     // 671
+    int mSecondPlayerGamepadIndex;           // 671
     int unk12[3];                            // 672 ~ 674
     MailBox *mMailBox;                       // 675
     int unk13_1[14];                         // 676 ~ 689
@@ -380,6 +380,9 @@ inline bool doCheatCodeDialog; // 菜单DoCheatCodeDialog
 inline int gPingNetPingPongCounter = 0;
 inline int gPingNetDelayCounter = -1;
 inline int gNetDelayNow = 0;
+
+static std::vector<char> clientRecvBuffer;
+static std::vector<char> serverRecvBuffer;
 
 inline void (*old_LawnApp_ClearSecondPlayer)(LawnApp *lawnApp);
 

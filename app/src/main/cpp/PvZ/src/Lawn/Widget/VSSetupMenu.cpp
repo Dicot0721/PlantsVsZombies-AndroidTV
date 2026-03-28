@@ -640,26 +640,27 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
     }
     if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {
 
-        if (gTcpConnected || gTcpClientSocket >= 0) {
-            SetSecondPlayerIndex(mApp->mTwoPlayerState);
-            GoToState(VSSetupState::VS_SETUP_STATE_SIDES);
-            return;
-        }
-        mControllerIndex[1] = -1;
-        auto *aWaitDialog = new WaitForSecondPlayerDialog(mApp);
-        mApp->AddDialog(aWaitDialog);
-
-        int aButtonId = aWaitDialog->WaitForResult(true);
-        if (aButtonId == VSSetupMenu::VSSetupMenu_Enter) {
-            SetSecondPlayerIndex(mApp->mTwoPlayerState);
-            GoToState(VSSetupState::VS_SETUP_STATE_SIDES);
-        } else if (aButtonId == VSSetupMenu::VSSetupMenu_Back) {
-            CloseVSSetup(true);
-            mApp->KillBoard();
-            //            mApp->ShowGameSelector();
-            mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS); // 返回主菜单改为返回战场选择
-        }
+        // 跳过VSSetupState的WaitForSecondPlayerDialog
+        mApp->SetSecondPlayer(1);
+        SetSecondPlayerIndex(mApp->mSecondPlayerGamepadIndex);
+        GoToState(VSSetupState::VS_SETUP_STATE_SIDES);
         return;
+
+        //        mControllerIndex[1] = -1;
+        //        auto *aWaitDialog = new WaitForSecondPlayerDialog(mApp);
+        //        mApp->AddDialog(aWaitDialog);
+        //
+        //        int aButtonId = aWaitDialog->WaitForResult(true);
+        //        if (aButtonId == VSSetupMenu::VSSetupMenu_Enter) {
+        //            SetSecondPlayerIndex(mApp->mSecondPlayerGamepadIndex);
+        //            GoToState(VSSetupState::VS_SETUP_STATE_SIDES);
+        //        } else if (aButtonId == VSSetupMenu::VSSetupMenu_Back) {
+        //            CloseVSSetup(true);
+        //            mApp->KillBoard();
+        //            //            mApp->ShowGameSelector();
+        //            mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS); // 返回主菜单改为返回战场选择
+        //        }
+        //        return;
     } else if (theState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE) {
         gGamepad1ToPlayerIndex = mSides[0];
 

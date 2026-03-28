@@ -202,6 +202,8 @@ void LawnApp::ClearSecondPlayer() {
         gUdpBroadcastSocket = -1;
     }
     gNetDelayNow = 0; // 清除旧的延时数据
+    clientRecvBuffer.clear();
+    serverRecvBuffer.clear();
     old_LawnApp_ClearSecondPlayer(this);
 }
 
@@ -230,14 +232,11 @@ int LawnApp::GamepadToPlayerIndex(unsigned int thePlayerIndex) {
         if (mPlayerInfo && thePlayerIndex == (*((int (**)(DefaultPlayerInfo *))mPlayerInfo->vTable + 2))(mPlayerInfo))
             return 0;
 
-        if (mTwoPlayerState != -1 && mTwoPlayerState == thePlayerIndex)
+        if (mSecondPlayerGamepadIndex != -1 && mSecondPlayerGamepadIndex == thePlayerIndex)
             return 1;
     }
     return -1;
 }
-
-static std::vector<char> clientRecvBuffer;
-static std::vector<char> serverRecvBuffer;
 
 
 void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
@@ -274,6 +273,20 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             mBoard->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
             offset += eventSize;
         }
+
+
+        else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS && base->type <= EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS) {
+            size_t eventSize = ChallengeScreen::getClientEventSize(base->type);
+            if (clientRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+            if (!mChallengeScreen) {
+                offset += eventSize;
+                break;
+            }
+            mChallengeScreen->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
+            offset += eventSize;
+        }
+
 
         else if (base->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
             size_t eventSize = VSSetupMenu::getClientEventSize(base->type);
@@ -328,7 +341,19 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             SendEvent(gTcpServerSocket, eventPing);
 
             offset += eventSize;
-        } else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type < NUM_EVENT_SERVER_BOARD) {
+        } else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS && base->type <= EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS) {
+            size_t eventSize = ChallengeScreen::getServerEventSize(base->type);
+            if (serverRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+            if (!mChallengeScreen) {
+                offset += eventSize;
+                break;
+            }
+            mChallengeScreen->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
+            offset += eventSize;
+        }
+
+        else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type < NUM_EVENT_SERVER_BOARD) {
             size_t eventSize = Board::getServerEventSize(base->type);
 
 
@@ -341,9 +366,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             }
             mBoard->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
             offset += eventSize;
-        } else
-
-            if (base->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
+        } else if (base->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
             size_t eventSize = VSSetupMenu::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -354,9 +377,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             }
             mVSSetupMenu->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
             offset += eventSize;
-        } else
-
-            if (base->type == EVENT_START_GAME) {
+        } else if (base->type == EVENT_WAITFORSECONDPALYER_START_GAME) {
             size_t eventSize = WaitForSecondPlayerDialog::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -414,6 +435,8 @@ void LawnApp::UpdateFrames() {
                     close(gTcpClientSocket);
                     gTcpClientSocket = -1;
                 }
+                clientRecvBuffer.clear();
+                serverRecvBuffer.clear();
                 if (!GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER)) {
                     if (gTcpListenSocket >= 0) {
                         close(gTcpListenSocket);
@@ -439,6 +462,8 @@ void LawnApp::UpdateFrames() {
                         close(gTcpListenSocket);
                         gTcpListenSocket = -1;
                     }
+                    clientRecvBuffer.clear();
+                    serverRecvBuffer.clear();
                     LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 }
@@ -473,6 +498,8 @@ void LawnApp::UpdateFrames() {
                 gTcpServerSocket = -1;
                 gTcpConnecting = false;
                 gTcpConnected = false;
+                clientRecvBuffer.clear();
+                serverRecvBuffer.clear();
                 LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
                 break;
             } else {
@@ -488,6 +515,8 @@ void LawnApp::UpdateFrames() {
                     gTcpServerSocket = -1;
                     gTcpConnecting = false;
                     gTcpConnected = false;
+                    clientRecvBuffer.clear();
+                    serverRecvBuffer.clear();
                     LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 }

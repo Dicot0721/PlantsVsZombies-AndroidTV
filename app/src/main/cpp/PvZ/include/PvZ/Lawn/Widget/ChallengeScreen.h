@@ -80,9 +80,6 @@ public:
     void SetScrollTarget(int theIndex) {
         reinterpret_cast<void (*)(ChallengeScreen *, int)>(ChallengeScreen_SetScrollTargetAddr)(this, theIndex);
     }
-    void KeyDown(Sexy::KeyCode theKey) {
-        reinterpret_cast<void (*)(ChallengeScreen *, Sexy::KeyCode)>(ChallengeScreen_KeyDownAddr)(this, theKey);
-    }
     void DrawButton(Sexy::Graphics *g, int theChallengeIndex, int theChallengeMode) {
         reinterpret_cast<void (*)(ChallengeScreen *, Sexy::Graphics *, int, int)>(ChallengeScreen_DrawButtonAddr)(this, g, theChallengeIndex, theChallengeMode);
     }
@@ -98,6 +95,11 @@ public:
     void MouseDown(int x, int y, int theClickCount);
     void MouseUp(int x, int y);
     void MouseDrag(int x, int y);
+    void KeyDown(Sexy::KeyCode code);
+    static size_t getClientEventSize(EventType type);
+    static size_t getServerEventSize(EventType type);
+    void processClientEvent(void *buf, ssize_t bufSize);
+    void processServerEvent(void *buf, ssize_t bufSize);
 
 protected:
     friend void InitHookFunction();
@@ -119,9 +121,11 @@ extern ChallengeDefinition gChallengeDefs[NUM_CHALLENGE_MODES];
 
 ChallengeDefinition &GetChallengeDefinition(int theChallengeMode);
 /***************************************************************************************************************/
-
+inline int gChallengeScreenRequestState = 0;
 
 inline void (*old_ChallengeScreen_ChallengeScreen)(ChallengeScreen *challengeScreen, LawnApp *lawnApp, ChallengePage page);
+
+inline void (*old_ChallengeScreen_KeyDown)(ChallengeScreen *challengeScreen, Sexy::KeyCode code);
 
 inline void (*old_ChallengeScreen_Draw)(ChallengeScreen *challengeScreen, Sexy::Graphics *graphics);
 

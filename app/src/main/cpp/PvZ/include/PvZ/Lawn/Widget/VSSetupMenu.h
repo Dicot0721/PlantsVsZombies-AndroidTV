@@ -53,7 +53,7 @@ class Board;
 class DefaultPlayerInfo;
 
 class VSSetupMenu : public Sexy::MenuWidget {
-private:
+public:
     enum {
         VSSetupMenu_Quick_Play = 9,     // 快速游戏
         VSSetupMenu_Custom_Battle = 10, // 自定义战场
@@ -62,7 +62,6 @@ private:
         VSSetupMenu_Back = 1001,
     };
 
-public:
     enum VSSetupState {
         VS_SETUP_STATE_CONTROLLERS = 0,   // WaitForSecondPlayerDialog
         VS_SETUP_STATE_SIDES = 1,         // 未分配手柄阵营
