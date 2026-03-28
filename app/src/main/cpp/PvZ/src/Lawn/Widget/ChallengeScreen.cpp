@@ -306,7 +306,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
 
         if (gTcpConnected) {
             pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_REMIND_HOST_FMT]");
-            pvzstl::string name = theNames[gChallengeScreenRequestState - 68];
+            pvzstl::string name = TodStringTranslate(theNames[gChallengeScreenRequestState - 68]);
             TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
         }
 
@@ -316,7 +316,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
         // ======================
         if (gTcpClientSocket >= 0) {
             pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_OPPONENT_WANTS_PLAY_FMT]");
-            pvzstl::string name = theNames[gChallengeScreenRequestState - 68];
+            pvzstl::string name = TodStringTranslate(theNames[gChallengeScreenRequestState - 68]);
             TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
         }
     }
