@@ -331,6 +331,7 @@ inline void *LawnApp_SafeDeleteWidgetAddr;
 inline void *LawnApp_NewGameAddr;
 inline void *LawnApp_MakeNewBoardAddr;
 inline void *LawnApp_ShowVSSetupScreenAddr;
+inline void *LawnApp_KillVSSetupScreenAddr;
 
 
 inline void *ChallengeScreen_UpdateAddr;

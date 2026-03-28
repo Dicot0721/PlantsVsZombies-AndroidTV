@@ -45,10 +45,10 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     mBanModeButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
     mBalancePatchButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BALANCE_PATCH_Y, 175, 50);
 
-    mApp->mBoard->AddWidget(mBalancePatchButton);
-    mApp->mBoard->AddWidget(mExtraPacketsButton);
-    mApp->mBoard->AddWidget(mExtraSeedsButton);
-    mApp->mBoard->AddWidget(mBanModeButton);
+    mBoard->AddWidget(mBalancePatchButton);
+    mBoard->AddWidget(mExtraPacketsButton);
+    mBoard->AddWidget(mExtraSeedsButton);
+    mBoard->AddWidget(mBanModeButton);
 
     if (gIsVSShuffleMode) {
         SetDisable(mExtraPacketsButton);
@@ -56,27 +56,48 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
         SetDisable(mBanModeButton);
         mBanMode = false;
     }
+
+    mBackButton = MakeNewButton(VSSetupAddonWidget::VSSetupAddonWidget_Back,
+                                mButtonListener,
+                                theVSSetupMenu,
+                                "[BACK_TO_MODE_SELECT]",
+                                nullptr,
+                                *Sexy::IMAGE_SEEDCHOOSER_BUTTON_DISABLED,
+                                *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW,
+                                *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
+    mBackButton->mTextOffsetX = -2;
+    mBackButton->mTextOffsetY = -4;
+    mBackButton->mTextDownOffsetX = 1;
+    mBackButton->mTextDownOffsetY = 1;
+    mBackButton->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+    reinterpret_cast<ColorVector &>(mBackButton->mColors)[ButtonWidget::COLOR_LABEL] = Color(0, 205, 0);
+    mBackButton->Resize(800, 520, 160, 50);
+    mBoard->AddWidget(mBackButton);
 }
 
 VSSetupAddonWidget::~VSSetupAddonWidget() {
-    if (mApp->mBoard) {
+    delete mBackButton;
+
+    if (mBoard) {
+        mBoard->RemoveWidget(mBackButton);
+
         if (mExtraPacketsButton) {
-            mApp->mBoard->RemoveWidget(mExtraPacketsButton);
+            mBoard->RemoveWidget(mExtraPacketsButton);
             mExtraPacketsButton->_destructor();
             mExtraPacketsButton = nullptr;
         }
         if (mExtraSeedsButton) {
-            mApp->mBoard->RemoveWidget(mExtraSeedsButton);
+            mBoard->RemoveWidget(mExtraSeedsButton);
             mExtraSeedsButton->_destructor();
             mExtraSeedsButton = nullptr;
         }
         if (mBanModeButton) {
-            mApp->mBoard->RemoveWidget(mBanModeButton);
+            mBoard->RemoveWidget(mBanModeButton);
             mBanModeButton->_destructor();
             mBanModeButton = nullptr;
         }
         if (mBalancePatchButton) {
-            mApp->mBoard->RemoveWidget(mBalancePatchButton);
+            mBoard->RemoveWidget(mBalancePatchButton);
             mBalancePatchButton->_destructor();
             mBalancePatchButton = nullptr;
         }
@@ -119,6 +140,11 @@ void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId)
     }
     if (theId == VSSetupAddonWidget_BalancePatch) {
         self.CheckboxChecked(VSSetupAddonWidget_BalancePatch, self.mBalancePatchMode);
+    }
+    if (theId == VSSetupAddonWidget_Back) {
+        self.mApp->mVSSetupMenu->CloseVSSetup(true);
+        self.mApp->KillBoard();
+        self.mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS);
     }
 }
 

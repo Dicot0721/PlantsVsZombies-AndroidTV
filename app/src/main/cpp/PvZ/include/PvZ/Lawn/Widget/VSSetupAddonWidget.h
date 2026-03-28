@@ -61,10 +61,13 @@ public:
         VSSetupAddonWidget_ExtraSeeds,
         VSSetupAddonWidget_BanMode,
         VSSetupAddonWidget_BalancePatch,
+        VSSetupAddonWidget_Back,
     };
 
 public:
     LawnApp *mApp = *gLawnApp_Addr;
+    Board *mBoard = mApp->mBoard;
+    NewLawnButton *mBackButton = nullptr;
     Sexy::ButtonListener *mButtonListener;
     Sexy::ButtonWidget *mExtraPacketsButton = nullptr;
     Sexy::ButtonWidget *mExtraSeedsButton = nullptr;

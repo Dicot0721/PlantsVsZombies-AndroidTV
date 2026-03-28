@@ -141,6 +141,12 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
+                case VSSetupAddonWidget::VSSetupAddonWidget_Back: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
+                    pvzstl::string opt = TodStringTranslate("[BACK_TO_MODE_SELECT]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    break;
+                }
                 default:
                     break;
             }
@@ -191,6 +197,12 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
                 case VSSetupAddonWidget::VSSetupAddonWidget_BalancePatch: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
                     pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mBalancePatchMode) ? "[VS_OPT_ENABLE_BALANCE_PATCH]" : "[VS_OPT_DISABLE_BALANCE_PATCH]");
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                    break;
+                }
+                case VSSetupAddonWidget::VSSetupAddonWidget_Back: {
+                    pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
+                    pvzstl::string opt = TodStringTranslate("[BACK_TO_MODE_SELECT]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
@@ -640,7 +652,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
     }
     if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {
 
-        // 跳过VSSetupState的WaitForSecondPlayerDialog
+        // 跳过 VSSetupState 的 WaitForSecondPlayerDialog
         mApp->SetSecondPlayer(1);
         SetSecondPlayerIndex(mApp->mSecondPlayerGamepadIndex);
         GoToState(VSSetupState::VS_SETUP_STATE_SIDES);
@@ -803,7 +815,17 @@ void VSSetupMenu::ButtonDepress(int theId) {
         }
     }
 
+    // 修复“额外卡槽”开启后卡槽位置不正确
+    for (int i = 0; i < SEEDBANK_MAX; i++) {
+        SeedPacket *aPlantPacket = &aPlantBank->mSeedPackets[i];
+        SeedPacket *aZombiePacket = &aZombieBank->mSeedPackets[i];
+        aPlantPacket->mIndex = i;
+        aPlantPacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 0, false);
+        aZombiePacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 1, true);
+    }
+
     switch (theId) {
+        case VSSetupAddonWidget::VSSetupAddonWidget_Back:         // 返回模式选择
         case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets: // 额外卡槽
         case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds:   // 拓展选卡
         case VSSetupAddonWidget::VSSetupAddonWidget_BanMode:      // 禁选模式
@@ -812,15 +834,6 @@ void VSSetupMenu::ButtonDepress(int theId) {
             break;
         default:
             break;
-    }
-
-    // 修复“额外卡槽”开启后卡槽位置不正确
-    for (int i = 0; i < SEEDBANK_MAX; i++) {
-        SeedPacket *aPlantPacket = &aPlantBank->mSeedPackets[i];
-        SeedPacket *aZombiePacket = &aZombieBank->mSeedPackets[i];
-        aPlantPacket->mIndex = i;
-        aPlantPacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 0, false);
-        aZombiePacket->mX = mApp->mBoard->GetSeedPacketPositionX(i, 1, true);
     }
 }
 

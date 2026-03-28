@@ -71,8 +71,8 @@ public:
     GameMode mSelectedMode;                                     // 378
     int unk4;                                                   // 379
     // 大小380个整数, 以下是新增成员!
-    NewLawnButton *mBackButton;
-    WaitForSecondPlayerDialog *mConnectDialog;
+    NewLawnButton *mBackButton = nullptr;
+    WaitForSecondPlayerDialog *mConnectDialog = nullptr;
 
     void SetUnlockChallengeIndex(ChallengePage thePage, bool theIsIZombie = false) {
         reinterpret_cast<void (*)(ChallengeScreen *, ChallengePage, bool)>(ChallengeScreen_SetUnlockChallengeIndexAddr)(this, thePage, theIsIZombie);
@@ -117,7 +117,7 @@ public:
     int mCol;                   // 4 无用
     const char *mChallengeName; // 5
 };
-extern ChallengeDefinition gChallengeDefs[NUM_CHALLENGE_MODES];
+extern ChallengeDefinition gChallengeDefs[200];
 
 ChallengeDefinition &GetChallengeDefinition(int theChallengeMode);
 /***************************************************************************************************************/

@@ -288,6 +288,9 @@ public:
     void ShowVSSetupScreen() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ShowVSSetupScreenAddr)(this);
     }
+    void KillVSSetupScreen() {
+        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillVSSetupScreenAddr)(this);
+    }
 
     LawnApp() {
         _constructor();

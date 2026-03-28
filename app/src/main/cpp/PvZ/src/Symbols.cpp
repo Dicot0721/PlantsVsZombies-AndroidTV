@@ -328,6 +328,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN7LawnApp7NewGameEv", LawnApp_NewGameAddr);
     libGameMain.GetSymbol("_ZN7LawnApp12MakeNewBoardEv", LawnApp_MakeNewBoardAddr);
     libGameMain.GetSymbol("_ZN7LawnApp17ShowVSSetupScreenEv", LawnApp_ShowVSSetupScreenAddr);
+    libGameMain.GetSymbol("_ZN7LawnApp17KillVSSetupScreenEv", LawnApp_KillVSSetupScreenAddr);
 
 
     libGameMain.GetSymbol("_ZN15ChallengeScreen6UpdateEv", ChallengeScreen_UpdateAddr);
