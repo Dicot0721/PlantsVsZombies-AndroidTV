@@ -197,7 +197,7 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     // 结盟模式先不显示此对话框，后续再做结盟联机
     if (mApp->IsCoopMode()) {
         mApp->SetSecondPlayer(1);
-        LawnDialog::ButtonDepress(1000);
+        LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Enter);
         return;
     }
 
@@ -651,7 +651,7 @@ void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_WAITFORSECONDPALYER_START_GAME:
             //            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
             //            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
-            LawnDialog::ButtonDepress(1000); // 直接关闭自身
+            LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Enter); // 直接关闭自身
             break;
         default:
             break;
@@ -1218,12 +1218,12 @@ void WaitForSecondPlayerDialog::ButtonDepress_Thunk(this ButtonListener &self, i
                     // 本地游戏：按两下A
                     //                    aDialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
                     //                    aDialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
-                    aDialog->LawnDialog::ButtonDepress(1000);
+                    aDialog->LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Enter);
                     break;
                 case UIMode::MODE2_WIFI:
                     if (aDialog->mIsCreatingRoom) {
                         // 开始游戏（房主）：根据是否有玩家加入决定是否可点（RefreshButtons里已禁用）
-                        aDialog->LawnDialog::ButtonDepress(1000);
+                        aDialog->LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Enter);
                         if (gTcpClientSocket >= 0) {
                             BaseEvent event = {EventType::EVENT_WAITFORSECONDPALYER_START_GAME};
                             SendEvent(event);
@@ -1564,7 +1564,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 }
 
                 // 进入对战：按两下A
-                LawnDialog::ButtonDepress(1000);
+                LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Enter);
                 return;
             }
 

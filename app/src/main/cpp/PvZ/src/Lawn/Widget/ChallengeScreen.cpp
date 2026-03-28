@@ -354,7 +354,7 @@ void ChallengeScreen::Update() {
 
 
             int aButtonId = mConnectDialog->WaitForResult(true);
-            if (aButtonId == VSSetupMenu::VSSetupMenu_Back) {
+            if (aButtonId == WaitForSecondPlayerDialog::WaitForSecondPlayerDialog_Back) {
                 mApp->KillBoard();
                 mApp->ShowGameSelector();
             }

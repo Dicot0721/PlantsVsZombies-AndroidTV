@@ -48,7 +48,7 @@ struct ServerRoomItem {
 };
 
 class WaitForSecondPlayerDialog : public LawnDialog {
-private:
+public:
     enum {
         WaitForSecondPlayerDialog_Enter = 1000,
         WaitForSecondPlayerDialog_Back = 1001,
@@ -56,7 +56,7 @@ private:
         WaitForSecondPlayerDialog_Right = 1003,
     };
 
-public:
+
     bool m2PJoined;
     // 115：192，111：194。自roomName1起的成员为我新增的成员，我Hook了构造函数调用方，为构造时分配了更多内存，因此可以为WaitForSecondPlayerDialog任意地新增成员。
 

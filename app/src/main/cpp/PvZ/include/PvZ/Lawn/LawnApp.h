@@ -381,8 +381,8 @@ inline int gPingNetPingPongCounter = 0;
 inline int gPingNetDelayCounter = -1;
 inline int gNetDelayNow = 0;
 
-static std::vector<char> clientRecvBuffer;
-static std::vector<char> serverRecvBuffer;
+inline std::vector<char> clientRecvBuffer;
+inline std::vector<char> serverRecvBuffer;
 
 inline void (*old_LawnApp_ClearSecondPlayer)(LawnApp *lawnApp);
 
