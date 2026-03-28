@@ -298,21 +298,21 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
 
 
     if (mPageIndex == CHALLENGE_PAGE_VS) {
-        if (gTcpConnected) {
-            if (gNetDelayNow == 0) {
-                g->DrawString(TodStringTranslate("[VS_STATUS_IN_ROOM]"), 370, -20);
-            } else {
-                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
-                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 370, -20);
-            }
-        } else if (gTcpClientSocket >= 0) {
-            if (gNetDelayNow == 0) {
-                g->DrawString(TodStringTranslate("[VS_STATUS_HOST]"), 380, -20);
-            } else {
-                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_HOST_MS_FMT]");
-                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 380, -20);
-            }
-        }
+        //        if (gTcpConnected) {
+        //            if (gNetDelayNow == 0) {
+        //                g->DrawString(TodStringTranslate("[VS_STATUS_IN_ROOM]"), 370, -20);
+        //            } else {
+        //                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
+        //                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 370, -20);
+        //            }
+        //        } else if (gTcpClientSocket >= 0) {
+        //            if (gNetDelayNow == 0) {
+        //                g->DrawString(TodStringTranslate("[VS_STATUS_HOST]"), 380, -20);
+        //            } else {
+        //                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_HOST_MS_FMT]");
+        //                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 380, -20);
+        //            }
+        //        }
 
         if (gChallengeScreenRequestState != 0) {
             // ======================
@@ -487,14 +487,14 @@ void ChallengeScreen::KeyDown(Sexy::KeyCode code) {
 
             if (gTcpConnected) {
                 U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS}, uint16_t(mSelectedMode)};
-                SendEvent(gTcpServerSocket, event);
+                SendEvent(event);
                 gChallengeScreenRequestState = mSelectedMode;
                 return;
             }
 
             if (gTcpClientSocket >= 0) {
                 U16_Event event = {{EventType::EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS}, uint16_t(mSelectedMode)};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
 
 

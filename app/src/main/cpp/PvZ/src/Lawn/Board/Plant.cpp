@@ -114,7 +114,7 @@ void Plant::PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, Se
 
         if (gTcpClientSocket >= 0) {
             U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
     }
 
@@ -625,7 +625,7 @@ void Plant::DoSpecial() {
 
         if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_DO_SPECIAL}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
     }
 
@@ -755,7 +755,7 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
             } else {
                 event.data5.u16x2.u16_1 = theTargetGridItem == nullptr ? uint16_t(GRIDITEMID_NULL) : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
             }
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
             //            SyncPingPongAnimationToClient();
             //            SyncAnimationToClient();
         }
@@ -1151,7 +1151,7 @@ void Plant::Die() {
 
         if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_DIE}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
     }
 
@@ -1745,7 +1745,7 @@ void Plant::UpdateProductionPlant() {
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if (gTcpClientSocket >= 0) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
             mApp->PlayFoley(FoleyType::FOLEY_SPAWN_SUN);
             if (mSeedType == SeedType::SEED_SUNSHROOM) {
@@ -1961,7 +1961,7 @@ void Plant::UpdateShooter() {
         mLaunchCounter = mLaunchRate - Sexy::Rand(15);
         if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
         if (mSeedType == SeedType::SEED_THREEPEATER) {
             LaunchThreepeater();
@@ -2069,7 +2069,7 @@ void Plant::SyncPingPongAnimationToClient() {
     event.data4.u32 = mFrame;
     event.data5.u32 = mAnimCounter;
 
-    SendEvent(gTcpClientSocket, event);
+    SendEvent(event);
 }
 
 void Plant::SyncAnimationToClient() {
@@ -2090,7 +2090,7 @@ void Plant::SyncAnimationToClient() {
         event2.data3 = theReanim->mLoopType;
         event2.data4.f32 = theReanim->mAnimTime;
         event2.data5.f32 = theReanim->mAnimRate;
-        SendEvent(gTcpClientSocket, event2);
+        SendEvent(event2);
     }
 }
 
@@ -2109,10 +2109,10 @@ bool Plant::FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
             if (mSeedType == SEED_KERNELPULT) {
                 U8U8U16U16_Event event = {
                     {EventType::EVENT_SERVER_BOARD_PLANT_KERNELPLUT_FINDTARGETANDFIRE}, uint8_t(theRow), uint8_t(thePlantWeapon), uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mState)};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             } else {
                 U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_FINDTARGETANDFIRE}, uint8_t(theRow), uint8_t(thePlantWeapon), uint16_t(mBoard->mPlants.DataArrayGetID(this))};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
         }
     }
@@ -2161,7 +2161,7 @@ void Plant::UpdateChomper() {
 
                 if (gTcpClientSocket >= 0) {
                     U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mBoard->mZombies.DataArrayGetID(aZombie))};
-                    SendEvent(gTcpClientSocket, event);
+                    SendEvent(event);
                 }
 
                 aZombie->DieWithLoot();

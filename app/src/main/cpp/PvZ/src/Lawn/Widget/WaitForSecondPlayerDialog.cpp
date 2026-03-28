@@ -1226,7 +1226,7 @@ void WaitForSecondPlayerDialog::ButtonDepress_Thunk(this ButtonListener &self, i
                         aDialog->LawnDialog::ButtonDepress(1000);
                         if (gTcpClientSocket >= 0) {
                             BaseEvent event = {EventType::EVENT_WAITFORSECONDPALYER_START_GAME};
-                            SendEvent(gTcpClientSocket, event);
+                            SendEvent(event);
                         }
                     } else {
                         // 加入指定IP房间：弹输入框

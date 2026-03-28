@@ -251,7 +251,7 @@ void Board::ShovelDown() {
     requestDrawShovelInCursor = false;
     if (gTcpClientSocket) {
         U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-        SendEvent(gTcpClientSocket, event);
+        SendEvent(event);
     }
     bool isInShovelTutorial = (unsigned int)(mTutorialState - 15) <= 2;
     if (isInShovelTutorial) {
@@ -268,7 +268,7 @@ void Board::ShovelDown() {
     if (aPlantUnderShovel != nullptr) {
         if (gTcpClientSocket) {
             BaseEvent event = {EventType::EVENT_SERVER_BOARD_GAMEPAD_USE_SHOVEL};
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
         mApp->PlayFoley(FoleyType::FOLEY_USE_SHOVEL); // 播放铲除音效
         aPlantUnderShovel->Die();                     // 让被铲的植物趋势
@@ -490,7 +490,7 @@ Plant *Board::AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedTyp
             event.data4.u16x2.u16_2 = uint16_t(theImitaterType);
             event.data5.u16x2.u16_1 = uint16_t(mPlants.DataArrayGetID(aPlant));
             event.data5.u16x2.u16_2 = theIsDoEffect;
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
 
             //            aPlant->SyncPingPongAnimationToClient();
             aPlant->SyncAnimationToClient();
@@ -558,7 +558,7 @@ void Board::KeyDown(KeyCode theKey) {
 Coin *Board::AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion) {
     if (gTcpClientSocket >= 0) {
         U8U8U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_COIN_ADD}, uint8_t(theCoinType), uint8_t(theCoinMotion), uint16_t(theX), uint16_t(theY)};
-        SendEvent(gTcpClientSocket, event);
+        SendEvent(event);
     }
 
     if (gTcpConnected)
@@ -959,7 +959,7 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
                 event.data2.u8x4.u8_1 = uint8_t(aTargetCol);
                 event.data2.u8x4.u8_2 = uint8_t(theRow);
                 event.data3.f32 = aZombie->mAltitude;
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             } else {
                 U8x4U16Buf32x2_Event event;
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
@@ -971,7 +971,7 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
                 event.data2 = uint16_t(mZombies.DataArrayGetID(aZombie));
                 event.data3[0].f32 = aZombie->mVelX;
                 event.data3[1].f32 = aZombie->mPosX;
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             };
         }
         return aZombie;
@@ -1035,7 +1035,7 @@ void Board::processClientEvent(void *buf, ssize_t bufSize) {
                                            uint8_t(clientGamepadControls->mGamepadState),
                                            int16_t(clientGamepadControls->mCursorPositionX),
                                            int16_t(clientGamepadControls->mCursorPositionY)};
-            SendEvent(gTcpClientSocket, eventReply);
+            SendEvent(eventReply);
         } break;
         case EVENT_CLIENT_BOARD_TOUCH_DRAG: {
             I16I16_Event *event1 = (I16I16_Event *)event;
@@ -1050,7 +1050,7 @@ void Board::processClientEvent(void *buf, ssize_t bufSize) {
             GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
             CursorObject *clientCursorObject = mGamepadControls2->mPlayerIndex2 == 1 ? mCursorObject2 : mCursorObject1;
             U8U8_Event eventReply = {{EventType::EVENT_BOARD_TOUCH_UP_REPLY}, uint8_t(clientGamepadControls->mGamepadState), uint8_t(clientCursorObject->mCursorType)};
-            SendEvent(gTcpClientSocket, eventReply);
+            SendEvent(eventReply);
         } break;
         case EVENT_CLIENT_BOARD_PAUSE: {
             U8_Event *event1 = (U8_Event *)event;
@@ -2270,7 +2270,7 @@ void Board::SpawnZombieWave() {
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         if (gTcpClientSocket) {
             BaseEvent event = {EventType::EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE};
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
     }
 
@@ -2481,12 +2481,12 @@ void Board::Pause(bool thePause) {
 
         if (gTcpConnected) {
             U8_Event event = {{EventType::EVENT_CLIENT_BOARD_PAUSE}, thePause};
-            SendEvent(gTcpServerSocket, event);
+            SendEvent(event);
         }
 
         if (gTcpClientSocket >= 0) {
             U8_Event event = {{EventType::EVENT_SERVER_BOARD_PAUSE}, thePause};
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
     }
 
@@ -2895,7 +2895,7 @@ void Board::MouseDown(int x, int y, int theClickCount) {
         if (inRangeOf1PSeedBank)
             return;
         I16I16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_DOWN}, int16_t(x), int16_t(y)};
-        SendEvent(gTcpServerSocket, event);
+        SendEvent(event);
         ClientMouseDownLocal(x, y, inRangeOf2PSeedBank);
         return;
     }
@@ -2911,7 +2911,7 @@ void Board::MouseDown(int x, int y, int theClickCount) {
                                   uint8_t(serverGamepadControls->mGamepadState),
                                   int16_t(serverGamepadControls->mCursorPositionX),
                                   int16_t(serverGamepadControls->mCursorPositionY)};
-        SendEvent(gTcpClientSocket, event);
+        SendEvent(event);
     }
 }
 void Board::__MouseDown(int x, int y, int theClickCount) {
@@ -2963,7 +2963,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
             requestDrawShovelInCursor = false; // 不再绘制铲子
             if (gTcpClientSocket) {
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
             if (isCobCannonSelected) { // 如果拿着加农炮，将其放下
                 mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
@@ -3070,7 +3070,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
         }
         if (gTcpClientSocket) {
             U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
         return;
     }
@@ -3128,7 +3128,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
             requestDrawShovelInCursor = false;
             if (gTcpClientSocket) {
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
             // if (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
             // LOGD("5656565656");
@@ -3288,7 +3288,7 @@ void Board::MouseDrag(int x, int y) {
     }
     if (gTcpConnected) {
         I16I16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_DRAG}, int16_t(x), int16_t(y)};
-        SendEvent(gTcpServerSocket, event);
+        SendEvent(event);
         ClientMouseDragLocal(x, y);
         return;
     }
@@ -3297,7 +3297,7 @@ void Board::MouseDrag(int x, int y) {
     if (gTcpClientSocket >= 0) {
         GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
         I16I16_Event event = {{EventType::EVENT_SERVER_BOARD_TOUCH_DRAG}, int16_t(serverGamepadControls->mCursorPositionX), int16_t(serverGamepadControls->mCursorPositionY)};
-        SendEvent(gTcpClientSocket, event);
+        SendEvent(event);
     }
 }
 void Board::__MouseDrag(int x, int y) {
@@ -3332,11 +3332,11 @@ void Board::__MouseDrag(int x, int y) {
             requestDrawShovelInCursor = false;
             if (gTcpClientSocket) {
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
             if (gTcpClientSocket >= 0 && mGamepadControls1->mPlayerIndex2 == 0) {
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_SET_STATE}, 7};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
         } else {
             mGamepadControls2->mGamepadState = 7;
@@ -3344,7 +3344,7 @@ void Board::__MouseDrag(int x, int y) {
             requestDrawButterInCursor = false;
             if (gTcpClientSocket >= 0 && mGamepadControls2->mPlayerIndex2 == 0) {
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_SET_STATE}, 7};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
         }
         mSendKeyWhenTouchUp = true;
@@ -3359,7 +3359,7 @@ void Board::__MouseDrag(int x, int y) {
                 requestDrawShovelInCursor = true;
                 if (gTcpClientSocket) {
                     U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-                    SendEvent(gTcpClientSocket, event);
+                    SendEvent(event);
                 }
                 mGamepadControls1->mGamepadState = 1;
                 mSendKeyWhenTouchUp = true;
@@ -3371,7 +3371,7 @@ void Board::__MouseDrag(int x, int y) {
             requestDrawShovelInCursor = true;
             if (gTcpClientSocket) {
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
             mGamepadControls1->mGamepadState = 1;
             mSendKeyWhenTouchUp = true;
@@ -3422,7 +3422,7 @@ void Board::__MouseDrag(int x, int y) {
 
             if (mGamepadControls1->mPlayerIndex2 == 0 && gTcpClientSocket >= 0) {
                 BaseEvent event = {EventType::EVENT_SERVER_BOARD_TOUCH_CLEAR_CURSOR};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
         }
     } else {
@@ -3438,7 +3438,7 @@ void Board::__MouseDrag(int x, int y) {
 
             if (mGamepadControls2->mPlayerIndex2 == 0 && gTcpClientSocket >= 0) {
                 BaseEvent event = {EventType::EVENT_SERVER_BOARD_TOUCH_CLEAR_CURSOR};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
         }
     }
@@ -3485,7 +3485,7 @@ void Board::MouseUp(int x, int y, int theClickCount) {
     }
     if (gTcpConnected) {
         I16I16_Event event = {{EventType::EVENT_CLIENT_BOARD_TOUCH_UP}, int16_t(x), int16_t(y)};
-        SendEvent(gTcpServerSocket, event);
+        SendEvent(event);
         ClientMouseUpLocal(x, y);
         return;
     }
@@ -3495,7 +3495,7 @@ void Board::MouseUp(int x, int y, int theClickCount) {
         GamepadControls *serverGamepadControls = mGamepadControls1->mPlayerIndex2 == 0 ? mGamepadControls1 : mGamepadControls2;
         CursorObject *serverCursorObject = mGamepadControls1->mPlayerIndex2 == 0 ? mCursorObject1 : mCursorObject2;
         U8U8_Event event = {{EventType::EVENT_SERVER_BOARD_TOUCH_UP}, uint8_t(serverGamepadControls->mGamepadState), uint8_t(serverCursorObject->mCursorType)};
-        SendEvent(gTcpClientSocket, event);
+        SendEvent(event);
     }
 }
 void Board::__MouseUp(int x, int y, int theClickCount) {
@@ -3647,7 +3647,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
             requestDrawShovelInCursor = false; // 不再绘制铲子
             if (gTcpClientSocket) {
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
             if (isCobCannonSelected) { // 如果拿着加农炮，将其放下
                 mGamepadControls1->OnKeyDown(KeyCode::KEYCODE_ESCAPE, 1096);
@@ -3767,7 +3767,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
         }
         if (gTcpClientSocket) {
             U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
         return;
     }
@@ -3836,7 +3836,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
             requestDrawShovelInCursor = false;
             if (gTcpClientSocket) {
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
             // if (mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
             // LOGD("5656565656");
@@ -3999,11 +3999,11 @@ void Board::MouseDragSecond(int x, int y) {
             requestDrawShovelInCursor = false;
             if (gTcpClientSocket) {
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
             if (gTcpClientSocket >= 0 && mGamepadControls1->mPlayerIndex2 == 1) {
                 U8_Event event = {{EventType::EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE}, 7};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
         } else {
             mGamepadControls2->mGamepadState = 7;
@@ -4011,7 +4011,7 @@ void Board::MouseDragSecond(int x, int y) {
             requestDrawButterInCursor = false;
             if (gTcpClientSocket >= 0 && mGamepadControls2->mPlayerIndex2 == 1) {
                 U8_Event event = {{EventType::EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE}, 7};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
         }
         gSendKeyWhenTouchUpSecond = true;
@@ -4026,7 +4026,7 @@ void Board::MouseDragSecond(int x, int y) {
                 requestDrawShovelInCursor = true;
                 if (gTcpClientSocket) {
                     U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-                    SendEvent(gTcpClientSocket, event);
+                    SendEvent(event);
                 }
                 mGamepadControls1->mGamepadState = 1;
                 gSendKeyWhenTouchUpSecond = true;
@@ -4038,7 +4038,7 @@ void Board::MouseDragSecond(int x, int y) {
             requestDrawShovelInCursor = true;
             if (gTcpClientSocket) {
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_GAMEPAD_PICKUP_SHOVEL}, requestDrawShovelInCursor};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
             mGamepadControls1->mGamepadState = 1;
             gSendKeyWhenTouchUpSecond = true;
@@ -4091,7 +4091,7 @@ void Board::MouseDragSecond(int x, int y) {
 
             if (gTcpClientSocket >= 0 && mGamepadControls1->mPlayerIndex2 == 1) {
                 BaseEvent event = {EventType::EVENT_CLIENT_BOARD_TOUCH_CLEAR_CURSOR};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
         }
     } else {
@@ -4107,7 +4107,7 @@ void Board::MouseDragSecond(int x, int y) {
 
             if (gTcpClientSocket >= 0 && mGamepadControls2->mPlayerIndex2 == 1) {
                 BaseEvent event = {EventType::EVENT_CLIENT_BOARD_TOUCH_CLEAR_CURSOR};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
         }
     }
@@ -4264,18 +4264,18 @@ void Board::StartLevel() {
                 }
             }
 
-            SendEvent(gTcpClientSocket, nineShortDataEvent);
+            SendEvent(nineShortDataEvent);
 
             gridItem = nullptr;
             while (IterateGridItems(gridItem)) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, uint16_t(mGridItems.DataArrayGetID(gridItem)), uint16_t(gridItem->mLaunchCounter)};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
 
             plant = nullptr;
             while (IteratePlants(plant)) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mPlants.DataArrayGetID(plant)), uint16_t(plant->mLaunchCounter)};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
                 //                plant->SyncPingPongAnimationToClient();
                 plant->SyncAnimationToClient();
             }
@@ -5281,7 +5281,7 @@ GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {
     if (gTcpClientSocket >= 0 && mApp->mGameScene == SCENE_PLAYING) {
         U8U8U16U16_Event event = {
             {EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE}, uint8_t(theGridX), uint8_t(theGridY), uint16_t(mGridItems.DataArrayGetID(aGraveStone)), uint16_t(aGraveStone->mLaunchCounter)};
-        SendEvent(gTcpClientSocket, event);
+        SendEvent(event);
     }
 
     return aGraveStone;
@@ -5291,7 +5291,7 @@ bool Board::TakeSunMoney(int theAmount, int thePlayer) {
     bool result = old_Board_TakeSunMoney(this, theAmount, thePlayer);
     if (gTcpClientSocket >= 0) {
         U16_Event event = {{EventType::EVENT_SERVER_BOARD_TAKE_SUNMONEY}, uint16_t(mSunMoney1)};
-        SendEvent(gTcpClientSocket, event);
+        SendEvent(event);
     }
     return result;
 }
@@ -5300,7 +5300,7 @@ bool Board::TakeDeathMoney(int theAmount) {
     bool result = old_Board_TakeDeathMoney(this, theAmount);
     if (gTcpClientSocket >= 0) {
         U16_Event event = {{EventType::EVENT_SERVER_BOARD_TAKE_DEATHMONEY}, uint16_t(mDeathMoney)};
-        SendEvent(gTcpClientSocket, event);
+        SendEvent(event);
     }
     return result;
 }
@@ -5345,7 +5345,7 @@ void Board::ShuffleButtonDown(SeedPacket *theSeedPacket) {
                 event.data[i] = aPlantSeeds[i];
             }
             event.data[5] = 0;
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
     }
     if (aPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
@@ -5373,7 +5373,7 @@ void Board::ShuffleButtonDown(SeedPacket *theSeedPacket) {
                 event.data[i] = aZombieSeeds[i];
             }
             event.data[5] = 1;
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
     }
 }

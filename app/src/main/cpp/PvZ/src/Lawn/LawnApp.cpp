@@ -255,7 +255,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             if (eventPing->data == 1) {
                 U8_Event eventPong = {{EVENT_SERVER_PONG}, 1};
                 gPingNetDelayCounter = 0; // 开始计时
-                SendEvent(gTcpClientSocket, eventPong);
+                SendEvent(eventPong);
             } else if (eventPing->data == 2) {
                 gNetDelayNow = gPingNetDelayCounter;
                 gPingNetDelayCounter = -1;
@@ -338,7 +338,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             gNetDelayNow = gPingNetDelayCounter;
             gPingNetDelayCounter = -1; // 停止计时
             gPingNetPingPongCounter = 0;
-            SendEvent(gTcpServerSocket, eventPing);
+            SendEvent(eventPing);
 
             offset += eventSize;
         } else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS && base->type <= EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS) {
@@ -416,6 +416,8 @@ void LawnApp::UpdateFrames() {
 
     if (gTcpClientSocket >= 0) {
 
+        FlushSendBuffer(gTcpClientSocket);
+
         if (gPingNetDelayCounter != -1) {
             gPingNetDelayCounter++;
         }
@@ -437,6 +439,7 @@ void LawnApp::UpdateFrames() {
                 }
                 clientRecvBuffer.clear();
                 serverRecvBuffer.clear();
+                gSendBuffer.clear();
                 if (!GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER)) {
                     if (gTcpListenSocket >= 0) {
                         close(gTcpListenSocket);
@@ -464,6 +467,7 @@ void LawnApp::UpdateFrames() {
                     }
                     clientRecvBuffer.clear();
                     serverRecvBuffer.clear();
+                    gSendBuffer.clear();
                     LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 }
@@ -473,15 +477,17 @@ void LawnApp::UpdateFrames() {
 
     if (gTcpConnected) {
 
+        FlushSendBuffer(gTcpServerSocket);
+
         if (gPingNetDelayCounter != -1) {
             gPingNetDelayCounter++;
         }
 
         gPingNetPingPongCounter++;
-        if (gPingNetPingPongCounter == 100) {
+        if (gPingNetPingPongCounter >= 100) {
             gPingNetDelayCounter = 0; // 开始计时
             U8_Event eventPing = {{EVENT_CLIENT_PING}, 1};
-            SendEvent(gTcpServerSocket, eventPing);
+            SendEvent(eventPing);
         }
         char buf[1024];
         while (true) {
@@ -500,6 +506,7 @@ void LawnApp::UpdateFrames() {
                 gTcpConnected = false;
                 clientRecvBuffer.clear();
                 serverRecvBuffer.clear();
+                gSendBuffer.clear();
                 LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
                 break;
             } else {
@@ -517,6 +524,7 @@ void LawnApp::UpdateFrames() {
                     gTcpConnected = false;
                     clientRecvBuffer.clear();
                     serverRecvBuffer.clear();
+                    gSendBuffer.clear();
                     LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 }

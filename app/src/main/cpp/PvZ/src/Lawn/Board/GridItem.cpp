@@ -53,7 +53,7 @@ void GridItem::GridItemDie() {
 
         if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_DIE}, uint16_t(mBoard->mGridItems.DataArrayGetID(this))};
-            SendEvent(gTcpClientSocket, event);
+            SendEvent(event);
         }
     }
 
@@ -190,7 +190,7 @@ void GridItem::Update() {
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if (gTcpClientSocket >= 0) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, uint16_t(mBoard->mGridItems.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
-                SendEvent(gTcpClientSocket, event);
+                SendEvent(event);
             }
             mBoard->AddCoin(mBoard->GridToPixelX(mGridX, mGridY), mBoard->GridToPixelY(mGridX, mGridY), CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_FROM_GRAVE);
         }
