@@ -750,7 +750,7 @@ void Board::PickBackground() {
         mPlantRow[5] = PlantRowType::PLANTROW_NORMAL;
         InitCoverLayer();
         SetGrids();
-    } else if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_POOL_PARTY) {
+    } else if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS_IN_PAGE) {
         mBackground = BackgroundType::BACKGROUND_3_POOL;
         LoadBackgroundImages();
         mPlantRow[0] = PlantRowType::PLANTROW_POOL;
@@ -2639,7 +2639,7 @@ void Board::PickZombieWaves() {
         return;
     }
 
-    if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_POOL_PARTY && !IsLevelDataLoaded()) {
+    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS_IN_PAGE && !IsLevelDataLoaded()) {
         mNumWaves = 20;
         ZombiePicker zombiePicker;
         ZombiePickerInit(&zombiePicker);
@@ -4627,7 +4627,7 @@ void Board::DrawBackdrop(Sexy::Graphics *g) {
 }
 
 bool Board::RowCanHaveZombieType(int theRow, ZombieType theZombieType) {
-    if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_POOL_PARTY) {
+    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS_IN_PAGE) {
         return Zombie::ZombieTypeCanGoInPool(theZombieType);
     }
 

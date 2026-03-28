@@ -25,6 +25,7 @@
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 #include "PvZ/SexyAppFramework/Widget/Dialog.h"
 #include "PvZ/Symbols.h"
+#include "WaitForSecondPlayerDialog.h"
 
 constexpr int NUM_CHALLENGE_MODES(int(GameMode::NUM_GAME_MODES - 1));
 constexpr int GAMEMODE_MP_VS_DAY = 68;
@@ -71,6 +72,7 @@ public:
     int unk4;                                                   // 379
     // 大小380个整数, 以下是新增成员!
     NewLawnButton *mBackButton;
+    WaitForSecondPlayerDialog *mConnectDialog;
 
     void SetUnlockChallengeIndex(ChallengePage thePage, bool theIsIZombie = false) {
         reinterpret_cast<void (*)(ChallengeScreen *, ChallengePage, bool)>(ChallengeScreen_SetUnlockChallengeIndexAddr)(this, thePage, theIsIZombie);

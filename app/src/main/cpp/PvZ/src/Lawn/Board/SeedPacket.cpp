@@ -227,39 +227,15 @@ void SeedPacket::SetNextRandomSeed() {
     if (gTcpConnected)
         return;
 
-    bool isZombie = false;
     SeedType seedType = SeedType::SEED_NONE;
     std::vector<SeedType> plantSeeds, zombieSeeds;
-    if (mSeedBank->mIsZombie) {
-        isZombie = true;
-        seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, true, mIndex);
-        SetPacketType(seedType, SeedType::SEED_NONE);
-
-        if (gTcpClientSocket >= 0) {
-            U8U8U16U16_Event event;
-            event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
-            event.data1 = true;
-            event.data3 = seedType;
-            event.data4 = mIndex;
-            SendEvent(gTcpClientSocket, event);
-        }
-    } else {
-        seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, false, mIndex);
-        SetPacketType(seedType, SeedType::SEED_NONE);
-    }
+    seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, mSeedBank->mIsZombie, mIndex);
+    SetPacketType(seedType, SeedType::SEED_NONE);
 
     if (gTcpClientSocket >= 0) {
         U8U8U16U16_Event event;
         event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
-        event.data1 = false;
-        event.data3 = seedType;
-        event.data4 = mIndex;
-        SendEvent(gTcpClientSocket, event);
-    }
-    if (gTcpClientSocket >= 0) {
-        U8U8U16U16_Event event;
-        event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
-        event.data1 = isZombie;
+        event.data1 = mSeedBank->mIsZombie;
         event.data3 = seedType;
         event.data4 = mIndex;
         SendEvent(gTcpClientSocket, event);
