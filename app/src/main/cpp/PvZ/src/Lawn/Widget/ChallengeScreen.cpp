@@ -297,27 +297,45 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
     g->PopState();
 
 
-    if (gChallengeScreenRequestState != 0) {
-        // ======================
-        // 我是 guest：已提醒房主...
-        // (gTcpConnected == true 代表我作为 client 连接到 host)
-        // ======================
-        char *theNames[] = {"[MP_VS_DAY]", "[MP_VS_NIGHT]", "[MP_VS_POOL_DAY]", "[MP_VS_POOL_NIGHT]", "[MP_VS_ROOF]", "[MP_VS_SHUFFLE_MODE]"};
-
+    if (mPageIndex == CHALLENGE_PAGE_VS) {
         if (gTcpConnected) {
-            pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_REMIND_HOST_FMT]");
-            pvzstl::string name = TodStringTranslate(theNames[gChallengeScreenRequestState - 68]);
-            TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+            if (gNetDelayNow == 0) {
+                g->DrawString(TodStringTranslate("[VS_STATUS_IN_ROOM]"), 370, -20);
+            } else {
+                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
+                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 370, -20);
+            }
+        } else if (gTcpClientSocket >= 0) {
+            if (gNetDelayNow == 0) {
+                g->DrawString(TodStringTranslate("[VS_STATUS_HOST]"), 380, -20);
+            } else {
+                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_HOST_MS_FMT]");
+                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 380, -20);
+            }
         }
 
-        // ======================
-        // 我是 host：对方想玩/想要...
-        // (gTcpClientSocket >= 0 表示我作为 host 收到了 client 连接)
-        // ======================
-        if (gTcpClientSocket >= 0) {
-            pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_OPPONENT_WANTS_PLAY_FMT]");
-            pvzstl::string name = TodStringTranslate(theNames[gChallengeScreenRequestState - 68]);
-            TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+        if (gChallengeScreenRequestState != 0) {
+            // ======================
+            // 我是 guest：已提醒房主...
+            // (gTcpConnected == true 代表我作为 client 连接到 host)
+            // ======================
+            char *theNames[] = {"[MP_VS_DAY]", "[MP_VS_NIGHT]", "[MP_VS_POOL_DAY]", "[MP_VS_POOL_NIGHT]", "[MP_VS_ROOF]", "[MP_VS_SHUFFLE_MODE]"};
+
+            if (gTcpConnected) {
+                pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_REMIND_HOST_FMT]");
+                pvzstl::string name = TodStringTranslate(theNames[gChallengeScreenRequestState - 68]);
+                TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+            }
+
+            // ======================
+            // 我是 host：对方想玩/想要...
+            // (gTcpClientSocket >= 0 表示我作为 host 收到了 client 连接)
+            // ======================
+            if (gTcpClientSocket >= 0) {
+                pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_OPPONENT_WANTS_PLAY_FMT]");
+                pvzstl::string name = TodStringTranslate(theNames[gChallengeScreenRequestState - 68]);
+                TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+            }
         }
     }
 }
