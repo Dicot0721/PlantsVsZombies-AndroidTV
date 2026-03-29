@@ -37,8 +37,131 @@
 #include <sys/endian.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <vector>
 
 using namespace Sexy;
+
+namespace {
+struct BroadcastTarget {
+    sockaddr_in addr{};
+    std::string ifname;
+    std::string local_ip;
+};
+
+std::vector<BroadcastTarget> gBroadcastTargets;
+
+static bool HasSameBroadcastAddr(const std::vector<BroadcastTarget> &targets, const sockaddr_in &addr) {
+    for (const auto &t : targets) {
+        if (t.addr.sin_addr.s_addr == addr.sin_addr.s_addr && t.addr.sin_port == addr.sin_port) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static void PushBroadcastTarget(std::vector<BroadcastTarget> &targets, const sockaddr_in &addr, const char *ifname, const char *local_ip) {
+    if (HasSameBroadcastAddr(targets, addr)) {
+        return;
+    }
+    BroadcastTarget t;
+    t.addr = addr;
+    t.ifname = ifname ? ifname : "";
+    t.local_ip = local_ip ? local_ip : "";
+    targets.push_back(t);
+}
+
+
+static bool CollectAllBroadcastTargets(std::vector<BroadcastTarget> &out_targets) {
+    out_targets.clear();
+
+    int fd = socket(AF_INET, SOCK_DGRAM, 0);
+    if (fd < 0) {
+        return false;
+    }
+
+    ifconf ifc{};
+    char buf[4096]{};
+    ifc.ifc_len = sizeof(buf);
+    ifc.ifc_buf = buf;
+    if (ioctl(fd, SIOCGIFCONF, &ifc) < 0) {
+        close(fd);
+        return false;
+    }
+
+    std::vector<BroadcastTarget> wifi_like;
+    std::vector<BroadcastTarget> eth_like;
+    std::vector<BroadcastTarget> other_like;
+
+    for (ifreq *it = (ifreq *)buf, *end = (ifreq *)(buf + ifc.ifc_len); it < end; ++it) {
+        ifreq ifr{};
+        strncpy(ifr.ifr_name, it->ifr_name, IFNAMSIZ - 1);
+        ifr.ifr_name[IFNAMSIZ - 1] = '\0';
+
+        if (ioctl(fd, SIOCGIFFLAGS, &ifr) < 0) {
+            continue;
+        }
+        if ((ifr.ifr_flags & IFF_LOOPBACK) || !(ifr.ifr_flags & IFF_UP)) {
+            continue;
+        }
+
+        const char *n = ifr.ifr_name;
+        if (strncmp(n, "rmnet", 5) == 0 || strncmp(n, "ccmni", 5) == 0 || strncmp(n, "pdp", 3) == 0) {
+            continue;
+        }
+
+        if (!(ifr.ifr_flags & IFF_BROADCAST)) {
+            continue;
+        }
+
+        ifreq ifr_address = ifr;
+        if (ioctl(fd, SIOCGIFADDR, &ifr_address) < 0) {
+            continue;
+        }
+
+        if (ioctl(fd, SIOCGIFBRDADDR, &ifr) < 0) {
+            continue;
+        }
+
+        sockaddr_in *local = (sockaddr_in *)&ifr_address.ifr_addr;
+        sockaddr_in *sin = (sockaddr_in *)&ifr.ifr_broadaddr;
+        if (local->sin_family != AF_INET || sin->sin_family != AF_INET || sin->sin_addr.s_addr == 0) {
+            continue;
+        }
+
+        char local_ip[INET_ADDRSTRLEN]{};
+        inet_ntop(AF_INET, &local->sin_addr, local_ip, sizeof(local_ip));
+
+        sockaddr_in bcast = *sin;
+        bcast.sin_family = AF_INET;
+        bcast.sin_port = htons(UDP_PORT);
+
+        if (strncasecmp(n, "wlan", 4) == 0 || strncasecmp(n, "ap", 2) == 0 || strncasecmp(n, "en", 2) == 0) {
+            PushBroadcastTarget(wifi_like, bcast, n, local_ip);
+        } else if (strncasecmp(n, "eth", 3) == 0) {
+            PushBroadcastTarget(eth_like, bcast, n, local_ip);
+        } else {
+            PushBroadcastTarget(other_like, bcast, n, local_ip);
+        }
+    }
+
+    close(fd);
+
+    out_targets.insert(out_targets.end(), wifi_like.begin(), wifi_like.end());
+    out_targets.insert(out_targets.end(), eth_like.begin(), eth_like.end());
+    out_targets.insert(out_targets.end(), other_like.begin(), other_like.end());
+
+    if (out_targets.empty()) {
+        sockaddr_in fallback{};
+        fallback.sin_family = AF_INET;
+        fallback.sin_port = htons(UDP_PORT);
+        inet_pton(AF_INET, "255.255.255.255", &fallback.sin_addr);
+        PushBroadcastTarget(out_targets, fallback, "fallback", "255.255.255.255");
+    }
+
+    return !out_targets.empty();
+}
+} // namespace
+
 
 void WaitForSecondPlayerDialog::SetMode(UIMode mode) {
     // 退出旧模式时做必要清理
@@ -294,23 +417,38 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
             pvzstl::string fmt = TodStringTranslate("[ROOM_CREATED_FMT]");
             pvzstl::string str = StrFormat(fmt.c_str(), mApp->mPlayerInfo->mName);
             g->DrawString(str, 230, 150);
-
+            int lineY = 250;
             if (gTcpPort != 0) {
-                pvzstl::string fmt1 = TodStringTranslate("[PORT_IF_FMT]");
-                pvzstl::string str1 = StrFormat(fmt1.c_str(), gTcpPort, gIfname.c_str());
-                g->DrawString(str1, 260, 200);
+
+                if (gBroadcastTargets.empty()) {
+                    g->DrawString("IF: <none>", 300, 185);
+                    return;
+                }
+
+                lineY = 190;
+                for (const auto &target : gBroadcastTargets) {
+                    char bcast_ip[INET_ADDRSTRLEN]{};
+                    inet_ntop(AF_INET, &target.addr.sin_addr, bcast_ip, sizeof(bcast_ip));
+
+                    const char *local_ip = target.local_ip.empty() ? "unknown" : target.local_ip.c_str();
+                    const char *ifname = target.ifname.empty() ? "unknown" : target.ifname.c_str();
+
+                    pvzstl::string fmt = TodStringTranslate("[IF_BCAST_ROOMIP_FMT]");
+                    g->DrawString(StrFormat(fmt.c_str(), ifname, bcast_ip, local_ip, gTcpPort), 130, lineY);
+                    lineY += 50;
+                }
             }
 
             pvzstl::string str2 = TodStringTranslate((gUdpBroadcastSocket >= 0) ? "[ROOM_SCAN_OPEN_OK]" : "[ROOM_SCAN_OPEN_FAIL]");
-            g->DrawString(str2, 260, 250);
+            g->DrawString(str2, 260, lineY);
 
             // 是否有玩家加入
             pvzstl::string str3 = TodStringTranslate((gTcpClientSocket == -1) ? "[WAIT_OTHER_JOIN]" : "[OTHER_JOINED]");
-            g->DrawString(str3, 260, 300);
+            g->DrawString(str3, 260, lineY + 50);
 
             // （可选）提示开始游戏按钮状态
             pvzstl::string str4 = TodStringTranslate((gTcpClientSocket == -1) ? "[WAIT_OTHER_JOIN_TO_START]" : "[CAN_START_CLICK_START]");
-            g->DrawString(str4, 220, 360);
+            g->DrawString(str4, 220, lineY + 110);
 
             return;
         }
@@ -357,7 +495,6 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
             g->DrawString(str1, 320, 200);
 
             g->DrawString(TodStringTranslate("[SCAN_TIP_MANUAL_JOIN]"), 55, 260);
-
 
             return;
         }
@@ -686,6 +823,7 @@ void WaitForSecondPlayerDialog::InitUdpScanSocket() {
         gUdpScanSocket = -1;
         return;
     }
+    CollectAllBroadcastTargets(gBroadcastTargets);
     LOG_DEBUG("[UDP Scan] Listening on port {}", UDP_PORT);
 }
 
@@ -798,13 +936,11 @@ void WaitForSecondPlayerDialog::CreateRoom() {
     if (bind(gTcpListenSocket, (sockaddr *)&addr, sizeof(addr)) < 0) {
         LOG_DEBUG("TCP bind failed errno={}", errno);
 
-        // ✅ 清理
         close(gTcpListenSocket);
         gTcpListenSocket = -1;
 
         InitUdpScanSocket();
 
-        // ✅ 弹窗（端口占用最常见）
         pvzstl::string strFmt = TodStringTranslate("[CREATE_ROOM_FAIL_BIND]");
 
         int result = mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[CREATE_ROOM_FAIL_TITLE]", StrFormat(strFmt.c_str(), mApp->mPlayerInfo->mVSRoomPort).c_str(), "[DIALOG_BUTTON_OK]", "", 3);
@@ -818,7 +954,6 @@ void WaitForSecondPlayerDialog::CreateRoom() {
     if (listen(gTcpListenSocket, 1) < 0) {
         LOG_DEBUG("TCP listen failed errno={}", errno);
 
-        // ✅ 清理
         close(gTcpListenSocket);
         gTcpListenSocket = -1;
 
@@ -826,12 +961,10 @@ void WaitForSecondPlayerDialog::CreateRoom() {
         return;
     }
 
-    // 获取实际分配的端口号（当 mVSRoomPort=0 时这里会得到随机端口）
     socklen_t addr_len = sizeof(addr);
     getsockname(gTcpListenSocket, (sockaddr *)&addr, &addr_len);
     gTcpPort = ntohs(addr.sin_port);
 
-    // 2) 创建UDP广播socket
     gUdpBroadcastSocket = socket(AF_INET, SOCK_DGRAM, 0);
     if (gUdpBroadcastSocket < 0) {
         mIsCreatingRoom = true;
@@ -843,25 +976,25 @@ void WaitForSecondPlayerDialog::CreateRoom() {
     setsockopt(gUdpBroadcastSocket, SOL_SOCKET, SO_BROADCAST, &on, sizeof(on));
     setsockopt(gUdpBroadcastSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
-    // 选择广播地址（失败也给提示，但仍可兜底 255.255.255.255）
-    sockaddr_in bcast{};
-    if (GetActiveBroadcast(bcast, &gIfname)) {
-        bcast.sin_port = htons(UDP_PORT);
-        gBroadcastAddr = bcast;
+    gBroadcastTargets.clear();
+    CollectAllBroadcastTargets(gBroadcastTargets);
 
-        char ipstr[INET_ADDRSTRLEN]{};
-        inet_ntop(AF_INET, &bcast.sin_addr, ipstr, sizeof(ipstr));
-        LOG_DEBUG("[UDP] use if={} bcast={}", gIfname, ipstr);
+    if (!gBroadcastTargets.empty()) {
+        gBroadcastAddr = gBroadcastTargets.front().addr;
+        gIfname = gBroadcastTargets.front().ifname;
+
+        for (const auto &target : gBroadcastTargets) {
+            char ipstr[INET_ADDRSTRLEN]{};
+            inet_ntop(AF_INET, &target.addr.sin_addr, ipstr, sizeof(ipstr));
+            LOG_DEBUG("[UDP] use if={} local={} bcast={}", target.ifname, target.local_ip, ipstr);
+        }
     } else {
-        memset(&gBroadcastAddr, 0, sizeof(gBroadcastAddr));
+        std::memset(&gBroadcastAddr, 0, sizeof(gBroadcastAddr));
         gBroadcastAddr.sin_family = AF_INET;
         gBroadcastAddr.sin_port = htons(UDP_PORT);
         inet_pton(AF_INET, "255.255.255.255", &gBroadcastAddr.sin_addr);
+        gIfname = "fallback";
         LOG_WARN("[UDP] fallback broadcast 255.255.255.255:{}", UDP_PORT);
-
-        // ✅ 可选：提示玩家“没找到网卡广播地址，已用兜底”
-        // （如果你觉得太吵可以注释掉）
-        // ShowCreateRoomFail("[CREATE_ROOM_WARN_TITLE]", "[CREATE_ROOM_WARN_BCAST_FALLBACK]");
     }
 
     flags = fcntl(gUdpBroadcastSocket, F_GETFL, 0);
@@ -874,6 +1007,7 @@ void WaitForSecondPlayerDialog::CreateRoom() {
 }
 
 void WaitForSecondPlayerDialog::ExitRoom() {
+
     mIsCreatingRoom = false;
 
     if (gTcpClientSocket >= 0) {
@@ -892,6 +1026,7 @@ void WaitForSecondPlayerDialog::ExitRoom() {
         close(gUdpBroadcastSocket);
         gUdpBroadcastSocket = -1;
     }
+    gBroadcastTargets.clear();
 
     // 其他清理操作
 }
@@ -927,7 +1062,7 @@ void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
     const char *message = lawnApp->mPlayerInfo->mName;
 
     if (gTcpPort != 0) {
-        size_t msg_len = strlen(message) + 1; // 含 '\0'
+        size_t msg_len = strlen(message) + 1; // 含 '�'
         size_t total_len = msg_len + sizeof(gTcpPort);
 
         char send_buf[256];
@@ -937,12 +1072,35 @@ void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
         memcpy(send_buf, message, msg_len);
         memcpy(send_buf + msg_len, &gTcpPort, sizeof(gTcpPort));
 
-        ssize_t sent = sendto(gUdpBroadcastSocket, send_buf, total_len, 0, (sockaddr *)&gBroadcastAddr, sizeof(gBroadcastAddr));
+        bool sent_any = false;
+        if (!gBroadcastTargets.empty()) {
+            for (const auto &target : gBroadcastTargets) {
+                ssize_t sent = sendto(gUdpBroadcastSocket, send_buf, total_len, 0, (sockaddr *)&target.addr, sizeof(target.addr));
 
-        if (sent > 0)
-            LOG_DEBUG("[Send] msg: '{}', num: {}", message, gTcpPort);
-        else if (!(errno == EAGAIN || errno == EWOULDBLOCK))
-            LOG_DEBUG("sendto ERROR {}", errno);
+                if (sent > 0) {
+                    sent_any = true;
+                    char ipstr[INET_ADDRSTRLEN]{};
+                    inet_ntop(AF_INET, &target.addr.sin_addr, ipstr, sizeof(ipstr));
+                    LOG_DEBUG("[Send] if={}, bcast={}, msg='{}', num={}", target.ifname, ipstr, message, gTcpPort);
+                } else if (!(errno == EAGAIN || errno == EWOULDBLOCK)) {
+                    char ipstr[INET_ADDRSTRLEN]{};
+                    inet_ntop(AF_INET, &target.addr.sin_addr, ipstr, sizeof(ipstr));
+                    LOG_DEBUG("sendto ERROR if={} bcast={} errno={}", target.ifname, ipstr, errno);
+                }
+            }
+        } else {
+            ssize_t sent = sendto(gUdpBroadcastSocket, send_buf, total_len, 0, (sockaddr *)&gBroadcastAddr, sizeof(gBroadcastAddr));
+            if (sent > 0) {
+                sent_any = true;
+                LOG_DEBUG("[Send] msg: '{}', num: {}", message, gTcpPort);
+            } else if (!(errno == EAGAIN || errno == EWOULDBLOCK)) {
+                LOG_DEBUG("sendto ERROR {}", errno);
+            }
+        }
+
+        if (!sent_any) {
+            LOG_DEBUG("[Send] no broadcast target sent, msg='{}', num={}", message, gTcpPort);
+        }
     }
 }
 
@@ -1206,6 +1364,7 @@ void WaitForSecondPlayerDialog::StopUdpBroadcastRoom() {
         close(gUdpBroadcastSocket);
         gUdpBroadcastSocket = -1;
     }
+    gBroadcastTargets.clear();
     LOG_DEBUG("[UDP] Broadcast closed\n");
 }
 
