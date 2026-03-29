@@ -169,7 +169,7 @@ public:
     ReanimationID mBodyReanimID;                      // 74
     float mScaleZombie;                               // 75
     float mVelZ;                                      // 76
-    float mOrginalAnimRate;                           // 77
+    float mOriginalAnimRate;                          // 77
     Plant *mTargetPlantID;                            // 78
     int mBossMode;                                    // 79
     int mTargetRow;                                   // 80

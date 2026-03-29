@@ -1441,7 +1441,7 @@ void Zombie::StopEating() {
         StartWalkAnim(20);
     }
 
-    if (mShieldType == ShieldType::SHIELDTYPE_DOOR) {
+    if (mShieldType == ShieldType::SHIELDTYPE_DOOR || mShieldType == ShieldType::SHIELDTYPE_TRASHCAN) {
         ShowDoorArms(true);
     }
 
@@ -2459,7 +2459,7 @@ void Zombie::StartWalkAnim(int theBlendTime) {
         }
     }
 
-    // 鸭子救生圈
+    // 为 Attach 的鸭子救生圈播放下水动画
     Reanimation *reanim = FindReanimAttachment(mAttachmentID);
     if (reanim && mInPool && mZombieHeight != ZombieHeight::HEIGHT_IN_TO_POOL && mZombieHeight != ZombieHeight::HEIGHT_OUT_OF_POOL && reanim->TrackExists("anim_swim")) {
         reanim->PlayReanim("anim_swim", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
@@ -2935,6 +2935,11 @@ void Zombie::UpdateZombieWalking() {
             if (IsMovingAtChilledSpeed()) {
                 aSpeed *= CHILLED_SPEED_FACTOR;
             }
+        }
+
+        // 对战模式垃圾桶僵尸的移速为正常的0.2倍
+        if (mApp->IsVSMode() && mZombieType == ZombieType::ZOMBIE_TRASHCAN) {
+            aSpeed *= 0.2f;
         }
 
         if (IsWalkingBackwards() || mZombiePhase == ZombiePhase::PHASE_DANCER_DANCING_IN) {
