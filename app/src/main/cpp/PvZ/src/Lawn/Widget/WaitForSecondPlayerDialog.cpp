@@ -513,7 +513,7 @@ void WaitForSecondPlayerDialog::Update() {
 
             // 允许输入 0（随机端口），范围 0~65535
             const int port = std::atoi(input.c_str());
-            if (port < 1 || port > 65535) {
+            if (port < 0 || port > 65535) {
                 mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[PORT_INVALID_TITLE]", "[PORT_INVALID_DESC]", "[DIALOG_BUTTON_OK]", "", 3);
                 mInputPurpose = InputPurpose::NONE;
                 return;
@@ -667,26 +667,25 @@ void WaitForSecondPlayerDialog::InitUdpScanSocket() {
         return;
     }
 
-    // 非阻塞
     int flags = fcntl(gUdpScanSocket, F_GETFL, 0);
     fcntl(gUdpScanSocket, F_SETFL, flags | O_NONBLOCK);
-    // 允许地址重用
+
     int opt = 1;
     setsockopt(gUdpScanSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-    // 绑定端口
+    // ✅ 新增：接收端也需要允许广播
+    setsockopt(gUdpScanSocket, SOL_SOCKET, SO_BROADCAST, &opt, sizeof(opt));
+
     sockaddr_in recv_addr{
         .sin_family = AF_INET,
         .sin_port = htons(UDP_PORT),
         .sin_addr{.s_addr = INADDR_ANY},
     };
-
     if (bind(gUdpScanSocket, (sockaddr *)&recv_addr, sizeof(recv_addr)) < 0) {
-        LOG_DEBUG("bind ERROR");
+        LOG_DEBUG("bind ERROR errno={}", errno);
         close(gUdpScanSocket);
         gUdpScanSocket = -1;
         return;
     }
-
     LOG_DEBUG("[UDP Scan] Listening on port {}", UDP_PORT);
 }
 
@@ -699,12 +698,13 @@ void WaitForSecondPlayerDialog::CloseUdpScanSocket() {
 }
 
 bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in &out_bcast, std::string *out_ifname) {
+    // 优先级：wlan/ap/en > eth > 其他（跳过回环和 rmnet/ccmni 移动数据接口）
     int fd = socket(AF_INET, SOCK_DGRAM, 0);
     if (fd < 0)
         return false;
 
     ifconf ifc;
-    char buf[1024];
+    char buf[2048]; // 加大缓冲，模拟器接口多
     ifc.ifc_len = sizeof(buf);
     ifc.ifc_buf = buf;
     if (ioctl(fd, SIOCGIFCONF, &ifc) < 0) {
@@ -712,63 +712,65 @@ bool WaitForSecondPlayerDialog::GetActiveBroadcast(sockaddr_in &out_bcast, std::
         return false;
     }
 
-    ifreq *it = (ifreq *)buf;
-    ifreq *end = (ifreq *)(buf + ifc.ifc_len);
+    // 候选槽
+    sockaddr_in cand[3]{}; // 0=wifi/en  1=eth  2=other
+    std::string cand_if[3];
+    bool cand_ok[3]{false, false, false};
 
-    bool found_wifi = false;
-    bool found_other = false;
-    sockaddr_in wifi_bcast{};
-    sockaddr_in other_bcast{};
-    std::string wifi_if, other_if;
-
-    for (; it < end; ++it) {
+    for (ifreq *it = (ifreq *)buf, *end = (ifreq *)(buf + ifc.ifc_len); it < end; ++it) {
         ifreq ifr{};
-        std::strncpy(ifr.ifr_name, it->ifr_name, IFNAMSIZ);
+        strncpy(ifr.ifr_name, it->ifr_name, IFNAMSIZ);
 
-        // 跳过回环 / 未启用接口
-        if (ioctl(fd, SIOCGIFFLAGS, &ifr) == 0) {
-            if ((ifr.ifr_flags & IFF_LOOPBACK) || !(ifr.ifr_flags & IFF_UP))
-                continue;
-        }
+        // 过滤：回环 / 未启用
+        if (ioctl(fd, SIOCGIFFLAGS, &ifr) < 0)
+            continue;
+        if ((ifr.ifr_flags & IFF_LOOPBACK) || !(ifr.ifr_flags & IFF_UP))
+            continue;
 
-        // 获取广播地址
-        if (ioctl(fd, SIOCGIFBRDADDR, &ifr) == 0) {
-            sockaddr_in *sin = (sockaddr_in *)&ifr.ifr_broadaddr;
-            if (sin->sin_family != AF_INET)
-                continue;
+        // 跳过移动数据虚拟接口（rmnet / ccmni / pdp）
+        const char *n = ifr.ifr_name;
+        if (strncmp(n, "rmnet", 5) == 0 || strncmp(n, "ccmni", 5) == 0 || strncmp(n, "pdp", 3) == 0)
+            continue;
 
-            // ✅ Wi-Fi / 热点接口优先（wlan*, ap*, en*）
-            if (strncasecmp(ifr.ifr_name, "wlan", 4) == 0 || strncasecmp(ifr.ifr_name, "ap", 2) == 0 || strncasecmp(ifr.ifr_name, "en", 2) == 0) {
-                wifi_bcast = *sin;
-                wifi_if = ifr.ifr_name;
-                found_wifi = true;
-                // 不 break，继续扫描，看是否还有更匹配的
-                continue;
+        if (ioctl(fd, SIOCGIFBRDADDR, &ifr) < 0)
+            continue;
+        sockaddr_in *sin = (sockaddr_in *)&ifr.ifr_broadaddr;
+        if (sin->sin_family != AF_INET)
+            continue;
+
+        // 分槽存放
+        if (strncasecmp(n, "wlan", 4) == 0 || strncasecmp(n, "ap", 2) == 0 || strncasecmp(n, "en", 2) == 0) {
+            cand[0] = *sin;
+            cand_if[0] = n;
+            cand_ok[0] = true;
+        } else if (strncasecmp(n, "eth", 3) == 0) {
+            // ✅ 新增：eth0 是模拟器最常见的局域网接口
+            if (!cand_ok[1]) {
+                cand[1] = *sin;
+                cand_if[1] = n;
+                cand_ok[1] = true;
             }
-
-            // 记录其他接口（例如 ccmni、rmnet 等）
-            if (!found_other) {
-                other_bcast = *sin;
-                other_if = ifr.ifr_name;
-                found_other = true;
+        } else {
+            if (!cand_ok[2]) {
+                cand[2] = *sin;
+                cand_if[2] = n;
+                cand_ok[2] = true;
             }
         }
     }
-
     close(fd);
 
-    if (found_wifi) {
-        out_bcast = wifi_bcast;
-        if (out_ifname)
-            *out_ifname = wifi_if;
-        return true;
-    } else if (found_other) {
-        out_bcast = other_bcast;
-        if (out_ifname)
-            *out_ifname = other_if;
-        return true;
+    for (int i = 0; i < 3; i++) {
+        if (cand_ok[i]) {
+            out_bcast = cand[i];
+            if (out_ifname)
+                *out_ifname = cand_if[i];
+            char ipstr[INET_ADDRSTRLEN]{};
+            inet_ntop(AF_INET, &cand[i].sin_addr, ipstr, sizeof(ipstr));
+            LOG_DEBUG("[UDP] selected if={} bcast={}", cand_if[i], ipstr);
+            return true;
+        }
     }
-
     return false;
 }
 
