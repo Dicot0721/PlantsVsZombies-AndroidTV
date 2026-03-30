@@ -275,7 +275,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
         }
 
 
-        else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS && base->type <= EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS) {
+        else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE && base->type <= EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE) {
             size_t eventSize = ChallengeScreen::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -341,7 +341,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             SendEvent(eventPing);
 
             offset += eventSize;
-        } else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS && base->type <= EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS) {
+        } else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE && base->type <= EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE) {
             size_t eventSize = ChallengeScreen::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -484,7 +484,7 @@ void LawnApp::UpdateFrames() {
         }
 
         gPingNetPingPongCounter++;
-        if (gPingNetPingPongCounter >= 100) {
+        if (gPingNetPingPongCounter == 100) {
             gPingNetDelayCounter = 0; // 开始计时
             U8_Event eventPing = {{EVENT_CLIENT_PING}, 1};
             SendEvent(eventPing);

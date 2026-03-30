@@ -466,7 +466,20 @@ void ChallengeScreen::MouseUp(int x, int y) {
             KeyDown(Sexy::KEYCODE_RETURN);
         } else {
             mApp->PlaySample(*Sexy_SOUND_BUTTONCLICK_Addr);
-            mSelectedMode = mUnk1[gameIndex];
+            if (gTcpConnected) {
+                // 房客
+                U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mUnk1[gameIndex])};
+                SendEvent(event);
+                gChallengeScreenRequestState = mUnk1[gameIndex];
+            } else if (gTcpClientSocket >= 0) {
+                // 房主
+                mSelectedMode = mUnk1[gameIndex];
+                U16_Event event = {{EventType::EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mSelectedMode)};
+                SendEvent(event);
+            } else {
+                // 单机
+                mSelectedMode = mUnk1[gameIndex];
+            }
         }
     }
     gTouchOutSide = false;
@@ -483,7 +496,7 @@ void ChallengeScreen::KeyDown(Sexy::KeyCode code) {
             }
 
             if (gTcpConnected) {
-                U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS}, uint16_t(mSelectedMode)};
+                U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mSelectedMode)};
                 SendEvent(event);
                 gChallengeScreenRequestState = mSelectedMode;
                 return;
@@ -526,7 +539,7 @@ void ChallengeScreen::KeyDown(Sexy::KeyCode code) {
 size_t ChallengeScreen::getClientEventSize(EventType type) {
     switch (type) {
         // --- 触摸相关事件 ---
-        case EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS:
+        case EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE:
             return sizeof(U16_Event);
         default:
             return sizeof(BaseEvent);
@@ -538,7 +551,7 @@ void ChallengeScreen::processClientEvent(void *buf, ssize_t bufSize) {
     BaseEvent *event = (BaseEvent *)buf;
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
-        case EVENT_CLIENT_CHALLENGESCREEN_BUTTON_DEPRESS: {
+        case EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE: {
             U16_Event *eventButtonDepress = (U16_Event *)event;
             gChallengeScreenRequestState = eventButtonDepress->data;
         } break;
@@ -552,6 +565,8 @@ size_t ChallengeScreen::getServerEventSize(EventType type) {
     switch (type) {
         // --- 触摸相关事件 ---
         case EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS:
+            return sizeof(U16_Event);
+        case EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE:
             return sizeof(U16_Event);
         default:
             return sizeof(BaseEvent);
@@ -570,6 +585,11 @@ void ChallengeScreen::processServerEvent(void *buf, ssize_t bufSize) {
             mSelectedMode = GameMode(theId);
             KeyDown(Sexy::KEYCODE_RETURN);
             gTcpConnected = true;
+        } break;
+        case EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE: {
+            U16_Event *event1 = (U16_Event *)event;
+            int theId = event1->data;
+            mSelectedMode = GameMode(theId);
         } break;
 
         default:
