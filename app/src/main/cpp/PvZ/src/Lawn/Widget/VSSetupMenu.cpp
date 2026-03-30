@@ -431,14 +431,6 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
             *it = SEED_TALLNUT;
         }
     }
-
-    if (gTcpClientSocket >= 0) {
-        U16x12_Event event;
-        event.type = EventType::EVENT_VSSETUPMENU_RANDOM_PICK;
-        std::ranges::copy(thePlantSeeds, event.data);
-        std::ranges::copy(theZombieSeeds, event.data + 6);
-        SendEvent(event);
-    }
 }
 
 size_t VSSetupMenu::getClientEventSize(EventType type) {
@@ -568,12 +560,10 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             ButtonDepress(VSSetupMenu_Random_Battle);
             gTcpConnected = true;
 
-            mApp->mBoard->mSeedBank[0]->mSeedPackets[0].SetPacketType(SeedType::SEED_SUNFLOWER, SeedType::SEED_NONE);
             for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(false) - 1; ++i) {
                 mApp->mBoard->mSeedBank[0]->mSeedPackets[i + 1].SetPacketType(SeedType(event1->data[i]), SeedType::SEED_NONE);
             }
 
-            mApp->mBoard->mSeedBank[1]->mSeedPackets[0].SetPacketType(SeedType::SEED_ZOMBIE_GRAVESTONE, SeedType::SEED_NONE);
             for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(true) - 1; ++i) {
                 mApp->mBoard->mSeedBank[1]->mSeedPackets[i + 1].SetPacketType(SeedType(event1->data[i + 6]), SeedType::SEED_NONE);
             }
@@ -747,13 +737,10 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 mApp->ShowZombieChooserScreen();
 
                 for (int aPlayerIndex = 0; aPlayerIndex < 2; ++aPlayerIndex) {
-                    VSSide aSides = mSides[aPlayerIndex];
-                    int aControllerIdx = mControllerIndex[aPlayerIndex];
-
-                    if (aSides == VSSide::VS_SIDE_ZOMBIE) {
-                        mApp->mZombieChooserScreen->mPlayerIndex = aControllerIdx;
-                    } else if (aSides == VSSide::VS_SIDE_PLANT) {
-                        mApp->mSeedChooserScreen->mPlayerIndex = aControllerIdx;
+                    if (mSides[aPlayerIndex] == VSSide::VS_SIDE_ZOMBIE) {
+                        mApp->mZombieChooserScreen->mPlayerIndex = mControllerIndex[aPlayerIndex];
+                    } else if (mSides[aPlayerIndex] == VSSide::VS_SIDE_PLANT) {
+                        mApp->mSeedChooserScreen->mPlayerIndex = mControllerIndex[aPlayerIndex];
                     }
                 }
 
@@ -808,6 +795,14 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
                 mSetupMode = VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE;
                 CloseVSSetup(false);
+
+                if (gTcpClientSocket >= 0) {
+                    U16x12_Event event;
+                    event.type = EventType::EVENT_VSSETUPMENU_RANDOM_PICK;
+                    std::ranges::copy(aPlantSeeds, event.data);
+                    std::ranges::copy(aZombieSeeds, event.data + 6);
+                    SendEvent(event);
+                }
             } break;
 
             default:

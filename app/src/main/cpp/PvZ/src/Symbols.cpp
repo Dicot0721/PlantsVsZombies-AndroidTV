@@ -344,6 +344,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN15ChallengeScreen13ButtonDepressEi", ChallengeScreen_ButtonDepressAddr);
     libGameMain.GetSymbol("_ZN15ChallengeScreen23SetUnlockChallengeIndexE13ChallengePageb", ChallengeScreen_SetUnlockChallengeIndexAddr);
     libGameMain.GetSymbol("_ZN15ChallengeScreen10DrawButtonEPN4Sexy8GraphicsEii", ChallengeScreen_DrawButtonAddr);
+    libGameMain.GetSymbol("_ZN15ChallengeScreen18MoreTrophiesNeededEi", ChallengeScreen_MoreTrophiesNeededAddr);
 
 
     libGameMain.GetSymbol("_ZN15GamepadControls27ButtonDownFireCobcannonTestEv", GamepadControls_ButtonDownFireCobcannonTestAddr);
@@ -923,6 +924,9 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN5Music11MusicResyncEv", Music_MusicResyncAddr);
     libGameMain.GetSymbol("_ZN5Music13GetMusicOrderE9MusicFile", Music_GetMusicOrderAddr);
     libGameMain.GetSymbol("_ZN5Music14PlayFromOffsetE9MusicFileid", Music_PlayFromOffsetAddr);
+    libGameMain.GetSymbol("_ZN6Music222MakeSureMusicIsPlayingE9MusicTune", Music2_MakeSureMusicIsPlayingAddr);
+
+
     libGameMain.GetSymbol("_ZN5Music16UpdateMusicBurstEv", Music_UpdateMusicBurstAddr);
     libGameMain.GetSymbol("_ZN8TodFoley14IsFoleyPlayingE9FoleyType", TodFoley_IsFoleyPlayingAddr);
     libGameMain.GetSymbol("_ZN8TodFoley9StopFoleyE9FoleyType", TodFoley_StopFoleyAddr);
@@ -987,8 +991,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN10LawnDialogD2Ev", LawnDialog_Delete2Addr);
     libGameMain.GetSymbol("_ZN10LawnDialog6ResizeEiiii", LawnDialog_ResizeAddr);
     libGameMain.GetSymbol("_ZN4Sexy6Widget6ResizeEiiii", Sexy_Widget_ResizeAddr);
-    libGameMain.GetSymbol("_ZN4Sexy6WidgetC2Ev", Sexy_Widget___ConstructorAddr);
-    libGameMain.GetSymbol("_ZN4Sexy6WidgetD2Ev", Sexy_Widget___DestructorAddr);
+    libGameMain.GetSymbol("_ZN4Sexy6WidgetC2Ev", Sexy_Widget__constructorAddr);
+    libGameMain.GetSymbol("_ZN4Sexy6WidgetD2Ev", Sexy_Widget__destructorAddr);
     libGameMain.GetSymbol("_ZN4Sexy6Widget10SetVisibleEb", Sexy_Widget_SetVisibleAddr);
     libGameMain.GetSymbol("_ZN4Sexy6Widget4MoveEii", Sexy_Widget_MoveAddr);
     libGameMain.GetSymbol("_ZN4Sexy13WidgetManager11GetWidgetAtEiiPiS1_", Sexy_WidgetManager_GetWidgetAtAddr);
@@ -1011,6 +1015,9 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy10MenuWidget4ExitEv", Sexy_MenuWidget_ExitAddr);
     libGameMain.GetSymbol("_ZN4Sexy6Widget12DeferOverlayEi", Sexy_Widget_DeferOverlayAddr);
     libGameMain.GetSymbol("_ZN4Sexy11SexyMatrix3C2Ev", Sexy_SexyMatrix3_SexyMatrix3Addr);
+
+
+    libGameMain.GetSymbol("_ZN4Sexy12ButtonWidgetC2EiPNS_14ButtonListenerE", Sexy_ButtonWidget__constructorAddr);
     libGameMain.GetSymbol("_ZN4Sexy12ButtonWidgetD2Ev", Sexy_ButtonWidget__destructorAddr);
     libGameMain.GetSymbol("_ZN4Sexy12ButtonWidget7SetFontEPNS_4FontE", Sexy_ButtonWidget_SetFontAddr);
 
@@ -1065,6 +1072,11 @@ bool LoadGameMain() {
 
 
     libGameMain.GetSymbol("_ZN13HelpBarWidgetC2Ev", HelpBarWidget_HelpBarWidgetAddr);
+    libGameMain.GetSymbol("_ZN13HelpBarWidget12ClearButtonsEj", HelpBarWidget_ClearButtonsAddr);
+    libGameMain.GetSymbol("_ZN13HelpBarWidget9AddButtonEN4Sexy13GamepadButtonESsNS_9HelpAlignE", HelpBarWidget_AddButtonAddr);
+
+
+    libGameMain.GetSymbol("_ZN13ToolTipWidgetC2Ev", ToolTipWidget__constructorAddr);
     libGameMain.GetSymbol("_ZN13ToolTipWidget14SetWarningTextERKSs", ToolTipWidget_SetWarningTextAddr);
     libGameMain.GetSymbol("_ZN13ToolTipWidget8SetTitleERKSs", ToolTipWidget_SetTitleAddr);
     libGameMain.GetSymbol("_ZN13ToolTipWidget8SetLabelERKSs", ToolTipWidget_SetLabelAddr);
@@ -1099,6 +1111,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy17DefaultPlayerInfo11SaveDetailsEv", Sexy_DefaultPlayerInfo_SaveDetailsAddr);
     libGameMain.GetSymbol("_ZN4Sexy17DefaultPlayerInfo5GetIdEv", Sexy_DefaultPlayerInfo_GetIdAddr);
     libGameMain.GetSymbol("_ZN14LawnPlayerInfo7GetFlagE11PlayerFlags", LawnPlayerInfo_GetFlagAddr);
+    libGameMain.GetSymbol("_ZN14LawnPlayerInfo7SetFlagE11PlayerFlagsb", LawnPlayerInfo_SetFlagAddr);
     libGameMain.GetSymbol("_ZN14LawnPlayerInfo8AddCoinsEi", LawnPlayerInfo_AddCoinsAddr);
     libGameMain.GetSymbol("_Z16GetFlashingColorii", GetFlashingColorAddr);
     libGameMain.GetSymbol("_Z12RandRangeIntii", RandRangeIntAddr);

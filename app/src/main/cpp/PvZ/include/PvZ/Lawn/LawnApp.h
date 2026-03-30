@@ -47,6 +47,7 @@ class PottedPlant;
 class VSSetupMenu;
 class VSResultsMenu;
 class MailBox;
+class HelpBarWidget;
 
 class LawnApp : public Sexy::GamepadApp {
 public:
@@ -81,7 +82,7 @@ public:
     ZenGarden *mZenGarden;                   // 584
     EffectSystem *mEffectSystem;             // 585
     ReanimatorCache *mReanimatorCache;       // 586
-    DefaultPlayerInfo *mPlayerInfo;          // 587
+    LawnPlayerInfo *mPlayerInfo;             // 587
     DefaultPlayerInfo *mPlayerInfo2P;        // 588 , 游戏内没有初始化，但有一些判定
     int *mLastLevelStats;                    // 589
     bool mCloseRequest;                      // 2360
@@ -134,7 +135,7 @@ public:
     bool unkBool3[4];                        // 690
     int unk13_2[6];                          // 691 ~ 696
     pvzstl::string mGameInfoStrings[5];      // 697 ~ 701
-    int *mHelpBarWidget;                     // 702
+    HelpBarWidget *mHelpBarWidget;           // 702
     int unk14;                               // 703
     int *mLogComposer;                       // 704
     int *MLogManager;                        // 705

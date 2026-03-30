@@ -36,6 +36,15 @@ public:
     int mY;                      // 4
     int mWidth;                  // 5
     int mHeight;                 // 6
+    bool mVisible;               // 28
+    bool mCenter;                // 29
+    /*
+     * 取自 Decompile, 未在 IDA 找到用法, 故暂注释
+    int mMinLeft;                // 8
+    int mMaxBottom;              // 9
+    int mGetsLinesWidth;         // 10
+    int mWarningFlashCounter;    // 11
+     */
 
     void SetWarningText(const pvzstl::string &theWarningText) {
         reinterpret_cast<void (*)(ToolTipWidget *, const pvzstl::string &)>(ToolTipWidget_SetWarningTextAddr)(this, theWarningText);
@@ -49,6 +58,16 @@ public:
     void Draw(Sexy::Graphics *g) {
         reinterpret_cast<void (*)(ToolTipWidget *, Sexy::Graphics *)>(ToolTipWidget_DrawAddr)(this, g);
     }
+
+    ToolTipWidget() {
+        _constructor();
+    }
+
+protected:
+    void _constructor() {
+        reinterpret_cast<void (*)(ToolTipWidget *)>(ToolTipWidget__constructorAddr)(this);
+    }
+    ~ToolTipWidget() = default;
 };
 
 #endif // PVZ_LAWN_BOARD_TOOL_TIP_WIDGET_H

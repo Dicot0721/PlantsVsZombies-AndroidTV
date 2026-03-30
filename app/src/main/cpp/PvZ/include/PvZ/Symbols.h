@@ -347,6 +347,7 @@ inline void *ChallengeScreen_ButtonPressAddr;
 inline void *ChallengeScreen_ButtonDepressAddr;
 inline void *ChallengeScreen_SetUnlockChallengeIndexAddr;
 inline void *ChallengeScreen_DrawButtonAddr;
+inline void *ChallengeScreen_MoreTrophiesNeededAddr;
 
 
 inline void *GamepadControls_ButtonDownFireCobcannonTestAddr;
@@ -932,6 +933,9 @@ inline void *Music_SetupMusicFileForTuneAddr;
 inline void *Music_MusicResyncAddr;
 inline void *Music_GetMusicOrderAddr;
 inline void *Music_PlayFromOffsetAddr;
+inline void *Music2_MakeSureMusicIsPlayingAddr;
+
+
 inline void *Sexy_AudiereMusicInterface_SetVolumeAddr;
 inline void *Sexy_AudiereMusicInterface_SetSongVolumeAddr;
 inline void *Sexy_AudiereMusicInterface_PlayMusicAddr;
@@ -998,8 +1002,8 @@ inline void *LawnDialog_LawnDialogAddr;
 inline void *LawnDialog_Delete2Addr;
 inline void *LawnDialog_ResizeAddr;
 inline void *Sexy_Widget_ResizeAddr;
-inline void *Sexy_Widget___ConstructorAddr;
-inline void *Sexy_Widget___DestructorAddr;
+inline void *Sexy_Widget__constructorAddr;
+inline void *Sexy_Widget__destructorAddr;
 inline void *Sexy_Widget_SetVisibleAddr;
 inline void *Sexy_Widget_MoveAddr;
 inline void *Sexy_WidgetContainer_SetFocusAddr;
@@ -1022,6 +1026,7 @@ inline void *Sexy_MenuWidget_DrawAddr;
 inline void *Sexy_MenuWidget_ExitAddr;
 inline void *Sexy_Widget_DeferOverlayAddr;
 inline void *Sexy_SexyMatrix3_SexyMatrix3Addr;
+inline void *Sexy_ButtonWidget__constructorAddr;
 inline void *Sexy_ButtonWidget__destructorAddr;
 inline void *Sexy_ButtonWidget_SetFontAddr;
 
@@ -1071,11 +1076,18 @@ inline void *ReanimatorCache_ReanimatorCacheDisposeAddr;
 
 
 inline void *HelpBarWidget_HelpBarWidgetAddr;
+inline void *HelpBarWidget_ClearButtonsAddr;
+inline void *HelpBarWidget_AddButtonAddr;
+
+
 inline void *Sexy_SexyAppBase_Is3DAcceleratedAddr;
 inline void *Sexy_SexyAppBase_Set3DAcceleratedAddr;
 inline void *Sexy_SexyAppBase_SexyAppBaseAddr;
 inline void *Sexy_SexyAppBase_UpdateAppAddr;
 inline void *Sexy_ResourceManager_GetSoundThrowAddr;
+
+
+inline void *ToolTipWidget__constructorAddr;
 inline void *ToolTipWidget_SetWarningTextAddr;
 inline void *ToolTipWidget_SetTitleAddr;
 inline void *ToolTipWidget_SetLabelAddr;
@@ -1126,6 +1138,7 @@ inline void *AwardScreen_StartButtonPressedAddr;
 inline void *Sexy_DefaultPlayerInfo_SaveDetailsAddr;
 inline void *Sexy_DefaultPlayerInfo_GetIdAddr;
 inline void *LawnPlayerInfo_GetFlagAddr;
+inline void *LawnPlayerInfo_SetFlagAddr;
 inline void *LawnPlayerInfo_AddCoinsAddr;
 inline void *GetFlashingColorAddr;
 inline void *RandRangeIntAddr;

@@ -124,10 +124,13 @@ public:
     }
 };
 
-class LawnPlayerInfo : public PlayerInfo {
+class LawnPlayerInfo : public DefaultPlayerInfo {
 public:
     int GetFlag(int theFlag) {
         return reinterpret_cast<int (*)(LawnPlayerInfo *, int)>(LawnPlayerInfo_GetFlagAddr)(this, theFlag);
+    }
+    void SetFlag(int theFlag, bool theHasFlag) {
+        reinterpret_cast<void (*)(LawnPlayerInfo *, int, bool)>(LawnPlayerInfo_SetFlagAddr)(this, theFlag, theHasFlag);
     }
 
     void AddCoins(int theAmount);

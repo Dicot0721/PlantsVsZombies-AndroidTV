@@ -138,6 +138,9 @@ void Challenge::UpdateVS() {
     if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING || mBoard->HasLevelAwardDropped())
         return;
 
+    if (gTcpConnected)
+        return;
+
     if (mBoard->StageHasPool() || mBoard->StageHasRoof()) {
         gVSAddUnderPlantsCounter--;
         if (gVSAddUnderPlantsCounter <= 0) {

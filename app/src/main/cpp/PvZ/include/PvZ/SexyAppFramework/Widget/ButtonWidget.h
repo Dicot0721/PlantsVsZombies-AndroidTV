@@ -67,16 +67,27 @@ public:
     int unkMem2;            // 203
     // 大小204个整数
 
-    void _destructor() {
-        reinterpret_cast<void (*)(ButtonWidget *)>(Sexy_ButtonWidget__destructorAddr)(this);
-    }
     void SetFont(Font *theFont) {
         reinterpret_cast<void (*)(ButtonWidget *, Font *)>(Sexy_ButtonWidget_SetFontAddr)(this, theFont);
+    }
+
+    void _constructor(int theId, ButtonListener *theButtonListener) {
+        reinterpret_cast<void (*)(ButtonWidget *, int, ButtonListener *)>(Sexy_ButtonWidget__constructorAddr)(this, theId, theButtonListener);
+    }
+    void _destructor() {
+        reinterpret_cast<void (*)(ButtonWidget *)>(Sexy_ButtonWidget__destructorAddr)(this);
     }
 
 protected:
     ButtonWidget() = default;
     ~ButtonWidget() = default;
+};
+
+class ButtonWidget_ : public ButtonWidget {
+public:
+    ButtonWidget_(int theId, ButtonListener *theButtonListener) {
+        ButtonWidget::_constructor(theId, theButtonListener);
+    }
 };
 
 } // namespace Sexy

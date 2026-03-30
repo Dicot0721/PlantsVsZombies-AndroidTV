@@ -56,10 +56,10 @@ public:
     // 大小64个整数！
 
     void _constructor() {
-        reinterpret_cast<void (*)(Widget *)>(Sexy_Widget___ConstructorAddr)(this);
+        reinterpret_cast<void (*)(Widget *)>(Sexy_Widget__constructorAddr)(this);
     }
     void _destructor() {
-        reinterpret_cast<void (*)(Widget *)>(Sexy_Widget___DestructorAddr)(this);
+        reinterpret_cast<void (*)(Widget *)>(Sexy_Widget__destructorAddr)(this);
     }
 
     void Resize(int theX, int theY, int theWidth, int theHeight) {

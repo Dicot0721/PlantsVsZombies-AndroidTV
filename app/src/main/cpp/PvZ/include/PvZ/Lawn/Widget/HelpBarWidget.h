@@ -20,11 +20,23 @@
 #ifndef PVZ_LAWN_WIDGET_HELP_BAR_WIDGET_H
 #define PVZ_LAWN_WIDGET_HELP_BAR_WIDGET_H
 
+#include "PvZ/SexyAppFramework/Misc/GamepadButtons.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 
 class HelpBarWidget : public Sexy::Widget {
 public:
+    enum HelpAlign {
+        HELP_ALIGN_NONE = -1,
+    };
+
     char mUnk[40]; // 65 ~ 74
+
+    void ClearButtons(unsigned int theUnkParameter) {
+        reinterpret_cast<void (*)(HelpBarWidget *, unsigned int)>(HelpBarWidget_ClearButtonsAddr)(this, theUnkParameter);
+    }
+    void AddButton(Sexy::GamepadButton theButton, pvzstl::string theString, HelpAlign theHelpAlign) {
+        reinterpret_cast<void (*)(HelpBarWidget *, Sexy::GamepadButton, pvzstl::string, HelpAlign)>(HelpBarWidget_AddButtonAddr)(this, theButton, theString, theHelpAlign);
+    }
 
     HelpBarWidget() {
         _constructor();

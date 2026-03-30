@@ -20,8 +20,10 @@
 #ifndef PVZ_LAWN_WIDGET_CHALLENGE_SCREEN_H
 #define PVZ_LAWN_WIDGET_CHALLENGE_SCREEN_H
 
+#include "HelpBarWidget.h"
 #include "PvZ/Lawn/Board/ToolTipWidget.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/SexyAppFramework/Misc/Curve1DUtil.h"
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 #include "PvZ/SexyAppFramework/Widget/Dialog.h"
 #include "PvZ/Symbols.h"
@@ -34,10 +36,7 @@ constexpr int GAMEMODE_MP_VS_POOL_DAY = 70;
 constexpr int GAMEMODE_MP_VS_POOL_NIGHT = 71;
 constexpr int GAMEMODE_MP_VS_ROOF = 72;
 constexpr int GAMEMODE_MP_VS_SHUFFLE_MODE = 73;
-
-struct Curve1DUtil {
-    int unk[16];
-};
+constexpr int NUM_VS_MODES(GAMEMODE_MP_VS_SHUFFLE_MODE - GAMEMODE_MP_VS_DAY + 1);
 
 class NewLawnButton;
 class ChallengeScreen : public Sexy::Widget, public Sexy::ButtonListener {
@@ -59,13 +58,13 @@ public:
     int mUnlockChallengeIndex;                                  // 165
     float mLockShakeX;                                          // 166
     float mLockShakeY;                                          // 167
-    Curve1DUtil mUtil;                                          // 168 ~ 183
-    int *mHelpBarWidget;                                        // 184
+    Sexy::Curve1DUtil mUtil;                                    // 168 ~ 183
+    HelpBarWidget *mHelpBarWidget;                              // 184
     int mScreenTopChallengeIndex;                               // 185
     int mSelectedChallengeIndex;                                // 186
     float mUnkFloat;                                            // 187
-    GameMode mUnk1[94];                                         // 188 ~ 281
-    int mUnk2[94];                                              // 282 ~ 375
+    GameMode mUnk1[NUM_CHALLENGE_MODES];                        // 188 ~ 281
+    int mUnk2[NUM_CHALLENGE_MODES];                             // 282 ~ 375
     int mTotalGameInPage;                                       // 376
     int mSelectedChallenge;                                     // 377 其值固定比mSelectedMode小2
     GameMode mSelectedMode;                                     // 378
@@ -83,6 +82,9 @@ public:
     void DrawButton(Sexy::Graphics *g, int theChallengeIndex, int theChallengeMode) {
         reinterpret_cast<void (*)(ChallengeScreen *, Sexy::Graphics *, int, int)>(ChallengeScreen_DrawButtonAddr)(this, g, theChallengeIndex, theChallengeMode);
     }
+    int MoreTrophiesNeeded(int theChallengeIndex) {
+        return reinterpret_cast<int (*)(ChallengeScreen *, int)>(ChallengeScreen_MoreTrophiesNeededAddr)(this, theChallengeIndex);
+    }
 
     ChallengeScreen(LawnApp *theApp, ChallengePage thePage);
     void Draw(Sexy::Graphics *g);
@@ -95,7 +97,7 @@ public:
     void MouseDown(int x, int y, int theClickCount);
     void MouseUp(int x, int y);
     void MouseDrag(int x, int y);
-    void KeyDown(Sexy::KeyCode code);
+    void KeyDown(Sexy::KeyCode theKey);
     static size_t getClientEventSize(EventType type);
     static size_t getServerEventSize(EventType type);
     void processClientEvent(void *buf, ssize_t bufSize);
@@ -118,6 +120,7 @@ public:
     const char *mChallengeName; // 5
 };
 extern ChallengeDefinition gChallengeDefs[200];
+extern ChallengeDefinition gVSChallengeDefs[NUM_VS_MODES];
 
 ChallengeDefinition &GetChallengeDefinition(int theChallengeMode);
 /***************************************************************************************************************/
@@ -136,8 +139,6 @@ inline void (*old_ChallengeScreen_Update)(ChallengeScreen *a);
 inline void (*old_ChallengeScreen_RemovedFromManager)(ChallengeScreen *a, Sexy::WidgetManager *a2);
 
 inline void (*old_ChallengeScreen_Delete2)(ChallengeScreen *challengeScreen);
-
-inline ChallengeDefinition &(*old_GetChallengeDefinition)(int index);
 
 inline void (*old_ChallengeScreen_MouseDown)(ChallengeScreen *challengeScreen, int x, int y, int theClickCount);
 

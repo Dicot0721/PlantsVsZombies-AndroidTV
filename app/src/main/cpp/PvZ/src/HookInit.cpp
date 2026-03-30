@@ -207,7 +207,7 @@ void InitHookFunction() {
     homura::HookFunction(ChallengeScreen_KeyDownAddr, &ChallengeScreen::KeyDown, &old_ChallengeScreen_KeyDown);
     homura::HookFunction(ChallengeScreen_ButtonDepressAddr, &ChallengeScreen::ButtonDepress, nullptr);
     homura::HookFunction(ChallengeScreen_UpdateButtonsAddr, &ChallengeScreen::UpdateButtons, nullptr);
-    homura::HookFunction(GetChallengeDefinitionAddr, &GetChallengeDefinition, &old_GetChallengeDefinition);
+    homura::HookFunction(GetChallengeDefinitionAddr, &GetChallengeDefinition, nullptr);
 
 
     homura::HookFunction(Coin_CoinInitializeAddr, &Coin::CoinInitialize, &old_Coin_CoinInitialize);

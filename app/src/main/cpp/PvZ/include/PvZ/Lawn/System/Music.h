@@ -128,6 +128,10 @@ protected:
 
 class Music2 : public Music { // 加载TV版ogg格式音乐时用。无鼓点。
 public:
+    void MakeSureMusicIsPlaying(MusicTune theMusicTune) {
+        reinterpret_cast<void (*)(Music *, MusicTune)>(Music2_MakeSureMusicIsPlayingAddr)(this, theMusicTune);
+    }
+
     // 大小26个整数
     Music2() {
         _constructor();
