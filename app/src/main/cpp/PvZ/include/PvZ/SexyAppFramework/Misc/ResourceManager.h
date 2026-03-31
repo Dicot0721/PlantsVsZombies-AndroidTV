@@ -20,6 +20,7 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_MISC_RESOURCE_MANAGER_H
 #define PVZ_SEXYAPPFRAMEWORK_MISC_RESOURCE_MANAGER_H
 
+#include "Homura/TypeUtils.h"
 #include "PvZ/STL/pvzstl_string.h"
 
 namespace Sexy {
@@ -53,8 +54,8 @@ protected:
     }; // 大小30个整数
 
 public:
-    int GetSoundThrow(pvzstl::string &result, const pvzstl::string &theId) {
-        return reinterpret_cast<int (*)(pvzstl::string &, const pvzstl::string &)>(Sexy_ResourceManager_GetSoundThrowAddr)(result, theId);
+    int GetSoundThrow(const pvzstl::string &theId) {
+        return reinterpret_cast<int (*)(ResourceManager *, const pvzstl::string &)>(Sexy_ResourceManager_GetSoundThrowAddr)(this, theId);
     }
 };
 

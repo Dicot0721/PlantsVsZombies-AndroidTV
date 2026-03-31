@@ -1195,9 +1195,7 @@ void Zombie::Draw(Sexy::Graphics *g) {
     // 根据玩家的“僵尸显血”功能是否开启，决定是否在游戏的原始old_Zombie_Draw函数执行完后额外绘制血量文本。
     old_Zombie_Draw(this, g);
     int drawHeightOffset = 0;
-    pvzstl::string str;
     if (showZombieBodyHealth || (showGargantuarHealth && (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR))) { // 如果玩家开了"僵尸显血"
-        str = StrFormat("%d/%d", mBodyHealth, mBodyMaxHealth);
         g->SetColor(colorWhite);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
         if (mZombieType == ZombieType::ZOMBIE_BOSS) {
@@ -1206,24 +1204,22 @@ void Zombie::Draw(Sexy::Graphics *g) {
             g->mTransX = 780.0f;
             g->mTransY = 240.0f;
         }
-        g->DrawString(str, 0, drawHeightOffset);
+        g->DrawString(StrFormat("%d/%d", mBodyHealth, mBodyMaxHealth), 0, drawHeightOffset);
         g->SetFont(nullptr);
         drawHeightOffset += 20;
     }
     if (showHelmAndShieldHealth) {
         if (mHelmHealth > 0) { // 如果有头盔，绘制头盔血量
-            str = StrFormat("%d/%d", mHelmHealth, mHelmMaxHealth);
             g->SetColor(colorYellow);
             g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-            g->DrawString(str, 0, drawHeightOffset);
+            g->DrawString(StrFormat("%d/%d", mHelmHealth, mHelmMaxHealth), 0, drawHeightOffset);
             g->SetFont(nullptr);
             drawHeightOffset += 20;
         }
         if (mShieldHealth > 0) { // 如果有盾牌，绘制盾牌血量
-            str = StrFormat("%d/%d", mShieldHealth, mShieldMaxHealth);
             g->SetColor(colorBlue);
             g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-            g->DrawString(str, 0, drawHeightOffset);
+            g->DrawString(StrFormat("%d/%d", mShieldHealth, mShieldMaxHealth), 0, drawHeightOffset);
             g->SetFont(nullptr);
         }
     }

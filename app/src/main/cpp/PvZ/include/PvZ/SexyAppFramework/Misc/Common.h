@@ -20,16 +20,11 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_MISC_COMMON_H
 #define PVZ_SEXYAPPFRAMEWORK_MISC_COMMON_H
 
+#include "Homura/TypeUtils.h"
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
 
-#include <algorithm>
-#include <cstdlib>
-#include <list>
-#include <map>
-#include <set>
-#include <string>
-#include <vector>
+#include <cstdarg>
 
 enum PixelFormat {
     kPixelFormat_None = -1,
@@ -62,17 +57,17 @@ inline int GetTickCount() {
     return reinterpret_cast<int (*)()>(Sexy_GetTickCountAddr)();
 }
 
-inline void vformat(pvzstl::string &output, const char *fmt, va_list vList) {
-    reinterpret_cast<void (*)(pvzstl::string &, const char *, va_list)>(Sexy_vformatAddr)(output, fmt, vList);
+inline void vformat(homura::Storage<pvzstl::string> &result, const char *fmt, std::va_list vList) {
+    reinterpret_cast<void (*)(homura::Storage<pvzstl::string> &, const char *, std::va_list)>(Sexy_vformatAddr)(result, fmt, vList);
 }
 
 [[gnu::format(printf, 1, 2)]] inline pvzstl::string StrFormat(const char *fmt, ...) {
-    pvzstl::string output;
-    va_list args;
+    homura::DestructStorage<pvzstl::string> result;
+    std::va_list args;
     va_start(args, fmt);
-    vformat(output, fmt, args);
+    vformat(result, fmt, args);
     va_end(args);
-    return output;
+    return *std::move(result);
 }
 
 } // namespace Sexy

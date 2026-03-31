@@ -20,6 +20,7 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_EFFECT_REANIMATION_H
 #define PVZ_SEXYAPPFRAMEWORK_EFFECT_REANIMATION_H
 
+#include "Homura/TypeUtils.h"
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/SexyAppFramework/Graphics/Color.h"
 #include "PvZ/SexyAppFramework/Misc/SexyMatrix.h"
@@ -310,7 +311,7 @@ inline bool (*old_Reanimation_DrawTrack)(Reanimation *reanim, Sexy::Graphics *g,
 
 inline void (*old_ReanimatorLoadDefinitions)(ReanimationParams *theReanimationParamArray, int theReanimationParamArraySize);
 
-inline void (*old_DefinitionGetCompiledFilePathFromXMLFilePath)(pvzstl::string &absPath, const pvzstl::string &defPathString);
+inline void (*old_DefinitionGetCompiledFilePathFromXMLFilePath)(homura::Storage<pvzstl::string> &result, const pvzstl::string &defPathString);
 
 
 void Reanimation_SetImageOrigin(Reanimation *, const char *, Sexy::Image *);
@@ -341,6 +342,6 @@ void Reanimation_GetZombatarTrackIndex(Reanimation *zombatarReanim, int *indexAr
 
 void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int theReanimationParamArraySize);
 
-void DefinitionGetCompiledFilePathFromXMLFilePath(pvzstl::string &absPath, const pvzstl::string &defPathString);
+void DefinitionGetCompiledFilePathFromXMLFilePath(homura::Storage<pvzstl::string> &result, const pvzstl::string &defPathString);
 
 #endif // PVZ_SEXYAPPFRAMEWORK_EFFECT_REANIMATION_H

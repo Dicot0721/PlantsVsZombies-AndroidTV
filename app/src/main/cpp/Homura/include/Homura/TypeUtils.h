@@ -81,7 +81,7 @@ public:
         : Storage<T>{} {};
 
     ~DestructStorage() {
-        std::destroy_at(std::addressof(**this));
+        std::destroy_at(this->operator->());
     }
 };
 

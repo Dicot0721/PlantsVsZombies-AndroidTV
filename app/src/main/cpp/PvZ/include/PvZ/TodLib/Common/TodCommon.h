@@ -27,6 +27,8 @@
 
 #include <cstdlib>
 
+#include <algorithm>
+
 class TodAllocator;
 
 namespace Sexy {
@@ -198,15 +200,16 @@ inline bool TodLoadResources(const pvzstl::string &theGroup) {
 }
 
 inline pvzstl::string TodReplaceString(const pvzstl::string &theText, const char *theStringToFind, const pvzstl::string &theStringToSubstitute) {
-    pvzstl::string result;
-    reinterpret_cast<void (*)(pvzstl::string &, const pvzstl::string &, const char *, const pvzstl::string &)>(TodReplaceStringAddr)(result, theText, theStringToFind, theStringToSubstitute);
-    return result;
+    homura::DestructStorage<pvzstl::string> result;
+    reinterpret_cast<void (*)(homura::Storage<pvzstl::string> &, const pvzstl::string &, const char *, const pvzstl::string &)>(TodReplaceStringAddr)(
+        result, theText, theStringToFind, theStringToSubstitute);
+    return *std::move(result);
 }
 
 inline pvzstl::string TodReplaceNumberString(const pvzstl::string &theText, const char *theStringToFind, int theNumber) {
-    pvzstl::string result;
-    reinterpret_cast<void (*)(pvzstl::string &, const pvzstl::string &, const char *, int)>(TodReplaceNumberStringAddr)(result, theText, theStringToFind, theNumber);
-    return result;
+    homura::DestructStorage<pvzstl::string> result;
+    reinterpret_cast<void (*)(homura::Storage<pvzstl::string> &, const pvzstl::string &, const char *, int)>(TodReplaceNumberStringAddr)(result, theText, theStringToFind, theNumber);
+    return *std::move(result);
 }
 
 inline TodAllocator *FindGlobalAllocator(int theSize) {

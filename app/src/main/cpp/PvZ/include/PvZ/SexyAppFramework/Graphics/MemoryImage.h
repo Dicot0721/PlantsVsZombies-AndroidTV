@@ -53,7 +53,7 @@ public:
         reinterpret_cast<void (*)(MemoryImage *, bool, bool)>(Sexy_MemoryImage_SetImageModeAddr)(this, hasTrans, hasAlpha);
     }
     void WriteToPng(pvzstl::string theString) {
-        reinterpret_cast<void (*)(MemoryImage *, pvzstl::string &)>(Sexy_MemoryImage_WriteToPngAddr)(this, theString);
+        reinterpret_cast<void (*)(MemoryImage *, pvzstl::string)>(Sexy_MemoryImage_WriteToPngAddr)(this, std::move(theString));
     }
     void WriteToJPEG(int *theString) {
         reinterpret_cast<void (*)(MemoryImage *, int *)>(Sexy_MemoryImage_WriteToJPEGAddr)(this, theString);

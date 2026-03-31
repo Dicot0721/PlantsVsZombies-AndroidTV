@@ -928,7 +928,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
 
     // Draw title text
     Color aTitleColor;
-    pvzstl::string aTitleText;
+    const char *aTitleText;
     if (mIsZombieChooser) {
         aTitleColor = Color(0, 255, 0);
         aTitleText = "[CHOOSE_YOUR_ZOMBIES]";

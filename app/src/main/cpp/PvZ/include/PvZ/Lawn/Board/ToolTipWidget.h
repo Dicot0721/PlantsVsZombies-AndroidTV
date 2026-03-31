@@ -46,6 +46,9 @@ public:
     int mWarningFlashCounter;    // 11
      */
 
+    ToolTipWidget() = delete;
+    ~ToolTipWidget() = delete;
+
     void SetWarningText(const pvzstl::string &theWarningText) {
         reinterpret_cast<void (*)(ToolTipWidget *, const pvzstl::string &)>(ToolTipWidget_SetWarningTextAddr)(this, theWarningText);
     }
@@ -58,11 +61,6 @@ public:
     void Draw(Sexy::Graphics *g) {
         reinterpret_cast<void (*)(ToolTipWidget *, Sexy::Graphics *)>(ToolTipWidget_DrawAddr)(this, g);
     }
-
-    ToolTipWidget() {
-        _constructor();
-    }
-    ~ToolTipWidget() = delete;
 
 protected:
     void _constructor() {

@@ -29,11 +29,13 @@
 #include "Insets.h"
 #include "WidgetContainer.h"
 
+#include <vector>
+
 namespace Sexy {
 
 class WidgetManager;
 
-typedef std::vector<Color> ColorVector;
+using ColorVector = std::vector<Color>;
 
 class Widget : public WidgetContainer {
 public:

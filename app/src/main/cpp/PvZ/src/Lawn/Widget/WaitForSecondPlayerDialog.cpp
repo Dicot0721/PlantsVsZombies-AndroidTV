@@ -181,11 +181,11 @@ void WaitForSecondPlayerDialog::SetMode(UIMode mode) {
 
     mUIMode = mode;
     if (mUIMode == UIMode::MODE1_INIT) {
-        mDialogHeader = TodStringTranslate("[MODE_SELECT_TITLE]");
+        *mDialogHeader = TodStringTranslate("[MODE_SELECT_TITLE]");
     } else if (mUIMode == UIMode::MODE2_WIFI) {
-        mDialogHeader = TodStringTranslate("[MODE_WIFI_TITLE]");
+        *mDialogHeader = TodStringTranslate("[MODE_WIFI_TITLE]");
     } else {
-        mDialogHeader = TodStringTranslate("[MODE_SERVER_TITLE]");
+        *mDialogHeader = TodStringTranslate("[MODE_SERVER_TITLE]");
     }
 
     // 进入 WIFI 模式默认开始扫描

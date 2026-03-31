@@ -20,6 +20,7 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_DIALOG_H
 #define PVZ_SEXYAPPFRAMEWORK_WIDGET_DIALOG_H
 
+#include "Homura/TypeUtils.h"
 #include "PvZ/SexyAppFramework/Misc/TextLayout.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 #include "PvZ/SexyAppFramework/Widget/Insets.h"
@@ -39,10 +40,10 @@ public:
     DialogButton *mYesButton;     // 67
     DialogButton *mNoButton;      // 68
     int mNumButtons;              // 69
-    pvzstl::string mDialogHeader; // 70
-    pvzstl::string mDialogFooter; // 71
-    pvzstl::string mDialogLines;  // 72
-    pvzstl::string mUnkText;      // 73
+    homura::Storage<pvzstl::string> mDialogHeader; // 70
+    homura::Storage<pvzstl::string> mDialogFooter; // 71
+    homura::Storage<pvzstl::string> mDialogLines;  // 72
+    homura::Storage<pvzstl::string> mUnkText;      // 73
     TextLayout mTextLayout;       // 74 ~ 157
     int unk1[3];                  // 158 ~ 160
     int mButtonMode;              // 161

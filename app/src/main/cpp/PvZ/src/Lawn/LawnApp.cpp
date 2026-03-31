@@ -691,33 +691,15 @@ void LawnApp::Init() {
     mKonamiCheck->AddChar('c');
     mKonamiCheck->AddChar('b');
     mKonamiCheck->AddChar('a');
-    pvzstl::string mustache = "mustache";
-    mMustacheCheck = new TypingCheck(mustache);
-
-    pvzstl::string moustache = "moustache";
-    mMoustacheCheck = new TypingCheck(moustache);
-
-    pvzstl::string trickedout = "trickedout";
-    mSuperMowerCheck = new TypingCheck(trickedout);
-
-    pvzstl::string trickedout2 = "tricked out";
-    mSuperMowerCheck2 = new TypingCheck(trickedout2);
-
-    pvzstl::string future = "future";
-    mFutureCheck = new TypingCheck(future);
-
-    pvzstl::string pinata = "pinata";
-    mPinataCheck = new TypingCheck(pinata);
-
-    pvzstl::string dance = "dance";
-    mDanceCheck = new TypingCheck(dance);
-
-    pvzstl::string daisies = "daisies";
-    mDaisyCheck = new TypingCheck(daisies);
-
-    pvzstl::string sukhbir = "sukhbir";
-    mSukhbirCheck = new TypingCheck(sukhbir);
-
+    mMustacheCheck = new TypingCheck("mustache");
+    mMoustacheCheck = new TypingCheck("moustache");
+    mSuperMowerCheck = new TypingCheck("trickedout");
+    mSuperMowerCheck2 = new TypingCheck("tricked out");
+    mFutureCheck = new TypingCheck("future");
+    mPinataCheck = new TypingCheck("pinata");
+    mDanceCheck = new TypingCheck("dance");
+    mDaisyCheck = new TypingCheck("daisies");
+    mSukhbirCheck = new TypingCheck("sukhbir");
 
     ReanimatorLoadDefinitions(gLawnReanimationArrayAddr, 178);
 

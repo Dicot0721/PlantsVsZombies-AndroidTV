@@ -35,7 +35,7 @@ public:
         reinterpret_cast<void (*)(HelpBarWidget *, unsigned int)>(HelpBarWidget_ClearButtonsAddr)(this, theUnkParameter);
     }
     void AddButton(Sexy::GamepadButton theButton, pvzstl::string theString, HelpAlign theHelpAlign) {
-        reinterpret_cast<void (*)(HelpBarWidget *, Sexy::GamepadButton, pvzstl::string, HelpAlign)>(HelpBarWidget_AddButtonAddr)(this, theButton, theString, theHelpAlign);
+        reinterpret_cast<void (*)(HelpBarWidget *, Sexy::GamepadButton, pvzstl::string, HelpAlign)>(HelpBarWidget_AddButtonAddr)(this, theButton, std::move(theString), theHelpAlign);
     }
 
     HelpBarWidget() {

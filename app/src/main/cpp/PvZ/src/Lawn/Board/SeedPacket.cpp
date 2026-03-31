@@ -564,24 +564,14 @@ void DrawSeedPacket(Sexy::Graphics *g,
             DrawSeedType(&aPlantG, x, y, theSeedType, theImitaterType, v28, v29, theDrawScale);
     }
     if (theDrawCost) {
-        pvzstl::string str;
-        Board *board = lawnApp->mBoard;
-        if (board != nullptr && board->PlantUsesAcceleratedPricing(realSeedType)) {
-            if (theUseCurrentCost) {
-                int CurrentPlantCost = board->GetCurrentPlantCost(theSeedType, theImitaterType);
-                str = StrFormat("%d", CurrentPlantCost);
-            } else {
-                int Cost = Plant::GetCost(theSeedType, theImitaterType);
-                str = StrFormat("%d+", Cost);
-            }
-        } else {
-            int Cost = Plant::GetCost(theSeedType, theImitaterType);
-            str = StrFormat("%d", Cost);
-        }
+        Board *aBoard = lawnApp->mBoard;
+        pvzstl::string str = //
+            (aBoard == nullptr || !aBoard->PlantUsesAcceleratedPricing(realSeedType)) ? StrFormat("%d", Plant::GetCost(theSeedType, theImitaterType))
+            : theUseCurrentCost                                                       ? StrFormat("%d", aBoard->GetCurrentPlantCost(theSeedType, theImitaterType))
+                                                                                      : StrFormat("%d+", Plant::GetCost(theSeedType, theImitaterType));
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
-        int width = 31 - (*((int (**)(Sexy::Font *, int *))font->vTable + 8))(font, (int *)&str);
-        ;                                                                      // 33  ----- >  31，微调一下文字位置，左移2个像素点
-        int height = 48 + (*((int (**)(Sexy::Font *))font->vTable + 2))(font); // 50  ---- >  48, 微调一下文字位置，上移2个像素点
+        int width = 31 - (*((int (**)(Sexy::Font *, const pvzstl::string &))font->vTable + 8))(font, str); // 33 -> 31，微调一下文字位置，左移2个像素点
+        int height = 48 + (*((int (**)(Sexy::Font *))font->vTable + 2))(font);                             // 50 -> 48, 微调一下文字位置，上移2个像素点
         Color theColor = {0, 0, 0, 255};
         g->PushState();
         if (g->mScaleX == 1.0 && g->mScaleY == 1.0) {

@@ -48,11 +48,11 @@ public:
         return reinterpret_cast<void (*)(DefaultProfileMgr *)>(Sexy_DefaultProfileMgr_SaveAddr)(this);
     }
 
-    LawnPlayerInfo *GetProfile(pvzstl::string &name) { // vTable + 4 * 8
-        return reinterpret_cast<LawnPlayerInfo *(*)(DefaultProfileMgr *, pvzstl::string &)>(Sexy_DefaultProfileMgr_GetProfileAddr)(this, name);
+    LawnPlayerInfo *GetProfile(const pvzstl::string &theName) { // vTable + 4 * 8
+        return reinterpret_cast<LawnPlayerInfo *(*)(DefaultProfileMgr *, const pvzstl::string &)>(Sexy_DefaultProfileMgr_GetProfileAddr)(this, theName);
     }
-    DefaultPlayerInfo *AddProfile(pvzstl::string &name) { // vTable + 4 * 9
-        return reinterpret_cast<DefaultPlayerInfo *(*)(DefaultProfileMgr *, pvzstl::string &)>(Sexy_DefaultProfileMgr_AddProfileAddr)(this, name);
+    DefaultPlayerInfo *AddProfile(const pvzstl::string &theName) { // vTable + 4 * 9
+        return reinterpret_cast<DefaultPlayerInfo *(*)(DefaultProfileMgr *, const pvzstl::string &)>(Sexy_DefaultProfileMgr_AddProfileAddr)(this, theName);
     }
     LawnPlayerInfo *GetAnyProfile() { // vTable + 4 * 10
         return reinterpret_cast<LawnPlayerInfo *(*)(DefaultProfileMgr *)>(Sexy_DefaultProfileMgr_GetAnyProfileAddr)(this);

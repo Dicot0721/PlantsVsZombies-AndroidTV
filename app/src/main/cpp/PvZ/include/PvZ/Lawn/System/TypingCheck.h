@@ -20,27 +20,29 @@
 #ifndef PVZ_LAWN_SYSTEM_TYPING_CHECK_H
 #define PVZ_LAWN_SYSTEM_TYPING_CHECK_H
 
+#include "Homura/TypeUtils.h"
 #include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/Symbols.h"
 
 class TypingCheck {
-public:
-    pvzstl::string mPhrase;
+protected:
+    homura::Storage<pvzstl::string> mPhrase;
 
 public:
+    TypingCheck() {
+        reinterpret_cast<void (*)(TypingCheck *)>(TypingCheck_TypingCheckAddr)(this);
+    }
+
+    TypingCheck(pvzstl::string thePhrase) {
+        reinterpret_cast<void (*)(TypingCheck *, pvzstl::string)>(TypingCheck_CreateByStringAddr)(this, std::move(thePhrase));
+    }
+
     void SetPhrase(const pvzstl::string &thePhrase) {
         reinterpret_cast<void (*)(TypingCheck *, const pvzstl::string &)>(TypingCheck_SetPhraseAddr)(this, thePhrase);
     }
+
     void AddChar(char theChar) {
         reinterpret_cast<void (*)(TypingCheck *, char)>(TypingCheck_AddCharAddr)(this, theChar);
-    }
-
-    TypingCheck(pvzstl::string &basicString) {
-        reinterpret_cast<void (*)(TypingCheck *, pvzstl::string &)>(TypingCheck_CreateByStringAddr)(this, basicString);
-    }
-
-    TypingCheck() {
-        reinterpret_cast<void (*)(TypingCheck *)>(TypingCheck_TypingCheckAddr)(this);
     }
 };
 

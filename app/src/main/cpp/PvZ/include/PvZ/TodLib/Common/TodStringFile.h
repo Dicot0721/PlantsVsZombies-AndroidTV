@@ -20,6 +20,7 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_STRING_FILE_H
 #define PVZ_SEXYAPPFRAMEWORK_TODLIB_COMMON_TOD_STRING_FILE_H
 
+#include "Homura/TypeUtils.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
 
@@ -36,9 +37,9 @@ inline int TodDrawStringWrappedHelper(
 }
 
 inline pvzstl::string TodStringTranslate(const char *theString) {
-    pvzstl::string result;
-    reinterpret_cast<void (*)(pvzstl::string &, const char *)>(TodStringTranslateAddr)(result, theString);
-    return result;
+    homura::DestructStorage<pvzstl::string> result;
+    reinterpret_cast<void (*)(homura::Storage<pvzstl::string> &, const char *)>(TodStringTranslateAddr)(result, theString);
+    return *std::move(result);
 }
 
 inline void TodStringListLoad(const char *theFileName) {
@@ -46,9 +47,9 @@ inline void TodStringListLoad(const char *theFileName) {
 }
 
 inline pvzstl::string TodStringListFind(const pvzstl::string &theName) {
-    pvzstl::string result;
-    reinterpret_cast<void (*)(pvzstl::string &, const pvzstl::string &)>(TodStringListFindAddr)(result, theName);
-    return result;
+    homura::DestructStorage<pvzstl::string> result;
+    reinterpret_cast<void (*)(homura::Storage<pvzstl::string> &, const pvzstl::string &)>(TodStringListFindAddr)(result, theName);
+    return *std::move(result);
 }
 
 // inline void TodStringListLoad(const char* theFileName) {
