@@ -64,6 +64,8 @@ public:
         _constructor(theApp);
     }
 
+    ~TitleScreen() = delete;
+
 protected:
     friend void InitHookFunction();
 

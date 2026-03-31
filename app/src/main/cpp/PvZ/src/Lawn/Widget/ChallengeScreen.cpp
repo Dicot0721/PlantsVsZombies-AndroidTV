@@ -138,10 +138,6 @@ ChallengeDefinition gVSChallengeDefs[NUM_VS_MODES] = {
     {GameMode::GAMEMODE_MP_VS, 0, ChallengePage::CHALLENGE_PAGE_VS, 1, 0, "[MP_VS_SHUFFLE_MODE]"},
 };
 
-ChallengeScreen::ChallengeScreen(LawnApp *theApp, ChallengePage thePage) {
-    _constructor(theApp, thePage);
-}
-
 void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
     //    Widget::_constructor();
     //

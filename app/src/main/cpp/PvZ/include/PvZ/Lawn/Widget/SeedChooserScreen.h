@@ -121,6 +121,12 @@ public:
     // 大小966个整数
     int mNewMemberOHHHHHHHHHHHHHHHHH;
 
+    SeedChooserScreen(bool theIsZombieChooser) {
+        _constructor(theIsZombieChooser);
+    }
+
+    ~SeedChooserScreen() = delete;
+
     void CloseSeedChooser() {
         reinterpret_cast<void (*)(SeedChooserScreen *)>(SeedChooserScreen_CloseSeedChooserAddr)(this);
     }
@@ -161,7 +167,6 @@ public:
         return reinterpret_cast<bool (*)(SeedChooserScreen *, int)>(SeedChooserScreen_ShouldDisplayCursorAddr)(this, thePlayerIndex);
     }
 
-    SeedChooserScreen(bool theIsZombieChooser);
     void EnableStartButton(int theIsEnabled);
     void RebuildHelpbar();
     SeedType GetZombieSeedType(int theSeedIndex);

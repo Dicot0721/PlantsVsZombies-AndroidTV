@@ -100,7 +100,13 @@ public:
     float mFadeCounterFloat;              // 102
     bool unkMems4[16];                    // 103 ~ 106
     Sexy::Image *m2DMarkImage;            // 107
-    // 大小108个整数
+                                          // 大小108个整数
+
+    MainMenu(LawnApp *theApp) {
+        _constructor(theApp);
+    }
+
+    ~MainMenu() = delete;
 
     bool InTransition() {
         return reinterpret_cast<bool (*)(MainMenu *)>(MainMenu_InTransitionAddr)(this);
@@ -112,9 +118,6 @@ public:
         reinterpret_cast<void (*)(MainMenu *)>(MainMenu_StartAdventureModeAddr)(this);
     };
 
-    MainMenu(LawnApp *theApp) {
-        _constructor(theApp);
-    }
     static FoleyType GetFoleyTypeByScene(int theScene);
     void KeyDown(Sexy::KeyCode theKeyCode);
     void ButtonDepress(MainMenuButtonId theSelectedButton);

@@ -38,7 +38,13 @@ public:
     int mPileNum;                 // 85
     // 大小86个整数
 
-    TrashBin(TrashPileType theTrashPileType, float theHeight);
+    TrashBin(TrashPileType theTrashPileType, float theHeight) {
+        _constructor(theTrashPileType, theHeight);
+    }
+
+    ~TrashBin() {
+        _destructor();
+    }
 
     void Draw(Sexy::Graphics *g);
     Sexy::Image *GetZombieTrashPiece(int theLevel);

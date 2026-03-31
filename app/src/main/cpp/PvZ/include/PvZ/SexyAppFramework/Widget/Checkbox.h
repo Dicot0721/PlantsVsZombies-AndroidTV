@@ -41,6 +41,8 @@ public:
     Color mCheckColor;      // 93 ~ 96
     // 大小97个整数
 
+    Checkbox() = delete;
+
     ~Checkbox() {
         _destructor();
     }

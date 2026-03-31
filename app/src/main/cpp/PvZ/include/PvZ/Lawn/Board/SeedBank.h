@@ -47,7 +47,9 @@ public:
         return reinterpret_cast<int (*)(SeedBank *)>(SeedBank_GetNumSeedsOnConveyorBeltAddr)(this);
     }
 
-    SeedBank(bool thePlayerIndex);
+    SeedBank(bool thePlayerIndex) {
+        _constructor(thePlayerIndex);
+    }
     ~SeedBank() {
         _destructor();
     }

@@ -103,7 +103,9 @@ public:
     ReanimationID mReanimHeavyWeaponID1;                    // 77
     ReanimationID mReanimHeavyWeaponID2;                    // 78
     ReanimationID mReanimHeavyWeaponID3;                    // 79
-    // 大小80个整数
+                                                            // 大小80个整数
+    Challenge() = delete;
+    ~Challenge() = delete;
 
     bool MouseDown(int x, int y, int theClickCount, HitResult *theHitResult, int thePlayerIndex) {
         return reinterpret_cast<bool (*)(Challenge *, int, int, int, HitResult *, int)>(Challenge_MouseDownAddr)(this, x, y, theClickCount, theHitResult, thePlayerIndex);
@@ -142,13 +144,6 @@ public:
         reinterpret_cast<void (*)(Challenge *, int, int)>(Challenge_ScaryPotterJackExplodeAddr)(this, thePosX, thePosY);
     }
 
-    Challenge() {
-        _constructor();
-    };
-    ~Challenge() {
-        _destructor();
-    }
-
     void Update();
     void UpdateVS();
     int GetUnderPlantCol(int theRow);
@@ -184,12 +179,13 @@ public:
     static bool IsMPZombieTypeAddInRow(ZombieType theZombieType);
     static bool IsMPZombieTypeCanGoInPool(ZombieType theZombieType);
 
+    void UpdateConveyorBelt(int playerIndex);
+
 protected:
     friend void InitHookFunction();
 
     void _constructor();
     void _destructor();
-    void UpdateConveyorBelt(int playerIndex);
 };
 
 /***************************************************************************************************************/

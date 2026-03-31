@@ -73,6 +73,12 @@ public:
     NewLawnButton *mBackButton = nullptr;
     WaitForSecondPlayerDialog *mConnectDialog = nullptr;
 
+    ChallengeScreen(LawnApp *theApp, ChallengePage thePage) {
+        _constructor(theApp, thePage);
+    }
+
+    ~ChallengeScreen() = delete;
+
     void SetUnlockChallengeIndex(ChallengePage thePage, bool theIsIZombie = false) {
         reinterpret_cast<void (*)(ChallengeScreen *, ChallengePage, bool)>(ChallengeScreen_SetUnlockChallengeIndexAddr)(this, thePage, theIsIZombie);
     }
@@ -86,7 +92,6 @@ public:
         return reinterpret_cast<int (*)(ChallengeScreen *, int)>(ChallengeScreen_MoreTrophiesNeededAddr)(this, theChallengeIndex);
     }
 
-    ChallengeScreen(LawnApp *theApp, ChallengePage thePage);
     void Draw(Sexy::Graphics *g);
     void AddedToManager(Sexy::WidgetManager *theWidgetManager);
     void Update();

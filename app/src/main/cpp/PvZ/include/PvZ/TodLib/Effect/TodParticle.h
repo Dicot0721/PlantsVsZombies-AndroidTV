@@ -70,6 +70,12 @@ public:
     int mParticleId;                         // 14
     // 大小15个整数
 
+    TodParticleSystem() = delete;
+
+    ~TodParticleSystem() {
+        _destructor();
+    }
+
     void Draw(Sexy::Graphics *g) {
         reinterpret_cast<void (*)(TodParticleSystem *, Sexy::Graphics *)>(TodParticleSystem_DrawAddr)(this, g);
     }
@@ -84,10 +90,6 @@ public:
     }
     void Update() {
         reinterpret_cast<void (*)(TodParticleSystem *)>(TodParticleSystem_UpdateAddr)(this);
-    }
-
-    ~TodParticleSystem() {
-        _destructor();
     }
 
 protected:

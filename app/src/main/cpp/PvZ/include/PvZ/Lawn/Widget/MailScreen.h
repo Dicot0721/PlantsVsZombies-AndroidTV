@@ -29,13 +29,15 @@ public:
     int unk[3];   // 191 ~ 193
     int mPage;    // 194
     int unk2[12]; // 195 ~ 206
-    // 115: 207, 111: 209
+                  // 115: 207, 111: 209
+
+    MailScreen(LawnApp *theApp) = delete;
+    ~MailScreen() = delete;
 
     void KeyDown(int theKey, int a2, int a3) {
         reinterpret_cast<void (*)(MailScreen *, int, int, int)>(MailScreen_KeyDownAddr)(this, theKey, a2, a3);
     }
 
-    MailScreen(LawnApp *theApp);
     void AddedToManager(Sexy::WidgetManager *theWidgetManager);
     void RemovedFromManager(Sexy::WidgetManager *widgetManager);
 

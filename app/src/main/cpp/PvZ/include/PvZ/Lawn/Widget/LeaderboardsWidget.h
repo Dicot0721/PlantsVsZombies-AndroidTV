@@ -89,6 +89,8 @@ public:
         _constructor(theApp);
     }
 
+    ~DaveHelp() = delete;
+
 protected:
     void _constructor(LawnApp *theApp) {
         reinterpret_cast<void (*)(DaveHelp *, LawnApp *)>(DaveHelp_DaveHelpAddr)(this, theApp);

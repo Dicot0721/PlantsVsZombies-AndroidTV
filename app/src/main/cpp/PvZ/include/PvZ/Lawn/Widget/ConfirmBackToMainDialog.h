@@ -32,6 +32,8 @@ public:
         _constructor(theBool);
     }
 
+    ~ConfirmBackToMainDialog() = delete;
+
 protected:
     void _constructor(bool theBool) {
         reinterpret_cast<void (*)(ConfirmBackToMainDialog *, bool)>(ConfirmBackToMainDialog_ConfirmBackToMainDialogAddr)(this, theBool);

@@ -32,10 +32,6 @@
 
 using namespace Sexy;
 
-SeedBank::SeedBank(bool thePlayerIndex) {
-    _constructor(thePlayerIndex);
-}
-
 void SeedBank::_constructor(bool thePlayerIndex) {
     old_SeedBank_SeedBank(this, thePlayerIndex);
 }
