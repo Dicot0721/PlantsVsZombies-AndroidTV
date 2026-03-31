@@ -397,9 +397,6 @@ public:
     bool CanInteractWithBoardButtons() {
         return reinterpret_cast<bool (*)(Board *)>(Board_CanInteractWithBoardButtonsAddr)(this);
     }
-    // Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion) {
-    // return reinterpret_cast<Coin *(*)(Board *, int, int, CoinType, CoinMotion)>(Board_AddCoinAddr)(this, theX, theY, theCoinType, theCoinMotion);
-    // }
     bool CanTakeSunMoney(int theAmount, int thePlayerIndex) {
         return reinterpret_cast<bool (*)(Board *, int, int)>(Board_CanTakeSunMoneyAddr)(this, theAmount, thePlayerIndex);
     }
@@ -442,9 +439,6 @@ public:
     bool CanTakeDeathMoney(int theAmount) {
         return reinterpret_cast<bool (*)(Board *, int)>(Board_CanTakeDeathMoneyAddr)(this, theAmount);
     }
-    // int TakeDeathMoney(int theAmount) {
-    // return reinterpret_cast<int (*)(Board *, int)>(Board_TakeDeathMoneyAddr)(this, theAmount);
-    // }
     void RemoveAllMowers() {
         reinterpret_cast<void (*)(Board *)>(Board_RemoveAllMowersAddr)(this);
     }
@@ -483,6 +477,8 @@ public:
     }
 
     Board(LawnApp *theApp);
+    ~Board() = delete;
+
     void InitLevel();
     void SetGrids();
     void StartLevel();

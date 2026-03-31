@@ -41,6 +41,7 @@ public:
     HelpBarWidget() {
         _constructor();
     }
+    ~HelpBarWidget() = delete;
 
 protected:
     friend void InitHookFunction();

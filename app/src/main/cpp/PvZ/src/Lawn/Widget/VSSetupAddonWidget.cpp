@@ -77,29 +77,25 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
 
 VSSetupAddonWidget::~VSSetupAddonWidget() {
     delete mBackButton;
+    delete mExtraPacketsButton;
+    delete mExtraSeedsButton;
+    delete mBanModeButton;
+    delete mBalancePatchButton;
 
     if (mBoard) {
         mBoard->RemoveWidget(mBackButton);
 
         if (mExtraPacketsButton) {
             mBoard->RemoveWidget(mExtraPacketsButton);
-            mExtraPacketsButton->_destructor();
-            mExtraPacketsButton = nullptr;
         }
         if (mExtraSeedsButton) {
             mBoard->RemoveWidget(mExtraSeedsButton);
-            mExtraSeedsButton->_destructor();
-            mExtraSeedsButton = nullptr;
         }
         if (mBanModeButton) {
             mBoard->RemoveWidget(mBanModeButton);
-            mBanModeButton->_destructor();
-            mBanModeButton = nullptr;
         }
         if (mBalancePatchButton) {
             mBoard->RemoveWidget(mBalancePatchButton);
-            mBalancePatchButton->_destructor();
-            mBalancePatchButton = nullptr;
         }
     }
 

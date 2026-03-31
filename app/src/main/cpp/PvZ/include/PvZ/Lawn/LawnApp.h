@@ -296,6 +296,8 @@ public:
     LawnApp() {
         _constructor();
     };
+    ~LawnApp() = delete;
+
     void Init();
     bool IsNight();
     inline bool IsIceDemo() {

@@ -292,6 +292,10 @@ public:
     Zombie() {
         _constructor();
     }
+    ~Zombie() {
+        _deconstructor();
+    };
+
     void ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Zombie *theParentZombie, int theFromWave, bool theIsVisible);
     void CheckIfPreyCaught();
     void Draw(Sexy::Graphics *g);
@@ -396,8 +400,11 @@ public:
 
 protected:
     void _constructor() {
-        reinterpret_cast<void (*)(Zombie *)>(Zombie_ZombieAddr)(this);
+        reinterpret_cast<void (*)(Zombie *)>(Zombie__constructorAddr)(this);
     };
+    void _deconstructor() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie__deconstructorAddr)(this);
+    }
 };
 
 class ZombieDefinition {

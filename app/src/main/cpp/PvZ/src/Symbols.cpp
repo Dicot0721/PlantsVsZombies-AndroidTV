@@ -426,7 +426,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN6Zombie16GetTrackPositionEPKcRfS2_", Zombie_GetTrackPositionAddr);
     libGameMain.GetSymbol("_ZN6Zombie15UpdateAnimSpeedEv", Zombie_UpdateAnimSpeedAddr);
     libGameMain.GetSymbol("_ZN6Zombie10HitIceTrapEv", Zombie_HitIceTrapAddr);
-    libGameMain.GetSymbol("_ZN6ZombieC2Ev", Zombie_ZombieAddr);
+    libGameMain.GetSymbol("_ZN6ZombieC2Ev", Zombie__constructorAddr);
+    libGameMain.GetSymbol("_ZN6ZombieD2Ev", Zombie__deconstructorAddr);
     libGameMain.GetSymbol("_Z19GetZombieDefinition10ZombieType", GetZombieDefinitionAddr);
     libGameMain.GetSymbol("_ZN6Zombie15FindPlantTargetE16ZombieAttackType", Zombie_FindPlantTargetAddr);
     libGameMain.GetSymbol("_ZN6Zombie16FindZombieTargetEv", Zombie_FindZombieTargetAddr);
@@ -849,7 +850,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN11TitleScreen11SwitchStateE10TitleStatei", TitleScreen_SwitchStateAddr);
 
 
-    libGameMain.GetSymbol("_ZN8GridItemC2Ev", GridItem_GridItemAddr);
+    libGameMain.GetSymbol("_ZN8GridItemC2Ev", GridItem__constructorAddr);
+    libGameMain.GetSymbol("_ZN8GridItemD2Ev", GridItem__deconstructorAddr);
     libGameMain.GetSymbol("_ZN8GridItem6UpdateEv", GridItem_UpdateAddr);
     libGameMain.GetSymbol("_ZN8GridItem11UpdateBrainEv", GridItem_UpdateBrainAddr);
     libGameMain.GetSymbol("_ZN8GridItem14UpdateScaryPotEv", GridItem_UpdateScaryPotAddr);

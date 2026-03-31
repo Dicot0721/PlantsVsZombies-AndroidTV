@@ -55,13 +55,6 @@ public:
     int *mAnimatorForState[4];                                 // 60 ~ 63
     // 大小64个整数！
 
-    void _constructor() {
-        reinterpret_cast<void (*)(Widget *)>(Sexy_Widget__constructorAddr)(this);
-    }
-    void _destructor() {
-        reinterpret_cast<void (*)(Widget *)>(Sexy_Widget__destructorAddr)(this);
-    }
-
     void Resize(int theX, int theY, int theWidth, int theHeight) {
         reinterpret_cast<void (*)(Widget *, int, int, int, int)>(Sexy_Widget_ResizeAddr)(this, theX, theY, theWidth, theHeight);
     }
@@ -83,6 +76,13 @@ public:
 protected:
     Widget() = default;
     ~Widget() = default;
+
+    void _constructor() {
+        reinterpret_cast<void (*)(Widget *)>(Sexy_Widget__constructorAddr)(this);
+    }
+    void _destructor() {
+        reinterpret_cast<void (*)(Widget *)>(Sexy_Widget__destructorAddr)(this);
+    }
 };
 
 } // namespace Sexy

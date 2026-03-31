@@ -61,6 +61,7 @@ public:
     VSResultsMenu() {
         _constructor();
     }
+    ~VSResultsMenu() = delete;
 
     void InitFromBoard(class Board *board) {
         reinterpret_cast<void (*)(VSResultsMenu *, Board *)>(VSResultsMenu_InitFromBoardAddr)(this, board);

@@ -75,7 +75,13 @@ public:
         reinterpret_cast<void (*)(GridItem *)>(GridItem_UpdateBurialMoundAddr)(this);
     }
 
-    GridItem();
+    GridItem() {
+        _constructor();
+    }
+    ~GridItem() {
+        _deconstructor();
+    };
+
     void GridItemDie();
     void DrawScaryPot(Sexy::Graphics *g);
     void Update();
@@ -90,6 +96,9 @@ protected:
     friend void InitHookFunction();
 
     void _constructor();
+    void _deconstructor() {
+        reinterpret_cast<void (*)(GridItem *)>(GridItem_GridItemDieAddr)(this);
+    };
 };
 
 /***************************************************************************************************************/

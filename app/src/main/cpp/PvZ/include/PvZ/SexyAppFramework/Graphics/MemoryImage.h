@@ -43,13 +43,6 @@ public:
     int unk2[20];          // 38 ~ 57
     // 大小58个整数
 
-    MemoryImage() {
-        _constructor();
-    }
-    ~MemoryImage() {
-        _destructor();
-    }
-
     unsigned long *GetBits() {
         return reinterpret_cast<unsigned long *(*)(MemoryImage *)>(Sexy_MemoryImage_GetBitsAddr)(this);
     }
@@ -67,6 +60,13 @@ public:
     }
     void BitsChanged() {
         reinterpret_cast<void (*)(MemoryImage *)>(Sexy_MemoryImage_BitsChangedAddr)(this);
+    }
+
+    MemoryImage() {
+        _constructor();
+    }
+    ~MemoryImage() {
+        _destructor();
     }
 
     void ClearRect(const Rect &theRect);

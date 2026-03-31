@@ -67,12 +67,12 @@ public:
 public:
     LawnApp *mApp = *gLawnApp_Addr;
     Board *mBoard = mApp->mBoard;
-    NewLawnButton *mBackButton = nullptr;
     Sexy::ButtonListener *mButtonListener;
-    Sexy::ButtonWidget *mExtraPacketsButton = nullptr;
-    Sexy::ButtonWidget *mExtraSeedsButton = nullptr;
-    Sexy::ButtonWidget *mBanModeButton = nullptr;
-    Sexy::ButtonWidget *mBalancePatchButton = nullptr;
+    NewLawnButton *mBackButton = nullptr;
+    NewLawnButton *mExtraPacketsButton = nullptr;
+    NewLawnButton *mExtraSeedsButton = nullptr;
+    NewLawnButton *mBanModeButton = nullptr;
+    NewLawnButton *mBalancePatchButton = nullptr;
     Sexy::Image *mButtonImage[NUM_VS_SETUP_ADDON_BUTTON] = {nullptr};
     bool mExtraPacketsMode = false;
     bool mExtraSeedsMode = false;

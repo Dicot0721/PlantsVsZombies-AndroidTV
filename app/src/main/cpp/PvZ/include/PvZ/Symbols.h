@@ -428,7 +428,8 @@ inline void *Zombie_GetBodyDamageIndexAddr;
 inline void *Zombie_GetTrackPositionAddr;
 inline void *Zombie_UpdateAnimSpeedAddr;
 inline void *Zombie_HitIceTrapAddr;
-inline void *Zombie_ZombieAddr;
+inline void *Zombie__constructorAddr;
+inline void *Zombie__deconstructorAddr;
 inline void *GetZombieDefinitionAddr;
 inline void *Zombie_FindPlantTargetAddr;
 inline void *Zombie_FindZombieTargetAddr;
@@ -1094,7 +1095,8 @@ inline void *ToolTipWidget_SetLabelAddr;
 inline void *ToolTipWidget_DrawAddr;
 
 
-inline void *GridItem_GridItemAddr;
+inline void *GridItem__constructorAddr;
+inline void *GridItem__deconstructorAddr;
 inline void *GridItem_UpdateAddr;
 inline void *GridItem_UpdateBrainAddr;
 inline void *GridItem_UpdateScaryPotAddr;

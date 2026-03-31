@@ -38,10 +38,6 @@
 
 using namespace Sexy;
 
-GridItem::GridItem() {
-    _constructor();
-}
-
 void GridItem::_constructor() {
     old_GridItem_GridItem(this);
 }

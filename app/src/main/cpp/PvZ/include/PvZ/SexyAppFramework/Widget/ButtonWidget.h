@@ -71,22 +71,25 @@ public:
         reinterpret_cast<void (*)(ButtonWidget *, Font *)>(Sexy_ButtonWidget_SetFontAddr)(this, theFont);
     }
 
+protected:
+    ButtonWidget() = default;
+    ~ButtonWidget() = default;
+
     void _constructor(int theId, ButtonListener *theButtonListener) {
         reinterpret_cast<void (*)(ButtonWidget *, int, ButtonListener *)>(Sexy_ButtonWidget__constructorAddr)(this, theId, theButtonListener);
     }
     void _destructor() {
         reinterpret_cast<void (*)(ButtonWidget *)>(Sexy_ButtonWidget__destructorAddr)(this);
     }
-
-protected:
-    ButtonWidget() = default;
-    ~ButtonWidget() = default;
 };
 
 class ButtonWidget_ : public ButtonWidget {
 public:
     ButtonWidget_(int theId, ButtonListener *theButtonListener) {
-        ButtonWidget::_constructor(theId, theButtonListener);
+        _constructor(theId, theButtonListener);
+    }
+    ~ButtonWidget_() {
+        _destructor();
     }
 };
 

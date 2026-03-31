@@ -69,10 +69,6 @@ SeedType gArtChallengeStarFruit[MAX_GRID_SIZE_Y][MAX_GRID_SIZE_X] = {
     {SEED_NONE, SEED_NONE, SEED_NONE, SEED_NONE, SEED_NONE, SEED_NONE, SEED_NONE, SEED_NONE, SEED_NONE},
 };
 
-Challenge::Challenge() {
-    _constructor();
-}
-
 void Challenge::_constructor() {
     if (requestJumpSurvivalStage) {
         // 如果玩家按了无尽跳关

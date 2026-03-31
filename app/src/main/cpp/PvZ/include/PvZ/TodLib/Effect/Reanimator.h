@@ -285,6 +285,7 @@ public:
     ~Reanimation() {
         _destructor();
     }
+
     void Draw(Sexy::Graphics *g);
     bool DrawTrack(Sexy::Graphics *g, int theTrackIndex, int theRenderGroup, TodTriangleGroup *theTriangleGroup);
     bool ShouldTriggerTimedEvent(float theEventTime);

@@ -105,6 +105,7 @@ public:
     TestMenuWidget() {
         _constructor();
     }
+    ~TestMenuWidget() = delete;
 
 protected:
     void _constructor() {

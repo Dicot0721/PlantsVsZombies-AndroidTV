@@ -142,7 +142,13 @@ public:
         reinterpret_cast<void (*)(Challenge *, int, int)>(Challenge_ScaryPotterJackExplodeAddr)(this, thePosX, thePosY);
     }
 
-    Challenge();
+    Challenge() {
+        _constructor();
+    };
+    ~Challenge() {
+        _destructor();
+    }
+
     void Update();
     void UpdateVS();
     int GetUnderPlantCol(int theRow);

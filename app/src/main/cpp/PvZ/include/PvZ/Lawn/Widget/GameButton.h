@@ -34,10 +34,13 @@ public:
     int unkMems6[13];               // 217 ~ 229
     // 大小230个整数
 
-    // GameButton(int theId, ButtonListener *theListener) { Create(); }
+    GameButton(int theId, Sexy::ButtonListener *theListener) {
+        _constructor(theId, theListener);
+    }
     ~GameButton() {
         _destructor();
     }
+
     bool IsMouseOver() {
         return reinterpret_cast<bool (*)(GameButton *)>(GameButton_IsMouseOverAddr)(this);
     }

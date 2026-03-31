@@ -62,12 +62,12 @@ public:
     ToolTipWidget() {
         _constructor();
     }
+    ~ToolTipWidget() = delete;
 
 protected:
     void _constructor() {
         reinterpret_cast<void (*)(ToolTipWidget *)>(ToolTipWidget__constructorAddr)(this);
     }
-    ~ToolTipWidget() = default;
 };
 
 #endif // PVZ_LAWN_BOARD_TOOL_TIP_WIDGET_H
