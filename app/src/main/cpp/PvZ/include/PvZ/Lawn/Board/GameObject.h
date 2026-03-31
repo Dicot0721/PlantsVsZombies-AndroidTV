@@ -42,9 +42,6 @@ public:
     int mRenderOrder;   // 12
     // 大小13个整数
 
-    void _destructor() {
-        reinterpret_cast<bool (*)(GameObject *)>(GameObject_Delete2Addr)(this);
-    }
     bool BeginDraw(Sexy::Graphics *g) {
         return reinterpret_cast<bool (*)(GameObject *, Sexy::Graphics *)>(GameObject_BeginDrawAddr)(this, g);
     }
@@ -58,6 +55,10 @@ public:
 protected:
     GameObject() = default;
     ~GameObject() = default;
+
+    void _destructor() {
+        reinterpret_cast<bool (*)(GameObject *)>(GameObject_destructorAddr)(this);
+    }
 };
 
 #endif // PVZ_LAWN_BOARD_GAME_OBJECT_H

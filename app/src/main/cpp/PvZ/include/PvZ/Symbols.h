@@ -962,7 +962,7 @@ inline void *ReanimatorTransform_ReanimatorTransformAddr;
 inline void *GameObject_BeginDrawAddr;
 inline void *GameObject_EndDrawAddr;
 inline void *GameObject_MakeParentGraphicsFrameAddr;
-inline void *GameObject_Delete2Addr;
+inline void *GameObject_destructorAddr;
 
 
 inline void *GameButton_IsMouseOverAddr;

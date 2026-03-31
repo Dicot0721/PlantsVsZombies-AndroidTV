@@ -70,7 +70,7 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     mBackButton->mTextDownOffsetX = 1;
     mBackButton->mTextDownOffsetY = 1;
     mBackButton->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-    reinterpret_cast<ColorVector &>(mBackButton->mColors)[ButtonWidget::COLOR_LABEL] = Color(0, 205, 0);
+    (*mBackButton->mColors)[ButtonWidget::COLOR_LABEL] = Color(0, 205, 0);
     mBackButton->Resize(800, 520, 160, 50);
     mBoard->AddWidget(mBackButton);
 }

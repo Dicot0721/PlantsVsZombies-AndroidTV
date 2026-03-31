@@ -20,18 +20,19 @@
 #ifndef PVZ_LAWN_BASE_GAMEPAD_CONTROLS_H
 #define PVZ_LAWN_BASE_GAMEPAD_CONTROLS_H
 
+#include "Homura/TypeUtils.h"
 #include "PvZ/Lawn/Board/GameObject.h"
 
 class SeedBank;
 
 class BaseGamepadControls {
 public:
-    int *mVtable;                    // 0
-    GameObject mGameObject;          // 1 ~ 13
-    Board *mBoard;                   // 14
-    int unknown_always_1;            // 15
-    float mUnkFirstHighlightRelated; // 16
-    int mShovelRelated1;             // 17
+    int *mVtable;                            // 0
+    homura::Storage<GameObject> mGameObject; // 1 ~ 13
+    Board *mBoard;                           // 14
+    int unknown_always_1;                    // 15
+    float mUnkFirstHighlightRelated;         // 16
+    int mShovelRelated1;                     // 17
     float mGamepadAccLeftX;
     float mGamepadAccLeftY;
     float mGridCenterPositionX;    // 20

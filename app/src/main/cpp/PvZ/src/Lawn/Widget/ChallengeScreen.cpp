@@ -231,7 +231,7 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
     mBackButton->mTextDownOffsetX = 1;
     mBackButton->mTextDownOffsetY = 1;
     mBackButton->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-    reinterpret_cast<ColorVector &>(mBackButton->mColors)[ButtonWidget::COLOR_LABEL_HILITE] = Color(0, 205, 0);
+    (*mBackButton->mColors)[ButtonWidget::COLOR_LABEL_HILITE] = Color(0, 205, 0);
     mBackButton->Resize(800, 520, 160, 50);
 
     // 去除按钮对触控的遮挡
@@ -386,11 +386,18 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
             // 我是 guest：已提醒房主...
             // (gTcpConnected == true 代表我作为 client 连接到 host)
             // ======================
-            char *theNames[] = {"[MP_VS_DAY]", "[MP_VS_NIGHT]", "[MP_VS_POOL_DAY]", "[MP_VS_POOL_NIGHT]", "[MP_VS_ROOF]", "[MP_VS_SHUFFLE_MODE]"};
+            static constexpr const char *names[] = {
+                "[MP_VS_DAY]",
+                "[MP_VS_NIGHT]",
+                "[MP_VS_POOL_DAY]",
+                "[MP_VS_POOL_NIGHT]",
+                "[MP_VS_ROOF]",
+                "[MP_VS_SHUFFLE_MODE]",
+            };
 
             if (gTcpConnected) {
                 pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_REMIND_HOST_FMT]");
-                pvzstl::string name = TodStringTranslate(theNames[gChallengeScreenRequestState - 68]);
+                pvzstl::string name = TodStringTranslate(names[gChallengeScreenRequestState - 68]);
                 TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
             }
 
@@ -400,7 +407,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
             // ======================
             if (gTcpClientSocket >= 0) {
                 pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_OPPONENT_WANTS_PLAY_FMT]");
-                pvzstl::string name = TodStringTranslate(theNames[gChallengeScreenRequestState - 68]);
+                pvzstl::string name = TodStringTranslate(names[gChallengeScreenRequestState - 68]);
                 TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
             }
         }

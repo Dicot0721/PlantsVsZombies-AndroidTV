@@ -1144,7 +1144,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN10GameObject9BeginDrawEPN4Sexy8GraphicsE", GameObject_BeginDrawAddr);
     libGameMain.GetSymbol("_ZN10GameObject7EndDrawEPN4Sexy8GraphicsE", GameObject_EndDrawAddr);
     libGameMain.GetSymbol("_ZN10GameObject23MakeParentGraphicsFrameEPN4Sexy8GraphicsE", GameObject_MakeParentGraphicsFrameAddr);
-    libGameMain.GetSymbol("_ZN10GameObjectD2Ev", GameObject_Delete2Addr);
+    libGameMain.GetSymbol("_ZN10GameObjectD2Ev", GameObject_destructorAddr);
 
 
     libGameMain.GetSymbol("_ZN10GameButton11IsMouseOverEv", GameButton_IsMouseOverAddr);

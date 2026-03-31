@@ -40,7 +40,7 @@ template <typename Range, typename Tp>
 concept _container_compatible_range = std::ranges::input_range<Range> && std::convertible_to<std::ranges::range_reference_t<Range>, Tp>;
 
 /**
- * @class 采用写时复制 (COW) 实现的字符串类模板
+ * @brief 采用写时复制 (COW) 实现的字符串类模板
  *
  * g++ 在版本 5 前 std::string 的实现 (简化版).
  * 参考资料: https://gcc.gnu.org/onlinedocs/gcc-4.9.4/libstdc++/api/a00745.html

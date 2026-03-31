@@ -48,7 +48,7 @@ void GamepadControls::_constructor(Board *theBoard, int thePlayerIndex1, int the
     if (isKeyboardTwoPlayerMode)
         return;
 
-    GameMode aGameMode = mGameObject.mApp->mGameMode;
+    GameMode aGameMode = mGameObject->mApp->mGameMode;
     bool isTwoSeedBankMode = (aGameMode == GameMode::GAMEMODE_MP_VS || (aGameMode >= GameMode::GAMEMODE_TWO_PLAYER_COOP_DAY && aGameMode <= GameMode::GAMEMODE_TWO_PLAYER_COOP_ENDLESS));
     if (!keyboardMode && !isTwoSeedBankMode && aGameMode != GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE) {
         mIsInShopSeedBank = true; // 是否在Shop栏。
@@ -120,7 +120,7 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
 
 
     if (mPlayerIndex2 != -1) {
-        LawnApp *anApp = mGameObject.mApp;
+        LawnApp *anApp = mGameObject->mApp;
         bool is2P = mPlayerIndex1 == 1;
         CursorObject *aCursorObject = is2P ? mBoard->mCursorObject2 : mBoard->mCursorObject1;
 
@@ -197,14 +197,14 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
 }
 
 void GamepadControls::Update(float a2) {
-    LawnApp *anApp = mGameObject.mApp;
+    LawnApp *anApp = mGameObject->mApp;
     int aGridX = mBoard->PixelToGridXKeepOnBoard(mCursorPositionX, mCursorPositionY);
     int aGridY = mBoard->PixelToGridYKeepOnBoard(mCursorPositionX, mCursorPositionY);
     int aGridCenterPosX = mBoard->GridToPixelX(aGridX, aGridY) + mBoard->GridCellWidth(aGridX, aGridY) / 2;
     int aGridCenterPosY = mBoard->GridToPixelY(aGridX, aGridY) + mBoard->GridCellHeight(aGridX, aGridY) / 2;
     // 键盘双人模式 平滑移动光标
     if (isKeyboardTwoPlayerMode) {
-        int aGamepadIndex = mGameObject.mApp->PlayerToGamepadIndex(mPlayerIndex1);
+        int aGamepadIndex = mGameObject->mApp->PlayerToGamepadIndex(mPlayerIndex1);
         if (aGamepadIndex == 0) {
             mGamepadVelocityLeftX = gGamepadP1VelX;
             mGamepadVelocityLeftY = gGamepadP1VelY;
@@ -240,7 +240,7 @@ void GamepadControls::Update(float a2) {
 
     old_GamepadControls_Update(this, a2);
 
-    // Reanimation *mCursorReanim = ReanimationTryToGet(gamepadControls->mGameObject.anApp, gamepadControls->mCursorReanimID);
+    // Reanimation *mCursorReanim = ReanimationTryToGet(gamepadControls->mGameObject->anApp, gamepadControls->mCursorReanimID);
     // LOGD("%d",mCursorReanim);
     // if (mCursorReanim != nullptr) {
     // if ((gamepadControls->mPlayerIndex2 == 0 &&(mIsZombie == TouchPlayerIndex::TOUCHPLAYER_PLAYER1 || gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER1)) ||
@@ -267,14 +267,14 @@ void GamepadControls::ButtonDownFireCobcannonTest() {
 }
 
 void GamepadControls::InvalidatePreviewReanim() {
-    Reanimation *aPreviewReanim4 = mGameObject.mApp->ReanimationTryToGet(mPreviewReanimID4);
+    Reanimation *aPreviewReanim4 = mGameObject->mApp->ReanimationTryToGet(mPreviewReanimID4);
     if (aPreviewReanim4 != nullptr) {
         aPreviewReanim4->ReanimationDie();
         mPreviewReanimID4 = ReanimationID::REANIMATIONID_NULL;
     }
 
     if (mPreviewReanimID3 != 0) {
-        mGameObject.mApp->RemoveReanimation(mPreviewReanimID3);
+        mGameObject->mApp->RemoveReanimation(mPreviewReanimID3);
         mPreviewReanimID3 = REANIMATIONID_NULL;
     }
 }
@@ -293,7 +293,7 @@ void GamepadControls::UpdatePreviewReanim() {
 
     // TV后续版本仅在PreviewingSeedType切换时进行一次Reanimation::Update，而TV 1.0.1则是无时无刻进行Reanimation::Update。我们恢复1.0.1的逻辑即可。
 
-    LawnApp *anApp = mGameObject.mApp;
+    LawnApp *anApp = mGameObject->mApp;
     CursorObject *aCursorObject = mPlayerIndex1 ? mBoard->mCursorObject2 : mBoard->mCursorObject1;
 
     if (!dynamicPreview) { // 如果没开启动态预览，则开启砸罐子无尽和锤僵尸关卡的动态预览，并执行旧游戏函数。
@@ -602,7 +602,7 @@ void GamepadControls::UpdatePreviewReanim() {
 
 void GamepadControls::DrawPreview(Sexy::Graphics *g) {
     // 修复排山倒海、砸罐子无尽、锤僵尸、种子雨不显示植物预览的问题。
-    LawnApp *anApp = mGameObject.mApp;
+    LawnApp *anApp = mGameObject->mApp;
     GameMode mGameMode = anApp->mGameMode;
     if (mGameMode == GameMode::GAMEMODE_CHALLENGE_RAINING_SEEDS) { // 为种子雨添加种植预览
         CursorObject *cursorObject = mPlayerIndex1 ? mBoard->mCursorObject2 : mBoard->mCursorObject1;
@@ -673,7 +673,7 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
     SeedPacket *aSeedPacket = &aSeedBank->mSeedPackets[mSelectedSeedIndex];
     SeedType aPacketType = aSeedPacket->mPacketType;
     int aCost = mBoard->GetCurrentPlantCost(aSeedPacket->mPacketType, SeedType::SEED_NONE);
-    if (mGameObject.mApp->IsVSMode() && theButton == Sexy::GamepadButton::GAMEPAD_BUTTON_A) {
+    if (mGameObject->mApp->IsVSMode() && theButton == Sexy::GamepadButton::GAMEPAD_BUTTON_A) {
         if (mIsZombie) {
             int aGridX = mBoard->PixelToGridXKeepOnBoard((int)mCursorPositionX, (int)mCursorPositionY);
             int aGridY = mBoard->PixelToGridYKeepOnBoard((int)mCursorPositionX, (int)mCursorPositionY);
@@ -684,7 +684,7 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
             if (aPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
                 std::vector<SeedType> aPlantSeeds;
                 std::vector<SeedType> aZombieSeeds;
-                PickMPRandomSeeds(mGameObject.mApp, aPlantSeeds, aZombieSeeds, true);
+                PickMPRandomSeeds(mGameObject->mApp, aPlantSeeds, aZombieSeeds, true);
                 if (!aZombieSeeds.empty()) {
                     for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
                         SeedType aSeedType = aZombieSeeds[aPacketIndex - 1];
@@ -757,7 +757,7 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
             if (aPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
                 std::vector<SeedType> aPlantSeeds;
                 std::vector<SeedType> aZombieSeeds;
-                PickMPRandomSeeds(mGameObject.mApp, aPlantSeeds, aZombieSeeds, false);
+                PickMPRandomSeeds(mGameObject->mApp, aPlantSeeds, aZombieSeeds, false);
                 if (!aPlantSeeds.empty()) {
                     for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
                         SeedType aSeedType = aPlantSeeds[aPacketIndex - 1];
