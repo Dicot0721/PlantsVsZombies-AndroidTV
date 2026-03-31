@@ -98,8 +98,6 @@ VSSetupAddonWidget::~VSSetupAddonWidget() {
             mBoard->RemoveWidget(mBalancePatchButton);
         }
     }
-
-    gVSSetupAddonWidget = nullptr;
 }
 
 void VSSetupAddonWidget::Update() {

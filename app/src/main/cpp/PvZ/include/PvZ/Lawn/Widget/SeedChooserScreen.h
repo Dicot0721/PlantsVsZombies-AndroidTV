@@ -27,6 +27,8 @@
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
 
+#include "VSSetupMenu.h"
+
 class Board;
 class LawnApp;
 class SeedBank;

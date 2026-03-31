@@ -113,9 +113,9 @@ public:
     int unkInt297[7];             // 297 ~ 303
     int mInt304;                  // 304
     int unkInt305[11];            // 305 ~ 315
-    bool mBool316;                // 316
-    bool mBool317;                // 317
-    int unkInt318[2];             // 318 ~ 319
+    bool mBool1264;               // 1264
+    bool mBool1265;               // 1265
+    int unkInt318[3];             // 317 ~ 319
     int mInt320;                  // 320
     int unkInt321[3];             // 321 ~ 323
     int mInt324;                  // 324
@@ -123,11 +123,9 @@ public:
     int mInt328;                  // 328
     int unkInt329[3];             // 329 ~ 331
     int mInt332;                  // 332
-    int unkInt333[28];            // 333 ~ 360
-    bool mBoo361;                 // 361
-    bool mBool362;                // 362
-    int unkInt363[161];           // 363 ~ 523
-    int mInt524;                  // 524
+    int unkInt333[3];             // 333 ~ 335
+    // 大小336个整数, 以下是新增成员
+    VSSetupAddonWidget *mAddonWidget;
 
     void GameButtonDown(Sexy::GamepadButton theButton, unsigned int thePlayerIndex, int a4) {
         reinterpret_cast<void (*)(VSSetupMenu *, Sexy::GamepadButton, unsigned int, int)>(VSSetupMenu_GameButtonDownAddr)(this, theButton, thePlayerIndex, a4);
@@ -179,8 +177,6 @@ protected:
 
     void PickBackgroundImmediately();
 };
-
-inline VSSetupAddonWidget *gVSSetupAddonWidget;
 
 inline int gVSSetupRequestState = 0;
 

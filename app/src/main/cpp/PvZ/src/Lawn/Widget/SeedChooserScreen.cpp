@@ -26,7 +26,6 @@
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
-#include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/NetPlay.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
@@ -210,11 +209,12 @@ void SeedChooserScreen::OnStartButton() {
 bool SeedChooserScreen::SeedNotAllowedToPick(SeedType theSeedType) {
     // 解除更多对战场地中的某些植物不能选取的问题，如泳池对战不能选荷叶，屋顶对战不能选花盆
     if (mApp->IsVSMode()) {
-        if (theSeedType == gVSSetupAddonWidget->mBannedSeed[theSeedType].mSeedType) {
+        VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
+        if (theSeedType == addonWidget->mBannedSeed[theSeedType].mSeedType) {
             return true;
         }
         if (theSeedType == SeedType::SEED_INSTANT_COFFEE) {
-            if (mBoard->StageIsNight() || gVSSetupAddonWidget->mBanMode)
+            if (mBoard->StageIsNight() || addonWidget->mBanMode)
                 return true;
         }
         if (mBoard->StageHasPool()) {
@@ -232,7 +232,7 @@ bool SeedChooserScreen::SeedNotAllowedToPick(SeedType theSeedType) {
         if (mBoard->StageHasRoof() && theSeedType == SeedType::SEED_FLOWERPOT) {
             return false;
         }
-        if (gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode && theSeedType == SeedType::SEED_BLOVER) {
+        if (addonWidget->mExtraSeedsMode && theSeedType == SeedType::SEED_BLOVER) {
             return false;
         }
     }
@@ -315,25 +315,26 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
     }
 
     // 禁选模式（BP）
-    if (mApp->IsVSMode() && gVSSetupAddonWidget->mBanMode) {
+    VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
+    if (mApp->IsVSMode() && addonWidget->mBanMode) {
         int x = (aGamepadIndex == 1) ? mCursorPositionX2 : mCursorPositionX1;
         int y = (aGamepadIndex == 1) ? mCursorPositionY2 : mCursorPositionY1;
         SeedType aSeedType = SeedHitTest(x, y);
         if (aSeedType != SEED_NONE && !SeedNotAllowedToPick(aSeedType)) {
-            BannedSeed &aBannedSeed = gVSSetupAddonWidget->mBannedSeed[aSeedType];
+            BannedSeed &aBannedSeed = addonWidget->mBannedSeed[aSeedType];
             aBannedSeed.mSeedType = theChosenSeed.mSeedType;
 
             int aSeedBanned = aBannedSeed.mSeedType;
 
-            gVSSetupAddonWidget->mBannedSeed[aSeedBanned].mX = theChosenSeed.mX;
-            gVSSetupAddonWidget->mBannedSeed[aSeedBanned].mY = theChosenSeed.mY;
-            gVSSetupAddonWidget->mBannedSeed[aSeedBanned].mSeedState = BannedSeedState::SEED_BANNED;
+            addonWidget->mBannedSeed[aSeedBanned].mX = theChosenSeed.mX;
+            addonWidget->mBannedSeed[aSeedBanned].mY = theChosenSeed.mY;
+            addonWidget->mBannedSeed[aSeedBanned].mSeedState = BannedSeedState::SEED_BANNED;
             if (mIsZombieChooser)
-                gVSSetupAddonWidget->mBannedSeed[aSeedBanned].mChosenPlayerIndex = 1;
+                addonWidget->mBannedSeed[aSeedBanned].mChosenPlayerIndex = 1;
 
-            gVSSetupAddonWidget->mSeedsInBothBanned++;
-            if (gVSSetupAddonWidget->mSeedsInBothBanned == gVSSetupAddonWidget->mNumBanPackets) {
-                gVSSetupAddonWidget->mBanMode = false;
+            addonWidget->mSeedsInBothBanned++;
+            if (addonWidget->mSeedsInBothBanned == addonWidget->mNumBanPackets) {
+                addonWidget->mBanMode = false;
                 mBoard->SwitchGamepadControls();
             }
 
@@ -406,10 +407,10 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
     if (mApp->IsVSMode()) {
         OnPlayerPickedSeed(aGamepadIndex);
 
-        if (gVSSetupAddonWidget && gVSSetupAddonWidget->mSeedsInBothBanned > 0 && mSeedsIn1PBank == 4 && !mIsZombieChooser) {
-            gVSSetupAddonWidget->mBanMode = true;
-            gVSSetupAddonWidget->mSeedsInBothBanned = 0;
-            gVSSetupAddonWidget->mNumBanPackets = 2;
+        if (addonWidget->mSeedsInBothBanned > 0 && mSeedsIn1PBank == 4 && !mIsZombieChooser) {
+            addonWidget->mBanMode = true;
+            addonWidget->mSeedsInBothBanned = 0;
+            addonWidget->mNumBanPackets = 2;
             mBoard->SwitchGamepadControls();
         }
     }
@@ -487,7 +488,7 @@ void SeedChooserScreen::DrawPacket(
                 aConvertedGrayness = 55;
         }
 
-        if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBanMode) {
+        if (mApp->mPlayerInfo->mVSBanMode) {
             for (int i = 0; i < NUM_SEEDS_IN_CHOOSER; i++) {
                 if (mChosenSeeds[i].mSeedType == theSeedType && mChosenSeeds[i].mSeedState == ChosenSeedState::SEED_IN_BANK) {
                     aConvertedGrayness = 115;
@@ -543,7 +544,7 @@ void SeedChooserScreen::GetSeedPositionInChooser(int theIndex, int &x, int &y) {
     }
     int aRow = theIndex / NumColumns();
     int aCol = theIndex % NumColumns();
-    bool isExtraSeedsMode = gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode;
+    bool isExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
     if (mIsZombieChooser && aRow == 3 && !isExtraSeedsMode) {
         x = 53 * aCol + 48;
     } else {
@@ -572,8 +573,9 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
         int x = (aGamepadIndex == 1) ? mCursorPositionX2 : mCursorPositionX1;
         int y = (aGamepadIndex == 1) ? mCursorPositionY2 : mCursorPositionY1;
         SeedType aSeedType = SeedHitTest(x, y);
-        for (int i = 0; i < NUM_ZOMBIE_SEED_TYPES; ++i) {
-            if (gVSSetupAddonWidget && aSeedType == gVSSetupAddonWidget->mBannedSeed[i].mSeedType) {
+        VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
+        for (auto &i : addonWidget->mBannedSeed) {
+            if (aSeedType == i.mSeedType) {
                 aTolTip->SetWarningText("本轮已禁用");
             }
         }
@@ -620,7 +622,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
                 aTolTip->SetLabel(aLabel);
             }
         } else {
-            if (gVSSetupAddonWidget && gVSSetupAddonWidget->mBanMode) {
+            if (addonWidget->mBanMode) {
                 if (mChosenSeeds[aSeedType].mSeedState == ChosenSeedState::SEED_IN_CHOOSER) {
                     bool aCanNotBanned = mToolTipSeed1 == SeedType::SEED_INSTANT_COFFEE || mToolTipSeed2 == SeedType::SEED_INSTANT_COFFEE;
                     pvzstl::string str = aCanNotBanned ? "此阶段不允许" : "";
@@ -843,7 +845,7 @@ void SeedChooserScreen::MouseUp(int x, int y) {
 }
 
 int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, SeedDir theMoveDirection) {
-    bool isExtraSeedsMode = gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode;
+    bool isExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
     if (mIsZombieChooser && !isExtraSeedsMode) {
         // 右下角边缘
         if ((theNumSeed == 14 && theMoveDirection == SeedDir::SEED_DIR_DOWN) || //
@@ -936,7 +938,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
 
     TodDrawString(g, aTitleText, aBackgroundImage->mWidth / 2, 114, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aTitleColor, DS_ALIGN_CENTER);
 
-    bool isExtraSeedsMode = gVSSetupAddonWidget && gVSSetupAddonWidget->mExtraSeedsMode;
+    bool isExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
 
     // Calculate seed count
     int aNumSeeds = isExtraSeedsMode ? NUM_ZOMBIE_SEED_IN_CHOOSER - SEED_ZOMBIE_GRAVESTONE : 19;
@@ -1221,10 +1223,8 @@ void SeedChooserScreen::Draw(Graphics *g) {
 }
 
 void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
-    if (!gVSSetupAddonWidget)
-        return;
-
-    if (gVSSetupAddonWidget->mBanMode) {
+    VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
+    if (addonWidget->mBanMode) {
         Graphics aBanGraphics(*g);
         aBanGraphics.mTransX = 0;
         aBanGraphics.mTransY = 0;
@@ -1233,11 +1233,11 @@ void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
         aBanGraphics.DrawString(TodStringTranslate("[VS_UI_BAN_PHASE_BIG]"), 440, 110);
     }
 
-    for (int i = 0; i < NUM_ZOMBIE_SEED_TYPES; i++) {
-        if (gVSSetupAddonWidget->mBannedSeed[i].mSeedState == BannedSeedState::SEED_BANNED) {
-            if ((mIsZombieChooser && gVSSetupAddonWidget->mBannedSeed[i].mChosenPlayerIndex == 1) || (!mIsZombieChooser && gVSSetupAddonWidget->mBannedSeed[i].mChosenPlayerIndex == 0)) {
-                int x = gVSSetupAddonWidget->mBannedSeed[i].mX;
-                int y = gVSSetupAddonWidget->mBannedSeed[i].mY;
+    for (auto &i : addonWidget->mBannedSeed) {
+        if (i.mSeedState == BannedSeedState::SEED_BANNED) {
+            if ((mIsZombieChooser && i.mChosenPlayerIndex == 1) || (!mIsZombieChooser && i.mChosenPlayerIndex == 0)) {
+                int x = i.mX;
+                int y = i.mY;
                 g->DrawImage(*IMAGE_MP_TARGETS_X, x + 5, y + 5);
             }
         }

@@ -286,9 +286,6 @@ public:
     void MakeNewBoard() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_MakeNewBoardAddr)(this);
     }
-    void ShowVSSetupScreen() {
-        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ShowVSSetupScreenAddr)(this);
-    }
     void KillVSSetupScreen() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillVSSetupScreenAddr)(this);
     }
@@ -370,6 +367,7 @@ public:
     void ShowZombieChooserScreen();
     void KillZombieChooserScreen();
     void ShowChallengeScreen(ChallengePage thePage);
+    void ShowVSSetupScreen();
     void PreNewGame(GameMode theGameMode, bool theLookForSavedGame);
     void NewGame();
 

@@ -39,7 +39,7 @@ void VSSetupMenu::_constructor() {
     msNextFirstPick = VSPickTurn::VS_PICK_TURN_ZOMBIE;
 
     // 拓展卡槽,禁选模式 etc.
-    gVSSetupAddonWidget = new VSSetupAddonWidget(this);
+    mAddonWidget = new VSSetupAddonWidget(this);
 
     is1PControllerMoving = false;
     is2PControllerMoving = false;
@@ -49,8 +49,8 @@ void VSSetupMenu::_constructor() {
 }
 
 void VSSetupMenu::_destructor() {
-    if (gVSSetupAddonWidget)
-        gVSSetupAddonWidget->~VSSetupAddonWidget();
+    if (mAddonWidget)
+        mAddonWidget->~VSSetupAddonWidget();
 
     old_VSSetupMenu_Destructor(this);
 }
@@ -119,25 +119,25 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
-                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mExtraPacketsMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraPacketsMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
-                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mExtraSeedsMode) ? "[VS_OPT_ENABLE_EXTRA_SEEDS]" : "[VS_OPT_DISABLE_EXTRA_SEEDS]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraSeedsMode) ? "[VS_OPT_ENABLE_EXTRA_SEEDS]" : "[VS_OPT_DISABLE_EXTRA_SEEDS]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_BanMode: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
-                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mBanMode) ? "[VS_OPT_ENABLE_BAN_MODE]" : "[VS_OPT_DISABLE_BAN_MODE]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mBanMode) ? "[VS_OPT_ENABLE_BAN_MODE]" : "[VS_OPT_DISABLE_BAN_MODE]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_BalancePatch: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
-                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mBalancePatchMode) ? "[VS_OPT_ENABLE_BALANCE_PATCH]" : "[VS_OPT_DISABLE_BALANCE_PATCH]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mBalancePatchMode) ? "[VS_OPT_ENABLE_BALANCE_PATCH]" : "[VS_OPT_DISABLE_BALANCE_PATCH]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
@@ -178,25 +178,25 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
-                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mExtraPacketsMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraPacketsMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
-                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mExtraSeedsMode) ? "[VS_OPT_ENABLE_EXTRA_SEEDS]" : "[VS_OPT_DISABLE_EXTRA_SEEDS]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraSeedsMode) ? "[VS_OPT_ENABLE_EXTRA_SEEDS]" : "[VS_OPT_DISABLE_EXTRA_SEEDS]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_BanMode: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
-                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mBanMode) ? "[VS_OPT_ENABLE_BAN_MODE]" : "[VS_OPT_DISABLE_BAN_MODE]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mBanMode) ? "[VS_OPT_ENABLE_BAN_MODE]" : "[VS_OPT_DISABLE_BAN_MODE]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_BalancePatch: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
-                    pvzstl::string opt = TodStringTranslate((gVSSetupAddonWidget && !gVSSetupAddonWidget->mBalancePatchMode) ? "[VS_OPT_ENABLE_BALANCE_PATCH]" : "[VS_OPT_DISABLE_BALANCE_PATCH]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mBalancePatchMode) ? "[VS_OPT_ENABLE_BALANCE_PATCH]" : "[VS_OPT_DISABLE_BALANCE_PATCH]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
@@ -212,8 +212,8 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
         }
     }
 
-    if (gVSSetupAddonWidget) {
-        gVSSetupAddonWidget->Draw(g);
+    if (mAddonWidget) {
+        mAddonWidget->Draw(g);
     }
 }
 
@@ -316,8 +316,8 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
 }
 
 void VSSetupMenu::Update() {
-    if (gVSSetupAddonWidget)
-        gVSSetupAddonWidget->Update();
+    if (mAddonWidget)
+        mAddonWidget->Update();
 
     drawTipArrowAlphaCounter++;
 
@@ -589,11 +589,11 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT: {
             B1x8_Event *eventButtonInit = static_cast<B1x8_Event *>(event);
-            if (gVSSetupAddonWidget) {
-                gVSSetupAddonWidget->mExtraPacketsMode = eventButtonInit->data1;
-                gVSSetupAddonWidget->mExtraSeedsMode = eventButtonInit->data2;
-                gVSSetupAddonWidget->mBanMode = eventButtonInit->data3;
-                gVSSetupAddonWidget->mBalancePatchMode = eventButtonInit->data4;
+            if (mAddonWidget) {
+                mAddonWidget->mExtraPacketsMode = eventButtonInit->data1;
+                mAddonWidget->mExtraSeedsMode = eventButtonInit->data2;
+                mAddonWidget->mBanMode = eventButtonInit->data3;
+                mAddonWidget->mBalancePatchMode = eventButtonInit->data4;
             }
             mApp->mPlayerInfo->mVSExtraPacketsMode = eventButtonInit->data1;
             mApp->mPlayerInfo->mVSExtraSeedsMode = eventButtonInit->data2;
@@ -632,10 +632,10 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         if (gTcpClientSocket >= 0) {
             B1x8_Event event = {
                 {EventType::EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT},
-                gVSSetupAddonWidget->mExtraPacketsMode,
-                gVSSetupAddonWidget->mExtraSeedsMode,
-                gVSSetupAddonWidget->mBanMode,
-                gVSSetupAddonWidget->mBalancePatchMode,
+                mAddonWidget->mExtraPacketsMode,
+                mAddonWidget->mExtraSeedsMode,
+                mAddonWidget->mBanMode,
+                mAddonWidget->mBalancePatchMode,
             };
             SendEvent(event);
         }
@@ -748,11 +748,11 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 GoToState(VSSetupState::VS_SETUP_STATE_CUSTOM_BATTLE);
 
                 if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
-                    gVSSetupAddonWidget->SetDisable(gVSSetupAddonWidget->mExtraPacketsButton);
-                    gVSSetupAddonWidget->SetDisable(gVSSetupAddonWidget->mExtraSeedsButton);
-                    gVSSetupAddonWidget->SetDisable(gVSSetupAddonWidget->mBanModeButton);
-                    gVSSetupAddonWidget->SetDisable(gVSSetupAddonWidget->mBalancePatchButton);
-                    gVSSetupAddonWidget->mDrawString = false;
+                    mAddonWidget->SetDisable(mAddonWidget->mExtraPacketsButton);
+                    mAddonWidget->SetDisable(mAddonWidget->mExtraSeedsButton);
+                    mAddonWidget->SetDisable(mAddonWidget->mBanModeButton);
+                    mAddonWidget->SetDisable(mAddonWidget->mBalancePatchButton);
+                    mAddonWidget->mDrawString = false;
                     PickBackgroundImmediately();
                 }
                 if (mApp->mPlayerInfo->mVSBanMode) { // 禁选模式下交换双方控制权
@@ -825,7 +825,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
         case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds:   // 拓展选卡
         case VSSetupAddonWidget::VSSetupAddonWidget_BanMode:      // 禁选模式
         case VSSetupAddonWidget::VSSetupAddonWidget_BalancePatch: // 平衡调整
-            gVSSetupAddonWidget->ButtonDepress(theId);
+            mAddonWidget->ButtonDepress(theId);
             break;
         default:
             break;
