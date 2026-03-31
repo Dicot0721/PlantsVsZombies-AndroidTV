@@ -1013,7 +1013,7 @@ bool LawnApp::IsWhackAZombieLevel() {
 }
 
 bool LawnApp::IsVSMode() {
-    return mGameMode == GameMode::GAMEMODE_MP_VS;
+    return mGameMode == GameMode::GAMEMODE_MP_VS || mGameMode == GameMode::GAMEMODE_MP_VS_HIDE;
 }
 
 bool LawnApp::IsCoopMode() {

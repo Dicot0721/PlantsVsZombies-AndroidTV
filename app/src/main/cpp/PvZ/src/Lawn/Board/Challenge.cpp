@@ -317,62 +317,61 @@ void Challenge::DrawArtChallenge(Sexy::Graphics *g) {
 }
 
 PlantingReason Challenge::CanPlantAt(int theGridX, int theGridY, SeedType theSeedType) {
-    // 修复IZ多个蹦极可放置在同一格子内
-    GameMode aGameMode = mApp->mGameMode;
     if (mApp->IsWallnutBowlingLevel()) {
-        if (theGridX > 2) {
-            return PlantingReason::PLANTING_NOT_PASSED_LINE;
-        }
+        return theGridX > 2 ? PLANTING_NOT_PASSED_LINE : PLANTING_OK;
     } else if (mApp->IsIZombieLevel()) {
-        int num = 6;
-        if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_1 || aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_2 || aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_3
-            || aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_4 || aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_5) {
-            num = 4;
+        int aLimit = 6;
+        if (mApp->mGameMode == GAMEMODE_PUZZLE_I_ZOMBIE_1 || mApp->mGameMode == GAMEMODE_PUZZLE_I_ZOMBIE_2 || mApp->mGameMode == GAMEMODE_PUZZLE_I_ZOMBIE_3
+            || mApp->mGameMode == GAMEMODE_PUZZLE_I_ZOMBIE_4 || mApp->mGameMode == GAMEMODE_PUZZLE_I_ZOMBIE_5) {
+            aLimit = 4;
         }
-        if (aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_6 || aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_7 || aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_8
-            || aGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS) {
-            num = 5;
+        if (mApp->mGameMode == GAMEMODE_PUZZLE_I_ZOMBIE_6 || mApp->mGameMode == GAMEMODE_PUZZLE_I_ZOMBIE_7 || mApp->mGameMode == GAMEMODE_PUZZLE_I_ZOMBIE_8
+            || mApp->mGameMode == GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS) {
+            aLimit = 5;
         }
+        // 修复IZ多个蹦极可放置在同一格子内
         if (theSeedType == SeedType::SEED_ZOMBIE_BUNGEE) {
-            if (theGridX < num) {
-                Zombie *aZombie = nullptr;
-                while (mBoard->IterateZombies(aZombie)) {
-                    if (aZombie->mZombieType == ZombieType::ZOMBIE_BUNGEE) {
-                        int aGridX = mBoard->PixelToGridX(aZombie->mX, aZombie->mY);
-                        if (aGridX == theGridX && aZombie->mRow == theGridY) {
-                            return PlantingReason::PLANTING_NOT_HERE;
-                        }
+            Zombie *aZombie = nullptr;
+            while (mBoard->IterateZombies(aZombie)) {
+                if (aZombie->mZombieType == ZombieType::ZOMBIE_BUNGEE) {
+                    int aGridX = mBoard->PixelToGridX(aZombie->mX, aZombie->mY);
+                    if (aGridX == theGridX && aZombie->mRow == theGridY) {
+                        return PlantingReason::PLANTING_NOT_HERE;
                     }
                 }
-                return PlantingReason::PLANTING_OK;
             }
-            return PlantingReason::PLANTING_NOT_HERE;
+            return theGridX < aLimit ? PLANTING_OK : PLANTING_NOT_HERE;
         } else if (IsZombieSeedType(theSeedType)) {
-            if (theGridX >= num) {
-                return PlantingReason::PLANTING_OK;
-            }
-            return PlantingReason::PLANTING_NOT_HERE;
+            return theGridX >= aLimit ? PLANTING_OK : PLANTING_NOT_HERE;
         }
     } else if (mApp->IsArtChallenge()) {
-        SeedType artChallengeSeed = GetArtChallengeSeed(theGridX, theGridY);
-        if (artChallengeSeed != SeedType::SEED_NONE && artChallengeSeed != theSeedType && theSeedType != SeedType::SEED_LILYPAD && theSeedType != SeedType::SEED_PUMPKINSHELL) {
-            return PlantingReason::PLANTING_NOT_ON_ART;
+        SeedType anArtSeed = GetArtChallengeSeed(theGridX, theGridY);
+        if (anArtSeed != SeedType::SEED_NONE && anArtSeed != theSeedType && theSeedType != SeedType::SEED_LILYPAD && theSeedType != SeedType::SEED_PUMPKINSHELL) {
+            return PLANTING_NOT_ON_ART;
         }
-        if (aGameMode == GameMode::GAMEMODE_CHALLENGE_ART_CHALLENGE_WALLNUT) {
-            if (theGridX == 4 && theGridY == 1) {
-                return PlantingReason::PLANTING_NOT_HERE;
-            }
-            if (theGridX == 6 && theGridY == 1) {
-                return PlantingReason::PLANTING_NOT_HERE;
+        if (mApp->mGameMode == GAMEMODE_CHALLENGE_ART_CHALLENGE_WALLNUT) {
+            if ((theGridX == 4 || theGridX == 6) && theGridY == 1) {
+                return PLANTING_NOT_HERE;
             }
         }
     } else if (mApp->IsFinalBossLevel() && theGridX >= 8) {
-        return PlantingReason::PLANTING_NOT_HERE;
-    } else if (aGameMode == GameMode::GAMEMODE_MP_VS_HIDE || aGameMode == GameMode::GAMEMODE_MP_VS) {
+        return PLANTING_NOT_HERE;
+    } else if (mApp->IsVSMode()) {
         if (IsMPSeedType(theSeedType)) {
-            if (theGridX > 5 || theSeedType == SeedType::SEED_ZOMBIE_BUNGEE)
-                return PlantingReason::PLANTING_OK;
-            return PlantingReason::PLANTING_NOT_PASSED_LINE_VS;
+            return (theGridX > 5 || theSeedType == SeedType::SEED_ZOMBIE_BUNGEE) ? PLANTING_OK : PLANTING_NOT_PASSED_LINE_VS;
+
+            ZombieType aZombieType = Challenge::IZombieSeedTypeToZombieType(theSeedType);
+            if ((!Challenge::IsMPZombieTypeCanGoInPool(aZombieType)) && mBoard->mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
+                return PLANTING_ONLY_ON_GROUND; // 部分僵尸类型禁止放置在水路
+            } else if ((aZombieType == ZombieType::ZOMBIE_SNORKEL || aZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER) && mBoard->mPlantRow[theGridY] != PlantRowType::PLANTROW_POOL) {
+                return PLANTING_ONLY_IN_POOL; // 潜水僵尸和海豚骑士僵尸禁止放置在非水路
+            }
+
+            if ((theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || theSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)) {
+                if (isKeyboardTwoPlayerMode)
+                    return PlantingReason::PLANTING_OK;
+                return PlantingReason::PLANTING_NOT_HERE;
+            }
         }
         if (theSeedType == SeedType::SEED_GRAVEBUSTER) {
             if (mBoard->GetGridItemAt(GridItemType::GRIDITEM_GRAVESTONE, theGridX, theGridY) == nullptr)

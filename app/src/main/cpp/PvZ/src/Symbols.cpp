@@ -651,6 +651,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN5Plant14BlowAwayFliersEii", Plant_BlowAwayFliersAddr);
     libGameMain.GetSymbol("_ZN5Plant13UpdateChomperEv", Plant_UpdateChomperAddr);
     libGameMain.GetSymbol("_ZN5Plant12UpdateSquashEv", Plant_UpdateSquashAddr);
+    libGameMain.GetSymbol("_ZN5Plant14IsUpgradableToE8SeedType", Plant_IsUpgradableToAddr);
 
 
     libGameMain.GetSymbol("_ZN10Projectile6UpdateEv", Projectile_UpdateAddr);
@@ -1199,8 +1200,6 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy12IMAGE_SHOVELE", Sexy_IMAGE_SHOVEL_Addr);
     libGameMain.GetSymbol("_ZN4Sexy19IMAGE_ZEN_MONEYSIGNE", Sexy_IMAGE_ZEN_MONEYSIGN_Addr);
     libGameMain.GetSymbol("_ZN4Sexy26IMAGE_HEAVY_WEAPON_OVERLAYE", Sexy_IMAGE_HEAVY_WEAPON_OVERLAY_Addr);
-    libGameMain.GetSymbol("_ZN4Sexy33IMAGE_SEEDCHOOSER_BUTTON_DISABLEDE", Sexy_IMAGE_SEEDCHOOSER_BUTTON_DISABLED_Addr);
-    libGameMain.GetSymbol("_ZN4Sexy24IMAGE_SEEDCHOOSER_BUTTONE", Sexy_IMAGE_SEEDCHOOSER_BUTTON_Addr);
     libGameMain.GetSymbol("_ZN4Sexy22IMAGE_GAMEPAD_IMAGE_P1E", Sexy_IMAGE_GAMEPAD_IMAGE_P1_Addr);
     libGameMain.GetSymbol("_ZN4Sexy23IMAGE_ZOMBIE_SEEDPACKETE", Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr);
     libGameMain.GetSymbol("_ZN4Sexy14IMAGE_SEEDBANKE", Sexy_IMAGE_SEEDBANK_Addr);
@@ -1288,7 +1287,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy26IMAGE_CHALLENGE_BACKGROUNDE", Sexy::IMAGE_CHALLENGE_BACKGROUND);
     libGameMain.GetSymbol("_ZN4Sexy12IMAGE_TROPHYE", Sexy::IMAGE_TROPHY);
     libGameMain.GetSymbol("_ZN4Sexy23IMAGE_DLG_SELECTORFRAMEE", Sexy::IMAGE_DLG_SELECTORFRAME);
-    Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW = Sexy_IMAGE_SEEDCHOOSER_BUTTON_Addr;
+    libGameMain.GetSymbol("_ZN4Sexy33IMAGE_SEEDCHOOSER_BUTTON_DISABLEDE", Sexy::IMAGE_SEEDCHOOSER_BUTTON_DISABLED);
+    libGameMain.GetSymbol("_ZN4Sexy24IMAGE_SEEDCHOOSER_BUTTONE", Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
     libGameMain.GetSymbol("_ZN4Sexy16IMAGE_TOMBSTONESE", Sexy::IMAGE_TOMBSTONES);
     libGameMain.GetSymbol("_ZN4Sexy22IMAGE_TOMBSTONE_MOUNDSE", Sexy::IMAGE_TOMBSTONE_MOUNDS);
     libGameMain.GetSymbol("_ZN4Sexy19IMAGE_VS_STONE_DIRTE", Sexy::IMAGE_VS_STONE_DIRT);

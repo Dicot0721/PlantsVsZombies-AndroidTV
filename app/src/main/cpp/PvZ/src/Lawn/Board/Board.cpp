@@ -412,28 +412,198 @@ void Board::AddDeathMoney(int theAmount) {
     }
 }
 
+bool Board::IsIceAt(int theGridX, int theGridY) {
+    if (mIceTimer[theGridY] == 0 || mIceMinX[theGridY] > 750)
+        return false;
+
+    return theGridX >= PixelToGridXKeepOnBoard(mIceMinX[theGridY] + 12, 0);
+}
+
 PlantingReason Board::CanPlantAt(int theGridX, int theGridY, SeedType theSeedType) {
     // 自由种植！
     if (FreePlantAt) {
         return PlantingReason::PLANTING_OK;
     }
 
-    if (mApp->IsVSMode()) {
-        ZombieType aZombieType = Challenge::IZombieSeedTypeToZombieType(theSeedType);
-        if ((!Challenge::IsMPZombieTypeCanGoInPool(aZombieType)) && mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
-            return PlantingReason::PLANTING_ONLY_ON_GROUND; // 部分僵尸类型禁止放置在水路
-        } else if ((aZombieType == ZombieType::ZOMBIE_SNORKEL || aZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER) && mPlantRow[theGridY] != PlantRowType::PLANTROW_POOL) {
-            return PlantingReason::PLANTING_ONLY_IN_POOL; // 潜水僵尸和海豚骑士僵尸禁止放置在非水路
+    // 目标位置不在场地内，则返回“不能种在那里”
+    if (theGridX < 0 || theGridX >= MAX_GRID_SIZE_X || theGridY < 0 || theGridY >= MAX_GRID_SIZE_Y) {
+        return PlantingReason::PLANTING_NOT_HERE;
+    }
+
+    // 从关卡玩法上，判断能否种植
+    PlantingReason aReason = mChallenge->CanPlantAt(theGridX, theGridY, theSeedType);
+    if (aReason != PlantingReason::PLANTING_OK || Challenge::IsZombieSeedType(theSeedType)) {
+        return aReason;
+    }
+
+    PlantsOnLawn aPlantOnLawn;
+    GetPlantsOnLawn(theGridX, theGridY, &aPlantOnLawn);
+    if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN) {
+        if (aPlantOnLawn.mUnderPlant || aPlantOnLawn.mPumpkinPlant || aPlantOnLawn.mFlyingPlant || aPlantOnLawn.mNormalPlant) {
+            return PlantingReason::PLANTING_NOT_HERE;
+        }
+        if (mApp->mZenGarden->mGardenType == GARDEN_AQUARIUM && !Plant::IsAquatic(theSeedType)) {
+            return PlantingReason::PLANTING_NOT_ON_WATER;
         }
 
-        if ((theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || theSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)) {
-            if (isKeyboardTwoPlayerMode)
-                return PlantingReason::PLANTING_OK;
+        return PlantingReason::PLANTING_OK;
+    }
+
+    // 墓碑吞噬者只能种植在墓碑上
+    bool aHasGrave = GetGraveStoneAt(theGridX, theGridY);
+    if (theSeedType == SeedType::SEED_GRAVEBUSTER) {
+        if (aPlantOnLawn.mNormalPlant) {
             return PlantingReason::PLANTING_NOT_HERE;
+        }
+
+        return aHasGrave ? PlantingReason::PLANTING_OK : PlantingReason::PLANTING_ONLY_ON_GRAVES;
+    }
+    if (theSeedType == SeedType::SEED_INSTANT_COFFEE) {
+        if (aPlantOnLawn.mFlyingPlant) {
+            return PlantingReason::PLANTING_NOT_HERE;
+        }
+
+        if (!aPlantOnLawn.mNormalPlant || !aPlantOnLawn.mNormalPlant->mIsAsleep || aPlantOnLawn.mNormalPlant->mWakeUpCounter > 0
+            || aPlantOnLawn.mNormalPlant->mOnBungeeState == PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE) {
+            return PlantingReason::PLANTING_NEEDS_SLEEPING;
+        }
+
+        return PlantingReason::PLANTING_OK;
+    }
+    // 非墓碑吞噬者且非飞行植物，则不能种在墓碑上
+    if (aHasGrave) {
+        return Plant::IsFlying(theSeedType) ? PlantingReason::PLANTING_OK : PlantingReason::PLANTING_NOT_ON_GRAVE;
+    }
+
+    Plant *aUnderPlant = aPlantOnLawn.mUnderPlant;
+    bool aHasLilypad, aHasFlowerPot;
+    if (!aUnderPlant || aUnderPlant->mOnBungeeState == PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE) {
+        aHasLilypad = false;
+        aHasFlowerPot = false;
+    } else {
+        aHasLilypad = aUnderPlant->mSeedType == SeedType::SEED_LILYPAD;
+        aHasFlowerPot = aUnderPlant->mSeedType == SeedType::SEED_FLOWERPOT;
+    }
+    // 部分情况下的格子中不能种植植物
+    if (GetCraterAt(theGridX, theGridY)) {
+        return PlantingReason::PLANTING_NOT_ON_CRATER;
+    }
+    if (GetScaryPotAt(theGridX, theGridY) || IsIceAt(theGridX, theGridY)) {
+        return PlantingReason::PLANTING_NOT_HERE;
+    }
+    GridSquareType aGridSquare = mGridSquareType[theGridX][theGridY];
+    if (aGridSquare == GridSquareType::GRIDSQUARE_DIRT || aGridSquare == GridSquareType::GRIDSQUARE_NONE) {
+        return PlantingReason::PLANTING_NOT_HERE;
+    }
+    // 水生植物只能种在水上
+    Plant *aNormalPlant = aPlantOnLawn.mNormalPlant;
+    if (theSeedType == SeedType::SEED_LILYPAD || theSeedType == SeedType::SEED_TANGLEKELP || theSeedType == SeedType::SEED_SEASHROOM) {
+        if (!IsPoolSquare(theGridX, theGridY)) {
+            return PlantingReason::PLANTING_ONLY_IN_POOL;
+        }
+
+        return (aNormalPlant || aUnderPlant) ? PlantingReason::PLANTING_NOT_HERE : PlantingReason::PLANTING_OK;
+    }
+    if (Plant::IsFlying(theSeedType)) {
+        return aPlantOnLawn.mFlyingPlant ? PlantingReason::PLANTING_NOT_HERE : PlantingReason::PLANTING_OK;
+    }
+    // 地刺/地刺王只能种在坚固的地面
+    if (theSeedType == SeedType::SEED_SPIKEWEED || theSeedType == SeedType::SEED_SPIKEROCK) {
+        if (aGridSquare == GridSquareType::GRIDSQUARE_POOL || StageHasRoof() || aUnderPlant) {
+            return PlantingReason::PLANTING_NEEDS_GROUND;
+        }
+    }
+    // 非水生植物不能种在水面上（南瓜头可以种在香蒲上）
+    Plant *aPumpkinPlant = aPlantOnLawn.mPumpkinPlant;
+    if (aGridSquare == GridSquareType::GRIDSQUARE_POOL && !aHasLilypad && theSeedType != SeedType::SEED_CATTAIL) {
+        if (!aNormalPlant || aNormalPlant->mSeedType != SeedType::SEED_CATTAIL || theSeedType != SeedType::SEED_PUMPKINSHELL) {
+            return PlantingReason::PLANTING_NOT_ON_WATER;
+        }
+    }
+    // 花盆的种植条件
+    if (theSeedType == SeedType::SEED_FLOWERPOT) {
+        return (aNormalPlant || aUnderPlant || aPumpkinPlant) ? PlantingReason::PLANTING_NOT_HERE : PlantingReason::PLANTING_OK;
+    }
+    // 屋顶种植需要花盆
+    if (StageHasRoof() && !aHasFlowerPot) {
+        return PlantingReason::PLANTING_NEEDS_POT;
+    }
+    // 南瓜头的种植条件
+    bool aAidPurchased = mApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_FIRSTAID] > 0;
+    if (theSeedType == SeedType::SEED_PUMPKINSHELL) {
+        // 不可种植在玉米加农炮上
+        if (aNormalPlant && aNormalPlant->mSeedType == SeedType::SEED_COBCANNON) {
+            return PlantingReason::PLANTING_NOT_HERE;
+        }
+        // 无南瓜头时，可以种植南瓜头
+        if (!aPumpkinPlant) {
+            return PlantingReason::PLANTING_OK;
+        }
+        // 南瓜头的坚果包扎术
+        if (aAidPurchased && aPumpkinPlant->mPlantHealth < aPumpkinPlant->mPlantMaxHealth * 2 / 3 && aPumpkinPlant->mSeedType == SeedType::SEED_PUMPKINSHELL
+            && aPumpkinPlant->mOnBungeeState != PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE) {
+            return PlantingReason::PLANTING_OK;
+        }
+
+        return PlantingReason::PLANTING_NOT_HERE;
+    }
+    // 土豆地雷只能种在陆地上
+    if (aHasLilypad && theSeedType == SeedType::SEED_POTATOMINE) {
+        return PlantingReason::PLANTING_ONLY_ON_GROUND;
+    }
+
+    if (aUnderPlant) {
+        // 香蒲对底端植物的紫卡升级
+        if (theSeedType == SeedType::SEED_CATTAIL) {
+            if (aNormalPlant) {
+                return PlantingReason::PLANTING_NOT_HERE;
+            }
+            if (aUnderPlant->IsUpgradableTo(theSeedType) && aUnderPlant->mOnBungeeState != PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE) {
+                return PlantingReason::PLANTING_OK;
+            }
+            if (Plant::IsUpgrade(theSeedType)) {
+                return PlantingReason::PLANTING_NEEDS_UPGRADE;
+            }
+        } else {
+            // 模仿中的模仿者不可作为花盆或睡莲
+            if (aUnderPlant->mSeedType == SeedType::SEED_IMITATER) {
+                return PlantingReason::PLANTING_NOT_HERE;
+            }
         }
     }
 
-    return old_Board_CanPlantAt(this, theGridX, theGridY, theSeedType);
+    // 一般紫卡植物的更迭判断
+    if (aNormalPlant) {
+        // 紫卡植物的升级
+        if (aNormalPlant->IsUpgradableTo(theSeedType) && aNormalPlant->mOnBungeeState != PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE) {
+            return PlantingReason::PLANTING_OK;
+        }
+        if (Plant::IsUpgrade(theSeedType)) {
+            return PlantingReason::PLANTING_NEEDS_UPGRADE;
+        }
+
+        // 坚果包扎术
+        if ((theSeedType == SeedType::SEED_WALLNUT || theSeedType == SeedType::SEED_TALLNUT) && aAidPurchased) {
+            if (aNormalPlant->mPlantHealth < aNormalPlant->mPlantMaxHealth * 2 / 3 && aNormalPlant->mSeedType == theSeedType
+                && aNormalPlant->mOnBungeeState != PlantOnBungeeState::GETTING_GRABBED_BY_BUNGEE) {
+                return PlantingReason::PLANTING_OK;
+            }
+        }
+
+        return PlantingReason::PLANTING_NOT_HERE;
+    }
+
+    // 免费种植模式下紫卡的额外判断
+    if (!mApp->mEasyPlantingCheat && Plant::IsUpgrade(theSeedType)) {
+        return PlantingReason::PLANTING_NEEDS_UPGRADE;
+    }
+    if (theSeedType == SeedType::SEED_COBCANNON && !IsValidCobCannonSpot(theGridX, theGridY)) {
+        return PlantingReason::PLANTING_NEEDS_UPGRADE;
+    } else if (theSeedType == SeedType::SEED_CATTAIL && aGridSquare != GridSquareType::GRIDSQUARE_POOL) {
+        return PlantingReason::PLANTING_NOT_HERE;
+    }
+
+    return PlantingReason::PLANTING_OK;
 }
 
 
@@ -1139,6 +1309,8 @@ size_t Board::getServerEventSize(EventType type) {
             return sizeof(U8x4U16Buf32x2_Event);
         case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD:
             return sizeof(U16Buf32Buf32_Event);
+        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE:
+            return sizeof(U16U16U16Buf32Buf32_Event);
         case EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT:
             return sizeof(U16Buf32Buf32_Event);
 
@@ -1515,6 +1687,22 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             aZombie->mPosY = aZombie->GetPosYBasedOnRow(aRow);
             aZombie->mRenderOrder = Board::MakeRenderOrder(RENDER_LAYER_GRAVE_STONE, aRow, 7);
 
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE: {
+            U16Buf32Buf32_Event *eventBungeeDropZombie = static_cast<U16Buf32Buf32_Event *>(event);
+            int gridX = eventBungeeDropZombie->data2.u8x4.u8_1;
+            int gridY = eventBungeeDropZombie->data2.u8x4.u8_2;
+            uint16_t serverBungeeZombieID = eventBungeeDropZombie->data2.u16x2.u16_1;
+            uint16_t clientBungeeZombieID;
+            uint16_t serverDroppedZombieID = eventBungeeDropZombie->data2.u16x2.u16_2;
+            uint16_t clientDroppedZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverBungeeZombieID, clientBungeeZombieID) && homura::FindInMap(serverZombieIDMap, serverDroppedZombieID, clientDroppedZombieID)) {
+                Zombie *bungeeZombie = mZombies.DataArrayGet(clientBungeeZombieID);
+                Zombie *droppedZombie = mZombies.DataArrayGet(clientDroppedZombieID);
+                gTcpConnected = false;
+                bungeeZombie->BungeeDropZombie(droppedZombie, gridX, gridY);
+                gTcpConnected = true;
+            }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT: {
             U16Buf32Buf32_Event *eventZombieAddByCheat = static_cast<U16Buf32Buf32_Event *>(event);
@@ -4730,6 +4918,14 @@ GridItem *Board::GetGridItemAt(GridItemType theGridItemType, int theGridX, int t
         }
     }
     return nullptr;
+}
+
+GridItem *Board::GetCraterAt(int theGridX, int theGridY) {
+    return GetGridItemAt(GridItemType::GRIDITEM_CRATER, theGridX, theGridY);
+}
+
+GridItem *Board::GetGraveStoneAt(int theGridX, int theGridY) {
+    return GetGridItemAt(GridItemType::GRIDITEM_GRAVESTONE, theGridX, theGridY);
 }
 
 GridItem *Board::GetLadderAt(int theGridX, int theGridY) {

@@ -224,14 +224,8 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
 
     old_ChallengeScreen_ChallengeScreen(this, theApp, thePage);
 
-    mBackButton = MakeNewButton(ChallengeScreen::ChallengeScreen_Back,
-                                this,
-                                this,
-                                "[CLOSE]",
-                                nullptr,
-                                *Sexy_IMAGE_SEEDCHOOSER_BUTTON_DISABLED_Addr,
-                                *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW,
-                                *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
+    mBackButton = MakeNewButton(
+        ChallengeScreen::ChallengeScreen_Back, this, this, "[CLOSE]", nullptr, *Sexy::IMAGE_SEEDCHOOSER_BUTTON_DISABLED, *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW, *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
     mBackButton->mTextOffsetX = -2;
     mBackButton->mTextOffsetY = -4;
     mBackButton->mTextDownOffsetX = 1;

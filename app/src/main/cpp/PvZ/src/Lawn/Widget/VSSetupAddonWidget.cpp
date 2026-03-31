@@ -62,7 +62,7 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
                                 theVSSetupMenu,
                                 "[BACK_TO_MODE_SELECT]",
                                 nullptr,
-                                *Sexy_IMAGE_SEEDCHOOSER_BUTTON_DISABLED_Addr,
+                                *Sexy::IMAGE_SEEDCHOOSER_BUTTON_DISABLED,
                                 *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW,
                                 *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
     mBackButton->mTextOffsetX = -2;

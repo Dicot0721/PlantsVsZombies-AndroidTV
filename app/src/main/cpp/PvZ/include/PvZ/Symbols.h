@@ -653,6 +653,7 @@ inline void *Plant_IceZombiesAddr;
 inline void *Plant_BlowAwayFliersAddr;
 inline void *Plant_UpdateChomperAddr;
 inline void *Plant_UpdateSquashAddr;
+inline void *Plant_IsUpgradableToAddr;
 
 
 inline void *Projectile_UpdateAddr;
@@ -1214,8 +1215,6 @@ inline Sexy::Image **Sexy_IMAGE_BUTTER_ICON_Addr;
 inline Sexy::Image **Sexy_IMAGE_SHOVEL_Addr;
 inline Sexy::Image **Sexy_IMAGE_ZEN_MONEYSIGN_Addr;
 inline Sexy::Image **Sexy_IMAGE_HEAVY_WEAPON_OVERLAY_Addr;
-inline Sexy::Image **Sexy_IMAGE_SEEDCHOOSER_BUTTON_DISABLED_Addr;
-inline Sexy::Image **Sexy_IMAGE_SEEDCHOOSER_BUTTON_Addr;
 inline Sexy::Image **Sexy_IMAGE_SHOVEL_HI_RES_Addr;
 inline Sexy::Image **Sexy_IMAGE_GAMEPAD_IMAGE_P1_Addr;
 inline Sexy::Image **Sexy_IMAGE_SEEDBANK_Addr;
@@ -1305,6 +1304,7 @@ inline Image **IMAGE_MP_TARGETS_X;
 inline Image **IMAGE_CHALLENGE_BACKGROUND;
 inline Image **IMAGE_TROPHY;
 inline Image **IMAGE_DLG_SELECTORFRAME;
+inline Image **IMAGE_SEEDCHOOSER_BUTTON_DISABLED;
 inline Image **IMAGE_SEEDCHOOSER_BUTTON_GLOW;
 inline Image **IMAGE_TOMBSTONES;
 inline Image **IMAGE_TOMBSTONE_MOUNDS;

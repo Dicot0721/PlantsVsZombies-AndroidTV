@@ -288,6 +288,8 @@ public:
     int PixelToGridY(int theX, int theY) {
         return reinterpret_cast<int (*)(Board *, int, int)>(Board_PixelToGridYAddr)(this, theX, theY);
     }
+    GridItem *GetCraterAt(int theGridX, int theGridY);
+    GridItem *GetGraveStoneAt(int theGridX, int theGridY);
     GridItem *GetLadderAt(int theGridX, int theGridY);
     GridItem *GetScaryPotAt(int theGridX, int theGridY);
     GridItem *GetGridItemAt(GridItemType theGridItemType, int theGridX, int theGridY);
@@ -475,6 +477,9 @@ public:
     ZombieType PickGraveRisingZombieType(int theZombiePoints) {
         return reinterpret_cast<ZombieType (*)(Board *, int)>(Board_PickGraveRisingZombieTypeAddr)(this, theZombiePoints);
     }
+    bool IsValidCobCannonSpot(int theGridX, int theGridY) {
+        return reinterpret_cast<bool (*)(Board *, int, int)>(Board_IsValidCobCannonSpotAddr)(this, theGridX, theGridY);
+    }
 
     Board(LawnApp *theApp) = delete;
     ~Board() = delete;
@@ -491,6 +496,7 @@ public:
     Plant *AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int thePlayerIndex, bool theIsDoEffect);
     void AddSunMoney(int theAmount, int thePlayerIndex);
     void AddDeathMoney(int theAmount);
+    bool IsIceAt(int theGridX, int theGridY);
     PlantingReason CanPlantAt(int theGridX, int theGridY, SeedType theSeedType);
     bool PlantingRequirementsMet(SeedType theSeedType);
     Plant *GetFlowerPotAt(int theGridX, int theGridY);
@@ -695,8 +701,6 @@ inline void (*old_Board_DrawDebugText)(Board *board, Sexy::Graphics *graphics);
 inline void (*old_Board_DrawDebugObjectRects)(Board *board, Sexy::Graphics *graphics);
 
 inline int (*old_Board_GetCurrentPlantCost)(Board *board, SeedType a2, SeedType a3);
-
-inline PlantingReason (*old_Board_CanPlantAt)(Board *board, int theGridX, int theGridY, SeedType seedType);
 
 inline bool (*old_Board_PlantingRequirementsMet)(Board *board, SeedType theSeedType);
 

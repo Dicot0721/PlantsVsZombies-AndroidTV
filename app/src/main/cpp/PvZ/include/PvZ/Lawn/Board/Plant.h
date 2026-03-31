@@ -245,9 +245,11 @@ public:
     void LaunchStarFruit() {
         reinterpret_cast<void (*)(Plant *)>(Plant_LaunchStarFruitAddr)(this);
     }
-
     void BlowAwayFliers(int theX, int theRow) {
         reinterpret_cast<void (*)(Plant *, int, int)>(Plant_BlowAwayFliersAddr)(this, theX, theRow);
+    }
+    bool IsUpgradableTo(SeedType theUpgradedType) {
+        return reinterpret_cast<bool (*)(Plant *, SeedType)>(Plant_IsUpgradableToAddr)(this, theUpgradedType);
     }
 
     void PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int a6);

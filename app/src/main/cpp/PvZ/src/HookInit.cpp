@@ -111,7 +111,7 @@ void InitHookFunction() {
     homura::HookFunction(Board_AddPlantAddr, &Board::AddPlant, &old_Board_AddPlant);
     homura::HookFunction(Board_AddSunMoneyAddr, &Board::AddSunMoney, &old_Board_AddSunMoney);
     homura::HookFunction(Board_AddDeathMoneyAddr, &Board::AddDeathMoney, &old_Board_AddDeathMoney);
-    homura::HookFunction(Board_CanPlantAtAddr, &Board::CanPlantAt, &old_Board_CanPlantAt);
+    homura::HookFunction(Board_CanPlantAtAddr, &Board::CanPlantAt, nullptr);
     homura::HookFunction(Board_PlantingRequirementsMetAddr, &Board::PlantingRequirementsMet, &old_Board_PlantingRequirementsMet);
     homura::HookFunction(Board_GetFlowerPotAtAddr, &Board::GetFlowerPotAt, nullptr);
     homura::HookFunction(Board_GetPumpkinAtAddr, &Board::GetPumpkinAt, nullptr);
@@ -404,6 +404,7 @@ void InitHookFunction() {
     homura::HookFunction(Zombie_GetBobsledPositionAddr, &Zombie::GetBobsledPosition, &old_Zombie_GetBobsledPosition);
     homura::HookFunction(Zombie_SquishAllInSquareAddr, &Zombie::SquishAllInSquare, &old_Zombie_SquishAllInSquare);
     homura::HookFunction(Zombie_StopEatingAddr, &Zombie::StopEating, nullptr);
+    homura::HookFunction(Zombie_BungeeDropZombieAddr, &Zombie::BungeeDropZombie, nullptr);
     homura::HookFunction(Zombie_PickRandomSpeedAddr, &Zombie::PickRandomSpeed, nullptr);
     homura::HookFunction(Zombie_UpdateZombieWalkingAddr, &Zombie::UpdateZombieWalking, nullptr);
     homura::HookFunction(Zombie_UpdateDamageStatesAddr, &Zombie::UpdateDamageStates, nullptr);

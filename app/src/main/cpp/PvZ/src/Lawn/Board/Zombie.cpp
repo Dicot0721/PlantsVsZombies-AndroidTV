@@ -110,7 +110,14 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
         SetZombatarReanim();
     }
 
-    if ((mBoard && mBoard->mPlantRow[mRow] == PlantRowType::PLANTROW_POOL) && GetZombieDefinition(theType).mReanimationType != REANIM_ZOMBIE) {
+    // 为其余位于水路的僵尸添加鸭子救生圈
+    if ((mBoard && mBoard->mPlantRow[mRow] == PlantRowType::PLANTROW_POOL)) {
+        if (GetZombieDefinition(theType).mReanimationType == REANIM_ZOMBIE) // 普通僵尸类不绘制
+            return;
+
+        if (mZombieType == ZombieType::ZOMBIE_SNORKEL || mZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER) // 水生僵尸不绘制
+            return;
+
         int offsetX = 20;
         int offsetY = -8;
         float scale = 1.0f;
@@ -455,13 +462,14 @@ void Zombie::UpdateZombieJackInTheBox() {
 
 
 void Zombie::UpdateZombiePolevaulter() {
-    if (mZombiePhase == PHASE_POLEVAULTER_PRE_VAULT && mHasHead && mZombieHeight == HEIGHT_ZOMBIE_NORMAL) {
-        Plant *plant = FindPlantTarget(ATTACKTYPE_VAULT);
-        if (plant != nullptr) {
-            if (mBoard->GetLadderAt(plant->mPlantCol, plant->mRow) != nullptr) {
-                if (mBoard->GridToPixelX(plant->mPlantCol, plant->mRow) + 40 > mPosX && mZombieHeight == HEIGHT_ZOMBIE_NORMAL && mUseLadderCol != plant->mPlantCol) {
-                    mZombieHeight = HEIGHT_UP_LADDER;
-                    mUseLadderCol = plant->mPlantCol;
+    if (mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT && mHasHead && mZombieHeight == ZombieHeight::HEIGHT_ZOMBIE_NORMAL) {
+        Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
+        if (aPlant) {
+            if (mBoard->GetLadderAt(aPlant->mPlantCol, aPlant->mRow)) {
+                float aPlantX = mBoard->GridToPixelX(aPlant->mPlantCol, aPlant->mRow) + 40;
+                if (aPlantX > mPosX && mZombieHeight == ZombieHeight::HEIGHT_ZOMBIE_NORMAL && mUseLadderCol != aPlant->mPlantCol) {
+                    mZombieHeight = ZombieHeight::HEIGHT_UP_LADDER;
+                    mUseLadderCol = aPlant->mPlantCol;
                 }
                 return;
             }
@@ -470,11 +478,12 @@ void Zombie::UpdateZombiePolevaulter() {
                 return;
             }
 
-            mZombiePhase = PHASE_POLEVAULTER_IN_VAULT;
-            PlayZombieReanim("anim_jump", REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
-            Reanimation *aReanim = mApp->ReanimationGet(mBodyReanimID);
-            float aAnimDuration = aReanim->mFrameCount / aReanim->mAnimRate * 100.0f;
-            int aJumpDistance = mX - plant->mX - 80;
+            mZombiePhase = ZombiePhase::PHASE_POLEVAULTER_IN_VAULT;
+            PlayZombieReanim("anim_jump", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
+
+            Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+            float aAnimDuration = aBodyReanim->mFrameCount / aBodyReanim->mAnimRate * 100.0f;
+            int aJumpDistance = mX - aPlant->mX - 80;
             if (mApp->IsWallnutBowlingLevel()) {
                 aJumpDistance = 0;
             }
@@ -491,55 +500,50 @@ void Zombie::UpdateZombiePolevaulter() {
             }
         }
 
-
-        if (mApp->IsIZombieLevel() && mBoard->mChallenge->IZombieGetBrainTarget(this) != nullptr) {
-            mZombiePhase = PHASE_POLEVAULTER_POST_VAULT;
+        if (mApp->IsIZombieLevel() && mBoard->mChallenge->IZombieGetBrainTarget(this)) {
+            mZombiePhase = ZombiePhase::PHASE_POLEVAULTER_POST_VAULT;
             StartWalkAnim(0);
-            return;
         }
-    } else if (mZombiePhase == PHASE_POLEVAULTER_IN_VAULT) {
-        Reanimation *aReanim2 = mApp->ReanimationGet(mBodyReanimID);
-        bool flag = false;
-        if (aReanim2->mAnimTime > 0.6f && aReanim2->mAnimTime <= 0.7f) {
-            Plant *plant2 = FindPlantTarget(ATTACKTYPE_VAULT);
-            if (plant2 != nullptr && plant2->mSeedType == SEED_TALLNUT) {
-                mApp->PlayFoley(FOLEY_BONK);
-                flag = true;
-                mApp->AddTodParticle(plant2->mX + 60, plant2->mY - 20, mRenderOrder + 1, PARTICLE_TALL_NUT_BLOCK);
-                mPosX = plant2->mX;
+    } else if (mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_IN_VAULT) {
+        Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+
+        bool aJumpEnds = false;
+        if (aBodyReanim->mAnimTime > 0.6f && aBodyReanim->mAnimTime <= 0.7f) {
+            Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
+            if (aPlant && aPlant->mSeedType == SeedType::SEED_TALLNUT) {
+                mApp->PlayFoley(FoleyType::FOLEY_BONK);
+                aJumpEnds = true;
+                mApp->AddTodParticle(aPlant->mX + 60, aPlant->mY - 20, mRenderOrder + 1, ParticleEffect::PARTICLE_TALL_NUT_BLOCK);
+
+                mZombieHeight = ZombieHeight::HEIGHT_FALLING;
+                mPosX = aPlant->mX;
                 mPosY -= 30.0f;
-                mZombieHeight = HEIGHT_FALLING;
             }
         }
 
-        if (aReanim2->mLoopCount > 0) {
-            flag = true;
+        if (aBodyReanim->mLoopCount > 0) {
+            aJumpEnds = true;
             mPosX -= 150.0f;
         }
-
-
-        if (aReanim2->ShouldTriggerTimedEvent(0.2f)) {
-            mApp->PlayFoley(FOLEY_GRASSSTEP);
+        if (aBodyReanim->ShouldTriggerTimedEvent(0.2f)) {
+            mApp->PlayFoley(FoleyType::FOLEY_GRASSSTEP);
         }
-        if (aReanim2->ShouldTriggerTimedEvent(0.4f)) {
-            mApp->PlayFoley(FOLEY_POLEVAULT);
+        if (aBodyReanim->ShouldTriggerTimedEvent(0.4f)) {
+            mApp->PlayFoley(FoleyType::FOLEY_POLEVAULT);
         }
-        if (flag) {
-            mX = mPosX;
-            mZombiePhase = PHASE_POLEVAULTER_POST_VAULT;
-            mZombieAttackRect.mX = 50;
-            mZombieAttackRect.mY = 0;
-            mZombieAttackRect.mWidth = 20;
-            mZombieAttackRect.mHeight = 115;
+
+        if (aJumpEnds) {
+            mX = (int)mPosX;
+            mZombiePhase = ZombiePhase::PHASE_POLEVAULTER_POST_VAULT;
+            mZombieAttackRect = Rect(50, 0, 20, 115);
+
             StartWalkAnim(0);
-            return;
+        } else {
+            float aOldPosX = mPosX;
+            mPosX -= 150.0f * aBodyReanim->mAnimTime;
+            mPosY = GetPosYBasedOnRow(mRow);
+            mPosX = aOldPosX;
         }
-
-
-        float aOldPosX = mPosX;
-        mPosX -= 150.0f * aReanim2->mAnimTime;
-        mPosY = GetPosYBasedOnRow(mRow);
-        mPosX = aOldPosX;
     }
 }
 
@@ -761,6 +765,10 @@ void Zombie::UpdateZombiePeaHead() {
     if (!mHasHead)
         return;
 
+    // 被蹦极空投时不发射
+    if (mZombieHeight == ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED)
+        return;
+
     if (mPhaseCounter == 35) {
         Reanimation *aHeadReanim = mApp->ReanimationGet(mSpecialHeadReanimID);
         aHeadReanim->PlayReanim("anim_shooting", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 35.0f);
@@ -796,6 +804,10 @@ void Zombie::UpdateZombieGatlingHead() {
     // 游戏原版逻辑是判断是否hasHead 且 是否isEating。这里去除对吃植物的判断
 
     if (!mHasHead)
+        return;
+
+    // 被蹦极空投时不发射
+    if (mZombieHeight == ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED)
         return;
 
     if (mPhaseCounter == 100) {
@@ -2597,6 +2609,36 @@ void Zombie::SetupLostArmReanim() {
                 break;
         }
     }
+}
+
+void Zombie::BungeeDropZombie(Zombie *theDroppedZombie, int theGridX, int theGridY) {
+    // TODO: 修复联机蹦极空投位置不同步
+    //    if (mApp->IsVSMode() && gTcpConnected)
+    //        return;
+
+    mTargetCol = theGridX;
+    SetRow(theGridY);
+    mPosX = mBoard->GridToPixelX(mTargetCol, mRow);
+    mPosY = GetPosYBasedOnRow(mRow);
+    PlayZombieReanim("anim_raise", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 36.0f);
+    mRelatedZombieID = mBoard->ZombieGetID(theDroppedZombie);
+
+    theDroppedZombie->mPosX = mPosX - 15.0f;
+    theDroppedZombie->SetRow(theGridY);
+    theDroppedZombie->mPosY = GetPosYBasedOnRow(theGridY);
+    theDroppedZombie->mZombieHeight = ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED;
+    theDroppedZombie->PlayZombieReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 0.0f);
+    theDroppedZombie->mRenderOrder = mRenderOrder + 1;
+
+    //    if (gTcpClientSocket >= 0) {
+    //        U16Buf32Buf32_Event event;
+    //        event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE;
+    //        event.data2.u16x2.u16_1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+    //        event.data2.u16x2.u16_2 = uint16_t(mBoard->mZombies.DataArrayGetID(theDroppedZombie));
+    //        event.data2.u8x4.u8_1 = uint8_t(theGridX);
+    //        event.data2.u8x4.u8_2 = uint8_t(theGridY);
+    //        netplay::PutEvent(event);
+    //    }
 }
 
 void Zombie::PickRandomSpeed() {

@@ -279,9 +279,6 @@ public:
     void PoolSplash(bool theInToPoolSound) {
         reinterpret_cast<void (*)(Zombie *, bool)>(Zombie_PoolSplashAddr)(this, theInToPoolSound);
     }
-    void BungeeDropZombie(Zombie *theDroppedZombie, int theGridX, int theGridY) {
-        reinterpret_cast<void (*)(Zombie *, Zombie *, int, int)>(Zombie_BungeeDropZombieAddr)(this, theDroppedZombie, theGridX, theGridY);
-    }
     Reanimation *AddAttachedReanim(int thePosX, int thePosY, ReanimationType theReanimType) {
         return reinterpret_cast<Reanimation *(*)(Zombie *, int, int, ReanimationType)>(Zombie_AddAttachedReanimAddr)(this, thePosX, thePosY, theReanimType);
     }
@@ -381,6 +378,7 @@ public:
     int GetBodyDamageIndex();
     int GetShieldDamageIndex();
     bool IsFireResistant();
+    void BungeeDropZombie(Zombie *theDroppedZombie, int theGridX, int theGridY);
     void PickRandomSpeed();
     void ApplySyncedSpeed(float theVelX, short theAnimTicks);
     float ZombieTargetLeadX(float theTime);
