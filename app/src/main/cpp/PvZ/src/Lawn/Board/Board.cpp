@@ -62,10 +62,6 @@
 using namespace Sexy;
 using IdMap = std::unordered_map<uint16_t, uint16_t>;
 
-Board::Board(LawnApp *theApp) {
-    _constructor(theApp);
-}
-
 void Board::_constructor(LawnApp *theApp) {
     old_Board_Board(this, theApp);
 

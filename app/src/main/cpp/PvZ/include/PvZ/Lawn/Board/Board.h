@@ -476,7 +476,7 @@ public:
         return reinterpret_cast<ZombieType (*)(Board *, int)>(Board_PickGraveRisingZombieTypeAddr)(this, theZombiePoints);
     }
 
-    Board(LawnApp *theApp);
+    Board(LawnApp *theApp) = delete;
     ~Board() = delete;
 
     void InitLevel();
