@@ -261,7 +261,7 @@ void VSSetupMenu::MouseDrag(int x, int y) {
         theController1Widget->Move(theController1Widget->mX + x - touchDownX, theController1Widget->mY);
         if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController1Widget->mX)};
-            SendEvent(event);
+            netplay::PutEvent(event);
         }
     } else if (touchingOnWhichController == 2) {
         if (gTcpClientSocket >= 0)
@@ -270,7 +270,7 @@ void VSSetupMenu::MouseDrag(int x, int y) {
         theController2Widget->Move(theController2Widget->mX + x - touchDownX, theController2Widget->mY);
         if (gTcpServerSocket >= 0) {
             U16_Event event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController2Widget->mX)};
-            SendEvent(event);
+            netplay::PutEvent(event);
         }
     }
     touchDownX = x;
@@ -289,7 +289,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         mSides[0] = aSideP1;
         if (gTcpClientSocket >= 0) {
             U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mSides[0] == -1 ? uint8_t(2) : uint8_t(mSides[0])};
-            SendEvent(event);
+            netplay::PutEvent(event);
         }
         is1PControllerMoving = false;
     } else if (touchingOnWhichController == 2) {
@@ -304,7 +304,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         mSides[1] = aSideP2;
         if (gTcpServerSocket >= 0) {
             U8_Event event = {{EventType::EVENT_VSSETUPMENU_SET_CONTROLLER}, mSides[1] == VS_SIDE_NONE ? uint8_t(2) : uint8_t(mSides[1])};
-            SendEvent(event);
+            netplay::PutEvent(event);
         }
         is2PControllerMoving = false;
     }
@@ -637,7 +637,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
                 mAddonWidget->mBanMode,
                 mAddonWidget->mBalancePatchMode,
             };
-            SendEvent(event);
+            netplay::PutEvent(event);
         }
     }
     if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {
@@ -671,7 +671,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         }
     } else if (gTcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_VSSETUPMENU_ENTER_STATE}, uint8_t(theState)};
-        SendEvent(event);
+        netplay::PutEvent(event);
     }
 
     old_VSSetupMenu_OnStateEnter(this, theState);
@@ -692,14 +692,14 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
     if (gTcpConnected) {
         U8_Event event = {{EventType::EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
-        SendEvent(event);
+        netplay::PutEvent(event);
         gVSSetupRequestState = theId;
         return;
     }
 
     if (gTcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
-        SendEvent(event);
+        netplay::PutEvent(event);
     }
 
     int aNumPackets = mApp->mBoard->GetNumSeedsInBank(false);
@@ -801,7 +801,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
                     event.type = EventType::EVENT_VSSETUPMENU_RANDOM_PICK;
                     std::ranges::copy(aPlantSeeds, event.data);
                     std::ranges::copy(aZombieSeeds, event.data + 6);
-                    SendEvent(event);
+                    netplay::PutEvent(event);
                 }
             } break;
 
@@ -854,7 +854,7 @@ void VSSetupMenu::PickBackgroundImmediately() {
 
         if (gTcpClientSocket >= 0) {
             U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND}, uint8_t(VSBackGround)};
-            SendEvent(event);
+            netplay::PutEvent(event);
         }
     }
 }

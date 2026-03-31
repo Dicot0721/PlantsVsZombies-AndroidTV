@@ -21,16 +21,13 @@
 #define PVZ_NETPLAY_H
 
 #include <netinet/in.h>
-#include <sys/socket.h>
 
+#include <cstddef>
 #include <cstdint>
 
 #include <concepts>
-#include <cstddef>
 #include <string>
-#include <type_traits>
 #include <utility>
-#include <vector>
 
 enum EventType : uint8_t {
     EVENT_NULL,
@@ -262,64 +259,6 @@ struct U16x4U16_Event : BaseEvent {
     uint16_t data2;
 };
 
-struct SendBuffer {
-    std::vector<std::byte> data;
-
-    void clear() {
-        data.clear();
-    }
-};
-
-inline SendBuffer gSendBuffer;
-
-template <typename Event>
-    requires(!std::is_const_v<std::remove_reference_t<Event>> &&    //
-             !std::is_volatile_v<std::remove_reference_t<Event>> && //
-             std::derived_from<std::remove_reference_t<Event>, BaseEvent>)
-
-// ssize_t SendEvent(int socket, Event &&event) {
-//     static_assert(std::in_range<decltype(event.BaseEvent::size)>(sizeof(Event)), "Please update the type of 'BaseEvent::size' to a larger integral type");
-//     event.BaseEvent::size = sizeof(Event);
-//     return send(socket, &event, sizeof(Event), 0);
-// }
-
-ssize_t SendEvent(Event &&event) {
-    using T = std::remove_reference_t<Event>;
-
-    static_assert(std::is_trivially_copyable_v<T>, "Event must be trivially copyable");
-
-    static_assert(std::in_range<decltype(event.BaseEvent::size)>(sizeof(T)), "BaseEvent::size too small");
-
-    event.BaseEvent::size = sizeof(T);
-
-    auto *ptr = reinterpret_cast<std::byte *>(&event);
-    gSendBuffer.data.insert(gSendBuffer.data.end(), ptr, ptr + sizeof(T));
-
-    return sizeof(T); // 表示已加入buffer
-}
-
-inline void FlushSendBuffer(int socket) {
-    auto &buf = gSendBuffer.data;
-
-    if (buf.empty())
-        return;
-
-    const char *data = reinterpret_cast<const char *>(buf.data());
-    size_t size = buf.size();
-
-    size_t sent = 0;
-    while (sent < size) {
-        ssize_t n = send(socket, data + sent, size - sent, 0);
-        if (n <= 0) {
-            // 这里你可以加错误处理
-            break;
-        }
-        sent += n;
-    }
-
-    buf.clear();
-}
-
 // 双方都需要
 constexpr int UDP_PORT = 8888;
 
@@ -352,5 +291,28 @@ inline int gUdpScanSocket = -1;
 inline int gTcpServerSocket = -1;
 inline bool gTcpConnecting = false; // 正在尝试连接
 inline bool gTcpConnected = false;
+
+namespace netplay {
+
+namespace details {
+    void PutEventData(const std::uint8_t *src, std::size_t n);
+} // namespace details
+
+template <typename T>
+    requires(!std::is_const_v<std::remove_reference_t<T>> &&    //
+             !std::is_volatile_v<std::remove_reference_t<T>> && //
+             std::derived_from<std::remove_reference_t<T>, BaseEvent>)
+ssize_t PutEvent(T &&event) {
+    static_assert(std::is_trivially_copyable_v<std::remove_reference_t<T>>, "Event must be trivially copyable");
+    static_assert(std::in_range<decltype(event.BaseEvent::size)>(sizeof(T)), "BaseEvent::size too small");
+    event.BaseEvent::size = sizeof(T);
+    details::PutEventData(reinterpret_cast<std::uint8_t *>(&event), sizeof(T));
+    return sizeof(T);
+}
+
+bool FlushSendBuffer(int socket);
+void ClearSendBuffer() noexcept;
+
+} // namespace netplay
 
 #endif // PVZ_NETPLAY_H

@@ -238,7 +238,7 @@ void SeedPacket::SetNextRandomSeed() {
         event.data1 = mSeedBank->mIsZombie;
         event.data3 = seedType;
         event.data4 = mIndex;
-        SendEvent(event);
+        netplay::PutEvent(event);
     }
 }
 
@@ -605,7 +605,7 @@ void SeedPacket::WasPlanted(int thePlayerIndex) {
 
     if (gTcpClientSocket >= 0) {
         U8U8_Event event = {{EventType::EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED}, uint8_t(mIndex), mSeedBank == mBoard->mSeedBank[0]};
-        SendEvent(event);
+        netplay::PutEvent(event);
     }
 }
 

@@ -598,7 +598,7 @@ void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int t
             if (theZombieType == ZOMBIE_BUNGEE) {
                 event.data3.f32 = aZombie->mAltitude;
             }
-            SendEvent(event);
+            netplay::PutEvent(event);
         }
     }
 }

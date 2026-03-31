@@ -116,14 +116,14 @@ void VSResultsMenu::ButtonDepress(int theId) {
     if (gTcpConnected) {
         // 客户端点击再来一局
         U8_Event event = {{EventType::EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS}, uint8_t(theId)};
-        SendEvent(event);
+        netplay::PutEvent(event);
         gVSResultRequestState = theId;
         return;
     }
 
     if (gTcpClientSocket >= 0) {
         U8_Event event = {{EventType::EVENT_SERVER_VSRESULT_BUTTON_DEPRESS}, uint8_t(theId)};
-        SendEvent(event);
+        netplay::PutEvent(event);
     }
 
     mResultsButtonId = theId;

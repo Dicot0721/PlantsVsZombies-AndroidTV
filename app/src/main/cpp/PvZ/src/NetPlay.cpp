@@ -17,27 +17,45 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "PvZ/Lawn/Board/LawnMower.h"
+#include "PvZ/NetPlay.h"
 #include "Homura/Logger.h"
-#include "PvZ/GlobalVariable.h"
-#include "PvZ/Lawn/LawnApp.h"
 
-void LawnMower::Update() {
-    if (!requestPause) {
-        old_LawnMower_Update(this);
-    }
+#include <sys/socket.h>
+
+#include <cstring>
+
+#include <ranges>
+#include <vector>
+
+namespace {
+std::vector<uint8_t> sendBuffer;
 }
 
-void LawnMower::StartMower() {
-    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (gTcpConnected)
-            return;
+void netplay::details::PutEventData(const std::uint8_t *src, std::size_t n) {
+    sendBuffer.append_range(std::views::counted(src, n));
+}
 
-        if (gTcpClientSocket >= 0) {
-            U16_Event event = {{EventType::EVENT_SERVER_BOARD_LAWNMOWER_START}, uint16_t(mRow)};
-            netplay::PutEvent(event);
-        }
+bool netplay::FlushSendBuffer(int socket) {
+    if (sendBuffer.empty()) {
+        return true;
     }
 
-    old_LawnMower_StartMower(this);
+    const auto *data = sendBuffer.data();
+    const auto size = sendBuffer.size();
+    size_t sent = 0;
+    while (sent < size) {
+        ssize_t ret = send(socket, data + sent, size - sent, 0);
+        if (ret < 0) {
+            LOG_ERROR("Failed to send event: {}", std::strerror(errno));
+            break;
+        }
+        sent += ret;
+    }
+
+    sendBuffer.clear();
+    return sent < size;
+}
+
+void netplay::ClearSendBuffer() noexcept {
+    sendBuffer.clear();
 }

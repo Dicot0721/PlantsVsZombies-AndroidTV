@@ -536,13 +536,13 @@ void ChallengeScreen::MouseUp(int x, int y) {
             if (gTcpConnected) {
                 // 房客
                 U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mUnk1[gameIndex])};
-                SendEvent(event);
+                netplay::PutEvent(event);
                 gChallengeScreenRequestState = mUnk1[gameIndex];
             } else if (gTcpClientSocket >= 0) {
                 // 房主
                 mSelectedMode = mUnk1[gameIndex];
                 U16_Event event = {{EventType::EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mSelectedMode)};
-                SendEvent(event);
+                netplay::PutEvent(event);
             } else {
                 // 单机
                 mSelectedMode = mUnk1[gameIndex];
@@ -564,14 +564,14 @@ void ChallengeScreen::KeyDown(Sexy::KeyCode theKey) {
 
             if (gTcpConnected) {
                 U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mSelectedMode)};
-                SendEvent(event);
+                netplay::PutEvent(event);
                 gChallengeScreenRequestState = mSelectedMode;
                 return;
             }
 
             if (gTcpClientSocket >= 0) {
                 U16_Event event = {{EventType::EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS}, uint16_t(mSelectedMode)};
-                SendEvent(event);
+                netplay::PutEvent(event);
             }
 
 
