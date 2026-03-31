@@ -361,7 +361,7 @@ PlantingReason Challenge::CanPlantAt(int theGridX, int theGridY, SeedType theSee
             return (theGridX > 5 || theSeedType == SeedType::SEED_ZOMBIE_BUNGEE) ? PLANTING_OK : PLANTING_NOT_PASSED_LINE_VS;
 
             ZombieType aZombieType = Challenge::IZombieSeedTypeToZombieType(theSeedType);
-            if ((!Challenge::IsMPZombieTypeCanGoInPool(aZombieType)) && mBoard->mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
+            if (!Challenge::IsMPZombieTypeCanGoInPool(aZombieType) && mBoard->mPlantRow[theGridY] == PlantRowType::PLANTROW_POOL) {
                 return PLANTING_ONLY_ON_GROUND; // 部分僵尸类型禁止放置在水路
             } else if ((aZombieType == ZombieType::ZOMBIE_SNORKEL || aZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER) && mBoard->mPlantRow[theGridY] != PlantRowType::PLANTROW_POOL) {
                 return PLANTING_ONLY_IN_POOL; // 潜水僵尸和海豚骑士僵尸禁止放置在非水路
