@@ -62,10 +62,12 @@ void SeedBank::Draw(Sexy::Graphics *g) {
     // (*(void (**)(uint32_t, int *, bool))(**((uint32_t **)g + 1) + 140))(*((uint32_t *)g + 1),transform,true);
     // }
 
-    VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
-    if (addonWidget && addonWidget->mBanMode) {
-        g->SetColorizeImages(true);
-        g->SetColor(Color(155, 155, 155));
+    if (mApp->mVSSetupMenu) {
+        VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
+        if (addonWidget && addonWidget->mBanMode) {
+            g->SetColorizeImages(true);
+            g->SetColor(Color(155, 155, 155));
+        }
     }
 
     if (mApp->mGameScene != GameScenes::SCENE_PLAYING) {
