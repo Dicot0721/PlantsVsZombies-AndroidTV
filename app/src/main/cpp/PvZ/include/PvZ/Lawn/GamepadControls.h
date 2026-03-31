@@ -74,7 +74,6 @@ public:
     // 铲子 49 1112
     // 锤子 50 1112
 
-    // GamepadControls(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2);
     void ButtonDownFireCobcannonTest();
     void InvalidatePreviewReanim();
     void Draw(Sexy::Graphics *g);
@@ -83,10 +82,10 @@ public:
     void UpdatePreviewReanim();
     void OnButtonDown(Sexy::GamepadButton theButton, int thePlayerIndex, unsigned int unk);
 
-    GamepadControls() = delete;
-    ~GamepadControls() = delete;
-
 protected:
+    GamepadControls() = default;
+    ~GamepadControls() = default;
+
     friend void InitHookFunction();
 
     void _constructor(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2);
@@ -96,6 +95,9 @@ class ZenGardenControls : public GamepadControls {
 public:
     GameObjectType mObjectType; // 66
     // 大小67个整数
+
+    ZenGardenControls() = delete;
+    ~ZenGardenControls() = delete;
 
     void Update(float a2);
 };

@@ -488,7 +488,8 @@ void SeedChooserScreen::DrawPacket(
                 aConvertedGrayness = 55;
         }
 
-        if (mApp->mPlayerInfo->mVSBanMode) {
+        VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
+        if (addonWidget && addonWidget->mBanMode) {
             for (int i = 0; i < NUM_SEEDS_IN_CHOOSER; i++) {
                 if (mChosenSeeds[i].mSeedType == theSeedType && mChosenSeeds[i].mSeedState == ChosenSeedState::SEED_IN_BANK) {
                     aConvertedGrayness = 115;
@@ -622,7 +623,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
                 aTolTip->SetLabel(aLabel);
             }
         } else {
-            if (addonWidget->mBanMode) {
+            if (addonWidget && addonWidget->mBanMode) {
                 if (mChosenSeeds[aSeedType].mSeedState == ChosenSeedState::SEED_IN_CHOOSER) {
                     bool aCanNotBanned = mToolTipSeed1 == SeedType::SEED_INSTANT_COFFEE || mToolTipSeed2 == SeedType::SEED_INSTANT_COFFEE;
                     pvzstl::string str = aCanNotBanned ? "此阶段不允许" : "";
@@ -1216,7 +1217,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
     //        }
     //    }
 
-    this->Widget::DeferOverlay(0);
+    DeferOverlay(0);
 
     // 绘制禁用叉叉
     DrawBanIcon(g);
@@ -1224,7 +1225,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
 
 void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
     VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
-    if (addonWidget->mBanMode) {
+    if (addonWidget && addonWidget->mBanMode) {
         Graphics aBanGraphics(*g);
         aBanGraphics.mTransX = 0;
         aBanGraphics.mTransY = 0;

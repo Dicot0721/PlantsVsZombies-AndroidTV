@@ -96,6 +96,7 @@ void InitHookFunction() {
     homura::HookFunction(LawnApp_ShowZombieChooserScreenAddr, &LawnApp::ShowZombieChooserScreen, nullptr);
     homura::HookFunction(LawnApp_KillZombieChooserScreenAddr, &LawnApp::KillZombieChooserScreen, nullptr);
     homura::HookFunction(LawnApp_ShowChallengeScreenAddr, &LawnApp::ShowChallengeScreen, nullptr);
+    homura::HookFunction(LawnApp_ShowVSSetupScreenAddr, &LawnApp::ShowVSSetupScreen, nullptr);
     homura::HookFunction(LawnApp_PreNewGameAddr, &LawnApp::PreNewGame, &old_LawnApp_PreNewGame);
     homura::HookFunction(LawnApp_NewGameAddr, &LawnApp::NewGame, nullptr);
 
