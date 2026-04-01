@@ -1214,13 +1214,16 @@ void SeedChooserScreen::Draw(Graphics *g) {
 
     DeferOverlay(0);
 
-    // 绘制禁用叉叉
+    // 绘制对战禁用叉叉
     DrawBanIcon(g);
 }
 
 void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
     VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
-    if (addonWidget && addonWidget->mBanMode) {
+    if (addonWidget == nullptr)
+        return;
+
+    if (addonWidget->mBanMode) {
         Graphics aBanGraphics(*g);
         aBanGraphics.mTransX = 0;
         aBanGraphics.mTransY = 0;
@@ -1231,7 +1234,7 @@ void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
 
     for (auto &i : addonWidget->mBannedSeed) {
         if (i.mSeedState == BannedSeedState::SEED_BANNED) {
-            if ((mIsZombieChooser && i.mChosenPlayerIndex == 1) || (!mIsZombieChooser && i.mChosenPlayerIndex == 0)) {
+            if (i.mChosenPlayerIndex == (mIsZombieChooser ? 1 : 0)) {
                 int x = i.mX;
                 int y = i.mY;
                 g->DrawImage(*IMAGE_MP_TARGETS_X, x + 5, y + 5);
