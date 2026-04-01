@@ -332,6 +332,7 @@ inline void *LawnApp_NewGameAddr;
 inline void *LawnApp_MakeNewBoardAddr;
 inline void *LawnApp_ShowVSSetupScreenAddr;
 inline void *LawnApp_KillVSSetupScreenAddr;
+inline void *LawnApp_HasBeatenChallengeAddr;
 
 
 inline void *ChallengeScreen_UpdateAddr;
@@ -348,6 +349,7 @@ inline void *ChallengeScreen_ButtonDepressAddr;
 inline void *ChallengeScreen_SetUnlockChallengeIndexAddr;
 inline void *ChallengeScreen_DrawButtonAddr;
 inline void *ChallengeScreen_MoreTrophiesNeededAddr;
+inline void *ChallengeScreen_AccomplishmentsNeededAddr;
 
 
 inline void *GamepadControls_ButtonDownFireCobcannonTestAddr;

@@ -329,6 +329,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN7LawnApp12MakeNewBoardEv", LawnApp_MakeNewBoardAddr);
     libGameMain.GetSymbol("_ZN7LawnApp17ShowVSSetupScreenEv", LawnApp_ShowVSSetupScreenAddr);
     libGameMain.GetSymbol("_ZN7LawnApp17KillVSSetupScreenEv", LawnApp_KillVSSetupScreenAddr);
+    libGameMain.GetSymbol("_ZN7LawnApp18HasBeatenChallengeE8GameMode", LawnApp_HasBeatenChallengeAddr);
 
 
     libGameMain.GetSymbol("_ZN15ChallengeScreen6UpdateEv", ChallengeScreen_UpdateAddr);
@@ -345,6 +346,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN15ChallengeScreen23SetUnlockChallengeIndexE13ChallengePageb", ChallengeScreen_SetUnlockChallengeIndexAddr);
     libGameMain.GetSymbol("_ZN15ChallengeScreen10DrawButtonEPN4Sexy8GraphicsEii", ChallengeScreen_DrawButtonAddr);
     libGameMain.GetSymbol("_ZN15ChallengeScreen18MoreTrophiesNeededEi", ChallengeScreen_MoreTrophiesNeededAddr);
+    libGameMain.GetSymbol("_ZN15ChallengeScreen21AccomplishmentsNeededEi", ChallengeScreen_AccomplishmentsNeededAddr);
 
 
     libGameMain.GetSymbol("_ZN15GamepadControls27ButtonDownFireCobcannonTestEv", GamepadControls_ButtonDownFireCobcannonTestAddr);

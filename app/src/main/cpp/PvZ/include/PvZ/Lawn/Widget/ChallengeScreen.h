@@ -30,12 +30,12 @@
 #include "WaitForSecondPlayerDialog.h"
 
 constexpr int NUM_CHALLENGE_MODES(int(GameMode::NUM_GAME_MODES - 1));
-constexpr int GAMEMODE_MP_VS_DAY = 68;
-constexpr int GAMEMODE_MP_VS_NIGHT = 69;
-constexpr int GAMEMODE_MP_VS_POOL_DAY = 70;
-constexpr int GAMEMODE_MP_VS_POOL_NIGHT = 71;
-constexpr int GAMEMODE_MP_VS_ROOF = 72;
-constexpr int GAMEMODE_MP_VS_SHUFFLE_MODE = 73;
+constexpr int GAMEMODE_MP_VS_DAY = 70;
+constexpr int GAMEMODE_MP_VS_NIGHT = 71;
+constexpr int GAMEMODE_MP_VS_POOL_DAY = 72;
+constexpr int GAMEMODE_MP_VS_POOL_NIGHT = 73;
+constexpr int GAMEMODE_MP_VS_ROOF = 74;
+constexpr int GAMEMODE_MP_VS_SHUFFLE_MODE = 75;
 constexpr int NUM_VS_MODES(GAMEMODE_MP_VS_SHUFFLE_MODE - GAMEMODE_MP_VS_DAY + 1);
 
 class NewLawnButton;
@@ -85,11 +85,11 @@ public:
     void SetScrollTarget(int theIndex) {
         reinterpret_cast<void (*)(ChallengeScreen *, int)>(ChallengeScreen_SetScrollTargetAddr)(this, theIndex);
     }
-    void DrawButton(Sexy::Graphics *g, int theChallengeIndex, int theChallengeMode) {
-        reinterpret_cast<void (*)(ChallengeScreen *, Sexy::Graphics *, int, int)>(ChallengeScreen_DrawButtonAddr)(this, g, theChallengeIndex, theChallengeMode);
-    }
     int MoreTrophiesNeeded(int theChallengeIndex) {
         return reinterpret_cast<int (*)(ChallengeScreen *, int)>(ChallengeScreen_MoreTrophiesNeededAddr)(this, theChallengeIndex);
+    }
+    int AccomplishmentsNeeded(int theChallengeIndex) {
+        return reinterpret_cast<int (*)(ChallengeScreen *, int)>(ChallengeScreen_AccomplishmentsNeededAddr)(this, theChallengeIndex);
     }
 
     void Draw(Sexy::Graphics *g);
@@ -99,6 +99,7 @@ public:
     void ButtonPress(int theButtonId);
     void ButtonDepress(int theId);
     void UpdateButtons();
+    void DrawButton(Sexy::Graphics *g, int theChallengeIndex, int theChallengeMode);
     void MouseDown(int x, int y, int theClickCount);
     void MouseUp(int x, int y);
     void MouseDrag(int x, int y);
@@ -136,6 +137,8 @@ inline void (*old_ChallengeScreen_ChallengeScreen)(ChallengeScreen *challengeScr
 inline void (*old_ChallengeScreen_KeyDown)(ChallengeScreen *challengeScreen, Sexy::KeyCode code);
 
 inline void (*old_ChallengeScreen_Draw)(ChallengeScreen *challengeScreen, Sexy::Graphics *graphics);
+
+inline void (*old_ChallengeScreen_DrawButton)(ChallengeScreen *, Sexy::Graphics *, int, int);
 
 inline void (*old_ChallengeScreen_AddedToManager)(ChallengeScreen *a, Sexy::WidgetManager *a2);
 

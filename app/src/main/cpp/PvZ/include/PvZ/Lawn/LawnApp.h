@@ -322,12 +322,16 @@ public:
     bool IsWallnutBowlingLevel();
     bool IsAdventureMode();
     bool IsPuzzleMode();
+    static bool IsSurvivalNormal(GameMode theGameMode);
+    static bool IsSurvivalHard(GameMode theGameMode);
+    static bool IsSurvivalEndless(GameMode theGameMode);
+    static bool IsEndlessScaryPotter(GameMode theGameMode);
+    static bool IsEndlessIZombie(GameMode theGameMode);
     bool IsLittleTroubleLevel();
     bool IsScaryPotterLevel();
     bool IsSlotMachineLevel();
     bool IsArtChallenge();
     bool IsSquirrelLevel();
-    bool IsSurvivalEndless(GameMode theGameMode);
     bool IsWhackAZombieLevel();
     bool IsVSMode();
     bool IsCoopMode();
@@ -370,6 +374,7 @@ public:
     void ShowVSSetupScreen();
     void PreNewGame(GameMode theGameMode, bool theLookForSavedGame);
     void NewGame();
+    bool HasBeatenChallenge(GameMode theGameMode);
 
 protected:
     friend void InitHookFunction();

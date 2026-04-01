@@ -139,84 +139,84 @@ ChallengeDefinition gVSChallengeDefs[NUM_VS_MODES] = {
 };
 
 void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
-    //    Widget::_constructor();
+    //        Widget::_constructor();
     //
-    //    auto vtableAddr = reinterpret_cast<uintptr_t>(vTableForChallengeScreenAddr);
-    //    uintptr_t vptrAddr = vtableAddr + 8;
-    //    vTable = reinterpret_cast<int*>(vptrAddr);
-    //    uintptr_t vptrButtonListenerAddr = vtableAddr + 512;
-    //    ButtonListener::mVTable = reinterpret_cast<VTable *>(vptrButtonListenerAddr);
+    //        auto vtableAddr = reinterpret_cast<uintptr_t>(vTableForChallengeScreenAddr);
+    //        uintptr_t vptrAddr = vtableAddr + 8;
+    //        vTable = reinterpret_cast<int*>(vptrAddr);
+    //        uintptr_t vptrButtonListenerAddr = vtableAddr + 512;
+    //        ButtonListener::mVTable = reinterpret_cast<VTable *>(vptrButtonListenerAddr);
     //
-    //    mUtil = Curve1DUtil();
+    //        mUtil = Curve1DUtil();
     //
-    //    mApp = theApp;
-    //    mPageIndex = thePage;
-    //    mLockShakeX = 0.0f;
-    //    mLockShakeY = 0.0f;
-    //    mUnkFloat = 0.0f;
-    //    mClip = false;
-    //    mCheatEnableChallenges = false;
-    //    mUnlockState = UnlockingState::UNLOCK_OFF;
-    //    mUnlockStateCounter = 0;
-    //    mScreenTopChallengeIndex = 0;
-    //    mSelectedChallengeIndex = 0;
-    //    mTotalGameInPage = 0;
-    //    mUnlockChallengeIndex = -1;
+    //        mApp = theApp;
+    //        mPageIndex = thePage;
+    //        mLockShakeX = 0.0f;
+    //        mLockShakeY = 0.0f;
+    //        mUnkFloat = 0.0f;
+    //        mClip = false;
+    //        mCheatEnableChallenges = false;
+    //        mUnlockState = UnlockingState::UNLOCK_OFF;
+    //        mUnlockStateCounter = 0;
+    //        mScreenTopChallengeIndex = 0;
+    //        mSelectedChallengeIndex = 0;
+    //        mTotalGameInPage = 0;
+    //        mUnlockChallengeIndex = -1;
     //
-    //    for (int aChallengeMode = 0; aChallengeMode < NUM_CHALLENGE_MODES; aChallengeMode++) {
-    //        ChallengeDefinition &aChlDef = GetChallengeDefinition(aChallengeMode);
-    //        auto *aChallengeButton = new ButtonWidget_(ChallengeScreen::ChallengeScreen_Mode + aChallengeMode, this);
-    //        mChallengeButtons[aChallengeMode] = aChallengeButton;
-    //        aChallengeButton->mDoFinger = true;
-    //        aChallengeButton->mFrameNoDraw = true;
-    //        if (aChlDef.mPage == mPageIndex) {
-    //            aChallengeButton->Resize(35, mTotalGameInPage * 120 + 80, 112, 65);
-    //            mTotalGameInPage++;
-    //            mUnk1[mTotalGameInPage] = GameMode(aChallengeMode);
-    //        }
-    //        if (MoreTrophiesNeeded(aChallengeMode)) {
-    //            aChallengeButton->mDoFinger = false;
-    //            aChallengeButton->mDisabled = true;
-    //        }
-    //        mUnk2[aChallengeMode] = 0;
-    //    }
-    //
-    //    mToolTip = new ToolTipWidget();
-    //    mToolTip->mCenter = true;
-    //    mToolTip->mVisible = false;
-    //
-    //    mSelectedMode = GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN;
-    //
-    //    UpdateButtons();
-    //
-    //    if (mApp->mGameMode != GameMode::GAMEMODE_UPSELL || mApp->mGameScene != GameScenes::SCENE_LEVEL_INTRO) {
-    //        mApp->mMusic->MakeSureMusicIsPlaying(MusicTune::MUSIC_TUNE_CHOOSE_YOUR_SEEDS);
-    //
-    //        if (mPageIndex == CHALLENGE_PAGE_SURVIVAL) {
-    //            if (mApp->mPlayerInfo->GetFlag(512)) {
-    //                SetUnlockChallengeIndex(mPageIndex, false);
-    //                mApp->mPlayerInfo->SetFlag(512, false);
+    //        for (int aChallengeMode = 0; aChallengeMode < NUM_CHALLENGE_MODES; aChallengeMode++) {
+    //            ChallengeDefinition &aChlDef = GetChallengeDefinition(aChallengeMode);
+    //            auto *aChallengeButton = new ButtonWidget_(ChallengeScreen::ChallengeScreen_Mode + aChallengeMode, this);
+    //            mChallengeButtons[aChallengeMode] = aChallengeButton;
+    //            aChallengeButton->mDoFinger = true;
+    //            aChallengeButton->mFrameNoDraw = true;
+    //            if (aChlDef.mPage == mPageIndex) {
+    //                aChallengeButton->Resize(35, mTotalGameInPage * 120 + 80, 112, 65);
+    //                mTotalGameInPage++;
+    //                mUnk1[mTotalGameInPage] = GameMode(aChallengeMode);
     //            }
-    //        } else if (mPageIndex == CHALLENGE_PAGE_CHALLENGE) {
-    //            if (mApp->mPlayerInfo->GetFlag(64)) {
-    //                SetUnlockChallengeIndex(mPageIndex, false);
-    //                mApp->mPlayerInfo->SetFlag(64, false);
+    //            if (MoreTrophiesNeeded(aChallengeMode)) {
+    //                aChallengeButton->mDoFinger = false;
+    //                aChallengeButton->mDisabled = true;
     //            }
-    //        } else if (mPageIndex == CHALLENGE_PAGE_PUZZLE) {
-    //            if (mApp->mPlayerInfo->GetFlag(128)) {
-    //                SetUnlockChallengeIndex(mPageIndex, false);
-    //                mApp->mPlayerInfo->SetFlag(128, false);
-    //            } else if (mApp->mPlayerInfo->GetFlag(256)) {
-    //                SetUnlockChallengeIndex(mPageIndex, true);
-    //                mApp->mPlayerInfo->SetFlag(256, false);
+    //            mUnk2[aChallengeMode] = 0;
+    //        }
+    //
+    //        mToolTip = new ToolTipWidget();
+    //        mToolTip->mCenter = true;
+    //        mToolTip->mVisible = false;
+    //
+    //        mSelectedMode = GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN;
+    //
+    //        UpdateButtons();
+    //
+    //        if (mApp->mGameMode != GameMode::GAMEMODE_UPSELL || mApp->mGameScene != GameScenes::SCENE_LEVEL_INTRO) {
+    //            mApp->mMusic->MakeSureMusicIsPlaying(MusicTune::MUSIC_TUNE_CHOOSE_YOUR_SEEDS);
+    //
+    //            if (mPageIndex == CHALLENGE_PAGE_SURVIVAL) {
+    //                if (mApp->mPlayerInfo->GetFlag(512)) {
+    //                    SetUnlockChallengeIndex(mPageIndex, false);
+    //                    mApp->mPlayerInfo->SetFlag(512, false);
+    //                }
+    //            } else if (mPageIndex == CHALLENGE_PAGE_CHALLENGE) {
+    //                if (mApp->mPlayerInfo->GetFlag(64)) {
+    //                    SetUnlockChallengeIndex(mPageIndex, false);
+    //                    mApp->mPlayerInfo->SetFlag(64, false);
+    //                }
+    //            } else if (mPageIndex == CHALLENGE_PAGE_PUZZLE) {
+    //                if (mApp->mPlayerInfo->GetFlag(128)) {
+    //                    SetUnlockChallengeIndex(mPageIndex, false);
+    //                    mApp->mPlayerInfo->SetFlag(128, false);
+    //                } else if (mApp->mPlayerInfo->GetFlag(256)) {
+    //                    SetUnlockChallengeIndex(mPageIndex, true);
+    //                    mApp->mPlayerInfo->SetFlag(256, false);
+    //                }
     //            }
     //        }
-    //    }
     //
-    //    mHelpBarWidget = mApp->mHelpBarWidget;
-    //    mHelpBarWidget->ClearButtons(0);
-    //    mHelpBarWidget->AddButton(GamepadButton::GAMEPAD_BUTTON_A, "[BACK]", HelpBarWidget::HELP_ALIGN_NONE);
-    //    mHelpBarWidget->mUnk[24] = 0;
+    //        mHelpBarWidget = mApp->mHelpBarWidget;
+    //        mHelpBarWidget->ClearButtons(0);
+    //        mHelpBarWidget->AddButton(GamepadButton::GAMEPAD_BUTTON_A, "[BACK]", HelpBarWidget::HELP_ALIGN_NONE);
+    //        mHelpBarWidget->mUnk[24] = 0;
 
     old_ChallengeScreen_ChallengeScreen(this, theApp, thePage);
 
@@ -251,10 +251,9 @@ void ChallengeScreen::_destructor2() {
 }
 
 ChallengeDefinition &GetChallengeDefinition(int theChallengeMode) {
-    const int offset = 3; // 跳过 CHALLENGE_PAGE_VS 的4个废弃关卡
-    for (int i = NUM_VS_MODES - 1; i >= 0; --i) {
-        if (theChallengeMode + offset + i == GameMode::GAMEMODE_MP_VS) {
-            return gVSChallengeDefs[abs(i - (NUM_VS_MODES - 1))];
+    for (int i = NUM_VS_MODES; i > 0; --i) {
+        if (theChallengeMode + i == GameMode::GAMEMODE_MP_VS) {
+            return gVSChallengeDefs[NUM_VS_MODES - i];
         }
     }
 
@@ -471,6 +470,10 @@ void ChallengeScreen::ButtonDepress(int theId) {
 
 void ChallengeScreen::UpdateButtons() {
     // 空函数替换，去除默认选取第一个游戏的功能
+}
+
+void ChallengeScreen::DrawButton(Graphics *g, int theChallengeIndex, int theChallengeMode) {
+    old_ChallengeScreen_DrawButton(this, g, theChallengeIndex, theChallengeMode);
 }
 
 namespace {

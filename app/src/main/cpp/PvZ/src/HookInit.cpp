@@ -99,6 +99,7 @@ void InitHookFunction() {
     homura::HookFunction(LawnApp_ShowVSSetupScreenAddr, &LawnApp::ShowVSSetupScreen, nullptr);
     homura::HookFunction(LawnApp_PreNewGameAddr, &LawnApp::PreNewGame, &old_LawnApp_PreNewGame);
     homura::HookFunction(LawnApp_NewGameAddr, &LawnApp::NewGame, nullptr);
+    homura::HookFunction(LawnApp_HasBeatenChallengeAddr, &LawnApp::HasBeatenChallenge, nullptr);
 
 
     homura::HookFunction(Board_DrawAddr, &Board::Draw, &old_Board_Draw);
@@ -208,6 +209,7 @@ void InitHookFunction() {
     homura::HookFunction(ChallengeScreen_KeyDownAddr, &ChallengeScreen::KeyDown, &old_ChallengeScreen_KeyDown);
     homura::HookFunction(ChallengeScreen_ButtonDepressAddr, &ChallengeScreen::ButtonDepress, nullptr);
     homura::HookFunction(ChallengeScreen_UpdateButtonsAddr, &ChallengeScreen::UpdateButtons, nullptr);
+    homura::HookFunction(ChallengeScreen_DrawButtonAddr, &ChallengeScreen::DrawButton, &old_ChallengeScreen_DrawButton);
     homura::HookFunction(GetChallengeDefinitionAddr, &GetChallengeDefinition, nullptr);
 
 

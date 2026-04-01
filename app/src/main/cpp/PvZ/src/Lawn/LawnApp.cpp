@@ -952,6 +952,29 @@ bool LawnApp::IsPuzzleMode() {
     return mGameMode >= GameMode::GAMEMODE_SCARY_POTTER_1 && mGameMode <= GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS;
 }
 
+bool LawnApp::IsSurvivalNormal(GameMode theGameMode) {
+    int aLevel = theGameMode - GameMode::GAMEMODE_SURVIVAL_NORMAL_STAGE_1;
+    return aLevel >= 0 && aLevel <= 4;
+}
+
+bool LawnApp::IsSurvivalHard(GameMode theGameMode) {
+    int aLevel = theGameMode - GameMode::GAMEMODE_SURVIVAL_HARD_STAGE_1;
+    return aLevel >= 0 && aLevel <= 4;
+}
+
+bool LawnApp::IsSurvivalEndless(GameMode theGameMode) {
+    int aLevel = theGameMode - GameMode::GAMEMODE_SURVIVAL_ENDLESS_STAGE_1;
+    return aLevel >= 0 && aLevel <= 4;
+}
+
+bool LawnApp::IsEndlessScaryPotter(GameMode theGameMode) {
+    return theGameMode == GameMode::GAMEMODE_SCARY_POTTER_ENDLESS;
+}
+
+bool LawnApp::IsEndlessIZombie(GameMode theGameMode) {
+    return theGameMode == GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS;
+}
+
 bool LawnApp::IsLittleTroubleLevel() {
     return (mBoard && (mGameMode == GameMode::GAMEMODE_CHALLENGE_LITTLE_TROUBLE || (mGameMode == GameMode::GAMEMODE_ADVENTURE && mPlayerInfo->mLevel == 25)));
 }
@@ -979,11 +1002,6 @@ bool LawnApp::IsSquirrelLevel() {
     return mBoard && mGameMode == GameMode::GAMEMODE_CHALLENGE_SQUIRREL;
 }
 
-bool LawnApp::IsSurvivalEndless(GameMode theGameMode) {
-    int aLevel = theGameMode - GameMode::GAMEMODE_SURVIVAL_ENDLESS_STAGE_1;
-    return aLevel >= 0 && aLevel <= 4;
-}
-
 bool LawnApp::IsWhackAZombieLevel() {
     if (mBoard == nullptr)
         return false;
@@ -995,7 +1013,7 @@ bool LawnApp::IsWhackAZombieLevel() {
 }
 
 bool LawnApp::IsVSMode() {
-    return mGameMode == GameMode::GAMEMODE_MP_VS || mGameMode == GameMode::GAMEMODE_MP_VS_HIDE;
+    return mGameMode == GameMode::GAMEMODE_MP_VS || mGameMode == GameMode::GAMEMODE_MP_VS_HIDE || mGameMode == GameMode::GAMEMODE_MP_VS_IN_PAGE;
 }
 
 bool LawnApp::IsCoopMode() {
@@ -1100,6 +1118,27 @@ void LawnApp::NewGame() {
     }
 
     mBoard->mCutScene->StartLevelIntro();
+}
+
+bool LawnApp::HasBeatenChallenge(GameMode theGameMode) {
+    if (mPlayerInfo == nullptr)
+        return false;
+
+    int aChallengeIndex = theGameMode - GameMode::GAMEMODE_SURVIVAL_NORMAL_STAGE_1;
+    if (IsSurvivalNormal(theGameMode)) {
+        return mPlayerInfo->mChallengeRecords[aChallengeIndex] >= SURVIVAL_NORMAL_FLAGS;
+    }
+    if (IsSurvivalHard(theGameMode)) {
+        return mPlayerInfo->mChallengeRecords[aChallengeIndex] >= SURVIVAL_HARD_FLAGS;
+    }
+    if (IsSurvivalEndless(theGameMode) || IsEndlessScaryPotter(theGameMode) || IsEndlessIZombie(theGameMode)) {
+        return false;
+    }
+    // 对战选关页设为未通关以取消绘制已通关奖杯贴图
+    if (mChallengeScreen && mChallengeScreen->mPageIndex == ChallengePage::CHALLENGE_PAGE_VS) {
+        return false;
+    }
+    return mPlayerInfo->mChallengeRecords[aChallengeIndex] > 0;
 }
 
 static bool zombatarResLoaded;
