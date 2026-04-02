@@ -1085,6 +1085,14 @@ void LawnApp::ShowChallengeScreen(ChallengePage thePage) { // 创建小游戏界
     mWidgetManager->SetFocus(mChallengeScreen);
 }
 
+void LawnApp::KillChallengeScreen() {
+    if (mChallengeScreen != nullptr) {
+        mWidgetManager->RemoveWidget(mChallengeScreen);
+        SafeDeleteWidget(mChallengeScreen);
+        mChallengeScreen = nullptr;
+    }
+}
+
 void LawnApp::ShowVSSetupScreen() {
     mVSSetupMenu = new VSSetupMenu();
     mVSSetupMenu->Resize(0, 0, mWidth, mHeight);

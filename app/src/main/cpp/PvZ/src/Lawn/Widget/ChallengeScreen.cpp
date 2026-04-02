@@ -462,7 +462,7 @@ void ChallengeScreen::Update() {
 
             int aButtonId = mConnectDialog->WaitForResult(true);
             if (aButtonId == WaitForSecondPlayerDialog::WaitForSecondPlayerDialog_Back) {
-                mApp->KillBoard();
+                mApp->KillChallengeScreen();
                 mApp->ShowGameSelector();
             }
         }

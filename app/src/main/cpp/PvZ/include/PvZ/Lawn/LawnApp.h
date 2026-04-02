@@ -164,9 +164,6 @@ public:
     void KillMainMenu() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillMainMenuAddr)(this);
     }
-    void KillChallengeScreen() {
-        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillChallengeScreenAddr)(this);
-    }
     void PlayFoleyPitch(FoleyType theFoleyType, float thePitch) {
         reinterpret_cast<void (*)(LawnApp *, FoleyType, float)>(LawnApp_PreNewGameAddr)(this, theFoleyType, thePitch);
     }
@@ -371,6 +368,7 @@ public:
     void ShowZombieChooserScreen();
     void KillZombieChooserScreen();
     void ShowChallengeScreen(ChallengePage thePage);
+    void KillChallengeScreen();
     void ShowVSSetupScreen();
     void PreNewGame(GameMode theGameMode, bool theLookForSavedGame);
     void NewGame();
