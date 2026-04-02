@@ -69,6 +69,7 @@ void SeedPacket::Update() {
             Activate();
             FlashIfReady();
 
+            gFreeForFristShuffle[mSeedBank->mIsZombie] = false; // 对战免费刷新已使用
             SetNextRandomSeed(); // 对战刷牌模式更换卡片
         }
     }

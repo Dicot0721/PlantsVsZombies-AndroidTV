@@ -19,6 +19,8 @@
 
 #include "PvZ/Lawn/Widget/VSSetupAddonWidget.h"
 #include "PvZ/Lawn/Board/Challenge.h"
+#include "PvZ/Lawn/Board/SeedBank.h"
+#include "PvZ/Lawn/Board/SeedPacket.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
@@ -54,6 +56,7 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
         SetDisable(mExtraPacketsButton);
         SetDisable(mExtraSeedsButton);
         SetDisable(mBanModeButton);
+        mBanMode = false;
     }
 
     mBackButton = MakeNewButton(VSSetupAddonWidget::VSSetupAddonWidget_Back,
@@ -224,7 +227,7 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
             ++validCount;
         }
 
-        SeedType aSeedType = SEED_NONE;
+        SeedType aSeedType = SeedType::SEED_NONE;
         for (;;) {
             do {
                 const int idx = Sexy::Rand(validCount);
@@ -237,20 +240,69 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
 
         aSeeds.push_back(aSeedType);
     }
+
+    if (NeedSeedInstantCoffee(theApp)) {
+        auto it = aSeeds.begin();
+        if (it != aSeeds.end()) {
+            *it = SeedType::SEED_INSTANT_COFFEE;
+        }
+    }
+    if (NeedSeedTallnut(theApp)) {
+        auto it = std::ranges::find(aSeeds, SeedType::SEED_WALLNUT);
+        if (it != aSeeds.end()) {
+            *it = SeedType::SEED_TALLNUT;
+        }
+    }
 }
 
 SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie, int theSeedIndex) {
     PickMPRandomSeeds(theApp, thePlantSeeds, theZombieSeeds, theIsZombie);
     SeedType aSeedType = theIsZombie ? theZombieSeeds[theSeedIndex - 1] : thePlantSeeds[theSeedIndex - 1];
 
-    Plant *aPlant = nullptr;
-    while (theApp->mBoard->IteratePlants(aPlant)) {
-        // 若场上存在未唤醒的植物，则一号槽的下一抽必为咖啡豆
-        if (theIsZombie || theSeedIndex != 1)
-            break;
-        if (aPlant->mIsAsleep)
+    if (!theIsZombie) {
+        if (NeedSeedInstantCoffee(theApp) && theSeedIndex == 1) {
             aSeedType = SeedType::SEED_INSTANT_COFFEE;
+        }
+        if (NeedSeedTallnut(theApp) && aSeedType == SeedType::SEED_WALLNUT) {
+            aSeedType = SeedType::SEED_TALLNUT;
+        }
     }
 
     return aSeedType;
+}
+
+bool NeedSeedInstantCoffee(LawnApp *theApp) {
+    // 种子栏存在蘑菇
+    for (int i = 1; i < 6; ++i) {
+        SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[0]->mSeedPackets[i];
+        if (Plant::IsNocturnal(aSeedPacket.mPacketType)) {
+            return true;
+        }
+    }
+    // 场上存在未唤醒的植物
+    Plant *aPlant = nullptr;
+    while (theApp->mBoard->IteratePlants(aPlant)) {
+        if (aPlant->mIsAsleep) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool NeedSeedTallnut(LawnApp *theApp) {
+    // 僵尸种子栏存在可用的蹦蹦僵尸或撑杆僵尸
+    for (int i = 1; i < 6; ++i) {
+        SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[1]->mSeedPackets[i];
+        if ((aSeedPacket.mPacketType == SeedType::SEED_ZOMBIE_POGO || aSeedPacket.mPacketType == SeedType::SEED_ZOMBIE_POLEVAULTER) && aSeedPacket.mActive) {
+            return true;
+        }
+    }
+    // 场上存在正在弹跳的蹦蹦僵尸或准备跳跃的撑杆僵尸
+    Zombie *aZombie = nullptr;
+    while (theApp->mBoard->IterateZombies(aZombie)) {
+        if (aZombie->IsBouncingPogo() || aZombie->mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT) {
+            return true;
+        }
+    }
+    return false;
 }

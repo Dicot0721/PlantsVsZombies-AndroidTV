@@ -5533,7 +5533,6 @@ void Board::ShuffleButtonDown(SeedPacket *theSeedPacket) {
         TakeSunMoney(aPacketCost, 0);
         theSeedPacket->Deactivate();
         theSeedPacket->WasPlanted(0);
-        gFreeForFristShuffle[0] = false;
 
         if (gTcpClientSocket >= 0) {
             U16x6_Event event;
@@ -5561,7 +5560,6 @@ void Board::ShuffleButtonDown(SeedPacket *theSeedPacket) {
         TakeDeathMoney(aPacketCost);
         theSeedPacket->Deactivate();
         theSeedPacket->WasPlanted(1);
-        gFreeForFristShuffle[1] = false;
 
         if (gTcpClientSocket >= 0) {
             U16x6_Event event;

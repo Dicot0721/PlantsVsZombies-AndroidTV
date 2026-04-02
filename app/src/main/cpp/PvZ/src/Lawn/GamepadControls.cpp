@@ -694,7 +694,6 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                 mBoard->TakeDeathMoney(aCost);
                 aSeedPacket->Deactivate();
                 aSeedPacket->WasPlanted(mPlayerIndex2);
-                gFreeForFristShuffle[1] = false;
                 return;
             }
 
@@ -767,7 +766,6 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                 mBoard->TakeSunMoney(aCost, 0);
                 aSeedPacket->Deactivate();
                 aSeedPacket->WasPlanted(mPlayerIndex1);
-                gFreeForFristShuffle[0] = false;
             }
         }
     }

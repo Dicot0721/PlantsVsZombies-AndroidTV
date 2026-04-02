@@ -782,6 +782,13 @@ void VSSetupMenu::ButtonDepress(int theId) {
                     }
                 }
 
+                if (gIsVSShuffleMode) {
+                    gFreeForFristShuffle[0] = gFreeForFristShuffle[1] = true;
+                    aPlantBank->mNumPackets = aZombieBank->mNumPackets = 7;
+                    aPlantBank->mSeedPackets[6].SetPacketType(SEED_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
+                    aZombieBank->mSeedPackets[6].SetPacketType(SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
+                }
+
                 mSetupMode = VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE;
                 CloseVSSetup(false);
 
@@ -797,13 +804,6 @@ void VSSetupMenu::ButtonDepress(int theId) {
             default:
                 break;
         }
-    }
-
-    if (gIsVSShuffleMode) {
-        gFreeForFristShuffle[0] = gFreeForFristShuffle[1] = true;
-        aPlantBank->mNumPackets = aZombieBank->mNumPackets = 7;
-        aPlantBank->mSeedPackets[6].SetPacketType(SEED_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
-        aZombieBank->mSeedPackets[6].SetPacketType(SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
     }
 
     // 修复“额外卡槽”开启后卡槽位置不正确
