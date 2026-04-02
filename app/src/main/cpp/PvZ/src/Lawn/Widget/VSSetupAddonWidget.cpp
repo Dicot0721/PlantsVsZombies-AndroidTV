@@ -54,7 +54,6 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
         SetDisable(mExtraPacketsButton);
         SetDisable(mExtraSeedsButton);
         SetDisable(mBanModeButton);
-        mBanMode = false;
     }
 
     mBackButton = MakeNewButton(VSSetupAddonWidget::VSSetupAddonWidget_Back,
@@ -168,22 +167,29 @@ void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
 }
 
 void VSSetupAddonWidget::Draw(Graphics *g) {
-    if (mDrawString) {
-        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-        g->SetColor(Color(0, 205, 0, 255));
-        if (!mExtraPacketsButton->mBtnNoDraw)
-            g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SLOTS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_PACKETS_Y + 25);
-        if (!mExtraSeedsButton->mBtnNoDraw)
-            g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SEEDS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_SEEDS_Y + 25);
-        if (!mBanModeButton->mBtnNoDraw)
-            g->DrawString(TodStringTranslate("[VS_UI_BAN_MODE]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_BAN_MODE_Y + 25);
-        if (!mBalancePatchButton->mBtnNoDraw)
-            g->DrawString(TodStringTranslate("[VS_UI_BALANCE_PATCH]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_BALANCE_PATCH_Y + 25);
+    if (!mDrawString)
+        return;
 
+    g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+    if (!mExtraPacketsButton->mBtnNoDraw) {
+        g->SetColor(mExtraPacketsMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
+        g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SLOTS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_PACKETS_Y + 25);
+    }
+    if (!mExtraSeedsButton->mBtnNoDraw) {
+        g->SetColor(mExtraSeedsMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
+        g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SEEDS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_SEEDS_Y + 25);
+    }
+    if (!mBanModeButton->mBtnNoDraw) {
+        g->SetColor(mBanMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
+        g->DrawString(TodStringTranslate("[VS_UI_BAN_MODE]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_BAN_MODE_Y + 25);
         if (mBanMode) {
             g->SetColor(Color(205, 0, 0, 255));
             g->DrawString(TodStringTranslate("[VS_UI_BAN_PHASE_BIG]"), 200, 45);
         }
+    }
+    if (!mBalancePatchButton->mBtnNoDraw) {
+        g->SetColor(mBalancePatchMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
+        g->DrawString(TodStringTranslate("[VS_UI_BALANCE_PATCH]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_BALANCE_PATCH_Y + 25);
     }
 }
 
