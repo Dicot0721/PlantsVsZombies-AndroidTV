@@ -1332,11 +1332,12 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL:
             return sizeof(U16_Event);
 
-        // --- 大嘴花吞咬、僵尸冻结、巨人投掷小鬼、僵尸状态计数 ---
+        // --- 大嘴花吞咬、僵尸冻结、巨人投掷小鬼、僵尸状态计数、僵尸受到伤害 ---
         case EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT:
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP:
         case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW:
         case EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER:
+        case EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE:
             return sizeof(U16U16_Event);
 
         // --- 撑杆跳跃、巨人开始投掷,锤击 ---
@@ -1887,6 +1888,19 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 gTcpConnected = false;
                 aZombie->DoSpecial();
+                gTcpConnected = true;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE: {
+            U16x4U16_Event *eventZombieTakeDmg = static_cast<U16x4U16_Event *>(event);
+            int damage = eventZombieTakeDmg->data1[1];
+            int damageFlags = eventZombieTakeDmg->data1[2];
+            uint16_t serverZombieID = eventZombieTakeDmg->data2;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                gTcpConnected = false;
+                aZombie->TakeDamage(damage, damageFlags);
                 gTcpConnected = true;
             }
         } break;

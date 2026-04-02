@@ -2491,7 +2491,19 @@ void Zombie::TakeDamage(int theDamage, unsigned int theDamageFlags) {
         }
     }
 
+    if (mApp->IsVSMode() && gTcpConnected)
+        return;
+
     old_Zombie_TakeDamage(this, theDamage, theDamageFlags);
+
+    if (gTcpClientSocket >= 0) {
+        U16x4U16_Event event;
+        event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE;
+        event.data1[1] = uint16_t(theDamage);
+        event.data1[2] = uint16_t(theDamageFlags);
+        event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+        netplay::PutEvent(event);
+    }
 }
 
 int Zombie::TakeHelmDamage(int theDamage, unsigned int theDamageFlags) {
