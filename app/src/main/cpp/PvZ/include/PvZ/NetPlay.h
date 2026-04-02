@@ -100,7 +100,7 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_ZOMBIE_DIE,
     EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED,
     EVENT_SERVER_BOARD_ZOMBIE_ADD,        // AddZombieInRow触发的同步
-    EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD, // 蹦极僵尸在AddZombieInRow之后还会设置靶标位置，所以单独同步
+    EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_STEAL, // 蹦极僵尸在AddZombieInRow之后还会设置靶标位置，所以单独同步
     EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE,
     EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT, // 修改器放置僵尸会在执行AddZombieInRow后额外设置僵尸的位置，本事件就是追加同步僵尸位置
     EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE,
@@ -123,6 +123,7 @@ enum EventType : uint8_t {
 
     EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED,
     EVENT_SERVER_BOARD_START_LEVEL,
+    EVENT_SERVER_BOARD_SYNC_ID,
 
     EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK,
     EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT,
@@ -150,6 +151,13 @@ union Buffer32Bit {
         uint16_t u16_1;
         uint16_t u16_2;
     } u16x2;
+
+    struct {
+        int8_t i8_1;
+        int8_t i8_2;
+        int8_t i8_3;
+        int8_t i8_4;
+    } i8x4;
 
     struct {
         int16_t i16_1;

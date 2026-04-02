@@ -1117,15 +1117,21 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
         Zombie *aZombie = old_Board_AddZombieInRow(this, theZombieType, theRow, theFromWave, theIsRustle);
         if (gTcpClientSocket >= 0) {
             if (theZombieType == ZombieType::ZOMBIE_BUNGEE) {
-                GamepadControls *aGamepad = mGamepadControls1->mIsZombie ? mGamepadControls1 : mGamepadControls2;
-                int aTargetCol = PixelToGridXKeepOnBoard(aGamepad->mCursorPositionX, aGamepad->mCursorPositionY);
-                U16Buf32Buf32_Event event;
-                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD;
-                event.data1 = uint16_t(mZombies.DataArrayGetID(aZombie));
-                event.data2.u8x4.u8_1 = uint8_t(aTargetCol);
-                event.data2.u8x4.u8_2 = uint8_t(theRow);
-                event.data3.f32 = aZombie->mAltitude;
-                netplay::PutEvent(event);
+                if (theFromWave == 0) {
+                    // theFromWave == 0代表是偷植物的蹦极
+                    GamepadControls *aGamepad = mGamepadControls1->mIsZombie ? mGamepadControls1 : mGamepadControls2;
+                    int aTargetCol = PixelToGridXKeepOnBoard(aGamepad->mCursorPositionX, aGamepad->mCursorPositionY);
+                    U16Buf32Buf32_Event event;
+                    event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_STEAL;
+                    event.data1 = uint16_t(mZombies.DataArrayGetID(aZombie));
+                    event.data2.u8x4.u8_1 = uint8_t(aTargetCol);
+                    event.data2.u8x4.u8_2 = uint8_t(theRow);
+                    event.data3.f32 = aZombie->mAltitude;
+                    netplay::PutEvent(event);
+                } else {
+                    // theFromWave == -5代表是放僵尸的蹦极，在屋顶模式专属。
+                    // 此处我们直接不处理，由专门的EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE事件处理
+                }
             } else {
                 U8x4U16Buf32x2_Event event;
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
@@ -1307,11 +1313,10 @@ size_t Board::getServerEventSize(EventType type) {
         // --- 僵尸添加 ---
         case EVENT_SERVER_BOARD_ZOMBIE_ADD:
             return sizeof(U8x4U16Buf32x2_Event);
-        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD:
+        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_STEAL:
             return sizeof(U16Buf32Buf32_Event);
-            // TODO: 修复联机蹦极空投位置不同步
-            //        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE:
-            //            return sizeof(U16Buf32Buf32_Event);
+        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE:
+            return sizeof(U16Buf32Buf32_Event);
         case EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT:
             return sizeof(U16Buf32Buf32_Event);
 
@@ -1353,7 +1358,9 @@ size_t Board::getServerEventSize(EventType type) {
             return sizeof(U8U8U16_Event);
 
         case EVENT_SERVER_BOARD_START_LEVEL:
-            return sizeof(U16x9_Event);
+            return sizeof(BaseEvent);
+        case EVENT_SERVER_BOARD_SYNC_ID:
+            return sizeof(U16Buf32_Event);
         case EVENT_SERVER_BOARD_CONCEDE:
         case EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE:
             return sizeof(BaseEvent);
@@ -1670,7 +1677,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             aZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
             aZombie->mPosX = eventZombieAdd->data3[1].f32;
         } break;
-        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD: {
+        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_STEAL: {
             U16Buf32Buf32_Event *eventZombieBungeeAdd = static_cast<U16Buf32Buf32_Event *>(event);
 
             int aTargetCol = eventZombieBungeeAdd->data2.u8x4.u8_1;
@@ -1689,23 +1696,27 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             aZombie->mRenderOrder = Board::MakeRenderOrder(RENDER_LAYER_GRAVE_STONE, aRow, 7);
 
         } break;
-            // TODO: 修复联机蹦极空投位置不同步
-            //        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE: {
-            //            U16Buf32Buf32_Event *eventBungeeDropZombie = static_cast<U16Buf32Buf32_Event *>(event);
-            //            int gridX = eventBungeeDropZombie->data2.u8x4.u8_1;
-            //            int gridY = eventBungeeDropZombie->data2.u8x4.u8_2;
-            //            uint16_t serverBungeeZombieID = eventBungeeDropZombie->data2.u16x2.u16_1;
-            //            uint16_t clientBungeeZombieID;
-            //            uint16_t serverDroppedZombieID = eventBungeeDropZombie->data2.u16x2.u16_2;
-            //            uint16_t clientDroppedZombieID;
-            //            if (homura::FindInMap(serverZombieIDMap, serverBungeeZombieID, clientBungeeZombieID) && homura::FindInMap(serverZombieIDMap, serverDroppedZombieID, clientDroppedZombieID)) {
-            //                Zombie *bungeeZombie = mZombies.DataArrayGet(clientBungeeZombieID);
-            //                Zombie *droppedZombie = mZombies.DataArrayGet(clientDroppedZombieID);
-            //                gTcpConnected = false;
-            //                bungeeZombie->BungeeDropZombie(droppedZombie, gridX, gridY);
-            //                gTcpConnected = true;
-            //            }
-            //        } break;
+
+        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE: {
+            U16Buf32Buf32_Event *eventBungeeDropZombie = static_cast<U16Buf32Buf32_Event *>(event);
+            int gridX = eventBungeeDropZombie->data2.u8x4.u8_1;
+            int gridY = eventBungeeDropZombie->data2.u8x4.u8_2;
+            uint16_t serverBungeeZombieID = eventBungeeDropZombie->data2.u16x2.u16_1;
+            uint16_t serverDroppedZombieID = eventBungeeDropZombie->data2.u16x2.u16_2;
+            uint16_t clientDroppedZombieID;
+
+            gTcpConnected = false;
+            Zombie *aBungeeZombie = AddZombie(ZombieType::ZOMBIE_BUNGEE, -5, false);
+            serverZombieIDMap.emplace(serverBungeeZombieID, uint16_t(mZombies.DataArrayGetID(aBungeeZombie)));
+            gTcpConnected = true;
+
+            if (homura::FindInMap(serverZombieIDMap, serverDroppedZombieID, clientDroppedZombieID)) {
+                Zombie *droppedZombie = mZombies.DataArrayGet(clientDroppedZombieID);
+                gTcpConnected = false;
+                aBungeeZombie->BungeeDropZombie(droppedZombie, gridX, gridY);
+                gTcpConnected = true;
+            }
+        } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT: {
             U16Buf32Buf32_Event *eventZombieAddByCheat = static_cast<U16Buf32Buf32_Event *>(event);
             int theGridX = eventZombieAddByCheat->data2.u8x4.u8_1;
@@ -1900,39 +1911,44 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             seedPacket->Deactivate();
             seedPacket->WasPlanted(0);
         } break;
+        case EVENT_SERVER_BOARD_SYNC_ID: {
+            U16Buf32_Event *eventSync = (U16Buf32_Event *)event;
+
+            switch (eventSync->data2.u8x4.u8_1) {
+                case 0: // Plant
+                {
+                    Plant *plant = nullptr;
+                    while (IteratePlants(plant)) {
+                        if (plant->mSeedType == eventSync->data2.u8x4.u8_2 && plant->mRow == eventSync->data2.u8x4.u8_3 && plant->mPlantCol == eventSync->data2.u8x4.u8_4) {
+                            serverPlantIDMap.emplace(eventSync->data1, uint16_t(mPlants.DataArrayGetID(plant)));
+                        }
+                    }
+                }
+
+                break;
+                case 1: // GridItem
+                {
+                    GridItem *gridItem = nullptr;
+                    while (IterateGridItems(gridItem)) {
+                        if (gridItem->mGridItemType == eventSync->data2.u8x4.u8_2 && gridItem->mGridX == eventSync->data2.u8x4.u8_3 && gridItem->mGridY == eventSync->data2.u8x4.u8_4) {
+                            serverGridItemIDMap.emplace(eventSync->data1, uint16_t(mGridItems.DataArrayGetID(gridItem)));
+                        }
+                    }
+                } break;
+                default:
+                    break;
+            }
+
+        } break;
+
         case EVENT_SERVER_BOARD_START_LEVEL: {
             // 与主机端同步置0
             mMainCounter = 0;
-            U16x9_Event *event1 = (U16x9_Event *)event;
             serverPlantIDMap.clear();
             serverZombieIDMap.clear();
             serverCoinIDMap.clear();
             serverGridItemIDMap.clear();
 
-            GridItem *gridItem = nullptr;
-            while (IterateGridItems(gridItem)) {
-                if (gridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
-                    serverGridItemIDMap.emplace(event1->data[gridItem->mGridY], uint16_t(mGridItems.DataArrayGetID(gridItem)));
-                }
-                if (gridItem->mGridItemType == GRIDITEM_GRAVESTONE) {
-                    if (gridItem->mGridY == 1) {
-                        serverGridItemIDMap.emplace(event1->data[5], uint16_t(mGridItems.DataArrayGetID(gridItem)));
-                    }
-                    if (gridItem->mGridY >= 3) {
-                        serverGridItemIDMap.emplace(event1->data[6], uint16_t(mGridItems.DataArrayGetID(gridItem)));
-                    }
-                }
-            }
-
-            Plant *plant = nullptr;
-            while (IteratePlants(plant)) {
-                if (plant->mRow == 1) {
-                    serverPlantIDMap.emplace(event1->data[7], uint16_t(mPlants.DataArrayGetID(plant)));
-                }
-                if (plant->mRow >= 3) {
-                    serverPlantIDMap.emplace(event1->data[8], uint16_t(mPlants.DataArrayGetID(plant)));
-                }
-            }
         } break;
         case EVENT_SERVER_BOARD_CONCEDE: {
             mApp->mMusic->StopAllMusic();
@@ -4422,44 +4438,38 @@ void Board::StartLevel() {
             // 重置计时器，以与客户端同步舞王的舞步节奏
             mMainCounter = 0;
 
-            U16x9_Event nineShortDataEvent;
-            nineShortDataEvent.type = EventType::EVENT_SERVER_BOARD_START_LEVEL;
-
+            BaseEvent nineShortDataEvent = {EventType::EVENT_SERVER_BOARD_START_LEVEL};
+            netplay::PutEvent(nineShortDataEvent);
             GridItem *gridItem = nullptr;
             while (IterateGridItems(gridItem)) {
-                if (gridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
-                    nineShortDataEvent.data[gridItem->mGridY] = uint16_t(mGridItems.DataArrayGetID(gridItem));
-                }
-                if (gridItem->mGridItemType == GRIDITEM_GRAVESTONE) {
-                    if (gridItem->mGridY == 1) {
-                        nineShortDataEvent.data[5] = uint16_t(mGridItems.DataArrayGetID(gridItem));
-                    }
-                    if (gridItem->mGridY >= 3) {
-                        nineShortDataEvent.data[6] = uint16_t(mGridItems.DataArrayGetID(gridItem));
-                    }
-                }
-            }
 
-            Plant *plant = nullptr;
-            while (IteratePlants(plant)) {
-                if (plant->mRow == 1) {
-                    nineShortDataEvent.data[7] = uint16_t(mPlants.DataArrayGetID(plant));
-                }
-                if (plant->mRow >= 3) {
-                    nineShortDataEvent.data[8] = uint16_t(mPlants.DataArrayGetID(plant));
-                }
-            }
+                U16Buf32_Event eventSync;
+                eventSync.type = EventType::EVENT_SERVER_BOARD_SYNC_ID;
+                eventSync.data1 = uint16_t(mGridItems.DataArrayGetID(gridItem));
+                eventSync.data2.u8x4.u8_1 = 1; // 1 --> GridItem
+                eventSync.data2.u8x4.u8_2 = uint8_t(gridItem->mGridItemType);
+                eventSync.data2.u8x4.u8_3 = uint8_t(gridItem->mGridX);
+                eventSync.data2.u8x4.u8_4 = uint8_t(gridItem->mGridY);
+                netplay::PutEvent(eventSync);
 
-            netplay::PutEvent(nineShortDataEvent);
 
-            gridItem = nullptr;
-            while (IterateGridItems(gridItem)) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, uint16_t(mGridItems.DataArrayGetID(gridItem)), uint16_t(gridItem->mLaunchCounter)};
                 netplay::PutEvent(event);
             }
 
-            plant = nullptr;
+            Plant *plant = nullptr;
             while (IteratePlants(plant)) {
+
+                U16Buf32_Event eventSync;
+                eventSync.type = EventType::EVENT_SERVER_BOARD_SYNC_ID;
+                eventSync.data1 = uint16_t(mPlants.DataArrayGetID(plant));
+                eventSync.data2.u8x4.u8_1 = 0; // 0 --> Plant
+                eventSync.data2.u8x4.u8_2 = uint8_t(plant->mSeedType);
+                eventSync.data2.u8x4.u8_3 = uint8_t(plant->mRow);
+                eventSync.data2.u8x4.u8_4 = uint8_t(plant->mPlantCol);
+                netplay::PutEvent(eventSync);
+
+
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mPlants.DataArrayGetID(plant)), uint16_t(plant->mLaunchCounter)};
                 netplay::PutEvent(event);
                 //                plant->SyncPingPongAnimationToClient();

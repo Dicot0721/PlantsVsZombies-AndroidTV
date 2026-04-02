@@ -382,9 +382,35 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
                 "[MP_VS_SHUFFLE_MODE]",
             };
 
+
             if (gTcpConnected) {
                 pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_REMIND_HOST_FMT]");
-                pvzstl::string name = TodStringTranslate(names[gChallengeScreenRequestState - 68]);
+                pvzstl::string name = "unknown";
+
+                switch (gChallengeScreenRequestState) {
+                    case GAMEMODE_MP_VS_DAY:
+                        name = TodStringTranslate("[MP_VS_DAY]");
+                        break;
+                    case GAMEMODE_MP_VS_NIGHT:
+                        name = TodStringTranslate("[MP_VS_NIGHT]");
+                        break;
+                    case GAMEMODE_MP_VS_POOL_DAY:
+                        name = TodStringTranslate("[MP_VS_POOL_DAY]");
+                        break;
+                    case GAMEMODE_MP_VS_POOL_NIGHT:
+                        name = TodStringTranslate("[MP_VS_POOL_NIGHT]");
+                        break;
+                    case GAMEMODE_MP_VS_ROOF:
+                        name = TodStringTranslate("[MP_VS_ROOF]");
+                        break;
+                    case GAMEMODE_MP_VS_SHUFFLE_MODE:
+                        name = TodStringTranslate("[MP_VS_SHUFFLE_MODE]");
+                        break;
+                    default:
+                        break;
+                }
+
+
                 TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
             }
 
@@ -394,7 +420,30 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
             // ======================
             if (gTcpClientSocket >= 0) {
                 pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_OPPONENT_WANTS_PLAY_FMT]");
-                pvzstl::string name = TodStringTranslate(names[gChallengeScreenRequestState - 68]);
+                pvzstl::string name = "unknown";
+
+                switch (gChallengeScreenRequestState) {
+                    case GAMEMODE_MP_VS_DAY:
+                        name = TodStringTranslate("[MP_VS_DAY]");
+                        break;
+                    case GAMEMODE_MP_VS_NIGHT:
+                        name = TodStringTranslate("[MP_VS_NIGHT]");
+                        break;
+                    case GAMEMODE_MP_VS_POOL_DAY:
+                        name = TodStringTranslate("[MP_VS_POOL_DAY]");
+                        break;
+                    case GAMEMODE_MP_VS_POOL_NIGHT:
+                        name = TodStringTranslate("[MP_VS_POOL_NIGHT]");
+                        break;
+                    case GAMEMODE_MP_VS_ROOF:
+                        name = TodStringTranslate("[MP_VS_ROOF]");
+                        break;
+                    case GAMEMODE_MP_VS_SHUFFLE_MODE:
+                        name = TodStringTranslate("[MP_VS_SHUFFLE_MODE]");
+                        break;
+                    default:
+                        break;
+                }
                 TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
             }
         }
