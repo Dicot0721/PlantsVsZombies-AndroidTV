@@ -440,8 +440,6 @@ inline void (*old_Zombie_DrawBossPart)(Zombie *a1, Sexy::Graphics *graphics, int
 
 inline void (*old_Zombie_RiseFromGrave)(Zombie *zombie, int gridX, int gridY);
 
-inline void (*old_Zombie_EatPlant)(Zombie *a, Plant *a2);
-
 inline void (*old_Zombie_DetachShield)(Zombie *zombie);
 
 inline void (*old_Zombie_ZombieInitialize)(Zombie *zombie, int theRow, ZombieType theType, bool theVariant, Zombie *theParentZombie, int theFromWave, bool isVisible);

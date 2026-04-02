@@ -1358,6 +1358,7 @@ size_t Board::getServerEventSize(EventType type) {
             return sizeof(U8U8U16_Event);
 
         case EVENT_SERVER_BOARD_START_LEVEL:
+        case EVENT_SERVER_BOARD_PLANT_EATEN:
             return sizeof(BaseEvent);
         case EVENT_SERVER_BOARD_SYNC_ID:
             return sizeof(U16Buf32_Event);
@@ -1552,6 +1553,9 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             serverPlantIDMap.emplace(event1->data5.u16x2.u16_1, uint16_t(mPlants.DataArrayGetID(plant)));
             gTcpConnected = true;
         } break;
+        case EVENT_SERVER_BOARD_PLANT_EATEN:
+            mApp->PlaySample(*SOUND_GULP);
+            break;
         case EVENT_SERVER_BOARD_PLANT_DIE: {
             U16_Event *eventPlantDie = static_cast<U16_Event *>(event);
             uint16_t serverPlantID = eventPlantDie->data;

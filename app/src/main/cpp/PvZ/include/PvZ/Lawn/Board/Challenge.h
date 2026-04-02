@@ -143,6 +143,9 @@ public:
     void ScaryPotterJackExplode(int thePosX, int thePosY) {
         reinterpret_cast<void (*)(Challenge *, int, int)>(Challenge_ScaryPotterJackExplodeAddr)(this, thePosX, thePosY);
     }
+    void ZombieAtePlant(Zombie *theZombie, Plant *thePlant) {
+        reinterpret_cast<void (*)(Challenge *, Zombie *, Plant *)>(Challenge_ZombieAtePlantAddr)(this, theZombie, thePlant);
+    }
 
     void Update();
     void UpdateVS();

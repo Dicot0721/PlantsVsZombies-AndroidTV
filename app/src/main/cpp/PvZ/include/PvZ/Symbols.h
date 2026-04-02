@@ -606,6 +606,7 @@ inline void *Challenge_CanTargetZombieWithPortalsAddr;
 inline void *Challenge_ScaryPotterJackExplodeAddr;
 inline void *Challenge_UpdateConveyorBeltAddr;
 inline void *Challenge_MouseDownWhackAZombieAddr;
+inline void *Challenge_ZombieAtePlantAddr;
 
 
 inline void *Plant_UpdateAddr;
@@ -1319,6 +1320,7 @@ inline Font **FONT_DWARVENTODCRAFT24;
 inline int *SOUND_BALLOON_POP;
 inline int *SOUND_BOING;
 inline int *SOUND_POTATO_MINE;
+inline int *SOUND_GULP;
 } // namespace Sexy
 
 inline Sexy::Image **Sexy_IMAGE_SEEDPACKETFLASH_Addr;
@@ -1391,7 +1393,6 @@ inline int *Sexy_SOUND_TAP_Addr;
 inline int *Sexy_SOUND_FINALWAVE_Addr;
 inline int *Sexy_SOUND_GRAVEBUTTON_Addr;
 inline int *Sexy_SOUND_CERAMIC_Addr;
-inline int *Sexy_SOUND_GULP_Addr;
 inline int *Sexy_SOUND_SEEDLIFT_Addr;
 inline int *Sexy_SOUND_DOOMSHROOM_Addr;
 inline int *Sexy_SOUND_HUGE_WAVE_Addr;

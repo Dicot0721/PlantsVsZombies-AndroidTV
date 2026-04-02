@@ -1457,7 +1457,6 @@ void Zombie::StopEating() {
 }
 
 void Zombie::EatPlant(Plant *thePlant) {
-    // 修复正向出土的矿工不上梯子
     if (mZombiePhase == ZombiePhase::PHASE_DANCER_DANCING_IN) {
         mPhaseCounter = 1;
         return;
@@ -1465,17 +1464,83 @@ void Zombie::EatPlant(Plant *thePlant) {
     if (mYuckyFace) {
         return;
     }
-    int aPlantCol = thePlant->mPlantCol;
-    int aRow = thePlant->mRow;
-    if (mBoard->GetLadderAt(aPlantCol, aRow) != nullptr && mZombieType == ZombieType::ZOMBIE_DIGGER && mZombiePhase == ZombiePhase::PHASE_DIGGER_WALKING_WITHOUT_AXE && !IsWalkingBackwards()) {
+
+    // 修复正向出土的矿工不上梯子
+    if (mBoard->GetLadderAt(thePlant->mPlantCol, thePlant->mRow) && (mZombieType != ZombieType::ZOMBIE_DIGGER || !IsWalkingBackwards())) {
         StopEating();
-        if (mZombieHeight == ZombieHeight::HEIGHT_ZOMBIE_NORMAL && mUseLadderCol != aPlantCol) {
+
+        if (mZombieHeight == ZombieHeight::HEIGHT_ZOMBIE_NORMAL && mUseLadderCol != thePlant->mPlantCol) {
             mZombieHeight = ZombieHeight::HEIGHT_UP_LADDER;
-            mUseLadderCol = aPlantCol;
+            mUseLadderCol = thePlant->mPlantCol;
         }
+
         return;
     }
-    old_Zombie_EatPlant(this, thePlant);
+
+    StartEating();
+    if (thePlant->mSeedType == SeedType::SEED_JALAPENO || thePlant->mSeedType == SeedType::SEED_CHERRYBOMB || thePlant->mSeedType == SeedType::SEED_DOOMSHROOM
+        || thePlant->mSeedType == SeedType::SEED_ICESHROOM || thePlant->mSeedType == SeedType::SEED_HYPNOSHROOM || thePlant->mState == PlantState::STATE_FLOWERPOT_INVULNERABLE
+        || thePlant->mState == PlantState::STATE_LILYPAD_INVULNERABLE || thePlant->mState == PlantState::STATE_SQUASH_LOOK || thePlant->mState == PlantState::STATE_SQUASH_PRE_LAUNCH) {
+        if (!thePlant->mIsAsleep) {
+            return;
+        }
+    }
+    if (thePlant->mSeedType == SeedType::SEED_POTATOMINE && thePlant->mState != PlantState::STATE_NOTREADY) {
+        return;
+    }
+
+    bool triggered = false;
+    if (thePlant->mSeedType == SeedType::SEED_BLOVER) {
+        triggered = true;
+    }
+    if (thePlant->mSeedType == SeedType::SEED_ICESHROOM && !thePlant->mIsAsleep) {
+        triggered = true;
+    }
+    if (triggered) {
+        thePlant->DoSpecial();
+        return;
+    }
+
+    if (mChilledCounter > 0 && mZombieAge % 2 == 1)
+        return;
+
+    if (mApp->IsIZombieLevel() && thePlant->mSeedType == SeedType::SEED_SUNFLOWER) // IZ模式下啃咬向日葵
+    {
+        int aStageBeforeChew = thePlant->mPlantHealth / 40;
+        int aStageAfterChew = (thePlant->mPlantHealth - DAMAGE_PER_EAT) / 40;
+        if (aStageAfterChew < aStageBeforeChew || thePlant->mPlantHealth - DAMAGE_PER_EAT <= 0) // 若本次啃食令植物血量下降了至少 1 个阶段
+        {
+            mBoard->AddCoin(thePlant->mX, thePlant->mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
+        }
+    }
+
+    thePlant->mPlantHealth -= DAMAGE_PER_EAT;
+    thePlant->mRecentlyEatenCountdown = 50;
+    if (mApp->IsIZombieLevel() && mJustGotShotCounter < -500) {
+        if (thePlant->mSeedType == SeedType::SEED_WALLNUT || thePlant->mSeedType == SeedType::SEED_TALLNUT || thePlant->mSeedType == SeedType::SEED_PUMPKINSHELL) {
+            thePlant->mPlantHealth -= DAMAGE_PER_EAT;
+        }
+    }
+
+    if (thePlant->mPlantHealth <= 0) {
+        if (!(mApp->IsVSMode() && gTcpConnected)) {
+            mApp->PlaySample(*SOUND_GULP);
+        }
+        if (gTcpClientSocket >= 0) {
+            BaseEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_EATEN};
+            netplay::PutEvent(event);
+        }
+
+        mBoard->mPlantsEaten++;
+        thePlant->Die();
+        mBoard->mChallenge->ZombieAtePlant(this, thePlant);
+
+        if (mBoard->mLevel >= 2 && mBoard->mLevel <= 4 && mApp->IsFirstTimeAdventureMode()) {
+            if (thePlant->mPlantCol > 4 && mBoard->mPlants.mSize < 15 && thePlant->mSeedType == SeedType::SEED_PEASHOOTER) {
+                mBoard->DisplayAdvice("[ADVICE_PEASHOOTER_DIED]", MessageStyle::MESSAGE_STYLE_HINT_TALL_FAST, AdviceType::ADVICE_PEASHOOTER_DIED);
+            }
+        }
+    }
 }
 
 void Zombie::DetachShield() {

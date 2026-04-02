@@ -603,6 +603,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN9Challenge22ScaryPotterJackExplodeEii", Challenge_ScaryPotterJackExplodeAddr);
     libGameMain.GetSymbol("_ZN9Challenge18UpdateConveyorBeltEi", Challenge_UpdateConveyorBeltAddr);
     libGameMain.GetSymbol("_ZN9Challenge21MouseDownWhackAZombieEiii", Challenge_MouseDownWhackAZombieAddr);
+    libGameMain.GetSymbol("_ZN9Challenge14ZombieAtePlantEP6ZombieP5Plant", Challenge_ZombieAtePlantAddr);
 
 
     libGameMain.GetSymbol("_ZN5Plant6UpdateEv", Plant_UpdateAddr);
@@ -1363,12 +1364,12 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy11SOUND_PAUSEE", Sexy_SOUND_PAUSE_Addr);
     libGameMain.GetSymbol("_ZN4Sexy11SOUND_BOINGE", Sexy::SOUND_BOING);
     libGameMain.GetSymbol("_ZN4Sexy17SOUND_POTATO_MINEE", Sexy::SOUND_POTATO_MINE);
+    libGameMain.GetSymbol("_ZN4Sexy10SOUND_GULPE", Sexy::SOUND_GULP);
     libGameMain.GetSymbol("_ZN4Sexy12SOUND_FROZENE", Sexy_SOUND_FROZEN_Addr);
     libGameMain.GetSymbol("_ZN4Sexy9SOUND_TAPE", Sexy_SOUND_TAP_Addr);
     libGameMain.GetSymbol("_ZN4Sexy15SOUND_FINALWAVEE", Sexy_SOUND_FINALWAVE_Addr);
     libGameMain.GetSymbol("_ZN4Sexy17SOUND_GRAVEBUTTONE", Sexy_SOUND_GRAVEBUTTON_Addr);
     libGameMain.GetSymbol("_ZN4Sexy13SOUND_CERAMICE", Sexy_SOUND_CERAMIC_Addr);
-    libGameMain.GetSymbol("_ZN4Sexy10SOUND_GULPE", Sexy_SOUND_GULP_Addr);
     libGameMain.GetSymbol("_ZN4Sexy14SOUND_SEEDLIFTE", Sexy_SOUND_SEEDLIFT_Addr);
     libGameMain.GetSymbol("_ZN4Sexy16SOUND_DOOMSHROOME", Sexy_SOUND_DOOMSHROOM_Addr);
     libGameMain.GetSymbol("_ZN4Sexy15SOUND_HUGE_WAVEE", Sexy_SOUND_HUGE_WAVE_Addr);

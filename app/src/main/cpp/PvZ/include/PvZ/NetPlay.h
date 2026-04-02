@@ -94,6 +94,7 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_PLANT_FIRE,                         // 射出子弹
     EVENT_SERVER_BOARD_PLANT_ADD,
     EVENT_SERVER_BOARD_PLANT_DIE,
+    EVENT_SERVER_BOARD_PLANT_EATEN,      // 播放植物被吃掉的音效
     EVENT_SERVER_BOARD_PLANT_DO_SPECIAL, // 同步植物触发特性
     EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT,
 
