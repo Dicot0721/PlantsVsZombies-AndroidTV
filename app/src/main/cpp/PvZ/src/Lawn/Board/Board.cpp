@@ -5588,3 +5588,11 @@ bool Board::CanAddGraveStoneAt(int theGridX, int theGridY) {
     }
     return true;
 }
+
+void Board::DrawLevel(Graphics *g) {
+    // 禁止对战模式绘制关卡名称
+    if (mApp->IsVSMode())
+        return;
+
+    old_Board_DrawLevel(this, g);
+}

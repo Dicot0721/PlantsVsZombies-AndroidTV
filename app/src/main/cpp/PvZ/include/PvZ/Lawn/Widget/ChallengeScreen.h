@@ -126,7 +126,6 @@ public:
     const char *mChallengeName; // 5
 };
 extern ChallengeDefinition gChallengeDefs[200];
-extern ChallengeDefinition gVSChallengeDefs[NUM_VS_MODES];
 
 ChallengeDefinition &GetChallengeDefinition(int theChallengeMode);
 /***************************************************************************************************************/

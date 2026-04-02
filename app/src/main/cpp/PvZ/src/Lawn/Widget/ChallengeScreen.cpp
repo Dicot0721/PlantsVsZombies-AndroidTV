@@ -102,12 +102,19 @@ ChallengeDefinition gChallengeDefs[200] = {
     {GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_9, 34, ChallengePage::CHALLENGE_PAGE_PUZZLE, 3, 2, "[I_ZOMBIE_9]"},
     {GameMode::GAMEMODE_SCARY_POTTER_ENDLESS, 33, ChallengePage::CHALLENGE_PAGE_PUZZLE, 3, 3, "[SCARY_POTTER_ENDLESS]"},
     {GameMode::GAMEMODE_PUZZLE_I_ZOMBIE_ENDLESS, 35, ChallengePage::CHALLENGE_PAGE_PUZZLE, 3, 4, "[I_ZOMBIE_ENDLESS]"},
-    {GameMode::GAMEMODE_UPSELL, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 0, "[UPSELL]"},
-    {GameMode::GAMEMODE_INTRO, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 1, "[INTRO]"},
-    {GameMode::GAMEMODE_MULTI_PLAYER, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 2, ""},
-    {GameMode::GAMEMODE_MP_VS_HIDE, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 3, ""},
-    {GameMode::GAMEMODE_MP_VS, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 0, ""},
-    {GameMode::GAMEMODE_MP_VS_COOP, 18, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 1, "[COOP]"},
+    //    {GameMode::GAMEMODE_UPSELL, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 0, "[UPSELL]"},
+    //    {GameMode::GAMEMODE_INTRO, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 1, "[INTRO]"},
+    //    {GameMode::GAMEMODE_MULTI_PLAYER, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 2, ""},
+    //    {GameMode::GAMEMODE_MP_VS_HIDE, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 3, ""},
+    //    {GameMode::GAMEMODE_MP_VS, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 0, ""},
+    //    {GameMode::GAMEMODE_MP_VS_COOP, 18, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 1, "[COOP]"},
+    // 废弃关卡改为对战关卡
+    {GameMode::GAMEMODE_MP_VS, 0, ChallengePage::CHALLENGE_PAGE_VS, 0, 0, "[MP_VS_DAY]"},
+    {GameMode::GAMEMODE_MP_VS, 1, ChallengePage::CHALLENGE_PAGE_VS, 0, 1, "[MP_VS_NIGHT]"},
+    {GameMode::GAMEMODE_MP_VS, 2, ChallengePage::CHALLENGE_PAGE_VS, 0, 2, "[MP_VS_POOL_DAY]"},
+    {GameMode::GAMEMODE_MP_VS, 3, ChallengePage::CHALLENGE_PAGE_VS, 0, 3, "[MP_VS_POOL_NIGHT]"},
+    {GameMode::GAMEMODE_MP_VS, 4, ChallengePage::CHALLENGE_PAGE_VS, 0, 4, "[MP_VS_ROOF]"},
+    {GameMode::GAMEMODE_MP_VS, 0, ChallengePage::CHALLENGE_PAGE_VS, 1, 0, "[MP_VS_SHUFFLE_MODE]"},
     {GameMode::GAMEMODE_MP_VS_UNKONWN, 18, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 2, ""},
     {GameMode::GAMEMODE_TWO_PLAYER_COOP_DAY, 0, ChallengePage::CHALLENGE_PAGE_COOP, 0, 0, "[COOP_1]"},
     {GameMode::GAMEMODE_TWO_PLAYER_COOP_NIGHT, 1, ChallengePage::CHALLENGE_PAGE_COOP, 0, 1, "[COOP_2]"},
@@ -127,15 +134,6 @@ ChallengeDefinition gChallengeDefs[200] = {
     {GameMode::GAMEMODE_MP_VS_IN_PAGE, 2, ChallengePage::CHALLENGE_PAGE_VS, 0, 2, "[MP_VS_POOL_DAY]"},
     {GameMode::GAMEMODE_MP_VS_IN_PAGE, 3, ChallengePage::CHALLENGE_PAGE_VS, 0, 3, "[MP_VS_POOL_NIGHT]"},
     {GameMode::GAMEMODE_MP_VS_IN_PAGE, 4, ChallengePage::CHALLENGE_PAGE_VS, 0, 4, "[MP_VS_ROOF]"},
-};
-
-ChallengeDefinition gVSChallengeDefs[NUM_VS_MODES] = {
-    {GameMode::GAMEMODE_MP_VS, 0, ChallengePage::CHALLENGE_PAGE_VS, 0, 0, "[MP_VS_DAY]"},
-    {GameMode::GAMEMODE_MP_VS, 1, ChallengePage::CHALLENGE_PAGE_VS, 0, 1, "[MP_VS_NIGHT]"},
-    {GameMode::GAMEMODE_MP_VS, 2, ChallengePage::CHALLENGE_PAGE_VS, 0, 2, "[MP_VS_POOL_DAY]"},
-    {GameMode::GAMEMODE_MP_VS, 3, ChallengePage::CHALLENGE_PAGE_VS, 0, 3, "[MP_VS_POOL_NIGHT]"},
-    {GameMode::GAMEMODE_MP_VS, 4, ChallengePage::CHALLENGE_PAGE_VS, 0, 4, "[MP_VS_ROOF]"},
-    {GameMode::GAMEMODE_MP_VS, 0, ChallengePage::CHALLENGE_PAGE_VS, 1, 0, "[MP_VS_SHUFFLE_MODE]"},
 };
 
 void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
@@ -251,12 +249,6 @@ void ChallengeScreen::_destructor2() {
 }
 
 ChallengeDefinition &GetChallengeDefinition(int theChallengeMode) {
-    for (int i = NUM_VS_MODES; i > 0; --i) {
-        if (theChallengeMode + i == GameMode::GAMEMODE_MP_VS) {
-            return gVSChallengeDefs[NUM_VS_MODES - i];
-        }
-    }
-
     return gChallengeDefs[theChallengeMode];
 }
 

@@ -197,6 +197,7 @@ inline void *Board_SpawnZombiesFromSkyAddr;
 inline void *Board_SpawnZombiesFromPoolAddr;
 inline void *Board_PickGraveRisingZombieTypeAddr;
 inline void *Board_CanAddGraveStoneAtAddr;
+inline void *Board_DrawLevelAddr;
 
 inline void *SyncBoardAddr;
 inline void *FixBoardAfterLoadAddr;

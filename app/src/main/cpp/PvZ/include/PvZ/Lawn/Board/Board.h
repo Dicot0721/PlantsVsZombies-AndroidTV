@@ -592,6 +592,7 @@ public:
     void SwitchGamepadControls();
     void ShuffleButtonDown(SeedPacket *theSeedPacket);
     bool CanAddGraveStoneAt(int theGridX, int theGridY);
+    void DrawLevel(Sexy::Graphics *g);
 
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);
@@ -623,6 +624,13 @@ protected:
 
 int GetRectOverlap(const Sexy::Rect &rect1, const Sexy::Rect &rect2);
 bool GetCircleRectOverlap(int theCircleX, int theCircleY, int theRadius, const Sexy::Rect &theRect);
+void FixBoardAfterLoad(Board *board);
+void SyncReanimation(Board *a1, Reanimation *a2, int *theSaveGameContext);
+bool LawnSaveGame(Board *theBoard, const pvzstl::string &theFilePath);
+bool LawnLoadGame(Board *theBoard, SaveGameContext *theFilePath);
+const char *GetNameByAchievementId(AchievementId theAchievementId);
+Sexy::Image *GetIconByAchievementId(AchievementId theAchievementId);
+bool TRect_Contains(Sexy::Rect *rect, int x, int y);
 /***************************************************************************************************************/
 inline int theBuildLadderX;
 inline int theBuildPlantX;
@@ -684,7 +692,6 @@ inline BackgroundType gVSBackground; // 对战模式战场
 // 下 1
 // 左 2
 // 右 3
-
 
 inline void (*old_FixBoardAfterLoad)(Board *board);
 
@@ -796,28 +803,12 @@ inline void (*old_Board_Draw)(Board *, Sexy::Graphics *g);
 
 inline Coin *(*old_Board_AddCoin)(Board *board, int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion);
 
-void FixBoardAfterLoad(Board *board);
-
-void SyncReanimation(Board *a1, Reanimation *a2, int *theSaveGameContext);
-
-bool LawnSaveGame(Board *theBoard, const pvzstl::string &theFilePath);
-
-bool LawnLoadGame(Board *theBoard, SaveGameContext *theFilePath);
-
-const char *GetNameByAchievementId(AchievementId theAchievementId);
-
-Sexy::Image *GetIconByAchievementId(AchievementId theAchievementId);
-
-bool TRect_Contains(Sexy::Rect *rect, int x, int y);
-
-bool Board_KeyUp(Board *board, int keyCode);
-
-void Board_DrawStartButton(Board *board, Sexy::Graphics *graphics, LawnApp *lawnApp);
-
 inline GridItem *(*old_Board_AddAGraveStone)(Board *board, int gridX, int gridY);
 
 inline bool (*old_Board_TakeSunMoney)(Board *board, int amount, int player);
 
 inline bool (*old_Board_TakeDeathMoney)(Board *board, int amount);
+
+inline void (*old_Board_DrawLevel)(Board *, Sexy::Graphics *);
 
 #endif // PVZ_LAWN_BOARD_BOARD_H
