@@ -169,7 +169,7 @@ void InitHookFunction() {
     homura::HookFunction(Board_TakeDeathMoneyAddr, &Board::TakeDeathMoney, &old_Board_TakeDeathMoney);
     homura::HookFunction(Board_SpawnZombiesFromGravesAddr, &Board::SpawnZombiesFromGraves, nullptr);
     homura::HookFunction(Board_CanAddGraveStoneAtAddr, &Board::CanAddGraveStoneAt, nullptr);
-    homura::HookFunction(Board_DrawLevelAddr, &Board::DrawLevel, nullptr);
+    homura::HookFunction(Board_DrawLevelAddr, &Board::DrawLevel, &old_Board_DrawLevel);
 
 
     homura::HookFunction(FixBoardAfterLoadAddr, &FixBoardAfterLoad, &old_FixBoardAfterLoad);
