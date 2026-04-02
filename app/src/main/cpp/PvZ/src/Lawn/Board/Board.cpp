@@ -1309,8 +1309,9 @@ size_t Board::getServerEventSize(EventType type) {
             return sizeof(U8x4U16Buf32x2_Event);
         case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_ADD:
             return sizeof(U16Buf32Buf32_Event);
-        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE:
-            return sizeof(U16U16U16Buf32Buf32_Event);
+            // TODO: 修复联机蹦极空投位置不同步
+            //        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE:
+            //            return sizeof(U16Buf32Buf32_Event);
         case EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT:
             return sizeof(U16Buf32Buf32_Event);
 
@@ -1688,22 +1689,23 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             aZombie->mRenderOrder = Board::MakeRenderOrder(RENDER_LAYER_GRAVE_STONE, aRow, 7);
 
         } break;
-        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE: {
-            U16Buf32Buf32_Event *eventBungeeDropZombie = static_cast<U16Buf32Buf32_Event *>(event);
-            int gridX = eventBungeeDropZombie->data2.u8x4.u8_1;
-            int gridY = eventBungeeDropZombie->data2.u8x4.u8_2;
-            uint16_t serverBungeeZombieID = eventBungeeDropZombie->data2.u16x2.u16_1;
-            uint16_t clientBungeeZombieID;
-            uint16_t serverDroppedZombieID = eventBungeeDropZombie->data2.u16x2.u16_2;
-            uint16_t clientDroppedZombieID;
-            if (homura::FindInMap(serverZombieIDMap, serverBungeeZombieID, clientBungeeZombieID) && homura::FindInMap(serverZombieIDMap, serverDroppedZombieID, clientDroppedZombieID)) {
-                Zombie *bungeeZombie = mZombies.DataArrayGet(clientBungeeZombieID);
-                Zombie *droppedZombie = mZombies.DataArrayGet(clientDroppedZombieID);
-                gTcpConnected = false;
-                bungeeZombie->BungeeDropZombie(droppedZombie, gridX, gridY);
-                gTcpConnected = true;
-            }
-        } break;
+            // TODO: 修复联机蹦极空投位置不同步
+            //        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE: {
+            //            U16Buf32Buf32_Event *eventBungeeDropZombie = static_cast<U16Buf32Buf32_Event *>(event);
+            //            int gridX = eventBungeeDropZombie->data2.u8x4.u8_1;
+            //            int gridY = eventBungeeDropZombie->data2.u8x4.u8_2;
+            //            uint16_t serverBungeeZombieID = eventBungeeDropZombie->data2.u16x2.u16_1;
+            //            uint16_t clientBungeeZombieID;
+            //            uint16_t serverDroppedZombieID = eventBungeeDropZombie->data2.u16x2.u16_2;
+            //            uint16_t clientDroppedZombieID;
+            //            if (homura::FindInMap(serverZombieIDMap, serverBungeeZombieID, clientBungeeZombieID) && homura::FindInMap(serverZombieIDMap, serverDroppedZombieID, clientDroppedZombieID)) {
+            //                Zombie *bungeeZombie = mZombies.DataArrayGet(clientBungeeZombieID);
+            //                Zombie *droppedZombie = mZombies.DataArrayGet(clientDroppedZombieID);
+            //                gTcpConnected = false;
+            //                bungeeZombie->BungeeDropZombie(droppedZombie, gridX, gridY);
+            //                gTcpConnected = true;
+            //            }
+            //        } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT: {
             U16Buf32Buf32_Event *eventZombieAddByCheat = static_cast<U16Buf32Buf32_Event *>(event);
             int theGridX = eventZombieAddByCheat->data2.u8x4.u8_1;
@@ -4842,9 +4844,12 @@ void Board::ShakeBoard(int theShakeAmountX, int theShakeAmountY) {
 
 int Board::GetNumSeedsInBank(bool isZombieBank) {
     // 对战额外卡槽
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        if (mApp->mPlayerInfo->mVSExtraPacketsMode)
-            return 7;
+    if (mApp->IsVSMode()) {
+        VSSetupMenu *setupMenu = mApp->mVSSetupMenu;
+        if (setupMenu) {
+            bool isExtraPackets = setupMenu->mAddonWidget->mExtraPacketsMode;
+            return isExtraPackets ? 7 : 6;
+        }
     }
 
     return old_Board_GetNumSeedsInBank(this, isZombieBank);

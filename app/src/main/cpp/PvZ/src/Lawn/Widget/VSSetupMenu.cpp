@@ -589,12 +589,10 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT: {
             B1x8_Event *eventButtonInit = static_cast<B1x8_Event *>(event);
-            if (mAddonWidget) {
-                mAddonWidget->mExtraPacketsMode = eventButtonInit->data1;
-                mAddonWidget->mExtraSeedsMode = eventButtonInit->data2;
-                mAddonWidget->mBanMode = eventButtonInit->data3;
-                mAddonWidget->mBalancePatchMode = eventButtonInit->data4;
-            }
+            mAddonWidget->mExtraPacketsMode = eventButtonInit->data1;
+            mAddonWidget->mExtraSeedsMode = eventButtonInit->data2;
+            mAddonWidget->mBanMode = eventButtonInit->data3;
+            mAddonWidget->mBalancePatchMode = eventButtonInit->data4;
             mApp->mPlayerInfo->mVSExtraPacketsMode = eventButtonInit->data1;
             mApp->mPlayerInfo->mVSExtraSeedsMode = eventButtonInit->data2;
             mApp->mPlayerInfo->mVSBanMode = eventButtonInit->data3;
@@ -761,14 +759,6 @@ void VSSetupMenu::ButtonDepress(int theId) {
             } break;
 
             case VSSetupMenu_Random_Battle: {
-                if (gIsVSShuffleMode) {
-                    gFreeForFristShuffle[0] = true;
-                    gFreeForFristShuffle[1] = true;
-                    aPlantBank->mNumPackets = aZombieBank->mNumPackets = 7;
-                    aPlantBank->mSeedPackets[6].SetPacketType(SEED_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
-                    aZombieBank->mSeedPackets[6].SetPacketType(SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
-                }
-
                 std::vector<SeedType> aZombieSeeds;
                 PickRandomZombies(aZombieSeeds);
 
@@ -808,6 +798,14 @@ void VSSetupMenu::ButtonDepress(int theId) {
             default:
                 break;
         }
+    }
+
+    // TODO: 修复种子栏墓碑点不动
+    if (gIsVSShuffleMode) {
+        gFreeForFristShuffle[0] = gFreeForFristShuffle[1] = true;
+        aPlantBank->mNumPackets = aZombieBank->mNumPackets = 7;
+        aPlantBank->mSeedPackets[6].SetPacketType(SEED_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
+        aZombieBank->mSeedPackets[6].SetPacketType(SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
     }
 
     // 修复“额外卡槽”开启后卡槽位置不正确
