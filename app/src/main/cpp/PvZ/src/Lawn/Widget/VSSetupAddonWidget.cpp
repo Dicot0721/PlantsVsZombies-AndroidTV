@@ -241,16 +241,18 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
         aSeeds.push_back(aSeedType);
     }
 
-    if (NeedSeedInstantCoffee(theApp)) {
-        auto it = aSeeds.begin();
-        if (it != aSeeds.end()) {
-            *it = SeedType::SEED_INSTANT_COFFEE;
+    if (!theIsZombie) {
+        if (NeedSeedInstantCoffee(theApp)) {
+            auto it = aSeeds.begin();
+            if (it != aSeeds.end()) {
+                *it = SeedType::SEED_INSTANT_COFFEE;
+            }
         }
-    }
-    if (NeedSeedTallnut(theApp)) {
-        auto it = std::ranges::find(aSeeds, SeedType::SEED_WALLNUT);
-        if (it != aSeeds.end()) {
-            *it = SeedType::SEED_TALLNUT;
+        if (NeedSeedTallnut(theApp)) {
+            auto it = std::ranges::find(aSeeds, SeedType::SEED_WALLNUT);
+            if (it != aSeeds.end()) {
+                *it = SeedType::SEED_TALLNUT;
+            }
         }
     }
 }

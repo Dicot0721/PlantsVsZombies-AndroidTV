@@ -310,33 +310,35 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
     }
 
     // 禁选模式（BP）
-    VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
-    if (mApp->IsVSMode() && addonWidget->mBanMode) {
-        int x = (aGamepadIndex == 1) ? mCursorPositionX2 : mCursorPositionX1;
-        int y = (aGamepadIndex == 1) ? mCursorPositionY2 : mCursorPositionY1;
-        SeedType aSeedType = SeedHitTest(x, y);
-        if (aSeedType != SEED_NONE && !SeedNotAllowedToPick(aSeedType)) {
-            BannedSeed &aBannedSeed = addonWidget->mBannedSeed[aSeedType];
-            aBannedSeed.mSeedType = theChosenSeed.mSeedType;
+    if (mApp->IsVSMode()) {
+        VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
+        if (addonWidget->mBanMode) {
+            int x = (aGamepadIndex == 1) ? mCursorPositionX2 : mCursorPositionX1;
+            int y = (aGamepadIndex == 1) ? mCursorPositionY2 : mCursorPositionY1;
+            SeedType aSeedType = SeedHitTest(x, y);
+            if (aSeedType != SEED_NONE && !SeedNotAllowedToPick(aSeedType)) {
+                BannedSeed &aBannedSeed = addonWidget->mBannedSeed[aSeedType];
+                aBannedSeed.mSeedType = theChosenSeed.mSeedType;
 
-            int aSeedBanned = aBannedSeed.mSeedType;
+                int aSeedBanned = aBannedSeed.mSeedType;
 
-            addonWidget->mBannedSeed[aSeedBanned].mX = theChosenSeed.mX;
-            addonWidget->mBannedSeed[aSeedBanned].mY = theChosenSeed.mY;
-            addonWidget->mBannedSeed[aSeedBanned].mSeedState = BannedSeedState::SEED_BANNED;
-            if (mIsZombieChooser)
-                addonWidget->mBannedSeed[aSeedBanned].mChosenPlayerIndex = 1;
+                addonWidget->mBannedSeed[aSeedBanned].mX = theChosenSeed.mX;
+                addonWidget->mBannedSeed[aSeedBanned].mY = theChosenSeed.mY;
+                addonWidget->mBannedSeed[aSeedBanned].mSeedState = BannedSeedState::SEED_BANNED;
+                if (mIsZombieChooser)
+                    addonWidget->mBannedSeed[aSeedBanned].mChosenPlayerIndex = 1;
 
-            addonWidget->mSeedsInBothBanned++;
-            if (addonWidget->mSeedsInBothBanned == addonWidget->mNumBanPackets) {
-                addonWidget->mBanMode = false;
-                mBoard->SwitchGamepadControls();
+                addonWidget->mSeedsInBothBanned++;
+                if (addonWidget->mSeedsInBothBanned == addonWidget->mNumBanPackets) {
+                    addonWidget->mBanMode = false;
+                    mBoard->SwitchGamepadControls();
+                }
+
+                mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
+                OnPlayerPickedSeed(aGamepadIndex);
             }
-
-            mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
-            OnPlayerPickedSeed(aGamepadIndex);
+            return;
         }
-        return;
     }
 
     // 确定种子栏
@@ -402,6 +404,7 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
     if (mApp->IsVSMode()) {
         OnPlayerPickedSeed(aGamepadIndex);
 
+        VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
         if (addonWidget->mSeedsInBothBanned > 0 && mSeedsIn1PBank == 4 && !mIsZombieChooser) {
             addonWidget->mBanMode = true;
             addonWidget->mSeedsInBothBanned = 0;
@@ -1219,6 +1222,9 @@ void SeedChooserScreen::Draw(Graphics *g) {
 }
 
 void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
+    if (!mApp->IsVSMode())
+        return;
+
     VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
     if (addonWidget == nullptr)
         return;
