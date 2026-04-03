@@ -395,7 +395,7 @@ void InitHookFunction() {
     homura::HookFunction(GetZombieDefinitionAddr, &GetZombieDefinition, nullptr);
     homura::HookFunction(Zombie_FindPlantTargetAddr, &Zombie::FindPlantTarget, nullptr);
     homura::HookFunction(Zombie_FindZombieTargetAddr, &Zombie::FindZombieTarget, nullptr);
-    homura::HookFunction(Zombie_TakeDamageAddr, &Zombie::TakeDamage, &old_Zombie_TakeDamage);
+    homura::HookFunction(Zombie_TakeDamageAddr, &Zombie::TakeDamage, nullptr);
     homura::HookFunction(Zombie_TakeHelmDamageAddr, &Zombie::TakeHelmDamage, &old_Zombie_TakeHelmDamage);
     homura::HookFunction(Zombie_PlayZombieReanimAddr, &Zombie::PlayZombieReanim, &old_Zombie_PlayZombieReanim);
     homura::HookFunction(Zombie_StartWalkAnimAddr, &Zombie::StartWalkAnim, nullptr);

@@ -341,6 +341,7 @@ public:
     bool CanTargetPlant(Plant *thePlant, ZombieAttackType theAttackType);
     Zombie *FindZombieTarget();
     void TakeDamage(int theDamage, unsigned int theDamageFlags);
+    void TakeDamage_Origin(int theDamage, unsigned int theDamageFlags);
     int TakeHelmDamage(int theDamage, unsigned int theDamageFlags);
     void PlayZombieReanim(const char *theTrackName, ReanimLoopType theLoopType, int theBlendTime, float theAnimRate);
     void StartWalkAnim(int theBlendTime);
@@ -451,8 +452,6 @@ inline void (*old_Zombie_DrawReanim)(Zombie *zombie, Sexy::Graphics *graphics, Z
 inline void (*old_Zombie_DropHead)(Zombie *zombie, unsigned int a2);
 
 inline void (*old_Zombie_DropArm)(Zombie *, unsigned int);
-
-inline void (*old_Zombie_TakeDamage)(Zombie *, int theDamage, unsigned int theDamageFlags);
 
 inline int (*old_Zombie_TakeHelmDamage)(Zombie *, int theDamage, unsigned int theDamageFlags);
 

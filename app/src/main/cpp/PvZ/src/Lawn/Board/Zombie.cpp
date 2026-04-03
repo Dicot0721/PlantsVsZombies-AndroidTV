@@ -2485,8 +2485,6 @@ void Zombie::TakeDamage(int theDamage, unsigned int theDamageFlags) {
     if (mApp->IsVSMode() && gTcpConnected)
         return;
 
-    old_Zombie_TakeDamage(this, theDamage, theDamageFlags);
-
     if (gTcpClientSocket >= 0) {
         U16U16U8_Event event{};
         event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE;
@@ -2494,6 +2492,31 @@ void Zombie::TakeDamage(int theDamage, unsigned int theDamageFlags) {
         event.data2 = uint16_t(theDamage);
         event.data3 = uint8_t(theDamageFlags);
         netplay::PutEvent(event);
+    }
+
+    TakeDamage_Origin(theDamage, theDamageFlags);
+}
+
+void Zombie::TakeDamage_Origin(int theDamage, unsigned int theDamageFlags) {
+    if (mZombiePhase == ZombiePhase::PHASE_JACK_IN_THE_BOX_POPPING || IsDeadOrDying())
+        return;
+
+    int aDamageRemaining = theDamage;
+
+    if (IsFlying()) {
+        aDamageRemaining = TakeFlyingDamage(aDamageRemaining, theDamageFlags);
+    }
+    if (aDamageRemaining > 0 && mShieldType != ShieldType::SHIELDTYPE_NONE && !TestBit(theDamageFlags, (int)DamageFlags::DAMAGE_BYPASSES_SHIELD)) {
+        aDamageRemaining = TakeShieldDamage(aDamageRemaining, theDamageFlags);
+        if (TestBit(theDamageFlags, (int)DamageFlags::DAMAGE_HITS_SHIELD_AND_BODY)) {
+            aDamageRemaining = theDamage;
+        }
+    }
+    if (aDamageRemaining > 0 && mHelmType != HelmType::HELMTYPE_NONE) {
+        aDamageRemaining = TakeHelmDamage(aDamageRemaining, theDamageFlags);
+    }
+    if (aDamageRemaining > 0) {
+        TakeBodyDamage(aDamageRemaining, theDamageFlags);
     }
 }
 

@@ -1914,9 +1914,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             uint16_t clientZombieID;
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
-                gTcpConnected = false;
-                aZombie->TakeDamage(damage, damageFlags);
-                gTcpConnected = true;
+                aZombie->TakeDamage_Origin(damage, damageFlags);
             }
         } break;
         case EVENT_SERVER_BOARD_LAWNMOWER_START: {
