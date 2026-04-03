@@ -438,24 +438,7 @@ void Zombie::UpdateZombieJackInTheBox() {
         }
 
         if (mPhaseCounter <= 0) {
-            mApp->PlayFoley(FoleyType::FOLEY_EXPLOSION);
-
-            int aPosX = mX + mWidth / 2;
-            int aPosY = mY + mHeight / 2;
-            if (mMindControlled) {
-                mBoard->CustomKillAllZombiesInRadius(mRow, aPosX, aPosY, JackInTheBoxZombieRadius, 1, true, 127);
-            } else {
-                mBoard->CustomKillAllZombiesInRadius(mRow, aPosX, aPosY, JackInTheBoxZombieRadius, 1, true, 255);
-                mBoard->KillAllPlantsInRadius(aPosX, aPosY, JackInTheBoxPlantRadius);
-            }
-
-            mApp->AddTodParticle(aPosX, aPosY, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 0), ParticleEffect::PARTICLE_JACKEXPLODE);
-            mBoard->ShakeBoard(4, -6);
-            DieNoLoot();
-
-            if (mApp->IsScaryPotterLevel()) {
-                mBoard->mChallenge->ScaryPotterJackExplode(aPosX, aPosY);
-            }
+            DoSpecial();
         }
     }
 }
@@ -2497,11 +2480,11 @@ void Zombie::TakeDamage(int theDamage, unsigned int theDamageFlags) {
     old_Zombie_TakeDamage(this, theDamage, theDamageFlags);
 
     if (gTcpClientSocket >= 0) {
-        U16x4U16_Event event;
+        U16U16U8_Event event{};
         event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE;
-        event.data1[1] = uint16_t(theDamage);
-        event.data1[2] = uint16_t(theDamageFlags);
-        event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+        event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+        event.data2 = uint16_t(theDamage);
+        event.data3 = uint8_t(theDamageFlags);
         netplay::PutEvent(event);
     }
 }
@@ -3342,6 +3325,28 @@ void Zombie::DoSpecial() {
     }
 
     switch (mZombieType) {
+        case ZombieType::ZOMBIE_JACK_IN_THE_BOX: {
+            mApp->PlayFoley(FoleyType::FOLEY_EXPLOSION);
+
+            int aPosX = mX + mWidth / 2;
+            int aPosY = mY + mHeight / 2;
+            if (mMindControlled) {
+                mBoard->CustomKillAllZombiesInRadius(mRow, aPosX, aPosY, JackInTheBoxZombieRadius, 1, true, 127);
+            } else {
+                mBoard->CustomKillAllZombiesInRadius(mRow, aPosX, aPosY, JackInTheBoxZombieRadius, 1, true, 255);
+                mBoard->KillAllPlantsInRadius(aPosX, aPosY, JackInTheBoxPlantRadius);
+            }
+
+            mApp->AddTodParticle(aPosX, aPosY, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 0), ParticleEffect::PARTICLE_JACKEXPLODE);
+            mBoard->ShakeBoard(4, -6);
+            DieNoLoot();
+
+            if (mApp->IsScaryPotterLevel()) {
+                mBoard->mChallenge->ScaryPotterJackExplode(aPosX, aPosY);
+            }
+            break;
+        }
+
         case ZombieType::ZOMBIE_JALAPENO_HEAD: {
             mApp->PlayFoley(FoleyType::FOLEY_JALAPENO_IGNITE);
             mApp->PlayFoley(FoleyType::FOLEY_JUICY);

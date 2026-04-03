@@ -1345,10 +1345,13 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH:
             return sizeof(U16Buf32_Event);
 
-        // --- 舞王召唤舞伴、僵尸受到伤害 ---
+        // --- 舞王召唤舞伴 ---
         case EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS:
-        case EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE:
             return sizeof(U16x4U16_Event);
+
+        // --- 僵尸受到伤害 ---
+        case EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE:
+            return sizeof(U16U16U8_Event);
 
         // --- 种子包被种下 ---
         case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED:
@@ -1892,10 +1895,10 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE: {
-            U16x4U16_Event *eventZombieTakeDmg = static_cast<U16x4U16_Event *>(event);
-            int damage = eventZombieTakeDmg->data1[1];
-            int damageFlags = eventZombieTakeDmg->data1[2];
-            uint16_t serverZombieID = eventZombieTakeDmg->data2;
+            U16U16U8_Event *eventZombieTakeDmg = static_cast<U16U16U8_Event *>(event);
+            int damage = eventZombieTakeDmg->data2;
+            unsigned int damageFlags = eventZombieTakeDmg->data3;
+            uint16_t serverZombieID = eventZombieTakeDmg->data1;
             uint16_t clientZombieID;
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);

@@ -226,10 +226,6 @@ struct B1x8_Event : BaseEvent {
     uint8_t data8 : 1;
 };
 
-struct U16x6_Event : BaseEvent {
-    uint16_t data[6];
-};
-
 struct U16Buf32_Event : BaseEvent {
     uint16_t data1;
     Buffer32Bit data2;
@@ -239,6 +235,16 @@ struct U16Buf32Buf32_Event : BaseEvent {
     uint16_t data1;
     Buffer32Bit data2;
     Buffer32Bit data3;
+};
+
+struct U16U16U8_Event : BaseEvent {
+    uint16_t data1;
+    uint16_t data2;
+    uint8_t data3;
+};
+
+struct U16x6_Event : BaseEvent {
+    uint16_t data[6];
 };
 
 struct U16x9_Event : BaseEvent {
