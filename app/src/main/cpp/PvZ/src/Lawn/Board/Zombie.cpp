@@ -724,7 +724,7 @@ void Zombie::ThrowZombieImp(Zombie *theThrowerZombie, float theOffsetDistance) {
         aThrowingDistance -= theOffsetDistance;
     }
 
-    mPosX = mPosX - 133.0f;
+    mPosX = theThrowerZombie->mPosX - 133.0f;
     mPosY = GetPosYBasedOnRow(theThrowerZombie->mRow);
     SetRow(theThrowerZombie->mRow);
     mVariant = false;
@@ -736,7 +736,7 @@ void Zombie::ThrowZombieImp(Zombie *theThrowerZombie, float theOffsetDistance) {
     mBodyMaxHealth *= mScaleZombie * mScaleZombie;
 
     if (mMindControlled) {
-        mPosX = mPosX + mWidth;
+        mPosX = theThrowerZombie->mPosX + theThrowerZombie->mWidth;
         StartMindControlled();
         mVelX = -3.0f;
     } else {
