@@ -290,6 +290,7 @@ public:
     void UpdateShooting();
     void UpdateShooter();
     void Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem);
+    void Fire_Origin(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem);
     void PlayIdleAnim(float theRate);
     void IceZombies();
     bool IsDisposable(SeedType theSeedType);

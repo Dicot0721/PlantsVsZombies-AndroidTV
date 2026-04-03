@@ -737,7 +737,7 @@ void Plant::DoSpecial() {
 // }
 
 void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem) {
-    if (mApp->mGameMode == GAMEMODE_MP_VS) {
+    if (mApp->IsVSMode()) {
         if (gTcpConnected)
             return;
 
@@ -761,6 +761,10 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
         }
     }
 
+    Fire_Origin(theTargetZombie, theRow, thePlantWeapon, theTargetGridItem);
+}
+
+void Plant::Fire_Origin(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem) {
     if (mSeedType == SeedType::SEED_FUMESHROOM) {
         DoRowAreaDamage(20, 2U);
         mApp->PlayFoley(FoleyType::FOLEY_FUME);
