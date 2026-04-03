@@ -243,9 +243,8 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
 
     if (!theIsZombie) {
         if (NeedSeedInstantCoffee(theApp)) {
-            auto it = aSeeds.begin();
-            if (it != aSeeds.end()) {
-                *it = SeedType::SEED_INSTANT_COFFEE;
+            if (!aSeeds.empty()) {
+                aSeeds[0] = SeedType::SEED_INSTANT_COFFEE;
             }
         }
         if (NeedSeedTallnut(theApp)) {

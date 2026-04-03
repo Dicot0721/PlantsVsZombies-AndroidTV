@@ -146,9 +146,9 @@ static bool CollectAllBroadcastTargets(std::vector<BroadcastTarget> &out_targets
 
     close(fd);
 
-    out_targets.insert(out_targets.end(), wifi_like.begin(), wifi_like.end());
-    out_targets.insert(out_targets.end(), eth_like.begin(), eth_like.end());
-    out_targets.insert(out_targets.end(), other_like.begin(), other_like.end());
+    out_targets.append_range(wifi_like);
+    out_targets.append_range(eth_like);
+    out_targets.append_range(other_like);
 
     if (out_targets.empty()) {
         sockaddr_in fallback{};

@@ -530,7 +530,7 @@ static void ApplyFormationSnippet(Board *theBoard, std::string_view theSnippetSt
         aCursor = end;
     }
 
-    for (const char *end = theSnippetStr.end(); aCursor < end; ++aCursor) {
+    for (const char *end = std::to_address(theSnippetStr.end()); aCursor < end; ++aCursor) {
         if (*aCursor == 'W') {
             isWakeUp = true;
         } else if (*aCursor == 'I') {

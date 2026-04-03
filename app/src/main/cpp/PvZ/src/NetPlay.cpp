@@ -40,20 +40,19 @@ bool netplay::FlushSendBuffer(int socket) {
         return true;
     }
 
-    const auto *data = sendBuffer.data();
-    const auto size = sendBuffer.size();
-    size_t sent = 0;
-    while (sent < size) {
-        ssize_t ret = send(socket, data + sent, size - sent, 0);
+    const auto *p = sendBuffer.data();
+    const auto *end = sendBuffer.data() + sendBuffer.size();
+    while (p < end) {
+        ssize_t ret = send(socket, p, end - p, 0);
         if (ret < 0) {
-            LOG_ERROR("Failed to send event: {}", std::strerror(errno));
+            LOG_ERROR("Failed to send event ({}/{} data sended): {}", p - sendBuffer.data(), sendBuffer.size(), std::strerror(errno));
             break;
         }
-        sent += ret;
+        p += ret;
     }
 
     sendBuffer.clear();
-    return sent < size;
+    return p < end;
 }
 
 void netplay::ClearSendBuffer() noexcept {
