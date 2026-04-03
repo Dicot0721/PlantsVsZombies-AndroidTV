@@ -103,5 +103,7 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
 SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie, int theSeedIndex);
 bool NeedSeedInstantCoffee(LawnApp *theApp);
 bool NeedSeedTallnut(LawnApp *theApp);
+bool NeedSeedUmbrella(LawnApp *theApp);
+bool NeedSeedZombieImp(LawnApp *theApp);
 
 #endif // PVZ_LAWN_WIDGET_VSSETUPADDONWIDGET_H

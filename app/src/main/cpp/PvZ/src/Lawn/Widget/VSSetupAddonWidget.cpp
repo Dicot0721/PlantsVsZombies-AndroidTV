@@ -218,30 +218,30 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
 
         const int poolBase = theIsZombie ? 6 + pool : poolGroupOffset + pool;
 
-        int validCount = 0;
+        int numSeedsInPool = 0;
         for (int i = 0; i < 8; ++i) {
-            const SeedType aSeedType = VSSetupMenu::msRandomPools[poolBase][i];
-            if (aSeedType == SeedType::SEED_NONE)
+            if (VSSetupMenu::msRandomPools[poolBase][i] == SeedType::SEED_NONE)
                 break;
-
-            ++validCount;
+            ++numSeedsInPool;
         }
 
         SeedType aSeedType = SeedType::SEED_NONE;
-        for (;;) {
-            do {
-                const int idx = Sexy::Rand(validCount);
-                aSeedType = VSSetupMenu::msRandomPools[poolBase][idx];
-            } while (std::ranges::contains(aSeeds, aSeedType));
-
-            if (theApp->HasSeedType(aSeedType, theIsZombie))
-                break;
-        }
+        do {
+            const int seedIndexInPool = Sexy::Rand(numSeedsInPool);
+            aSeedType = VSSetupMenu::msRandomPools[poolBase][seedIndexInPool];
+        } while (std::ranges::contains(aSeeds, aSeedType) || !theApp->HasSeedType(aSeedType, theIsZombie));
 
         aSeeds.push_back(aSeedType);
     }
 
-    if (!theIsZombie) {
+    if (theIsZombie) {
+        if (NeedSeedZombieImp(theApp)) {
+            auto it = std::ranges::find(aSeeds, SeedType::SEED_ZOMBIE_NORMAL);
+            if (it != aSeeds.end()) {
+                *it = SeedType::SEED_ZOMBIE_IMP;
+            }
+        }
+    } else {
         if (NeedSeedInstantCoffee(theApp)) {
             if (!aSeeds.empty()) {
                 aSeeds[0] = SeedType::SEED_INSTANT_COFFEE;
@@ -253,6 +253,12 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
                 *it = SeedType::SEED_TALLNUT;
             }
         }
+        if (NeedSeedUmbrella(theApp)) {
+            auto it = std::ranges::find(aSeeds, SeedType::SEED_SPIKEWEED);
+            if (it != aSeeds.end()) {
+                *it = SeedType::SEED_UMBRELLA;
+            }
+        }
     }
 }
 
@@ -260,12 +266,19 @@ SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeed
     PickMPRandomSeeds(theApp, thePlantSeeds, theZombieSeeds, theIsZombie);
     SeedType aSeedType = theIsZombie ? theZombieSeeds[theSeedIndex - 1] : thePlantSeeds[theSeedIndex - 1];
 
-    if (!theIsZombie) {
+    if (theIsZombie) {
+        if (NeedSeedTallnut(theApp) && aSeedType == SeedType::SEED_ZOMBIE_NORMAL) {
+            aSeedType = SeedType::SEED_ZOMBIE_IMP;
+        }
+    } else {
         if (NeedSeedInstantCoffee(theApp) && theSeedIndex == 1) {
             aSeedType = SeedType::SEED_INSTANT_COFFEE;
         }
         if (NeedSeedTallnut(theApp) && aSeedType == SeedType::SEED_WALLNUT) {
             aSeedType = SeedType::SEED_TALLNUT;
+        }
+        if (NeedSeedUmbrella(theApp) && aSeedType == SeedType::SEED_SPIKEWEED) {
+            aSeedType = SeedType::SEED_UMBRELLA;
         }
     }
 
@@ -273,17 +286,17 @@ SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeed
 }
 
 bool NeedSeedInstantCoffee(LawnApp *theApp) {
-    // 种子栏存在蘑菇
+    // 种子栏存在可用的蘑菇
     for (int i = 1; i < 6; ++i) {
         SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[0]->mSeedPackets[i];
-        if (Plant::IsNocturnal(aSeedPacket.mPacketType)) {
+        if (Plant::IsNocturnal(aSeedPacket.mPacketType) && aSeedPacket.mActive) {
             return true;
         }
     }
-    // 场上存在未唤醒的植物
+    // 场上存在未唤醒且头顶没有咖啡豆的植物
     Plant *aPlant = nullptr;
     while (theApp->mBoard->IteratePlants(aPlant)) {
-        if (aPlant->mIsAsleep) {
+        if (aPlant->mIsAsleep && !theApp->mBoard->GetTopPlantAt(aPlant->mPlantCol, aPlant->mRow, PlantPriority::TOPPLANT_ONLY_FLYING)) {
             return true;
         }
     }
@@ -302,6 +315,42 @@ bool NeedSeedTallnut(LawnApp *theApp) {
     Zombie *aZombie = nullptr;
     while (theApp->mBoard->IterateZombies(aZombie)) {
         if (aZombie->IsBouncingPogo() || aZombie->mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool NeedSeedUmbrella(LawnApp *theApp) {
+    // 僵尸种子栏存在可用的投篮僵尸
+    for (int i = 1; i < 6; ++i) {
+        SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[1]->mSeedPackets[i];
+        if (aSeedPacket.mPacketType == SeedType::SEED_ZOMBIE_CATAPULT && aSeedPacket.mActive) {
+            return true;
+        }
+    }
+    // 场上存在剩余篮球数大于15的投篮僵尸
+    Zombie *aZombie = nullptr;
+    while (theApp->mBoard->IterateZombies(aZombie)) {
+        if (aZombie->mZombieType == ZombieType::ZOMBIE_CATAPULT || aZombie->mSummonCounter > 15) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool NeedSeedZombieImp(LawnApp *theApp) {
+    // 种子栏存在可用的土豆雷
+    for (int i = 1; i < 6; ++i) {
+        SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[0]->mSeedPackets[i];
+        if (aSeedPacket.mPacketType == SeedType::SEED_POTATOMINE && aSeedPacket.mActive) {
+            return true;
+        }
+    }
+    // 场上存在土豆雷
+    Plant *aPlant = nullptr;
+    while (theApp->mBoard->IteratePlants(aPlant)) {
+        if (aPlant->mSeedType == SeedType::SEED_POTATOMINE) {
             return true;
         }
     }

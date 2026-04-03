@@ -69,8 +69,10 @@ void SeedPacket::Update() {
             Activate();
             FlashIfReady();
 
-            gFreeForFristShuffle[mSeedBank->mIsZombie] = false; // 对战免费刷新已使用
-            SetNextRandomSeed();                                // 对战刷牌模式更换卡片
+            SetNextRandomSeed(); // 对战刷牌模式更换卡片
+            if (mSeedBank->mIsZombie ? mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE : mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
+                gFreeForFristShuffle[mSeedBank->mIsZombie] = false; // 对战免费刷新已使用
+            }
         }
     }
 
