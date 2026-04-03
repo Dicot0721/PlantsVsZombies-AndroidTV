@@ -711,7 +711,7 @@ void Zombie::UpdateZombieGargantuar() {
 }
 
 void Zombie::ThrowZombieImp(Zombie *theThrowerZombie, float theOffsetDistance) {
-    float aThrowingDistance = mPosX - 360.0f;
+    float aThrowingDistance = theThrowerZombie->mPosX - 360.0f;
 
     float aMinThrowDistance = 40.0f;
     if (mBoard->StageHasRoof()) {
@@ -729,13 +729,13 @@ void Zombie::ThrowZombieImp(Zombie *theThrowerZombie, float theOffsetDistance) {
     SetRow(theThrowerZombie->mRow);
     mVariant = false;
     mAltitude = 88.0f;
-    mRenderOrder = mRenderOrder + 1;
+    mRenderOrder = theThrowerZombie->mRenderOrder + 1;
     mZombiePhase = ZombiePhase::PHASE_IMP_GETTING_THROWN;
     mScaleZombie = theThrowerZombie->mScaleZombie;
     mBodyHealth *= mScaleZombie * mScaleZombie;
     mBodyMaxHealth *= mScaleZombie * mScaleZombie;
 
-    if (mMindControlled) {
+    if (theThrowerZombie->mMindControlled) {
         mPosX = theThrowerZombie->mPosX + theThrowerZombie->mWidth;
         StartMindControlled();
         mVelX = -3.0f;
