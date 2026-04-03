@@ -597,7 +597,7 @@ void Zombie::UpdateZombieGargantuar() {
                 return;
 
             float aMinThrowDistance = 40.0f;
-            float aOffserDistance = RandRangeFloat(0.0f, 100.0f);
+            float aOffsetDistance = RandRangeFloat(0.0f, 100.0f);
             if (mBoard->StageHasRoof()) {
                 aThrowingDistance -= 180.0f;
                 aMinThrowDistance = -140.0f;
@@ -605,7 +605,7 @@ void Zombie::UpdateZombieGargantuar() {
             if (aThrowingDistance < aMinThrowDistance) {
                 aThrowingDistance = aMinThrowDistance;
             } else if (aThrowingDistance > 140.0f) {
-                aThrowingDistance -= aOffserDistance;
+                aThrowingDistance -= aOffsetDistance;
             }
 
             if (gTcpClientSocket >= 0) {
@@ -613,7 +613,7 @@ void Zombie::UpdateZombieGargantuar() {
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW;
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombieImp));
-                event.data4.f32 = aOffserDistance;
+                event.data4.f32 = aOffsetDistance;
                 netplay::PutEvent(event);
             }
 

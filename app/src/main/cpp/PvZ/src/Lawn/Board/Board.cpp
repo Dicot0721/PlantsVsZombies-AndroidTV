@@ -1332,12 +1332,18 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL:
             return sizeof(U16_Event);
 
-        // --- 大嘴花吞咬、僵尸冻结、巨人投掷小鬼、僵尸状态计数 ---
+        // --- 大嘴花吞咬、僵尸冻结 ---
         case EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT:
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP:
-        case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW:
-        case EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER:
             return sizeof(U16U16_Event);
+
+        // --- 僵尸状态计数 ---
+        case EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER:
+            return sizeof(U8U8U16U16_Event);
+
+        // --- 巨人投掷小鬼 ---
+        case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW:
+            return sizeof(U16U16U16Buf32Buf32_Event);
 
         // --- 撑杆跳跃、巨人开始投掷,锤击 ---
         case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT:
