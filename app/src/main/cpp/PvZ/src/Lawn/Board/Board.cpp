@@ -1273,7 +1273,7 @@ size_t Board::getServerEventSize(EventType type) {
             return sizeof(U8U8U16U16_Event);
 
         case EVENT_SERVER_BOARD_TOUCH_DRAG:
-            return sizeof(U16U16_Event);
+            return sizeof(I16I16_Event);
 
         case EVENT_SERVER_BOARD_TOUCH_UP:
             return sizeof(U8U8_Event);
@@ -1332,21 +1332,20 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL:
             return sizeof(U16_Event);
 
-        // --- 大嘴花吞咬、僵尸冻结 ---
+        // --- 大嘴花吞咬、僵尸冻结、巨人投掷小鬼、僵尸状态计数 ---
         case EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT:
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP:
             return sizeof(U16U16_Event);
 
-        // --- 僵尸状态计数 ---
         case EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER:
             return sizeof(U8U8U16U16_Event);
 
-        // --- 巨人投掷小鬼 ---
         case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW:
             return sizeof(U16U16U16Buf32Buf32_Event);
 
         // --- 撑杆跳跃、巨人开始投掷,锤击 ---
-        case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT:
+        case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_IN_VAULT:
+        case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_POST_VAULT:
         case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW:
         case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH:
             return sizeof(U16Buf32_Event);
@@ -1550,6 +1549,9 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
                 Zombie *aZombie = aZombieID == ZOMBIEID_NULL ? nullptr : mZombies.DataArrayGet(homura::FindInMap(serverZombieIDMap, aZombieID).value_or(0));
                 GridItem *aGridItem = aGridItemID == GRIDITEMID_NULL ? nullptr : mGridItems.DataArrayGet(homura::FindInMap(serverGridItemIDMap, aGridItemID).value_or(0));
+
+                //                old_Plant_Fire(aPlant, aZombie, aRow, PlantWeapon(aPlantWeapon), aGridItem);
+
                 gTcpConnected = false;
                 aPlant->Fire(aZombie, aRow, PlantWeapon(aPlantWeapon), aGridItem);
                 gTcpConnected = true;
@@ -1824,7 +1826,16 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 gTcpConnected = true;
             }
         } break;
-        case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT: {
+        case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_POST_VAULT: {
+            U16Buf32_Event *event1 = static_cast<U16Buf32_Event *>(event);
+            uint16_t serverZombieID = event1->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                aZombie->mPosY = event1->data2.f32;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_IN_VAULT: {
             U16Buf32_Event *event1 = static_cast<U16Buf32_Event *>(event);
             uint16_t serverZombieID = event1->data1;
             uint16_t clientZombieID;

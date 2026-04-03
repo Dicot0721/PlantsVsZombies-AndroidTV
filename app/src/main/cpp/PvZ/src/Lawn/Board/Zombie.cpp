@@ -475,7 +475,7 @@ void Zombie::UpdateZombiePolevaulter() {
 
             if (gTcpClientSocket >= 0) {
                 U16Buf32_Event event;
-                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_VAULT;
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_IN_VAULT;
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2.i16x2.i16_1 = int16_t(mX);
                 event.data2.i16x2.i16_2 = int16_t(aJumpDistance);
@@ -521,6 +521,14 @@ void Zombie::UpdateZombiePolevaulter() {
             mZombieAttackRect = Rect(50, 0, 20, 115);
 
             StartWalkAnim(0);
+
+            if (gTcpClientSocket >= 0) {
+                U16Buf32_Event event;
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_POST_VAULT;
+                event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+                event.data2.f32 = mPosY;
+                netplay::PutEvent(event);
+            }
         } else {
             float aOldPosX = mPosX;
             mPosX -= 150.0f * aBodyReanim->mAnimTime;
