@@ -45,14 +45,14 @@ bool netplay::FlushSendBuffer(int socket) {
     while (p < end) {
         ssize_t ret = send(socket, p, end - p, 0);
         if (ret < 0) {
-            LOG_ERROR("Failed to send event ({}/{} data sended): {}", p - sendBuffer.data(), sendBuffer.size(), std::strerror(errno));
+            LOG_ERROR("Failed to send event: {}", std::strerror(errno));
             break;
         }
         p += ret;
     }
 
     sendBuffer.clear();
-    return p < end;
+    return p >= end;
 }
 
 void netplay::ClearSendBuffer() noexcept {
