@@ -3341,9 +3341,9 @@ void Zombie::DoSpecial() {
             int aPosX = mX + mWidth / 2;
             int aPosY = mY + mHeight / 2;
             if (mMindControlled) {
-                mBoard->CustomKillAllZombiesInRadius(mRow, aPosX, aPosY, JackInTheBoxZombieRadius, 1, true, 127);
+                mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, JackInTheBoxZombieRadius, 1, true, 127);
             } else {
-                mBoard->CustomKillAllZombiesInRadius(mRow, aPosX, aPosY, JackInTheBoxZombieRadius, 1, true, 255);
+                mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, JackInTheBoxZombieRadius, 1, true, 255);
                 mBoard->KillAllPlantsInRadius(aPosX, aPosY, JackInTheBoxPlantRadius);
             }
 

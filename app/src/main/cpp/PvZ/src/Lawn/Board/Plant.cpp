@@ -629,6 +629,10 @@ void Plant::DoSpecial() {
         }
     }
 
+    DoSpecial_Origin();
+}
+
+void Plant::DoSpecial_Origin() {
     int aPosX = mX + mWidth / 2;
     int aPosY = mY + mHeight / 2;
     int aDamageRangeFlags = GetDamageRangeFlags(PlantWeapon::WEAPON_PRIMARY);
@@ -645,7 +649,7 @@ void Plant::DoSpecial() {
             mApp->PlayFoley(FoleyType::FOLEY_CHERRYBOMB);
             mApp->PlayFoley(FoleyType::FOLEY_JUICY);
 
-            if (mBoard->CustomKillAllZombiesInRadius(mRow, aPosX, aPosY, 115, 1, true, aDamageRangeFlags) >= 10)
+            if (mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, 115, 1, true, aDamageRangeFlags) >= 10)
                 if (!mApp->IsLittleTroubleLevel())
                     mBoard->GrantAchievement(AchievementId::ACHIEVEMENT_EXPLODONATOR, true);
 
@@ -658,7 +662,7 @@ void Plant::DoSpecial() {
         case SeedType::SEED_DOOMSHROOM: {
             mApp->PlaySample(*Sexy_SOUND_DOOMSHROOM_Addr);
 
-            mBoard->CustomKillAllZombiesInRadius(mRow, aPosX, aPosY, 250, 3, true, aDamageRangeFlags);
+            mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, 250, 3, true, aDamageRangeFlags);
             KillAllPlantsNearDoom();
 
             mApp->AddTodParticle(aPosX, aPosY, (int)RenderLayer::RENDER_LAYER_TOP, ParticleEffect::PARTICLE_DOOM);
@@ -705,7 +709,7 @@ void Plant::DoSpecial() {
             aPosY = mY + mHeight / 2;
 
             mApp->PlaySample(*SOUND_POTATO_MINE);
-            mBoard->CustomKillAllZombiesInRadius(mRow, aPosX, aPosY, 60, 0, false, aDamageRangeFlags);
+            mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, 60, 0, false, aDamageRangeFlags);
 
             int aRenderPosition = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PARTICLE, mRow, 0);
             mApp->AddTodParticle(aPosX + 20.0f, aPosY, aRenderPosition, ParticleEffect::PARTICLE_POTATO_MINE);

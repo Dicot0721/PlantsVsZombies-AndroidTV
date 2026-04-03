@@ -257,6 +257,7 @@ public:
     void Draw(Sexy::Graphics *g);
     void KillAllPlantsNearDoom();
     void DoSpecial();
+    void DoSpecial_Origin();
     Zombie *FindTargetZombie(int theRow, PlantWeapon thePlantWeapon);
     GridItem *FindTargetGridItem(PlantWeapon thePlantWeapon);
     void Die();

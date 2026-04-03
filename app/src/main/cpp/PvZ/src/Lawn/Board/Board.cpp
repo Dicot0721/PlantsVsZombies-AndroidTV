@@ -1582,9 +1582,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             uint16_t clientPlantID;
             if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
-                gTcpConnected = false;
-                aPlant->DoSpecial();
-                gTcpConnected = true;
+                aPlant->DoSpecial_Origin();
             }
         } break;
         case EVENT_SERVER_BOARD_PLANT_FINDTARGETANDFIRE: {
@@ -5388,7 +5386,7 @@ int Board::TotalZombiesHealthInWave(int theWaveIndex) {
     return aTotalHealth;
 }
 
-int Board::CustomKillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags) {
+int Board::KillAllZombiesInRadius_Custom(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags) {
     Zombie *aZombie = nullptr;
     int aKilledZombies = 0;
     while (IterateZombies(aZombie)) {

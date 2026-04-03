@@ -574,7 +574,7 @@ public:
     bool IsPoolSquare(int theGridX, int theGridY);
     void PutZombieInWave(ZombieType theZombieType, int theWaveNumber, ZombiePicker *theZombiePicker);
     int TotalZombiesHealthInWave(int theWaveIndex);
-    int CustomKillAllZombiesInRadius(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags);
+    int KillAllZombiesInRadius_Custom(int theRow, int theX, int theY, int theRadius, int theRowRange, bool theBurn, int theDamageRangeFlags);
     void KillAllPlantsInRadius(int theX, int theY, int theRadius);
     void RemoveCutsceneZombies();
     int CountZombiesOnScreen();
