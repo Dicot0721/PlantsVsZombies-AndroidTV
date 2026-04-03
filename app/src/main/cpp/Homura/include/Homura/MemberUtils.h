@@ -144,11 +144,10 @@ template <typename T, std::size_t... DIMS>
  * @endcode
  */
 template <typename T, std::size_t I, typename R, typename... Args>
-R CallVirtualFunc(T *thiz, std::type_identity_t<Args &&>... args) {
-    using FuncPtr = R (T::*)(Args...);
+R CallVirtualFunc(T *thiz, std::convertible_to<Args> auto &&...args) {
+    using FuncPtr = R (*)(T *, Args...);
     FuncPtr *vtable = *reinterpret_cast<FuncPtr **>(thiz);
-    FuncPtr vfuncPtr = vtable[I];
-    return (thiz->*vfuncPtr)(std::forward<Args>(args)...);
+    return vtable[I](thiz, std::forward<decltype(args)>(args)...);
 }
 
 } // namespace homura
