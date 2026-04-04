@@ -222,14 +222,20 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
         for (int i = 0; i < 8; ++i) {
             if (VSSetupMenu::msRandomPools[poolBase][i] == SeedType::SEED_NONE)
                 break;
+
             ++numSeedsInPool;
         }
 
         SeedType aSeedType = SeedType::SEED_NONE;
-        do {
-            const int seedIndexInPool = Sexy::Rand(numSeedsInPool);
-            aSeedType = VSSetupMenu::msRandomPools[poolBase][seedIndexInPool];
-        } while (std::ranges::contains(aSeeds, aSeedType) || !theApp->HasSeedType(aSeedType, theIsZombie));
+        for (;;) {
+            do {
+                const int seedIndex = Sexy::Rand(numSeedsInPool);
+                aSeedType = VSSetupMenu::msRandomPools[poolBase][seedIndex];
+            } while (std::ranges::contains(aSeeds, aSeedType));
+
+            if (theApp->HasSeedType(aSeedType, theIsZombie))
+                break;
+        }
 
         aSeeds.push_back(aSeedType);
     }
@@ -243,8 +249,28 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
         }
     } else {
         if (NeedSeedInstantCoffee(theApp)) {
+            // 如果随到的新卡组中没有蘑菇则不生成咖啡豆
+            for (int i = 0; i < 5; ++i) {
+                if (!Plant::IsNocturnal(aSeeds[i]))
+                    return;
+            }
             if (!aSeeds.empty()) {
                 aSeeds[0] = SeedType::SEED_INSTANT_COFFEE;
+            }
+        } else {
+            // 如果卡组中有咖啡豆但没有蘑菇, 则替换豌豆射手为卡池3里的随机蘑菇(小喷, 大喷, 胆小)
+            if (!aSeeds.empty() && aSeeds[0] == SeedType::SEED_INSTANT_COFFEE) {
+                bool replacePeashooter = false;
+                for (int i = 0; i < 5; ++i) {
+                    if (!Plant::IsNocturnal(aSeeds[i])) {
+                        replacePeashooter = true;
+                        break;
+                    }
+                }
+                if (replacePeashooter) {
+                    const int seedIndex = Sexy::Rand(3);
+                    aSeeds[1] = VSSetupMenu::msRandomPools[3][seedIndex];
+                }
             }
         }
         if (NeedSeedTallnut(theApp)) {
