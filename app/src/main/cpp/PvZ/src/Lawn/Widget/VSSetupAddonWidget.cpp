@@ -220,7 +220,8 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
 
         int numSeedsInPool = 0;
         for (int i = 0; i < 8; ++i) {
-            if (VSSetupMenu::msRandomPools[poolBase][i] == SeedType::SEED_NONE)
+            const SeedType aSeedType = VSSetupMenu::msRandomPools[poolBase][i];
+            if (aSeedType == SeedType::SEED_NONE)
                 break;
 
             ++numSeedsInPool;
@@ -254,6 +255,7 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
                 if (!Plant::IsNocturnal(aSeeds[i]))
                     return;
             }
+
             if (!aSeeds.empty()) {
                 aSeeds[0] = SeedType::SEED_INSTANT_COFFEE;
             }
@@ -285,6 +287,31 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
                 *it = SeedType::SEED_UMBRELLA;
             }
         }
+        if (NeedSeedMagnetshroom(theApp)) {
+            auto it = std::ranges::find(aSeeds, SeedType::SEED_ICESHROOM);
+            if (it != aSeeds.end()) {
+                *it = SeedType::SEED_MAGNETSHROOM;
+            }
+        }
+        if (NeedSeedSplitPea(theApp)) {
+            auto it = std::ranges::find(aSeeds, SeedType::SEED_PEASHOOTER);
+            if (it != aSeeds.end()) {
+                *it = SeedType::SEED_SPLITPEA;
+            }
+        }
+
+        int numPeasInBank = 0;
+        for (int i = 0; i < 5; ++i) {
+            if (IsPeaSeedType(aSeeds[i])) {
+                ++numPeasInBank;
+            }
+        }
+        if (numPeasInBank >= 2 || GetPeaCount(theApp) >= 3) {
+            auto it = std::ranges::find(aSeeds, SeedType::SEED_GRAVEBUSTER);
+            if (it != aSeeds.end()) {
+                *it = SeedType::SEED_TORCHWOOD;
+            }
+        }
     }
 }
 
@@ -305,6 +332,15 @@ SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeed
         }
         if (NeedSeedUmbrella(theApp) && aSeedType == SeedType::SEED_SPIKEWEED) {
             aSeedType = SeedType::SEED_UMBRELLA;
+        }
+        if (NeedSeedMagnetshroom(theApp) && aSeedType == SeedType::SEED_ICESHROOM) {
+            aSeedType = SeedType::SEED_MAGNETSHROOM;
+        }
+        if (NeedSeedSplitPea(theApp) && aSeedType == SeedType::SEED_PEASHOOTER) {
+            aSeedType = SeedType::SEED_SPLITPEA;
+        }
+        if (NeedSeedTorchwood(theApp) && aSeedType == SeedType::SEED_GRAVEBUSTER) {
+            aSeedType = SeedType::SEED_TORCHWOOD;
         }
     }
 
@@ -361,6 +397,90 @@ bool NeedSeedUmbrella(LawnApp *theApp) {
         if (aZombie->mZombieType == ZombieType::ZOMBIE_CATAPULT || aZombie->mSummonCounter > 15) {
             return true;
         }
+    }
+    return false;
+}
+
+bool IsIronItemZombieType(ZombieType theZombieType) {
+    return theZombieType == ZombieType::ZOMBIE_PAIL || theZombieType == ZombieType::ZOMBIE_DOOR || theZombieType == ZombieType::ZOMBIE_FOOTBALL || theZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX
+        || theZombieType == ZombieType::ZOMBIE_DIGGER || theZombieType == ZombieType::ZOMBIE_POGO || theZombieType == ZombieType::ZOMBIE_LADDER || theZombieType == ZombieType::ZOMBIE_TRASHCAN;
+}
+
+bool NeedSeedMagnetshroom(LawnApp *theApp) {
+    // 僵尸种子栏存在2个以上可用的铁具类僵尸
+    int aNumIronItemZombies = 0;
+    for (int i = 1; i < 6; ++i) {
+        SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[1]->mSeedPackets[i];
+        ZombieType aZombieType = Challenge::IZombieSeedTypeToZombieType(aSeedPacket.mPacketType);
+        if (IsIronItemZombieType(aZombieType) && aSeedPacket.mActive) {
+            ++aNumIronItemZombies;
+        }
+    }
+    if (aNumIronItemZombies >= 2) {
+        return true;
+    }
+    // 场上存在3个以上的铁具类僵尸
+    int aCount = 0;
+    Zombie *aZombie = nullptr;
+    while (theApp->mBoard->IterateZombies(aZombie)) {
+        if (IsIronItemZombieType(aZombie->mZombieType)) {
+            ++aCount;
+        }
+    }
+    if (aCount >= 3) {
+        return true;
+    }
+    return false;
+}
+
+bool NeedSeedSplitPea(LawnApp *theApp) {
+    // 僵尸种子栏存在可用的矿工僵尸
+    for (int i = 1; i < 6; ++i) {
+        SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[1]->mSeedPackets[i];
+        if (aSeedPacket.mPacketType == SeedType::SEED_ZOMBIE_DIGGER && aSeedPacket.mActive) {
+            return true;
+        }
+    }
+    // 场上存在矿工僵尸
+    Zombie *aZombie = nullptr;
+    while (theApp->mBoard->IterateZombies(aZombie)) {
+        if (aZombie->mZombieType == ZombieType::ZOMBIE_DIGGER) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool IsPeaSeedType(SeedType theSeedType) {
+    return theSeedType == SeedType::SEED_PEASHOOTER || theSeedType == SeedType::SEED_REPEATER || theSeedType == SeedType::SEED_THREEPEATER || theSeedType == SeedType::SEED_SPLITPEA;
+}
+
+int GetPeaCount(LawnApp *theApp) {
+    int aCount = 0;
+    Plant *aPlant = nullptr;
+    while (theApp->mBoard->IteratePlants(aPlant)) {
+        if (IsPeaSeedType(aPlant->mSeedType)) {
+            ++aCount;
+        }
+    }
+    return aCount;
+}
+
+bool NeedSeedTorchwood(LawnApp *theApp) {
+    // 种子栏存在2株以上可用的豌豆类种子
+    int aNumPeasInBank = 0;
+    for (int i = 1; i < 6; ++i) {
+        SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[0]->mSeedPackets[i];
+        if (IsPeaSeedType(aSeedPacket.mPacketType) && aSeedPacket.mActive) {
+            ++aNumPeasInBank;
+        }
+    }
+    if (aNumPeasInBank >= 2) {
+        return true;
+    }
+    // 场上存在3株以上的豌豆类植物
+    if (GetPeaCount(theApp) >= 3) {
+        return true;
     }
     return false;
 }

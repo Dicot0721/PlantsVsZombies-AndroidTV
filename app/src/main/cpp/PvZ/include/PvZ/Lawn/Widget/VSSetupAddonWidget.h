@@ -104,6 +104,11 @@ SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeed
 bool NeedSeedInstantCoffee(LawnApp *theApp);
 bool NeedSeedTallnut(LawnApp *theApp);
 bool NeedSeedUmbrella(LawnApp *theApp);
+bool NeedSeedMagnetshroom(LawnApp *theApp);
+bool NeedSeedSplitPea(LawnApp *theApp);
+bool IsPeaSeedType(SeedType theSeedType);
+int GetPeaCount(LawnApp *theApp);
+bool NeedSeedTorchwood(LawnApp *theApp);
 bool NeedSeedZombieImp(LawnApp *theApp);
 
 #endif // PVZ_LAWN_WIDGET_VSSETUPADDONWIDGET_H
