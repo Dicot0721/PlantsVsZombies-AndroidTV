@@ -469,6 +469,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN6Zombie15SetupWaterTrackEPKc", Zombie_SetupWaterTrackAddr);
     libGameMain.GetSymbol("_ZN6Zombie16UpdateZombiePoolEv", Zombie_UpdateZombiePoolAddr);
     libGameMain.GetSymbol("_ZN6Zombie13ApplyAnimRateEf", Zombie_ApplyAnimRateAddr);
+    libGameMain.GetSymbol("_ZN6Zombie19SummonBackupDancersEv", Zombie_SummonBackupDancersAddr);
 
 
     libGameMain.GetSymbol("_ZN17SeedChooserScreen6UpdateEv", SeedChooserScreen_UpdateAddr);

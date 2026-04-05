@@ -472,6 +472,7 @@ inline void *Zombie_AddAttachedReanimAddr;
 inline void *Zombie_SetupWaterTrackAddr;
 inline void *Zombie_UpdateZombiePoolAddr;
 inline void *Zombie_ApplyAnimRateAddr;
+inline void *Zombie_SummonBackupDancersAddr;
 
 
 inline void *SeedChooserScreen_UpdateAddr;

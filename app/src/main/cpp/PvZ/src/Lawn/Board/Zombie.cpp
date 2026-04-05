@@ -1064,8 +1064,7 @@ void Zombie::UpdateZombieDancer() {
                 mApp->PlayFoley(FoleyType::FOLEY_DANCER);
             }
 
-            if (!(mApp->IsVSMode() && gTcpConnected))
-                SummonBackupDancers();
+            SummonBackupDancers();
             mZombiePhase = ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_HOLD;
             mPhaseCounter = 200;
         }
@@ -3187,6 +3186,23 @@ ZombieID Zombie::SummonBackupDancer(int theRow, int thePosX) {
 }
 
 void Zombie::SummonBackupDancers() {
+    if (mApp->IsVSMode() && gTcpConnected)
+        return;
+
+    SummonBackupDancers_Origin();
+
+    if (gTcpClientSocket >= 0) {
+        U16x4U16_Event event{};
+        event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS;
+        for (int i = 0; i < NUM_BACKUP_DANCERS; i++) {
+            event.data1[i] = uint16_t(mFollowerZombieID[i]);
+        }
+        event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+        netplay::PutEvent(event);
+    }
+}
+
+void Zombie::SummonBackupDancers_Origin() {
     if (!mHasHead)
         return;
 
@@ -3214,16 +3230,6 @@ void Zombie::SummonBackupDancers() {
                 break;
         }
         mFollowerZombieID[i] = SummonBackupDancer(aRow, aPosX);
-    }
-
-    if (gTcpClientSocket >= 0) {
-        U16x4U16_Event event;
-        event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS;
-        for (int i = 0; i < NUM_BACKUP_DANCERS; i++) {
-            event.data1[i] = uint16_t(mFollowerZombieID[i]);
-        }
-        event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
-        netplay::PutEvent(event);
     }
 }
 

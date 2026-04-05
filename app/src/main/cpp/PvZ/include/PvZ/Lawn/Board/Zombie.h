@@ -395,6 +395,7 @@ public:
     ZombiePhase GetDancerPhase();
     ZombieID SummonBackupDancer(int theRow, int thePosX);
     void SummonBackupDancers();
+    void SummonBackupDancers_Origin();
     bool NeedsMoreBackupDancers();
     void UpdateYuckyFace();
     void UpdateZombiePool();

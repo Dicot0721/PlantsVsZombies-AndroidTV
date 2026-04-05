@@ -1164,11 +1164,11 @@ Zombie *Board::AddZombieInRow_Origin(ZombieType theZombieType, int theRow, int t
 }
 
 Zombie *Board::AddZombie(ZombieType theZombieType, int theFromWave, bool theIsRustle) {
-    return AddZombieInRow(theZombieType, PickRowForNewZombie(theZombieType), theFromWave, theIsRustle);
+    return AddZombie_Origin(theZombieType, theFromWave, theIsRustle);
 }
 
 Zombie *Board::AddZombie_Origin(ZombieType theZombieType, int theFromWave, bool theIsRustle) {
-    return AddZombieInRow_Origin(theZombieType, PickRowForNewZombie(theZombieType), theFromWave, theIsRustle);
+    return AddZombieInRow(theZombieType, PickRowForNewZombie(theZombieType), theFromWave, theIsRustle);
 }
 
 // void (*old_Board_UpdateCoverLayer)(Board *this);
@@ -1764,7 +1764,10 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             uint16_t clientZombieID;
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                //                aZombie->SummonBackupDancers_Origin();
+                gTcpConnected = false;
                 aZombie->SummonBackupDancers();
+                gTcpConnected = true;
 
                 for (int i = 0; i < NUM_BACKUP_DANCERS; ++i) {
                     if (aZombie->mFollowerZombieID[i] != ZombieID::ZOMBIEID_NULL)
