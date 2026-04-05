@@ -37,6 +37,10 @@ public:
     int mHeight;
     int mLineSpacingOffset;
 
+public:
+    inline int CharWidthKern(int theChar, int thePrevChar) {
+        return reinterpret_cast<int (*)(Font *, int, int)>(Sexy_Font_CharWidthKernAddr)(this, theChar, thePrevChar);
+    }
     // virtual void DrawString(Graphics* g, int theX, int theY, const pvzstl::string& theString, const Color& theColor, const Rect& theClipRect);
 };
 

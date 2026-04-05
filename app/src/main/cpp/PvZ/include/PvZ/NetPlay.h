@@ -300,6 +300,8 @@ inline int gLastBroadcastTime = 0;
 inline sockaddr_in gBroadcastAddr;
 inline std::string gIfname;
 
+inline char gSecondPlayerName[32];
+
 // 客户端需要
 constexpr int MAX_SERVERS = 3;
 constexpr int UDP_TIMEOUT = 3; // 超时时间为3秒

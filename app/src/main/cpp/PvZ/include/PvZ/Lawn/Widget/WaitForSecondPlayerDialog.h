@@ -111,8 +111,6 @@ public:
     // helper UI text
     pvzstl::string mServerStatusText;
 
-    char mSecondPlayerName[32];
-
     // MODE3 actions
     bool ServerConnectFromInput(); // consume gInputString
     void ServerDisconnect(const char *why);

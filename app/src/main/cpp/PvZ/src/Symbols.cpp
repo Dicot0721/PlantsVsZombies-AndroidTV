@@ -1170,6 +1170,9 @@ bool LoadGameMain() {
 
     libGameMain.GetSymbol("_ZN8TodFoley9PlayFoleyE9FoleyType", TodFoley_PlayFoleyAddr);
 
+    libGameMain.GetSymbol("_ZN4Sexy4Font13CharWidthKernEii", Sexy_Font_CharWidthKernAddr);
+
+
     libGameMain.GetSymbol("_ZN4Sexy20FONT_HOUSEOFTERROR28E", Sexy_FONT_HOUSEOFTERROR28_Addr);
     libGameMain.GetSymbol("_ZN4Sexy20FONT_HOUSEOFTERROR20E", Sexy_FONT_HOUSEOFTERROR20_Addr);
     libGameMain.GetSymbol("_ZN4Sexy22FONT_DWARVENTODCRAFT18E", Sexy_FONT_DWARVENTODCRAFT18_Addr);
@@ -1181,6 +1184,9 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy27FONT_CONTINUUMBOLD14OUTLINEE", Sexy_FONT_CONTINUUMBOLD14OUTLINE_Addr);
     libGameMain.GetSymbol("_ZN4Sexy18IMAGE_PLANTSHADOW2E", Sexy_IMAGE_PLANTSHADOW2_Addr);
     libGameMain.GetSymbol("_ZN4Sexy26IMAGE_GAMEPAD_CURSOR_FRAMEE", Sexy_IMAGE_GAMEPAD_CURSOR_FRAME_Addr);
+    libGameMain.GetSymbol("_ZN4Sexy20IMAGE_CURSOR_P1_TEXTE", Sexy_IMAGE_CURSOR_P1_TEXT_Addr);
+    libGameMain.GetSymbol("_ZN4Sexy20IMAGE_CURSOR_P2_TEXTE", Sexy_IMAGE_CURSOR_P2_TEXT_Addr);
+
     libGameMain.GetSymbol("_ZN4Sexy10IMAGE_POOLE", Sexy_IMAGE_POOL_Addr);
     libGameMain.GetSymbol("_ZN4Sexy16IMAGE_POOL_NIGHTE", Sexy_IMAGE_POOL_NIGHT_Addr);
     libGameMain.GetSymbol("_ZN4Sexy15IMAGE_POOL_BASEE", Sexy_IMAGE_POOL_BASE_Addr);

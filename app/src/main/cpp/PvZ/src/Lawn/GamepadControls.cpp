@@ -192,7 +192,37 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
         *Sexy_IMAGE_COBCANNON_TARGET_1_Addr = cobcannon_1;
         return;
     }
-
+    // 联机光标上绘制双方玩家昵称
+    if (gTcpConnected || gTcpClientSocket >= 0) {
+        if (mPlayerIndex1 == 0 && gSecondPlayerName[0] != '\0') {
+            Image *tmp1 = *Sexy_IMAGE_CURSOR_P1_TEXT_Addr;
+            *Sexy_IMAGE_CURSOR_P1_TEXT_Addr = *IMAGE_BLANK;
+            old_GamepadControls_Draw(this, g);
+            TodDrawString(g,
+                          gTcpConnected ? gSecondPlayerName : mBoard->mApp->mPlayerInfo->mName,
+                          mCursorPositionX - 5,
+                          mCursorPositionY - 60,
+                          *Sexy_FONT_DWARVENTODCRAFT18_Addr,
+                          Color(255, 242, 14, 255),
+                          DrawStringJustification::DS_ALIGN_CENTER);
+            *Sexy_IMAGE_CURSOR_P1_TEXT_Addr = tmp1;
+            return;
+        }
+        if (mPlayerIndex1 == 1 && gSecondPlayerName[0] != '\0') {
+            Image *tmp = *Sexy_IMAGE_CURSOR_P2_TEXT_Addr;
+            *Sexy_IMAGE_CURSOR_P2_TEXT_Addr = *IMAGE_BLANK;
+            old_GamepadControls_Draw(this, g);
+            TodDrawString(g,
+                          gTcpClientSocket >= 0 ? gSecondPlayerName : mBoard->mApp->mPlayerInfo->mName,
+                          mCursorPositionX - 5,
+                          mCursorPositionY - 60,
+                          *Sexy_FONT_DWARVENTODCRAFT18_Addr,
+                          Color(68, 207, 255, 255),
+                          DrawStringJustification::DS_ALIGN_CENTER);
+            *Sexy_IMAGE_CURSOR_P2_TEXT_Addr = tmp;
+            return;
+        }
+    }
     old_GamepadControls_Draw(this, g);
 }
 

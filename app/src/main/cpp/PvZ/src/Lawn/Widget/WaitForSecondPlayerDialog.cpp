@@ -26,6 +26,7 @@
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/SexyAppFramework/Graphics/Font.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
 #include <arpa/inet.h>
@@ -393,7 +394,7 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mServerRoomCount = 0;
     mSrvRecvLen = 0;
 
-    mSecondPlayerName[0] = '\0';
+    gSecondPlayerName[0] = '\0';
 
     std::memset(mServerRooms, 0, sizeof(mServerRooms));
     std::memset(mSrvRecvBuf, 0, sizeof(mSrvRecvBuf));
@@ -450,7 +451,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
                 g->DrawString(str3, 260, lineY + 50);
             } else {
                 pvzstl::string joinedFmt = TodStringTranslate("[OTHER_JOINED_FMT]");
-                pvzstl::string str3 = StrFormat(joinedFmt.c_str(), mSecondPlayerName);
+                pvzstl::string str3 = StrFormat(joinedFmt.c_str(), gSecondPlayerName);
                 g->DrawString(str3, 260, lineY + 50);
             }
 
@@ -470,7 +471,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
 
                 if (gTcpConnected) {
                     pvzstl::string joinedFmt = TodStringTranslate("[JOINED_MANUAL_FMT]");
-                    pvzstl::string str3 = StrFormat(joinedFmt.c_str(), mSecondPlayerName);
+                    pvzstl::string str3 = StrFormat(joinedFmt.c_str(), gSecondPlayerName);
                     g->DrawString(str3, 280, 150);
                 } else {
                     pvzstl::string str3 = TodStringTranslate("[JOINING_MANUAL]");
@@ -787,7 +788,7 @@ void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
     switch (event->type) {
         case EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME: {
             CHARx32_Event *nameEvent = (CHARx32_Event *)event;
-            strncpy(mSecondPlayerName, nameEvent->chars, sizeof(mSecondPlayerName) - 1);
+            strncpy(gSecondPlayerName, nameEvent->chars, sizeof(gSecondPlayerName) - 1);
 
             CHARx32_Event nameEventReply;
             nameEventReply.type = EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME;
@@ -824,7 +825,7 @@ void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
                 // 弹出提示并断开连接
                 int buttonId = mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[VERSION_ERROR_TITLE]", "[VERSION_ERROR_DESC]", "[DIALOG_BUTTON_OK]", "", 3);
                 if (buttonId == 1000) {
-                    LeaveRoom(); // 或 ExitRoom()
+                    LeaveRoom();
                 }
             } else {
                 CHARx32_Event nameEvent;
@@ -835,7 +836,7 @@ void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
         } break;
         case EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME: {
             CHARx32_Event *nameEvent = (CHARx32_Event *)event;
-            strncpy(mSecondPlayerName, nameEvent->chars, sizeof(mSecondPlayerName) - 1);
+            strncpy(gSecondPlayerName, nameEvent->chars, sizeof(gSecondPlayerName) - 1);
         } break;
         case EVENT_WAITFORSECONDPALYER_START_GAME:
             //            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
@@ -1101,7 +1102,7 @@ void WaitForSecondPlayerDialog::LeaveRoom() {
     mUseManualTarget = false;
     mManualIp[0] = '\0';
     mManualPort = 0;
-    mSecondPlayerName[0] = '\0';
+    gSecondPlayerName[0] = '\0';
 }
 
 void WaitForSecondPlayerDialog::UdpBroadcastRoom() {

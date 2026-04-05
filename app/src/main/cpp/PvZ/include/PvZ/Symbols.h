@@ -1180,11 +1180,14 @@ inline void *EffectSystem_EffectSystemInitializeAddr;
 
 inline void *TodFoley_PlayFoleyAddr;
 
+inline void *Sexy_Font_CharWidthKernAddr;
+
 inline void *Native_BridgeApp_getJNIEnvAddr;
 inline void *Native_NativeApp_getActivityAddr;
 inline void *Native_NativeApp_getViewAddr;
 inline void *Native_BridgeApp_getSingletonAddr;
 inline void *Native_NativeApp_getPackageNameAddr;
+
 
 inline Sexy::Font **Sexy_FONT_HOUSEOFTERROR28_Addr;
 inline Sexy::Font **Sexy_FONT_HOUSEOFTERROR20_Addr;
@@ -1196,6 +1199,8 @@ inline Sexy::Font **Sexy_FONT_BRIANNETOD32_Addr;
 inline Sexy::Font **Sexy_FONT_CONTINUUMBOLD14_Addr;
 inline Sexy::Font **Sexy_FONT_CONTINUUMBOLD14OUTLINE_Addr;
 inline Sexy::Image **Sexy_IMAGE_GAMEPAD_CURSOR_FRAME_Addr;
+inline Sexy::Image **Sexy_IMAGE_CURSOR_P1_TEXT_Addr;
+inline Sexy::Image **Sexy_IMAGE_CURSOR_P2_TEXT_Addr;
 inline Sexy::Image **Sexy_IMAGE_POOL_Addr;
 inline Sexy::Image **Sexy_IMAGE_POOL_NIGHT_Addr;
 inline Sexy::Image **Sexy_IMAGE_POOL_BASE_Addr;
