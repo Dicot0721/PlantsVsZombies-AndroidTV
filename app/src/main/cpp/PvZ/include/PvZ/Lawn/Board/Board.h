@@ -494,6 +494,7 @@ public:
     void RemoveParticleByType(ParticleEffect theEffectType);
     void FadeOutLevel();
     Plant *AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int thePlayerIndex, bool theIsDoEffect);
+    Plant *AddPlant_Origin(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int thePlayerIndex, bool theIsDoEffect);
     void AddSunMoney(int theAmount, int thePlayerIndex);
     void AddDeathMoney(int theAmount);
     bool IsIceAt(int theGridX, int theGridY);
@@ -536,7 +537,9 @@ public:
     bool StageHasRoof();
     bool StageHas6Rows();
     Zombie *AddZombieInRow(ZombieType theZombieType, int theRow, int theFromWave, bool theIsRustle);
+    Zombie *AddZombieInRow_Origin(ZombieType theZombieType, int theRow, int theFromWave, bool theIsRustle);
     Zombie *AddZombie(ZombieType theZombieType, int theFromWave, bool theIsRustle);
+    Zombie *AddZombie_Origin(ZombieType theZombieType, int theFromWave, bool theIsRustle);
     void DoPlantingEffects(int theGridX, int theGridY, Plant *thePlant);
     void InitLawnMowers();
     void PickZombieWaves();

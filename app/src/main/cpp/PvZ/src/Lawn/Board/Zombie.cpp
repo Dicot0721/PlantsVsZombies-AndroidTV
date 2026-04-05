@@ -438,6 +438,9 @@ void Zombie::UpdateZombieJackInTheBox() {
         }
 
         if (mPhaseCounter <= 0) {
+            if (mApp->IsVSMode() && gTcpConnected)
+                return;
+
             DoSpecial();
         }
     }
@@ -902,6 +905,9 @@ void Zombie::UpdateZombieJalapenoHead() {
     }
 
     if (mPhaseCounter == 0) {
+        if (mApp->IsVSMode() && gTcpConnected)
+            return;
+
         DoSpecial();
     }
 }
@@ -1789,6 +1795,10 @@ void Zombie::DieNoLoot() {
         mApp->RemoveReanimation(mBossFireBallReanimID);
     }
 
+    DieNoLoot_Origin();
+}
+
+void Zombie::DieNoLoot_Origin() {
     old_Zombie_DieNoLoot(this);
 }
 
@@ -2592,6 +2602,10 @@ void Zombie::StartMindControlled() {
         }
     }
 
+    StartMindControlled_Origin();
+}
+
+void Zombie::StartMindControlled_Origin() {
     old_Zombie_StartMindControlled(this);
 }
 
@@ -2699,10 +2713,23 @@ void Zombie::SetupLostArmReanim() {
 }
 
 void Zombie::BungeeDropZombie(Zombie *theDroppedZombie, int theGridX, int theGridY) {
-
     if (mApp->IsVSMode() && gTcpConnected)
         return;
 
+    BungeeDropZombie_Origin(theDroppedZombie, theGridX, theGridY);
+
+    if (gTcpClientSocket >= 0) {
+        U16Buf32Buf32_Event event;
+        event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE;
+        event.data2.u16x2.u16_1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+        event.data2.u16x2.u16_2 = uint16_t(mBoard->mZombies.DataArrayGetID(theDroppedZombie));
+        event.data2.u8x4.u8_1 = uint8_t(theGridX);
+        event.data2.u8x4.u8_2 = uint8_t(theGridY);
+        netplay::PutEvent(event);
+    }
+}
+
+void Zombie::BungeeDropZombie_Origin(Zombie *theDroppedZombie, int theGridX, int theGridY) {
     mTargetCol = theGridX;
     SetRow(theGridY);
     mPosX = mBoard->GridToPixelX(mTargetCol, mRow);
@@ -2716,16 +2743,6 @@ void Zombie::BungeeDropZombie(Zombie *theDroppedZombie, int theGridX, int theGri
     theDroppedZombie->mZombieHeight = ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED;
     theDroppedZombie->PlayZombieReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 0.0f);
     theDroppedZombie->mRenderOrder = mRenderOrder + 1;
-
-    if (gTcpClientSocket >= 0) {
-        U16Buf32Buf32_Event event;
-        event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE;
-        event.data2.u16x2.u16_1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
-        event.data2.u16x2.u16_2 = uint16_t(mBoard->mZombies.DataArrayGetID(theDroppedZombie));
-        event.data2.u8x4.u8_1 = uint8_t(theGridX);
-        event.data2.u8x4.u8_2 = uint8_t(theGridY);
-        netplay::PutEvent(event);
-    }
 }
 
 void Zombie::PickRandomSpeed() {
@@ -3348,8 +3365,6 @@ void Zombie::UpdateZombiePool() {
 
 void Zombie::DoSpecial() {
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (gTcpConnected)
-            return;
 
         if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};

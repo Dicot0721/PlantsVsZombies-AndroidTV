@@ -261,6 +261,7 @@ public:
     Zombie *FindTargetZombie(int theRow, PlantWeapon thePlantWeapon);
     GridItem *FindTargetGridItem(PlantWeapon thePlantWeapon);
     void Die();
+    void Die_Origin();
     static Sexy::Image *GetImage(SeedType theSeedType);
     static int GetCost(SeedType theSeedType, SeedType theImitaterType);
     static int GetRefreshTime(SeedType theSeedType, SeedType theImitaterType);

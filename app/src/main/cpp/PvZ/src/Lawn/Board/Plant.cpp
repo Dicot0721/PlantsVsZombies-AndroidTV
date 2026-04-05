@@ -1163,6 +1163,10 @@ void Plant::Die() {
         }
     }
 
+    Die_Origin();
+}
+
+void Plant::Die_Origin() {
     if (IsOnBoard() && mSeedType == SeedType::SEED_TANGLEKELP) {
         Zombie *aZombie = mBoard->ZombieTryToGet(mTargetZombieID);
         if (aZombie) {

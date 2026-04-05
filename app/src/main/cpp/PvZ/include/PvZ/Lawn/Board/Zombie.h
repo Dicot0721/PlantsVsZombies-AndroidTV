@@ -298,6 +298,7 @@ public:
     void Draw(Sexy::Graphics *g);
     void DieWithLoot();
     void DieNoLoot();
+    void DieNoLoot_Origin();
     void StopZombieSound();
     void Update();
     void UpdateActions();
@@ -350,6 +351,7 @@ public:
     float GetPosYBasedOnRow(int theRow);
     void SetRow(int theRow);
     void StartMindControlled();
+    void StartMindControlled_Origin();
     void UpdateReanim();
     void UpdateReanimColor();
     void SetupLostArmReanim();
@@ -380,6 +382,7 @@ public:
     int GetShieldDamageIndex();
     bool IsFireResistant();
     void BungeeDropZombie(Zombie *theDroppedZombie, int theGridX, int theGridY);
+    void BungeeDropZombie_Origin(Zombie *theDroppedZombie, int theGridX, int theGridY);
     void PickRandomSpeed();
     void ApplySyncedSpeed(float theVelX, short theAnimTicks);
     float ZombieTargetLeadX(float theTime);
