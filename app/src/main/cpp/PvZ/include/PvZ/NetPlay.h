@@ -29,8 +29,7 @@
 #include <string>
 #include <utility>
 
-#define NETPLAY_VERSION 3141
-
+constexpr std::uint32_t NETPLAY_VERSION = 3141;
 
 enum EventType : uint8_t {
     EVENT_NULL,
