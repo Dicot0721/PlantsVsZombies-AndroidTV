@@ -393,6 +393,8 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mServerRoomCount = 0;
     mSrvRecvLen = 0;
 
+    mSecondPlayerName[0] = '\0';
+
     std::memset(mServerRooms, 0, sizeof(mServerRooms));
     std::memset(mSrvRecvBuf, 0, sizeof(mSrvRecvBuf));
     mServerStatusText = TodStringTranslate("[STATUS_NOT_CONNECTED]");
@@ -443,8 +445,14 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
             g->DrawString(str2, 260, lineY);
 
             // 是否有玩家加入
-            pvzstl::string str3 = TodStringTranslate((gTcpClientSocket == -1) ? "[WAIT_OTHER_JOIN]" : "[OTHER_JOINED]");
-            g->DrawString(str3, 260, lineY + 50);
+            if (gTcpClientSocket == -1) {
+                pvzstl::string str3 = TodStringTranslate("[WAIT_OTHER_JOIN]");
+                g->DrawString(str3, 260, lineY + 50);
+            } else {
+                pvzstl::string joinedFmt = TodStringTranslate("[OTHER_JOINED_FMT]");
+                pvzstl::string str3 = StrFormat(joinedFmt.c_str(), mSecondPlayerName);
+                g->DrawString(str3, 260, lineY + 50);
+            }
 
             // （可选）提示开始游戏按钮状态
             pvzstl::string str4 = TodStringTranslate((gTcpClientSocket == -1) ? "[WAIT_OTHER_JOIN_TO_START]" : "[CAN_START_CLICK_START]");
@@ -459,8 +467,15 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
         if (mIsJoiningRoom) {
             if (mUseManualTarget) {
                 // 手动连接
-                pvzstl::string str = TodStringTranslate(gTcpConnected ? "[JOINED_MANUAL]" : "[JOINING_MANUAL]");
-                g->DrawString(str, 280, 150);
+
+                if (gTcpConnected) {
+                    pvzstl::string joinedFmt = TodStringTranslate("[JOINED_MANUAL_FMT]");
+                    pvzstl::string str3 = StrFormat(joinedFmt.c_str(), mSecondPlayerName);
+                    g->DrawString(str3, 280, 150);
+                } else {
+                    pvzstl::string str3 = TodStringTranslate("[JOINING_MANUAL]");
+                    g->DrawString(str3, 280, 150);
+                }
 
                 pvzstl::string str1 = StrFormat("IP: %s:%d", mManualIp, mManualPort);
                 g->DrawString(str1, 280, 200);
@@ -759,6 +774,8 @@ void WaitForSecondPlayerDialog::Update() {
 
 size_t WaitForSecondPlayerDialog::getClientEventSize(EventType type) {
     switch (type) {
+        case EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME:
+            return sizeof(Char32_Event);
         default:
             return sizeof(BaseEvent);
     }
@@ -768,6 +785,15 @@ void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
     BaseEvent *event = (BaseEvent *)buf;
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
+        case EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME: {
+            Char32_Event *nameEvent = (Char32_Event *)event;
+            strncpy(mSecondPlayerName, nameEvent->chars, sizeof(mSecondPlayerName) - 1);
+
+            Char32_Event nameEventReply;
+            nameEventReply.type = EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME;
+            strncpy(nameEventReply.chars, mApp->mPlayerInfo->mName, sizeof(nameEventReply.chars) - 1);
+            netplay::PutEvent(nameEventReply);
+        } break;
         default:
             break;
     }
@@ -775,7 +801,13 @@ void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
 
 size_t WaitForSecondPlayerDialog::getServerEventSize(EventType type) {
     switch (type) {
+        case EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME:
+            return sizeof(Char32_Event);
+        case EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK:
+            return sizeof(U16_Event);
+
         case EVENT_WAITFORSECONDPALYER_START_GAME:
+            return sizeof(BaseEvent);
         default:
             return sizeof(BaseEvent);
     }
@@ -785,6 +817,26 @@ void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
     BaseEvent *event = (BaseEvent *)buf;
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
+        case EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK: {
+            U16_Event *event1 = (U16_Event *)event;
+            if (event1->data != NETPLAY_VERSION) {
+                LOG_ERROR("Room Version Mismatch!");
+                // 弹出提示并断开连接
+                int buttonId = mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[VERSION_ERROR_TITLE]", "[VERSION_ERROR_DESC]", "[DIALOG_BUTTON_OK]", "", 3);
+                if (buttonId == 1000) {
+                    LeaveRoom(); // 或 ExitRoom()
+                }
+            } else {
+                Char32_Event nameEvent;
+                nameEvent.type = EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME;
+                strncpy(nameEvent.chars, mApp->mPlayerInfo->mName, sizeof(nameEvent.chars) - 1);
+                netplay::PutEvent(nameEvent);
+            }
+        } break;
+        case EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME: {
+            Char32_Event *nameEvent = (Char32_Event *)event;
+            strncpy(mSecondPlayerName, nameEvent->chars, sizeof(mSecondPlayerName) - 1);
+        } break;
         case EVENT_WAITFORSECONDPALYER_START_GAME:
             //            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
             //            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
@@ -1049,6 +1101,7 @@ void WaitForSecondPlayerDialog::LeaveRoom() {
     mUseManualTarget = false;
     mManualIp[0] = '\0';
     mManualPort = 0;
+    mSecondPlayerName[0] = '\0';
 }
 
 void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
@@ -1136,6 +1189,10 @@ bool WaitForSecondPlayerDialog::CheckTcpAccept() {
     char ip[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &clientAddr.sin_addr, ip, sizeof(ip));
     LOG_DEBUG("[TCP] Client connected: {}", ip);
+
+    // 检查version
+    U16_Event event = {{EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK}, NETPLAY_VERSION};
+    netplay::PutEvent(event);
     return true;
 }
 

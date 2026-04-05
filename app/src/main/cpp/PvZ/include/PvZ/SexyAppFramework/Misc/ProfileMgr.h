@@ -36,7 +36,9 @@ class DefaultProfileMgr : public ProfileMgr {
 public:
     int *mProfileMap;       // 2
     int *mProfileMapEnd;    // 3
+    int unk[3];             // 4 ~ 6
     int mNumProfiles;       // 7
+    int unk2;               // 8
     int mNextProfileUseSeq; // 9
 
 

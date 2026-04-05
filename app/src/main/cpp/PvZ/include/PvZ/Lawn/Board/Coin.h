@@ -57,8 +57,8 @@ public:
     int mPlayerIndex;              // 43
     float unk2;                    // 44
     bool unk3;                     // 180
-    int unk4;                      // 46
-    bool unk5;                     // 188
+    int mCustomSunValue;           // 46
+    bool mAutoCollect;             // 188
     int mAutoCollectAge;           // 48
     bool unk7;                     // 196
     bool unk8;                     // 197

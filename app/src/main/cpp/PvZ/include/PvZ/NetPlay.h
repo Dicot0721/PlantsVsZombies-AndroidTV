@@ -29,11 +29,19 @@
 #include <string>
 #include <utility>
 
+#define NETPLAY_VERSION 3141
+
+
 enum EventType : uint8_t {
     EVENT_NULL,
 
     EVENT_CLIENT_PING,
     EVENT_SERVER_PONG,
+
+    EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK,
+
+    EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME,
+    EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME,
 
     EVENT_WAITFORSECONDPALYER_START_GAME,
 
@@ -275,6 +283,10 @@ struct U8x4U16Buf32x2_Event : BaseEvent {
 struct U16x4U16_Event : BaseEvent {
     uint16_t data1[4];
     uint16_t data2;
+};
+
+struct Char32_Event : BaseEvent {
+    char chars[32];
 };
 
 // 双方都需要

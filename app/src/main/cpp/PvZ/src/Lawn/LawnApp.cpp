@@ -311,6 +311,16 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             }
             mVSResultsMenu->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
             offset += eventSize;
+        } else if (base->type >= EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK && base->type <= EVENT_WAITFORSECONDPALYER_START_GAME) {
+            size_t eventSize = WaitForSecondPlayerDialog::getClientEventSize(base->type);
+            if (clientRecvBuffer.size() - offset < eventSize)
+                break; // 不完整
+            if (!GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER)) {
+                offset += eventSize;
+                break;
+            }
+            ((WaitForSecondPlayerDialog *)GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER))->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
+            offset += eventSize;
         } else {
             offset += 1;
         }
@@ -377,7 +387,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             }
             mVSSetupMenu->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
             offset += eventSize;
-        } else if (base->type == EVENT_WAITFORSECONDPALYER_START_GAME) {
+        } else if (base->type >= EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK && base->type <= EVENT_WAITFORSECONDPALYER_START_GAME) {
             size_t eventSize = WaitForSecondPlayerDialog::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -648,21 +658,19 @@ void LawnApp::Init() {
     //    Sexy::PerfTimer::Start((Sexy::PerfTimer *)&v60);
 
     mProfileMgr->Load();
-    pvzstl::string defaultName = "player";
     if (mProfileMgr->GetAnyProfile() == nullptr) {
+        pvzstl::string defaultName = "player";
         mProfileMgr->AddProfile(defaultName);
         mProfileMgr->Save();
+        mPlayerInfo = mProfileMgr->GetProfile(defaultName);
     }
+
     if (mPlayerInfo == nullptr) {
         pvzstl::string value;
         bool readSuccess = RegistryReadString("CurUser", &value);
         if (readSuccess) {
             mPlayerInfo = mProfileMgr->GetProfile(value);
         }
-    }
-
-    if (mPlayerInfo == nullptr) {
-        mPlayerInfo = mProfileMgr->GetProfile(defaultName);
     }
 
     if (mPlayerInfo == nullptr && mProfileMgr->mNumProfiles > 0) {
