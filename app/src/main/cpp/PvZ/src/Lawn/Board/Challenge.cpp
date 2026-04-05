@@ -588,7 +588,7 @@ void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int t
         }
 
         if (gTcpClientSocket >= 0) {
-            U16Buf32Buf32_Event event;
+            U16UNI32UNI32_Event event;
             event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT;
             event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombie));
             event.data2.u8x4.u8_1 = uint8_t(theGridX);

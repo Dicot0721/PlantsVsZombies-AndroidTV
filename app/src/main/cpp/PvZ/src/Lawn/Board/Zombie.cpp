@@ -477,7 +477,7 @@ void Zombie::UpdateZombiePolevaulter() {
             mHasObject = false;
 
             if (gTcpClientSocket >= 0) {
-                U16Buf32_Event event;
+                U16UNI32_Event event;
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_IN_VAULT;
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2.i16x2.i16_1 = int16_t(mX);
@@ -526,7 +526,7 @@ void Zombie::UpdateZombiePolevaulter() {
             StartWalkAnim(0);
 
             if (gTcpClientSocket >= 0) {
-                U16Buf32_Event event;
+                U16UNI32_Event event;
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_POST_VAULT;
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2.f32 = mPosY;
@@ -620,7 +620,7 @@ void Zombie::UpdateZombieGargantuar() {
             }
 
             if (gTcpClientSocket >= 0) {
-                U16U16U16Buf32Buf32_Event event;
+                U16U16U16UNI32UNI32_Event event;
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW;
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombieImp));
@@ -671,7 +671,7 @@ void Zombie::UpdateZombieGargantuar() {
 
     if (mHasObject && mBodyHealth < mBodyMaxHealth / 2 && aThrowingDistance > 40.0f) {
         if (gTcpClientSocket >= 0) {
-            U16Buf32_Event event;
+            U16UNI32_Event event;
             event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW;
             event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
             event.data2.f32 = mPosX;
@@ -700,7 +700,7 @@ void Zombie::UpdateZombieGargantuar() {
     if (doSmash) {
 
         if (gTcpClientSocket >= 0) {
-            U16Buf32_Event event;
+            U16UNI32_Event event;
             event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH;
             event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
             event.data2.f32 = mPosX;
@@ -2719,7 +2719,7 @@ void Zombie::BungeeDropZombie(Zombie *theDroppedZombie, int theGridX, int theGri
     BungeeDropZombie_Origin(theDroppedZombie, theGridX, theGridY);
 
     if (gTcpClientSocket >= 0) {
-        U16Buf32Buf32_Event event;
+        U16UNI32UNI32_Event event;
         event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE;
         event.data2.u16x2.u16_1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
         event.data2.u16x2.u16_2 = uint16_t(mBoard->mZombies.DataArrayGetID(theDroppedZombie));
@@ -2785,7 +2785,7 @@ void Zombie::PickRandomSpeed() {
     UpdateAnimSpeed();
 
     if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
-        U16U16U16Buf32Buf32_Event event;
+        U16U16U16UNI32UNI32_Event event;
         event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED;
         event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
         event.data2 = uint16_t(mAnimTicksPerFrame);

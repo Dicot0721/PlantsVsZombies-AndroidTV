@@ -150,19 +150,7 @@ struct BaseEvent {
     uint8_t size;
 };
 
-union Buffer32Bit {
-    struct {
-        uint8_t u8_1;
-        uint8_t u8_2;
-        uint8_t u8_3;
-        uint8_t u8_4;
-    } u8x4;
-
-    struct {
-        uint16_t u16_1;
-        uint16_t u16_2;
-    } u16x2;
-
+union Union32Bit {
     struct {
         int8_t i8_1;
         int8_t i8_2;
@@ -171,15 +159,27 @@ union Buffer32Bit {
     } i8x4;
 
     struct {
+        uint8_t u8_1;
+        uint8_t u8_2;
+        uint8_t u8_3;
+        uint8_t u8_4;
+    } u8x4;
+
+    struct {
         int16_t i16_1;
         int16_t i16_2;
     } i16x2;
+
+    struct {
+        uint16_t u16_1;
+        uint16_t u16_2;
+    } u16x2;
 
     uint32_t u32;
     int32_t i32;
     float f32;
 };
-static_assert(sizeof(Buffer32Bit) == 4);
+static_assert(sizeof(Union32Bit) == 4);
 
 struct U8_Event : BaseEvent {
     uint8_t data;
@@ -235,15 +235,15 @@ struct B1x8_Event : BaseEvent {
     uint8_t data8 : 1;
 };
 
-struct U16Buf32_Event : BaseEvent {
+struct U16UNI32_Event : BaseEvent {
     uint16_t data1;
-    Buffer32Bit data2;
+    Union32Bit data2;
 };
 
-struct U16Buf32Buf32_Event : BaseEvent {
+struct U16UNI32UNI32_Event : BaseEvent {
     uint16_t data1;
-    Buffer32Bit data2;
-    Buffer32Bit data3;
+    Union32Bit data2;
+    Union32Bit data3;
 };
 
 struct U16U16U8_Event : BaseEvent {
@@ -266,18 +266,18 @@ struct U16x12_Event : BaseEvent {
 };
 
 
-struct U16U16U16Buf32Buf32_Event : BaseEvent {
+struct U16U16U16UNI32UNI32_Event : BaseEvent {
     uint16_t data1;
     uint16_t data2;
     uint16_t data3;
-    Buffer32Bit data4;
-    Buffer32Bit data5;
+    Union32Bit data4;
+    Union32Bit data5;
 };
 
-struct U8x4U16Buf32x2_Event : BaseEvent {
+struct U8x4U16UNI32x2_Event : BaseEvent {
     uint8_t data1[4];
     uint16_t data2;
-    Buffer32Bit data3[2];
+    Union32Bit data3[2];
 };
 
 struct U16x4U16_Event : BaseEvent {
@@ -285,7 +285,7 @@ struct U16x4U16_Event : BaseEvent {
     uint16_t data2;
 };
 
-struct Char32_Event : BaseEvent {
+struct CHARx32_Event : BaseEvent {
     char chars[32];
 };
 

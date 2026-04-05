@@ -746,7 +746,7 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
             return;
 
         if (gTcpClientSocket >= 0) {
-            U16U16U16Buf32Buf32_Event event;
+            U16U16U16UNI32UNI32_Event event;
 
             event.type = EventType::EVENT_SERVER_BOARD_PLANT_FIRE;
             event.data1 = uint16_t(mBoard->mPlants.DataArrayGetID(this));
@@ -2073,7 +2073,7 @@ ReanimationID Plant::GetPlantReanimationIDByIndex(int index) {
 void Plant::SyncPingPongAnimationToClient() {
     uint16_t id = mBoard->mPlants.DataArrayGetID(this);
 
-    U16U16U16Buf32Buf32_Event event;
+    U16U16U16UNI32UNI32_Event event;
     event.type = EventType::EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION;
     event.data1 = id;
     event.data2 = mFrameLength;
@@ -2095,7 +2095,7 @@ void Plant::SyncAnimationToClient() {
             continue;
         }
 
-        U16U16U16Buf32Buf32_Event event2;
+        U16U16U16UNI32UNI32_Event event2;
         event2.type = EventType::EVENT_SERVER_BOARD_PLANT_OTHER_ANIMATION;
         event2.data1 = id;
         event2.data2 = i;

@@ -775,7 +775,7 @@ void WaitForSecondPlayerDialog::Update() {
 size_t WaitForSecondPlayerDialog::getClientEventSize(EventType type) {
     switch (type) {
         case EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME:
-            return sizeof(Char32_Event);
+            return sizeof(CHARx32_Event);
         default:
             return sizeof(BaseEvent);
     }
@@ -786,10 +786,10 @@ void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME: {
-            Char32_Event *nameEvent = (Char32_Event *)event;
+            CHARx32_Event *nameEvent = (CHARx32_Event *)event;
             strncpy(mSecondPlayerName, nameEvent->chars, sizeof(mSecondPlayerName) - 1);
 
-            Char32_Event nameEventReply;
+            CHARx32_Event nameEventReply;
             nameEventReply.type = EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME;
             strncpy(nameEventReply.chars, mApp->mPlayerInfo->mName, sizeof(nameEventReply.chars) - 1);
             netplay::PutEvent(nameEventReply);
@@ -802,7 +802,7 @@ void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
 size_t WaitForSecondPlayerDialog::getServerEventSize(EventType type) {
     switch (type) {
         case EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME:
-            return sizeof(Char32_Event);
+            return sizeof(CHARx32_Event);
         case EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK:
             return sizeof(U16_Event);
 
@@ -827,14 +827,14 @@ void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
                     LeaveRoom(); // 或 ExitRoom()
                 }
             } else {
-                Char32_Event nameEvent;
+                CHARx32_Event nameEvent;
                 nameEvent.type = EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME;
                 strncpy(nameEvent.chars, mApp->mPlayerInfo->mName, sizeof(nameEvent.chars) - 1);
                 netplay::PutEvent(nameEvent);
             }
         } break;
         case EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME: {
-            Char32_Event *nameEvent = (Char32_Event *)event;
+            CHARx32_Event *nameEvent = (CHARx32_Event *)event;
             strncpy(mSecondPlayerName, nameEvent->chars, sizeof(mSecondPlayerName) - 1);
         } break;
         case EVENT_WAITFORSECONDPALYER_START_GAME:
