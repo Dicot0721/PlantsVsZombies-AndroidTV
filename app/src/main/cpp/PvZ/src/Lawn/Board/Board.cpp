@@ -1164,11 +1164,12 @@ Zombie *Board::AddZombieInRow_Origin(ZombieType theZombieType, int theRow, int t
 }
 
 Zombie *Board::AddZombie(ZombieType theZombieType, int theFromWave, bool theIsRustle) {
-    return AddZombie_Origin(theZombieType, theFromWave, theIsRustle);
+    //    return AddZombie_Origin(theZombieType, theFromWave, theIsRustle);
+    return AddZombieInRow(theZombieType, PickRowForNewZombie(theZombieType), theFromWave, theIsRustle);
 }
 
 Zombie *Board::AddZombie_Origin(ZombieType theZombieType, int theFromWave, bool theIsRustle) {
-    return AddZombieInRow(theZombieType, PickRowForNewZombie(theZombieType), theFromWave, theIsRustle);
+    return AddZombieInRow_Origin(theZombieType, PickRowForNewZombie(theZombieType), theFromWave, theIsRustle);
 }
 
 // void (*old_Board_UpdateCoverLayer)(Board *this);

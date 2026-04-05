@@ -3155,7 +3155,7 @@ ZombieID Zombie::SummonBackupDancer(int theRow, int thePosX) {
     if (!mBoard->RowCanHaveZombieType(theRow, ZombieType::ZOMBIE_BACKUP_DANCER))
         return ZombieID::ZOMBIEID_NULL;
 
-    Zombie *aZombie = mBoard->AddZombie(ZombieType::ZOMBIE_BACKUP_DANCER, mFromWave, false);
+    Zombie *aZombie = mBoard->AddZombie_Origin(ZombieType::ZOMBIE_BACKUP_DANCER, mFromWave, false);
     if (aZombie == nullptr)
         return ZombieID::ZOMBIEID_NULL;
 
