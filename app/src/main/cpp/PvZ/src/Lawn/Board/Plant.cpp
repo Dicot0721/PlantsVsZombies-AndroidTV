@@ -941,7 +941,11 @@ void Plant::Fire_Origin(Zombie *theTargetZombie, int theRow, PlantWeapon thePlan
             }
         } else if (theTargetGridItem) {
             aRangeX = mBoard->GridToPixelX(theTargetGridItem->mGridX, theTargetGridItem->mGridY) - aOriginX;
-            aRangeY = (float(mBoard->GridToPixelY(theTargetGridItem->mGridX, theTargetGridItem->mGridY)) - aOriginY) * 0.0083333 - 7.0;
+            // 为靶子僵尸添加半格距离，以匹配靶子僵尸的碰撞箱
+            if (theTargetGridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
+                aRangeX += mBoard->GridCellWidth(theTargetGridItem->mGridX, theTargetGridItem->mGridY) / 2;
+            }
+            aRangeY = (mBoard->GridToPixelY(theTargetGridItem->mGridX, theTargetGridItem->mGridY) - aOriginY) * 0.0083333 - 7.0;
         } else {
             aRangeX = 700.0f - aOriginX;
             aRangeY = 0.0f;
