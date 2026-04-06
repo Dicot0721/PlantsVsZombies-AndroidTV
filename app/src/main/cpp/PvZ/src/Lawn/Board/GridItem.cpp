@@ -442,3 +442,12 @@ void GridItem::AddGraveStoneParticles() {
         mApp->PlayFoley(FoleyType::FOLEY_DIRT_RISE);
     }
 }
+
+void GridItem::DrawMPTarget(Graphics *g) {
+    //    Reanimation *reanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+    //    pvzstl::string fmt = StrFormat("%d %d %d", mGridItemReanimID, (int)reanim,mRenderOrder);
+    //    g->SetFont(*Sexy_FONT_CONTINUUMBOLD14OUTLINE_Addr);
+    //    g->DrawString(fmt,0,50 * mGridY);
+    //    TodDrawString(g,fmt,0,0,*Sexy_FONT_CONTINUUMBOLD14OUTLINE_Addr,Color(0,0,255,255),DS_ALIGN_LEFT);
+    old_GridItem_DrawMPTarget(this, g);
+}

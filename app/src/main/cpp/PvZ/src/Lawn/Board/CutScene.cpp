@@ -111,8 +111,8 @@ void CutScene::PlaceLawnItems() {
         int aNumRows = mBoard->StageHas6Rows() ? 6 : 5;
         SeedType aSunPlantType = mBoard->StageIsNight() ? SeedType::SEED_SUNSHROOM : SeedType::SEED_SUNFLOWER;
         for (int aRow = 0; aRow < aNumRows; ++aRow) {
-            if (aRow != 5) // TODO: 修复泳池六路靶子被投手击中崩溃
-                mBoard->AddMPTarget(8, aRow);
+            //            if (aRow != 5) // TODO: 修复泳池六路靶子被投手击中崩溃
+            mBoard->AddMPTarget(8, aRow);
             if ((aRow == 1 || aRow == aNumRows - 2) || mBoard->StageIsNight()) { // 黑夜种满一列
                 mBoard->AddAGraveStone(8, aRow);
                 Plant *aPlant = mBoard->AddPlant(0, aRow, aSunPlantType, SeedType::SEED_NONE, -1, true);

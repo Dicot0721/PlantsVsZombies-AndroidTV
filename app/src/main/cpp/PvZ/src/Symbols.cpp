@@ -870,6 +870,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN8GridItem11GridItemDieEv", GridItem_GridItemDieAddr);
     libGameMain.GetSymbol("_ZN8GridItem17UpdateBurialMoundEv", GridItem_UpdateBurialMoundAddr);
     libGameMain.GetSymbol("_ZN8GridItem22AddGraveStoneParticlesEv", GridItem_AddGraveStoneParticlesAddr);
+    libGameMain.GetSymbol("_ZN8GridItem12DrawMPTargetEPN4Sexy8GraphicsE", GridItem_DrawMPTargetAddr);
 
 
     libGameMain.GetSymbol("_ZN4Sexy13SexyCommonApp11getGameInfoEv", Sexy_SexyCommonApp_getGameInfoAddr);

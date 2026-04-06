@@ -462,9 +462,9 @@ public:
     void UpdateCoverLayer() {
         reinterpret_cast<void (*)(Board *)>(Board_UpdateCoverLayerAddr)(this);
     }
-    void AddMPTarget(int theGridX, int theGridY) {
-        reinterpret_cast<void (*)(Board *, int, int)>(Board_AddMPTargetAddr)(this, theGridX, theGridY);
-    }
+    //    GridItem* AddMPTarget(int theGridX, int theGridY) {
+    //       return reinterpret_cast<GridItem* (*)(Board *, int, int)>(Board_AddMPTargetAddr)(this, theGridX, theGridY);
+    //    }
     void PlaceRake() {
         reinterpret_cast<void (*)(Board *)>(Board_PlaceRakeAddr)(this);
     }
@@ -597,7 +597,7 @@ public:
     bool CanAddGraveStoneAt(int theGridX, int theGridY);
     void DrawLevel(Sexy::Graphics *g);
     bool CanAddBobSledMP();
-
+    GridItem *AddMPTarget(int theGridX, int theGridY);
 
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);

@@ -1115,6 +1115,7 @@ inline void *GridItem_DrawGraveStoneAddr;
 inline void *GridItem_GridItemDieAddr;
 inline void *GridItem_UpdateBurialMoundAddr;
 inline void *GridItem_AddGraveStoneParticlesAddr;
+inline void *GridItem_DrawMPTargetAddr;
 
 
 inline void *TodDrawImageCelCenterScaledFAddr;

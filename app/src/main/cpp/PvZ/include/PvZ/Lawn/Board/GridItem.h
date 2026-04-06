@@ -91,6 +91,7 @@ public:
     void DrawCrater(Sexy::Graphics *g);
     void DrawGraveStone(Sexy::Graphics *g);
     void AddGraveStoneParticles();
+    void DrawMPTarget(Sexy::Graphics *g);
 
 protected:
     friend void InitHookFunction();
@@ -114,5 +115,8 @@ inline void (*old_GridItem_Update)(GridItem *a1);
 inline void (*old_GridItem_UpdateScaryPot)(GridItem *scaryPot);
 
 inline void (*old_GridItem_DrawStinky)(GridItem *mStinky, Sexy::Graphics *graphics);
+
+inline void (*old_GridItem_DrawMPTarget)(GridItem *, Sexy::Graphics *graphics);
+
 
 #endif // PVZ_LAWN_BOARD_GRID_ITEM_H

@@ -5720,3 +5720,26 @@ bool Board::CanAddBobSledMP() {
     // 如果所有车道都不满足条件，返回 false
     return false;
 }
+
+GridItem *Board::AddMPTarget(int theGridX, int theGridY) {
+
+    // 修复六路靶子不绘制，原版固定绘制5行，现在绘制aNumRows
+    int RenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_LAWN, theGridY, 1);
+    if (theGridY == 0) {
+        RenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_UI_BOTTOM, 0, 0);
+    }
+    GridItem *aGridItem = mGridItems.DataArrayAlloc();
+    aGridItem->mGridItemType = GRIDITEM_VS_TARGET_ZOMBIE;
+    aGridItem->mGridY = theGridY;
+    aGridItem->mRenderOrder = RenderOrder;
+    aGridItem->mGridX = theGridX;
+    int aPixelX = GridToPixelX(theGridX, theGridY);
+    int aPixelY = GridToPixelY(theGridX, theGridY);
+    int aNumRows = StageHas6Rows() ? 6 : 5;
+    Reanimation *reanimation = mApp->AddReanimation((20.0f / (aNumRows - theGridY)) + 26.0f + aPixelX, aPixelY - 54.0f, RenderOrder, REANIM_VS_TARGET);
+    reanimation->SetAnimRate(0.0);
+    reanimation->mLoopType = REANIM_LOOP;
+    reanimation->mIsAttachment = true;
+    aGridItem->mGridItemReanimID = mApp->ReanimationGetID(reanimation);
+    return aGridItem;
+}

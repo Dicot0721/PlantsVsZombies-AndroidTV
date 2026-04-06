@@ -172,6 +172,7 @@ void InitHookFunction() {
     homura::HookFunction(Board_CanAddGraveStoneAtAddr, &Board::CanAddGraveStoneAt, nullptr);
     homura::HookFunction(Board_DrawLevelAddr, &Board::DrawLevel, &old_Board_DrawLevel);
     homura::HookFunction(Board_CanAddBobSledMPAddr, &Board::CanAddBobSledMP, nullptr);
+    homura::HookFunction(Board_AddMPTargetAddr, &Board::AddMPTarget, nullptr);
 
 
     homura::HookFunction(FixBoardAfterLoadAddr, &FixBoardAfterLoad, &old_FixBoardAfterLoad);
@@ -244,6 +245,7 @@ void InitHookFunction() {
     homura::HookFunction(GridItem_DrawCraterAddr, &GridItem::DrawCrater, nullptr);
     homura::HookFunction(GridItem_DrawGraveStoneAddr, &GridItem::DrawGraveStone, nullptr);
     homura::HookFunction(GridItem_AddGraveStoneParticlesAddr, &GridItem::AddGraveStoneParticles, nullptr);
+    //    homura::HookFunction(GridItem_DrawMPTargetAddr, &GridItem::DrawMPTarget, &old_GridItem_DrawMPTarget);
 
 
     homura::HookFunction(AlmanacDialog_RemovedFromManagerAddr, &AlmanacDialog::RemovedFromManager, &old_AlmanacDialog_RemovedFromManager);
