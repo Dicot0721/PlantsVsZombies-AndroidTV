@@ -20,8 +20,8 @@
 #ifndef HOMURA_TYPEUTILS_H
 #define HOMURA_TYPEUTILS_H
 
+#include <concepts>
 #include <memory>
-#include <type_traits>
 
 namespace homura {
 
@@ -31,6 +31,7 @@ namespace homura {
  * 对象使用 placement new 创建, 并使用显式析构函数调用销毁.
  */
 template <typename T>
+    requires requires { sizeof(T); }
 class Storage {
 public:
     using ElementType = T;
@@ -87,7 +88,7 @@ protected:
  *
  * 对象使用 placement new 创建, 但不需要使用显式析构函数调用销毁.
  */
-template <typename T>
+template <std::destructible T>
 class DestructStorage : public Storage<T> {
 public:
     constexpr DestructStorage() noexcept
