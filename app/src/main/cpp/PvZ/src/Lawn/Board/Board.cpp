@@ -1113,6 +1113,42 @@ void Board::DrawFog(Sexy::Graphics *g) {
 
 Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromWave, bool theIsRustle) {
 
+    if (theZombieType == ZOMBIE_BOBSLED && (gTcpConnected || gTcpClientSocket >= 0)) {
+
+        // 不允许客户端通过AddZombieInRow来添加雪橇小队僵尸
+        if (gTcpConnected)
+            return nullptr;
+
+
+        bool theUnkBool = Sexy::Rand(5) == 0;
+        Zombie *bobsledZombies[4];
+        bobsledZombies[0] = mZombies.DataArrayAlloc();
+        bobsledZombies[0]->ZombieInitialize(theRow, theZombieType, theUnkBool, nullptr, theFromWave, true);
+
+        for (int i = 1; i < 4; ++i) {
+            bobsledZombies[i] = mZombies.DataArrayAlloc();
+            bobsledZombies[i]->ZombieInitialize(theRow, theZombieType, theUnkBool, bobsledZombies[0], theFromWave, true);
+        }
+
+
+        if (gTcpClientSocket >= 0) {
+
+            U8x2U16x4UNI32x8_Event event{};
+            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_BOBSELD_ADD;
+            event.data1[0] = uint8_t(theRow);
+            event.data1[1] = int8_t(theFromWave);
+
+            for (int i = 0; i < 4; ++i) {
+                event.data2[i] = mZombies.DataArrayGetID(bobsledZombies[i]);
+                event.data3[i].f32 = bobsledZombies[i]->mVelX;
+                event.data4[i].f32 = bobsledZombies[i]->mPosX;
+            }
+            netplay::PutEvent(event);
+        }
+        return bobsledZombies[0];
+    }
+
+
     Zombie *aZombie = AddZombieInRow_Origin(theZombieType, theRow, theFromWave, theIsRustle);
 
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
@@ -1148,7 +1184,7 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
                 event.data3[0].f32 = aZombie->mVelX;
                 event.data3[1].f32 = aZombie->mPosX;
                 netplay::PutEvent(event);
-            };
+            }
         }
         return aZombie;
     }
@@ -1329,6 +1365,8 @@ size_t Board::getServerEventSize(EventType type) {
         // --- 僵尸添加 ---
         case EVENT_SERVER_BOARD_ZOMBIE_ADD:
             return sizeof(U8x4U16UNI32x2_Event);
+        case EVENT_SERVER_BOARD_ZOMBIE_BOBSELD_ADD:
+            return sizeof(U8x2U16x4UNI32x8_Event);
         case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_STEAL:
             return sizeof(U16UNI32UNI32_Event);
         case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE:
@@ -1698,6 +1736,27 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             float aVelX = eventZombieAdd->data3[0].f32;
             aZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
             aZombie->mPosX = eventZombieAdd->data3[1].f32;
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_BOBSELD_ADD: {
+            auto *eventZombieBobseldAdd = reinterpret_cast<U8x2U16x4UNI32x8_Event *>(event);
+
+            bool theUnkBool = Sexy::Rand(5) == 0;
+            int theRow = eventZombieBobseldAdd->data1[0];
+            int theFromWave = eventZombieBobseldAdd->data1[1];
+            Zombie *bobsledZombies[4];
+
+            bobsledZombies[0] = mZombies.DataArrayAlloc();
+            bobsledZombies[0]->ZombieInitialize(theRow, ZOMBIE_BOBSLED, theUnkBool, nullptr, theFromWave, true);
+            serverZombieIDMap.emplace(eventZombieBobseldAdd->data2[0], uint16_t(mZombies.DataArrayGetID(bobsledZombies[0])));
+            bobsledZombies[0]->ApplySyncedSpeed(eventZombieBobseldAdd->data3[0].f32, short(bobsledZombies[0]->mAnimTicksPerFrame));
+            bobsledZombies[0]->mPosX = eventZombieBobseldAdd->data4[0].f32;
+            for (int i = 1; i < 4; ++i) {
+                bobsledZombies[i] = mZombies.DataArrayAlloc();
+                bobsledZombies[i]->ZombieInitialize(theRow, ZOMBIE_BOBSLED, theUnkBool, bobsledZombies[0], theFromWave, true);
+                serverZombieIDMap.emplace(eventZombieBobseldAdd->data2[i], uint16_t(mZombies.DataArrayGetID(bobsledZombies[i])));
+                bobsledZombies[i]->ApplySyncedSpeed(eventZombieBobseldAdd->data3[i].f32, short(bobsledZombies[i]->mAnimTicksPerFrame));
+                bobsledZombies[i]->mPosX = eventZombieBobseldAdd->data4[i].f32;
+            }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_STEAL: {
             auto *eventZombieBungeeAdd = reinterpret_cast<U16UNI32UNI32_Event *>(event);

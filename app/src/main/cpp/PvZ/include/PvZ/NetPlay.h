@@ -29,7 +29,7 @@
 #include <string>
 #include <utility>
 
-constexpr std::uint32_t NETPLAY_VERSION = 3145;
+constexpr std::uint32_t NETPLAY_VERSION = 3146;
 
 enum EventType : uint8_t {
     EVENT_NULL,
@@ -108,6 +108,7 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_ZOMBIE_DIE,
     EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED,
     EVENT_SERVER_BOARD_ZOMBIE_ADD,          // AddZombieInRow触发的同步
+    EVENT_SERVER_BOARD_ZOMBIE_BOBSELD_ADD,  // 单独同步雪橇小队
     EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_STEAL, // 蹦极僵尸在AddZombieInRow之后还会设置靶标位置，所以单独同步
     EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE,
     EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT, // 修改器放置僵尸会在执行AddZombieInRow后额外设置僵尸的位置，本事件就是追加同步僵尸位置
@@ -288,6 +289,13 @@ struct U16x5UNI32x5_Event : BaseEvent {
 
 struct CHARx32_Event : BaseEvent {
     char chars[32];
+};
+
+struct U8x2U16x4UNI32x8_Event : BaseEvent {
+    uint8_t data1[2];
+    uint16_t data2[4];
+    Union32Bit data3[4];
+    Union32Bit data4[4];
 };
 
 // 双方都需要
