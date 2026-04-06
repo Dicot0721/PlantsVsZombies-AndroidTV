@@ -496,7 +496,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
                     pvzstl::string str = StrFormat(fmtJoin.c_str(), gServers[idx].name);
                     g->DrawString(str, 280, 150);
 
-                    g->DrawString(StrFormat("IP: %s:%d", gServers[idx].ip, gServers[idx].tcp_port), 280, 200);
+                    g->DrawString(StrFormat("IP: %s:%d", gServers[idx].ip, gServers[idx].tcpPort), 280, 200);
                 }
             }
 
@@ -541,7 +541,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
             }
 
             pvzstl::string fmtLine = TodStringTranslate("[ROOM_LINE_FMT]");
-            pvzstl::string line = StrFormat(fmtLine.c_str(), gServers[i].name, gServers[i].ip, gServers[i].tcp_port);
+            pvzstl::string line = StrFormat(fmtLine.c_str(), gServers[i].name, gServers[i].ip, gServers[i].tcpPort);
             g->DrawString(line, 230, yPos);
             yPos += 50;
         }
@@ -789,7 +789,6 @@ void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
         case EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME: {
             CHARx32_Event *nameEvent = (CHARx32_Event *)event;
             strncpy(gSecondPlayerName, nameEvent->chars, sizeof(gSecondPlayerName) - 1);
-            gSecondPlayerName[sizeof(gSecondPlayerName) - 1] = '\0';
 
             CHARx32_Event nameEventReply{};
             nameEventReply.type = EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME;
@@ -838,7 +837,6 @@ void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME: {
             CHARx32_Event *nameEvent = (CHARx32_Event *)event;
             strncpy(gSecondPlayerName, nameEvent->chars, sizeof(gSecondPlayerName) - 1);
-            gSecondPlayerName[sizeof(gSecondPlayerName) - 1] = '\0';
         } break;
         case EVENT_WAITFORSECONDPALYER_START_GAME:
             //            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
@@ -1216,35 +1214,35 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
             if (n < (ssize_t)(msg_len + sizeof(int)))
                 continue; // 包太短，跳过
 
-            int tcp_port = 0;
-            memcpy(&tcp_port, buffer + msg_len, sizeof(tcp_port));
+            int tcpPort = 0;
+            memcpy(&tcpPort, buffer + msg_len, sizeof(tcpPort));
 
-            char server_ip[INET_ADDRSTRLEN];
-            inet_ntop(AF_INET, &recv_addr.sin_addr, server_ip, sizeof(server_ip));
+            char serverIp[INET_ADDRSTRLEN];
+            inet_ntop(AF_INET, &recv_addr.sin_addr, serverIp, sizeof(serverIp));
 
             time_t now = time(nullptr);
             bool found = false;
 
             // 更新已存在的server
             for (int i = 0; i < gScannedServerCount; i++) {
-                if (strcmp(gServers[i].ip, server_ip) == 0) {
-                    gServers[i].tcp_port = tcp_port;
-                    strncpy(gServers[i].name, msg, NAME_LENGTH);
-                    gServers[i].last_seen = now;
+                if (strcmp(gServers[i].ip, serverIp) == 0) {
+                    gServers[i].tcpPort = tcpPort;
+                    strncpy(gServers[i].name, msg, NAME_LENGTH - 1);
+                    gServers[i].lastSeen = now;
                     found = true;
-                    LOG_DEBUG("[Scan] Update server: {}:{} ({})\n", server_ip, tcp_port, msg);
+                    LOG_DEBUG("[Scan] Update server: {}:{} ({})", serverIp, tcpPort, msg);
                     break;
                 }
             }
 
             // 新server
             if (!found && gScannedServerCount < MAX_SERVERS) {
-                strncpy(gServers[gScannedServerCount].ip, server_ip, INET_ADDRSTRLEN);
-                strncpy(gServers[gScannedServerCount].name, msg, NAME_LENGTH);
-                gServers[gScannedServerCount].tcp_port = tcp_port;
-                gServers[gScannedServerCount].last_seen = now;
+                strncpy(gServers[gScannedServerCount].ip, serverIp, INET_ADDRSTRLEN - 1);
+                strncpy(gServers[gScannedServerCount].name, msg, NAME_LENGTH - 1);
+                gServers[gScannedServerCount].tcpPort = tcpPort;
+                gServers[gScannedServerCount].lastSeen = now;
                 gScannedServerCount++;
-                LOG_DEBUG("[Scan] New server: {}:{} ({})\n", server_ip, tcp_port, msg);
+                LOG_DEBUG("[Scan] New server: {}:{} ({})", serverIp, tcpPort, msg);
             }
 
         } else if (n < 0) {
@@ -1261,7 +1259,7 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
     // 检查超时
     time_t current_time = time(nullptr);
     for (int i = 0; i < gScannedServerCount;) {
-        if (difftime(current_time, gServers[i].last_seen) > UDP_TIMEOUT) {
+        if (difftime(current_time, gServers[i].lastSeen) > UDP_TIMEOUT) {
 
             // 如果选中的是最后一个，而我们要把最后一个删掉
             int last = gScannedServerCount - 1;
@@ -1303,12 +1301,12 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
         return;
 
     // 统一得到目标 ip/port（用于 connect + 日志）
-    char target_ip[INET_ADDRSTRLEN] = {0};
-    int target_port = 0;
+    char targetIp[INET_ADDRSTRLEN] = {0};
+    int targetPort = 0;
 
     if (mUseManualTarget) {
-        strncpy(target_ip, mManualIp, INET_ADDRSTRLEN - 1);
-        target_port = mManualPort;
+        strncpy(targetIp, mManualIp, INET_ADDRSTRLEN - 1);
+        targetPort = mManualPort;
     } else {
         int idx = mSelectedServerIndex;
         if (idx < 0)
@@ -1316,16 +1314,16 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
         if (idx >= gScannedServerCount)
             idx = gScannedServerCount - 1;
 
-        strncpy(target_ip, gServers[idx].ip, INET_ADDRSTRLEN - 1);
-        target_port = gServers[idx].tcp_port;
+        strncpy(targetIp, gServers[idx].ip, INET_ADDRSTRLEN - 1);
+        targetPort = gServers[idx].tcpPort;
     }
 
     // 组装 sockaddr
     sockaddr_in server_addr{
         .sin_family = AF_INET,
-        .sin_port = htons(target_port),
+        .sin_port = htons(targetPort),
     };
-    inet_pton(AF_INET, target_ip, &server_addr.sin_addr);
+    inet_pton(AF_INET, targetIp, &server_addr.sin_addr);
 
     if (!gTcpConnecting) {
         gTcpServerSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -1343,7 +1341,7 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
         if (ret < 0) {
             if (errno == EINPROGRESS) {
                 gTcpConnecting = true;
-                LOG_DEBUG("[Client] Connecting to {}:{} ...", target_ip, target_port);
+                LOG_DEBUG("[Client] Connecting to {}:{} ...", targetIp, targetPort);
             } else {
                 LOG_DEBUG("[Client] connect ERROR errno={}", errno);
                 close(gTcpServerSocket);
@@ -1367,7 +1365,7 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
 
             gTcpConnected = true;
             gTcpConnecting = false;
-            LOG_DEBUG("[Client] Connected immediately to {}:{}", target_ip, target_port);
+            LOG_DEBUG("[Client] Connected immediately to {}:{}", targetIp, targetPort);
         }
 
     } else {
@@ -1405,9 +1403,9 @@ void WaitForSecondPlayerDialog::TryTcpConnect() {
 
                 gTcpConnected = true;
                 gTcpConnecting = false;
-                LOG_DEBUG("[Client] Connected to {}:{}", target_ip, target_port);
+                LOG_DEBUG("[Client] Connected to {}:{}", targetIp, targetPort);
             } else {
-                LOG_DEBUG("[Client] Connect failed to {}:{} err={}", target_ip, target_port, err);
+                LOG_DEBUG("[Client] Connect failed to {}:{} err={}", targetIp, targetPort, err);
                 close(gTcpServerSocket);
                 gTcpServerSocket = -1;
                 gTcpConnecting = false;

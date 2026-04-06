@@ -312,9 +312,9 @@ constexpr int NAME_LENGTH = 256;
 // 全局变量，用于保存发现的服务端IP和时间戳
 struct ServerInfo {
     char ip[INET_ADDRSTRLEN];
-    int tcp_port;
+    int tcpPort;
     char name[NAME_LENGTH];
-    time_t last_seen; // 记录最后一次收到广播的时间
+    time_t lastSeen; // 记录最后一次收到广播的时间
 } inline gServers[MAX_SERVERS];
 
 inline int gScannedServerCount = 0; // 已发现的服务端数量
