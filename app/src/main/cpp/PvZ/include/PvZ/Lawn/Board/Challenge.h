@@ -152,7 +152,7 @@ public:
     }
 
     void Update();
-    void UpdateVS();
+    void UpdateVSAddPlants();
     int GetUnderPlantCol(int theRow);
     void HeavyWeaponFire(float a2, float a3);
     void IZombieDrawPlant(Sexy::Graphics *g, Plant *thePlant);

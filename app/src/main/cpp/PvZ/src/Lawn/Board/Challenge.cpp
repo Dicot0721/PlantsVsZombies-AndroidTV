@@ -123,14 +123,24 @@ void Challenge::Update() {
         return;
     }
 
-    old_Challenge_Update(this);
-
     if (mApp->IsVSMode()) {
-        UpdateVS();
+        if (mBoard->CanAddBobSledMP()) {
+            --mBobSledMPCounter;
+            if (mBobSledMPCounter <= 0) {
+                // SD模式雪橇车召唤倒计时缩减至 1/3
+                mBobSledMPCounter = (IsMPSuddenDeath() && *Challenge_gVSSuddenDeathMode_Addr == 1) ? 2000 : 6000;
+                mBoard->AddZombie(ZombieType::ZOMBIE_BOBSLED, -5, true);
+            }
+            return;
+        }
+
+        UpdateVSAddPlants();
     }
+
+    old_Challenge_Update(this);
 }
 
-void Challenge::UpdateVS() {
+void Challenge::UpdateVSAddPlants() {
     if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING || mBoard->HasLevelAwardDropped())
         return;
 

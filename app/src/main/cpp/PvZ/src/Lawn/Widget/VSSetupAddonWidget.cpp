@@ -376,6 +376,9 @@ bool NeedSeedTallnut(LawnApp *theApp) {
     // 场上存在正在弹跳的蹦蹦僵尸或准备跳跃的撑杆僵尸
     Zombie *aZombie = nullptr;
     while (theApp->mBoard->IterateZombies(aZombie)) {
+        if (aZombie->mMindControlled) {
+            break;
+        }
         if (aZombie->IsBouncingPogo() || aZombie->mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT) {
             return true;
         }
@@ -384,17 +387,18 @@ bool NeedSeedTallnut(LawnApp *theApp) {
 }
 
 bool NeedSeedUmbrella(LawnApp *theApp) {
-    // 僵尸种子栏存在可用的投篮僵尸
+    // 僵尸种子栏存在可用的蹦极僵尸或投篮僵尸
     for (int i = 1; i < 6; ++i) {
         SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[1]->mSeedPackets[i];
-        if (aSeedPacket.mPacketType == SeedType::SEED_ZOMBIE_CATAPULT && aSeedPacket.mActive) {
+        if ((aSeedPacket.mPacketType == SeedType::SEED_ZOMBIE_BUNGEE || aSeedPacket.mPacketType == SeedType::SEED_ZOMBIE_CATAPULT) && aSeedPacket.mActive) {
             return true;
         }
     }
-    // 场上存在剩余篮球数大于15的投篮僵尸
+    // 场上存在下落的蹦极僵尸或剩余篮球数大于15的投篮僵尸
     Zombie *aZombie = nullptr;
     while (theApp->mBoard->IterateZombies(aZombie)) {
-        if (aZombie->mZombieType == ZombieType::ZOMBIE_CATAPULT || aZombie->mSummonCounter > 15) {
+        if ((aZombie->mZombieType == ZombieType::ZOMBIE_BUNGEE && (aZombie->mZombiePhase == ZombiePhase::PHASE_BUNGEE_DIVING || aZombie->mZombiePhase == ZombiePhase::PHASE_BUNGEE_DIVING_SCREAMING))
+            || (aZombie->mZombieType == ZombieType::ZOMBIE_CATAPULT || aZombie->mSummonCounter > 15)) {
             return true;
         }
     }
@@ -423,6 +427,9 @@ bool NeedSeedMagnetshroom(LawnApp *theApp) {
     int aCount = 0;
     Zombie *aZombie = nullptr;
     while (theApp->mBoard->IterateZombies(aZombie)) {
+        if (aZombie->mMindControlled) {
+            break;
+        }
         if (IsIronItemZombieType(aZombie->mZombieType)) {
             ++aCount;
         }
@@ -441,9 +448,12 @@ bool NeedSeedSplitPea(LawnApp *theApp) {
             return true;
         }
     }
-    // 场上存在矿工僵尸
+    // 场上存在存活且未被魅惑的矿工僵尸
     Zombie *aZombie = nullptr;
     while (theApp->mBoard->IterateZombies(aZombie)) {
+        if (aZombie->IsDeadOrDying() || aZombie->mMindControlled) {
+            break;
+        }
         if (aZombie->mZombieType == ZombieType::ZOMBIE_DIGGER) {
             return true;
         }
