@@ -3192,12 +3192,15 @@ void Zombie::SummonBackupDancers() {
     SummonBackupDancers_Origin();
 
     if (gTcpClientSocket >= 0) {
-        U16x4U16_Event event{};
+        U16x5UNI32x5_Event event{};
         event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS;
+        event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+        event.data2.f32 = mPosX;
         for (int i = 0; i < NUM_BACKUP_DANCERS; i++) {
-            event.data1[i] = uint16_t(mFollowerZombieID[i]);
+            event.data3[i] = uint16_t(mFollowerZombieID[i]);
+            Zombie *aZombie = mBoard->ZombieTryToGet(mFollowerZombieID[i]);
+            event.data4[i].f32 = aZombie->mVelX;
         }
-        event.data2 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
         netplay::PutEvent(event);
     }
 }

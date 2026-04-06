@@ -596,6 +596,8 @@ public:
     void ShuffleButtonDown(SeedPacket *theSeedPacket);
     bool CanAddGraveStoneAt(int theGridX, int theGridY);
     void DrawLevel(Sexy::Graphics *g);
+    bool CanAddBobSledMP();
+
 
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);

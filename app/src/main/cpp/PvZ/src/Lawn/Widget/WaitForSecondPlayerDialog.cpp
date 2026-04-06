@@ -789,8 +789,9 @@ void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
         case EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME: {
             CHARx32_Event *nameEvent = (CHARx32_Event *)event;
             strncpy(gSecondPlayerName, nameEvent->chars, sizeof(gSecondPlayerName) - 1);
+            gSecondPlayerName[sizeof(gSecondPlayerName) - 1] = '\0';
 
-            CHARx32_Event nameEventReply;
+            CHARx32_Event nameEventReply{};
             nameEventReply.type = EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME;
             strncpy(nameEventReply.chars, mApp->mPlayerInfo->mName, sizeof(nameEventReply.chars) - 1);
             netplay::PutEvent(nameEventReply);
@@ -828,7 +829,7 @@ void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
                     LeaveRoom();
                 }
             } else {
-                CHARx32_Event nameEvent;
+                CHARx32_Event nameEvent{};
                 nameEvent.type = EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME;
                 strncpy(nameEvent.chars, mApp->mPlayerInfo->mName, sizeof(nameEvent.chars) - 1);
                 netplay::PutEvent(nameEvent);
@@ -837,6 +838,7 @@ void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
         case EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME: {
             CHARx32_Event *nameEvent = (CHARx32_Event *)event;
             strncpy(gSecondPlayerName, nameEvent->chars, sizeof(gSecondPlayerName) - 1);
+            gSecondPlayerName[sizeof(gSecondPlayerName) - 1] = '\0';
         } break;
         case EVENT_WAITFORSECONDPALYER_START_GAME:
             //            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);

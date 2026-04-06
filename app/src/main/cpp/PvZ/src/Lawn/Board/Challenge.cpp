@@ -593,7 +593,7 @@ void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int t
             event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombie));
             event.data2.u8x4.u8_1 = uint8_t(theGridX);
             event.data2.u8x4.u8_2 = uint8_t(theGridY);
-            //            event.data2.u16x2.u16_2 = uint16_t(theZombieType);
+            //            event.data3.u16x2.u16_2 = uint16_t(theZombieType);
             if (theZombieType == ZOMBIE_BUNGEE) {
                 event.data3.f32 = aZombie->mAltitude;
             }

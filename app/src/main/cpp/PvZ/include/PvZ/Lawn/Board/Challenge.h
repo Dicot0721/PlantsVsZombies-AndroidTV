@@ -89,7 +89,11 @@ public:
     int mScaryPotterPots;                                   // 50
     int mRainCounter;                                       // 51
     int mTreeOfWisdomTalkIndex;                             // 52
-    int unk3[14];                                           // 53 ~ 66
+    int unk53[3];                                           // 53 ~ 55
+    int mBobSledMPCounter;                                  // 56
+    int unk57[2];                                           // 57 ~ 58
+    bool mIsMPSuddenDeathNow;                               // 59 * 4
+    int unk60[7];                                           // 60 ~ 66
     float mHeavyWeaponX;                                    // 67
     float mHeavyWeaponY;                                    // 68
     float mHeavyWeaponAngle;                                // 69

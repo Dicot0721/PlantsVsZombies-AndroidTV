@@ -171,6 +171,7 @@ void InitHookFunction() {
     homura::HookFunction(Board_SpawnZombiesFromGravesAddr, &Board::SpawnZombiesFromGraves, nullptr);
     homura::HookFunction(Board_CanAddGraveStoneAtAddr, &Board::CanAddGraveStoneAt, nullptr);
     homura::HookFunction(Board_DrawLevelAddr, &Board::DrawLevel, &old_Board_DrawLevel);
+    homura::HookFunction(Board_CanAddBobSledMPAddr, &Board::CanAddBobSledMP, nullptr);
 
 
     homura::HookFunction(FixBoardAfterLoadAddr, &FixBoardAfterLoad, &old_FixBoardAfterLoad);

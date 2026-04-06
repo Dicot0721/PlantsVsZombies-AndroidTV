@@ -1112,9 +1112,6 @@ void Board::DrawFog(Sexy::Graphics *g) {
 }
 
 Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromWave, bool theIsRustle) {
-    // 修复蹦极僵尸出现时草丛也会摇晃
-    if (theZombieType == ZombieType::ZOMBIE_BUNGEE)
-        theIsRustle = false;
 
     Zombie *aZombie = AddZombieInRow_Origin(theZombieType, theRow, theFromWave, theIsRustle);
 
@@ -1160,6 +1157,9 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
 }
 
 Zombie *Board::AddZombieInRow_Origin(ZombieType theZombieType, int theRow, int theFromWave, bool theIsRustle) {
+    // 修复蹦极僵尸出现时草丛也会摇晃
+    if (theZombieType == ZombieType::ZOMBIE_BUNGEE)
+        theIsRustle = false;
     return old_Board_AddZombieInRow(this, theZombieType, theRow, theFromWave, theIsRustle);
 }
 
@@ -1370,7 +1370,7 @@ size_t Board::getServerEventSize(EventType type) {
 
         // --- 舞王召唤舞伴 ---
         case EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS:
-            return sizeof(U16x4U16_Event);
+            return sizeof(U16x5UNI32x5_Event);
 
         // --- 僵尸受到伤害 ---
         case EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE:
@@ -1417,14 +1417,14 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 clientSeedBank->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
             }
             clientGamepadControls->mGamepadState = event1->data2;
-            //            clientGamepadControls->mCursorPositionX = event1->data3;
+            //            clientGamepadControls->mCursorPositionX = event1->data4;
             //            clientGamepadControls->mCursorPositionY = event1->data4;
         } break;
         case EVENT_BOARD_TOUCH_DRAG_REPLY: {
             // U16U16_Event *event1 = (U16U16_Event *)event;
             // GamepadControls *clientGamepadControls = mGamepadControls2->mPlayerIndex2 == 1 ? mGamepadControls2 : mGamepadControls1;
             //            clientGamepadControls->mCursorPositionX = event1->data1;
-            //            clientGamepadControls->mCursorPositionY = event1->data2;
+            //            clientGamepadControls->mCursorPositionY = event1->data3;
         } break;
         case EVENT_BOARD_TOUCH_UP_REPLY: {
             auto *event1 = reinterpret_cast<U8U8_Event *>(event);
@@ -1760,19 +1760,20 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS: {
-            auto *eventSummonBackupDancers = reinterpret_cast<U16x4U16_Event *>(event);
-            uint16_t serverZombieID = eventSummonBackupDancers->data2;
+            auto *eventSummonBackupDancers = reinterpret_cast<U16x5UNI32x5_Event *>(event);
+            uint16_t serverZombieID = eventSummonBackupDancers->data1;
             uint16_t clientZombieID;
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
-                //                aZombie->SummonBackupDancers_Origin();
-                gTcpConnected = false;
-                aZombie->SummonBackupDancers();
-                gTcpConnected = true;
+                aZombie->mPosX = eventSummonBackupDancers->data2.f32;
+                aZombie->SummonBackupDancers_Origin();
 
                 for (int i = 0; i < NUM_BACKUP_DANCERS; ++i) {
                     if (aZombie->mFollowerZombieID[i] != ZombieID::ZOMBIEID_NULL)
-                        serverZombieIDMap.emplace(uint16_t(eventSummonBackupDancers->data1[i]), uint16_t(aZombie->mFollowerZombieID[i]));
+                        serverZombieIDMap.emplace(uint16_t(eventSummonBackupDancers->data3[i]), uint16_t(aZombie->mFollowerZombieID[i]));
+                    Zombie *backupZombie = ZombieTryToGet(aZombie->mFollowerZombieID[i]);
+                    float aVelX = eventSummonBackupDancers->data4[i].f32;
+                    backupZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
                 }
             }
         } break;
@@ -5637,4 +5638,26 @@ void Board::DrawLevel(Graphics *g) {
         return;
 
     old_Board_DrawLevel(this, g);
+}
+
+
+bool Board::CanAddBobSledMP() {
+    // 客户端不允许私自召唤雪橇小队
+    if (gTcpConnected)
+        return false;
+
+    // 遍历 6 条车道
+    for (int lane = 0; lane < 6; lane++) {
+        // 检查当前车道的冰面状态：
+        // 1. mIceTimer[lane] > 0 : 说明该行当前有冰面存在（计时器未归零）
+        // 2. mIceMinX[lane] < 700 : 说明冰面从左侧延伸到了坐标 700 以内（冰面够长）
+
+        if (mIceTimer[lane] > 0 && mIceMinX[lane] < 700) {
+            // 只要找到任意一条符合条件的冰面，就可以放置雪橇车
+            return true;
+        }
+    }
+
+    // 如果所有车道都不满足条件，返回 false
+    return false;
 }

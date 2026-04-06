@@ -29,7 +29,7 @@
 #include <string>
 #include <utility>
 
-constexpr std::uint32_t NETPLAY_VERSION = 3143;
+constexpr std::uint32_t NETPLAY_VERSION = 3144;
 
 enum EventType : uint8_t {
     EVENT_NULL,
@@ -279,9 +279,11 @@ struct U8x4U16UNI32x2_Event : BaseEvent {
     Union32Bit data3[2];
 };
 
-struct U16x4U16_Event : BaseEvent {
-    uint16_t data1[4];
-    uint16_t data2;
+struct U16x5UNI32x5_Event : BaseEvent {
+    uint16_t data1;
+    Union32Bit data2;
+    uint16_t data3[4];
+    Union32Bit data4[4];
 };
 
 struct CHARx32_Event : BaseEvent {
