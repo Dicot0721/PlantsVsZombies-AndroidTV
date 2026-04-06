@@ -21,6 +21,7 @@
 #define HOMURA_TYPEUTILS_H
 
 #include <memory>
+#include <type_traits>
 
 namespace homura {
 
@@ -63,6 +64,18 @@ public:
 
     [[nodiscard]] T &&operator*() && noexcept {
         return reinterpret_cast<T &&>(data_);
+    }
+
+    template <typename... Args>
+        requires std::is_constructible_v<T, Args &&...>
+    T &Construct(Args &&...args) noexcept(std::is_nothrow_constructible_v<T, Args &&...>) {
+        return *std::construct_at(this->operator->(), std::forward<Args>(args)...);
+    }
+
+    template <typename U, typename... Args>
+        requires std::is_constructible_v<T, std::initializer_list<U> &, Args &&...>
+    T &Construct(std::initializer_list<U> ilist, Args &&...args) noexcept(std::is_nothrow_constructible_v<T, std::initializer_list<U> &, Args &&...>) {
+        return *std::construct_at(this->operator->(), ilist, std::forward<Args>(args)...);
     }
 
 protected:

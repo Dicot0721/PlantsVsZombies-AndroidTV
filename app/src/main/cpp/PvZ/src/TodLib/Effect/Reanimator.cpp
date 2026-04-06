@@ -331,7 +331,7 @@ int Reanimation::GetZombatarEyeWearTrackIndex() {
 void DefinitionGetCompiledFilePathFromXMLFilePath(homura::Storage<pvzstl::string> &result, const pvzstl::string &defPathString) {
     // 从addonFiles读取新增的reanim文件
     if (defPathString.contains("addonFiles")) {
-        std::construct_at(&*result, defPathString + ".compiled");
+        result.Construct(defPathString + ".compiled");
         return;
     }
     old_DefinitionGetCompiledFilePathFromXMLFilePath(result, defPathString);
