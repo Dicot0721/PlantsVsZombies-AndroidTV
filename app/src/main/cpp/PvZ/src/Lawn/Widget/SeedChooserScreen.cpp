@@ -312,7 +312,7 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
     // 禁选模式（BP）
     if (mApp->IsVSMode()) {
         VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
-        if (addonWidget->mBanMode) {
+        if (addonWidget->mBanMode) { // 如果当前处于禁用阶段
             int x = (aGamepadIndex == 1) ? mCursorPositionX2 : mCursorPositionX1;
             int y = (aGamepadIndex == 1) ? mCursorPositionY2 : mCursorPositionY1;
             SeedType aSeedType = SeedHitTest(x, y);
@@ -324,14 +324,14 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
 
                 addonWidget->mBannedSeed[aSeedBanned].mX = theChosenSeed.mX;
                 addonWidget->mBannedSeed[aSeedBanned].mY = theChosenSeed.mY;
-                addonWidget->mBannedSeed[aSeedBanned].mSeedState = BannedSeedState::SEED_BANNED;
+                addonWidget->mBannedSeed[aSeedBanned].mSeedState = BannedSeedState::SEED_BANNED; // 将被选卡设为禁用状态
                 if (mIsZombieChooser)
                     addonWidget->mBannedSeed[aSeedBanned].mChosenPlayerIndex = 1;
 
-                addonWidget->mSeedsInBothBanned++;
-                if (addonWidget->mSeedsInBothBanned == addonWidget->mNumBanPackets) {
-                    addonWidget->mBanMode = false;
-                    mBoard->SwitchGamepadControls();
+                addonWidget->mSeedsInBanned++;                                    // 已禁用卡片数量 + 1
+                if (addonWidget->mSeedsInBanned == addonWidget->mNumBanPackets) { // 如果已禁用数量与需禁用数量一致
+                    addonWidget->mBanMode = false;                                // 结束禁用阶段
+                    mBoard->SwitchGamepadControls();                              // 交换玩家手柄
                 }
 
                 mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
@@ -404,11 +404,12 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
     if (mApp->IsVSMode()) {
         OnPlayerPickedSeed(aGamepadIndex);
 
+        // 第二轮禁用
         VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
-        if (addonWidget->mSeedsInBothBanned > 0 && mSeedsIn1PBank == 4 && !mIsZombieChooser) {
-            addonWidget->mBanMode = true;
-            addonWidget->mSeedsInBothBanned = 0;
-            addonWidget->mNumBanPackets = 2;
+        if (addonWidget->mSeedsInBanned > 0 && mSeedsIn1PBank == 4 && !mIsZombieChooser) { // 当植物完成第三次选卡
+            addonWidget->mBanMode = true;                                                  // 重新开启禁用阶段
+            addonWidget->mSeedsInBanned = 0;                                               // 已禁用卡片数量重置归零
+            addonWidget->mNumBanPackets = addonWidget->mExtraPacketsMode ? 4 : 2;          // 需禁用数量重置为2, 额外卡槽模式则为4
             mBoard->SwitchGamepadControls();
         }
     }

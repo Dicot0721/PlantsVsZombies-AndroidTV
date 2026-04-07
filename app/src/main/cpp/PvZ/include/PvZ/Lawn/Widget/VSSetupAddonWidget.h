@@ -79,7 +79,7 @@ public:
     bool mBanMode = false;
     bool mBalancePatchMode = false;
     int mNumBanPackets = NUM_VS_BAN_PACKETS;
-    int mSeedsInBothBanned = 0;
+    int mSeedsInBanned = 0;
     BannedSeed mBannedSeed[NUM_ZOMBIE_SEED_TYPES];
     bool mDrawString = true;
 
