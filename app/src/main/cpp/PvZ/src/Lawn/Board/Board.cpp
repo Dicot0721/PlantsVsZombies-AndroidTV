@@ -5641,12 +5641,6 @@ bool Board::TakeDeathMoney(int theAmount) {
     return result;
 }
 
-void Board::SwitchGamepadControls() {
-    GamepadControls *aGamepad = mGamepadControls1;
-    mGamepadControls1 = mGamepadControls2;
-    mGamepadControls2 = aGamepad;
-}
-
 void Board::ShuffleButtonDown(SeedPacket *theSeedPacket) {
     if (!gIsVSShuffleMode)
         return;

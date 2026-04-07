@@ -436,7 +436,7 @@ size_t VSSetupMenu::getClientEventSize(EventType type) {
     switch (type) {
         case EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS:
             return sizeof(U8_Event);
-        case EVENT_SEEDCHOOSER_SELECT_SEED:
+        case EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED:
             return sizeof(U8U8_Event);
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER:
             return sizeof(U16_Event);
@@ -455,17 +455,15 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             U8_Event *eventButtonDepress = (U8_Event *)event;
             gVSSetupRequestState = eventButtonDepress->data;
         } break;
-        case EVENT_SEEDCHOOSER_SELECT_SEED: {
-            U8U8_Event *event1 = (U8U8_Event *)event;
-            SeedType theSeedType = (SeedType)event1->data1;
-            bool mIsZombieChooser = event1->data2;
-            LOG_DEBUG("theSeedType={}", event1->data1);
-            LOG_DEBUG("mIsZombieChooser={}", mIsZombieChooser);
-            SeedChooserScreen *screen = (mIsZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
-            screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX1, screen->mCursorPositionY1);
-            screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX2, screen->mCursorPositionY2);
-            (mIsZombieChooser ? screen->mSeedType2 : screen->mSeedType1) = theSeedType;
-            screen->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, screen->mPlayerIndex);
+        case EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED: {
+            auto *event1 = reinterpret_cast<U8U8_Event *>(event);
+            auto seedType = SeedType(event1->data1);
+            bool isZombieChooser = event1->data2;
+            SeedChooserScreen *seedChooser = (isZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
+            seedChooser->GetSeedPositionInChooser(seedType, seedChooser->mCursorPositionX1, seedChooser->mCursorPositionY1);
+            seedChooser->GetSeedPositionInChooser(seedType, seedChooser->mCursorPositionX2, seedChooser->mCursorPositionY2);
+            (isZombieChooser ? seedChooser->mSeedType2 : seedChooser->mSeedType1) = seedType;
+            seedChooser->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, seedChooser->mPlayerIndex);
         } break;
         case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND: {
             U8_Event *event1 = (U8_Event *)event;
@@ -506,7 +504,7 @@ size_t VSSetupMenu::getServerEventSize(EventType type) {
         case EVENT_VSSETUPMENU_ENTER_STATE:
         case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND:
             return sizeof(U8_Event);
-        case EVENT_SEEDCHOOSER_SELECT_SEED:
+        case EVENT_SERVER_SEEDCHOOSER_SELECT_SEED:
             return sizeof(U8U8_Event);
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT:
             return sizeof(B1x8_Event);
@@ -541,17 +539,17 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             LOG_DEBUG("theState={}", aState);
             // GoToState(aState);
         } break;
-        case EVENT_SEEDCHOOSER_SELECT_SEED: {
-            U8U8_Event *event1 = (U8U8_Event *)event;
-            SeedType theSeedType = (SeedType)event1->data1;
-            bool mIsZombieChooser = event1->data2;
-            LOG_DEBUG("theSeedType={}", event1->data1);
-            LOG_DEBUG("mIsZombieChooser={}", mIsZombieChooser);
-            SeedChooserScreen *screen = (mIsZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
-            screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX1, screen->mCursorPositionY1);
-            screen->GetSeedPositionInChooser(theSeedType, screen->mCursorPositionX2, screen->mCursorPositionY2);
-            (mIsZombieChooser ? screen->mSeedType2 : screen->mSeedType1) = theSeedType;
-            screen->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, screen->mPlayerIndex);
+        case EVENT_SERVER_SEEDCHOOSER_SELECT_SEED: {
+            auto *event1 = reinterpret_cast<U8U8_Event *>(event);
+            auto seedType = SeedType(event1->data1);
+            bool isZombieChooser = event1->data2;
+            LOG_DEBUG("seedType={}", event1->data1);
+            LOG_DEBUG("isZombieChooser={}", isZombieChooser);
+            SeedChooserScreen *seedChooser = (isZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
+            seedChooser->GetSeedPositionInChooser(seedType, seedChooser->mCursorPositionX1, seedChooser->mCursorPositionY1);
+            seedChooser->GetSeedPositionInChooser(seedType, seedChooser->mCursorPositionX2, seedChooser->mCursorPositionY2);
+            (isZombieChooser ? seedChooser->mSeedType2 : seedChooser->mSeedType1) = seedType;
+            seedChooser->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, seedChooser->mPlayerIndex);
         } break;
         case EVENT_VSSETUPMENU_RANDOM_PICK: {
             U16x12_Event *event1 = (U16x12_Event *)event;
@@ -751,9 +749,6 @@ void VSSetupMenu::ButtonDepress(int theId) {
                     mAddonWidget->SetDisable(mAddonWidget->mBalancePatchButton);
                     mAddonWidget->mDrawString = false;
                     PickBackgroundImmediately();
-                }
-                if (mApp->mPlayerInfo->mVSBanMode) { // 禁选模式下交换双方控制权
-                    mApp->mBoard->SwitchGamepadControls();
                 }
             } break;
 

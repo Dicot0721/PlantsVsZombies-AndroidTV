@@ -595,7 +595,6 @@ public:
     bool TakeDeathMoney(int theAmount);
     GridItem *AddAGraveStone(int theGridX, int theGridY);
     bool TakeSunMoney(int theAmount, int thePlayer);
-    void SwitchGamepadControls();
     void ShuffleButtonDown(SeedPacket *theSeedPacket);
     bool CanAddGraveStoneAt(int theGridX, int theGridY);
     void DrawLevel(Sexy::Graphics *g);

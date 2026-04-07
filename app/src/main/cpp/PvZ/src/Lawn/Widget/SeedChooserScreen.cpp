@@ -331,7 +331,6 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
                 addonWidget->mSeedsInBanned++;                                    // 已禁用卡片数量 + 1
                 if (addonWidget->mSeedsInBanned == addonWidget->mNumBanPackets) { // 如果已禁用数量与需禁用数量一致
                     addonWidget->mBanMode = false;                                // 结束禁用阶段
-                    mBoard->SwitchGamepadControls();                              // 交换玩家手柄
                 }
 
                 mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
@@ -410,7 +409,6 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
             addonWidget->mBanMode = true;                                                  // 重新开启禁用阶段
             addonWidget->mSeedsInBanned = 0;                                               // 已禁用卡片数量重置归零
             addonWidget->mNumBanPackets = addonWidget->mExtraPacketsMode ? 4 : 2;          // 需禁用数量重置为2, 额外卡槽模式则为4
-            mBoard->SwitchGamepadControls();
         }
     }
 }
@@ -462,10 +460,10 @@ void SeedChooserScreen::GameButtonDown(Sexy::GamepadButton theButton, unsigned i
         }
     }
 
-    if (gTcpClientSocket >= 0 && mApp->IsVSMode()) {
-        U8U8_Event event = {{EventType::EVENT_SEEDCHOOSER_SELECT_SEED}, uint8_t(mIsZombieChooser ? mSeedType2 : mSeedType1), mIsZombieChooser};
-        netplay::PutEvent(event);
-    }
+    //    if (gTcpClientSocket >= 0 && mApp->IsVSMode()) {
+    //        U8U8_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED}, uint8_t(mIsZombieChooser ? mSeedType2 : mSeedType1), mIsZombieChooser};
+    //        netplay::PutEvent(event);
+    //    }
 
     old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
 }
@@ -638,6 +636,22 @@ SeedType SeedChooserScreen::GetZombieIndexBySeedType(SeedType theSeedType) {
 }
 
 void SeedChooserScreen::MouseMove(int x, int y) {
+    if (mApp->IsVSMode()) {
+        VSSetupMenu *vsSetup = mApp->mVSSetupMenu;
+        if (gTcpConnected) {
+            VSSide side = vsSetup->mAddonWidget->mBanMode ? vsSetup->mSides[0] : vsSetup->mSides[1];
+            if (side != vsSetup->mSeedPickTurn) {
+                return;
+            }
+        }
+        if (gTcpClientSocket >= 0) {
+            VSSide side = vsSetup->mAddonWidget->mBanMode ? vsSetup->mSides[1] : vsSetup->mSides[0];
+            if (side != vsSetup->mSeedPickTurn) {
+                return;
+            }
+        }
+    }
+
     SeedType aSeedType = SeedHitTest(x, y);
     // 该函数探测不到模仿者位置
     if (aSeedType == SeedType::SEED_NONE) {
@@ -670,6 +684,22 @@ void SeedChooserScreen::MouseMove(int x, int y) {
 }
 
 void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
+    if (mApp->IsVSMode()) {
+        VSSetupMenu *vsSetup = mApp->mVSSetupMenu;
+        if (gTcpConnected) {
+            VSSide side = vsSetup->mAddonWidget->mBanMode ? vsSetup->mSides[0] : vsSetup->mSides[1];
+            if (side != vsSetup->mSeedPickTurn) {
+                return;
+            }
+        }
+        if (gTcpClientSocket >= 0) {
+            VSSide side = vsSetup->mAddonWidget->mBanMode ? vsSetup->mSides[1] : vsSetup->mSides[0];
+            if (side != vsSetup->mSeedPickTurn) {
+                return;
+            }
+        }
+    }
+
     m1PChoosingSeeds = !mApp->IsCoopMode() || mSeedsIn1PBank < 4;
 
     bool mViewLawnButtonDisabled = mViewLawnButton == nullptr || !mBoard->mCutScene->IsSurvivalRepick();
@@ -778,6 +808,22 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
 }
 
 void SeedChooserScreen::MouseDrag(int x, int y) {
+    if (mApp->IsVSMode()) {
+        VSSetupMenu *vsSetup = mApp->mVSSetupMenu;
+        if (gTcpConnected) {
+            VSSide side = vsSetup->mAddonWidget->mBanMode ? vsSetup->mSides[0] : vsSetup->mSides[1];
+            if (side != vsSetup->mSeedPickTurn) {
+                return;
+            }
+        }
+        if (gTcpClientSocket >= 0) {
+            VSSide side = vsSetup->mAddonWidget->mBanMode ? vsSetup->mSides[1] : vsSetup->mSides[0];
+            if (side != vsSetup->mSeedPickTurn) {
+                return;
+            }
+        }
+    }
+
     if (gSeedChooserTouchState == SeedChooserTouchState::SeedChooser) {
         SeedType aSeedType = SeedHitTest(x, y);
         // 该函数探测不到模仿者位置
@@ -811,11 +857,24 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
 }
 
 void SeedChooserScreen::MouseUp(int x, int y) {
-
-    if (gTcpConnected && mApp->mGameMode == GAMEMODE_MP_VS) {
-        U8U8_Event event = {{EventType::EVENT_SEEDCHOOSER_SELECT_SEED}, uint8_t(mIsZombieChooser ? mSeedType2 : mSeedType1), mIsZombieChooser};
-        netplay::PutEvent(event);
-        return;
+    if (mApp->IsVSMode()) {
+        VSSetupMenu *vsSetup = mApp->mVSSetupMenu;
+        if (gTcpConnected) {
+            VSSide side = vsSetup->mAddonWidget->mBanMode ? vsSetup->mSides[0] : vsSetup->mSides[1];
+            if (side != vsSetup->mSeedPickTurn) {
+                return;
+            }
+            U8U8_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED}, uint8_t(mIsZombieChooser ? mSeedType2 : mSeedType1), mIsZombieChooser};
+            netplay::PutEvent(event);
+        }
+        if (gTcpClientSocket >= 0) {
+            VSSide side = vsSetup->mAddonWidget->mBanMode ? vsSetup->mSides[1] : vsSetup->mSides[0];
+            if (side != vsSetup->mSeedPickTurn) {
+                return;
+            }
+            U8U8_Event event = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, uint8_t(mIsZombieChooser ? mSeedType2 : mSeedType1), mIsZombieChooser};
+            netplay::PutEvent(event);
+        }
     }
 
     switch (gSeedChooserTouchState) {
@@ -1127,11 +1186,19 @@ void SeedChooserScreen::Draw(Graphics *g) {
         DrawPacket(g, x, y + 5, aDisplaySeedType, SEED_NONE, 0.0f, aGrayness, &aBaseColor, true, true);
     }
 
+    // 绘制对战禁用叉叉
+    DrawBanIcon(g);
+
     // Draw cursor arrows for players
     for (int aPlayerIndex = 0; aPlayerIndex < 2; aPlayerIndex++) {
         if (ShouldDisplayCursor(aPlayerIndex) && (aPlayerIndex ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1)->mPlayerIndex2 != -1) {
             Image *aArrowImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_ARROW_P2 : *Sexy::IMAGE_CURSOR_ARROW_P1;
             Image *aTextImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_P2_TEXT : *Sexy::IMAGE_CURSOR_P1_TEXT;
+
+            if (mApp->mVSSetupMenu->mAddonWidget->mBanMode) {
+                aArrowImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_ARROW_P1 : *Sexy::IMAGE_CURSOR_ARROW_P2;
+                aTextImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_P1_TEXT : *Sexy::IMAGE_CURSOR_P2_TEXT;
+            }
 
             float aBounce = sinf(unkF * 5.0f) * 2.0f;
 
@@ -1139,14 +1206,17 @@ void SeedChooserScreen::Draw(Graphics *g) {
             char *firstPlayerName = mBoard->mApp->mPlayerInfo->mName;
             if (gTcpConnected || gTcpClientSocket >= 0) {
                 if (gSecondPlayerName[0] != '\0') {
+                    char *name = mPlayerIndex ? (gTcpConnected ? gSecondPlayerName : firstPlayerName) : (gTcpClientSocket >= 0 ? gSecondPlayerName : firstPlayerName);
+                    Color color = mPlayerIndex ? Color(68, 207, 255, 255) : Color(255, 242, 14, 255);
+                    if (mApp->mVSSetupMenu->mAddonWidget->mBanMode) {
+                        name = mPlayerIndex ? (gTcpClientSocket >= 0 ? firstPlayerName : gSecondPlayerName) : (gTcpConnected ? firstPlayerName : gSecondPlayerName);
+                        color = mPlayerIndex ? Color(255, 242, 14, 255) : Color(68, 207, 255, 255);
+                    } else {
+                        name = mPlayerIndex ? (gTcpConnected ? firstPlayerName : gSecondPlayerName) : (gTcpClientSocket >= 0 ? firstPlayerName : gSecondPlayerName);
+                        color = mPlayerIndex ? Color(68, 207, 255, 255) : Color(255, 242, 14, 255);
+                    }
                     g->DrawImageF(aArrowImage, float(aCursorX + 25 - aArrowImage->mWidth / 2), float(aCursorY - 8) + aBounce);
-                    TodDrawString(g,
-                                  mPlayerIndex ? (gTcpConnected ? gSecondPlayerName : firstPlayerName) : (gTcpClientSocket >= 0 ? gSecondPlayerName : firstPlayerName),
-                                  aCursorX + 25 - aArrowImage->mWidth / 2,
-                                  aCursorY - 10,
-                                  *Sexy_FONT_DWARVENTODCRAFT18_Addr,
-                                  mPlayerIndex ? Color(68, 207, 255, 255) : Color(255, 242, 14, 255),
-                                  DrawStringJustification::DS_ALIGN_CENTER);
+                    TodDrawString(g, name, aCursorX + 25 - aArrowImage->mWidth / 2, aCursorY - 10, *Sexy_FONT_DWARVENTODCRAFT18_Addr, color, DrawStringJustification::DS_ALIGN_CENTER);
                 }
             } else {
                 g->DrawImageF(aArrowImage, float(aCursorX + 25 - aArrowImage->mWidth / 2), float(aCursorY - 8) + aBounce);
@@ -1232,9 +1302,6 @@ void SeedChooserScreen::Draw(Graphics *g) {
     //    }
 
     DeferOverlay(0);
-
-    // 绘制对战禁用叉叉
-    DrawBanIcon(g);
 }
 
 void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
