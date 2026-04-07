@@ -481,6 +481,9 @@ public:
         return reinterpret_cast<bool (*)(Board *, int, int)>(Board_IsValidCobCannonSpotAddr)(this, theGridX, theGridY);
     }
 
+    int CountDeathBeingCollected() {
+        return reinterpret_cast<int (*)(Board *)>(Board_CountDeathBeingCollectedAddr)(this);
+    }
     Board(LawnApp *theApp) = delete;
     ~Board() = delete;
 

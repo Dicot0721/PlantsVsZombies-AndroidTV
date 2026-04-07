@@ -200,6 +200,7 @@ inline void *Board_PickGraveRisingZombieTypeAddr;
 inline void *Board_CanAddGraveStoneAtAddr;
 inline void *Board_DrawLevelAddr;
 inline void *Board_CanAddBobSledMPAddr;
+inline void *Board_CountDeathBeingCollectedAddr;
 
 inline void *SyncBoardAddr;
 inline void *FixBoardAfterLoadAddr;

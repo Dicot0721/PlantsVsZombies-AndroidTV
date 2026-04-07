@@ -5622,7 +5622,18 @@ bool Board::TakeSunMoney(int theAmount, int thePlayer) {
 }
 
 bool Board::TakeDeathMoney(int theAmount) {
-    bool result = old_Board_TakeDeathMoney(this, theAmount);
+    // 重写以添加计算CountDeathBeingCollected(this)
+
+    bool result;
+    if (theAmount > mDeathMoney + CountDeathBeingCollected()) {
+        result = false;
+        mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
+        mOutOfMoneyCounter = 70;
+    } else {
+        result = true;
+        mDeathMoney -= theAmount;
+    }
+
     if (gTcpClientSocket >= 0) {
         U16_Event event = {{EventType::EVENT_SERVER_BOARD_TAKE_DEATHMONEY}, uint16_t(mDeathMoney)};
         netplay::PutEvent(event);

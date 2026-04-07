@@ -195,6 +195,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN5Board18CanAddGraveStoneAtEii", Board_CanAddGraveStoneAtAddr);
     libGameMain.GetSymbol("_ZN5Board9DrawLevelEPN4Sexy8GraphicsE", Board_DrawLevelAddr);
     libGameMain.GetSymbol("_ZN5Board15CanAddBobSledMPEv", Board_CanAddBobSledMPAddr);
+    libGameMain.GetSymbol("_ZN5Board24CountDeathBeingCollectedEv", Board_CountDeathBeingCollectedAddr);
 
 
     libGameMain.GetSymbol("_Z9SyncBoardP15SaveGameContextP5Board", SyncBoardAddr);
