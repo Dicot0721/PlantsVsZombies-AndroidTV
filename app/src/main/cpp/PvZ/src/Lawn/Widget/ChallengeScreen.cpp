@@ -352,35 +352,32 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
 
 
     if (mPageIndex == CHALLENGE_PAGE_VS) {
-        //        if (gTcpConnected) {
-        //            if (gNetDelayNow == 0) {
-        //                g->DrawString(TodStringTranslate("[VS_STATUS_IN_ROOM]"), 370, -20);
-        //            } else {
-        //                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
-        //                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 370, -20);
-        //            }
-        //        } else if (gTcpClientSocket >= 0) {
-        //            if (gNetDelayNow == 0) {
-        //                g->DrawString(TodStringTranslate("[VS_STATUS_HOST]"), 380, -20);
-        //            } else {
-        //                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_HOST_MS_FMT]");
-        //                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 380, -20);
-        //            }
-        //        }
+
+        Color aColor = Color(0, 205, 0, 255);
+        g->SetColor(aColor);
+        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+
+        if (gTcpConnected) {
+            if (gNetDelayNow == 0) {
+                g->DrawString(TodStringTranslate("[VS_STATUS_IN_ROOM]"), 370, -20);
+            } else {
+                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
+                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 370, -20);
+            }
+        } else if (gTcpClientSocket >= 0) {
+            if (gNetDelayNow == 0) {
+                g->DrawString(TodStringTranslate("[VS_STATUS_HOST]"), 380, -20);
+            } else {
+                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_HOST_MS_FMT]");
+                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 380, -20);
+            }
+        }
 
         if (gChallengeScreenRequestState != 0) {
             // ======================
             // 我是 guest：已提醒房主...
             // (gTcpConnected == true 代表我作为 client 连接到 host)
             // ======================
-            static constexpr const char *names[] = {
-                "[MP_VS_DAY]",
-                "[MP_VS_NIGHT]",
-                "[MP_VS_POOL_DAY]",
-                "[MP_VS_POOL_NIGHT]",
-                "[MP_VS_ROOF]",
-                "[MP_VS_SHUFFLE_MODE]",
-            };
 
 
             if (gTcpConnected) {

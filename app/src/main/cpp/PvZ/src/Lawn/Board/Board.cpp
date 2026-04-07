@@ -2728,6 +2728,7 @@ void Board::Draw(Sexy::Graphics *g) {
 
     if (mApp->IsVSMode()) {
         Color aColor = Color(0, 205, 0, 255);
+        g->Translate(-mX, -mY);
         g->SetColor(aColor);
         g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
 
