@@ -1372,6 +1372,11 @@ void Zombie::RiseFromGrave(int theCol, int theRow) {
 
 void Zombie::CheckForBoardEdge() {
     // 修复僵尸正常进家、支持调整僵尸进家线
+
+    if (mApp->IsVSMode() && gTcpConnected) {
+        return;
+    }
+
     if (IsWalkingBackwards() && mPosX > 850.0f) {
         DieNoLoot();
         return;
@@ -1396,6 +1401,11 @@ void Zombie::CheckForBoardEdge() {
             DieNoLoot();
         } else {
             mBoard->ZombiesWon(this);
+
+            if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
+                U16_Event zombieWinEvent = {{EVENT_SERVER_BOARD_ZOMBIE_WIN}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};
+                netplay::PutEvent(zombieWinEvent);
+            }
         }
     }
     if (mX <= boardEdge + 70 && !mHasHead) {
@@ -2485,11 +2495,7 @@ Zombie *Zombie::FindZombieTarget() {
 }
 
 void Zombie::TakeDamage(int theDamage, unsigned int theDamageFlags) {
-    if (mZombieType == ZombieType::ZOMBIE_BOSS) {
-        if (!TestBit(theDamageFlags, int(DamageFlags::DAMAGE_DOESNT_CAUSE_FLASH))) {
-            TriggerVibration(VibrationEffect::VIVRATION_BOSS_HIT);
-        }
-    }
+
 
     if (mApp->IsVSMode() && gTcpConnected)
         return;
@@ -2507,6 +2513,12 @@ void Zombie::TakeDamage(int theDamage, unsigned int theDamageFlags) {
 }
 
 void Zombie::TakeDamage_Origin(int theDamage, unsigned int theDamageFlags) {
+    if (mZombieType == ZombieType::ZOMBIE_BOSS) {
+        if (!TestBit(theDamageFlags, int(DamageFlags::DAMAGE_DOESNT_CAUSE_FLASH))) {
+            TriggerVibration(VibrationEffect::VIVRATION_BOSS_HIT);
+        }
+    }
+
     if (mZombiePhase == ZombiePhase::PHASE_JACK_IN_THE_BOX_POPPING || IsDeadOrDying())
         return;
 

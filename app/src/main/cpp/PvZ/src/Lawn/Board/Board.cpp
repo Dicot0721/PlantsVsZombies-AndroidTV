@@ -1386,6 +1386,10 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL:
             return sizeof(U16_Event);
 
+
+        case EVENT_SERVER_BOARD_PLANT_WIN:
+            return sizeof(U16_Event);
+
         // --- 大嘴花吞咬、僵尸冻结、巨人投掷小鬼、僵尸状态计数 ---
         case EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT:
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP:
@@ -1413,6 +1417,9 @@ size_t Board::getServerEventSize(EventType type) {
         // --- 僵尸受到伤害 ---
         case EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE:
             return sizeof(U16U16U8_Event);
+
+        case EVENT_SERVER_BOARD_ZOMBIE_WIN:
+            return sizeof(U16_Event);
 
         // --- 种子包被种下 ---
         case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED:
@@ -1705,6 +1712,15 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 aPlant->mState = PlantState::STATE_CHOMPER_BITING_GOT_ONE;
             }
         } break;
+        case EVENT_SERVER_BOARD_PLANT_WIN: {
+            //            auto *plantWinEvent = reinterpret_cast<U16_Event *>(event);
+            //            uint16_t serverGridItemID = plantWinEvent->data;
+            //            uint16_t clientGridItemID;
+            //            if (homura::FindInMap(serverGridItemIDMap, serverGridItemID, clientGridItemID)) {
+            //                GridItem *aGridItem = mGridItems.DataArrayGet(clientGridItemID);
+            //                PlantsWon_Origin(aGridItem);
+            //            }
+        } break;
         case EVENT_SERVER_BOARD_ZOMBIE_DIE: {
             auto *eventZombieDie = reinterpret_cast<U16_Event *>(event);
             uint16_t serverZombieID = eventZombieDie->data;
@@ -1976,6 +1992,15 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 aZombie->TakeDamage_Origin(damage, damageFlags);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_WIN: {
+            auto *zombieWinEvent = reinterpret_cast<U16_Event *>(event);
+            uint16_t serverZombieID = zombieWinEvent->data;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                ZombiesWon(aZombie);
             }
         } break;
         case EVENT_SERVER_BOARD_LAWNMOWER_START: {
@@ -5743,4 +5768,23 @@ GridItem *Board::AddMPTarget(int theGridX, int theGridY) {
     reanimation->mIsAttachment = true;
     aGridItem->mGridItemReanimID = mApp->ReanimationGetID(reanimation);
     return aGridItem;
+}
+
+void Board::PlantsWon(GridItem *tomb) {
+
+    // 此处不需要同步，因为上级GridItemDie已经同步了，此处同同步反而会导致动画ID为null导致的闪退BUG
+
+    //    if (mApp->IsVSMode() && gTcpConnected)
+    //        return;
+    //
+    //    if (gTcpClientSocket >= 0) {
+    //        U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_WIN},uint16_t(mGridItems.DataArrayGetID(tomb))};
+    //        netplay::PutEvent(event);
+    //    }
+
+    PlantsWon_Origin(tomb);
+}
+
+void Board::PlantsWon_Origin(GridItem *tomb) {
+    return old_Board_PlantsWon(this, tomb);
 }

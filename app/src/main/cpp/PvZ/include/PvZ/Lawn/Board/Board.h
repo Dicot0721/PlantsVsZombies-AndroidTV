@@ -598,6 +598,8 @@ public:
     void DrawLevel(Sexy::Graphics *g);
     bool CanAddBobSledMP();
     GridItem *AddMPTarget(int theGridX, int theGridY);
+    void PlantsWon(GridItem *tomb);
+    void PlantsWon_Origin(GridItem *tomb);
 
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);
@@ -815,5 +817,7 @@ inline bool (*old_Board_TakeSunMoney)(Board *board, int amount, int player);
 inline bool (*old_Board_TakeDeathMoney)(Board *board, int amount);
 
 inline void (*old_Board_DrawLevel)(Board *, Sexy::Graphics *);
+
+inline void (*old_Board_PlantsWon)(Board *, GridItem *);
 
 #endif // PVZ_LAWN_BOARD_BOARD_H

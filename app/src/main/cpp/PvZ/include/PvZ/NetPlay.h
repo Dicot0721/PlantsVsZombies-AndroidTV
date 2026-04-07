@@ -29,7 +29,7 @@
 #include <string>
 #include <utility>
 
-constexpr std::uint32_t NETPLAY_VERSION = 3147;
+constexpr std::uint32_t NETPLAY_VERSION = 3148;
 
 enum EventType : uint8_t {
     EVENT_NULL,
@@ -106,6 +106,7 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_PLANT_EATEN,      // 播放植物被吃掉的音效
     EVENT_SERVER_BOARD_PLANT_DO_SPECIAL, // 同步植物触发特性
     EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT,
+    EVENT_SERVER_BOARD_PLANT_WIN, // 植物方通过杀够3只靶子胜利，目前版本由于已同步上级GridItemDie，故不需要同步
 
     EVENT_SERVER_BOARD_ZOMBIE_DIE,
     EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED,
@@ -128,6 +129,7 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER,
     EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL, // 同步僵尸触发特性
     EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE,
+    EVENT_SERVER_BOARD_ZOMBIE_WIN, // 僵尸方通过进家胜利
 
     EVENT_SERVER_BOARD_LAWNMOWER_START,
 

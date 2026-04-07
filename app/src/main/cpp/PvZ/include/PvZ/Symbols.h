@@ -192,6 +192,7 @@ inline void *Board_SetDanceModeAddr;
 inline void *Board_ChooseSeedsOnCurrentLevelAddr;
 inline void *Board_RowCanHaveZombiesAddr;
 inline void *Board_AddMPTargetAddr;
+inline void *Board_PlantsWonAddr;
 inline void *Board_PlaceRakeAddr;
 inline void *Board_SpawnZombiesFromSkyAddr;
 inline void *Board_SpawnZombiesFromPoolAddr;

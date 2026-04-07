@@ -187,6 +187,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN5Board25ChooseSeedsOnCurrentLevelEv", Board_ChooseSeedsOnCurrentLevelAddr);
     libGameMain.GetSymbol("_ZN5Board17RowCanHaveZombiesEi", Board_RowCanHaveZombiesAddr);
     libGameMain.GetSymbol("_ZN5Board11AddMPTargetEii", Board_AddMPTargetAddr);
+    libGameMain.GetSymbol("_ZN5Board9PlantsWonEP8GridItem", Board_PlantsWonAddr);
     libGameMain.GetSymbol("_ZN5Board9PlaceRakeEv", Board_PlaceRakeAddr);
     libGameMain.GetSymbol("_ZN5Board19SpawnZombiesFromSkyEv", Board_SpawnZombiesFromSkyAddr);
     libGameMain.GetSymbol("_ZN5Board20SpawnZombiesFromPoolEv", Board_SpawnZombiesFromPoolAddr);
