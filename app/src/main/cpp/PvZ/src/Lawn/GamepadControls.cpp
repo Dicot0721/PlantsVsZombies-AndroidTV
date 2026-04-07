@@ -689,6 +689,8 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
         g->SetScale(1.5, 1.5, 0, 0);
         g->Translate(-15, -25);
         old_GamepadControls_DrawPreview(this, g);
+        g->SetScale(1, 1, 0, 0);
+        g->Translate(15, 25);
         return;
     }
 
