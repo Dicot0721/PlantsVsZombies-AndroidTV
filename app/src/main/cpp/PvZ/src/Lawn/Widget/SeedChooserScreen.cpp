@@ -1137,7 +1137,6 @@ void SeedChooserScreen::Draw(Graphics *g) {
             // 联机光标上绘制双方玩家昵称
             char *firstPlayerName = mBoard->mApp->mPlayerInfo->mName;
             if (gTcpConnected || gTcpClientSocket >= 0) {
-                //                int aPlayerState = (aPlayerIndex ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1)->mPlayerIndex1;
                 if (gSecondPlayerName[0] != '\0') {
                     g->DrawImageF(aArrowImage, float(aCursorX + 25 - aArrowImage->mWidth / 2), float(aCursorY - 8) + aBounce);
                     TodDrawString(g,

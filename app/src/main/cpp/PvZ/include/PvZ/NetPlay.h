@@ -29,26 +29,27 @@
 #include <string>
 #include <utility>
 
-constexpr std::uint32_t NETPLAY_VERSION = 3146;
+constexpr std::uint32_t NETPLAY_VERSION = 3147;
 
 enum EventType : uint8_t {
     EVENT_NULL,
 
     EVENT_CLIENT_PING,
     EVENT_SERVER_PONG,
-
+    /************************************************************/
     EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK,
 
     EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME,
     EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME,
 
     EVENT_WAITFORSECONDPALYER_START_GAME,
-
+    NUM_EVENT_WAITFORSECONDPALYER,
+    /************************************************************/
     EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE,
     EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS,
     EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE,
-
-
+    NUM_EVENT_CHALLENGESCREEN,
+    /************************************************************/
     EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS,
     EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS,
     EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND,
@@ -59,7 +60,8 @@ enum EventType : uint8_t {
     EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT,
 
     EVENT_SEEDCHOOSER_SELECT_SEED,
-
+    NUM_EVENT_VSSETUPMENU,
+    /************************************************************/
     EVENT_CLIENT_BOARD_TOUCH_DOWN,
     EVENT_CLIENT_BOARD_TOUCH_DRAG,
     EVENT_CLIENT_BOARD_TOUCH_UP,
@@ -139,10 +141,11 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK,
     EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT,
 
-    NUM_EVENT_SERVER_BOARD,
-
+    NUM_EVENT_BOARD,
+    /************************************************************/
     EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS,
     EVENT_SERVER_VSRESULT_BUTTON_DEPRESS,
+    NUM_EVENT_VSRESULT
 };
 
 struct BaseEvent {

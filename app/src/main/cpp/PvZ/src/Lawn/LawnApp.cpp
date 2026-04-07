@@ -262,7 +262,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             }
 
             offset += eventSize;
-        } else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type < NUM_EVENT_SERVER_BOARD) {
+        } else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type < NUM_EVENT_BOARD) {
             size_t eventSize = Board::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -275,7 +275,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
         }
 
 
-        else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE && base->type <= EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE) {
+        else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE && base->type < NUM_EVENT_CHALLENGESCREEN) {
             size_t eventSize = ChallengeScreen::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -288,7 +288,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
         }
 
 
-        else if (base->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
+        else if (base->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && base->type < NUM_EVENT_VSSETUPMENU) {
             size_t eventSize = VSSetupMenu::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -301,7 +301,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
         }
 
 
-        else if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type <= EVENT_SERVER_VSRESULT_BUTTON_DEPRESS) {
+        else if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type < NUM_EVENT_VSRESULT) {
             size_t eventSize = VSResultsMenu::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -311,7 +311,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             }
             mVSResultsMenu->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
             offset += eventSize;
-        } else if (base->type >= EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK && base->type <= EVENT_WAITFORSECONDPALYER_START_GAME) {
+        } else if (base->type >= EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK && base->type < NUM_EVENT_WAITFORSECONDPALYER) {
             size_t eventSize = WaitForSecondPlayerDialog::getClientEventSize(base->type);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -351,7 +351,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             netplay::PutEvent(eventPing);
 
             offset += eventSize;
-        } else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE && base->type <= EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE) {
+        } else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE && base->type < NUM_EVENT_CHALLENGESCREEN) {
             size_t eventSize = ChallengeScreen::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -363,7 +363,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             offset += eventSize;
         }
 
-        else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type < NUM_EVENT_SERVER_BOARD) {
+        else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type < NUM_EVENT_BOARD) {
             size_t eventSize = Board::getServerEventSize(base->type);
 
 
@@ -376,7 +376,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             }
             mBoard->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
             offset += eventSize;
-        } else if (base->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && base->type <= EVENT_SEEDCHOOSER_SELECT_SEED) {
+        } else if (base->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && base->type < NUM_EVENT_VSSETUPMENU) {
             size_t eventSize = VSSetupMenu::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -387,7 +387,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
             }
             mVSSetupMenu->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
             offset += eventSize;
-        } else if (base->type >= EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK && base->type <= EVENT_WAITFORSECONDPALYER_START_GAME) {
+        } else if (base->type >= EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK && base->type < NUM_EVENT_WAITFORSECONDPALYER) {
             size_t eventSize = WaitForSecondPlayerDialog::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
@@ -400,7 +400,7 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
         } else
 
 
-            if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type <= EVENT_SERVER_VSRESULT_BUTTON_DEPRESS) {
+            if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type < NUM_EVENT_VSRESULT) {
             size_t eventSize = VSResultsMenu::getServerEventSize(base->type);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
