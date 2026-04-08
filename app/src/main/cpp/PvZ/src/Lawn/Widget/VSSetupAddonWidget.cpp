@@ -377,7 +377,7 @@ bool NeedSeedTallnut(LawnApp *theApp) {
     Zombie *aZombie = nullptr;
     while (theApp->mBoard->IterateZombies(aZombie)) {
         if (aZombie->mMindControlled) {
-            break;
+            continue;
         }
         if (aZombie->IsBouncingPogo()) {
             return true;
@@ -398,7 +398,7 @@ bool NeedSeedUmbrella(LawnApp *theApp) {
     Zombie *aZombie = nullptr;
     while (theApp->mBoard->IterateZombies(aZombie)) {
         if (aZombie->IsDeadOrDying()) {
-            break;
+            continue;
         }
         if (aZombie->mZombieType == ZombieType::ZOMBIE_CATAPULT && aZombie->mSummonCounter > 15) {
             return true;
@@ -430,7 +430,7 @@ bool NeedSeedMagnetshroom(LawnApp *theApp) {
     Zombie *aZombie = nullptr;
     while (theApp->mBoard->IterateZombies(aZombie)) {
         if (aZombie->mMindControlled) {
-            break;
+            continue;
         }
         if (IsIronItemZombieType(aZombie->mZombieType)) {
             ++aCount;
@@ -454,7 +454,7 @@ bool NeedSeedSplitPea(LawnApp *theApp) {
     Zombie *aZombie = nullptr;
     while (theApp->mBoard->IterateZombies(aZombie)) {
         if (aZombie->IsDeadOrDying() || aZombie->mMindControlled) {
-            break;
+            continue;
         }
         if (aZombie->mZombieType == ZombieType::ZOMBIE_DIGGER) {
             return true;

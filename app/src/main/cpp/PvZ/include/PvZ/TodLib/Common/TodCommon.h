@@ -58,7 +58,7 @@ public:
     float mSecondLastPicked;
 };
 
-inline int RandRangeInt(int theMin, int theMax) {
+inline int RandRangeInt(int theMin, int theMax) { // 取 [theMin, theMax] 的随机整数
     return reinterpret_cast<int (*)(int, int)>(RandRangeIntAddr)(theMin, theMax);
 }
 

@@ -45,7 +45,7 @@ enum PixelFormat {
 
 namespace Sexy {
 
-inline int Rand(int range) {
+inline int Rand(int range) { // 取 [0, range) 的随机整数
     return reinterpret_cast<int (*)(int)>(Sexy_RandIntAddr)(range);
 }
 

@@ -747,10 +747,52 @@ void Board::UpdateSunSpawning() {
         return;
     }
 
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && gTcpConnected) {
+    if (mApp->IsVSMode() && gTcpConnected) {
         return;
     }
-    old_Board_UpdateSunSpawning(this);
+
+    if (StageIsNight() || HasLevelAwardDropped() || mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_RAINING_SEEDS || mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ICE
+        || mApp->mGameMode == GameMode::GAMEMODE_UPSELL || mApp->mGameMode == GameMode::GAMEMODE_INTRO || mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM
+        || mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || mApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM || mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND
+        || mApp->IsIZombieLevel() || mApp->IsScaryPotterLevel() || mApp->IsSquirrelLevel() || HasConveyorBeltSeedBank(0) || mTutorialState == TutorialState::TUTORIAL_SLOT_MACHINE_PULL)
+        return;
+
+    if (mTutorialState == TutorialState::TUTORIAL_LEVEL_1_PICK_UP_PEASHOOTER || mTutorialState == TutorialState::TUTORIAL_LEVEL_1_PLANT_PEASHOOTER) {
+        if (mPlants.mSize == 0) {
+            return;
+        }
+    }
+
+    mSunCountDown--;
+    if (mSunCountDown != 0)
+        return;
+
+    mNumSunsFallen++;
+    mSunCountDown = std::min(SUN_COUNTDOWN_MAX, SUN_COUNTDOWN + mNumSunsFallen * 10) + Rand(SUN_COUNTDOWN_RANGE);
+    CoinType aSunType = mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_SUNNY_DAY ? CoinType::COIN_LARGESUN : CoinType::COIN_SUN;
+    if (mApp->mGameMode == GAMEMODE_CHALLENGE_HEAVY_WEAPON) {
+        mSunCountDown = 2 * mSunCountDown / 3;
+    }
+    if (mApp->IsCoopMode() && (Sexy::Rand(2) == 0)) { // 结盟模式 50% 概率掉落双倍阳光
+        aSunType = CoinType::COIN_COOP_DOUBLE_SUN;
+    }
+    if (mApp->IsVSMode()) {
+        if (mChallenge->IsMPSuddenDeath()) {
+            mSunCountDown /= 3;
+        }
+
+        int aSpawnCount = 1;
+        if (mChallenge->IsMPSuddenDeath()) {
+            aSpawnCount = (*Challenge_gVSSuddenDeathMode_Addr == 1) ? 2 : 1;
+        }
+
+        for (int aSpawnIndex = 0; aSpawnIndex < aSpawnCount; ++aSpawnIndex) {
+            AddCoin(RandRangeInt(100, 499), 60, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_SKY);
+            AddCoin(RandRangeInt(500, 799), 60, CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_SKY);
+        }
+    } else {
+        AddCoin(RandRangeInt(100, 649), 60, aSunType, CoinMotion::COIN_MOTION_FROM_SKY);
+    }
 }
 
 void Board::UpdateZombieSpawning() {
