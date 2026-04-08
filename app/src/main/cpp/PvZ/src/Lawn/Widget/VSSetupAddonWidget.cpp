@@ -306,7 +306,7 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
                 ++numPeasInBank;
             }
         }
-        if (numPeasInBank >= 2 || GetPeaCount(theApp) >= 3) {
+        if (numPeasInBank >= 2 || CountPeasOnScreen(theApp) >= 3) {
             auto it = std::ranges::find(aSeeds, SeedType::SEED_GRAVEBUSTER);
             if (it != aSeeds.end()) {
                 *it = SeedType::SEED_TORCHWOOD;
@@ -366,20 +366,20 @@ bool NeedSeedInstantCoffee(LawnApp *theApp) {
 }
 
 bool NeedSeedTallnut(LawnApp *theApp) {
-    // 僵尸种子栏存在可用的蹦蹦僵尸或撑杆僵尸
+    // 僵尸种子栏存在可用的蹦蹦僵尸
     for (int i = 1; i < 6; ++i) {
         SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[1]->mSeedPackets[i];
-        if ((aSeedPacket.mPacketType == SeedType::SEED_ZOMBIE_POGO || aSeedPacket.mPacketType == SeedType::SEED_ZOMBIE_POLEVAULTER) && aSeedPacket.mActive) {
+        if (aSeedPacket.mPacketType == SeedType::SEED_ZOMBIE_POGO && aSeedPacket.mActive) {
             return true;
         }
     }
-    // 场上存在正在弹跳的蹦蹦僵尸或准备跳跃的撑杆僵尸
+    // 场上存在正在弹跳的蹦蹦僵尸
     Zombie *aZombie = nullptr;
     while (theApp->mBoard->IterateZombies(aZombie)) {
         if (aZombie->mMindControlled) {
             break;
         }
-        if (aZombie->IsBouncingPogo() || aZombie->mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT) {
+        if (aZombie->IsBouncingPogo()) {
             return true;
         }
     }
@@ -394,11 +394,13 @@ bool NeedSeedUmbrella(LawnApp *theApp) {
             return true;
         }
     }
-    // 场上存在下落的蹦极僵尸或剩余篮球数大于15的投篮僵尸
+    // 场上剩余篮球数大于15的投篮僵尸
     Zombie *aZombie = nullptr;
     while (theApp->mBoard->IterateZombies(aZombie)) {
-        if ((aZombie->mZombieType == ZombieType::ZOMBIE_BUNGEE && (aZombie->mZombiePhase == ZombiePhase::PHASE_BUNGEE_DIVING || aZombie->mZombiePhase == ZombiePhase::PHASE_BUNGEE_DIVING_SCREAMING))
-            || (aZombie->mZombieType == ZombieType::ZOMBIE_CATAPULT || aZombie->mSummonCounter > 15)) {
+        if (aZombie->IsDeadOrDying()) {
+            break;
+        }
+        if (aZombie->mZombieType == ZombieType::ZOMBIE_CATAPULT && aZombie->mSummonCounter > 15) {
             return true;
         }
     }
@@ -465,7 +467,7 @@ bool IsPeaSeedType(SeedType theSeedType) {
     return theSeedType == SeedType::SEED_PEASHOOTER || theSeedType == SeedType::SEED_REPEATER || theSeedType == SeedType::SEED_THREEPEATER || theSeedType == SeedType::SEED_SPLITPEA;
 }
 
-int GetPeaCount(LawnApp *theApp) {
+int CountPeasOnScreen(LawnApp *theApp) {
     int aCount = 0;
     Plant *aPlant = nullptr;
     while (theApp->mBoard->IteratePlants(aPlant)) {
@@ -489,7 +491,7 @@ bool NeedSeedTorchwood(LawnApp *theApp) {
         return true;
     }
     // 场上存在3株以上的豌豆类植物
-    if (GetPeaCount(theApp) >= 3) {
+    if (CountPeasOnScreen(theApp) >= 3) {
         return true;
     }
     return false;

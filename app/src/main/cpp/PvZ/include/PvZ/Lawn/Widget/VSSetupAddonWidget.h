@@ -107,7 +107,7 @@ bool NeedSeedUmbrella(LawnApp *theApp);
 bool NeedSeedMagnetshroom(LawnApp *theApp);
 bool NeedSeedSplitPea(LawnApp *theApp);
 bool IsPeaSeedType(SeedType theSeedType);
-int GetPeaCount(LawnApp *theApp);
+int CountPeasOnScreen(LawnApp *theApp);
 bool NeedSeedTorchwood(LawnApp *theApp);
 bool NeedSeedZombieImp(LawnApp *theApp);
 

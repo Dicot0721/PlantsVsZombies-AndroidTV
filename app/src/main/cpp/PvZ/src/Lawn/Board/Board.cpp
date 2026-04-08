@@ -1374,9 +1374,11 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT:
             return sizeof(U16UNI32UNI32_Event);
 
-        // --- 金钱类、 植物,僵尸,场地物死亡、 僵尸魅惑、植物触发特性、小推车启动 ---
         case EVENT_SERVER_BOARD_TAKE_SUNMONEY:
         case EVENT_SERVER_BOARD_TAKE_DEATHMONEY:
+            return sizeof(I16_Event);
+
+        // --- 植物,僵尸,场地物死亡、 僵尸魅惑、植物触发特性、小推车启动 ---
         case EVENT_SERVER_BOARD_PLANT_DIE:
         case EVENT_SERVER_BOARD_ZOMBIE_DIE:
         case EVENT_SERVER_BOARD_GRIDITEM_DIE:
@@ -2014,11 +2016,11 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_BOARD_TAKE_SUNMONEY: {
-            auto *event1 = reinterpret_cast<U16_Event *>(event);
+            auto *event1 = reinterpret_cast<I16_Event *>(event);
             mSunMoney1 = event1->data;
         } break;
         case EVENT_SERVER_BOARD_TAKE_DEATHMONEY: {
-            auto *event1 = reinterpret_cast<U16_Event *>(event);
+            auto *event1 = reinterpret_cast<I16_Event *>(event);
             mDeathMoney = event1->data;
         } break;
         case EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED: {
@@ -5615,7 +5617,7 @@ GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {
 bool Board::TakeSunMoney(int theAmount, int thePlayer) {
     bool result = old_Board_TakeSunMoney(this, theAmount, thePlayer);
     if (gTcpClientSocket >= 0) {
-        U16_Event event = {{EventType::EVENT_SERVER_BOARD_TAKE_SUNMONEY}, uint16_t(mSunMoney1)};
+        I16_Event event = {{EventType::EVENT_SERVER_BOARD_TAKE_SUNMONEY}, int16_t(mSunMoney1)};
         netplay::PutEvent(event);
     }
     return result;
@@ -5635,7 +5637,7 @@ bool Board::TakeDeathMoney(int theAmount) {
     }
 
     if (gTcpClientSocket >= 0) {
-        U16_Event event = {{EventType::EVENT_SERVER_BOARD_TAKE_DEATHMONEY}, uint16_t(mDeathMoney)};
+        I16_Event event = {{EventType::EVENT_SERVER_BOARD_TAKE_DEATHMONEY}, int16_t(mDeathMoney)};
         netplay::PutEvent(event);
     }
     return result;
