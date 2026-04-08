@@ -25,6 +25,7 @@
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/CursorObject.h"
 #include "PvZ/Lawn/Board/GridItem.h"
+#include "PvZ/Lawn/Board/OpeningEncounter.h"
 #include "PvZ/Lawn/Board/Plant.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/Board/SeedPacket.h"
@@ -134,16 +135,20 @@ void Challenge::Update() {
             return;
         }
 
+        if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING || mBoard->HasLevelAwardDropped())
+            return;
+
         UpdateVSAddPlants();
+
+        if (gOpeningEncounter) {
+            gOpeningEncounter->Update();
+        }
     }
 
     old_Challenge_Update(this);
 }
 
 void Challenge::UpdateVSAddPlants() {
-    if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING || mBoard->HasLevelAwardDropped())
-        return;
-
     if (gTcpConnected)
         return;
 
@@ -434,6 +439,14 @@ void Challenge::StartLevel() {
         jmethodID methodID = env->GetMethodID(cls, "startOrientationListener", "()V");
         env->CallVoidMethod(activity, methodID);
         env->DeleteLocalRef(cls);
+    }
+
+    if (mApp->IsVSMode()) {
+        if (gOpeningEncounter) {
+            if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN) {
+                mBoard->DisplayAdvice("[ADVICE_SUN_RAIN_COMING]", MESSAGE_STYLE_HINT_FAST, ADVICE_NONE);
+            }
+        }
     }
 }
 
@@ -794,4 +807,15 @@ bool Challenge::IsMPZombieTypeCanGoInPool(ZombieType theZombieType) {
 
     return theZombieType != ZombieType::ZOMBIE_POLEVAULTER && theZombieType != ZombieType::ZOMBIE_DOOR && theZombieType != ZombieType::ZOMBIE_POGO && theZombieType != ZombieType::ZOMBIE_YETI
         && theZombieType != ZombieType::ZOMBIE_LADDER && theZombieType != ZombieType::ZOMBIE_TRASHCAN;
+}
+
+void Challenge::DrawWeather(Sexy::Graphics *g) {
+    if (mApp->IsStormyNightLevel() || mApp->mGameMode == GAMEMODE_CHALLENGE_RAINING_SEEDS)
+        DrawRain(g);
+
+    if (mApp->IsStormyNightLevel())
+        DrawStormNight(g);
+
+    if (gOpeningEncounter && gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN && gOpeningEncounter->mDoEffect)
+        DrawRain(g);
 }

@@ -35,6 +35,7 @@ class ReanimationParams;
 
 inline void *Board_UpdateAddr;
 inline void *Board_BoardAddr;
+inline void *Board__destructorAddr;
 inline void *Board_InitLevelAddr;
 inline void *Board_StartLevelAddr;
 inline void *Board_RemovedFromManagerAddr;
@@ -1326,6 +1327,7 @@ inline Image **IMAGE_VS_STONE_DIRT;
 
 
 inline Font **FONT_DWARVENTODCRAFT24;
+inline Font **FONT_HOUSEOFTERROR16;
 
 inline int *SOUND_BALLOON_POP;
 inline int *SOUND_BOING;

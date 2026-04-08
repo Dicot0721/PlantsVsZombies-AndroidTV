@@ -30,6 +30,7 @@ bool LoadGameMain() {
 
     libGameMain.GetSymbol("_ZN5Board6UpdateEv", Board_UpdateAddr);
     libGameMain.GetSymbol("_ZN5BoardC2EP7LawnApp", Board_BoardAddr);
+    libGameMain.GetSymbol("_ZN5BoardD2Ev", Board__destructorAddr);
     libGameMain.GetSymbol("_ZN5Board9InitLevelEv", Board_InitLevelAddr);
     libGameMain.GetSymbol("_ZN5Board10StartLevelEv", Board_StartLevelAddr);
     libGameMain.GetSymbol("_ZN5Board18RemovedFromManagerEPN4Sexy13WidgetManagerE", Board_RemovedFromManagerAddr);
@@ -1309,6 +1310,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy19IMAGE_VS_STONE_DIRTE", Sexy::IMAGE_VS_STONE_DIRT);
 
     libGameMain.GetSymbol("_ZN4Sexy22FONT_DWARVENTODCRAFT24E", Sexy::FONT_DWARVENTODCRAFT24);
+    libGameMain.GetSymbol("_ZN4Sexy20FONT_HOUSEOFTERROR16E", Sexy::FONT_HOUSEOFTERROR16);
 
     libGameMain.GetSymbol("_ZN4Sexy17SOUND_BALLOON_POPE", Sexy::SOUND_BALLOON_POP);
 

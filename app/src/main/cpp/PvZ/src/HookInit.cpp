@@ -106,6 +106,7 @@ void InitHookFunction() {
     homura::HookFunction(Board_DrawAddr, &Board::Draw, &old_Board_Draw);
     homura::HookFunction(Board_UpdateAddr, &Board::Update, &old_Board_Update);
     homura::HookFunction(Board_BoardAddr, &Board::_constructor, &old_Board_Board);
+    homura::HookFunction(Board__destructorAddr, &Board::_destructor, &old_Board__destructor);
     homura::HookFunction(Board_InitLevelAddr, &Board::InitLevel, &old_Board_InitLevel);
     homura::HookFunction(Board_StartLevelAddr, &Board::StartLevel, &old_Board_StartLevel);
     homura::HookFunction(Board_RemovedFromManagerAddr, &Board::RemovedFromManager, &old_Board_RemovedFromManager);
@@ -119,7 +120,7 @@ void InitHookFunction() {
     homura::HookFunction(Board_GetPumpkinAtAddr, &Board::GetPumpkinAt, nullptr);
     homura::HookFunction(Board_ZombiesWonAddr, &Board::ZombiesWon, &old_BoardZombiesWon);
     homura::HookFunction(Board_KeyDownAddr, &Board::KeyDown, &old_Board_KeyDown);
-    homura::HookFunction(Board_UpdateSunSpawningAddr, &Board::UpdateSunSpawning, &old_Board_UpdateSunSpawning);
+    homura::HookFunction(Board_UpdateSunSpawningAddr, &Board::UpdateSunSpawning, nullptr);
     homura::HookFunction(Board_UpdateZombieSpawningAddr, &Board::UpdateZombieSpawning, &old_Board_UpdateZombieSpawning);
     homura::HookFunction(Board_PickBackgroundAddr, &Board::PickBackground, &old_Board_PickBackground);
     homura::HookFunction(Board_DrawCoverLayerAddr, &Board::DrawCoverLayer, nullptr);
@@ -203,6 +204,7 @@ void InitHookFunction() {
     homura::HookFunction(Challenge_IZombieSquishBrainAddr, &Challenge::IZombieSquishBrain, &old_Challenge_IZombieSquishBrain);
     homura::HookFunction(Challenge_UpdateConveyorBeltAddr, &Challenge::UpdateConveyorBelt, &old_Challenge_UpdateConveyorBelt);
     homura::HookFunction(Challenge_MouseDownWhackAZombieAddr, &Challenge::MouseDownWhackAZombie, nullptr);
+    homura::HookFunction(Challenge_DrawWeatherAddr, &Challenge::DrawWeather, nullptr);
 
 
     homura::HookFunction(ChallengeScreen_AddedToManagerAddr, &ChallengeScreen::AddedToManager, &old_ChallengeScreen_AddedToManager);

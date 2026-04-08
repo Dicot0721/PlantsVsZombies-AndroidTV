@@ -30,6 +30,7 @@
 #include "PvZ/Lawn/Board/CutScene.h"
 #include "PvZ/Lawn/Board/GridItem.h"
 #include "PvZ/Lawn/Board/MessageWidget.h"
+#include "PvZ/Lawn/Board/OpeningEncounter.h"
 #include "PvZ/Lawn/Board/Plant.h"
 #include "PvZ/Lawn/Board/Projectile.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
@@ -98,6 +99,16 @@ void Board::_constructor(LawnApp *theApp) {
     AddWidget(gBoardStoreButton);
     mAdvice->~CustomMessageWidget();
     mAdvice = new CustomMessageWidget(mApp);
+
+    if (gIsVSShuffleMode) {
+        gOpeningEncounter = new OpeningEncounter();
+    }
+}
+
+void Board::_destructor() {
+    old_Board__destructor(this);
+
+    delete gOpeningEncounter;
 }
 
 void Board::InitLevel() {
@@ -712,6 +723,12 @@ void Board::DrawZenButtons(Sexy::Graphics *g) {
 
 void Board::DrawGameObjects(Graphics *g) {
     old_Board_DrawGameObjects(this, g);
+
+    if (gOpeningEncounter && gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN && gOpeningEncounter->mDoEffect) {
+        if (mApp->mGameScene == SCENE_PLAYING) {
+            mChallenge->DrawWeather(g);
+        }
+    }
 }
 
 void Board::KeyDown(KeyCode theKey) {
@@ -779,6 +796,11 @@ void Board::UpdateSunSpawning() {
     if (mApp->IsVSMode()) {
         if (mChallenge->IsMPSuddenDeath()) {
             mSunCountDown /= 3;
+        }
+
+        // 刷牌模式阳光雨
+        if (gOpeningEncounter && gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN && gOpeningEncounter->mDoEffect) {
+            mSunCountDown /= 10;
         }
 
         int aSpawnCount = 1;
@@ -5768,8 +5790,18 @@ bool Board::CanAddGraveStoneAt(int theGridX, int theGridY) {
 
 void Board::DrawLevel(Graphics *g) {
     // 禁止对战模式绘制关卡名称
-    if (mApp->IsVSMode())
+    if (mApp->IsVSMode()) {
+        if (gOpeningEncounter) {
+            pvzstl::string aLevelStr;
+            if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN) {
+                aLevelStr = "[SUN_RAIN]";
+            }
+            int aPosX = 593;
+            int aPosY = 595;
+            TodDrawString(g, aLevelStr, aPosX, aPosY, *Sexy::FONT_HOUSEOFTERROR16, Color(224, 187, 98), DrawStringJustification::DS_ALIGN_RIGHT);
+        }
         return;
+    }
 
     old_Board_DrawLevel(this, g);
 }
@@ -5819,7 +5851,7 @@ GridItem *Board::AddMPTarget(int theGridX, int theGridY) {
     return aGridItem;
 }
 
-void Board::PlantsWon(GridItem *tomb) {
+void Board::PlantsWon(GridItem *theGridItem) {
 
     // 此处不需要同步，因为上级GridItemDie已经同步了，此处同同步反而会导致动画ID为null导致的闪退BUG
 
@@ -5827,13 +5859,13 @@ void Board::PlantsWon(GridItem *tomb) {
     //        return;
     //
     //    if (gTcpClientSocket >= 0) {
-    //        U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_WIN},uint16_t(mGridItems.DataArrayGetID(tomb))};
+    //        U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_WIN},uint16_t(mGridItems.DataArrayGetID(theGridItem))};
     //        netplay::PutEvent(event);
     //    }
 
-    PlantsWon_Origin(tomb);
+    PlantsWon_Origin(theGridItem);
 }
 
-void Board::PlantsWon_Origin(GridItem *tomb) {
-    return old_Board_PlantsWon(this, tomb);
+void Board::PlantsWon_Origin(GridItem *theGridItem) {
+    old_Board_PlantsWon(this, theGridItem);
 }

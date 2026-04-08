@@ -600,8 +600,8 @@ public:
     void DrawLevel(Sexy::Graphics *g);
     bool CanAddBobSledMP();
     GridItem *AddMPTarget(int theGridX, int theGridY);
-    void PlantsWon(GridItem *tomb);
-    void PlantsWon_Origin(GridItem *tomb);
+    void PlantsWon(GridItem *theGridItem);
+    void PlantsWon_Origin(GridItem *theGridItem);
 
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);
@@ -626,6 +626,7 @@ protected:
     friend void InitHookFunction();
 
     void _constructor(LawnApp *theApp);
+    void _destructor();
     void ClientMouseDownLocal(int x, int y, bool isInBank);
     void ClientMouseDragLocal(int x, int y);
     void ClientMouseUpLocal(int x, int y);
@@ -726,8 +727,6 @@ inline Plant *(*old_Board_AddPlant)(Board *board, int x, int y, SeedType seedTyp
 
 inline void (*old_Board_KeyDown)(Board *board, Sexy::KeyCode theKey);
 
-inline void (*old_Board_UpdateSunSpawning)(Board *board);
-
 inline void (*old_Board_UpdateZombieSpawning)(Board *board);
 
 inline void (*old_Board_UpdateIce)(Board *board);
@@ -769,6 +768,8 @@ inline void (*old_Board_InitLevel)(Board *board);
 inline void (*old_Board_ButtonDepress)(Board *board, int id);
 
 inline void (*old_Board_Board)(Board *board, LawnApp *mApp);
+
+inline void (*old_Board__destructor)(Board *board);
 
 inline void (*old_Board_MouseUp)(Board *board, int a2, int a3, int a4);
 

@@ -1020,6 +1020,16 @@ bool LawnApp::IsWhackAZombieLevel() {
     return IsAdventureMode() && mPlayerInfo->mLevel == 15;
 }
 
+bool LawnApp::IsStormyNightLevel() {
+    if (mBoard == nullptr)
+        return false;
+
+    if (mGameMode == GameMode::GAMEMODE_CHALLENGE_STORMY_NIGHT)
+        return true;
+
+    return IsAdventureMode() && mPlayerInfo->mLevel == 40;
+}
+
 bool LawnApp::IsVSMode() {
     return mGameMode == GameMode::GAMEMODE_MP_VS || mGameMode == GameMode::GAMEMODE_MP_VS_HIDE || mGameMode == GameMode::GAMEMODE_MP_VS_IN_PAGE;
 }

@@ -330,6 +330,7 @@ public:
     bool IsArtChallenge();
     bool IsSquirrelLevel();
     bool IsWhackAZombieLevel();
+    bool IsStormyNightLevel();
     bool IsVSMode();
     bool IsCoopMode();
     bool IsTwinSunbankMode();

@@ -129,9 +129,6 @@ public:
     void PlantAdded(Plant *thePlant) {
         reinterpret_cast<void (*)(Challenge *, Plant *)>(Challenge_PlantAddedAddr)(this, thePlant);
     }
-    void DrawWeather(Sexy::Graphics *g) {
-        reinterpret_cast<void (*)(Challenge *, Sexy::Graphics *)>(Challenge_DrawWeatherAddr)(this, g);
-    }
     void DrawRain(Sexy::Graphics *g) {
         reinterpret_cast<void (*)(Challenge *, Sexy::Graphics *)>(Challenge_DrawRainAddr)(this, g);
     }
@@ -185,6 +182,7 @@ public:
     static bool IsMPResourceProducer(SeedType theSeedType);
     static bool IsMPZombieTypeAddInRow(ZombieType theZombieType);
     static bool IsMPZombieTypeCanGoInPool(ZombieType theZombieType);
+    void DrawWeather(Sexy::Graphics *g);
 
     void UpdateConveyorBelt(int playerIndex);
 

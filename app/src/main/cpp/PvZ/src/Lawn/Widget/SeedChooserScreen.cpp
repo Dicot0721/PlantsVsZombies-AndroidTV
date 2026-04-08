@@ -1195,7 +1195,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
             Image *aArrowImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_ARROW_P2 : *Sexy::IMAGE_CURSOR_ARROW_P1;
             Image *aTextImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_P2_TEXT : *Sexy::IMAGE_CURSOR_P1_TEXT;
 
-            if (mApp->mVSSetupMenu->mAddonWidget->mBanMode) {
+            if (mApp->IsVSMode() && mApp->mVSSetupMenu->mAddonWidget->mBanMode) {
                 aArrowImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_ARROW_P1 : *Sexy::IMAGE_CURSOR_ARROW_P2;
                 aTextImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_P1_TEXT : *Sexy::IMAGE_CURSOR_P2_TEXT;
             }
