@@ -1624,6 +1624,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             if (homura::FindInMap(serverGridItemIDMap, serverGridItemID, clientGridItemID)) {
                 GridItem *aGridItem = mGridItems.DataArrayGet(clientGridItemID);
                 old_GridItem_GridItemDie(aGridItem);
+                serverGridItemIDMap.erase(serverGridItemID);
             }
         } break;
         case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER: {
@@ -1640,7 +1641,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             gridItem->mLaunchCounter = event1->data4;
             //            gridItem->mVSGraveStoneHealth = 350;
             //            gridItem->unkBool1 = true;
-            serverGridItemIDMap.emplace(event1->data3, uint16_t(mGridItems.DataArrayGetID(gridItem)));
+            serverGridItemIDMap[event1->data3] = uint16_t(mGridItems.DataArrayGetID(gridItem));
         } break;
         case EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION: {
             auto *event1 = reinterpret_cast<U16U16U16UNI32UNI32_Event *>(event);
@@ -1676,8 +1677,8 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 uint16_t aRow = eventPlantFire->data4.u16x2.u16_1;
                 auto aPlantWeapon = PlantWeapon(eventPlantFire->data4.u16x2.u16_2);
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
-                Zombie *aZombie = aZombieID == ZOMBIEID_NULL ? nullptr : mZombies.DataArrayGet(homura::FindInMap(serverZombieIDMap, aZombieID).value_or(0));
-                GridItem *aGridItem = aGridItemID == GRIDITEMID_NULL ? nullptr : mGridItems.DataArrayGet(homura::FindInMap(serverGridItemIDMap, aGridItemID).value_or(0));
+                Zombie *aZombie = aZombieID == ZOMBIEID_NULL ? nullptr : mZombies.DataArrayGet(*homura::FindInMap(serverZombieIDMap, aZombieID));
+                GridItem *aGridItem = aGridItemID == GRIDITEMID_NULL ? nullptr : mGridItems.DataArrayGet(*homura::FindInMap(serverGridItemIDMap, aGridItemID));
                 aPlant->Fire_Origin(aZombie, aRow, aPlantWeapon, aGridItem);
             }
         } break;
@@ -1690,7 +1691,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             bool isDoEffect = eventPlantAdd->data5.u16x2.u16_2;
             Plant *plant = AddPlant_Origin(gridX, gridY, seedType, imitaterType, 0, isDoEffect);
             plant->mLaunchCounter = int(eventPlantAdd->data3);
-            serverPlantIDMap.emplace(eventPlantAdd->data5.u16x2.u16_1, uint16_t(mPlants.DataArrayGetID(plant)));
+            serverPlantIDMap[eventPlantAdd->data5.u16x2.u16_1] = uint16_t(mPlants.DataArrayGetID(plant));
         } break;
         case EVENT_SERVER_BOARD_PLANT_EATEN:
             mApp->PlaySample(*SOUND_GULP);
@@ -1702,6 +1703,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
                 aPlant->Die_Origin();
+                serverPlantIDMap.erase(serverPlantID);
             }
         } break;
         case EVENT_SERVER_BOARD_PLANT_DO_SPECIAL: {
@@ -1794,6 +1796,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 aZombie->DieNoLoot_Origin();
+                serverZombieIDMap.erase(serverZombieID);
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED: {
@@ -1814,7 +1817,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             if (aZombieType == ZombieType::ZOMBIE_BACKUP_DANCER) // 移除主机生成时向客机同步传递的舞伴
                 return;
             Zombie *aZombie = AddZombieInRow_Origin(aZombieType, aRow, aFromWave, aIsRustle);
-            serverZombieIDMap.emplace(eventZombieAdd->data2, uint16_t(mZombies.DataArrayGetID(aZombie)));
+            serverZombieIDMap[eventZombieAdd->data2] = uint16_t(mZombies.DataArrayGetID(aZombie));
             float aVelX = eventZombieAdd->data3[0].f32;
             aZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
             aZombie->mPosX = eventZombieAdd->data3[1].f32;
@@ -1829,13 +1832,13 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
 
             bobsledZombies[0] = mZombies.DataArrayAlloc();
             bobsledZombies[0]->ZombieInitialize(theRow, ZOMBIE_BOBSLED, theUnkBool, nullptr, theFromWave, true);
-            serverZombieIDMap.emplace(eventZombieBobseldAdd->data2[0], uint16_t(mZombies.DataArrayGetID(bobsledZombies[0])));
+            serverZombieIDMap[eventZombieBobseldAdd->data2[0]] = uint16_t(mZombies.DataArrayGetID(bobsledZombies[0]));
             bobsledZombies[0]->ApplySyncedSpeed(eventZombieBobseldAdd->data3[0].f32, short(bobsledZombies[0]->mAnimTicksPerFrame));
             bobsledZombies[0]->mPosX = eventZombieBobseldAdd->data4[0].f32;
             for (int i = 1; i < 4; ++i) {
                 bobsledZombies[i] = mZombies.DataArrayAlloc();
                 bobsledZombies[i]->ZombieInitialize(theRow, ZOMBIE_BOBSLED, theUnkBool, bobsledZombies[0], theFromWave, true);
-                serverZombieIDMap.emplace(eventZombieBobseldAdd->data2[i], uint16_t(mZombies.DataArrayGetID(bobsledZombies[i])));
+                serverZombieIDMap[eventZombieBobseldAdd->data2[i]] = uint16_t(mZombies.DataArrayGetID(bobsledZombies[i]));
                 bobsledZombies[i]->ApplySyncedSpeed(eventZombieBobseldAdd->data3[i].f32, short(bobsledZombies[i]->mAnimTicksPerFrame));
                 bobsledZombies[i]->mPosX = eventZombieBobseldAdd->data4[i].f32;
             }
@@ -1846,7 +1849,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             int aTargetCol = eventZombieBungeeAdd->data2.u8x4.u8_1;
             int aRow = eventZombieBungeeAdd->data2.u8x4.u8_2;
             Zombie *aZombie = AddZombieInRow_Origin(ZOMBIE_BUNGEE, aRow, 0, false);
-            serverZombieIDMap.emplace(eventZombieBungeeAdd->data1, uint16_t(mZombies.DataArrayGetID(aZombie)));
+            serverZombieIDMap[eventZombieBungeeAdd->data1] = uint16_t(mZombies.DataArrayGetID(aZombie));
 
             aZombie->mAltitude = eventZombieBungeeAdd->data3.f32;
             aZombie->mTargetCol = aTargetCol;
@@ -1865,7 +1868,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             uint16_t clientDroppedZombieID;
 
             Zombie *aBungeeZombie = AddZombie_Origin(ZombieType::ZOMBIE_BUNGEE, -5, false);
-            serverZombieIDMap.emplace(serverBungeeZombieID, uint16_t(mZombies.DataArrayGetID(aBungeeZombie)));
+            serverZombieIDMap[serverBungeeZombieID] = uint16_t(mZombies.DataArrayGetID(aBungeeZombie));
 
             if (homura::FindInMap(serverZombieIDMap, serverDroppedZombieID, clientDroppedZombieID)) {
                 Zombie *droppedZombie = mZombies.DataArrayGet(clientDroppedZombieID);
@@ -1911,7 +1914,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
 
                 for (int i = 0; i < NUM_BACKUP_DANCERS; ++i) {
                     if (aZombie->mFollowerZombieID[i] != ZombieID::ZOMBIEID_NULL)
-                        serverZombieIDMap.emplace(uint16_t(eventSummonBackupDancers->data3[i]), uint16_t(aZombie->mFollowerZombieID[i]));
+                        serverZombieIDMap[uint16_t(eventSummonBackupDancers->data3[i])] = uint16_t(aZombie->mFollowerZombieID[i]);
                     Zombie *backupZombie = ZombieTryToGet(aZombie->mFollowerZombieID[i]);
                     float aVelX = eventSummonBackupDancers->data4[i].f32;
                     backupZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
@@ -2103,7 +2106,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                     Plant *plant = nullptr;
                     while (IteratePlants(plant)) {
                         if (plant->mSeedType == eventSync->data2.u8x4.u8_2 && plant->mRow == eventSync->data2.u8x4.u8_3 && plant->mPlantCol == eventSync->data2.u8x4.u8_4) {
-                            serverPlantIDMap.emplace(eventSync->data1, uint16_t(mPlants.DataArrayGetID(plant)));
+                            serverPlantIDMap[eventSync->data1] = uint16_t(mPlants.DataArrayGetID(plant));
                         }
                     }
                 }
@@ -2114,7 +2117,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                     GridItem *gridItem = nullptr;
                     while (IterateGridItems(gridItem)) {
                         if (gridItem->mGridItemType == eventSync->data2.u8x4.u8_2 && gridItem->mGridX == eventSync->data2.u8x4.u8_3 && gridItem->mGridY == eventSync->data2.u8x4.u8_4) {
-                            serverGridItemIDMap.emplace(eventSync->data1, uint16_t(mGridItems.DataArrayGetID(gridItem)));
+                            serverGridItemIDMap[eventSync->data1] = uint16_t(mGridItems.DataArrayGetID(gridItem));
                         }
                     }
                 } break;
