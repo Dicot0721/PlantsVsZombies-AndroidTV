@@ -1366,8 +1366,10 @@ void Zombie::RiseFromGrave(int theCol, int theRow) {
         }
     }
 
-    U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE}, uint8_t(theCol), uint8_t(theRow), uint16_t(mBoard->mZombies.DataArrayGetID(this))};
-    netplay::PutEvent(event);
+    if (gTcpClientSocket >= 0) {
+        U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE}, uint8_t(theCol), uint8_t(theRow), uint16_t(mBoard->mZombies.DataArrayGetID(this))};
+        netplay::PutEvent(event);
+    }
 }
 
 void Zombie::CheckForBoardEdge() {
