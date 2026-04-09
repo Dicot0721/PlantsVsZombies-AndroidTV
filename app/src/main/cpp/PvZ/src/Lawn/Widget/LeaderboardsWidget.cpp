@@ -57,6 +57,9 @@ static Sexy::Rect gLeaderboardAchievementsRect[12][2] = {
     {{456, 362, 43, 122}, {461, 484, 71, 30}},
 };
 
+int GameStats::ChangeMiscStat(MiscStat theMiscStat, int theChangeIndex) {
+    return mMiscStats[theMiscStat] + theChangeIndex;
+}
 
 int LeaderboardsWidget_GetAchievementIdByReanimationType(ReanimationType type) {
     AchievementId id = AchievementId::ACHIEVEMENT_HOME_SECURITY;

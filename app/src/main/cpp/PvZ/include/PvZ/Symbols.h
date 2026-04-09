@@ -1399,6 +1399,9 @@ inline ReanimationParams *gLawnReanimationArrayAddr;
 inline int *gDaveWidgetAddr;
 inline int *Challenge_gVSSuddenDeathMode_Addr;
 inline int *Challenge_gVSWinModeAddr;
+inline int *Challenge_gVSResourseDropModeAddr;
+inline int *Challenge_gVSResourceDropCountAddr;
+
 inline int *Sexy_SOUND_PAUSE_Addr;
 inline int *Sexy_SOUND_FROZEN_Addr;
 inline int *Sexy_SOUND_TAP_Addr;

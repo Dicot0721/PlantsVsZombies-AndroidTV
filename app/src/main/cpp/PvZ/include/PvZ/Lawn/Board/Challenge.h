@@ -61,6 +61,9 @@ struct BeghouledBoardState {
 
 class Challenge {
 public:
+    static inline int gVSResourseDropMode = *Challenge_gVSResourceDropCountAddr;
+    static inline int gVSResourceDropCount = *Challenge_gVSResourceDropCountAddr;
+
     int *vTable;                                            // 0
     int unk1[3];                                            // 1 ~ 3
     LawnApp *mApp;                                          // 4

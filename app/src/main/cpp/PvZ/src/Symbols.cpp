@@ -1374,6 +1374,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("gLawnReanimationArray", gLawnReanimationArrayAddr);
     libGameMain.GetSymbol("_ZN9Challenge18gVSSuddenDeathModeE", Challenge_gVSSuddenDeathMode_Addr);
     libGameMain.GetSymbol("_ZN9Challenge10gVSWinModeE", Challenge_gVSWinModeAddr);
+    libGameMain.GetSymbol("_ZN9Challenge19gVSResourseDropModeE", Challenge_gVSResourseDropModeAddr);
+    libGameMain.GetSymbol("_ZN9Challenge20gVSResourceDropCountE", Challenge_gVSResourceDropCountAddr);
     libGameMain.GetSymbol("_ZN4Sexy12gSexyAppBaseE", Sexy_gSexyAppBase_Addr);
     libGameMain.GetSymbol("_ZN4Sexy11SOUND_PAUSEE", Sexy_SOUND_PAUSE_Addr);
     libGameMain.GetSymbol("_ZN4Sexy11SOUND_BOINGE", Sexy::SOUND_BOING);

@@ -1178,6 +1178,15 @@ void Plant::Die_Origin() {
         }
     }
 
+    if (IsOnBoard() && mApp->IsVSMode()) {
+        bool isSunFlower = (mSeedType == SEED_SUNFLOWER) || (mSeedType == SEED_TWINSUNFLOWER);
+        if (isSunFlower && (Challenge::gVSResourseDropMode == 2 || Challenge::gVSResourseDropMode == 3) && Challenge::gVSResourceDropCount > 0) {
+            for (int sunDropCount = 0; sunDropCount < Challenge::gVSResourceDropCount; ++sunDropCount) {
+                mBoard->AddCoin(mX, mY, CoinType::COIN_SUN, CoinMotion::COIN_MOTION_FROM_PLANT);
+            }
+        }
+    }
+
     mDead = true;
     RemoveEffects();
 
@@ -1195,6 +1204,10 @@ void Plant::Die_Origin() {
             Reanimation *aPotReanim = mApp->ReanimationGet(aFlowerPot->mBodyReanimID);
             aPotReanim->SetAnimRate(RandRangeFloat(10.0f, 15.0f));
         }
+    }
+
+    if (mApp->mPlayerInfo) {
+        mApp->mPlayerInfo->mGameStats.ChangeMiscStat(GameStats::PLANTS_KILLED, 1);
     }
 }
 

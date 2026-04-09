@@ -28,8 +28,8 @@
 
 class Reanimation;
 
-struct GameStats {
-
+class GameStats {
+public:
     enum MiscStat {
         ZOMBIES_KILLED = 0,
         PLANTS_KILLED = 1,
@@ -48,6 +48,8 @@ struct GameStats {
     float mSurvivalCompletion; // 35
     float mMiniGameCompletion; // 36
     float mPuzzleCompletion;   // 37
+
+    int ChangeMiscStat(MiscStat theMiscStat, int theChangeIndex);
 }; // 大小38个整数
 
 struct LeaderboardReanimations {
