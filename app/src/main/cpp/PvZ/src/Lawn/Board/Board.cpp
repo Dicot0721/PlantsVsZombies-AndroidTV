@@ -63,6 +63,13 @@
 using namespace Sexy;
 using IdMap = std::unordered_map<uint16_t, uint16_t>;
 
+namespace {
+IdMap serverPlantIDMap;
+IdMap serverZombieIDMap;
+IdMap serverCoinIDMap;
+IdMap serverGridItemIDMap;
+} // namespace
+
 void Board::_constructor(LawnApp *theApp) {
     old_Board_Board(this, theApp);
 
@@ -102,6 +109,12 @@ void Board::_constructor(LawnApp *theApp) {
 
     if (gIsVSShuffleMode) {
         gOpeningEncounter = new OpeningEncounter();
+    }
+    if (theApp->IsVSMode()) {
+        serverPlantIDMap.clear();
+        serverZombieIDMap.clear();
+        serverCoinIDMap.clear();
+        serverGridItemIDMap.clear();
     }
 }
 
@@ -1364,12 +1377,6 @@ void Board::processClientEvent(void *buf, ssize_t bufSize) {
     }
 }
 
-namespace {
-IdMap serverPlantIDMap;
-IdMap serverZombieIDMap;
-IdMap serverCoinIDMap;
-IdMap serverGridItemIDMap;
-} // namespace
 
 size_t Board::getServerEventSize(EventType type) {
     switch (type) {
