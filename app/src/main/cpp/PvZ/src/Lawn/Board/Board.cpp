@@ -1394,6 +1394,10 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_COIN_ADD:
         case EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE:
             return sizeof(U8U8U16U16_Event);
+        case EVENT_SERVER_BOARD_GRIDITEM_ADDLADDER:
+            return sizeof(U8U8U16_Event);
+        case EVENT_SERVER_BOARD_GRIDITEM_ADDCRATER:
+            return sizeof(U8U8U16_Event);
 
         case EVENT_SERVER_BOARD_TOUCH_DRAG:
             return sizeof(I16I16_Event);
@@ -1641,6 +1645,16 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 GridItem *gridItem = mGridItems.DataArrayGet(clientGridItemID);
                 gridItem->mLaunchCounter = event1->data2;
             }
+        } break;
+        case EVENT_SERVER_BOARD_GRIDITEM_ADDLADDER: {
+            auto *event1 = reinterpret_cast<U8U8U16_Event *>(event);
+            GridItem *ladder = AddALadder_Origin(event1->data1, event1->data2);
+            serverGridItemIDMap[event1->data3] = uint16_t(mGridItems.DataArrayGetID(ladder));
+        } break;
+        case EVENT_SERVER_BOARD_GRIDITEM_ADDCRATER: {
+            auto *event1 = reinterpret_cast<U8U8U16_Event *>(event);
+            GridItem *crater = AddACrater_Origin(event1->data1, event1->data2);
+            serverGridItemIDMap[event1->data3] = uint16_t(mGridItems.DataArrayGetID(crater));
         } break;
         case EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE: {
             auto *event1 = reinterpret_cast<U8U8U16U16_Event *>(event);
@@ -5638,14 +5652,60 @@ Zombie *Board::GetBossZombie() {
 }
 
 GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
-    GamepadControls *mGamepadControls1 = this->mGamepadControls1;
-    if (mGamepadControls1->mPlayerIndex1 != thePlayerIndex) {
-        mGamepadControls1 = this->mGamepadControls2;
-        if (mGamepadControls1->mPlayerIndex1 != thePlayerIndex)
+    GamepadControls *mGamepadControls = this->mGamepadControls1;
+    if (mGamepadControls->mPlayerIndex1 != thePlayerIndex) {
+        mGamepadControls = this->mGamepadControls2;
+        if (mGamepadControls->mPlayerIndex1 != thePlayerIndex)
             return nullptr;
     }
-
     return mGamepadControls1;
+}
+
+GridItem *Board::AddACrater_Origin(int theGridX, int theGridY) {
+    GridItem *aCrater = mGridItems.DataArrayAlloc();
+    aCrater->mGridX = theGridX;
+    aCrater->mGridY = theGridY;
+    aCrater->mGridItemType = GRIDITEM_CRATER;
+    aCrater->mRenderOrder = 10000 * theGridY + 200001;
+    return aCrater;
+}
+
+GridItem *Board::AddACrater(int theGridX, int theGridY) {
+    if (gTcpConnected) {
+        return nullptr;
+    }
+
+    GridItem *aCrater = AddACrater_Origin(theGridX, theGridY);
+
+    if (gTcpClientSocket >= 0 && mApp->mGameScene == SCENE_PLAYING) {
+        U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDCRATER}, uint8_t(theGridX), uint8_t(theGridY), uint16_t(mGridItems.DataArrayGetID(aCrater))};
+        netplay::PutEvent(event);
+    }
+    return aCrater;
+}
+
+
+GridItem *Board::AddALadder_Origin(int theGridX, int theGridY) {
+    GridItem *aLadder = mGridItems.DataArrayAlloc();
+    aLadder->mGridX = theGridX;
+    aLadder->mGridY = theGridY;
+    aLadder->mGridItemType = GRIDITEM_LADDER;
+    aLadder->mRenderOrder = 10000 * theGridY + 302800;
+    return aLadder;
+}
+
+GridItem *Board::AddALadder(int theGridX, int theGridY) {
+    if (gTcpConnected) {
+        return nullptr;
+    }
+
+    GridItem *aLadder = AddALadder_Origin(theGridX, theGridY);
+
+    if (gTcpClientSocket >= 0 && mApp->mGameScene == SCENE_PLAYING) {
+        U8U8U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDLADDER}, uint8_t(theGridX), uint8_t(theGridY), uint16_t(mGridItems.DataArrayGetID(aLadder))};
+        netplay::PutEvent(event);
+    }
+    return aLadder;
 }
 
 GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {

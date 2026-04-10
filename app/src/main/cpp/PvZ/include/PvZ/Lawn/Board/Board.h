@@ -372,12 +372,12 @@ public:
     Plant *GetPlantsOnLawn(int theGridX, int theGridY, PlantsOnLawn *thePlantOnLawn) { // 检查加农炮用
         return reinterpret_cast<Plant *(*)(Board *, int, int, PlantsOnLawn *)>(Board_GetPlantsOnLawnAddr)(this, theGridX, theGridY, thePlantOnLawn);
     }
-    GridItem *AddALadder(int theGridX, int theGridY) {
-        return reinterpret_cast<GridItem *(*)(Board *, int, int)>(Board_AddALadderAddr)(this, theGridX, theGridY);
-    }
-    GridItem *AddACrater(int theGridX, int theGridY) {
-        return reinterpret_cast<GridItem *(*)(Board *, int, int)>(Board_AddACraterAddr)(this, theGridX, theGridY);
-    }
+    //    GridItem *AddALadder(int theGridX, int theGridY) {
+    //        return reinterpret_cast<GridItem *(*)(Board *, int, int)>(Board_AddALadderAddr)(this, theGridX, theGridY);
+    //    }
+    //    GridItem *AddACrater(int theGridX, int theGridY) {
+    //        return reinterpret_cast<GridItem *(*)(Board *, int, int)>(Board_AddACraterAddr)(this, theGridX, theGridY);
+    //    }
     void ClearCursor(int thePlayerIndex) {
         reinterpret_cast<void (*)(Board *, int)>(Board_ClearCursorAddr)(this, thePlayerIndex);
     }
@@ -602,7 +602,10 @@ public:
     GridItem *AddMPTarget(int theGridX, int theGridY);
     void PlantsWon(GridItem *theGridItem);
     void PlantsWon_Origin(GridItem *theGridItem);
-
+    GridItem *AddALadder(int theGridX, int theGridY);
+    GridItem *AddALadder_Origin(int theGridX, int theGridY);
+    GridItem *AddACrater(int theGridX, int theGridY);
+    GridItem *AddACrater_Origin(int theGridX, int theGridY);
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);
     void MouseDownSecond(int x, int y, int theClickCount);

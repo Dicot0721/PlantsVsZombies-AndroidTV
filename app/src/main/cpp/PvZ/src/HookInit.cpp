@@ -175,6 +175,8 @@ void InitHookFunction() {
     homura::HookFunction(Board_CanAddBobSledMPAddr, &Board::CanAddBobSledMP, nullptr);
     homura::HookFunction(Board_AddMPTargetAddr, &Board::AddMPTarget, nullptr);
     homura::HookFunction(Board_PlantsWonAddr, &Board::PlantsWon, &old_Board_PlantsWon);
+    homura::HookFunction(Board_AddALadderAddr, &Board::AddALadder, nullptr);
+    homura::HookFunction(Board_AddACraterAddr, &Board::AddACrater, nullptr);
 
 
     homura::HookFunction(FixBoardAfterLoadAddr, &FixBoardAfterLoad, &old_FixBoardAfterLoad);
