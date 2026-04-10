@@ -478,6 +478,10 @@ inline void *Zombie_SetupWaterTrackAddr;
 inline void *Zombie_UpdateZombiePoolAddr;
 inline void *Zombie_ApplyAnimRateAddr;
 inline void *Zombie_SummonBackupDancersAddr;
+inline void *Zombie_RemoveButterAddr;
+inline void *Zombie_CheckForPoolAddr;
+inline void *Zombie_CheckForHighGroundAddr;
+inline void *Zombie_UpdateBossAddr;
 
 
 inline void *SeedChooserScreen_UpdateAddr;

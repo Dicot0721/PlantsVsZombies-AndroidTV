@@ -19,11 +19,27 @@
 
 #include "PvZ/Lawn/Board/OpeningEncounter.h"
 
+void OpeningEncounter::OpeningEncounterInitialize(EncounterType theType) {
+    switch (theType) {
+        case EncounterType::ENCOUNTER_SUN_RAIN:
+            mCounter = 1500;
+            break;
+
+        default:
+            break;
+    }
+}
+
 void OpeningEncounter::Update() {
     if (mCounter > 0) {
         mCounter--;
-        if (mCounter <= 0) {
-            mDoEffect = false;
-        }
+
+        UpdateSunRain();
+    }
+}
+
+void OpeningEncounter::UpdateSunRain() {
+    if (mCounter <= 0) {
+        mDoEffect = false;
     }
 }

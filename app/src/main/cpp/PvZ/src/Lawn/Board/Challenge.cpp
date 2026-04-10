@@ -130,7 +130,7 @@ void Challenge::Update() {
             if (mBobSledMPCounter <= 0) {
                 // SD模式雪橇车召唤倒计时缩减至 1/3
                 mBobSledMPCounter = (IsMPSuddenDeath() && *Challenge_gVSSuddenDeathMode_Addr == 1) ? 2000 : 6000;
-                mBoard->AddZombie(ZombieType::ZOMBIE_BOBSLED, -5, true);
+                mBoard->AddZombie(ZombieType::ZOMBIE_BOBSLED, Zombie::ZOMBIE_WAVE_VS, true);
             }
             return;
         }
@@ -445,6 +445,9 @@ void Challenge::StartLevel() {
         if (gOpeningEncounter) {
             if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN) {
                 mBoard->DisplayAdvice("[ADVICE_SUN_RAIN_COMING]", MESSAGE_STYLE_HINT_FAST, ADVICE_NONE);
+            }
+            if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_LITTER_TROUBLE) {
+                mBoard->DisplayAdvice("[ADVICE_LITTER_TROUBLE]", MESSAGE_STYLE_HINT_FAST, ADVICE_NONE);
             }
         }
     }
@@ -816,6 +819,8 @@ void Challenge::DrawWeather(Sexy::Graphics *g) {
     if (mApp->IsStormyNightLevel())
         DrawStormNight(g);
 
-    if (gOpeningEncounter && gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN && gOpeningEncounter->mDoEffect)
-        DrawRain(g);
+    if (gOpeningEncounter) {
+        if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN && gOpeningEncounter->mDoEffect)
+            DrawRain(g);
+    }
 }

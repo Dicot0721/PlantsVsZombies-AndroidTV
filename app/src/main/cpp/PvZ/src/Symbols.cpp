@@ -475,6 +475,10 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN6Zombie16UpdateZombiePoolEv", Zombie_UpdateZombiePoolAddr);
     libGameMain.GetSymbol("_ZN6Zombie13ApplyAnimRateEf", Zombie_ApplyAnimRateAddr);
     libGameMain.GetSymbol("_ZN6Zombie19SummonBackupDancersEv", Zombie_SummonBackupDancersAddr);
+    libGameMain.GetSymbol("_ZN6Zombie12RemoveButterEv", Zombie_RemoveButterAddr);
+    libGameMain.GetSymbol("_ZN6Zombie12CheckForPoolEv", Zombie_CheckForPoolAddr);
+    libGameMain.GetSymbol("_ZN6Zombie18CheckForHighGroundEv", Zombie_CheckForHighGroundAddr);
+    libGameMain.GetSymbol("_ZN6Zombie10UpdateBossEv", Zombie_UpdateBossAddr);
 
 
     libGameMain.GetSymbol("_ZN17SeedChooserScreen6UpdateEv", SeedChooserScreen_UpdateAddr);

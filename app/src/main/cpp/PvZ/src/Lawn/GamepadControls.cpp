@@ -752,15 +752,15 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                     mBoard->DisplayAdviceAgain("[ADVICE_HUGE_WAVE]", MessageStyle::MESSAGE_STYLE_HUGE_WAVE, AdviceType::ADVICE_HUGE_WAVE);
                     mBoard->SpawnZombieWave();
                 } else if (Challenge::IsMPZombieTypeAddInRow(aZombieType)) {
-                    mBoard->AddZombieInRow(aZombieType, aGridY, -5, true);
+                    mBoard->AddZombieInRow(aZombieType, aGridY, Zombie::ZOMBIE_WAVE_VS, true);
                 } else {
                     if (mBoard->mPlantRow[aGridY] == PlantRowType::PLANTROW_POOL) { // 如果是水路则放置在出生点
-                        mBoard->AddZombieInRow(aZombieType, aGridY, -5, true);
+                        mBoard->AddZombieInRow(aZombieType, aGridY, Zombie::ZOMBIE_WAVE_VS, true);
                     } else {
-                        Zombie *aZombie = mBoard->AddZombie(aZombieType, -5, false);
+                        Zombie *aZombie = mBoard->AddZombie(aZombieType, Zombie::ZOMBIE_WAVE_VS, false);
                         if (aZombie) {
                             if (mBoard->StageHasRoof()) {
-                                Zombie *aBungeeZombie = mBoard->AddZombie(ZombieType::ZOMBIE_BUNGEE, -5, false);
+                                Zombie *aBungeeZombie = mBoard->AddZombie(ZombieType::ZOMBIE_BUNGEE, Zombie::ZOMBIE_WAVE_VS, false);
                                 aBungeeZombie->BungeeDropZombie(aZombie, aGridX, aGridY);
                             } else {
                                 aZombie->RiseFromGrave(aGridX, aGridY);

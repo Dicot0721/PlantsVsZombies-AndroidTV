@@ -370,6 +370,7 @@ void InitHookFunction() {
 
     homura::HookFunction(Zombie_UpdateAddr, &Zombie::Update, &old_Zombie_Update);
     homura::HookFunction(Zombie_UpdateActionsAddr, &Zombie::UpdateActions, &old_Zombie_UpdateActions);
+    homura::HookFunction(Zombie_UpdatePlayingAddr, &Zombie::UpdatePlaying, nullptr);
     homura::HookFunction(Zombie_UpdateYetiAddr, &Zombie::UpdateYeti, nullptr);
     homura::HookFunction(Zombie_UpdateZombieFlyerAddr, &Zombie::UpdateZombieFlyer, nullptr);
     homura::HookFunction(Zombie_UpdateZombieImpAddr, &Zombie::UpdateZombieImp, nullptr);

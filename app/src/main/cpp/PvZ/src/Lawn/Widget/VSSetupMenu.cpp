@@ -516,7 +516,7 @@ size_t VSSetupMenu::getServerEventSize(EventType type) {
         case EVENT_VSSETUPMENU_SET_CONTROLLER:
             return sizeof(U8_Event);
         case EVENT_SERVER_ENCOUNTER_PICK:
-            return sizeof(U16U16_Event);
+            return sizeof(U16_Event);
         default:
             return sizeof(BaseEvent);
     }
@@ -599,9 +599,9 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             mApp->mPlayerInfo->mVSBalancePatchMode = eventButtonInit->data4;
         } break;
         case EVENT_SERVER_ENCOUNTER_PICK: {
-            auto *eventEncounterPick = reinterpret_cast<U16U16_Event *>(event);
-            gOpeningEncounter->mType = EncounterType(eventEncounterPick->data1);
-            gOpeningEncounter->mCounter = eventEncounterPick->data2;
+            auto *eventEncounterPick = reinterpret_cast<U16_Event *>(event);
+            gOpeningEncounter->mType = EncounterType(eventEncounterPick->data);
+            gOpeningEncounter->OpeningEncounterInitialize(gOpeningEncounter->mType);
         } break;
         default:
             break;
@@ -670,11 +670,11 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         gGamepad1ToPlayerIndex = mSides[0];
 
         if (gIsVSShuffleMode) {
-            if (Rand(20) == 0 && !gTcpConnected) {
-                gOpeningEncounter->mType = EncounterType::ENCOUNTER_SUN_RAIN;
-                gOpeningEncounter->mCounter = 1500;
+            if (Rand(10) == 0 && !gTcpConnected) {
+                gOpeningEncounter->mType = EncounterType(Rand(NUM_ENCOUNTER));
+                gOpeningEncounter->OpeningEncounterInitialize(gOpeningEncounter->mType);
                 if (gTcpClientSocket >= 0) {
-                    U16U16_Event event = {{EventType::EVENT_SERVER_ENCOUNTER_PICK}, uint16_t(gOpeningEncounter->mType), uint16_t(gOpeningEncounter->mCounter)};
+                    U16_Event event = {{EventType::EVENT_SERVER_ENCOUNTER_PICK}, uint16_t(gOpeningEncounter->mType)};
                     netplay::PutEvent(event);
                 }
             }

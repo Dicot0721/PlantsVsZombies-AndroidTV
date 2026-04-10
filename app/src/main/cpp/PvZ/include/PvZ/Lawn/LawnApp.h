@@ -165,7 +165,7 @@ public:
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillMainMenuAddr)(this);
     }
     void PlayFoleyPitch(FoleyType theFoleyType, float thePitch) {
-        reinterpret_cast<void (*)(LawnApp *, FoleyType, float)>(LawnApp_PreNewGameAddr)(this, theFoleyType, thePitch);
+        reinterpret_cast<void (*)(LawnApp *, FoleyType, float)>(LawnApp_PlayFoleyPitchAddr)(this, theFoleyType, thePitch);
     }
     void DoCheatDialog() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_DoCheatDialogAddr)(this);

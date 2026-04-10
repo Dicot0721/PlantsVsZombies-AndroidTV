@@ -104,6 +104,7 @@ public:
         ZOMBIE_WAVE_CUTSCENE = -2,
         ZOMBIE_WAVE_UI = -3,
         ZOMBIE_WAVE_WINNER = -4,
+        ZOMBIE_WAVE_VS = -5,
     };
 
     ZombieType mZombieType;                           // 13
@@ -204,9 +205,6 @@ public:
     static void SetupShieldReanims(ZombieType theZombieType, Reanimation *aReanim) {
         reinterpret_cast<void (*)(ZombieType, Reanimation *)>(Zombie_SetupShieldReanimsAddr)(theZombieType, aReanim);
     }
-    void UpdatePlaying() {
-        reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdatePlayingAddr)(this);
-    }
     int TakeFlyingDamage(int theDamage, unsigned int theDamageFlags) {
         return reinterpret_cast<int (*)(Zombie *, int, unsigned int)>(Zombie_TakeFlyingDamageAddr)(this, theDamage, theDamageFlags);
     }
@@ -285,6 +283,18 @@ public:
     void SetupWaterTrack(const char *theTrackName) {
         reinterpret_cast<void (*)(Zombie *, const char *)>(Zombie_SetupWaterTrackAddr)(this, theTrackName);
     }
+    void RemoveButter() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_RemoveButterAddr)(this);
+    }
+    void CheckForPool() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_CheckForPoolAddr)(this);
+    }
+    void CheckForHighGround() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_CheckForHighGroundAddr)(this);
+    }
+    void UpdateBoss() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateBossAddr)(this);
+    }
 
     Zombie() {
         _constructor();
@@ -302,6 +312,7 @@ public:
     void StopZombieSound();
     void Update();
     void UpdateActions();
+    void UpdatePlaying();
     void LandFlyer(unsigned int theDamageFlags);
     void UpdateZombieFlyer();
     void UpdateYeti();

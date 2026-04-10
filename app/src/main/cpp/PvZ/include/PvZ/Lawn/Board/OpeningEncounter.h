@@ -22,6 +22,8 @@
 enum EncounterType {
     ENCOUNTER_NONE = -1,
     ENCOUNTER_SUN_RAIN,
+    ENCOUNTER_LITTER_TROUBLE,
+    NUM_ENCOUNTER,
 };
 
 class OpeningEncounter {
@@ -32,7 +34,9 @@ public:
 
     OpeningEncounter() = default;
 
+    void OpeningEncounterInitialize(EncounterType theType);
     void Update();
+    void UpdateSunRain();
 };
 
 inline OpeningEncounter *gOpeningEncounter;

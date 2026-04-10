@@ -737,8 +737,8 @@ void Board::DrawZenButtons(Sexy::Graphics *g) {
 void Board::DrawGameObjects(Graphics *g) {
     old_Board_DrawGameObjects(this, g);
 
-    if (gOpeningEncounter && gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN && gOpeningEncounter->mDoEffect) {
-        if (mApp->mGameScene == SCENE_PLAYING) {
+    if (gOpeningEncounter && mApp->mGameScene == SCENE_PLAYING) {
+        if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN && gOpeningEncounter->mDoEffect) {
             mChallenge->DrawWeather(g);
         }
     }
@@ -812,8 +812,9 @@ void Board::UpdateSunSpawning() {
         }
 
         // 刷牌模式阳光雨
-        if (gOpeningEncounter && gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN && gOpeningEncounter->mDoEffect) {
-            mSunCountDown /= 10;
+        if (gOpeningEncounter) {
+            if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN && gOpeningEncounter->mDoEffect)
+                mSunCountDown /= 10;
         }
 
         int aSpawnCount = 1;
@@ -1888,7 +1889,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             uint16_t serverDroppedZombieID = eventBungeeDropZombie->data2.u16x2.u16_2;
             uint16_t clientDroppedZombieID;
 
-            Zombie *aBungeeZombie = AddZombie_Origin(ZombieType::ZOMBIE_BUNGEE, -5, false);
+            Zombie *aBungeeZombie = AddZombie_Origin(ZombieType::ZOMBIE_BUNGEE, Zombie::ZOMBIE_WAVE_VS, false);
             serverZombieIDMap[serverBungeeZombieID] = uint16_t(mZombies.DataArrayGetID(aBungeeZombie));
 
             if (homura::FindInMap(serverZombieIDMap, serverDroppedZombieID, clientDroppedZombieID)) {
@@ -5865,6 +5866,9 @@ void Board::DrawLevel(Graphics *g) {
             pvzstl::string aLevelStr;
             if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN) {
                 aLevelStr = "[SUN_RAIN]";
+            }
+            if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_LITTER_TROUBLE) {
+                aLevelStr = "[LITTLE_TROUBLE]";
             }
             int aPosX = 593;
             int aPosY = 595;

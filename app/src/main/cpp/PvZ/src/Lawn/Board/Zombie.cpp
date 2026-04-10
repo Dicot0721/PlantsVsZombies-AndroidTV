@@ -23,6 +23,7 @@
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/GridItem.h"
+#include "PvZ/Lawn/Board/OpeningEncounter.h"
 #include "PvZ/Lawn/Board/Plant.h"
 #include "PvZ/Lawn/Board/Projectile.h"
 #include "PvZ/Lawn/LawnApp.h"
@@ -194,6 +195,14 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
         default:
             break;
     }
+
+    if (gOpeningEncounter) {
+        if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_LITTER_TROUBLE && IsOnBoard()) {
+            mScaleZombie = 0.5f;
+            UpdateAnimSpeed();
+        }
+    }
+
     mBodyMaxHealth = mBodyHealth;
     mHelmMaxHealth = mHelmHealth;
     mShieldMaxHealth = mShieldHealth;
@@ -278,6 +287,93 @@ void Zombie::UpdateActions() {
     old_Zombie_UpdateActions(this);
 
     // UpdateZombieType类函数在此处添加
+}
+
+void Zombie::UpdatePlaying() {
+    mGroanCounter--;
+    int aZombiesCount = mBoard->mZombies.mSize;
+    if (mGroanCounter == 0 && Rand(aZombiesCount) == 0 && mHasHead && mZombieType != ZombieType::ZOMBIE_BOSS && !mBoard->HasLevelAwardDropped()) {
+        float aPitch = 0.0f;
+        if (mApp->IsLittleTroubleLevel()) {
+            aPitch = RandRangeFloat(40.0f, 50.0f);
+        }
+        if (gOpeningEncounter && gOpeningEncounter->mType == EncounterType::ENCOUNTER_LITTER_TROUBLE) {
+            aPitch = RandRangeFloat(40.0f, 50.0f);
+        }
+
+        if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR) {
+            mApp->PlayFoley(FoleyType::FOLEY_LOW_GROAN);
+        } else if (mVariant) {
+            mApp->PlayFoleyPitch(FoleyType::FOLEY_BRAINS, aPitch);
+        } else if (mApp->mSukhbirMode) {
+            mApp->PlayFoleyPitch(FoleyType::FOLEY_SUKHBIR, aPitch);
+        } else {
+            mApp->PlayFoleyPitch(FoleyType::FOLEY_GROAN, aPitch);
+        }
+
+        mGroanCounter = Rand(1000) + 500;
+    }
+
+    if (mIceTrapCounter > 0) {
+        mIceTrapCounter--;
+        if (mIceTrapCounter == 0) {
+            RemoveIceTrap();
+            AddAttachedParticle(75, 106, ParticleEffect::PARTICLE_ICE_TRAP_RELEASE);
+        }
+    }
+    if (mChilledCounter > 0) {
+        mChilledCounter--;
+        if (mChilledCounter == 0) {
+            UpdateAnimSpeed();
+        }
+    }
+    if (mButteredCounter > 0) {
+        mButteredCounter--;
+        if (mButteredCounter == 0) {
+            RemoveButter();
+        }
+    }
+
+    if (mZombiePhase == ZombiePhase::PHASE_RISING_FROM_GRAVE) {
+        UpdateZombieRiseFromGrave();
+        return;
+    }
+
+    if (!IsImmobilizied()) {
+        UpdateActions();
+        UpdateZombiePosition();
+        CheckIfPreyCaught();
+        CheckForPool();
+        CheckForHighGround();
+        CheckForBoardEdge();
+    }
+
+    if (mZombieType == ZombieType::ZOMBIE_BOSS) {
+        UpdateBoss();
+    }
+
+    if (!IsDeadOrDying() && mFromWave != Zombie::ZOMBIE_WAVE_WINNER) {
+        bool isDying = !mHasHead;
+        if (mZombieType == ZombieType::ZOMBIE_ZAMBONI || mZombieType == ZombieType::ZOMBIE_CATAPULT) {
+            if (mBodyHealth < 200) {
+                isDying = true;
+            }
+        }
+
+        if (isDying) {
+            int aDamage = 1;
+            if (mZombieType == ZombieType::ZOMBIE_YETI) {
+                aDamage = 10;
+            }
+            if (mBodyMaxHealth >= 500) {
+                aDamage = 3;
+            }
+
+            if (Rand(5) == 0) {
+                TakeDamage(aDamage, 9U);
+            }
+        }
+    }
 }
 
 void Zombie::LandFlyer(unsigned int theDamageFlags) {
@@ -3101,8 +3197,10 @@ void Zombie::UpdateZombieWalking() {
             aSpeed *= 0.2f;
         }
 
-        if (IsWalkingBackwards() || mZombiePhase == ZombiePhase::PHASE_DANCER_DANCING_IN) {
+        if (IsWalkingBackwards()) {
             mPosX += aSpeed;
+        } else if (mZombiePhase == ZombiePhase::PHASE_DANCER_DANCING_IN) {
+            mPosX += aSpeed / mScaleZombie; // 修复舞王缩小后登场位置靠后
         } else {
             mPosX -= aSpeed;
         }
