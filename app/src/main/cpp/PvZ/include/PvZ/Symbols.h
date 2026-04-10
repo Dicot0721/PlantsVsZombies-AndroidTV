@@ -25,6 +25,7 @@
 
 namespace Sexy {
 class Image;
+class MemoryImage;
 class Font;
 class SexyAppBase;
 } // namespace Sexy
@@ -1301,7 +1302,7 @@ inline Sexy::Image **Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
 inline Sexy::Image **Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
 
 namespace Sexy {
-inline Image **IMAGE_BLANK;
+inline MemoryImage **IMAGE_BLANK;
 inline Image **IMAGE_SEEDCHOOSER_IMITATERADDON;
 inline Image **IMAGE_SEEDPACKETSILHOUETTE;
 inline Image **IMAGE_SEED_SELECTOR;

@@ -127,6 +127,8 @@ void LawnApp::LoadAddonImages() {
     //    addonImages.VSRoof = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
     //    addonImages.VSRoofNight = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
 
+    (*IMAGE_BLANK)->ClearRect({0, 0, (*IMAGE_BLANK)->mWidth, (*IMAGE_BLANK)->mHeight}); // 手动把IMAGE_BLANK清空
+
     int addonImagesNum = (sizeof(AddonImages) / sizeof(Sexy::Image *));
     mCompletedLoadingThreadTasks += 9 * addonImagesNum;
 
