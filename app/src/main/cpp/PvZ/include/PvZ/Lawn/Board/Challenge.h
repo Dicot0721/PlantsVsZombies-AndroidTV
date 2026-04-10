@@ -61,8 +61,8 @@ struct BeghouledBoardState {
 
 class Challenge {
 public:
-    static inline int gVSResourseDropMode = *Challenge_gVSResourceDropCountAddr;
-    static inline int gVSResourceDropCount = *Challenge_gVSResourceDropCountAddr;
+    static inline int &gVSResourseDropMode = *Challenge_gVSResourseDropModeAddr;   // 常为0
+    static inline int &gVSResourceDropCount = *Challenge_gVSResourceDropCountAddr; // 常为4
 
     int *vTable;                                            // 0
     int unk1[3];                                            // 1 ~ 3
