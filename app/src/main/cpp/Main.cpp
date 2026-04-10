@@ -52,7 +52,7 @@ static std::string JStringToString(JNIEnv *env, jstring str) {
  *
  * Java 层已指定模块加载顺序: 先 libGameMain.so, 后 libHomura.so.
  */
-[[gnu::constructor]] static void lib_main() {
+[[gnu::constructor(101)]] static void LibMain() {
     homura::RegisterExceptionHandler();
     homura::RegisterAccessViolationHandler();
 
