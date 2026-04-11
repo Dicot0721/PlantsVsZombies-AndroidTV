@@ -802,7 +802,8 @@ bool Challenge::IsMPZombieTypeAddInRow(ZombieType theZombieType) {
 }
 
 bool Challenge::IsMPZombieTypeCanGoInPool(ZombieType theZombieType) {
-    if (theZombieType == ZombieType::ZOMBIE_SNORKEL || theZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER)
+    if (theZombieType == ZombieType::ZOMBIE_SNORKEL || theZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER || theZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX
+        || theZombieType == ZombieType::ZOMBIE_BALLOON)
         return true;
 
     if (IsMPZombieTypeAddInRow(theZombieType))

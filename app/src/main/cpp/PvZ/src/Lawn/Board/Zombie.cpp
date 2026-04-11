@@ -113,10 +113,11 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
 
     // 为其余位于水路的僵尸添加鸭子救生圈
     if ((mBoard && mBoard->mPlantRow[mRow] == PlantRowType::PLANTROW_POOL)) {
-        if (GetZombieDefinition(theType).mReanimationType == REANIM_ZOMBIE) // 普通僵尸类不绘制
+        // 普通僵尸类不绘制
+        if (GetZombieDefinition(theType).mReanimationType == REANIM_ZOMBIE)
             return;
-
-        if (mZombieType == ZombieType::ZOMBIE_SNORKEL || mZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER) // 水生僵尸不绘制
+        // 潜水僵尸、海豚僵尸、气球僵尸不绘制
+        if (mZombieType == ZombieType::ZOMBIE_SNORKEL || mZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER || mZombieType == ZombieType::ZOMBIE_BALLOON)
             return;
 
         int offsetX = 20;
