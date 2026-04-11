@@ -3017,6 +3017,15 @@ void Board::InitLawnMowers() {
         return;
     }
 
+    // 在屋顶对战时，固定使用屋顶小推车
+    if (mApp->mGameMode == GAMEMODE_MP_VS && StageHasRoof()) {
+        bool tmp = mApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_ROOF_CLEANER];
+        mApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_ROOF_CLEANER] = true;
+        old_Board_InitLawnMowers(this);
+        mApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_ROOF_CLEANER] = tmp;
+        return;
+    }
+
     old_Board_InitLawnMowers(this);
 }
 
