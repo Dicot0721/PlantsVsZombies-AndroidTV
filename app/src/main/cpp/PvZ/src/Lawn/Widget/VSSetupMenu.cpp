@@ -37,7 +37,7 @@ using namespace Sexy;
 
 void VSSetupMenu::_constructor() {
     old_VSSetupMenu_Constructor(this);
-    msNextFirstPick = VSPickTurn::VS_PICK_TURN_ZOMBIE;
+    msNextFirstPick = VSSide::VS_SIDE_ZOMBIE;
 
     // 拓展卡槽,禁选模式 etc.
     mAddonWidget = new VSSetupAddonWidget(this);

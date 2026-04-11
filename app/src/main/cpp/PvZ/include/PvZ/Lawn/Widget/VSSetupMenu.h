@@ -33,11 +33,6 @@ enum VSSetupMode {
     VS_SETUP_MODE_RANDOM_BATTLE = 2, // 随机战场
 };
 
-enum VSPickTurn {
-    VS_PICK_TURN_PLANT = 0,
-    VS_PICK_TURN_ZOMBIE = 1,
-};
-
 enum VSSide {
     VS_SIDE_NONE = -1,  // 未分配阵营
     VS_SIDE_PLANT = 0,  // 植物方
@@ -89,7 +84,7 @@ public:
         {SEED_ZOMBIE_TRASHCAN, SEED_ZOMBIE_PAIL, SEED_ZOMBIE_DANCER, SEED_ZOMBIE_POLEVAULTER, SEED_ZOMBIE_FOOTBALL, SEED_ZOMBIE_BUNGEE, SEED_ZOMBIE_POGO, SEED_NONE},
         {SEED_ZOMBONI, SEED_ZOMBIE_CATAPULT, SEED_ZOMBIE_GARGANTUAR, SEED_ZOMBIE_FLAG, SEED_ZOMBIE_JACK_IN_THE_BOX, SEED_ZOMBIE_DIGGER, SEED_NONE, SEED_PEASHOOTER},
     };
-    static inline VSPickTurn msNextFirstPick;
+    static inline VSSide msNextFirstPick;
 
     int mInt70;                   // 70
     int mInt71;                   // 71
@@ -99,7 +94,7 @@ public:
     int mControllerIndex[2];      // 75  // 0:手柄1, 1:手柄2
     VSSide mSides[2];             // 77
     int unkInt79;                 // 79
-    VSPickTurn mSeedPickTurn;     // 80
+    VSSide mSeedPickTurn;         // 80
     int mChooserAnimateUpdateCnt; // 81
     VSSetupMode mSetupMode;       // 82
     int unkInt83[85];             // 83 ~ 167

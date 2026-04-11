@@ -63,7 +63,9 @@ public:
     int mMotionTrailCount;                   // 61
     bool unkBool;                            // 62 * 4
     bool unkBool1;                           // 62 * 4 + 1
-    int unkMems[3];                          // 63 ~ 65
+    int unkMems;                             // 63
+    int mSummonCount;                        // 64
+    int mMoundLevel;                         // 65
     int mLaunchCounter;                      // 66
     int mLaunchRate;                         // 67
     int mJustGotShotCounter;                 // 68

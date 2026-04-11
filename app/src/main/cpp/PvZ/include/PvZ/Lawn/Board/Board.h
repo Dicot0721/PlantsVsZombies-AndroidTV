@@ -594,6 +594,7 @@ public:
     Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion);
     bool TakeDeathMoney(int theAmount);
     GridItem *AddAGraveStone(int theGridX, int theGridY);
+    GridItem *AddAMound(int theGridX, int theGridY, int theUnkParameter);
     bool TakeSunMoney(int theAmount, int thePlayer);
     void ShuffleButtonDown(SeedPacket *theSeedPacket);
     bool CanAddGraveStoneAt(int theGridX, int theGridY);

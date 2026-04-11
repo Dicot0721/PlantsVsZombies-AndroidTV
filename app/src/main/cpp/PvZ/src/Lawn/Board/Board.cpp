@@ -5749,6 +5749,17 @@ GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {
     return aGraveStone;
 }
 
+GridItem *Board::AddAMound(int theGridX, int theGridY, int theUnkParameter) {
+    GridItem *aMound = mGridItems.DataArrayAlloc();
+    aMound->unkMems = theUnkParameter;
+    aMound->mGridX = theGridX;
+    aMound->mGridY = theGridY;
+    aMound->mGridItemType = GridItemType::GRIDITEM_MP_BURIAL_MOUND;
+    aMound->mGridItemCounter = -500;
+    aMound->mRenderOrder = 10000 * theGridY + 200001;
+    return aMound;
+}
+
 bool Board::TakeSunMoney(int theAmount, int thePlayer) {
     bool result = old_Board_TakeSunMoney(this, theAmount, thePlayer);
     if (gTcpClientSocket >= 0) {
