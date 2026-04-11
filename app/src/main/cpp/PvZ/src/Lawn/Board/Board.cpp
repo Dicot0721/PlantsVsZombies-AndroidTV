@@ -1672,6 +1672,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             auto *event1 = reinterpret_cast<U8U8U16_Event *>(event);
             GridItem *crater = AddACrater_Origin(event1->data1, event1->data2);
             serverGridItemIDMap[event1->data3] = uint16_t(mGridItems.DataArrayGetID(crater));
+            crater->mGridItemCounter = 18000;
         } break;
         case EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE: {
             auto *event1 = reinterpret_cast<U8U8U16U16_Event *>(event);

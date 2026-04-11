@@ -666,7 +666,10 @@ void Plant::DoSpecial_Origin() {
             KillAllPlantsNearDoom();
 
             mApp->AddTodParticle(aPosX, aPosY, (int)RenderLayer::RENDER_LAYER_TOP, ParticleEffect::PARTICLE_DOOM);
-            mBoard->AddACrater(mPlantCol, mRow)->mGridItemCounter = 18000;
+            GridItem *crater = mBoard->AddACrater(mPlantCol, mRow);
+            if (crater) {
+                crater->mGridItemCounter = 18000;
+            }
             mBoard->ShakeBoard(3, -4);
 
             Die();
