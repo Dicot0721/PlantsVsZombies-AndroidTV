@@ -224,8 +224,13 @@ bool SeedChooserScreen::SeedNotAllowedToPick(SeedType theSeedType) {
                 return true;
             }
         }
-        if (mBoard->StageHasRoof() && theSeedType == SeedType::SEED_FLOWERPOT) {
-            return false;
+        if (mBoard->StageHasRoof()) {
+            if (theSeedType == SeedType::SEED_FLOWERPOT) {
+                return false;
+            }
+            if (theSeedType == SeedType::SEED_ZOMBIE_DANCER || theSeedType == SeedType::SEED_ZOMBIE_DIGGER) {
+                return true;
+            }
         }
         if (addonWidget->mExtraSeedsMode && theSeedType == SeedType::SEED_BLOVER) {
             return false;

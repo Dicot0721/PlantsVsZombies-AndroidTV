@@ -479,6 +479,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN6Zombie12CheckForPoolEv", Zombie_CheckForPoolAddr);
     libGameMain.GetSymbol("_ZN6Zombie18CheckForHighGroundEv", Zombie_CheckForHighGroundAddr);
     libGameMain.GetSymbol("_ZN6Zombie10UpdateBossEv", Zombie_UpdateBossAddr);
+    libGameMain.GetSymbol("_ZN6Zombie16UpdateZombiePogoEv", Zombie_UpdateZombiePogoAddr);
+    libGameMain.GetSymbol("_ZN6Zombie9PogoBreakEj", Zombie_PogoBreakAddr);
 
 
     libGameMain.GetSymbol("_ZN17SeedChooserScreen6UpdateEv", SeedChooserScreen_UpdateAddr);

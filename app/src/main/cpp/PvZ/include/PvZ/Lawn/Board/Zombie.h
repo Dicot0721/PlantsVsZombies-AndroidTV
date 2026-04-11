@@ -295,6 +295,9 @@ public:
     void UpdateBoss() {
         reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateBossAddr)(this);
     }
+    void PogoBreak(unsigned int theDamageFlags) {
+        reinterpret_cast<void (*)(Zombie *, unsigned int)>(Zombie_PogoBreakAddr)(this, theDamageFlags);
+    }
 
     Zombie() {
         _constructor();
@@ -369,6 +372,7 @@ public:
     void SetZombatarReanim();
     bool IsImmobilizied();
     bool IsBouncingPogo();
+    void UpdateZombiePogo();
     bool IsFlying();
     int GetBobsledPosition();
     bool IsBobsledTeamWithSled();

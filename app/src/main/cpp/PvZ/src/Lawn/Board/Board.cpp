@@ -5766,7 +5766,7 @@ GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {
         aReanim->AssignRenderGroupToPrefix("chunk", true);
         aReanim->AssignRenderGroupToPrefix("Layer", true);
         aReanim->AssignRenderGroupToPrefix("bit", true);
-        aReanim->AssignRenderGroupToTrack("Stone dirt", -1);
+        aReanim->AssignRenderGroupToTrack("Stone dirt", RENDER_GROUP_HIDDEN);
         aGraveStone->mGridItemReanimID = mApp->ReanimationGetID(aReanim);
         aGraveStone->AddGraveStoneParticles();
     }

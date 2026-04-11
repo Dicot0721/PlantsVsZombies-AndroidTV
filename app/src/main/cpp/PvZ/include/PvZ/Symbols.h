@@ -482,6 +482,8 @@ inline void *Zombie_RemoveButterAddr;
 inline void *Zombie_CheckForPoolAddr;
 inline void *Zombie_CheckForHighGroundAddr;
 inline void *Zombie_UpdateBossAddr;
+inline void *Zombie_UpdateZombiePogoAddr;
+inline void *Zombie_PogoBreakAddr;
 
 
 inline void *SeedChooserScreen_UpdateAddr;

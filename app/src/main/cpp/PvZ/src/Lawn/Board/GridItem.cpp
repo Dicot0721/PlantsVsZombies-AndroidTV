@@ -190,6 +190,12 @@ void GridItem::Update() {
             }
             mBoard->AddCoin(mBoard->GridToPixelX(mGridX, mGridY), mBoard->GridToPixelY(mGridX, mGridY), CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_FROM_GRAVE);
         }
+
+        // 屋顶墓碑落地时播放砸地音效
+        if (mBoard->StageHasRoof() && mGridItemCounter == 50) {
+            mApp->PlayFoley(FoleyType::FOLEY_THUMP);
+            ;
+        }
         return;
     }
 
@@ -383,7 +389,7 @@ void GridItem::DrawGraveStone(Graphics *g) {
             g->ClearClipRect();
 
             bool isPlantRowPool = mBoard->mPlantRow[mGridY] == PlantRowType::PLANTROW_POOL;
-            Image *bottomImage = isPlantRowPool ? addonImages.zombie_duckytube_inwater : *IMAGE_VS_STONE_DIRT;
+            Image *bottomImage = isPlantRowPool ? addonImages.zombie_duckytube_inwater : *IMAGE_VS_STONE_DIRT; // 泳池绘制鸭子救生圈，草坪绘制泥土
             int offsetX = 0, offsetY = 0;
             if (isPlantRowPool) {
                 offsetX = -20;
@@ -391,8 +397,8 @@ void GridItem::DrawGraveStone(Graphics *g) {
             }
 
             Rect aRectDirt(0, 0, bottomImage->mWidth, TodAnimateCurve(500, 1000, aHeightPosition, bottomImage->mHeight, 0, TodCurves::CURVE_EASE_IN_OUT));
-            if (!stageHasRoof) {                                                                     // 屋顶不绘制墓碑底部贴图
-                g->DrawImage(bottomImage, x + offsetX, y - aVisibleHeightDirt + offsetY, aRectDirt); // 泳池绘制鸭子救生圈，草坪绘制泥土
+            if (!stageHasRoof) { // 屋顶不绘制墓碑底部贴图
+                g->DrawImage(bottomImage, x + offsetX, y - aVisibleHeightDirt + offsetY, aRectDirt);
             }
             aReanim->DrawRenderGroup(g, 1);
             g->mClipRect = Rect(g->mClipRect.mX, g->mClipRect.mY, g->mClipRect.mWidth, g->mClipRect.mHeight);

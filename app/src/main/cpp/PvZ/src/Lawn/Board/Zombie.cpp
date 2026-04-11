@@ -116,8 +116,8 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
         // 普通僵尸类不绘制
         if (GetZombieDefinition(theType).mReanimationType == REANIM_ZOMBIE)
             return;
-        // 潜水僵尸、海豚僵尸、气球僵尸不绘制
-        if (mZombieType == ZombieType::ZOMBIE_SNORKEL || mZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER || mZombieType == ZombieType::ZOMBIE_BALLOON)
+        // 潜水僵尸、海豚僵尸、气球僵尸、蹦极僵尸不绘制
+        if (mZombieType == ZombieType::ZOMBIE_SNORKEL || mZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER || mZombieType == ZombieType::ZOMBIE_BALLOON || mZombieType == ZombieType::ZOMBIE_BUNGEE)
             return;
 
         int offsetX = 20;
@@ -1693,6 +1693,79 @@ bool Zombie::IsBouncingPogo() {
     return mZombiePhase >= ZombiePhase::PHASE_POGO_BOUNCING && mZombiePhase <= ZombiePhase::PHASE_POGO_FORWARD_BOUNCE_7;
 }
 
+void Zombie::UpdateZombiePogo() {
+    if (IsDeadOrDying() || IsImmobilizied() || !IsBouncingPogo() || mZombieHeight == ZombieHeight::HEIGHT_IN_TO_CHIMNEY
+        || mZombieHeight == ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED /* 被蹦极空投时不更新 */)
+        return;
+
+    float aHeight = 40.0f;
+    if (mZombiePhase >= ZombiePhase::PHASE_POGO_HIGH_BOUNCE_1 && mZombiePhase <= ZombiePhase::PHASE_POGO_HIGH_BOUNCE_6) {
+        aHeight = 50.0f + 20.0f * (mZombiePhase - ZombiePhase::PHASE_POGO_HIGH_BOUNCE_1);
+    } else if (mZombiePhase == ZombiePhase::PHASE_POGO_FORWARD_BOUNCE_2) {
+        aHeight = 90.0f;
+    } else if (mZombiePhase == ZombiePhase::PHASE_POGO_FORWARD_BOUNCE_7) {
+        aHeight = 170.0f;
+    }
+    mAltitude = TodAnimateCurveFloat(POGO_BOUNCE_TIME, 0, mPhaseCounter, 9.0f, aHeight + 9.0f, TodCurves::CURVE_BOUNCE_SLOW_MIDDLE);
+    mFrame = ClampInt(3 - mAltitude / 3, 0, 3);
+
+    if (mPhaseCounter == 7) {
+        Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+        aBodyReanim->mAnimTime = 0.0f;
+        aBodyReanim->mLoopType = ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD;
+    }
+    if (IsOnBoard() && mPhaseCounter == 5) {
+        mApp->PlayFoley(FoleyType::FOLEY_POGO_ZOMBIE);
+    }
+
+    if (mZombieHeight == ZombieHeight::HEIGHT_UP_TO_HIGH_GROUND) {
+        mAltitude += HIGH_GROUND_HEIGHT;
+        mZombieHeight = ZombieHeight::HEIGHT_ZOMBIE_NORMAL;
+    } else if (mZombieHeight == ZombieHeight::HEIGHT_DOWN_OFF_HIGH_GROUND) {
+        mOnHighGround = false;
+        mZombieHeight = ZombieHeight::HEIGHT_ZOMBIE_NORMAL;
+    } else if (mOnHighGround) {
+        mAltitude += HIGH_GROUND_HEIGHT;
+    }
+
+    if (mZombiePhase == ZombiePhase::PHASE_POGO_FORWARD_BOUNCE_2 && mPhaseCounter == 70) {
+        Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
+        if (aPlant && aPlant->mSeedType == SeedType::SEED_TALLNUT) {
+            mApp->PlayFoley(FoleyType::FOLEY_BONK);
+            mApp->AddTodParticle(aPlant->mX + 60, aPlant->mY - 20, mRenderOrder + 1, ParticleEffect::PARTICLE_TALL_NUT_BLOCK);
+
+            mShieldType = ShieldType::SHIELDTYPE_NONE;
+            PogoBreak(0U);
+            return;
+        }
+    }
+
+    if (mPhaseCounter != 0)
+        return;
+
+    Plant *aPlant = nullptr;
+    if (IsOnBoard()) {
+        aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_VAULT);
+    }
+    if (aPlant == nullptr) {
+        mZombiePhase = ZombiePhase::PHASE_POGO_BOUNCING;
+
+        PickRandomSpeed();
+        mPhaseCounter = POGO_BOUNCE_TIME;
+        return;
+    }
+
+    if (mZombiePhase == ZombiePhase::PHASE_POGO_HIGH_BOUNCE_1) {
+        mZombiePhase = ZombiePhase::PHASE_POGO_FORWARD_BOUNCE_2;
+        mVelX = (mX - aPlant->mX + 60) / (float)POGO_BOUNCE_TIME; // 速度 = 跳跃距离 / 跳跃时间
+        mPhaseCounter = POGO_BOUNCE_TIME;
+    } else {
+        mZombiePhase = ZombiePhase::PHASE_POGO_HIGH_BOUNCE_1;
+        mVelX = 0.0f;
+        mPhaseCounter = POGO_BOUNCE_TIME;
+    }
+}
+
 bool Zombie::IsFlying() {
     return mZombiePhase == ZombiePhase::PHASE_BALLOON_FLYING || mZombiePhase == ZombiePhase::PHASE_BALLOON_POPPING;
 }
@@ -2662,6 +2735,8 @@ void Zombie::StartWalkAnim(int theBlendTime) {
         PlayZombieReanim("anim_swim", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
     } else if ((mZombieType == ZombieType::ZOMBIE_NORMAL || mZombieType == ZombieType::ZOMBIE_TRAFFIC_CONE || mZombieType == ZombieType::ZOMBIE_PAIL) && mBoard->mDanceMode) {
         PlayZombieReanim("anim_dance", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
+    } else if (mZombiePhase == ZombiePhase::PHASE_POGO_BOUNCING) {
+        PlayZombieReanim("anim_pogo", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 40.0f);
     } else {
         int aWalkAnimVariant = Rand(2);
         if (mZombieType == ZombieType::ZOMBIE_PEA_HEAD) {
@@ -2853,6 +2928,10 @@ void Zombie::BungeeDropZombie_Origin(Zombie *theDroppedZombie, int theGridX, int
     theDroppedZombie->mZombieHeight = ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED;
     theDroppedZombie->PlayZombieReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 0.0f);
     theDroppedZombie->mRenderOrder = mRenderOrder + 1;
+    // 修复蹦蹦僵尸被蹦极空投时动画不正确
+    if (theDroppedZombie->mZombieType == ZombieType::ZOMBIE_POGO) {
+        theDroppedZombie->PlayZombieReanim("anim_pogo", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 40.0f);
+    }
 }
 
 void Zombie::PickRandomSpeed() {
