@@ -29,7 +29,6 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/ReanimationLawn.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
-#include "PvZ/MagicAddr.h"
 #include "PvZ/Misc.h"
 #include "PvZ/NetPlay.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"

@@ -97,6 +97,8 @@ inline ZombatarWidget *gMainMenuZombatarWidget;
 inline int xx, yy, xw, yh;
 inline int xx1, yy1, xw1, yh1;
 
+inline bool enableNewOptionsDialog = false;
+
 struct AddonImages {
     Sexy::Image *pole_night;
     Sexy::Image *trees_night;

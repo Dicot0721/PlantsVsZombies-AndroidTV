@@ -20,7 +20,7 @@
 #include "PvZ/Symbols.h"
 #include "Homura/SharedLibUtils.h"
 #include "PvZ/GlobalVariable.h"
-#include "PvZ/MagicAddr.h"
+#include "PvZ/MagicNumbers.h"
 
 bool LoadGameMain() {
     static homura::SharedLibLoader libGameMain{"libGameMain.so"};

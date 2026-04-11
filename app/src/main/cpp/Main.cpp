@@ -31,7 +31,7 @@
 #include "PvZ/Lawn/Widget/SeedChooserScreen.h"
 #include "PvZ/Lawn/Widget/TitleScreen.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
-#include "PvZ/MagicAddr.h"
+#include "PvZ/PatchList.h"
 #include "PvZ/Symbols.h"
 
 #include <jni.h>
@@ -50,9 +50,10 @@ static std::string JStringToString(JNIEnv *env, jstring str) {
 /**
  * @brief Homura 模块的初始化函数.
  *
- * Java 层已指定模块加载顺序: 先 libGameMain.so, 后 libHomura.so.
+ * Java 层已指定模块加载顺序: 先 libGameMain.so, 后 libHomura.so.<br/>
+ * [[gnu::constructor(102)]] -> call after patchlist variables are initialized
  */
-[[gnu::constructor(101)]] static void LibMain() {
+[[gnu::constructor(102)]] static void LibMain() {
     homura::RegisterExceptionHandler();
     homura::RegisterAccessViolationHandler();
 

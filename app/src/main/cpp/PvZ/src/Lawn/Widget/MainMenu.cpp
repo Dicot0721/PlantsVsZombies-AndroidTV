@@ -25,6 +25,7 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
 #include "PvZ/Lawn/Widget/MailScreen.h"
+#include "PvZ/PatchList.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Graphics/MemoryImage.h"
 #include "PvZ/Symbols.h"
@@ -100,7 +101,7 @@ void MainMenu::Update() {
     requestDrawButterInCursor = false;
 
     if (!isPatched) {
-        game_patches::autoPickupSeedPacketDisable.Modify();
+        patchlist::autoPickupSeedPacketDisable.Modify();
         isPatched = true;
     }
 

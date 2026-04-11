@@ -49,6 +49,7 @@
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Misc.h"
 #include "PvZ/NetPlay.h"
+#include "PvZ/PatchList.h"
 #include "PvZ/SexyAppFramework/GamepadApp.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
@@ -61,9 +62,9 @@
 #include <unordered_map>
 
 using namespace Sexy;
-using IdMap = std::unordered_map<uint16_t, uint16_t>;
 
 namespace {
+using IdMap = std::unordered_map<uint16_t, uint16_t>;
 IdMap serverPlantIDMap;
 IdMap serverZombieIDMap;
 IdMap serverCoinIDMap;
@@ -748,7 +749,7 @@ void Board::KeyDown(KeyCode theKey) {
     // 用于切换键盘模式，自动开关砸罐子老虎机种子雨关卡内的"自动拾取植物卡片"功能
     if (theKey >= 37 && theKey <= 40) {
         if (!keyboardMode) {
-            game_patches::autoPickupSeedPacketDisable.Restore();
+            patchlist::autoPickupSeedPacketDisable.Restore();
         }
         keyboardMode = true;
         requestDrawShovelInCursor = false;
@@ -3367,7 +3368,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
     // yy = y;
     // LOGD("%d %d",x,y);
     if (keyboardMode) {
-        game_patches::autoPickupSeedPacketDisable.Modify();
+        patchlist::autoPickupSeedPacketDisable.Modify();
     }
     keyboardMode = false;
     SeedBank *seedBank = mGamepadControls1->GetSeedBank();
@@ -4049,7 +4050,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
     gTouchLastXSecond = x;
     gTouchLastYSecond = y;
     if (keyboardMode) {
-        game_patches::autoPickupSeedPacketDisable.Modify();
+        patchlist::autoPickupSeedPacketDisable.Modify();
     }
     keyboardMode = false;
 
