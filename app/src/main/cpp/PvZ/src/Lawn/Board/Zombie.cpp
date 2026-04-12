@@ -1370,10 +1370,9 @@ bool Zombie::IsZombotany(ZombieType theZombieType) {
 
 bool Zombie::ZombieTypeCanGoInPool(ZombieType theZombieType) {
     // 修复泳池对战的僵尸走水路时不索敌植物
-    LawnApp *lawnApp = *gLawnApp_Addr;
-    if (lawnApp->IsVSMode()) {
+    if ((*gLawnApp_Addr)->IsVSMode()) {
         if (gVSBackground == BackgroundType::BACKGROUND_3_POOL || gVSBackground == BackgroundType::BACKGROUND_4_FOG)
-            return true;
+            return theZombieType != ZombieType::ZOMBIE_BUNGEE; // 蹦极不能落水
     }
 
     return theZombieType == ZombieType::ZOMBIE_NORMAL || theZombieType == ZombieType::ZOMBIE_TRAFFIC_CONE || theZombieType == ZombieType::ZOMBIE_PAIL || theZombieType == ZombieType::ZOMBIE_FLAG
@@ -3534,32 +3533,38 @@ void Zombie::UpdateYuckyFace() {
 }
 
 void Zombie::UpdateZombiePool() {
-    if (mZombieHeight == ZombieHeight::HEIGHT_OUT_OF_POOL) {
-        mAltitude++;
-        if (mZombieType == ZombieType::ZOMBIE_SNORKEL) {
+    switch (mZombieHeight) {
+        case ZombieHeight::HEIGHT_OUT_OF_POOL: {
             mAltitude++;
-        }
+            if (mZombieType == ZombieType::ZOMBIE_SNORKEL) {
+                mAltitude++;
+            }
 
-        if (mAltitude >= 0.0f) {
-            mAltitude = 0.0f;
-            mZombieHeight = ZombieHeight::HEIGHT_ZOMBIE_NORMAL;
-            mInPool = false;
-        }
-    } else if (mZombieHeight == ZombieHeight::HEIGHT_IN_TO_POOL) {
-        mAltitude--;
-        int aDepth = -40 * mScaleZombie;
-        if (mZombieType == ZombieType::ZOMBIE_FOOTBALL) {
-            aDepth = -50 * mScaleZombie;
-        } else if (mZombieType == ZombieType::ZOMBIE_IMP) {
-            aDepth = -30 * mScaleZombie;
-        }
-        if (mAltitude <= aDepth) {
-            mAltitude = aDepth;
-            mZombieHeight = ZombieHeight::HEIGHT_ZOMBIE_NORMAL;
-            StartWalkAnim(0);
-        }
-    } else if (mZombieHeight == ZombieHeight::HEIGHT_DRAGGED_UNDER) {
-        mAltitude--;
+            if (mAltitude >= 0.0f) {
+                mAltitude = 0.0f;
+                mZombieHeight = ZombieHeight::HEIGHT_ZOMBIE_NORMAL;
+                mInPool = false;
+            }
+        } break;
+        case ZombieHeight::HEIGHT_IN_TO_POOL: {
+            mAltitude--;
+            int aDepth = -40 * mScaleZombie;
+            if (mZombieType == ZombieType::ZOMBIE_FOOTBALL) {
+                aDepth = -50 * mScaleZombie;
+            } else if (mZombieType == ZombieType::ZOMBIE_IMP) {
+                aDepth = -30 * mScaleZombie;
+            }
+            if (mAltitude <= aDepth) {
+                mAltitude = aDepth;
+                mZombieHeight = ZombieHeight::HEIGHT_ZOMBIE_NORMAL;
+                StartWalkAnim(0);
+            }
+        } break;
+        case ZombieHeight::HEIGHT_DRAGGED_UNDER:
+            mAltitude--;
+            break;
+        default:
+            break;
     }
 }
 
