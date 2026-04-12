@@ -4,13 +4,6 @@ project(PvZTV)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-string(APPEND CMAKE_CXX_FLAGS
-        " -Wall" # 开启绝大部分警告
-        " -Werror=array-bounds"
-        " -Werror=return-type"
-        " -Werror=unused-result"
-)
-
 if ((NOT CMAKE_BUILD_TYPE STREQUAL "Debug") AND (NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo"))
     set(CMAKE_C_VISIBILITY_PRESET hidden)
     set(CMAKE_CXX_VISIBILITY_PRESET hidden) # 隐藏非 inline 符号
@@ -20,10 +13,17 @@ endif ()
 add_subdirectory(ThirdParty)
 
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
-        "Homura/src/*.cpp"
-        "PvZ/src/*.cpp"
+    "Homura/src/*.cpp"
+    "PvZ/src/*.cpp"
 )
 add_library(Homura SHARED Main.cpp ${SRC_FILES})
+
+target_compile_options(Homura PRIVATE
+    -Wall
+    -Werror=array-bounds
+    -Werror=return-type
+    -Werror=unused-result
+)
 
 target_include_directories(Homura PRIVATE Homura/include PvZ/include)
 
@@ -38,10 +38,10 @@ find_library(GLESv2-lib GLESv2)
 find_library(log-lib log)
 find_library(OpenSLES-lib OpenSLES)
 target_link_libraries(Homura PRIVATE
-        Substrate
-        ${android-lib}
-        ${EGL-lib}
-        ${GLESv2-lib}
-        ${log-lib}
-        ${OpenSLES-lib}
+    Substrate
+    ${android-lib}
+    ${EGL-lib}
+    ${GLESv2-lib}
+    ${log-lib}
+    ${OpenSLES-lib}
 )
