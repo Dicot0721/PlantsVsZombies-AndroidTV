@@ -1375,9 +1375,17 @@ bool Zombie::ZombieTypeCanGoInPool(ZombieType theZombieType) {
             return theZombieType != ZombieType::ZOMBIE_BUNGEE; // 蹦极不能落水
     }
 
-    return theZombieType == ZombieType::ZOMBIE_NORMAL || theZombieType == ZombieType::ZOMBIE_TRAFFIC_CONE || theZombieType == ZombieType::ZOMBIE_PAIL || theZombieType == ZombieType::ZOMBIE_FLAG
-        || theZombieType == ZombieType::ZOMBIE_SNORKEL || theZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER || theZombieType == ZombieType::ZOMBIE_PEA_HEAD
-        || theZombieType == ZombieType::ZOMBIE_WALLNUT_HEAD || theZombieType == ZombieType::ZOMBIE_JALAPENO_HEAD || theZombieType == ZombieType::ZOMBIE_GATLING_HEAD
+    return theZombieType == ZombieType::ZOMBIE_NORMAL        //
+        || theZombieType == ZombieType::ZOMBIE_TRAFFIC_CONE  //
+        || theZombieType == ZombieType::ZOMBIE_PAIL          //
+        || theZombieType == ZombieType::ZOMBIE_FLAG          //
+        || theZombieType == ZombieType::ZOMBIE_BALLOON       //
+        || theZombieType == ZombieType::ZOMBIE_SNORKEL       //
+        || theZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER //
+        || theZombieType == ZombieType::ZOMBIE_PEA_HEAD      //
+        || theZombieType == ZombieType::ZOMBIE_WALLNUT_HEAD  //
+        || theZombieType == ZombieType::ZOMBIE_JALAPENO_HEAD //
+        || theZombieType == ZombieType::ZOMBIE_GATLING_HEAD  //
         || theZombieType == ZombieType::ZOMBIE_TALLNUT_HEAD;
 }
 
