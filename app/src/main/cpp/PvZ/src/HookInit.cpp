@@ -207,6 +207,7 @@ void InitHookFunction() {
     homura::HookFunction(Challenge_UpdateConveyorBeltAddr, &Challenge::UpdateConveyorBelt, &old_Challenge_UpdateConveyorBelt);
     homura::HookFunction(Challenge_MouseDownWhackAZombieAddr, &Challenge::MouseDownWhackAZombie, nullptr);
     homura::HookFunction(Challenge_DrawWeatherAddr, &Challenge::DrawWeather, nullptr);
+    homura::HookFunction(Challenge_UpdateMPGraveStonesAddr, &Challenge::UpdateMPGraveStones, nullptr);
 
 
     homura::HookFunction(ChallengeScreen_AddedToManagerAddr, &ChallengeScreen::AddedToManager, &old_ChallengeScreen_AddedToManager);
@@ -242,8 +243,11 @@ void InitHookFunction() {
 
     homura::HookFunction(GridItem__constructorAddr, &GridItem::_constructor, &old_GridItem_GridItem);
     homura::HookFunction(GridItem_GridItemDieAddr, &GridItem::GridItemDie, &old_GridItem_GridItemDie);
+    homura::HookFunction(GridItem_DrawGridItemAddr, &GridItem::DrawGridItem, &old_GridItem_DrawGridItem);
     homura::HookFunction(GridItem_UpdateAddr, &GridItem::Update, &old_GridItem_Update);
     homura::HookFunction(GridItem_UpdateScaryPotAddr, &GridItem::UpdateScaryPot, &old_GridItem_UpdateScaryPot);
+    homura::HookFunction(GridItem_UpdateBurialMoundAddr, &GridItem::UpdateBurialMound, nullptr);
+    homura::HookFunction(GridItem_GetMoundUpgradeCostAddr, &GridItem::GetMoundUpgradeCost, nullptr);
     homura::HookFunction(GridItem_DrawStinkyAddr, &GridItem::DrawStinky, &old_GridItem_DrawStinky);
     homura::HookFunction(GridItem_DrawSquirrelAddr, &GridItem::DrawSquirrel, nullptr);
     homura::HookFunction(GridItem_DrawScaryPotAddr, &GridItem::DrawScaryPot, nullptr);
@@ -251,6 +255,7 @@ void InitHookFunction() {
     homura::HookFunction(GridItem_DrawGraveStoneAddr, &GridItem::DrawGraveStone, nullptr);
     homura::HookFunction(GridItem_AddGraveStoneParticlesAddr, &GridItem::AddGraveStoneParticles, nullptr);
     //    homura::HookFunction(GridItem_DrawMPTargetAddr, &GridItem::DrawMPTarget, &old_GridItem_DrawMPTarget);
+    homura::HookFunction(GridItem_TakeDamgaeAddr, &GridItem::TakeDamgae, &old_GridItem_TakeDamage);
 
 
     homura::HookFunction(AlmanacDialog_RemovedFromManagerAddr, &AlmanacDialog::RemovedFromManager, &old_AlmanacDialog_RemovedFromManager);
@@ -355,6 +360,7 @@ void InitHookFunction() {
     homura::HookFunction(Projectile_GetProjectileDefAddr, &Projectile::GetProjectileDef, nullptr);
     homura::HookFunction(Projectile_DrawAddr, &Projectile::Draw, &old_Projectile_Draw);
     homura::HookFunction(Projectile_DrawShadowAddr, &Projectile::DrawShadow, &old_Projectile_DrawShadow);
+    homura::HookFunction(Projectile_FindCollisionTargetGridItemAddr, &Projectile::FindCollisionTargetGridItem, nullptr);
 
 
     homura::HookFunction(SeedPacket_UpdateAddr, &SeedPacket::Update, nullptr);

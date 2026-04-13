@@ -72,9 +72,6 @@ public:
     void Die() {
         reinterpret_cast<void (*)(Projectile *)>(Projectile_DieAddr)(this);
     }
-    GridItem *FindCollisionTargetGridItem() {
-        return reinterpret_cast<GridItem *(*)(Projectile *)>(Projectile_FindCollisionTargetGridItemAddr)(this);
-    }
     void DoImpactGridItem(GridItem *theGridItem) {
         return reinterpret_cast<void (*)(Projectile *, GridItem *)>(Projectile_DoImpactGridItemAddr)(this, theGridItem);
     }
@@ -90,6 +87,7 @@ public:
     void DoImpact(Zombie *theZombie);
     void CheckForCollision();
     Zombie *FindCollisionMindControlledTarget();
+    GridItem *FindCollisionTargetGridItem();
     ProjectileDefinition &GetProjectileDef();
     Sexy::Rect GetProjectileRect();
     Plant *FindCollisionTargetPlant();

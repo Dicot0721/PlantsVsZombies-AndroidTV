@@ -105,7 +105,7 @@ ChallengeDefinition gChallengeDefs[200] = {
     //    {GameMode::GAMEMODE_UPSELL, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 0, "[UPSELL]"},
     //    {GameMode::GAMEMODE_INTRO, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 1, "[INTRO]"},
     //    {GameMode::GAMEMODE_MULTI_PLAYER, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 2, ""},
-    //    {GameMode::GAMEMODE_MP_VS_HIDE, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 3, ""},
+    //    {GameMode::GAMEMODE_MP_VS_DEBUG, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 3, ""},
     //    {GameMode::GAMEMODE_MP_VS, 10, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 0, ""},
     //    {GameMode::GAMEMODE_MP_VS_COOP, 18, ChallengePage::CHALLENGE_PAGE_LIMBO, 0, 1, "[COOP]"},
     // 废弃关卡改为对战关卡

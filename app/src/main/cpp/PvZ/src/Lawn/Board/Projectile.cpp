@@ -389,12 +389,11 @@ Zombie *Projectile::FindCollisionMindControlledTarget() {
     Zombie *aBestZombie = nullptr;
     int aMinX = 0;
 
-    Sexy::Rect aProjectileRect = GetProjectileRect();
+    Rect aProjectileRect = GetProjectileRect();
     while (mBoard->IterateZombies(aZombie)) {
         if (!aZombie->mDead && aZombie->mRow == mRow && aZombie->mMindControlled) {
-            Sexy::Rect zombieRect = aZombie->GetZombieRect();
-            int rectOverlap = GetRectOverlap(aProjectileRect, zombieRect);
-            if (rectOverlap >= 0 && (aBestZombie != nullptr || aZombie->mX > aMinX)) {
+            Rect aZombieRect = aZombie->GetZombieRect();
+            if (GetRectOverlap(aProjectileRect, aZombieRect) >= 0 && (aBestZombie || aZombie->mX > aMinX)) {
                 aBestZombie = aZombie;
                 aMinX = aZombie->mX;
             }
@@ -402,6 +401,54 @@ Zombie *Projectile::FindCollisionMindControlledTarget() {
     }
 
     return aBestZombie;
+}
+
+GridItem *Projectile::FindCollisionTargetGridItem() {
+    GridItem *aBestGridItem = nullptr;
+    GridItem *aGridItem = nullptr;
+
+    Rect aProjectileRect = GetProjectileRect();
+    while (mBoard->IterateGridItems(aGridItem)) {
+        if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE || aGridItem->mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
+            if (mRow != aGridItem->mGridY) {
+                continue;
+            }
+
+            int x = mBoard->GridToPixelX(aGridItem->mGridX, mRow);
+            int y = mBoard->GridToPixelY(aGridItem->mGridX, aGridItem->mGridY);
+            int aCelWidth = (*IMAGE_TOMBSTONES)->GetCelWidth();
+            int aCelHeight = (*IMAGE_TOMBSTONES)->GetCelHeight();
+
+            Rect aGraveRect = Rect(x, y, aCelWidth, aCelHeight);
+            if (GetRectOverlap(aProjectileRect, aGraveRect) > 12) {
+                if (!aBestGridItem || aBestGridItem->mGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
+                    aBestGridItem = aGridItem;
+                } else if (aGridItem->mGridX < aBestGridItem->mGridX) {
+                    aBestGridItem = aGridItem;
+                }
+            }
+            continue;
+        } else if (aGridItem->mGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
+            bool findTarget = (!aBestGridItem || aBestGridItem->mGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE);
+            if (findTarget && aGridItem->mVSTargetZombieHealth > 0) {
+                if (mRow == aGridItem->mGridY) {
+                    int x = mBoard->GridToPixelX(aGridItem->mGridX, mRow);
+                    int y = mBoard->GridToPixelY(aGridItem->mGridX, aGridItem->mGridY);
+                    int aPosX = x + mBoard->GridCellWidth(aGridItem->mGridX, aGridItem->mGridY) / 2;
+                    int aCelWidth = (*IMAGE_MP_TARGET)->GetCelWidth();
+                    int aCelHeight = (*IMAGE_MP_TARGET)->GetCelHeight();
+
+                    Rect aTargetRect = Rect(aPosX, y, aCelWidth, aCelHeight);
+                    if (GetRectOverlap(aProjectileRect, aTargetRect) > 12) {
+                        aBestGridItem = aGridItem;
+                    }
+                }
+            }
+            continue;
+        }
+    }
+
+    return aBestGridItem;
 }
 
 void Projectile::CheckForCollision() {
@@ -487,7 +534,7 @@ void Projectile::CheckForCollision() {
             return;
         }
         DoImpact(aZombie);
-    } else if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+    } else if (mApp->IsVSMode()) {
         GridItem *aGridItem = FindCollisionTargetGridItem();
         if (aGridItem) {
             DoImpactGridItem(aGridItem);

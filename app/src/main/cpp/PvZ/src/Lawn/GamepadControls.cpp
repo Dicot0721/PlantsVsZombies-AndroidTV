@@ -693,8 +693,40 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
         return;
     }
 
-    if (mSelectedSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || mSelectedSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)
+    if (mSelectedSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || mSelectedSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
         return;
+    }
+
+    if (mGamepadState == 7 && mSelectedSeedType == SeedType::SEED_ZOMBIE_MOUND) {
+        g->SetColorizeImages(true);
+        Color aColor = Color(255, 255, 255, 125);
+        g->SetColor(aColor);
+
+        Image *aImage = *Sexy::IMAGE_TOMBSTONES;
+        int aCelWidth = aImage->GetCelWidth();
+        int aCelCol = 2;
+        int aGridX = mBoard->PixelToGridXKeepOnBoard(int(mCursorPositionX), int(mCursorPositionY));
+        int aGridY = mBoard->PixelToGridYKeepOnBoard(int(mCursorPositionX), int(mCursorPositionY));
+        GridItem *aMound = mBoard->GetMoundAt(aGridX, aGridY);
+        if (aMound) {
+            if (aMound->mMoundLevel == 0) {
+                aCelCol = 0;
+            } else if (aMound->mMoundLevel == 1) {
+                aCelCol = 3;
+            } else if (aMound->mMoundLevel == 2) {
+                aCelCol = 4;
+            } else if (aMound->mMoundLevel == 3) {
+                aCelCol = 1;
+            }
+        }
+        Rect aRect = Rect(aCelWidth * aCelCol, 0, aCelWidth, aImage->GetCelHeight());
+        g->DrawImage(aImage, 0, 0, aRect);
+
+        g->SetColorizeImages(false);
+
+        UpdatePreviewReanim();
+        return;
+    }
 
     old_GamepadControls_DrawPreview(this, g);
 }
@@ -728,10 +760,26 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                 return;
             }
 
+            if (aPacketType == SeedType::SEED_ZOMBIE_MOUND) {
+                GridItem *aGraveStone = mBoard->GetGraveStoneAt(aGridX, aGridY);
+                GridItem *aMound = mBoard->GetMoundAt(aGridX, aGridY);
+                if (aGraveStone && mBoard->TakeDeathMoney(aCost)) {
+                    mBoard->AddAMound(aGridX, aGridY, 0);
+                    aGraveStone->GridItemDie();
+                    aSeedPacket->Deactivate();
+                    aSeedPacket->WasPlanted(mPlayerIndex1);
+                } else if (aMound && aMound->mMoundLevel < 4 && mBoard->TakeDeathMoney(aCost)) {
+                    mBoard->AddAMound(aGridX, aGridY, aMound->mMoundLevel + 1);
+                    aMound->GridItemDie();
+                    aSeedPacket->Deactivate();
+                    aSeedPacket->WasPlanted(mPlayerIndex1);
+                }
+            }
+
             if (aPacketType == SeedType::SEED_ZOMBIE_GRAVESTONE) {
                 if (mBoard->CanAddGraveStoneAt(aGridX, aGridY) && mBoard->TakeDeathMoney(aCost)) {
                     GridItem *aGraveStone = mBoard->AddAGraveStone(aGridX, aGridY);
-                    aGraveStone->unkBool1 = false;
+                    aGraveStone->mIsSpecialGrave = false;
                     aGraveStone->mVSGraveStoneHealth = 350;
                     aSeedPacket->Deactivate();
                     aSeedPacket->WasPlanted(mPlayerIndex1);

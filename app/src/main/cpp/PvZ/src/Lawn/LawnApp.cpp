@@ -1033,7 +1033,7 @@ bool LawnApp::IsStormyNightLevel() {
 }
 
 bool LawnApp::IsVSMode() {
-    return mGameMode == GameMode::GAMEMODE_MP_VS || mGameMode == GameMode::GAMEMODE_MP_VS_HIDE || mGameMode == GameMode::GAMEMODE_MP_VS_IN_PAGE;
+    return mGameMode == GameMode::GAMEMODE_MP_VS || mGameMode == GameMode::GAMEMODE_MP_VS_DEBUG || mGameMode == GameMode::GAMEMODE_MP_VS_IN_PAGE;
 }
 
 bool LawnApp::IsCoopMode() {

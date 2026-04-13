@@ -168,7 +168,7 @@ void Coin::UpdateFallForAward() {
         }
     } else if (mPosY + mVelY < mGroundY) {
         mPosY += mVelY;
-        if (mCoinMotion == CoinMotion::COIN_MOTION_FROM_PLANT || mCoinMotion == CoinMotion::COIN_MOTION_FROM_FROM_GRAVE) {
+        if (mCoinMotion == CoinMotion::COIN_MOTION_FROM_PLANT || mCoinMotion == CoinMotion::COIN_MOTION_FROM_GRAVE_STONE) {
             mVelY += 0.09;
         } else if (mCoinMotion == CoinMotion::COIN_MOTION_COIN || mCoinMotion == CoinMotion::COIN_MOTION_FROM_BOSS) {
             mVelY += 0.15;
@@ -239,7 +239,7 @@ void Coin::UpdateFallForAward() {
         }
     }
 
-    if (mCoinMotion == CoinMotion::COIN_MOTION_FROM_PLANT || mCoinMotion == CoinMotion::COIN_MOTION_FROM_FROM_GRAVE) {
+    if (mCoinMotion == CoinMotion::COIN_MOTION_FROM_PLANT || mCoinMotion == CoinMotion::COIN_MOTION_FROM_GRAVE_STONE) {
         float aFinalScale = GetSunScale();
         if (mScale < aFinalScale) {
             mScale += 0.02f;

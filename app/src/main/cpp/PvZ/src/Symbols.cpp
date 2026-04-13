@@ -193,10 +193,13 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN5Board19SpawnZombiesFromSkyEv", Board_SpawnZombiesFromSkyAddr);
     libGameMain.GetSymbol("_ZN5Board20SpawnZombiesFromPoolEv", Board_SpawnZombiesFromPoolAddr);
     libGameMain.GetSymbol("_ZN5Board25PickGraveRisingZombieTypeEi", Board_PickGraveRisingZombieTypeAddr);
+    libGameMain.GetSymbol("_ZN5Board27PickGraveRisingZombieTypeMPEi", Board_PickGraveRisingZombieTypeMPAddr);
     libGameMain.GetSymbol("_ZN5Board18CanAddGraveStoneAtEii", Board_CanAddGraveStoneAtAddr);
     libGameMain.GetSymbol("_ZN5Board9DrawLevelEPN4Sexy8GraphicsE", Board_DrawLevelAddr);
     libGameMain.GetSymbol("_ZN5Board15CanAddBobSledMPEv", Board_CanAddBobSledMPAddr);
     libGameMain.GetSymbol("_ZN5Board24CountDeathBeingCollectedEv", Board_CountDeathBeingCollectedAddr);
+    libGameMain.GetSymbol("_ZN5Board16GetMPTargetCountEv", Board_GetMPTargetCountAddr);
+    libGameMain.GetSymbol("_ZN5Board24FreezeEffectsForCutsceneEb", Board_FreezeEffectsForCutsceneAddr);
 
 
     libGameMain.GetSymbol("_Z9SyncBoardP15SaveGameContextP5Board", SyncBoardAddr);
@@ -616,6 +619,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN9Challenge18UpdateConveyorBeltEi", Challenge_UpdateConveyorBeltAddr);
     libGameMain.GetSymbol("_ZN9Challenge21MouseDownWhackAZombieEiii", Challenge_MouseDownWhackAZombieAddr);
     libGameMain.GetSymbol("_ZN9Challenge14ZombieAtePlantEP6ZombieP5Plant", Challenge_ZombieAtePlantAddr);
+    libGameMain.GetSymbol("_ZN9Challenge19UpdateMPGraveStonesEv", Challenge_UpdateMPGraveStonesAddr);
 
 
     libGameMain.GetSymbol("_ZN5Plant6UpdateEv", Plant_UpdateAddr);
@@ -869,6 +873,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN8GridItemC2Ev", GridItem__constructorAddr);
     libGameMain.GetSymbol("_ZN8GridItemD2Ev", GridItem__deconstructorAddr);
     libGameMain.GetSymbol("_ZN8GridItem6UpdateEv", GridItem_UpdateAddr);
+    libGameMain.GetSymbol("_ZN8GridItem12UpdatePortalEv", GridItem_UpdatePortalAddr);
+    libGameMain.GetSymbol("_ZN8GridItem10UpdateRakeEv", GridItem_UpdateRakeAddr);
     libGameMain.GetSymbol("_ZN8GridItem11UpdateBrainEv", GridItem_UpdateBrainAddr);
     libGameMain.GetSymbol("_ZN8GridItem14UpdateScaryPotEv", GridItem_UpdateScaryPotAddr);
     libGameMain.GetSymbol("_ZN8GridItem12DrawScaryPotEPN4Sexy8GraphicsE", GridItem_DrawScaryPotAddr);
@@ -878,8 +884,13 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN8GridItem14DrawGraveStoneEPN4Sexy8GraphicsE", GridItem_DrawGraveStoneAddr);
     libGameMain.GetSymbol("_ZN8GridItem11GridItemDieEv", GridItem_GridItemDieAddr);
     libGameMain.GetSymbol("_ZN8GridItem17UpdateBurialMoundEv", GridItem_UpdateBurialMoundAddr);
+    libGameMain.GetSymbol("_ZN8GridItem19GetMoundUpgradeCostEv", GridItem_GetMoundUpgradeCostAddr);
     libGameMain.GetSymbol("_ZN8GridItem22AddGraveStoneParticlesEv", GridItem_AddGraveStoneParticlesAddr);
     libGameMain.GetSymbol("_ZN8GridItem12DrawMPTargetEPN4Sexy8GraphicsE", GridItem_DrawMPTargetAddr);
+    libGameMain.GetSymbol("_ZN8GridItem12DrawGridItemEPN4Sexy8GraphicsE", GridItem_DrawGridItemAddr);
+    libGameMain.GetSymbol("_ZN8GridItem10DrawLadderEPN4Sexy8GraphicsE", GridItem_DrawLadderAddr);
+    libGameMain.GetSymbol("_ZN8GridItem16DrawIZombieBrainEPN4Sexy8GraphicsE", GridItem_DrawIZombieBrainAddr);
+    libGameMain.GetSymbol("_ZN8GridItem10TakeDamageEij", GridItem_TakeDamgaeAddr);
 
 
     libGameMain.GetSymbol("_ZN4Sexy13SexyCommonApp11getGameInfoEv", Sexy_SexyCommonApp_getGameInfoAddr);
@@ -1133,6 +1144,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN14LawnPlayerInfo7SetFlagE11PlayerFlagsb", LawnPlayerInfo_SetFlagAddr);
     libGameMain.GetSymbol("_ZN14LawnPlayerInfo8AddCoinsEi", LawnPlayerInfo_AddCoinsAddr);
     libGameMain.GetSymbol("_Z16GetFlashingColorii", GetFlashingColorAddr);
+    libGameMain.GetSymbol("_Z24TodPickFromWeightedArrayP16TodWeightedArrayi", TodPickFromWeightedArrayAddr);
     libGameMain.GetSymbol("_Z12RandRangeIntii", RandRangeIntAddr);
     libGameMain.GetSymbol("_Z14RandRangeFloatff", RandRangeFloatAddr);
     libGameMain.GetSymbol("_Z19FindGlobalAllocatori", FindGlobalAllocatorAddr);
@@ -1314,6 +1326,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy16IMAGE_TOMBSTONESE", Sexy::IMAGE_TOMBSTONES);
     libGameMain.GetSymbol("_ZN4Sexy22IMAGE_TOMBSTONE_MOUNDSE", Sexy::IMAGE_TOMBSTONE_MOUNDS);
     libGameMain.GetSymbol("_ZN4Sexy19IMAGE_VS_STONE_DIRTE", Sexy::IMAGE_VS_STONE_DIRT);
+    libGameMain.GetSymbol("_ZN4Sexy11IMAGE_BRAINE", Sexy::IMAGE_BRAIN);
+    libGameMain.GetSymbol("_ZN4Sexy15IMAGE_MP_TARGETE", Sexy::IMAGE_MP_TARGET);
 
     libGameMain.GetSymbol("_ZN4Sexy22FONT_DWARVENTODCRAFT24E", Sexy::FONT_DWARVENTODCRAFT24);
     libGameMain.GetSymbol("_ZN4Sexy20FONT_HOUSEOFTERROR16E", Sexy::FONT_HOUSEOFTERROR16);

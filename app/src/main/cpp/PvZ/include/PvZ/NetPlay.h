@@ -29,7 +29,7 @@
 #include <string>
 #include <utility>
 
-constexpr std::uint32_t NETPLAY_VERSION = 3153;
+constexpr std::uint32_t NETPLAY_VERSION = 3154;
 
 enum EventType : uint8_t {
     EVENT_NULL,
@@ -94,9 +94,11 @@ enum EventType : uint8_t {
 
     EVENT_SERVER_BOARD_GRIDITEM_DIE,
     EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER,
+    EVENT_SERVER_BOARD_GRIDITEM_SUMMONCOUNTER,
     EVENT_SERVER_BOARD_GRIDITEM_ADDGRAVE,
     EVENT_SERVER_BOARD_GRIDITEM_ADDLADDER,
     EVENT_SERVER_BOARD_GRIDITEM_ADDCRATER,
+    EVENT_SERVER_BOARD_GRIDITEM_ADDMOUND,
 
     EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER,                // 同步生产植物如向日葵、阳光菇的生产发光
     EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH,               // 播放杨桃、三线射手的开火动画
@@ -228,6 +230,11 @@ struct U8U8U16U16_Event : BaseEvent {
     uint8_t data2;
     uint16_t data3;
     uint16_t data4;
+};
+
+struct U8x3U16x3_Event : BaseEvent {
+    uint8_t data1[3];
+    uint16_t data2[3];
 };
 
 struct U8U8I16I16_Event : BaseEvent {

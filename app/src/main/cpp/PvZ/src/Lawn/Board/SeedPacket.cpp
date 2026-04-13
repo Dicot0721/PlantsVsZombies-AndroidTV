@@ -251,6 +251,26 @@ void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, See
     g->mScaleY = g->mScaleY * theScale;
     if (theSeedType == SeedType::SEED_ZOMBIE_GRAVESTONE) {
         TodDrawImageCelScaledF(g, *Sexy_IMAGE_MP_TOMBSTONE_Addr, x + theOffsetX, y + theOffsetY, 0, 0, g->mScaleX, g->mScaleY);
+    } else if (theSeedType == SeedType::SEED_ZOMBIE_MOUND) {
+        LawnApp *app = *gLawnApp_Addr;
+        Board *board = app->mBoard;
+        int aCelCol = 2;
+        GamepadControls *aGamepad = board->mGamepadControls1->mIsZombie ? board->mGamepadControls1 : (board->mGamepadControls2->mIsZombie ? board->mGamepadControls2 : nullptr);
+        int aGridX = board->PixelToGridXKeepOnBoard(int(aGamepad->mCursorPositionX), int(aGamepad->mCursorPositionY));
+        int aGridY = board->PixelToGridYKeepOnBoard(int(aGamepad->mCursorPositionX), int(aGamepad->mCursorPositionY));
+        GridItem *aMound = board->GetMoundAt(aGridX, aGridY);
+        if (aMound) {
+            if (aMound->mMoundLevel == 0) {
+                aCelCol = 0;
+            } else if (aMound->mMoundLevel == 1) {
+                aCelCol = 3;
+            } else if (aMound->mMoundLevel == 2) {
+                aCelCol = 4;
+            } else if (aMound->mMoundLevel == 3) {
+                aCelCol = 1;
+            }
+        }
+        TodDrawImageCelScaledF(g, *IMAGE_TOMBSTONES, x + theOffsetX, y + theOffsetY, aCelCol, 0, g->mScaleX, g->mScaleY);
     } else {
         if (theSeedType == SeedType::SEED_IMITATER && theImitaterType != SeedType::SEED_NONE) {
             // 卡槽内的模仿者SeedPacket卡且为冷却状态，此时需要交换theImitaterType和theSeedType。
@@ -317,6 +337,9 @@ void DrawSeedPacket(Sexy::Graphics *g,
         } else if (theIsZombieSeed && theSeedType != SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
             float heightOffset = g->mScaleX > 1.2 ? -1.5f : 0.0f;
             TodDrawImageScaledF(g, *Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr, x, y + heightOffset, g->mScaleX, g->mScaleY);
+            if (theSeedType == SeedType::SEED_ZOMBIE_MOUND) {
+                TodDrawImageCelScaledF(g, *Sexy_IMAGE_SEEDS_Addr, x, y, 1, 0, g->mScaleX, g->mScaleY);
+            }
         } else {
             TodDrawImageCelScaledF(g, *Sexy_IMAGE_SEEDS_Addr, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
         }
@@ -558,6 +581,9 @@ void DrawSeedPacket(Sexy::Graphics *g,
         if (theIsPacketSelected) {
             if (Challenge::IsMPSeedType(theSeedType)) {
                 TodDrawImageScaledF(&aPlantG, *Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr, x, y, g->mScaleX, g->mScaleY);
+                if (theSeedType == SeedType::SEED_ZOMBIE_MOUND) {
+                    TodDrawImageCelScaledF(&aPlantG, *Sexy_IMAGE_SEEDS_Addr, x, y, 1, 0, g->mScaleX, g->mScaleY);
+                }
             } else {
                 TodDrawImageCelScaledF(&aPlantG, *Sexy_IMAGE_SEEDS_Addr, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
             }
@@ -566,25 +592,34 @@ void DrawSeedPacket(Sexy::Graphics *g,
             DrawSeedType(&aPlantG, x, y, theSeedType, theImitaterType, v28, v29, theDrawScale);
     }
     if (theDrawCost) {
-        Board *aBoard = lawnApp->mBoard;
-        pvzstl::string str = //
-            (aBoard == nullptr || !aBoard->PlantUsesAcceleratedPricing(realSeedType)) ? StrFormat("%d", Plant::GetCost(theSeedType, theImitaterType))
-            : theUseCurrentCost                                                       ? StrFormat("%d", aBoard->GetCurrentPlantCost(theSeedType, theImitaterType))
-                                                                                      : StrFormat("%d+", Plant::GetCost(theSeedType, theImitaterType));
+        pvzstl::string aCostStr;
+        if (lawnApp->mBoard && lawnApp->mBoard->PlantUsesAcceleratedPricing(realSeedType)) {
+            if (theUseCurrentCost) {
+                aCostStr = StrFormat("%d", lawnApp->mBoard->GetCurrentPlantCost(theSeedType, theImitaterType));
+            } else {
+                aCostStr = StrFormat("%d+", Plant::GetCost(theSeedType, theImitaterType));
+            }
+        } else {
+            aCostStr = StrFormat("%d", Plant::GetCost(theSeedType, theImitaterType));
+            if (realSeedType == SeedType::SEED_ZOMBIE_MOUND) {
+                aCostStr = StrFormat("%d", lawnApp->mBoard->GetCurrentPlantCost(theSeedType, theImitaterType));
+            }
+        }
+
         Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
-        int width = 31 - (*((int (**)(Sexy::Font *, const pvzstl::string &))font->vTable + 8))(font, str); // 33 -> 31，微调一下文字位置，左移2个像素点
-        int height = 48 + (*((int (**)(Sexy::Font *))font->vTable + 2))(font);                             // 50 -> 48, 微调一下文字位置，上移2个像素点
+        int width = 31 - (*((int (**)(Sexy::Font *, const pvzstl::string &))font->vTable + 8))(font, aCostStr); // 33 -> 31，微调一下文字位置，左移2个像素点
+        int height = 48 + (*((int (**)(Sexy::Font *))font->vTable + 2))(font);                                  // 50 -> 48, 微调一下文字位置，上移2个像素点
         Color theColor = {0, 0, 0, 255};
         g->PushState();
         if (g->mScaleX == 1.0 && g->mScaleY == 1.0) {
-            TodDrawString(g, str, width + x, height + y, font, theColor, DrawStringJustification::DS_ALIGN_LEFT);
+            TodDrawString(g, aCostStr, width + x, height + y, font, theColor, DrawStringJustification::DS_ALIGN_LEFT);
         } else {
             SexyMatrix3 aMatrix;
             TodScaleTransformMatrix(aMatrix, x + g->mTransX + width * g->mScaleX, y + g->mTransY + height * g->mScaleY - 1.0, g->mScaleX, g->mScaleY);
             if (g->mScaleX > 1.8) {
                 g->SetLinearBlend(false);
             }
-            TodDrawStringMatrix(g, font, aMatrix, str, theColor);
+            TodDrawStringMatrix(g, font, aMatrix, aCostStr, theColor);
             g->SetLinearBlend(true);
         }
         g->PopState();

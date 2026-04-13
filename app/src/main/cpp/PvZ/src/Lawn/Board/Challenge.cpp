@@ -673,8 +673,8 @@ void Challenge::ScaryPotterOpenPot(GridItem *theScaryPot) {
     old_Challenge_ScaryPotterOpenPot(this, theScaryPot);
 }
 
-void Challenge::UpdateConveyorBelt(int playerIndex) {
-    old_Challenge_UpdateConveyorBelt(this, playerIndex);
+void Challenge::UpdateConveyorBelt(int thePlayerIndex) {
+    old_Challenge_UpdateConveyorBelt(this, thePlayerIndex);
 }
 
 GridItem *Challenge::IZombieGetBrainTarget(Zombie *theZombie) {
@@ -824,4 +824,8 @@ void Challenge::DrawWeather(Sexy::Graphics *g) {
         if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_SUN_RAIN && gOpeningEncounter->mDoEffect)
             DrawRain(g);
     }
+}
+
+void Challenge::UpdateMPGraveStones() {
+    // 空函数替换，原逻辑移动至 GridItem::UpdateBurialMound
 }

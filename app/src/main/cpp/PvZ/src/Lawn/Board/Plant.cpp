@@ -944,7 +944,7 @@ void Plant::Fire_Origin(Zombie *theTargetZombie, int theRow, PlantWeapon thePlan
         } else if (theTargetGridItem) {
             aRangeX = mBoard->GridToPixelX(theTargetGridItem->mGridX, theTargetGridItem->mGridY) - aOriginX;
             // 为靶子僵尸添加半格距离，以匹配靶子僵尸的碰撞箱
-            if (theTargetGridItem->mGridItemType == GRIDITEM_VS_TARGET_ZOMBIE) {
+            if (theTargetGridItem->mGridItemType == GRIDITEM_MP_TARGET_ZOMBIE) {
                 aRangeX += mBoard->GridCellWidth(theTargetGridItem->mGridX, theTargetGridItem->mGridY) / 2;
             }
             aRangeY = (mBoard->GridToPixelY(theTargetGridItem->mGridX, theTargetGridItem->mGridY) - aOriginY) * 0.0083333 - 7.0;
@@ -1114,7 +1114,7 @@ GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
             int aGridY = aGridItem->mGridY;
             GridItemType aGridItemType = aGridItem->mGridItemType;
 
-            if (aGridItemType != GridItemType::GRIDITEM_GRAVESTONE && aGridItemType != GridItemType::GRIDITEM_VS_TARGET_ZOMBIE) {
+            if (aGridItemType != GridItemType::GRIDITEM_GRAVESTONE && aGridItemType != GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
                 // 修复植物们攻击核坑和梯子
                 continue;
             }
@@ -1144,7 +1144,7 @@ GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
                         continue;
                     }
                     // 不主动攻击靶子
-                    if (aGridItemType == GridItemType::GRIDITEM_VS_TARGET_ZOMBIE) {
+                    if (aGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
                         continue;
                     }
                 }
@@ -1252,6 +1252,7 @@ int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_GARLIC:
                 case SeedType::SEED_ZOMBIE_TRAFFIC_CONE:
                 case SeedType::SEED_ZOMBIE_BOBSLED:
+                case SeedType::SEED_ZOMBIE_MOUND:
                     return 75;
                 case SeedType::SEED_THREEPEATER:
                 case SeedType::SEED_ZOMBIE_CATAPULT:
@@ -1346,6 +1347,7 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
                     case SeedType::SEED_ZOMBIE_SCREEN_DOOR:
                     case SeedType::SEED_ZOMBIE_YETI:
                     case SeedType::SEED_ZOMBIE_SQUASH_HEAD:
+                    case SeedType::SEED_ZOMBIE_MOUND:
                         aRefreshTime = 1500;
                         break;
                     case SeedType::SEED_ZOMBONI:
@@ -1446,6 +1448,7 @@ int Plant::GetCostBalanced(SeedType theSeedType) {
         case SeedType::SEED_ZOMBIE_JACK_IN_THE_BOX: // 100 -> 75
         case SeedType::SEED_ZOMBIE_BOBSLED:
         case SeedType::SEED_ZOMBIE_DOLPHIN_RIDER: // 125 -> 75
+        case SeedType::SEED_ZOMBIE_MOUND:
             aCost = 75;
             break;
         case SeedType::SEED_SQUASH:  // 75 -> 100 削弱窝瓜!!!
@@ -1533,6 +1536,7 @@ int Plant::GetRefreshTimeBalanced(SeedType theSeedType) {
             case SeedType::SEED_ZOMBIE_YETI:
             case SeedType::SEED_ZOMBIE_SNORKEL: // 7.5 -> 15
             case SeedType::SEED_ZOMBIE_SQUASH_HEAD:
+            case SeedType::SEED_ZOMBIE_MOUND:
                 return 1500;
             default:
                 return 750;

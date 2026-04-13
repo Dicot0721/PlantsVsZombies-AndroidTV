@@ -52,7 +52,120 @@ void GridItem::GridItemDie() {
         }
     }
 
-    old_GridItem_GridItemDie(this);
+    mDead = true;
+
+    if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS) {
+        goto Cleanup;
+    }
+
+    if (mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
+        if ((Challenge::gVSResourseDropMode == 2 || Challenge::gVSResourseDropMode == 3) && Challenge::gVSResourceDropCount > 0) {
+            for (int i = 0; i < Challenge::gVSResourceDropCount; ++i) {
+                int x = mBoard->GridToPixelX(mGridX, mGridY);
+                int y = mBoard->GridToPixelY(mGridX, mGridY);
+                mBoard->AddCoin(x, y, CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_GRAVE_STONE);
+            }
+        }
+        goto Cleanup;
+    }
+
+    if (mGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
+        bool shouldDrop = (Challenge::gVSResourseDropMode == 1 || Challenge::gVSResourseDropMode == 3);
+        if (shouldDrop && Challenge::gVSResourceDropCount > 0) {
+            for (int i = 0; i < Challenge::gVSResourceDropCount; ++i) {
+                int x = mBoard->GridToPixelX(mGridX, mGridY);
+                int y = mBoard->GridToPixelY(mGridX, mGridY);
+                mBoard->AddCoin(x, y, CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_GRAVE_STONE);
+            }
+        }
+        goto Cleanup;
+    }
+
+    if (mApp->mGameScene == GameScenes::SCENE_PLAYING && !mBoard->mLevelAwardSpawned) {
+        if (Challenge::gVSWinMode == 1) {
+            int remainingTargets = mBoard->GetMPTargetCount();
+            if (remainingTargets <= 2) {
+                mBoard->FreezeEffectsForCutscene(true);
+                mBoard->PlantsWon(this);
+                mGridItemReanimID = ReanimationID::REANIMATIONID_NULL;
+                goto Cleanup;
+            }
+        }
+
+        if (mBoard->GetMPTargetCount() == 0) {
+            mBoard->FreezeEffectsForCutscene(true);
+            mBoard->PlantsWon(this);
+            mGridItemReanimID = ReanimationID::REANIMATIONID_NULL;
+            goto Cleanup;
+        }
+    }
+
+Cleanup:
+    Reanimation *aGridItemReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+    if (aGridItemReanim) {
+        aGridItemReanim->ReanimationDie();
+        mGridItemReanimID = ReanimationID::REANIMATIONID_NULL;
+    }
+
+    TodParticleSystem *aGridItemParticle = mApp->ParticleTryToGet(mGridItemParticleID);
+    if (aGridItemParticle) {
+        aGridItemParticle->ParticleSystemDie();
+        mGridItemParticleID = ParticleSystemID::PARTICLESYSTEMID_NULL;
+    }
+}
+
+void GridItem::DrawGridItem(Graphics *g) {
+    if (GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
+        DrawGraveStone(g);
+    }
+
+    old_GridItem_DrawGridItem(this, g);
+
+    //    Reanimation *aGridItemReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+    //
+    //    switch (mGridItemType) {
+    //        case GridItemType::GRIDITEM_GRAVESTONE:
+    //            DrawGraveStone(g);
+    //            if (aGridItemReanim) {
+    //                aGridItemReanim->Draw(g);
+    //            }
+    //            return;
+    //        case GridItemType::GRIDITEM_CRATER:
+    //            DrawCrater(g);
+    //            break;
+    //        case GridItemType::GRIDITEM_LADDER:
+    //            DrawLadder(g);
+    //            break;
+    //        case GridItemType::GRIDITEM_BRAIN:
+    //            g->DrawImageF(*IMAGE_BRAIN, mPosX, mPosY);
+    //            break;
+    //        case GridItemType::GRIDITEM_SCARY_POT:
+    //            DrawScaryPot(g);
+    //            break;
+    //        case GridItemType::GRIDITEM_SQUIRREL:
+    //            DrawSquirrel(g);
+    //            break;
+    //        case GridItemType::GRIDITEM_STINKY:
+    //            DrawStinky(g);
+    //            break;
+    //        case GridItemType::GRIDITEM_IZOMBIE_BRAIN:
+    //            DrawIZombieBrain(g);
+    //            break;
+    //        case GridItemType::GRIDITEM_MP_TARGET_ZOMBIE:
+    //            DrawMPTarget(g);
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //
+    //    if (aGridItemReanim) {
+    //        aGridItemReanim->Draw(g);
+    //    }
+    //
+    //    TodParticleSystem *aGridItemParticle = mApp->ParticleTryToGet(mGridItemParticleID);
+    //    if (aGridItemParticle) {
+    //        aGridItemParticle->Draw(g);
+    //    }
 }
 
 void GridItem::DrawScaryPot(Sexy::Graphics *g) {
@@ -148,33 +261,62 @@ void GridItem::Update() {
         return; // 高级暂停
     }
 
-    if (mGridItemType == GRIDITEM_GRAVESTONE && mApp->mGameMode == GAMEMODE_MP_VS && mApp->mGameScene == SCENE_PLAYING) {
-        Reanimation *aReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
-        if (aReanim)
-            aReanim->Update();
+    //    Reanimation *aGridItemReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+    //    if (aGridItemReanim) {
+    //        aGridItemReanim->Update();
+    //    }
+    //
+    //    TodParticleSystem *aGridItemParticle = mApp->ParticleTryToGet(mGridItemParticleID);
+    //    if (aGridItemParticle) {
+    //        aGridItemParticle->Update();
+    //    }
+    //
+    //    if (mGridItemType == GridItemType::GRIDITEM_PORTAL_CIRCLE || mGridItemType == GridItemType::GRIDITEM_PORTAL_SQUARE) {
+    //        UpdatePortal();
+    //    }
+    //    if (mGridItemType == GridItemType::GRIDITEM_SCARY_POT) {
+    //        UpdateScaryPot();
+    //    }
+    //    if (mGridItemType == GridItemType::GRIDITEM_RAKE) {
+    //        UpdateRake();
+    //    }
+    //    if (mGridItemType == GridItemType::GRIDITEM_IZOMBIE_BRAIN) {
+    //        UpdateBrain();
+    //    }
+    if (mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
+        UpdateBurialMound();
+    }
 
-        TodParticleSystem *aParticle = mApp->ParticleTryToGet(mGridItemParticleID);
-        if (aParticle)
-            aParticle->Update();
+    if ((mGridItemType == GridItemType::GRIDITEM_GRAVESTONE || mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) && mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
+        Reanimation *aGridItemReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+        if (aGridItemReanim) {
+            aGridItemReanim->Update();
+        }
 
-        if (mJustGotShotCounter > 0)
-            mJustGotShotCounter--;
+        TodParticleSystem *aGridItemParticle = mApp->ParticleTryToGet(mGridItemParticleID);
+        if (aGridItemParticle) {
+            aGridItemParticle->Update();
+        }
+
+        if (mGraveJustGotShotCounter > 0) {
+            mGraveJustGotShotCounter--;
+        }
 
         mLaunchCounter--;
 
         if (mLaunchCounter <= 100) {
             int aFlashCountdown = TodAnimateCurve(100, 0, mLaunchCounter, 0, 100, TodCurves::CURVE_LINEAR);
-            mJustGotShotCounter = std::max(mJustGotShotCounter, aFlashCountdown);
+            mGraveJustGotShotCounter = std::max(mGraveJustGotShotCounter, aFlashCountdown);
         }
 
-        if (aReanim) {
-            if (mJustGotShotCounter <= 0) {
-                aReanim->mEnableExtraAdditiveDraw = false;
+        if (aGridItemReanim) {
+            if (mGraveJustGotShotCounter <= 0) {
+                aGridItemReanim->mEnableExtraAdditiveDraw = false;
             } else {
-                int aGrayness = std::min(mJustGotShotCounter * 3, 255);
+                int aGrayness = std::min(mGraveJustGotShotCounter * 3, 255);
                 int aGrayness2 = (aGrayness == 255) ? 127 : (aGrayness / 2);
-                aReanim->mExtraAdditiveColor = Color(aGrayness, aGrayness2, aGrayness, 255);
-                aReanim->mEnableExtraAdditiveDraw = true;
+                aGridItemReanim->mExtraAdditiveColor = Color(aGrayness, aGrayness2, aGrayness, 255);
+                aGridItemReanim->mEnableExtraAdditiveDraw = true;
             }
         }
 
@@ -187,18 +329,35 @@ void GridItem::Update() {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, uint16_t(mBoard->mGridItems.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
                 netplay::PutEvent(event);
             }
-            mBoard->AddCoin(mBoard->GridToPixelX(mGridX, mGridY), mBoard->GridToPixelY(mGridX, mGridY), CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_FROM_GRAVE);
+            mBoard->AddCoin(mBoard->GridToPixelX(mGridX, mGridY), mBoard->GridToPixelY(mGridX, mGridY), CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_GRAVE_STONE);
         }
 
         // 屋顶墓碑落地时播放砸地音效
         if (mBoard->StageHasRoof() && mGridItemCounter == 50) {
             mApp->PlayFoley(FoleyType::FOLEY_THUMP);
-            ;
         }
+
         return;
     }
 
     old_GridItem_Update(this);
+
+    //    if (mGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
+    //        if (mTargetJustGotShotCounter <= 0) {
+    //            // 受击结束，尝试播放 idle 动画
+    //            if (aGridItemReanim && !aGridItemReanim->IsAnimPlaying("anim_idle")) {
+    //                // 如果正在播放受击动画，确保它播放完毕(到最后一帧)才切换
+    //                if (!aGridItemReanim->IsAnimPlaying("anim_hit") || aGridItemReanim->mAnimTime == 1.0f) {
+    //                    aGridItemReanim->PlayReanim("anim_idle", REANIM_PLAY_ONCE, 0.0f, 24.0f);
+    //                }
+    //            }
+    //        } else {
+    //            mTargetJustGotShotCounter--;
+    //            if (mTargetJustGotShotCounter == 0) {
+    //                GridItemDie();
+    //            }
+    //        }
+    //    }
 }
 
 void GridItem::UpdateScaryPot() {
@@ -210,6 +369,74 @@ void GridItem::UpdateScaryPot() {
             mTransparentCounter += 2;
         }
     }
+}
+
+void GridItem::UpdateBurialMound() {
+    if (mApp->mGameScene != SCENE_PLAYING)
+        return;
+
+    if (mSummonCounter > 0) {
+        --mSummonCounter;
+
+        if (mSummonCounter <= 0) {
+            if (mSummonIndex >= 0) {
+                for (int aSummonIndex = 0; aSummonIndex <= mSummonIndex; ++aSummonIndex) {
+                    ZombieType aZombieType = mBoard->PickGraveRisingZombieTypeMP(mMoundLevel);
+                    Zombie *aZombie = mBoard->AddZombie(aZombieType, Zombie::ZOMBIE_WAVE_VS, false);
+
+                    if (aZombie) {
+                        int aGridX = mGridX;
+                        int aGridY = mGridY;
+
+                        // 调整Y坐标
+                        if (aSummonIndex == 1) {
+                            --aGridY;
+                        } else if (aSummonIndex == 2) {
+                            ++aGridY;
+                        }
+
+                        // 限制Y坐标范围
+                        if (aGridY > 0) {
+                            if (aGridY >= 4) {
+                                aGridY = 4;
+                            }
+                        } else {
+                            aGridY = 0;
+                        }
+
+                        // 限制X坐标范围
+                        if (aGridX > 0) {
+                            if (aGridX >= 8) {
+                                aGridX = 8;
+                            }
+                        } else {
+                            aGridX = 0;
+                        }
+
+                        aZombie->RiseFromGrave(aGridX, aGridY);
+                    }
+                }
+            }
+
+            if (gTcpConnected) {
+                return;
+            }
+
+            mSummonCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
+
+            if (gTcpClientSocket >= 0) {
+                U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, uint16_t(mBoard->mGridItems.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
+                netplay::PutEvent(event);
+            }
+        }
+    }
+
+    ++mGridItemCounter;
+}
+
+int GridItem::GetMoundUpgradeCost() {
+    int aCost = Plant::GetCost(SeedType::SEED_ZOMBIE_MOUND, SeedType::SEED_NONE);
+    return mMoundLevel < 4 ? aCost + 50 * (mMoundLevel + 1) : aCost;
 }
 
 void GridItem::DrawStinky(Sexy::Graphics *g) {
@@ -344,11 +571,33 @@ void GridItem::DrawGraveStone(Graphics *g) {
     int aGraveCol = aGridCelLook % 5;
     int aGraveRow;
     if (mGridY == 0) {
-        aGraveRow = 1;
+        aGraveRow = 1; // 第一列固定用低矮墓碑贴图
     } else if (mGridItemState == GridItemState::GRIDITEM_STATE_GRAVESTONE_SPECIAL) {
         aGraveRow = 0;
     } else {
         aGraveRow = 2 + aGridCelLook % 2;
+    }
+
+    if (mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
+        switch (mMoundLevel) {
+            case 0:
+                aGraveCol = 2;
+                break;
+            case 1:
+                aGraveCol = 0;
+                break;
+            case 2:
+                aGraveCol = 3;
+                break;
+            case 3:
+                aGraveCol = 4;
+                break;
+            case 4:
+                aGraveCol = 1;
+                break;
+            default:
+                break;
+        }
     }
 
     int aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT);       // 墓碑主体在当前帧应显示的高度
@@ -365,8 +614,7 @@ void GridItem::DrawGraveStone(Graphics *g) {
     int x = mBoard->GridToPixelX(mGridX, mGridY) + aGridCelOffsetX - 4;
     int y = mBoard->GridToPixelY(mGridX, mGridY) + aCelHeight + aGridCelOffsetY - 9;
 
-    bool stageHasRoof = mBoard->StageHasRoof();
-    if (stageHasRoof) {
+    if (mBoard->StageHasRoof()) {
         aHeightPosition = TodAnimateCurve(
             0, 100, mGridItemCounter, 0, 1000, TodCurves::CURVE_EASE_IN_OUT); // 修改动画曲线：将“从土里长出来”的进度（1000->0对应从下到上）改为“从天上坠落”的进度（0->1000对应从上到下）
         aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, 0, aCelHeight, TodCurves::CURVE_EASE_IN_OUT);                   // 调整泥土显示逻辑：泥土应随着墓碑下落而逐渐显示（从下往上）
@@ -379,7 +627,7 @@ void GridItem::DrawGraveStone(Graphics *g) {
         y = mBoard->GridToPixelY(mGridX, mGridY) + currentYOffset;
     }
 
-    if (mApp->IsVSMode()) {
+    if (mApp->IsVSMode() && mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
         Reanimation *aReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
         if (aReanim) {
             g->SetClipRect(x, y - aVisibleHeight + aExtraTopClip, 86, aVisibleHeight - aExtraBottomClip - aExtraTopClip);
@@ -396,7 +644,7 @@ void GridItem::DrawGraveStone(Graphics *g) {
             }
 
             Rect aRectDirt(0, 0, bottomImage->mWidth, TodAnimateCurve(500, 1000, aHeightPosition, bottomImage->mHeight, 0, TodCurves::CURVE_EASE_IN_OUT));
-            if (!stageHasRoof) { // 屋顶不绘制墓碑底部贴图
+            if (!mBoard->StageHasRoof()) { // 屋顶不绘制墓碑底部贴图
                 g->DrawImage(bottomImage, x + offsetX, y - aVisibleHeightDirt + offsetY, aRectDirt);
             }
             aReanim->DrawRenderGroup(g, 1);
@@ -404,6 +652,23 @@ void GridItem::DrawGraveStone(Graphics *g) {
         }
         g->DrawString(StrFormat("%d", mVSGraveStoneHealth), x, y);
     } else {
+        // Mound 受击和生产时变色
+        if (mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
+            Graphics aMoundG = Graphics(*g);
+            if (mGraveJustGotShotCounter <= 0) {
+                aMoundG.SetColorizeImages(false);
+            } else {
+                int aGrayness = std::min(mGraveJustGotShotCounter * 3, 255);
+                int aGrayness2 = (aGrayness == 255) ? 127 : (aGrayness / 2);
+                aMoundG.SetColor(Color(aGrayness, aGrayness2, aGrayness, 255));
+                aMoundG.SetColorizeImages(true);
+            }
+
+            aMoundG.DrawImage(*IMAGE_TOMBSTONES, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
+            aMoundG.DrawImage(*IMAGE_TOMBSTONE_MOUNDS, x, y - aVisibleHeightDirt, aSrcRectDirt);
+            return;
+        }
+
         g->DrawImage(*IMAGE_TOMBSTONES, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
         g->DrawImage(*IMAGE_TOMBSTONE_MOUNDS, x, y - aVisibleHeightDirt, aSrcRectDirt);
     }
@@ -455,4 +720,92 @@ void GridItem::DrawMPTarget(Graphics *g) {
     //    g->DrawString(fmt,0,50 * mGridY);
     //    TodDrawString(g,fmt,0,0,*Sexy_FONT_CONTINUUMBOLD14OUTLINE_Addr,Color(0,0,255,255),DS_ALIGN_LEFT);
     old_GridItem_DrawMPTarget(this, g);
+}
+
+void GridItem::TakeDamgae(int theDamage, unsigned int theDamageFlags) {
+    //    if (!mApp->IsVSMode())
+    //        return;
+    //
+    //    if (mGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
+    //        if (mDead || mVSTargetZombieHealth <= 0)
+    //            return;
+    //
+    //        mVSTargetZombieHealth -= theDamage;
+    //
+    //        if (mVSTargetZombieHealth > 0) {
+    //            Reanimation* reanim = mApp->ReanimationGet(mGridItemReanimID);
+    //            if (reanim) {
+    //                reanim->PlayReanim("anim_hit", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, mDead ? 1 : 0, 24.0f);
+    //            }
+    //            return;
+    //        }
+    //
+    //        mVSTargetZombieHealth = 0;
+    //
+    //        if (mBoard->GetMPTargetCount() > 3) {
+    //            Reanimation* reanim = mApp->ReanimationGet(mGridItemReanimID);
+    //            if (reanim) {
+    //                reanim->AssignRenderGroupToTrack("target", -1);
+    //                reanim->PlayReanim("anim_death2", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, mDead ? 1 : 0, 12.0f);
+    //            }
+    //            mTargetJustGotShotCounter = 300;
+    //            return;
+    //        }
+    //
+    //        GridItemDie();
+    //        return;
+    //    }
+    //
+    //    if (mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
+    //        if (mDead || mVSGraveStoneHealth <= 0)
+    //            return;
+    //
+    //        mVSGraveStoneHealth -= theDamage;
+    //
+    //        if (mVSGraveStoneHealth <= 0) {
+    //            GridItemDie();
+    //            return;
+    //        }
+    //
+    //        mGraveJustGotShotCounter = std::max(mGraveJustGotShotCounter, 25);
+    //
+    //        float maxHealth = mIsSpecialGrave ? 1000.0f : 350.0f;
+    //
+    //        // 计算当前和上一帧的健康比例（0~6段）
+    //        float currentRatio = static_cast<float>(mVSGraveStoneHealth) / maxHealth;
+    //        float previousRatio = static_cast<float>(mVSGraveStoneHealth) / maxHealth;
+    //
+    //        int prevBreakStage = static_cast<int>(6.0f - (currentRatio * 6.0f));
+    //        int newBreakStage = static_cast<int>(6.0f - (previousRatio * 6.0f));
+    //
+    //        // 限制阶段在0~6之间
+    //        prevBreakStage = std::clamp(prevBreakStage, 0, 6);
+    //        newBreakStage = std::clamp(newBreakStage, 0, 6);
+    //
+    //        // 若阶段变化，播放破碎动画
+    //        if (newBreakStage != prevBreakStage) {
+    //            Reanimation* reanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+    //            if (reanim) {
+    //                pvzstl::string animName = StrFormat("anim_break0%d", newBreakStage);
+    ////                snprintf(animName, sizeof(animName), "anim_break%d", newBreakStage);
+    //                reanim->PlayReanim(animName.c_str(), ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 4, 10.0f);
+    //            }
+    //        }
+    //    }
+
+    old_GridItem_TakeDamage(this, theDamage, theDamageFlags);
+
+    if (mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
+        if (mDead || mVSGraveStoneHealth <= 0)
+            return;
+
+        mVSGraveStoneHealth -= theDamage;
+
+        if (mVSGraveStoneHealth <= 0) {
+            GridItemDie();
+            return;
+        }
+
+        mGraveJustGotShotCounter = std::max(mGraveJustGotShotCounter, 25);
+    }
 }

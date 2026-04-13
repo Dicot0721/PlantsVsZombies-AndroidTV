@@ -199,10 +199,13 @@ inline void *Board_PlaceRakeAddr;
 inline void *Board_SpawnZombiesFromSkyAddr;
 inline void *Board_SpawnZombiesFromPoolAddr;
 inline void *Board_PickGraveRisingZombieTypeAddr;
+inline void *Board_PickGraveRisingZombieTypeMPAddr;
 inline void *Board_CanAddGraveStoneAtAddr;
 inline void *Board_DrawLevelAddr;
 inline void *Board_CanAddBobSledMPAddr;
 inline void *Board_CountDeathBeingCollectedAddr;
+inline void *Board_GetMPTargetCountAddr;
+inline void *Board_FreezeEffectsForCutsceneAddr;
 
 inline void *SyncBoardAddr;
 inline void *FixBoardAfterLoadAddr;
@@ -619,6 +622,7 @@ inline void *Challenge_ScaryPotterJackExplodeAddr;
 inline void *Challenge_UpdateConveyorBeltAddr;
 inline void *Challenge_MouseDownWhackAZombieAddr;
 inline void *Challenge_ZombieAtePlantAddr;
+inline void *Challenge_UpdateMPGraveStonesAddr;
 
 
 inline void *Plant_UpdateAddr;
@@ -1115,6 +1119,8 @@ inline void *ToolTipWidget_DrawAddr;
 inline void *GridItem__constructorAddr;
 inline void *GridItem__deconstructorAddr;
 inline void *GridItem_UpdateAddr;
+inline void *GridItem_UpdatePortalAddr;
+inline void *GridItem_UpdateRakeAddr;
 inline void *GridItem_UpdateBrainAddr;
 inline void *GridItem_UpdateScaryPotAddr;
 inline void *GridItem_DrawScaryPotAddr;
@@ -1124,8 +1130,13 @@ inline void *GridItem_DrawSquirrelAddr;
 inline void *GridItem_DrawGraveStoneAddr;
 inline void *GridItem_GridItemDieAddr;
 inline void *GridItem_UpdateBurialMoundAddr;
+inline void *GridItem_GetMoundUpgradeCostAddr;
 inline void *GridItem_AddGraveStoneParticlesAddr;
 inline void *GridItem_DrawMPTargetAddr;
+inline void *GridItem_DrawGridItemAddr;
+inline void *GridItem_DrawLadderAddr;
+inline void *GridItem_DrawIZombieBrainAddr;
+inline void *GridItem_TakeDamgaeAddr;
 
 
 inline void *TodDrawImageCelCenterScaledFAddr;
@@ -1161,6 +1172,7 @@ inline void *LawnPlayerInfo_GetFlagAddr;
 inline void *LawnPlayerInfo_SetFlagAddr;
 inline void *LawnPlayerInfo_AddCoinsAddr;
 inline void *GetFlashingColorAddr;
+inline int *TodPickFromWeightedArrayAddr;
 inline void *RandRangeIntAddr;
 inline void *RandRangeFloatAddr;
 inline void *FindGlobalAllocatorAddr;
@@ -1331,7 +1343,8 @@ inline Image **IMAGE_SEEDCHOOSER_BUTTON_GLOW;
 inline Image **IMAGE_TOMBSTONES;
 inline Image **IMAGE_TOMBSTONE_MOUNDS;
 inline Image **IMAGE_VS_STONE_DIRT;
-
+inline Image **IMAGE_BRAIN;
+inline Image **IMAGE_MP_TARGET;
 
 inline Font **FONT_DWARVENTODCRAFT24;
 inline Font **FONT_HOUSEOFTERROR16;

@@ -292,6 +292,7 @@ public:
     GridItem *GetGraveStoneAt(int theGridX, int theGridY);
     GridItem *GetLadderAt(int theGridX, int theGridY);
     GridItem *GetScaryPotAt(int theGridX, int theGridY);
+    GridItem *GetMoundAt(int theGridX, int theGridY);
     GridItem *GetGridItemAt(GridItemType theGridItemType, int theGridX, int theGridY);
     void Move(int theX, int theY) {
         reinterpret_cast<void (*)(Board *, int, int)>(Board_MoveAddr)(this, theX, theY);
@@ -372,12 +373,6 @@ public:
     Plant *GetPlantsOnLawn(int theGridX, int theGridY, PlantsOnLawn *thePlantOnLawn) { // 检查加农炮用
         return reinterpret_cast<Plant *(*)(Board *, int, int, PlantsOnLawn *)>(Board_GetPlantsOnLawnAddr)(this, theGridX, theGridY, thePlantOnLawn);
     }
-    //    GridItem *AddALadder(int theGridX, int theGridY) {
-    //        return reinterpret_cast<GridItem *(*)(Board *, int, int)>(Board_AddALadderAddr)(this, theGridX, theGridY);
-    //    }
-    //    GridItem *AddACrater(int theGridX, int theGridY) {
-    //        return reinterpret_cast<GridItem *(*)(Board *, int, int)>(Board_AddACraterAddr)(this, theGridX, theGridY);
-    //    }
     void ClearCursor(int thePlayerIndex) {
         reinterpret_cast<void (*)(Board *, int)>(Board_ClearCursorAddr)(this, thePlayerIndex);
     }
@@ -462,9 +457,6 @@ public:
     void UpdateCoverLayer() {
         reinterpret_cast<void (*)(Board *)>(Board_UpdateCoverLayerAddr)(this);
     }
-    //    GridItem* AddMPTarget(int theGridX, int theGridY) {
-    //       return reinterpret_cast<GridItem* (*)(Board *, int, int)>(Board_AddMPTargetAddr)(this, theGridX, theGridY);
-    //    }
     void PlaceRake() {
         reinterpret_cast<void (*)(Board *)>(Board_PlaceRakeAddr)(this);
     }
@@ -480,10 +472,16 @@ public:
     bool IsValidCobCannonSpot(int theGridX, int theGridY) {
         return reinterpret_cast<bool (*)(Board *, int, int)>(Board_IsValidCobCannonSpotAddr)(this, theGridX, theGridY);
     }
-
     int CountDeathBeingCollected() {
         return reinterpret_cast<int (*)(Board *)>(Board_CountDeathBeingCollectedAddr)(this);
     }
+    int GetMPTargetCount() {
+        return reinterpret_cast<int (*)(Board *)>(Board_GetMPTargetCountAddr)(this);
+    }
+    void FreezeEffectsForCutscene(bool theFreeze) {
+        reinterpret_cast<int (*)(Board *, bool)>(Board_FreezeEffectsForCutsceneAddr)(this, theFreeze);
+    }
+
     Board(LawnApp *theApp) = delete;
     ~Board() = delete;
 
@@ -594,7 +592,7 @@ public:
     Coin *AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoinMotion);
     bool TakeDeathMoney(int theAmount);
     GridItem *AddAGraveStone(int theGridX, int theGridY);
-    GridItem *AddAMound(int theGridX, int theGridY, int theUnkParameter);
+    GridItem *AddAMound(int theGridX, int theGridY, int theMoundLevel);
     bool TakeSunMoney(int theAmount, int thePlayer);
     void ShuffleButtonDown(SeedPacket *theSeedPacket);
     bool CanAddGraveStoneAt(int theGridX, int theGridY);
@@ -607,6 +605,8 @@ public:
     GridItem *AddALadder_Origin(int theGridX, int theGridY);
     GridItem *AddACrater(int theGridX, int theGridY);
     GridItem *AddACrater_Origin(int theGridX, int theGridY);
+    ZombieType PickGraveRisingZombieTypeMP(int theMoundLevel);
+
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);
     void MouseDownSecond(int x, int y, int theClickCount);

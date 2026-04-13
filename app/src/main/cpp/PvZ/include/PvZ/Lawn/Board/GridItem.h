@@ -62,19 +62,33 @@ public:
     MotionTrailFrame mMotionTrailFrames[12]; // 25 ~ 60
     int mMotionTrailCount;                   // 61
     bool unkBool;                            // 62 * 4
-    bool unkBool1;                           // 62 * 4 + 1
-    int unkMems;                             // 63
-    int mSummonCount;                        // 64
-    int mMoundLevel;                         // 65
+    bool mIsSpecialGrave;                    // 62 * 4 + 1
+    int mMoundLevel;                         // 63
+    int mSummonIndex;                        // 64
+    int mSummonCounter;                      // 65
     int mLaunchCounter;                      // 66
     int mLaunchRate;                         // 67
-    int mJustGotShotCounter;                 // 68
+    int mGraveJustGotShotCounter;            // 68
     int mVSGraveStoneHealth;                 // 69
     int mVSTargetZombieHealth;               // 70
-    int unkMems2[4];                         // 71 ~ 74
+    int mTargetJustGotShotCounter;           // 71
+    int unkMems2[3];                         // 72 ~ 74
     // 大小75个整数
-    void UpdateBurialMound() {
-        reinterpret_cast<void (*)(GridItem *)>(GridItem_UpdateBurialMoundAddr)(this);
+
+    void DrawLadder(Sexy::Graphics *g) {
+        reinterpret_cast<void (*)(GridItem *, Sexy::Graphics *)>(GridItem_DrawLadderAddr)(this, g);
+    }
+    void DrawIZombieBrain(Sexy::Graphics *g) {
+        reinterpret_cast<void (*)(GridItem *, Sexy::Graphics *)>(GridItem_DrawIZombieBrainAddr)(this, g);
+    }
+    void UpdatePortal() {
+        reinterpret_cast<void (*)(GridItem *)>(GridItem_UpdatePortalAddr)(this);
+    }
+    void UpdateRake() {
+        reinterpret_cast<void (*)(GridItem *)>(GridItem_UpdateRakeAddr)(this);
+    }
+    void UpdateBrain() {
+        reinterpret_cast<void (*)(GridItem *)>(GridItem_UpdateBrainAddr)(this);
     }
 
     GridItem() {
@@ -85,15 +99,19 @@ public:
     };
 
     void GridItemDie();
+    void DrawGridItem(Sexy::Graphics *g);
     void DrawScaryPot(Sexy::Graphics *g);
     void Update();
     void UpdateScaryPot();
+    void UpdateBurialMound();
+    int GetMoundUpgradeCost();
     void DrawStinky(Sexy::Graphics *g);
     void DrawSquirrel(Sexy::Graphics *g);
     void DrawCrater(Sexy::Graphics *g);
     void DrawGraveStone(Sexy::Graphics *g);
     void AddGraveStoneParticles();
     void DrawMPTarget(Sexy::Graphics *g);
+    void TakeDamgae(int theDamage, unsigned int theDamageFlags);
 
 protected:
     friend void InitHookFunction();
@@ -114,11 +132,14 @@ inline void (*old_GridItem_GridItemDie)(GridItem *);
 
 inline void (*old_GridItem_Update)(GridItem *a1);
 
+inline void (*old_GridItem_DrawGridItem)(GridItem *, Sexy::Graphics *);
+
 inline void (*old_GridItem_UpdateScaryPot)(GridItem *scaryPot);
 
 inline void (*old_GridItem_DrawStinky)(GridItem *mStinky, Sexy::Graphics *graphics);
 
 inline void (*old_GridItem_DrawMPTarget)(GridItem *, Sexy::Graphics *graphics);
 
+inline void (*old_GridItem_TakeDamage)(GridItem *, int theDamage, unsigned int theDamageFlags);
 
 #endif // PVZ_LAWN_BOARD_GRID_ITEM_H

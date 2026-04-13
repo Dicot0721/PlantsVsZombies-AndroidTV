@@ -58,6 +58,10 @@ public:
     float mSecondLastPicked;
 };
 
+inline int TodPickFromWeightedArray(const TodWeightedArray *theArray, int theCount) {
+    return reinterpret_cast<int (*)(const TodWeightedArray *, int)>(TodPickFromWeightedArrayAddr)(theArray, theCount);
+}
+
 inline int RandRangeInt(int theMin, int theMax) { // 取 [theMin, theMax] 的随机整数
     return reinterpret_cast<int (*)(int, int)>(RandRangeIntAddr)(theMin, theMax);
 }

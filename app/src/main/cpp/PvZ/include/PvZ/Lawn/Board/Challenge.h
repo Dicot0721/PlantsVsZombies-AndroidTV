@@ -63,6 +63,7 @@ class Challenge {
 public:
     static inline int &gVSResourseDropMode = *Challenge_gVSResourseDropModeAddr;   // 常为0
     static inline int &gVSResourceDropCount = *Challenge_gVSResourceDropCountAddr; // 常为4
+    static inline int &gVSWinMode = *Challenge_gVSWinModeAddr;
 
     int *vTable;                                            // 0
     int unk1[3];                                            // 1 ~ 3
@@ -186,8 +187,8 @@ public:
     static bool IsMPZombieTypeAddInRow(ZombieType theZombieType);
     static bool IsMPZombieTypeCanGoInPool(ZombieType theZombieType);
     void DrawWeather(Sexy::Graphics *g);
-
-    void UpdateConveyorBelt(int playerIndex);
+    void UpdateConveyorBelt(int thePlayerIndex);
+    void UpdateMPGraveStones();
 
 protected:
     friend void InitHookFunction();

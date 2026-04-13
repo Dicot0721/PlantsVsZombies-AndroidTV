@@ -412,6 +412,16 @@ int Board::GetCurrentPlantCost(SeedType theSeedType, SeedType theImitaterType) {
     if (infiniteSun)
         return 0;
 
+    if (theSeedType == SeedType::SEED_ZOMBIE_MOUND) {
+        GamepadControls *aGamepad = mGamepadControls1->mIsZombie ? mGamepadControls1 : (mGamepadControls2->mIsZombie ? mGamepadControls2 : nullptr);
+        int aGridX = PixelToGridXKeepOnBoard(int(aGamepad->mCursorPositionX), int(aGamepad->mCursorPositionY));
+        int aGridY = PixelToGridYKeepOnBoard(int(aGamepad->mCursorPositionX), int(aGamepad->mCursorPositionY));
+        GridItem *aMound = GetMoundAt(aGridX, aGridY);
+        if (aMound) {
+            return aMound->GetMoundUpgradeCost();
+        }
+    }
+
     return old_Board_GetCurrentPlantCost(this, theSeedType, theImitaterType);
 }
 
@@ -1416,6 +1426,8 @@ size_t Board::getServerEventSize(EventType type) {
             return sizeof(U8U8U16_Event);
         case EVENT_SERVER_BOARD_GRIDITEM_ADDCRATER:
             return sizeof(U8U8U16_Event);
+        case EVENT_SERVER_BOARD_GRIDITEM_ADDMOUND:
+            return sizeof(U8x3U16x3_Event);
 
         case EVENT_SERVER_BOARD_TOUCH_DRAG:
             return sizeof(I16I16_Event);
@@ -1439,6 +1451,7 @@ size_t Board::getServerEventSize(EventType type) {
         // --- 发射计数类事件 ---
         case EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER:
         case EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER:
+        case EVENT_SERVER_BOARD_GRIDITEM_SUMMONCOUNTER:
             return sizeof(U16U16_Event);
         case EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH:
             return sizeof(U16_Event);
@@ -1664,6 +1677,14 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 gridItem->mLaunchCounter = event1->data2;
             }
         } break;
+        case EVENT_SERVER_BOARD_GRIDITEM_SUMMONCOUNTER: {
+            auto *eventSummonCounter = reinterpret_cast<U16U16_Event *>(event);
+            uint16_t clientGridItemID;
+            if (homura::FindInMap(serverGridItemIDMap, eventSummonCounter->data1, clientGridItemID)) {
+                GridItem *gridItem = mGridItems.DataArrayGet(clientGridItemID);
+                gridItem->mSummonCounter = eventSummonCounter->data2;
+            }
+        } break;
         case EVENT_SERVER_BOARD_GRIDITEM_ADDLADDER: {
             auto *event1 = reinterpret_cast<U8U8U16_Event *>(event);
             GridItem *ladder = AddALadder_Origin(event1->data1, event1->data2);
@@ -1680,8 +1701,18 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             GridItem *gridItem = AddAGraveStone(event1->data1, event1->data2);
             gridItem->mLaunchCounter = event1->data4;
             //            gridItem->mVSGraveStoneHealth = 350;
-            //            gridItem->unkBool1 = true;
+            //            gridItem->mIsSpecialGrave = true;
             serverGridItemIDMap[event1->data3] = uint16_t(mGridItems.DataArrayGetID(gridItem));
+        } break;
+        case EVENT_SERVER_BOARD_GRIDITEM_ADDMOUND: {
+            auto *eventAddMound = reinterpret_cast<U8x3U16x3_Event *>(event);
+            int gridX = eventAddMound->data1[0];
+            int gridY = eventAddMound->data1[1];
+            int moundLevel = eventAddMound->data1[2];
+            GridItem *mound = AddAMound(gridX, gridY, moundLevel);
+            serverGridItemIDMap[eventAddMound->data2[0]] = uint16_t(mGridItems.DataArrayGetID(mound));
+            mound->mLaunchCounter = eventAddMound->data2[1];
+            mound->mSummonCounter = eventAddMound->data2[2];
         } break;
         case EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION: {
             auto *event1 = reinterpret_cast<U16U16U16UNI32UNI32_Event *>(event);
@@ -5192,6 +5223,10 @@ GridItem *Board::GetScaryPotAt(int theGridX, int theGridY) {
     return GetGridItemAt(GridItemType::GRIDITEM_SCARY_POT, theGridX, theGridY);
 }
 
+GridItem *Board::GetMoundAt(int theGridX, int theGridY) {
+    return GetGridItemAt(GridItemType::GRIDITEM_MP_BURIAL_MOUND, theGridX, theGridY);
+}
+
 int Board::PixelToGridXKeepOnBoard(int theX, int theY) {
     int aGridX = PixelToGridX(theX, theY);
     return std::max(aGridX, 0);
@@ -5781,14 +5816,29 @@ GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {
     return aGraveStone;
 }
 
-GridItem *Board::AddAMound(int theGridX, int theGridY, int theUnkParameter) {
+GridItem *Board::AddAMound(int theGridX, int theGridY, int theMoundLevel) {
     GridItem *aMound = mGridItems.DataArrayAlloc();
-    aMound->unkMems = theUnkParameter;
+    aMound->mMoundLevel = theMoundLevel;
     aMound->mGridX = theGridX;
     aMound->mGridY = theGridY;
     aMound->mGridItemType = GridItemType::GRIDITEM_MP_BURIAL_MOUND;
-    aMound->mGridItemCounter = -500;
-    aMound->mRenderOrder = 10000 * theGridY + 200001;
+    aMound->mGridItemCounter = -Rand(50);
+    aMound->mSummonCounter = RandRangeInt(300, 1500);
+    aMound->mRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, theGridY, 3);
+    ;
+
+    if (gTcpClientSocket >= 0 && mApp->mGameScene == SCENE_PLAYING) {
+        U8x3U16x3_Event event{};
+        event.type = EventType::EVENT_SERVER_BOARD_GRIDITEM_ADDMOUND;
+        event.data1[0] = uint8_t(theGridX);
+        event.data1[1] = uint8_t(theGridY);
+        event.data1[2] = uint8_t(aMound->mMoundLevel);
+        event.data2[0] = uint16_t(mGridItems.DataArrayGetID(aMound));
+        event.data2[1] = uint16_t(aMound->mLaunchCounter);
+        event.data2[2] = uint16_t(aMound->mSummonCounter);
+        netplay::PutEvent(event);
+    }
+
     return aMound;
 }
 
@@ -5953,7 +6003,7 @@ GridItem *Board::AddMPTarget(int theGridX, int theGridY) {
         RenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_UI_BOTTOM, 0, 0);
     }
     GridItem *aGridItem = mGridItems.DataArrayAlloc();
-    aGridItem->mGridItemType = GRIDITEM_VS_TARGET_ZOMBIE;
+    aGridItem->mGridItemType = GRIDITEM_MP_TARGET_ZOMBIE;
     aGridItem->mGridY = theGridY;
     aGridItem->mRenderOrder = RenderOrder;
     aGridItem->mGridX = theGridX;
@@ -5985,4 +6035,73 @@ void Board::PlantsWon(GridItem *theGridItem) {
 
 void Board::PlantsWon_Origin(GridItem *theGridItem) {
     old_Board_PlantsWon(this, theGridItem);
+}
+
+ZombieType Board::PickGraveRisingZombieTypeMP(int theMoundLevel) {
+    TodWeightedArray aZombieWeightArray[(int)ZombieType::NUM_ZOMBIE_TYPES];
+    int aCount = 0;
+    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS_DEBUG) {
+        if (theMoundLevel > 3) {
+            aZombieWeightArray[0].mItem = ZombieType::ZOMBIE_GARGANTUAR;
+            aZombieWeightArray[0].mWeight = GetZombieDefinition(ZombieType::ZOMBIE_GARGANTUAR).mPickWeight;
+            aZombieWeightArray[1].mItem = ZombieType::ZOMBIE_CATAPULT;
+            aZombieWeightArray[1].mWeight = GetZombieDefinition(ZombieType::ZOMBIE_CATAPULT).mPickWeight;
+            aZombieWeightArray[2].mItem = ZombieType::ZOMBIE_ZAMBONI;
+            aZombieWeightArray[2].mWeight = GetZombieDefinition(ZombieType::ZOMBIE_ZAMBONI).mPickWeight;
+            aCount = 3;
+        } else {
+            switch (theMoundLevel) {
+                case 3:
+                    aZombieWeightArray[0].mItem = ZombieType::ZOMBIE_DOOR;
+                    aZombieWeightArray[0].mWeight = GetZombieDefinition(ZombieType::ZOMBIE_DOOR).mPickWeight;
+                    aZombieWeightArray[1].mItem = ZombieType::ZOMBIE_JACK_IN_THE_BOX;
+                    aZombieWeightArray[1].mWeight = GetZombieDefinition(ZombieType::ZOMBIE_JACK_IN_THE_BOX).mPickWeight;
+                    aCount = 2;
+                    break;
+
+                case 2:
+                    aZombieWeightArray[0].mItem = ZombieType::ZOMBIE_POLEVAULTER;
+                    aZombieWeightArray[0].mWeight = GetZombieDefinition(ZombieType::ZOMBIE_POLEVAULTER).mPickWeight;
+                    aZombieWeightArray[1].mItem = ZombieType::ZOMBIE_FOOTBALL;
+                    aZombieWeightArray[1].mWeight = GetZombieDefinition(ZombieType::ZOMBIE_FOOTBALL).mPickWeight;
+                    aCount = 2;
+                    break;
+
+                case 1:
+                    aZombieWeightArray[0].mItem = ZombieType::ZOMBIE_NEWSPAPER;
+                    aZombieWeightArray[0].mWeight = GetZombieDefinition(ZombieType::ZOMBIE_NEWSPAPER).mPickWeight;
+                    aZombieWeightArray[1].mItem = ZombieType::ZOMBIE_TRAFFIC_CONE;
+                    aZombieWeightArray[1].mWeight = GetZombieDefinition(ZombieType::ZOMBIE_TRAFFIC_CONE).mPickWeight;
+                    aCount = 2;
+                    break;
+
+                default:
+                    aZombieWeightArray[0].mItem = ZombieType::ZOMBIE_NORMAL;
+                    aZombieWeightArray[0].mWeight = GetZombieDefinition(ZombieType::ZOMBIE_NORMAL).mPickWeight;
+                    aCount = 1;
+                    break;
+            }
+        }
+
+        return ZombieType(TodPickFromWeightedArray(aZombieWeightArray, aCount));
+    }
+
+    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+        switch (theMoundLevel) {
+            case 0:
+                return ZombieType::ZOMBIE_NORMAL;
+            case 1:
+                return ZombieType::ZOMBIE_TRAFFIC_CONE;
+            case 2:
+                return ZombieType::ZOMBIE_PAIL;
+            case 3:
+                return ZombieType::ZOMBIE_FOOTBALL;
+            case 4:
+                return ZombieType::ZOMBIE_GARGANTUAR;
+            default:
+                break;
+        }
+    }
+
+    return ZombieType(TodPickFromWeightedArray(aZombieWeightArray, aCount));
 }
