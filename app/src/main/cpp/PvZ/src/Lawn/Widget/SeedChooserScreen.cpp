@@ -1198,11 +1198,11 @@ void SeedChooserScreen::Draw(Graphics *g) {
     for (int aPlayerIndex = 0; aPlayerIndex < 2; aPlayerIndex++) {
         if (ShouldDisplayCursor(aPlayerIndex) && (aPlayerIndex ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1)->mPlayerIndex2 != -1) {
             Image *aArrowImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_ARROW_P2 : *Sexy::IMAGE_CURSOR_ARROW_P1;
-            Image *aTextImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_P2_TEXT : *Sexy::IMAGE_CURSOR_P1_TEXT;
+            Image *aTextImage = aPlayerIndex ? *Sexy_IMAGE_CURSOR_P2_TEXT_Addr : *Sexy_IMAGE_CURSOR_P1_TEXT_Addr;
 
             if (mApp->IsVSMode() && mApp->mVSSetupMenu->mAddonWidget->mBanMode) {
                 aArrowImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_ARROW_P1 : *Sexy::IMAGE_CURSOR_ARROW_P2;
-                aTextImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_P1_TEXT : *Sexy::IMAGE_CURSOR_P2_TEXT;
+                aTextImage = aPlayerIndex ? *Sexy_IMAGE_CURSOR_P1_TEXT_Addr : *Sexy_IMAGE_CURSOR_P2_TEXT_Addr;
             }
 
             float aBounce = sinf(unkF * 5.0f) * 2.0f;

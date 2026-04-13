@@ -34,7 +34,6 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN5Board9InitLevelEv", Board_InitLevelAddr);
     libGameMain.GetSymbol("_ZN5Board10StartLevelEv", Board_StartLevelAddr);
     libGameMain.GetSymbol("_ZN5Board18RemovedFromManagerEPN4Sexy13WidgetManagerE", Board_RemovedFromManagerAddr);
-    libGameMain.GetSymbol("_ZN5BoardD2Ev", Board_Delete2Addr);
     libGameMain.GetSymbol("_ZN5Board12FadeOutLevelEv", Board_FadeOutLevelAddr);
     libGameMain.GetSymbol("_ZN5Board12MouseHitTestEiiP9HitResulti", Board_MouseHitTestAddr);
     libGameMain.GetSymbol("_ZN5Board16CanUseGameObjectE14GameObjectType", Board_CanUseGameObjectAddr);
@@ -1310,8 +1309,6 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy24IMAGE_SEED_SELECTOR_BLUEE", Sexy::IMAGE_SEED_SELECTOR_BLUE);
     libGameMain.GetSymbol("_ZN4Sexy21IMAGE_CURSOR_ARROW_P1E", Sexy::IMAGE_CURSOR_ARROW_P1);
     libGameMain.GetSymbol("_ZN4Sexy21IMAGE_CURSOR_ARROW_P2E", Sexy::IMAGE_CURSOR_ARROW_P2);
-    libGameMain.GetSymbol("_ZN4Sexy20IMAGE_CURSOR_P1_TEXTE", Sexy::IMAGE_CURSOR_P1_TEXT);
-    libGameMain.GetSymbol("_ZN4Sexy20IMAGE_CURSOR_P2_TEXTE", Sexy::IMAGE_CURSOR_P2_TEXT);
     libGameMain.GetSymbol("_ZN4Sexy22IMAGE_PUFFSHROOM_PUFF1E", Sexy::IMAGE_PUFFSHROOM_PUFF1);
     libGameMain.GetSymbol("_ZN4Sexy19IMAGE_ZOMBIEIMPHEADE", Sexy::IMAGE_ZOMBIEIMPHEAD);
     libGameMain.GetSymbol("_ZN4Sexy41IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_HANDE", Sexy::IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_HAND);
