@@ -92,7 +92,7 @@ public:
     void Draw(Sexy::Graphics *g);
 
 private:
-    static constexpr Sexy::ButtonListener::VTable sButtonListenerVtable{
+    static inline const Sexy::ButtonListener::VTable sButtonListenerVtable{
         .ButtonDepress = (void *)&VSSetupAddonWidget::ButtonDepress,
     };
 

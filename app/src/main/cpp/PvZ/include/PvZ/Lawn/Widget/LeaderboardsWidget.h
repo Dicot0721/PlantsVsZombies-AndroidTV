@@ -77,9 +77,11 @@ public:
     bool mHighLightAchievement;
 
 private:
-    static constexpr Sexy::ButtonListener::VTable sButtonListenerVtable{// .ButtonPress = (void *)LeaderboardsWidget_ButtonPress;
-                                                                        .ButtonPress2 = (void *)&LeaderboardsWidget::ButtonPress,
-                                                                        .ButtonDepress = (void *)&LeaderboardsWidget::ButtonDepress};
+    static inline const Sexy::ButtonListener::VTable sButtonListenerVtable{
+        // .ButtonPress = (void *)LeaderboardsWidget_ButtonPress;
+        .ButtonPress2 = (void *)&LeaderboardsWidget::ButtonPress,
+        .ButtonDepress = (void *)&LeaderboardsWidget::ButtonDepress,
+    };
 
     static inline Sexy::ButtonListener sButtonListener{&sButtonListenerVtable};
 

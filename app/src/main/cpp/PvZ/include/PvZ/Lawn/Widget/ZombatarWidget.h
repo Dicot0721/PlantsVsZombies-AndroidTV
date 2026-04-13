@@ -90,7 +90,7 @@ public:
     void ButtonDepress(this ZombatarWidget &self, int id);
 
 private:
-    static constexpr Sexy::ButtonListener::VTable sButtonListenerVtable{
+    static inline const Sexy::ButtonListener::VTable sButtonListenerVtable{
         // .ButtonPress = (void *)LeaderboardsWidget_ButtonPress;
         .ButtonPress2 = (void *)&ZombatarWidget::ButtonPress,
         .ButtonDepress = (void *)&ZombatarWidget::ButtonDepress,
