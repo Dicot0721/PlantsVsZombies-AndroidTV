@@ -29,7 +29,7 @@
         if (auto eptr = std::current_exception()) {
             std::rethrow_exception(eptr);
         } else {
-            LOG_FATAL("Exiting without exception");
+            LOG_FATAL("Unhandled 'std::terminate()' call");
         }
     } catch (const std::exception &e) {
         LOG_FATAL("Unhandled exception: {}", e.what());

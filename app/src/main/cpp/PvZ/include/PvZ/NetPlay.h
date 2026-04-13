@@ -349,7 +349,7 @@ inline bool gTcpConnected = false;
 namespace netplay {
 
 namespace details {
-    void PutEventData(const std::uint8_t *src, std::size_t n);
+    void PutEventData(const std::byte *src, std::size_t n);
 } // namespace details
 
 template <typename T>
@@ -360,7 +360,7 @@ ssize_t PutEvent(T &&event) {
     static_assert(std::is_trivially_copyable_v<std::remove_reference_t<T>>, "Event must be trivially copyable");
     static_assert(std::in_range<decltype(event.BaseEvent::size)>(sizeof(T)), "BaseEvent::size too small");
     event.BaseEvent::size = sizeof(T);
-    details::PutEventData(reinterpret_cast<std::uint8_t *>(&event), sizeof(T));
+    details::PutEventData(reinterpret_cast<std::byte *>(&event), sizeof(T));
     return sizeof(T);
 }
 

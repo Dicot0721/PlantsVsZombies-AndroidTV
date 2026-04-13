@@ -40,19 +40,26 @@ class Logger {
 public:
     static constexpr auto &PVZ_LOG_TAG = "pvztv";
 
-    Logger() = delete;
-    ~Logger() = delete;
+    [[nodiscard]] static Logger &GetInstance() {
+        static Logger logger;
+        return logger;
+    }
 
-    static void SetLevel(android_LogPriority level) noexcept {
+    Logger(const Logger &) = delete;
+    Logger(Logger &&) = delete;
+    Logger &operator=(const Logger &) = delete;
+    Logger &operator=(Logger &&) = delete;
+
+    void SetLevel(android_LogPriority level) noexcept {
         level_ = level;
     }
 
-    [[nodiscard]] static android_LogPriority GetLevel() noexcept {
+    [[nodiscard]] android_LogPriority GetLevel() const noexcept {
         return level_;
     }
 
     template <typename... Args>
-    static void Log(const char *funcName, android_LogPriority level, std::format_string<Args...> format, Args &&...args) {
+    void Log(const char *funcName, android_LogPriority level, std::format_string<Args...> format, Args &&...args) {
         if (level < level_) {
             return;
         }
@@ -61,14 +68,17 @@ public:
     }
 
 protected:
-    static inline android_LogPriority level_ = ANDROID_LOG_DEBUG;
+    constexpr Logger() = default;
+    constexpr ~Logger() = default;
+
+    android_LogPriority level_ = ANDROID_LOG_DEBUG;
 };
 
 } // namespace homura
 
 
 // '__func__' 与 '__FUNCTION__' 生成的函数签名不够完整.
-#define LOGGER_CALL(level, ...) homura::Logger::Log(std::source_location::current().function_name(), level, __VA_ARGS__)
+#define LOGGER_CALL(level, ...) homura::Logger::GetInstance().Log(std::source_location::current().function_name(), level, __VA_ARGS__)
 
 #define LOG_DEBUG(...) LOGGER_CALL(ANDROID_LOG_DEBUG, __VA_ARGS__)
 #define LOG_INFO(...) LOGGER_CALL(ANDROID_LOG_INFO, __VA_ARGS__)

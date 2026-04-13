@@ -20,8 +20,6 @@
 #ifndef HOMURA_SHAREDLIBUTILS_H
 #define HOMURA_SHAREDLIBUTILS_H
 
-#include <type_traits>
-
 namespace homura {
 
 class SharedLibLoader {
@@ -49,9 +47,7 @@ public:
      *
      * @retval false 仅在发生错误时返回 false.
      */
-    template <typename T>
-        requires(!std::is_const_v<T> && (std::is_pointer_v<T> || std::is_member_function_pointer_v<T>))
-    bool GetSymbol(const char *name, T &output) const {
+    bool GetSymbol(const char *name, auto *&output) const {
         return GetSymbolImpl(name, reinterpret_cast<void *&>(output));
     }
 

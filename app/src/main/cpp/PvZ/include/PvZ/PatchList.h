@@ -23,17 +23,18 @@
 #include "Homura/MemoryUtils.h"
 
 
+namespace patchlist {
+
 // initialize before calling 'LibMain()'
 #pragma clang attribute push([[gnu::init_priority(101)]], apply_to = variable)
 
-namespace patchlist {
 inline homura::Patcher autoPickupSeedPacketDisable; // 禁止光标自动拾取植物卡片
-} // namespace patchlist
 
 #pragma clang attribute pop
 
+} // namespace patchlist
 
-// 不添加 [[gnu::constructor]] 属性, 防止忘记引用本头文件
+
 inline void ApplyPatches() {
     constexpr auto *libGameMain = "libGameMain.so";
 

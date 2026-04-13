@@ -69,13 +69,13 @@ public:
 
     template <typename... Args>
         requires std::is_constructible_v<T, Args &&...>
-    T &Construct(Args &&...args) noexcept(std::is_nothrow_constructible_v<T, Args &&...>) {
+    T &Construct(Args &&...args) {
         return *std::construct_at(this->operator->(), std::forward<Args>(args)...);
     }
 
     template <typename U, typename... Args>
         requires std::is_constructible_v<T, std::initializer_list<U> &, Args &&...>
-    T &Construct(std::initializer_list<U> ilist, Args &&...args) noexcept(std::is_nothrow_constructible_v<T, std::initializer_list<U> &, Args &&...>) {
+    T &Construct(std::initializer_list<U> ilist, Args &&...args) {
         return *std::construct_at(this->operator->(), ilist, std::forward<Args>(args)...);
     }
 

@@ -62,7 +62,7 @@ namespace homura::inline string {
     std::vector<std::string> result;
     auto view = std::views::split(sv, sep);
     result.reserve(std::ranges::distance(view));
-    for (const auto &word : view) {
+    for (const auto word : view) {
         result.emplace_back(std::from_range, word);
     }
     return result;

@@ -27,11 +27,9 @@
 #include <ranges>
 #include <vector>
 
-namespace {
-std::vector<uint8_t> sendBuffer;
-}
+static std::vector<std::byte> sendBuffer;
 
-void netplay::details::PutEventData(const std::uint8_t *src, std::size_t n) {
+void netplay::details::PutEventData(const std::byte *src, std::size_t n) {
     sendBuffer.append_range(std::views::counted(src, n));
 }
 
