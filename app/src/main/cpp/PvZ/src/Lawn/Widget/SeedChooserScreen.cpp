@@ -668,15 +668,16 @@ void SeedChooserScreen::MouseMove(int x, int y) {
             return;
 
         SeedType aZombieSeedType = GetZombieIndexBySeedType(aSeedType);
-        GetSeedPositionInChooser(aZombieSeedType, mCursorPositionX1, mCursorPositionX1);
+        GetSeedPositionInChooser(aZombieSeedType, mCursorPositionX1, mCursorPositionY1);
         GetSeedPositionInChooser(aZombieSeedType, mCursorPositionX2, mCursorPositionY2);
+        mSeedType1 = aZombieSeedType;
         mSeedType2 = aZombieSeedType;
     } else if (m1PChoosingSeeds) {
         if (mApp->IsVSMode() && aSeedType > SeedType::SEED_MELONPULT)
             return;
 
         if (mApp->IsVSMode()) {
-            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionX1);
+            GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
             GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
         } else {
             GetSeedPositionInChooser(aSeedType, mCursorPositionX1, mCursorPositionY1);
@@ -793,6 +794,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         SeedType aZombieSeedType = GetZombieIndexBySeedType(aSeedType);
         GetSeedPositionInChooser(aZombieSeedType, mCursorPositionX1, mCursorPositionY1);
         GetSeedPositionInChooser(aZombieSeedType, mCursorPositionX2, mCursorPositionY2);
+        mSeedType1 = aZombieSeedType;
         mSeedType2 = aZombieSeedType;
     } else if (m1PChoosingSeeds) {
         if (mApp->IsVSMode() && aSeedType > SeedType::SEED_MELONPULT)
@@ -842,6 +844,7 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
             SeedType aZombieSeedType = GetZombieIndexBySeedType(aSeedType);
             GetSeedPositionInChooser(aZombieSeedType, mCursorPositionX1, mCursorPositionY1);
             GetSeedPositionInChooser(aZombieSeedType, mCursorPositionX2, mCursorPositionY2);
+            mSeedType1 = aZombieSeedType;
             mSeedType2 = aZombieSeedType;
         } else if (m1PChoosingSeeds) {
             if (mApp->IsVSMode() && aSeedType > SeedType::SEED_MELONPULT)
