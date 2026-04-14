@@ -436,6 +436,7 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
 size_t VSSetupMenu::getClientEventSize(EventType type) {
     switch (type) {
         case EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS:
+        case EVENT_CLIENT_SEEDCHOOSER_BUTTON_DEPRESS:
             return sizeof(U8_Event);
         case EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED:
             return sizeof(U8U8_Event);
@@ -453,8 +454,12 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS: {
-            U8_Event *eventButtonDepress = (U8_Event *)event;
-            gVSSetupRequestState = eventButtonDepress->data;
+            auto *eventBtnDepress = reinterpret_cast<U8_Event *>(event);
+            gVSSetupRequestState = eventBtnDepress->data;
+        } break;
+        case EVENT_CLIENT_SEEDCHOOSER_BUTTON_DEPRESS: {
+            auto *eventBtnDepress = reinterpret_cast<U8_Event *>(event);
+            mApp->mZombieChooserScreen->ButtonDepress_Origin(eventBtnDepress->data);
         } break;
         case EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED: {
             auto *event1 = reinterpret_cast<U8U8_Event *>(event);
@@ -504,6 +509,7 @@ size_t VSSetupMenu::getServerEventSize(EventType type) {
         case EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS:
         case EVENT_VSSETUPMENU_ENTER_STATE:
         case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND:
+        case EVENT_SERVER_SEEDCHOOSER_BUTTON_DEPRESS:
             return sizeof(U8_Event);
         case EVENT_SERVER_SEEDCHOOSER_SELECT_SEED:
             return sizeof(U8U8_Event);
@@ -527,8 +533,8 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS: {
-            U8_Event *event1 = (U8_Event *)event;
-            int theId = event1->data;
+            auto *eventBtnDepress = reinterpret_cast<U8_Event *>(event);
+            int theId = eventBtnDepress->data;
             LOG_DEBUG("theId={}", theId);
             if (theId == VSSetupMenu_Random_Battle && mState == VS_SETUP_STATE_SELECT_BATTLE) { // 随机战场
                 break;
@@ -536,6 +542,10 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             gTcpConnected = false;
             ButtonDepress(theId);
             gTcpConnected = true;
+        } break;
+        case EVENT_SERVER_SEEDCHOOSER_BUTTON_DEPRESS: {
+            auto *eventBtnDepress = reinterpret_cast<U8_Event *>(event);
+            mApp->mZombieChooserScreen->ButtonDepress_Origin(eventBtnDepress->data);
         } break;
         case EVENT_VSSETUPMENU_ENTER_STATE: {
             [[maybe_unused]] int aState = static_cast<U8_Event *>(event)->data;
@@ -763,6 +773,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
                     mAddonWidget->SetDisable(mAddonWidget->mExtraSeedsButton);
                     mAddonWidget->SetDisable(mAddonWidget->mBanModeButton);
                     mAddonWidget->SetDisable(mAddonWidget->mBalancePatchButton);
+                    mAddonWidget->SetDisable(mAddonWidget->mBackButton);
                     mAddonWidget->mDrawString = false;
                     PickBackgroundImmediately();
                 }

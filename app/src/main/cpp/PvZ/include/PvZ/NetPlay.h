@@ -29,7 +29,7 @@
 #include <string>
 #include <utility>
 
-constexpr std::uint32_t NETPLAY_VERSION = 3154;
+constexpr std::uint32_t NETPLAY_VERSION = 3155;
 
 enum EventType : uint8_t {
     EVENT_NULL,
@@ -62,6 +62,8 @@ enum EventType : uint8_t {
 
     EVENT_SERVER_SEEDCHOOSER_SELECT_SEED,
     EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED,
+    EVENT_SERVER_SEEDCHOOSER_BUTTON_DEPRESS,
+    EVENT_CLIENT_SEEDCHOOSER_BUTTON_DEPRESS,
     NUM_EVENT_VSSETUPMENU,
     /************************************************************/
     EVENT_CLIENT_BOARD_TOUCH_DOWN,

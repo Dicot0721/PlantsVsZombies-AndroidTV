@@ -493,6 +493,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN17SeedChooserScreen16CloseSeedChooserEv", SeedChooserScreen_CloseSeedChooserAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreen17ClickedSeedInBankER10ChosenSeedi", SeedChooserScreen_ClickedSeedInBankAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreenC2Eb", SeedChooserScreen_SeedChooserScreenAddr);
+    libGameMain.GetSymbol("_ZN17SeedChooserScreenD2Ev", SeedChooserScreen__destructorAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreen9HasPacketEib", SeedChooserScreen_HasPacketAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreen17EnableStartButtonEb", SeedChooserScreen_EnableStartButtonAddr);
     libGameMain.GetSymbol("_ZN17SeedChooserScreen14RebuildHelpbarEv", SeedChooserScreen_RebuildHelpbarAddr);

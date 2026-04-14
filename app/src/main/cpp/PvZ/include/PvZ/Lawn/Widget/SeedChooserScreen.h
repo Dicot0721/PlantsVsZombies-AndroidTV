@@ -72,7 +72,8 @@ private:
         SeedChooserScreen_Almanac = 103,
         SeedChooserScreen_Menu = 104,
         SeedChooserScreen_Store = 105,
-        SeedChooserScreen_Imitater = 106
+        SeedChooserScreen_Imitater = 106,
+        SeedChooserScreen_Page
     };
 
 public:
@@ -119,7 +120,8 @@ public:
     GameButton *mAlmanacButton;              // 961
     int unkMems3[4];                         // 962 ~ 965
     // 大小966个整数
-    int mNewMemberOHHHHHHHHHHHHHHHHH;
+    NewLawnButton *mPageButton = nullptr;
+    int mPageIndex = 0;
 
     SeedChooserScreen(bool theIsZombieChooser) {
         _constructor(theIsZombieChooser);
@@ -130,9 +132,6 @@ public:
     void CloseSeedChooser() {
         reinterpret_cast<void (*)(SeedChooserScreen *)>(SeedChooserScreen_CloseSeedChooserAddr)(this);
     }
-    //    SeedType FindSeedInBank(int theIndexInBank, int thePlayerIndex) {
-    //        return reinterpret_cast<SeedType (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_FindSeedInBankAddr)(this, theIndexInBank, thePlayerIndex);
-    //    }
     bool HasPacket(SeedType theSeedType, bool theIsZombieChooser) {
         return reinterpret_cast<bool (*)(SeedChooserScreen *, SeedType, bool)>(SeedChooserScreen_HasPacketAddr)(this, theSeedType, theIsZombieChooser);
     }
@@ -145,9 +144,6 @@ public:
     void UpdateImitaterButton() {
         reinterpret_cast<void (*)(SeedChooserScreen *)>(SeedChooserScreen_UpdateImitaterButtonAddr)(this);
     }
-    //    SeedType SeedHitTest(int x, int y) {
-    //        return reinterpret_cast<SeedType (*)(SeedChooserScreen *, int, int)>(SeedChooserScreen_SeedHitTestAddr)(this, x, y);
-    //    }
     void LandFlyingSeed(ChosenSeed &theChosenSeed) {
         reinterpret_cast<void (*)(SeedChooserScreen *, ChosenSeed &)>(SeedChooserScreen_LandFlyingSeedAddr)(this, theChosenSeed);
     }
@@ -183,7 +179,6 @@ public:
     void GameButtonDown(Sexy::GamepadButton theButton, unsigned int thePlayerIndex);
     void
     DrawPacket(Sexy::Graphics *g, int x, int y, SeedType theSeedType, SeedType theImitaterType, float thePercentDark, int theGrayness, Sexy::Color *theColor, bool theDrawCost, bool theUseCurrentCost);
-    void ButtonDepress(int theId);
     void GetSeedPositionInBank(int theIndex, int &x, int &y, int thePlayerIndex);
     void GetSeedPositionInChooser(int theIndex, int &x, int &y);
     int NumColumns();
@@ -193,6 +188,7 @@ public:
     void Draw(Sexy::Graphics *g);
     void DrawBanIcon(Sexy::Graphics *g);
     SeedType SeedHitTest(int x, int y);
+    SeedType SeedHitTest_Origin(int x, int y);
     void VSAutoPickResourceGen();
 
     void MouseMove(int x, int y);
@@ -200,11 +196,14 @@ public:
     void MouseUp(int x, int y);
     void MouseDrag(int x, int y);
     void ButtonPress(int theId);
+    void ButtonDepress(int theId);
+    void ButtonDepress_Origin(int theId);
 
 protected:
     friend void InitHookFunction();
 
     void _constructor(bool theIsZombieChooser);
+    void _destructor();
 };
 
 inline GameButton *gSeedChooserScreenMainMenuButton;
@@ -217,6 +216,8 @@ inline bool daveNoPickSeeds;
 inline void (*old_SeedChooserScreen_RebuildHelpbar)(SeedChooserScreen *instance);
 
 inline void (*old_SeedChooserScreen_SeedChooserScreen)(SeedChooserScreen *seedChooserScreen, bool isZombieChooser);
+
+inline void (*old_SeedChooserScreen__destructor)(SeedChooserScreen *);
 
 inline void (*old_SeedChooserScreen_Update)(SeedChooserScreen *a);
 

@@ -494,6 +494,7 @@ inline void *SeedChooserScreen_HasPacketAddr;
 inline void *SeedChooserScreen_Has7RowsAddr;
 inline void *SeedChooserScreen_RebuildHelpbarAddr;
 inline void *SeedChooserScreen_SeedChooserScreenAddr;
+inline void *SeedChooserScreen__destructorAddr;
 inline void *SeedChooserScreen_OnStartButtonAddr;
 inline void *SeedChooserScreen_OnKeyDownAddr;
 inline void *SeedChooserScreen_DrawPacketAddr;

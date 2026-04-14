@@ -269,9 +269,10 @@ void InitHookFunction() {
     homura::HookFunction(AlmanacDialog_SetupLayoutPlantsAddr, &AlmanacDialog::SetupLayoutPlants, &old_AlmanacDialog_SetupLayoutPlants);
 
 
+    homura::HookFunction(SeedChooserScreen_SeedChooserScreenAddr, &SeedChooserScreen::_constructor, &old_SeedChooserScreen_SeedChooserScreen);
+    homura::HookFunction(SeedChooserScreen__destructorAddr, &SeedChooserScreen::_destructor, &old_SeedChooserScreen__destructor);
     homura::HookFunction(SeedChooserScreen_EnableStartButtonAddr, &SeedChooserScreen::EnableStartButton, &old_SeedChooserScreen_EnableStartButton);
     homura::HookFunction(SeedChooserScreen_RebuildHelpbarAddr, &SeedChooserScreen::RebuildHelpbar, &old_SeedChooserScreen_RebuildHelpbar);
-    homura::HookFunction(SeedChooserScreen_SeedChooserScreenAddr, &SeedChooserScreen::_constructor, &old_SeedChooserScreen_SeedChooserScreen);
     homura::HookFunction(SeedChooserScreen_GetZombieSeedTypeAddr, &SeedChooserScreen::GetZombieSeedType, nullptr);
     homura::HookFunction(SeedChooserScreen_ClickedSeedInChooserAddr, &SeedChooserScreen::ClickedSeedInChooser, &old_SeedChooserScreen_ClickedSeedInChooser);
     homura::HookFunction(SeedChooserScreen_CrazyDavePickSeedsAddr, &SeedChooserScreen::CrazyDavePickSeeds, &old_SeedChooserScreen_CrazyDavePickSeeds);

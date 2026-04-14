@@ -119,8 +119,17 @@ void GridItem::GridItemDie() {
 }
 
 void GridItem::DrawGridItem(Graphics *g) {
-    if (GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
+    if (mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
         DrawGraveStone(g);
+        // 召唤墓碑暂无受损动画，故用显血来表示
+        int x = mBoard->GridToPixelX(mGridX, mGridY);
+        int y = mBoard->GridToPixelY(mGridX, mGridY);
+        Graphics aHealthG = Graphics(*g);
+        pvzstl::string str = StrFormat("%d/%d", mVSGraveStoneHealth, 350);
+        aHealthG.SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        aHealthG.SetColor(Color::White);
+        aHealthG.DrawString(str, x, y + 34);
+        aHealthG.SetFont(nullptr);
     }
 
     old_GridItem_DrawGridItem(this, g);
