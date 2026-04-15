@@ -388,51 +388,51 @@ void GridItem::UpdateBurialMound() {
     if (mApp->mGameScene != SCENE_PLAYING)
         return;
 
+    ++mGridItemCounter;
+
     if (mSummonCounter > 0) {
         --mSummonCounter;
 
-        if (mSummonCounter <= 0) {
-            if (mSummonIndex >= 0) {
-                for (int aSummonIndex = 0; aSummonIndex <= mSummonIndex; ++aSummonIndex) {
-                    ZombieType aZombieType = mBoard->PickGraveRisingZombieTypeMP(mMoundLevel);
-                    Zombie *aZombie = mBoard->AddZombie(aZombieType, Zombie::ZOMBIE_WAVE_VS, false);
+        if (gTcpConnected) {
+            return;
+        }
 
-                    if (aZombie) {
-                        int aGridX = mGridX;
-                        int aGridY = mGridY;
+        if (mSummonCounter <= 0 && mSummonIndex >= 0) {
+            for (int aSummonIndex = 0; aSummonIndex <= mSummonIndex; ++aSummonIndex) {
+                ZombieType aZombieType = mBoard->PickGraveRisingZombieTypeMP(mMoundLevel);
+                Zombie *aZombie = mBoard->AddZombie(aZombieType, Zombie::ZOMBIE_WAVE_VS, false);
 
-                        // 调整Y坐标
-                        if (aSummonIndex == 1) {
-                            --aGridY;
-                        } else if (aSummonIndex == 2) {
-                            ++aGridY;
-                        }
+                if (aZombie) {
+                    int aGridX = mGridX;
+                    int aGridY = mGridY;
 
-                        // 限制Y坐标范围
-                        if (aGridY > 0) {
-                            if (aGridY >= 4) {
-                                aGridY = 4;
-                            }
-                        } else {
-                            aGridY = 0;
-                        }
-
-                        // 限制X坐标范围
-                        if (aGridX > 0) {
-                            if (aGridX >= 8) {
-                                aGridX = 8;
-                            }
-                        } else {
-                            aGridX = 0;
-                        }
-
-                        aZombie->RiseFromGrave(aGridX, aGridY);
+                    // 调整Y坐标
+                    if (aSummonIndex == 1) {
+                        --aGridY;
+                    } else if (aSummonIndex == 2) {
+                        ++aGridY;
                     }
-                }
-            }
 
-            if (gTcpConnected) {
-                return;
+                    // 限制Y坐标范围
+                    if (aGridY > 0) {
+                        if (aGridY >= 4) {
+                            aGridY = 4;
+                        }
+                    } else {
+                        aGridY = 0;
+                    }
+
+                    // 限制X坐标范围
+                    if (aGridX > 0) {
+                        if (aGridX >= 8) {
+                            aGridX = 8;
+                        }
+                    } else {
+                        aGridX = 0;
+                    }
+
+                    aZombie->RiseFromGrave(aGridX, aGridY);
+                }
             }
 
             mSummonCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
@@ -443,8 +443,6 @@ void GridItem::UpdateBurialMound() {
             }
         }
     }
-
-    ++mGridItemCounter;
 }
 
 int GridItem::GetMoundUpgradeCost() {
