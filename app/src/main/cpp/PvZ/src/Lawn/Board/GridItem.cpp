@@ -86,6 +86,25 @@ void GridItem::GridItemDie() {
         return;
     }
 
+    int targetsRemain = mBoard->GetMPTargetCount();
+    if (mApp->mGameScene == GameScenes::SCENE_PLAYING && !mBoard->mLevelAwardSpawned) {
+        if (Challenge::gVSWinMode == 1) {
+            if (targetsRemain <= (mBoard->StageHas6Rows() ? 3 : 2)) {
+                mBoard->FreezeEffectsForCutscene(true);
+                mBoard->PlantsWon(this);
+                mGridItemReanimID = ReanimationID::REANIMATIONID_NULL;
+                return;
+            }
+        }
+
+        if (targetsRemain == 0) {
+            mBoard->FreezeEffectsForCutscene(true);
+            mBoard->PlantsWon(this);
+            mGridItemReanimID = ReanimationID::REANIMATIONID_NULL;
+            return;
+        }
+    }
+
     if (mGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
         bool shouldDrop = (Challenge::gVSResourseDropMode == 1 || Challenge::gVSResourseDropMode == 3);
         if (shouldDrop && Challenge::gVSResourceDropCount > 0) {
@@ -96,25 +115,6 @@ void GridItem::GridItemDie() {
             }
         }
         return;
-    }
-
-    if (mApp->mGameScene == GameScenes::SCENE_PLAYING && !mBoard->mLevelAwardSpawned) {
-        if (Challenge::gVSWinMode == 1) {
-            int remainingTargets = mBoard->GetMPTargetCount();
-            if (remainingTargets <= 2) {
-                mBoard->FreezeEffectsForCutscene(true);
-                mBoard->PlantsWon(this);
-                mGridItemReanimID = ReanimationID::REANIMATIONID_NULL;
-                return;
-            }
-        }
-
-        if (mBoard->GetMPTargetCount() == 0) {
-            mBoard->FreezeEffectsForCutscene(true);
-            mBoard->PlantsWon(this);
-            mGridItemReanimID = ReanimationID::REANIMATIONID_NULL;
-            return;
-        }
     }
 }
 
