@@ -1889,12 +1889,20 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             case 0x89: { // P2P_READY
                 if (len >= 2) {
                     mServerP2PLocalPort = homura::ReadBEU16(payload);
+
+                    LOG_DEBUG("[P2P_READY] recv len={} localPort={}", len, mServerP2PLocalPort);
+
                     if (len >= 8) {
                         mServerP2PProbePort = homura::ReadBEU16(payload + 2);
                         mServerP2PProbeToken = (uint32_t)homura::ReadBEI32(payload + 4);
                         mServerP2PProbeDone = false;
-                        ServerSendP2PProbe();
+
+                        LOG_DEBUG("[P2P_READY] probePort={} token={} localPort={}", mServerP2PProbePort, mServerP2PProbeToken, mServerP2PLocalPort);
+
+                        bool ok = ServerSendP2PProbe();
+                        LOG_DEBUG("[P2P_READY] probe result ok={} probeDone={}", ok, mServerP2PProbeDone);
                     }
+
                     if (!mServerGameStarting) {
                         if (mServerP2PProbeDone) {
                             mServerP2PStatusText = StrFormat("P2P: server registered %d, probe complete", mServerP2PLocalPort);
@@ -1906,7 +1914,15 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 break;
             }
             case 0x88: { // P2P_INFO
+                LOG_DEBUG(
+                    "[P2P_INFO] role={} hosting={} localPort={} probeDone={} rawLen={}", mServerHosting ? "host" : "guest", (int)mServerHosting, mServerP2PLocalPort, (int)mServerP2PProbeDone, len);
                 ServerHandleP2PInfo(payload, len);
+                LOG_DEBUG("[P2P_INFO] parsed roomId={} peer={}:{} timeoutSec={} status='{}'",
+                          mServerP2PTargetRoomId,
+                          mServerP2PPeerIp,
+                          mServerP2PPeerPort,
+                          mServerP2PTimeoutSec,
+                          mServerP2PStatusText.c_str());
                 break;
             }
             case 0x8A: { // P2P_DONE
@@ -2061,6 +2077,7 @@ void WaitForSecondPlayerDialog::ServerResetP2PState(bool keepListener) {
 
 bool WaitForSecondPlayerDialog::ServerOpenP2PListener() {
     if (mServerP2PListenSock >= 0) {
+        LOG_DEBUG("[P2P_LISTEN] already open fd={} localPort={}", mServerP2PListenSock, mServerP2PLocalPort);
         return true;
     }
 
@@ -2068,6 +2085,7 @@ bool WaitForSecondPlayerDialog::ServerOpenP2PListener() {
     if (sock < 0) {
         mServerP2PListenerFailed = true;
         mServerP2PStatusText = "P2P: listener socket failed";
+        LOG_ERROR("[P2P_LISTEN] socket failed errno={}", errno);
         return false;
     }
 
@@ -2076,18 +2094,32 @@ bool WaitForSecondPlayerDialog::ServerOpenP2PListener() {
     int flags = fcntl(sock, F_GETFL, 0);
     fcntl(sock, F_SETFL, flags | O_NONBLOCK);
 
+    int preferredPort = (mApp && mApp->mPlayerInfo) ? mApp->mPlayerInfo->mVSRoomPort : 0;
+
     sockaddr_in sa{
         .sin_family = AF_INET,
-        .sin_port = htons(mApp && mApp->mPlayerInfo ? mApp->mPlayerInfo->mVSRoomPort : 0),
+        .sin_port = htons(preferredPort),
         .sin_addr{.s_addr = INADDR_ANY},
     };
 
+    LOG_DEBUG("[P2P_LISTEN] try bind preferredPort={}", preferredPort);
+
     bool bound = bind(sock, (sockaddr *)&sa, sizeof(sa)) == 0;
+    if (!bound) {
+        LOG_WARN("[P2P_LISTEN] bind preferredPort={} failed errno={}", preferredPort, errno);
+    }
+
     if (!bound && ntohs(sa.sin_port) != 0) {
         sa.sin_port = 0;
+        LOG_DEBUG("[P2P_LISTEN] fallback bind ephemeral");
         bound = bind(sock, (sockaddr *)&sa, sizeof(sa)) == 0;
+        if (!bound) {
+            LOG_ERROR("[P2P_LISTEN] fallback bind failed errno={}", errno);
+        }
     }
+
     if (!bound || listen(sock, 1) < 0) {
+        LOG_ERROR("[P2P_LISTEN] listen/bind failed errno={}", errno);
         CloseSocketFd(sock, false);
         mServerP2PListenerFailed = true;
         mServerP2PStatusText = "P2P: listener bind failed";
@@ -2096,23 +2128,30 @@ bool WaitForSecondPlayerDialog::ServerOpenP2PListener() {
 
     socklen_t salen = sizeof(sa);
     getsockname(sock, (sockaddr *)&sa, &salen);
+
     mServerP2PListenSock = sock;
     mServerP2PLocalPort = ntohs(sa.sin_port);
     mServerP2PListenerFailed = false;
     mServerP2PStatusText = StrFormat("P2P: listener ready on %d", mServerP2PLocalPort);
+
+    LOG_DEBUG("[P2P_LISTEN] ready fd={} localPort={} preferredPort={}", mServerP2PListenSock, mServerP2PLocalPort, preferredPort);
     return true;
 }
 
 bool WaitForSecondPlayerDialog::ServerSendNatPort() {
     if (mServerSock < 0 || mServerP2PLocalPort <= 0) {
+        LOG_WARN("[P2P_NAT_PORT] skip serverSock={} localPort={}", mServerSock, mServerP2PLocalPort);
         return false;
     }
 
     uint8_t buf[3];
     buf[0] = 0x08;
     homura::WriteBEU16(buf + 1, (uint16_t)mServerP2PLocalPort);
+
+    LOG_DEBUG("[P2P_NAT_PORT] send localPort={} server={}:{}", mServerP2PLocalPort, mServerIp, mServerPort);
+
     if (!SendAll(mServerSock, buf, sizeof(buf))) {
-        mServerP2PStatusText = "P2P: NAT port send failed";
+        LOG_ERROR("[P2P_NAT_PORT] send failed localPort={}", mServerP2PLocalPort);
         ServerDisconnect("nat port send fail");
         return false;
     }
@@ -2125,84 +2164,73 @@ bool WaitForSecondPlayerDialog::ServerSendNatPort() {
 }
 
 bool WaitForSecondPlayerDialog::ServerSendP2PProbe() {
-    if (mServerSock < 0 || mServerP2PLocalPort <= 0 || mServerP2PProbePort <= 0 || mServerP2PProbeToken == 0) {
-        return false;
-    }
+    for (int attempt = 1; attempt <= 3; ++attempt) {
+        int sock = socket(AF_INET, SOCK_STREAM, 0);
+        if (sock < 0)
+            return false;
 
-    in_addr addr{};
-    if (inet_pton(AF_INET, mServerIp, &addr) != 1) {
-        mServerP2PStatusText = "P2P: invalid probe server address";
-        return false;
-    }
+        EnableReuseOptions(sock);
 
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0) {
-        mServerP2PStatusText = "P2P: probe socket failed";
-        return false;
-    }
+        int one = 1;
+        setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
 
-    EnableReuseOptions(sock);
+        if (!BindSocketToAnyPort(sock, mServerP2PLocalPort)) {
+            LOG_ERROR("[P2P_PROBE] bind failed attempt={} errno={}", attempt, errno);
+            CloseSocketFd(sock, false);
+            continue;
+        }
 
-    int one = 1;
-    setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
-    if (!BindSocketToAnyPort(sock, mServerP2PLocalPort)) {
-        CloseSocketFd(sock, false);
-        mServerP2PStatusText = "P2P: probe bind failed";
-        return false;
-    }
+        int flags = fcntl(sock, F_GETFL, 0);
+        fcntl(sock, F_SETFL, flags | O_NONBLOCK);
 
-    int flags = fcntl(sock, F_GETFL, 0);
-    fcntl(sock, F_SETFL, flags | O_NONBLOCK);
+        sockaddr_in probeSa{
+            .sin_family = AF_INET,
+            .sin_port = htons((uint16_t)mServerP2PProbePort),
+        };
+        inet_pton(AF_INET, mServerIp, &probeSa.sin_addr);
 
-    sockaddr_in probeSa{
-        .sin_family = AF_INET,
-        .sin_port = htons((uint16_t)mServerP2PProbePort),
-        .sin_addr = addr,
-    };
+        int ret = connect(sock, (sockaddr *)&probeSa, sizeof(probeSa));
+        if (ret != 0 && errno != EINPROGRESS) {
+            LOG_ERROR("[P2P_PROBE] connect fail attempt={} errno={}", attempt, errno);
+            CloseSocketFd(sock, false);
+            continue;
+        }
 
-    int ret = connect(sock, (sockaddr *)&probeSa, sizeof(probeSa));
-    if (ret != 0 && errno != EINPROGRESS) {
-        CloseSocketFd(sock, false);
-        mServerP2PStatusText = "P2P: probe connect failed";
-        return false;
-    }
-
-    if (ret != 0) {
         fd_set wfds;
         FD_ZERO(&wfds);
         FD_SET(sock, &wfds);
-        timeval tv{1, 0};
+        timeval tv{5, 0}; // 关键：不要只等 1 秒
+
         int sel = select(sock + 1, nullptr, &wfds, nullptr, &tv);
         if (sel <= 0 || !FD_ISSET(sock, &wfds)) {
+            LOG_ERROR("[P2P_PROBE] timeout attempt={} sel={}", attempt, sel);
             CloseSocketFd(sock, false);
-            mServerP2PStatusText = "P2P: probe connect timeout";
-            return false;
+            continue;
         }
 
         int err = 0;
         socklen_t elen = sizeof(err);
         getsockopt(sock, SOL_SOCKET, SO_ERROR, &err, &elen);
         if (err != 0) {
+            LOG_ERROR("[P2P_PROBE] complete-with-error attempt={} err={}", attempt, err);
             CloseSocketFd(sock, false);
-            mServerP2PStatusText = "P2P: probe connect failed";
-            return false;
+            continue;
         }
-    }
 
-    uint8_t tokenBuf[4];
-    homura::WriteBEI32(tokenBuf, (int32_t)mServerP2PProbeToken);
-    if (!SendAll(sock, tokenBuf, sizeof(tokenBuf))) {
+        uint8_t tokenBuf[4];
+        homura::WriteBEI32(tokenBuf, (int32_t)mServerP2PProbeToken);
+        if (!SendAll(sock, tokenBuf, sizeof(tokenBuf))) {
+            LOG_ERROR("[P2P_PROBE] token send fail attempt={} errno={}", attempt, errno);
+            CloseSocketFd(sock, false);
+            continue;
+        }
+
         CloseSocketFd(sock, false);
-        mServerP2PStatusText = "P2P: probe token send failed";
-        return false;
+        mServerP2PProbeDone = true;
+        return true;
     }
 
-    CloseSocketFd(sock, false);
-    mServerP2PProbeDone = true;
-    if (!mServerGameStarting) {
-        mServerP2PStatusText = StrFormat("P2P: probe sent via local port %d", mServerP2PLocalPort);
-    }
-    return true;
+    return false;
 }
 
 void WaitForSecondPlayerDialog::ServerHandleP2PInfo(const uint8_t *payload, uint16_t len) {
@@ -2235,7 +2263,7 @@ void WaitForSecondPlayerDialog::ServerHandleP2PInfo(const uint8_t *payload, uint
     mServerP2PPeerPort = homura::ReadBEU16(payload + off);
     off += 2;
 
-    mServerP2PTimeoutSec = payload[off] > 0 ? (payload[off] & 0xFF) : 3;
+    mServerP2PTimeoutSec = payload[off] > 0 ? (payload[off] & 0xFF) : 5;
     mServerP2PDeadlineTick = mServerP2PTick + mServerP2PTimeoutSec * 100;
     mServerP2PNextRetryTick = mServerP2PTick;
     if (mServerHosting) {
@@ -2297,6 +2325,9 @@ void WaitForSecondPlayerDialog::ServerUpdateP2P() {
         socklen_t peerLen = sizeof(peerAddr);
         int accepted = accept(mServerP2PListenSock, (sockaddr *)&peerAddr, &peerLen);
         if (accepted >= 0) {
+            char ip[INET_ADDRSTRLEN]{};
+            inet_ntop(AF_INET, &peerAddr.sin_addr, ip, sizeof(ip));
+            LOG_DEBUG("[P2P_ACCEPT] role={} accepted from {}:{} localPort={}", mServerHosting ? "host" : "guest", ip, ntohs(peerAddr.sin_port), mServerP2PLocalPort);
             ConfigureTcpSocket(accepted);
             if (mServerP2PTargetRoomId == 0 || mServerP2PFailSent) {
                 CloseSocketFd(accepted);
@@ -2412,7 +2443,17 @@ void WaitForSecondPlayerDialog::ServerUpdateP2P() {
         .sin_addr = addr,
     };
 
+    LOG_DEBUG("[P2P_DIRECT_TRY] role={} peer={}:{} localPort={} tick={} deadline={} nextRetry={}",
+              mServerHosting ? "host" : "guest",
+              mServerP2PPeerIp,
+              mServerP2PPeerPort,
+              mServerP2PLocalPort,
+              mServerP2PTick,
+              mServerP2PDeadlineTick,
+              mServerP2PNextRetryTick);
+
     int ret = connect(sock, (sockaddr *)&peerSa, sizeof(peerSa));
+    LOG_DEBUG("[P2P_DIRECT_CONNECT] ret={} errno={}", ret, errno);
     if (ret == 0) {
         mServerP2PPendingSock = sock;
         mServerP2PPendingFromAccept = false;
