@@ -2500,7 +2500,6 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
     int yPos = kServerRoomListItemStartY;
     Sexy::Color oldColor = g->mColor;
 
-    TodDrawString(g, TodStringTranslate("[SERVER_ROOM_LIST_TITLE]"), 400, yPos, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
     g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
     int idx = mSelectedRoomIndex_Server;
     if (idx < 0)
