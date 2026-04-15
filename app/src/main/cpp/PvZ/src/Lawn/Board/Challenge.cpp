@@ -791,7 +791,8 @@ void Challenge::MouseDownWhackAZombie(int theX, int theY, int thePlayerIndex) {
 }
 
 bool Challenge::IsMPResourceProducer(SeedType theSeedType) {
-    return theSeedType == SeedType::SEED_SUNFLOWER || theSeedType == SeedType::SEED_SUNSHROOM || theSeedType == SeedType::SEED_TWINSUNFLOWER || theSeedType == SeedType::SEED_ZOMBIE_GRAVESTONE;
+    return theSeedType == SeedType::SEED_SUNFLOWER || theSeedType == SeedType::SEED_SUNSHROOM || theSeedType == SeedType::SEED_TWINSUNFLOWER || theSeedType == SeedType::SEED_ZOMBIE_GRAVESTONE
+        || theSeedType == SeedType::SEED_ZOMBIE_MOUND;
 }
 
 bool Challenge::IsMPZombieTypeAddInRow(ZombieType theZombieType) {
@@ -828,4 +829,9 @@ void Challenge::DrawWeather(Sexy::Graphics *g) {
 
 void Challenge::UpdateMPGraveStones() {
     // 空函数替换，原逻辑移动至 GridItem::UpdateBurialMound
+}
+
+bool Challenge::ISMPSeedSuddenDeathDisabled(int thePlayerIndex, SeedType theSeedType) {
+    SeedType *aDisableList = (thePlayerIndex == 1) ? mSuddenDeathDisableSeeds2 : mSuddenDeathDisableSeeds1;
+    return aDisableList[0] == theSeedType || aDisableList[1] == theSeedType || aDisableList[2] == theSeedType;
 }

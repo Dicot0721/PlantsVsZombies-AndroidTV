@@ -208,6 +208,8 @@ void InitHookFunction() {
     homura::HookFunction(Challenge_MouseDownWhackAZombieAddr, &Challenge::MouseDownWhackAZombie, nullptr);
     homura::HookFunction(Challenge_DrawWeatherAddr, &Challenge::DrawWeather, nullptr);
     homura::HookFunction(Challenge_UpdateMPGraveStonesAddr, &Challenge::UpdateMPGraveStones, nullptr);
+    homura::HookFunction(Challenge_IsMPResourceProducerAddr, &Challenge::IsMPResourceProducer, nullptr);
+    homura::HookFunction(Challenge_ISMPSeedSuddenDeathDisabledAddr, &Challenge::ISMPSeedSuddenDeathDisabled, nullptr);
 
 
     homura::HookFunction(ChallengeScreen_AddedToManagerAddr, &ChallengeScreen::AddedToManager, &old_ChallengeScreen_AddedToManager);

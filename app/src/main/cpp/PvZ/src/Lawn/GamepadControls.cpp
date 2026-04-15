@@ -760,6 +760,12 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                 return;
             }
 
+            if (mBoard->HasLevelAwardDropped() || (mBoard->mChallenge->IsMPSuddenDeath() && Challenge::gVSSuddenDeathMode <= 1 && Challenge::IsMPResourceProducer(aSeedPacket->mPacketType))
+                || mBoard->mChallenge->ISMPSeedSuddenDeathDisabled(aSeedBank->mIsZombie, aPacketType)) {
+                mGameObject->mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
+                return;
+            }
+
             if (aPacketType == SeedType::SEED_ZOMBIE_MOUND) {
                 GridItem *aGraveStone = mBoard->GetGraveStoneAt(aGridX, aGridY);
                 GridItem *aMound = mBoard->GetMoundAt(aGridX, aGridY);

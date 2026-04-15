@@ -64,6 +64,7 @@ public:
     static inline int &gVSResourseDropMode = *Challenge_gVSResourseDropModeAddr;   // 常为0
     static inline int &gVSResourceDropCount = *Challenge_gVSResourceDropCountAddr; // 常为4
     static inline int &gVSWinMode = *Challenge_gVSWinModeAddr;
+    static inline int &gVSSuddenDeathMode = *Challenge_gVSSuddenDeathMode_Addr;
 
     int *vTable;                                            // 0
     int unk1[3];                                            // 1 ~ 3
@@ -97,7 +98,9 @@ public:
     int mBobSledMPCounter;                                  // 56
     int unk57[2];                                           // 57 ~ 58
     bool mIsMPSuddenDeathNow;                               // 59 * 4
-    int unk60[7];                                           // 60 ~ 66
+    SeedType mSuddenDeathDisableSeeds1[3];                  // 60 ~ 62
+    SeedType mSuddenDeathDisableSeeds2[3];                  // 63 ~ 65
+    int unk66;                                              // 66
     float mHeavyWeaponX;                                    // 67
     float mHeavyWeaponY;                                    // 68
     float mHeavyWeaponAngle;                                // 69
@@ -189,6 +192,7 @@ public:
     void DrawWeather(Sexy::Graphics *g);
     void UpdateConveyorBelt(int thePlayerIndex);
     void UpdateMPGraveStones();
+    bool ISMPSeedSuddenDeathDisabled(int thePlayerIndex, SeedType theSeedType);
 
 protected:
     friend void InitHookFunction();

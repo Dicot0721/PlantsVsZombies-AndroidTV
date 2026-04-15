@@ -623,6 +623,8 @@ inline void *Challenge_UpdateConveyorBeltAddr;
 inline void *Challenge_MouseDownWhackAZombieAddr;
 inline void *Challenge_ZombieAtePlantAddr;
 inline void *Challenge_UpdateMPGraveStonesAddr;
+inline void *Challenge_IsMPResourceProducerAddr;
+inline void *Challenge_ISMPSeedSuddenDeathDisabledAddr;
 
 
 inline void *Plant_UpdateAddr;

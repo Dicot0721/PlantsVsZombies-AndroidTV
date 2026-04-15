@@ -620,6 +620,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN9Challenge21MouseDownWhackAZombieEiii", Challenge_MouseDownWhackAZombieAddr);
     libGameMain.GetSymbol("_ZN9Challenge14ZombieAtePlantEP6ZombieP5Plant", Challenge_ZombieAtePlantAddr);
     libGameMain.GetSymbol("_ZN9Challenge19UpdateMPGraveStonesEv", Challenge_UpdateMPGraveStonesAddr);
+    libGameMain.GetSymbol("_ZN9Challenge20IsMPResourceProducerE8SeedType", Challenge_IsMPResourceProducerAddr);
+    libGameMain.GetSymbol("_ZN9Challenge27ISMPSeedSuddenDeathDisabledEi8SeedType", Challenge_ISMPSeedSuddenDeathDisabledAddr);
 
 
     libGameMain.GetSymbol("_ZN5Plant6UpdateEv", Plant_UpdateAddr);
