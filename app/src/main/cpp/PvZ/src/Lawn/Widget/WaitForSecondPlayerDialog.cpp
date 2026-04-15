@@ -84,6 +84,23 @@ static void ConfigureTcpSocket(int fd) {
     fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
 
+static void EnableReuseOptions(int fd) {
+    int one = 1;
+    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+#ifdef SO_REUSEPORT
+    setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &one, sizeof(one));
+#endif
+}
+
+static bool BindSocketToAnyPort(int fd, int port) {
+    sockaddr_in sa{
+        .sin_family = AF_INET,
+        .sin_port = htons((uint16_t)port),
+        .sin_addr{.s_addr = INADDR_ANY},
+    };
+    return bind(fd, (sockaddr *)&sa, sizeof(sa)) == 0;
+}
+
 static bool HasSameBroadcastAddr(const std::vector<BroadcastTarget> &targets, const sockaddr_in &addr) {
     for (const auto &t : targets) {
         if (t.addr.sin_addr.s_addr == addr.sin_addr.s_addr && t.addr.sin_port == addr.sin_port) {
@@ -449,6 +466,9 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mServerP2PDoneReceived = false;
     mServerGameStarting = false;
     mServerP2PLocalPort = 0;
+    mServerP2PProbePort = 0;
+    mServerP2PProbeToken = 0;
+    mServerP2PProbeDone = false;
     mServerP2PDeadlineTick = 0;
     mServerP2PNextRetryTick = 0;
     mServerP2PTick = 0;
@@ -1869,8 +1889,18 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             case 0x89: { // P2P_READY
                 if (len >= 2) {
                     mServerP2PLocalPort = homura::ReadBEU16(payload);
+                    if (len >= 8) {
+                        mServerP2PProbePort = homura::ReadBEU16(payload + 2);
+                        mServerP2PProbeToken = (uint32_t)homura::ReadBEI32(payload + 4);
+                        mServerP2PProbeDone = false;
+                        ServerSendP2PProbe();
+                    }
                     if (!mServerGameStarting) {
-                        mServerP2PStatusText = StrFormat("P2P: server accepted local port %d", mServerP2PLocalPort);
+                        if (mServerP2PProbeDone) {
+                            mServerP2PStatusText = StrFormat("P2P: server registered %d, probe complete", mServerP2PLocalPort);
+                        } else {
+                            mServerP2PStatusText = StrFormat("P2P: server accepted local port %d", mServerP2PLocalPort);
+                        }
                     }
                 }
                 break;
@@ -2004,6 +2034,9 @@ void WaitForSecondPlayerDialog::ServerResetP2PState(bool keepListener) {
         mServerP2PLocalPort = 0;
         mServerP2PNatSent = false;
         mServerP2PListenerFailed = false;
+        mServerP2PProbePort = 0;
+        mServerP2PProbeToken = 0;
+        mServerP2PProbeDone = false;
     }
 
     mServerP2POkSent = false;
@@ -2038,8 +2071,7 @@ bool WaitForSecondPlayerDialog::ServerOpenP2PListener() {
         return false;
     }
 
-    int one = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+    EnableReuseOptions(sock);
 
     int flags = fcntl(sock, F_GETFL, 0);
     fcntl(sock, F_SETFL, flags | O_NONBLOCK);
@@ -2088,6 +2120,87 @@ bool WaitForSecondPlayerDialog::ServerSendNatPort() {
     mServerP2PNatSent = true;
     if (!mServerGameStarting) {
         mServerP2PStatusText = StrFormat("P2P: local port %d sent to server", mServerP2PLocalPort);
+    }
+    return true;
+}
+
+bool WaitForSecondPlayerDialog::ServerSendP2PProbe() {
+    if (mServerSock < 0 || mServerP2PLocalPort <= 0 || mServerP2PProbePort <= 0 || mServerP2PProbeToken == 0) {
+        return false;
+    }
+
+    in_addr addr{};
+    if (inet_pton(AF_INET, mServerIp, &addr) != 1) {
+        mServerP2PStatusText = "P2P: invalid probe server address";
+        return false;
+    }
+
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0) {
+        mServerP2PStatusText = "P2P: probe socket failed";
+        return false;
+    }
+
+    EnableReuseOptions(sock);
+
+    int one = 1;
+    setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+    if (!BindSocketToAnyPort(sock, mServerP2PLocalPort)) {
+        CloseSocketFd(sock, false);
+        mServerP2PStatusText = "P2P: probe bind failed";
+        return false;
+    }
+
+    int flags = fcntl(sock, F_GETFL, 0);
+    fcntl(sock, F_SETFL, flags | O_NONBLOCK);
+
+    sockaddr_in probeSa{
+        .sin_family = AF_INET,
+        .sin_port = htons((uint16_t)mServerP2PProbePort),
+        .sin_addr = addr,
+    };
+
+    int ret = connect(sock, (sockaddr *)&probeSa, sizeof(probeSa));
+    if (ret != 0 && errno != EINPROGRESS) {
+        CloseSocketFd(sock, false);
+        mServerP2PStatusText = "P2P: probe connect failed";
+        return false;
+    }
+
+    if (ret != 0) {
+        fd_set wfds;
+        FD_ZERO(&wfds);
+        FD_SET(sock, &wfds);
+        timeval tv{1, 0};
+        int sel = select(sock + 1, nullptr, &wfds, nullptr, &tv);
+        if (sel <= 0 || !FD_ISSET(sock, &wfds)) {
+            CloseSocketFd(sock, false);
+            mServerP2PStatusText = "P2P: probe connect timeout";
+            return false;
+        }
+
+        int err = 0;
+        socklen_t elen = sizeof(err);
+        getsockopt(sock, SOL_SOCKET, SO_ERROR, &err, &elen);
+        if (err != 0) {
+            CloseSocketFd(sock, false);
+            mServerP2PStatusText = "P2P: probe connect failed";
+            return false;
+        }
+    }
+
+    uint8_t tokenBuf[4];
+    homura::WriteBEI32(tokenBuf, (int32_t)mServerP2PProbeToken);
+    if (!SendAll(sock, tokenBuf, sizeof(tokenBuf))) {
+        CloseSocketFd(sock, false);
+        mServerP2PStatusText = "P2P: probe token send failed";
+        return false;
+    }
+
+    CloseSocketFd(sock, false);
+    mServerP2PProbeDone = true;
+    if (!mServerGameStarting) {
+        mServerP2PStatusText = StrFormat("P2P: probe sent via local port %d", mServerP2PLocalPort);
     }
     return true;
 }
@@ -2185,10 +2298,9 @@ void WaitForSecondPlayerDialog::ServerUpdateP2P() {
         int accepted = accept(mServerP2PListenSock, (sockaddr *)&peerAddr, &peerLen);
         if (accepted >= 0) {
             ConfigureTcpSocket(accepted);
-            if (!mServerHosting) {
-                mServerP2PStatusText = "P2P: inbound probe ignored, waiting outbound";
+            if (mServerP2PTargetRoomId == 0 || mServerP2PFailSent) {
                 CloseSocketFd(accepted);
-            } else if (!mServerP2PFailSent && (mServerP2PPendingSock < 0 || !mServerP2PPendingFromAccept)) {
+            } else if (mServerP2PPendingSock < 0 || !mServerP2PPendingFromAccept) {
                 if (mServerP2PPendingSock >= 0) {
                     CloseSocketFd(mServerP2PPendingSock);
                 }
@@ -2221,10 +2333,7 @@ void WaitForSecondPlayerDialog::ServerUpdateP2P() {
             socklen_t elen = sizeof(err);
             getsockopt(mServerP2PConnectingSock, SOL_SOCKET, SO_ERROR, &err, &elen);
             if (err == 0) {
-                if (!mServerJoined) {
-                    mServerP2PStatusText = "P2P: outbound probe connected, waiting inbound direct";
-                    CloseSocketFd(mServerP2PConnectingSock);
-                } else if (!mServerP2PFailSent && mServerP2PPendingSock < 0) {
+                if (!mServerP2PFailSent && mServerP2PPendingSock < 0) {
                     mServerP2PPendingSock = mServerP2PConnectingSock;
                     mServerP2PConnectingSock = -1;
                     mServerP2PPendingFromAccept = false;
@@ -2271,10 +2380,6 @@ void WaitForSecondPlayerDialog::ServerUpdateP2P() {
         return;
     }
 
-    if (!mServerJoined) {
-        return;
-    }
-
     in_addr addr{};
     if (inet_pton(AF_INET, mServerP2PPeerIp, &addr) != 1 || mServerP2PPeerPort <= 0) {
         mServerP2PFailSent = true;
@@ -2287,6 +2392,14 @@ void WaitForSecondPlayerDialog::ServerUpdateP2P() {
 
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0) {
+        mServerP2PNextRetryTick = mServerP2PTick + kServerP2PConnectRetryTicks;
+        return;
+    }
+
+    EnableReuseOptions(sock);
+    if (!BindSocketToAnyPort(sock, mServerP2PLocalPort)) {
+        CloseSocketFd(sock, false);
+        mServerP2PStatusText = "P2P: same-port bind failed, waiting relay";
         mServerP2PNextRetryTick = mServerP2PTick + kServerP2PConnectRetryTicks;
         return;
     }
@@ -2505,7 +2618,13 @@ void WaitForSecondPlayerDialog::ServerSendStart() {
     // START = 0x05
     ServerResetP2PState(true);
     mServerGameStarting = true;
-    mServerP2PStatusText = mServerP2PNatSent ? "P2P: start sent, waiting peer info" : "P2P: no local listener, waiting relay";
+    if (!mServerP2PNatSent) {
+        mServerP2PStatusText = "P2P: no local listener, waiting relay";
+    } else if (!mServerP2PProbeDone) {
+        mServerP2PStatusText = "P2P: start sent, waiting probe/public endpoint";
+    } else {
+        mServerP2PStatusText = "P2P: start sent, waiting peer info";
+    }
     if (!ServerSendU8(0x05)) {
         mServerStatusText = TodStringTranslate("[STATUS_SEND_START_FAIL]");
         ServerDisconnect("start send fail");

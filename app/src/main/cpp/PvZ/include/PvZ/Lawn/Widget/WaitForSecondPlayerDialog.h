@@ -20,6 +20,8 @@
 #ifndef PVZ_LAWN_WIDGET_WAIT_FOR_SECOND_PLAYER_DIALOG_H
 #define PVZ_LAWN_WIDGET_WAIT_FOR_SECOND_PLAYER_DIALOG_H
 
+#include <cstdint>
+
 #include "PvZ/Lawn/Widget/LawnDialog.h"
 #include "PvZ/NetPlay.h"
 #include "PvZ/SexyAppFramework/Misc/GamepadButtons.h"
@@ -122,6 +124,9 @@ public:
     bool mServerP2PDoneReceived;
     bool mServerGameStarting;
     int mServerP2PLocalPort;
+    int mServerP2PProbePort;
+    std::uint32_t mServerP2PProbeToken;
+    bool mServerP2PProbeDone;
     int mServerP2PDeadlineTick;
     int mServerP2PNextRetryTick;
     int mServerP2PTick;
@@ -146,6 +151,7 @@ public:
     void ServerSendLeaveRoom();
     void ServerSendStart(); // host start (optional)
     bool ServerSendNatPort();
+    bool ServerSendP2PProbe();
     bool ServerOpenP2PListener();
     void ServerResetP2PState(bool keepListener);
     void ServerHandleP2PInfo(const uint8_t *payload, uint16_t len);
