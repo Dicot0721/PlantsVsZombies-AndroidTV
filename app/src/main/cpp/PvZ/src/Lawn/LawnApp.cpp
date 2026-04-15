@@ -182,6 +182,8 @@ void LawnApp::DoConfirmBackToMain(bool theIsSave) {
 
 
 void LawnApp::ClearSecondPlayer() {
+    gIsServerModeNetplay = false;
+    gServerModeTransport = ServerModeTransport::NONE;
     if (gTcpConnected) {
         close(gTcpServerSocket);
         gTcpServerSocket = -1;

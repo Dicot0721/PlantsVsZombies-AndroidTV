@@ -42,6 +42,7 @@ class GameButton;
 
 struct ServerRoomItem {
     int roomId;
+    int protocolVersion;
     char name[128];
     bool full;
     bool gaming;
@@ -97,6 +98,8 @@ public:
     int mServerJoinedRoomId;  // joined room id (optional)
     int mServerLastQueryTick; // frame tick for auto query
     int mServerLastRecvTick;  // for debug/timeout if needed
+    char mServerHostedRoomName[128];
+    char mServerJoinedRoomName[128];
 
     char mServerIp[INET_ADDRSTRLEN];
     int mServerPort;
@@ -108,25 +111,53 @@ public:
     uint8_t mSrvRecvBuf[8192];
     int mSrvRecvLen;
 
+    int mServerP2PListenSock;
+    int mServerP2PPendingSock;
+    int mServerP2PConnectingSock;
+    bool mServerP2PPendingFromAccept;
+    bool mServerP2PListenerFailed;
+    bool mServerP2PNatSent;
+    bool mServerP2POkSent;
+    bool mServerP2PFailSent;
+    bool mServerP2PDoneReceived;
+    bool mServerGameStarting;
+    int mServerP2PLocalPort;
+    int mServerP2PDeadlineTick;
+    int mServerP2PNextRetryTick;
+    int mServerP2PTick;
+    int mServerP2PTargetRoomId;
+    int mServerP2PPeerPort;
+    int mServerP2PTimeoutSec;
+    char mServerP2PPeerIp[INET_ADDRSTRLEN];
+
     // helper UI text
     pvzstl::string mServerStatusText;
+    pvzstl::string mServerP2PStatusText;
 
     // MODE3 actions
     bool ServerConnectFromInput(); // consume gInputString
     void ServerDisconnect(const char *why);
     void ServerUpdateIO(); // read frames (nonblocking)
+    void ServerUpdateP2P();
     void ServerSendQuery();
     void ServerSendCreate();
     void ServerSendJoinSelected();
     void ServerSendExitRoom();
     void ServerSendLeaveRoom();
     void ServerSendStart(); // host start (optional)
+    bool ServerSendNatPort();
+    bool ServerOpenP2PListener();
+    void ServerResetP2PState(bool keepListener);
+    void ServerHandleP2PInfo(const uint8_t *payload, uint16_t len);
+    void ServerAdoptP2PSocket();
 
 
     bool ServerTryReadOneFrame(uint8_t &outType, uint8_t *outPayload, uint16_t &outLen);
+    bool ServerHostRoomLocked() const;
 
     // MODE3 drawing + selection
     void DrawServerRoomList(Sexy::Graphics *g);
+    void DrawServerP2PStatus(Sexy::Graphics *g, int x, int y);
     void ServerSelectRoomByMouse(int x, int y);
     // 统一切模式
     void SetMode(UIMode mode);

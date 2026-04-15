@@ -19,6 +19,7 @@
 
 #include "PvZ/Lawn/Widget/ChallengeScreen.h"
 #include "Homura/Logger.h"
+#include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/Music.h"
@@ -30,6 +31,15 @@
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
 using namespace Sexy;
+
+namespace {
+const char *GetServerModeTransportSuffix() {
+    if (!gIsServerModeNetplay) {
+        return "";
+    }
+    return gServerModeTransport == ServerModeTransport::P2P ? " [P2P]" : gServerModeTransport == ServerModeTransport::RELAY ? " [Relay]" : "";
+}
+} // namespace
 
 ChallengeDefinition gChallengeDefs[200] = {
     {GameMode::GAMEMODE_SURVIVAL_NORMAL_STAGE_1, 0, ChallengePage::CHALLENGE_PAGE_SURVIVAL, 0, 0, "[SURVIVAL_DAY_NORMAL]"},
@@ -354,22 +364,24 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
     if (mPageIndex == CHALLENGE_PAGE_VS) {
 
         Color aColor = Color(0, 205, 0, 255);
-        g->SetColor(aColor);
-        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
 
         if (gTcpConnected) {
             if (gNetDelayNow == 0) {
-                g->DrawString(TodStringTranslate("[VS_STATUS_IN_ROOM]"), 370, -20);
+                TodDrawString(
+                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
-                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 370, -20);
+                TodDrawString(
+                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
             }
         } else if (gTcpClientSocket >= 0) {
             if (gNetDelayNow == 0) {
-                g->DrawString(TodStringTranslate("[VS_STATUS_HOST]"), 380, -20);
+                TodDrawString(
+                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_HOST]").c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_HOST_MS_FMT]");
-                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 380, -20);
+                TodDrawString(
+                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
             }
         }
 

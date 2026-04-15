@@ -99,6 +99,15 @@ inline int xx1, yy1, xw1, yh1;
 
 inline bool enableNewOptionsDialog = false;
 
+enum class ServerModeTransport {
+    NONE = 0,
+    RELAY = 1,
+    P2P = 2,
+};
+
+inline bool gIsServerModeNetplay = false;
+inline ServerModeTransport gServerModeTransport = ServerModeTransport::NONE;
+
 struct AddonImages {
     Sexy::Image *pole_night;
     Sexy::Image *trees_night;

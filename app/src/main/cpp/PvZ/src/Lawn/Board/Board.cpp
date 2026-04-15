@@ -267,6 +267,15 @@ bool LawnLoadGame(Board *theBoard, SaveGameContext *theFilePath) {
     return old_LawnLoadGame(theBoard, theFilePath);
 }
 
+namespace {
+const char *GetServerModeTransportSuffix() {
+    if (!gIsServerModeNetplay) {
+        return "";
+    }
+    return gServerModeTransport == ServerModeTransport::P2P ? " [P2P]" : gServerModeTransport == ServerModeTransport::RELAY ? " [Relay]" : "";
+}
+} // namespace
+
 void Board::ShovelDown() {
     // 用于铲掉光标正下方的植物。
     requestDrawShovelInCursor = false;
@@ -2889,26 +2898,25 @@ void Board::Draw(Sexy::Graphics *g) {
 
     if (mApp->IsVSMode()) {
         Color aColor = Color(0, 205, 0, 255);
-        g->Translate(-mX, -mY);
-        g->SetColor(aColor);
-        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
 
         if (gTcpConnected) {
             if (gNetDelayNow == 0) {
-                g->DrawString(TodStringTranslate("[VS_STATUS_IN_ROOM]"), 370, -20);
+                TodDrawString(
+                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
-                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 370, -20);
+                TodDrawString(
+                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
             }
         } else if (gTcpClientSocket >= 0) {
             if (gNetDelayNow == 0) {
-                g->DrawString(TodStringTranslate("[VS_STATUS_HOST]"), 380, -20);
+                TodDrawString(
+                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_HOST]").c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_HOST_MS_FMT]");
-                g->DrawString(StrFormat(fmt.c_str(), gNetDelayNow * 10), 380, -20);
+                TodDrawString(
+                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
             }
-        } else {
-            g->DrawString(TodStringTranslate("[VS_STATUS_LOCAL_GAME]"), 360, -20);
         }
     }
 }
