@@ -346,14 +346,14 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
             mLawnNoButton->mDisabled = hostLocked;
 
             // ✅ 加入按钮：连接后且“房间数量>0”才允许（空闲态）
-            bool canJoinIdle = (mServerConnected && !mServerConnecting && !mServerHosting && !mServerJoined && !startBusy && (mServerRoomCount > 0));
+            bool canJoinIdle = (mServerConnected && !mServerConnecting && !mServerHosting && !mServerJoined && !mServerCreatePending && !startBusy && (mServerRoomCount > 0));
             mLeftButton->mDisabled = !canJoinIdle && !mServerJoined; // 离开房间时应可点
             if (mServerJoined) {
                 mLeftButton->mDisabled = (!mServerConnected || mServerConnecting || startBusy);
             }
 
             // 创建按钮：空闲态可创建；hosting 时可退出
-            bool canCreateIdle = (mServerConnected && !mServerConnecting && !mServerJoined && !startBusy);
+            bool canCreateIdle = (mServerConnected && !mServerConnecting && !mServerJoined && !mServerCreatePending && !startBusy);
             mRightButton->mDisabled = !canCreateIdle;
         } break;
     }
@@ -442,6 +442,9 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
 
     mServerHosting = false;
     mServerJoined = false;
+    mServerCreatePending = false;
+    mServerHostProbeDone = false;
+    mServerGuestProbeDone = false;
     mServerHostHasGuest = false;
     mServerHostedRoomId = 0;
     mServerJoinedRoomId = 0;
@@ -467,6 +470,7 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mServerGameStarting = false;
     mServerP2PLocalPort = 0;
     mServerP2PProbePort = 0;
+    mServerP2PProbePort2 = 0;
     mServerP2PProbeToken = 0;
     mServerP2PProbeDone = false;
     mServerP2PDeadlineTick = 0;
@@ -542,11 +546,6 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
                 pvzstl::string str3 = StrFormat(joinedFmt.c_str(), gSecondPlayerName);
                 TodDrawString(g, str3, 400, lineY + 50, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
             }
-
-            // （可选）提示开始游戏按钮状态
-            pvzstl::string str4 = TodStringTranslate((gTcpClientSocket == -1) ? "[WAIT_OTHER_JOIN_TO_START]" : "[CAN_START_CLICK_START]");
-
-            TodDrawString(g, str4, 400, lineY + 110, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
 
             return;
         }
@@ -666,6 +665,17 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
                     TodDrawString(g, str3, 400, 250, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
                 }
 
+                pvzstl::string p2pReady = TodStringTranslate("[P2P_READY]");
+                pvzstl::string p2pNotReady = TodStringTranslate("[P2P_NOT_READY]");
+                pvzstl::string p2pStateFmt = TodStringTranslate("[ROOM_P2P_STATE]");
+                TodDrawString(g,
+                              StrFormat(p2pStateFmt.c_str(), mServerHostProbeDone ? p2pReady.c_str() : p2pNotReady.c_str(), mServerGuestProbeDone ? p2pReady.c_str() : p2pNotReady.c_str()),
+                              400,
+                              300,
+                              g->GetFont(),
+                              g->GetColor(),
+                              DS_ALIGN_CENTER);
+
                 //                DrawServerP2PStatus(g, 170, 290);
             } else if (mServerJoined) {
                 const char *roomName = mServerJoinedRoomName[0] != '\0' ? mServerJoinedRoomName : "Unknown";
@@ -673,6 +683,17 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
                 pvzstl::string fmtJoin = TodStringTranslate("[JOINED_ROOM_FMT]");
                 pvzstl::string str = StrFormat(fmtJoin.c_str(), roomName);
                 TodDrawString(g, str, 400, 200, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
+
+                pvzstl::string p2pReady = TodStringTranslate("[P2P_READY]");
+                pvzstl::string p2pNotReady = TodStringTranslate("[P2P_NOT_READY]");
+                pvzstl::string p2pStateFmt = TodStringTranslate("[ROOM_P2P_STATE]");
+                TodDrawString(g,
+                              StrFormat(p2pStateFmt.c_str(), mServerHostProbeDone ? p2pReady.c_str() : p2pNotReady.c_str(), mServerGuestProbeDone ? p2pReady.c_str() : p2pNotReady.c_str()),
+                              400,
+                              300,
+                              g->GetFont(),
+                              g->GetColor(),
+                              DS_ALIGN_CENTER);
 
                 //                DrawServerP2PStatus(g, 170, 290);
             } else {
@@ -860,7 +881,7 @@ void WaitForSecondPlayerDialog::Update() {
         // 自动 Query：仅在“空闲态”每秒一次
         // 空闲态定义：已连接 && 未创建房间 && 未加入房间 && 未进入 relay
         mServerLastQueryTick++;
-        if (mServerConnected && !mServerHosting && !mServerJoined && !mServerGameStarting) {
+        if (mServerConnected && !mServerGameStarting) {
             if (mServerLastQueryTick >= 100) { // ~1秒
                 mServerLastQueryTick = 0;
                 ServerSendQuery();
@@ -1760,6 +1781,9 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 if (len >= 4) {
                     int id = homura::ReadBEI32(payload);
                     ServerResetP2PState(true);
+                    mServerCreatePending = false;
+                    mServerHostProbeDone = false;
+                    mServerGuestProbeDone = false;
                     mServerHosting = true;
                     mServerJoined = false;
                     mServerHostHasGuest = false;
@@ -1780,6 +1804,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             case 0x82: { // ROOM_LIST
                 // payload: [count:1] + count*([roomId:4][flags:1][version:4][nameLen:1][nameBytes])
                 mServerRoomCount = 0;
+                bool foundCurrentRoomProbe = false;
                 if (len < 1)
                     break;
                 int count = payload[0] & 0xFF;
@@ -1802,12 +1827,27 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     it.protocolVersion = version;
                     it.full = (flags & 1) != 0;
                     it.gaming = (flags & 2) != 0;
+                    it.hostProbeDone = (flags & 4) != 0;
+                    it.guestProbeDone = (flags & 8) != 0;
                     std::memset(it.name, 0, sizeof(it.name));
                     int cp = nameLen;
                     if (cp > (int)sizeof(it.name) - 1)
                         cp = (int)sizeof(it.name) - 1;
                     std::memcpy(it.name, payload + off, cp);
                     off += nameLen;
+
+                    const bool inCurrentHostRoom = mServerHosting && id == mServerHostedRoomId;
+                    const bool inCurrentGuestRoom = mServerJoined && id == mServerJoinedRoomId;
+                    if (inCurrentHostRoom || inCurrentGuestRoom) {
+                        mServerHostProbeDone = it.hostProbeDone;
+                        mServerGuestProbeDone = it.guestProbeDone;
+                        foundCurrentRoomProbe = true;
+                    }
+                }
+
+                if ((mServerHosting || mServerJoined) && !foundCurrentRoomProbe) {
+                    mServerHostProbeDone = false;
+                    mServerGuestProbeDone = false;
                 }
 
                 if (mSelectedRoomIndex_Server < 0)
@@ -1829,6 +1869,9 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 }
                 if (ok) {
                     ServerResetP2PState(true);
+                    mServerCreatePending = false;
+                    mServerHostProbeDone = false;
+                    mServerGuestProbeDone = false;
                     mServerJoined = true;
                     mServerHosting = false;
                     mServerHostedRoomId = 0;
@@ -1847,8 +1890,9 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     mServerStatusText = TodStringTranslate("[STATUS_JOINED_ROOM]");
 
                 } else {
+                    mServerCreatePending = false;
                     if (roomVersion != 0 && roomVersion != NETPLAY_VERSION) {
-                        mServerStatusText = StrFormat("Version mismatch: room %d, local %d", roomVersion, NETPLAY_VERSION);
+                        mServerStatusText = TodStringTranslate("[STATUS_ROOM_VERSION_ERR]");
                     } else {
                         mServerStatusText = TodStringTranslate("[STATUS_JOIN_FAILED]");
                     }
@@ -1894,10 +1938,16 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
 
                     if (len >= 8) {
                         mServerP2PProbePort = homura::ReadBEU16(payload + 2);
-                        mServerP2PProbeToken = (uint32_t)homura::ReadBEI32(payload + 4);
+                        if (len >= 10) {
+                            mServerP2PProbePort2 = homura::ReadBEU16(payload + 4);
+                            mServerP2PProbeToken = (uint32_t)homura::ReadBEI32(payload + 6);
+                        } else {
+                            mServerP2PProbePort2 = mServerP2PProbePort;
+                            mServerP2PProbeToken = (uint32_t)homura::ReadBEI32(payload + 4);
+                        }
                         mServerP2PProbeDone = false;
 
-                        LOG_DEBUG("[P2P_READY] probePort={} token={} localPort={}", mServerP2PProbePort, mServerP2PProbeToken, mServerP2PLocalPort);
+                        LOG_DEBUG("[P2P_READY] probePort1={} probePort2={} token={} localPort={}", mServerP2PProbePort, mServerP2PProbePort2, mServerP2PProbeToken, mServerP2PLocalPort);
 
                         bool ok = ServerSendP2PProbe();
                         LOG_DEBUG("[P2P_READY] probe result ok={} probeDone={}", ok, mServerP2PProbeDone);
@@ -1940,6 +1990,9 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 // 不管 host/guest 哪边退出成功，回到空闲
                 mServerHosting = false;
                 mServerJoined = false;
+                mServerCreatePending = false;
+                mServerHostProbeDone = false;
+                mServerGuestProbeDone = false;
                 mServerHostHasGuest = false;
                 mServerHostedRoomId = 0;
                 mServerJoinedRoomId = 0;
@@ -2013,6 +2066,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
 
             case 0xFF: { // ERROR
                 int ec = (len >= 1) ? (payload[0] & 0xFF) : -1;
+                mServerCreatePending = false;
                 mServerStatusText = StrFormat("Server error code: %d", ec);
                 break;
             }
@@ -2051,6 +2105,7 @@ void WaitForSecondPlayerDialog::ServerResetP2PState(bool keepListener) {
         mServerP2PNatSent = false;
         mServerP2PListenerFailed = false;
         mServerP2PProbePort = 0;
+        mServerP2PProbePort2 = 0;
         mServerP2PProbeToken = 0;
         mServerP2PProbeDone = false;
     }
@@ -2164,7 +2219,14 @@ bool WaitForSecondPlayerDialog::ServerSendNatPort() {
 }
 
 bool WaitForSecondPlayerDialog::ServerSendP2PProbe() {
+#if 0
+    if (mServerP2PProbePort2 <= 0) {
+        mServerP2PProbePort2 = mServerP2PProbePort;
+    }
     for (int attempt = 1; attempt <= 3; ++attempt) {
+        bool allOk = true;
+        for (int targetIdx = 0; targetIdx < 2; ++targetIdx) {
+            int targetPort = targetIdx == 0 ? mServerP2PProbePort : mServerP2PProbePort2;
         int sock = socket(AF_INET, SOCK_STREAM, 0);
         if (sock < 0)
             return false;
@@ -2175,9 +2237,10 @@ bool WaitForSecondPlayerDialog::ServerSendP2PProbe() {
         setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
 
         if (!BindSocketToAnyPort(sock, mServerP2PLocalPort)) {
-            LOG_ERROR("[P2P_PROBE] bind failed attempt={} errno={}", attempt, errno);
+            LOG_ERROR("[P2P_PROBE] bind failed port={} attempt={} errno={}", targetPort, attempt, errno);
             CloseSocketFd(sock, false);
-            continue;
+            allOk = false;
+            break;
         }
 
         int flags = fcntl(sock, F_GETFL, 0);
@@ -2185,7 +2248,7 @@ bool WaitForSecondPlayerDialog::ServerSendP2PProbe() {
 
         sockaddr_in probeSa{
             .sin_family = AF_INET,
-            .sin_port = htons((uint16_t)mServerP2PProbePort),
+            .sin_port = htons((uint16_t)targetPort),
         };
         inet_pton(AF_INET, mServerIp, &probeSa.sin_addr);
 
@@ -2228,6 +2291,87 @@ bool WaitForSecondPlayerDialog::ServerSendP2PProbe() {
         CloseSocketFd(sock, false);
         mServerP2PProbeDone = true;
         return true;
+    }
+
+    return false;
+#endif
+
+    auto probeOnce = [&](int targetPort, int attempt) -> bool {
+        int sock = socket(AF_INET, SOCK_STREAM, 0);
+        if (sock < 0)
+            return false;
+
+        EnableReuseOptions(sock);
+
+        int one = 1;
+        setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+
+        if (!BindSocketToAnyPort(sock, mServerP2PLocalPort)) {
+            LOG_ERROR("[P2P_PROBE] bind failed port={} attempt={} errno={}", targetPort, attempt, errno);
+            CloseSocketFd(sock, false);
+            return false;
+        }
+
+        int flags = fcntl(sock, F_GETFL, 0);
+        fcntl(sock, F_SETFL, flags | O_NONBLOCK);
+
+        sockaddr_in probeSa{
+            .sin_family = AF_INET,
+            .sin_port = htons((uint16_t)targetPort),
+        };
+        inet_pton(AF_INET, mServerIp, &probeSa.sin_addr);
+
+        int ret = connect(sock, (sockaddr *)&probeSa, sizeof(probeSa));
+        if (ret != 0 && errno != EINPROGRESS) {
+            LOG_ERROR("[P2P_PROBE] connect fail port={} attempt={} errno={}", targetPort, attempt, errno);
+            CloseSocketFd(sock, false);
+            return false;
+        }
+
+        fd_set wfds;
+        FD_ZERO(&wfds);
+        FD_SET(sock, &wfds);
+        timeval tv{5, 0};
+
+        int sel = select(sock + 1, nullptr, &wfds, nullptr, &tv);
+        if (sel <= 0 || !FD_ISSET(sock, &wfds)) {
+            LOG_ERROR("[P2P_PROBE] timeout port={} attempt={} sel={}", targetPort, attempt, sel);
+            CloseSocketFd(sock, false);
+            return false;
+        }
+
+        int err = 0;
+        socklen_t elen = sizeof(err);
+        getsockopt(sock, SOL_SOCKET, SO_ERROR, &err, &elen);
+        if (err != 0) {
+            LOG_ERROR("[P2P_PROBE] complete-with-error port={} attempt={} err={}", targetPort, attempt, err);
+            CloseSocketFd(sock, false);
+            return false;
+        }
+
+        uint8_t tokenBuf[4];
+        homura::WriteBEI32(tokenBuf, (int32_t)mServerP2PProbeToken);
+        if (!SendAll(sock, tokenBuf, sizeof(tokenBuf))) {
+            LOG_ERROR("[P2P_PROBE] token send fail port={} attempt={} errno={}", targetPort, attempt, errno);
+            CloseSocketFd(sock, false);
+            return false;
+        }
+
+        CloseSocketFd(sock, false);
+        return true;
+    };
+
+    if (mServerP2PProbePort2 <= 0) {
+        mServerP2PProbePort2 = mServerP2PProbePort;
+    }
+
+    for (int attempt = 1; attempt <= 3; ++attempt) {
+        bool ok1 = probeOnce(mServerP2PProbePort, attempt);
+        bool ok2 = probeOnce(mServerP2PProbePort2, attempt);
+        if (ok1 && ok2) {
+            mServerP2PProbeDone = true;
+            return true;
+        }
     }
 
     return false;
@@ -2503,6 +2647,8 @@ void WaitForSecondPlayerDialog::ServerSendQuery() {
 void WaitForSecondPlayerDialog::ServerSendCreate() {
     if (mServerSock < 0)
         return;
+    if (!mServerConnected || mServerConnecting || mServerHosting || mServerJoined || mServerCreatePending)
+        return;
     if (!mApp || !mApp->mPlayerInfo || !mApp->mPlayerInfo->mName)
         return;
 
@@ -2515,20 +2661,25 @@ void WaitForSecondPlayerDialog::ServerSendCreate() {
     head[0] = 0x01;          // MsgType.CREATE
     head[1] = (uint8_t)nlen; // nameLen
 
+    mServerCreatePending = true;
     if (!SendAll(mServerSock, head, 2)) {
+        mServerCreatePending = false;
         mServerStatusText = TodStringTranslate("[STATUS_SEND_CREATE_FAIL]");
         return;
     }
     if (nlen > 0 && !SendAll(mServerSock, name, (size_t)nlen)) {
+        mServerCreatePending = false;
         mServerStatusText = TodStringTranslate("[STATUS_SEND_CREATE_FAIL]");
         return;
     }
     uint8_t versionBuf[4];
     homura::WriteBEI32(versionBuf, NETPLAY_VERSION);
     if (!SendAll(mServerSock, versionBuf, sizeof(versionBuf))) {
+        mServerCreatePending = false;
         mServerStatusText = TodStringTranslate("[STATUS_SEND_CREATE_FAIL]");
         return;
     }
+    mServerStatusText = TodStringTranslate("[STATUS_CREATING_ROOM]");
 }
 
 
@@ -2562,6 +2713,8 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
         pvzstl::string tagFull = TodStringTranslate("[TAG_FULL]");
         const bool versionMismatch = (r.protocolVersion != 0 && r.protocolVersion != NETPLAY_VERSION);
         pvzstl::string tag = r.gaming ? tagGaming : (r.full ? tagFull : "");
+        pvzstl::string probeTag = TodStringTranslate(r.hostProbeDone ? "[P2P_READY]" : "[P2P_NOT_READY]");
+        tag = tag.empty() ? probeTag : tag + " " + probeTag;
         if (versionMismatch) {
             pvzstl::string verErr = TodStringTranslate("[SERVER_ROOM_VERSION_ERROR]");
             tag = tag.empty() ? verErr : tag + " " + verErr;
@@ -2610,7 +2763,7 @@ void WaitForSecondPlayerDialog::ServerSendJoinSelected() {
         idx = mServerRoomCount - 1;
     const ServerRoomItem &room = mServerRooms[idx];
     if (room.protocolVersion != 0 && room.protocolVersion != NETPLAY_VERSION) {
-        mServerStatusText = StrFormat("Version mismatch: room %d, local %d", room.protocolVersion, NETPLAY_VERSION);
+        mServerStatusText = TodStringTranslate("[STATUS_ROOM_VERSION_ERR]");
         return;
     }
     std::strncpy(mServerJoinedRoomName, room.name, sizeof(mServerJoinedRoomName) - 1);
@@ -2769,6 +2922,9 @@ void WaitForSecondPlayerDialog::ServerDisconnect([[maybe_unused]] const char *wh
 
     mServerHosting = false;
     mServerJoined = false;
+    mServerCreatePending = false;
+    mServerHostProbeDone = false;
+    mServerGuestProbeDone = false;
     mServerHostHasGuest = false;
     mServerHostedRoomId = 0;
     mServerJoinedRoomId = 0;

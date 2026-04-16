@@ -48,6 +48,8 @@ struct ServerRoomItem {
     char name[128];
     bool full;
     bool gaming;
+    bool hostProbeDone;
+    bool guestProbeDone;
 };
 
 class WaitForSecondPlayerDialog : public LawnDialog {
@@ -95,6 +97,9 @@ public:
     bool mServerConnecting;   // non-blocking connect in progress
     bool mServerHosting;      // created a room
     bool mServerJoined;       // joined a room as guest
+    bool mServerCreatePending;
+    bool mServerHostProbeDone;
+    bool mServerGuestProbeDone;
     bool mServerHostHasGuest; // server pushed guest joined/left
     int mServerHostedRoomId;  // created room id
     int mServerJoinedRoomId;  // joined room id (optional)
@@ -125,6 +130,7 @@ public:
     bool mServerGameStarting;
     int mServerP2PLocalPort;
     int mServerP2PProbePort;
+    int mServerP2PProbePort2;
     std::uint32_t mServerP2PProbeToken;
     bool mServerP2PProbeDone;
     int mServerP2PDeadlineTick;
