@@ -1114,7 +1114,7 @@ GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
             int aGridY = aGridItem->mGridY;
             GridItemType aGridItemType = aGridItem->mGridItemType;
 
-            if (aGridItemType != GridItemType::GRIDITEM_GRAVESTONE && aGridItemType != GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
+            if (aGridItemType != GridItemType::GRIDITEM_GRAVESTONE && aGridItemType != GridItemType::GRIDITEM_MP_TARGET_ZOMBIE && aGridItemType != GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
                 // 修复植物们攻击核坑和梯子
                 continue;
             }

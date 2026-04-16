@@ -173,6 +173,8 @@ struct AddonImages {
     Sexy::Image *crater_night_roof_left;
     Sexy::Image *leaderboard_selector;
     Sexy::Image *zombie_duckytube_inwater;
+    Sexy::Image *burial_mound;
+    Sexy::Image *burial_mound_dirt;
 
     //    Sexy::Image *IMAGE_ZOMBIEJACKSONHEAD;
     //    Sexy::Image *IMAGE_ZOMBIEBACKUPDANCERHEAD2;

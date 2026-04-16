@@ -120,16 +120,16 @@ void GridItem::GridItemDie() {
 
 void GridItem::DrawGridItem(Graphics *g) {
     if (mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
-        DrawGraveStone(g);
-        // 召唤墓碑暂无受损动画，故用显血来表示
-        int x = mBoard->GridToPixelX(mGridX, mGridY);
-        int y = mBoard->GridToPixelY(mGridX, mGridY);
-        Graphics aHealthG = Graphics(*g);
-        pvzstl::string str = StrFormat("%d/%d", mVSGraveStoneHealth, 350);
-        aHealthG.SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-        aHealthG.SetColor(Color::White);
-        aHealthG.DrawString(str, x, y + 34);
-        aHealthG.SetFont(nullptr);
+        DrawBurialMound(g);
+        //        // 召唤墓碑暂无受损动画，故用显血来表示
+        //        int x = mBoard->GridToPixelX(mGridX, mGridY);
+        //        int y = mBoard->GridToPixelY(mGridX, mGridY);
+        //        Graphics aHealthG = Graphics(*g);
+        //        pvzstl::string str = StrFormat("%d/%d", mVSGraveStoneHealth, 350);
+        //        aHealthG.SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        //        aHealthG.SetColor(Color::White);
+        //        aHealthG.DrawString(str, x, y + 34);
+        //        aHealthG.SetFont(nullptr);
     }
 
     old_GridItem_DrawGridItem(this, g);
@@ -589,28 +589,6 @@ void GridItem::DrawGraveStone(Graphics *g) {
         aGraveRow = 2 + aGridCelLook % 2;
     }
 
-    if (mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
-        switch (mMoundLevel) {
-            case 0:
-                aGraveCol = 2;
-                break;
-            case 1:
-                aGraveCol = 0;
-                break;
-            case 2:
-                aGraveCol = 3;
-                break;
-            case 3:
-                aGraveCol = 4;
-                break;
-            case 4:
-                aGraveCol = 1;
-                break;
-            default:
-                break;
-        }
-    }
-
     int aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT);       // 墓碑主体在当前帧应显示的高度
     int aExtraBottomClip = TodAnimateCurve(0, 50, aHeightPosition, 0, 14, TodCurves::CURVE_EASE_IN_OUT);               // 为模拟墓碑从地面“长出”的效果，从底部额外裁剪的高度
     int aVisibleHeightDirt = TodAnimateCurve(500, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT); // 墓碑下方泥土部分应显示的高度
@@ -638,7 +616,7 @@ void GridItem::DrawGraveStone(Graphics *g) {
         y = mBoard->GridToPixelY(mGridX, mGridY) + currentYOffset;
     }
 
-    if (mApp->IsVSMode() && mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
+    if (mApp->IsVSMode()) {
         Reanimation *aReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
         if (aReanim) {
             g->SetClipRect(x, y - aVisibleHeight + aExtraTopClip, 86, aVisibleHeight - aExtraBottomClip - aExtraTopClip);
@@ -663,23 +641,6 @@ void GridItem::DrawGraveStone(Graphics *g) {
         }
         g->DrawString(StrFormat("%d", mVSGraveStoneHealth), x, y);
     } else {
-        // Mound 受击和生产时变色
-        if (mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
-            Graphics aMoundG = Graphics(*g);
-            if (mGraveJustGotShotCounter <= 0) {
-                aMoundG.SetColorizeImages(false);
-            } else {
-                int aGrayness = std::min(mGraveJustGotShotCounter * 3, 255);
-                int aGrayness2 = (aGrayness == 255) ? 127 : (aGrayness / 2);
-                aMoundG.SetColor(Color(aGrayness, aGrayness2, aGrayness, 255));
-                aMoundG.SetColorizeImages(true);
-            }
-
-            aMoundG.DrawImage(*IMAGE_TOMBSTONES, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
-            aMoundG.DrawImage(*IMAGE_TOMBSTONE_MOUNDS, x, y - aVisibleHeightDirt, aSrcRectDirt);
-            return;
-        }
-
         g->DrawImage(*IMAGE_TOMBSTONES, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
         g->DrawImage(*IMAGE_TOMBSTONE_MOUNDS, x, y - aVisibleHeightDirt, aSrcRectDirt);
     }
@@ -819,4 +780,78 @@ void GridItem::TakeDamgae(int theDamage, unsigned int theDamageFlags) {
 
         mGraveJustGotShotCounter = std::max(mGraveJustGotShotCounter, 25);
     }
+}
+void GridItem::DrawBurialMound(Sexy::Graphics *g) {
+    if (mGridItemCounter <= 0)
+        return;
+
+    constexpr int BURIAL_MOUND_ROW_Y_OFFSET[3] = {18, 10, 0};
+    constexpr int BURIAL_MOUND_ROW_HEIGHT_OFFSET[3] = {6, 0, 0};
+
+    int aHeightPosition = TodAnimateCurve(0, 100, mGridItemCounter, 1000, 0, TodCurves::CURVE_EASE_IN_OUT);
+    int aGridCelOffsetX = mBoard->mGridCelOffset[mGridX][mGridY][0];
+    int aGridCelOffsetY = mBoard->mGridCelOffset[mGridX][mGridY][1];
+    int aCelWidth = addonImages.burial_mound->GetCelWidth();
+    int aCelHeight = addonImages.burial_mound->GetCelHeight();
+
+    int aGraveCol = 0;
+    switch (mMoundLevel) {
+        case 0:
+            aGraveCol = 2;
+            break;
+        case 1:
+            aGraveCol = 0;
+            break;
+        case 2:
+            aGraveCol = 3;
+            break;
+        case 3:
+            aGraveCol = 4;
+            break;
+        case 4:
+            aGraveCol = 1;
+            break;
+        default:
+            break;
+    }
+
+    int aGraveRow = 2;
+    if (mVSGraveStoneHealth > 350 / 3 * 2) {
+        aGraveRow = 0;
+    } else if (mVSGraveStoneHealth > 350 / 3) {
+        aGraveRow = 1;
+    }
+
+    int aRowYOffset = BURIAL_MOUND_ROW_Y_OFFSET[aGraveRow];
+    int aRowHeightOffset = BURIAL_MOUND_ROW_HEIGHT_OFFSET[aGraveRow];
+    int aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT);
+    int aExtraBottomClip = TodAnimateCurve(0, 50, aHeightPosition, 0, 14, TodCurves::CURVE_EASE_IN_OUT);
+    int aVisibleHeightDirt = TodAnimateCurve(500, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT);
+    int aExtraTopClip = 0;
+
+    Plant *aPlant = mBoard->GetTopPlantAt(mGridX, mGridY, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
+    if (aPlant && aPlant->mState == PlantState::STATE_GRAVEBUSTER_EATING) {
+        aExtraTopClip = TodAnimateCurveFloat(400, 0, aPlant->mStateCountdown, 10.0f, 40.0f, TodCurves::CURVE_LINEAR);
+    }
+
+    Rect aSrcRect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip + aRowYOffset, aCelWidth, aVisibleHeight - aExtraBottomClip - aExtraTopClip + aRowHeightOffset);
+    Rect aSrcRectDirt(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aRowYOffset, aCelWidth, aVisibleHeightDirt + aRowHeightOffset);
+
+    int x = mBoard->GridToPixelX(mGridX, mGridY) + aGridCelOffsetX - 4;
+    int y = mBoard->GridToPixelY(mGridX, mGridY) + aCelHeight + aGridCelOffsetY - aRowYOffset;
+
+    if (mBoard->StageHasRoof()) {
+        aHeightPosition = TodAnimateCurve(0, 100, mGridItemCounter, 0, 1000, TodCurves::CURVE_EASE_IN_OUT);
+        aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, 0, aCelHeight, TodCurves::CURVE_EASE_IN_OUT);
+        aExtraBottomClip = 0;
+        aSrcRect = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip, aCelWidth, aVisibleHeight - aExtraTopClip);
+        aSrcRectDirt = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + (aCelHeight - aVisibleHeightDirt), aCelWidth, aVisibleHeightDirt);
+        int startYOffset = -200;
+        int endYOffset = aGridCelOffsetY + aRowHeightOffset;
+        int currentYOffset = TodAnimateCurve(0, 1000, aHeightPosition, startYOffset, endYOffset, TodCurves::CURVE_EASE_IN_OUT);
+        y = mBoard->GridToPixelY(mGridX, mGridY) + currentYOffset;
+    }
+
+    g->DrawImage(addonImages.burial_mound, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
+    g->DrawImage(addonImages.burial_mound_dirt, x, y - aVisibleHeightDirt, aSrcRectDirt);
 }
