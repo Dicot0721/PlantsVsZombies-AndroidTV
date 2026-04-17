@@ -70,9 +70,6 @@ public:
     Dialog *GetDialog(Dialogs theDialogId) { // vTable + 4 * 103
         return reinterpret_cast<Dialog *(*)(SexyAppBase *, Dialogs)>(Sexy_SexyAppBase_GetDialogAddr)(this, theDialogId);
     }
-    void EraseFile(const pvzstl::string &theFileName) {
-        reinterpret_cast<void (*)(SexyAppBase *, const pvzstl::string &)>(Sexy_SexyAppBase_EraseFileAddr)(this, theFileName);
-    }
     Image *GetImage(const pvzstl::string &theFileName, bool commitBits = true) {
         return reinterpret_cast<Image *(*)(SexyAppBase *, const pvzstl::string &, bool)>(Sexy_SexyAppBase_GetImageAddr)(this, theFileName, commitBits);
     }
@@ -99,6 +96,7 @@ public:
     }
 
     bool UpdateApp();
+    bool EraseFile(const pvzstl::string &theFileName);
 
 protected:
     SexyAppBase() = default;
@@ -114,5 +112,7 @@ protected:
 inline void (*old_Sexy_SexyAppBase_SexyAppBase)(Sexy::SexyAppBase *appBase);
 
 inline bool (*old_Sexy_SexyAppBase_UpdateApp)(Sexy::SexyAppBase *appBase);
+
+inline bool (*old_Sexy_SexyAppBase_EraseFile)(Sexy::SexyAppBase *thiz, const pvzstl::string &theFileName);
 
 #endif // PVZ_SEXYAPPFRAMEWORK_SEXY_APP_BASE_H

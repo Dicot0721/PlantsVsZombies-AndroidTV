@@ -54,6 +54,8 @@ inline bool seedBankPin;    // 无尽置顶种子栏
 inline bool dynamicPreview; // 动态种植预览
 inline bool jumpLogo;       // 跳过加载界面的宝开Logo
 inline bool heavyWeaponAccel;
+inline bool disableDeleteUserdata;
+inline bool disableSaveUserdata;
 
 inline bool gKeyDown = false;
 inline bool gButtonDown = false;

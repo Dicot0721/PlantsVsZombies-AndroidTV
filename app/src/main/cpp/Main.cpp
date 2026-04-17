@@ -293,6 +293,12 @@ extern "C" JNIEXPORT void JNICALL Java_com_android_support_Preferences_Changes(J
         case 88:
             banMower = boolean; // 不出小推车
             break;
+        case 89:
+            disableDeleteUserdata = boolean; // 禁止删档
+            break;
+        case 90:
+            disableSaveUserdata = boolean; // 禁止存档
+            break;
         case 101:
             PumpkinWithLadder = boolean; // 种下南瓜自动搭梯
             break;
@@ -518,6 +524,8 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
         "88_CollapseAdd_Toggle_不出小推车",
         "83_CollapseAdd_Toggle_取消必选卡片",
         "84_CollapseAdd_Toggle_坚不可摧无尽",
+        "89_CollapseAdd_Toggle_禁止删档",
+        "90_CollapseAdd_Toggle_禁止存档",
         "81_CollapseAdd_OnceCheckBox_跳关器",
         "102_CollapseAdd_Spinner_<font color='green'>更换场景：_关闭,白天,黑夜,泳池,雾夜,屋顶,月夜,温室园,蘑菇园,水族馆",
         "CollapseAdd_RichTextView_<font color='green'>无尽模式跳轮:",

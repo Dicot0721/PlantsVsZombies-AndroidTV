@@ -19,6 +19,7 @@
 
 #include "PvZ/SexyAppFramework/SexyAppBase.h"
 #include "Homura/Logger.h"
+#include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/PlayerInfo.h"
 
@@ -37,4 +38,11 @@ void Sexy::SexyAppBase::_constructor() {
 
 bool Sexy::SexyAppBase::UpdateApp() {
     return old_Sexy_SexyAppBase_UpdateApp(this);
+}
+
+bool Sexy::SexyAppBase::EraseFile(const pvzstl::string &theFileName) {
+    if (disableDeleteUserdata) {
+        return false;
+    }
+    return old_Sexy_SexyAppBase_EraseFile(this, theFileName);
 }
