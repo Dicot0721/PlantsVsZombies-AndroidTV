@@ -860,6 +860,7 @@ inline void *Reanimation_GetTrackVelocityAddr;
 inline void *Sexy_SexyCommonApp_getGameInfoAddr;
 inline void *Sexy_GamepadApp_CheckGamepadAddr;
 inline void *Sexy_GamepadApp_HasGamepadAddr;
+inline void *Sexy_GamepadApp_SwapGamepadIdAddr;
 inline void *Sexy_RandIntAddr;
 inline void *Sexy_RandFloatAddr;
 inline void *Sexy_GetTickCountAddr;

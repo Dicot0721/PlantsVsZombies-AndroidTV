@@ -31,6 +31,9 @@ public:
     bool HasGamepad() {
         return reinterpret_cast<bool (*)(GamepadApp *)>(Sexy_GamepadApp_HasGamepadAddr)(this);
     }
+    void SwapGamepadId(int a2, int a3) {
+        reinterpret_cast<void (*)(GamepadApp *, int, int)>(Sexy_GamepadApp_SwapGamepadIdAddr)(this, a2, a3);
+    }
 
 protected:
     GamepadApp() = default;

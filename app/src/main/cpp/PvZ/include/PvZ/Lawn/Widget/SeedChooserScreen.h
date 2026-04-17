@@ -106,8 +106,8 @@ public:
     int mViewLawnTime;                       // 947
     bool unkBool;                            // 3792
     int mPlayerIndex;                        // 949
-    SeedType mSeedType1;                     // 950
-    SeedType mSeedType2;                     // 951
+    int mSeedIndex1;                         // 950
+    int mSeedIndex2;                         // 951
     float unkF;                              // 952
     bool mIsZombieChooser;                   // 3812
     SeedBank *mSeedBank1;                    // 954
@@ -169,6 +169,7 @@ public:
     int GetSeedPacketIndex(int theSeedIndex);
     void OnPlayerPickedSeed(int thePlayerIndex);
     void ClickedSeedInChooser(ChosenSeed &theChosenSeed, int thePlayerIndex);
+    void ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, int thePlayerIndex);
     void CrazyDavePickSeeds();
     void OnStartButton();
     void Update();

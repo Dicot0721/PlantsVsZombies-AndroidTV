@@ -466,10 +466,45 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             auto seedType = SeedType(event1->data1);
             bool isZombieChooser = event1->data2;
             SeedChooserScreen *seedChooser = (isZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
-            seedChooser->GetSeedPositionInChooser(seedType, seedChooser->mCursorPositionX1, seedChooser->mCursorPositionY1);
-            seedChooser->GetSeedPositionInChooser(seedType, seedChooser->mCursorPositionX2, seedChooser->mCursorPositionY2);
-            (isZombieChooser ? seedChooser->mSeedType2 : seedChooser->mSeedType1) = seedType;
-            seedChooser->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, seedChooser->mPlayerIndex);
+            if (seedChooser == nullptr) {
+                break;
+            }
+            if (isZombieChooser) {
+                if (seedType < SeedType::SEED_ZOMBIE_GRAVESTONE || seedType >= SeedType::NUM_ZOMBIE_SEED_IN_CHOOSER) {
+                    break;
+                }
+            } else {
+                if (seedType < SeedType::SEED_PEASHOOTER || seedType >= SeedType::NUM_SEEDS_IN_CHOOSER) {
+                    break;
+                }
+            }
+            int seedIndex = seedChooser->GetSeedPacketIndex(seedType);
+            if (seedIndex < 0 || seedIndex >= NUM_SEEDS_IN_CHOOSER) {
+                break;
+            }
+            VSSide targetSide = isZombieChooser ? VSSide::VS_SIDE_ZOMBIE : VSSide::VS_SIDE_PLANT;
+            if (mSides[0] != targetSide && mSides[1] != targetSide) {
+                break;
+            }
+            int ownerPlayerIndex = seedChooser->mPlayerIndex;
+            int *cursorX = (ownerPlayerIndex == 0) ? &seedChooser->mCursorPositionX1 : &seedChooser->mCursorPositionX2;
+            int *cursorY = (ownerPlayerIndex == 0) ? &seedChooser->mCursorPositionY1 : &seedChooser->mCursorPositionY2;
+            seedChooser->GetSeedPositionInChooser(seedIndex, *cursorX, *cursorY);
+            if (ownerPlayerIndex == 0)
+                seedChooser->mSeedIndex1 = seedIndex;
+            else
+                seedChooser->mSeedIndex2 = seedIndex;
+            ChosenSeed &chosenSeed = seedChooser->mChosenSeeds[seedIndex];
+            if (chosenSeed.mSeedState != ChosenSeedState::SEED_IN_CHOOSER) {
+                break;
+            }
+            chosenSeed.mSeedType = seedType;
+            seedChooser->ClickedSeedInChooser_Orgin(chosenSeed, ownerPlayerIndex);
+
+            if (gTcpClientSocket >= 0) {
+                U8U8_Event syncEvent = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, uint8_t(seedType), uint8_t(isZombieChooser)};
+                netplay::PutEvent(syncEvent);
+            }
         } break;
         case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND: {
             U8_Event *event1 = (U8_Event *)event;
@@ -556,13 +591,41 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             auto *event1 = reinterpret_cast<U8U8_Event *>(event);
             auto seedType = SeedType(event1->data1);
             bool isZombieChooser = event1->data2;
-            LOG_DEBUG("seedType={}", event1->data1);
-            LOG_DEBUG("isZombieChooser={}", isZombieChooser);
             SeedChooserScreen *seedChooser = (isZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
-            seedChooser->GetSeedPositionInChooser(seedType, seedChooser->mCursorPositionX1, seedChooser->mCursorPositionY1);
-            seedChooser->GetSeedPositionInChooser(seedType, seedChooser->mCursorPositionX2, seedChooser->mCursorPositionY2);
-            (isZombieChooser ? seedChooser->mSeedType2 : seedChooser->mSeedType1) = seedType;
-            seedChooser->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, seedChooser->mPlayerIndex);
+            if (seedChooser == nullptr) {
+                break;
+            }
+            if (isZombieChooser) {
+                if (seedType < SeedType::SEED_ZOMBIE_GRAVESTONE || seedType >= SeedType::NUM_ZOMBIE_SEED_IN_CHOOSER) {
+                    break;
+                }
+            } else {
+                if (seedType < SeedType::SEED_PEASHOOTER || seedType >= SeedType::NUM_SEEDS_IN_CHOOSER) {
+                    break;
+                }
+            }
+            int seedIndex = seedChooser->GetSeedPacketIndex(seedType);
+            if (seedIndex < 0 || seedIndex >= NUM_SEEDS_IN_CHOOSER) {
+                break;
+            }
+            VSSide targetSide = isZombieChooser ? VSSide::VS_SIDE_ZOMBIE : VSSide::VS_SIDE_PLANT;
+            if (mSides[0] != targetSide && mSides[1] != targetSide) {
+                break;
+            }
+            int ownerPlayerIndex = seedChooser->mPlayerIndex;
+            int *cursorX = (ownerPlayerIndex == 0) ? &seedChooser->mCursorPositionX1 : &seedChooser->mCursorPositionX2;
+            int *cursorY = (ownerPlayerIndex == 0) ? &seedChooser->mCursorPositionY1 : &seedChooser->mCursorPositionY2;
+            seedChooser->GetSeedPositionInChooser(seedIndex, *cursorX, *cursorY);
+            if (ownerPlayerIndex == 0)
+                seedChooser->mSeedIndex1 = seedIndex;
+            else
+                seedChooser->mSeedIndex2 = seedIndex;
+            ChosenSeed &chosenSeed = seedChooser->mChosenSeeds[seedIndex];
+            if (chosenSeed.mSeedState != ChosenSeedState::SEED_IN_CHOOSER) {
+                break;
+            }
+            chosenSeed.mSeedType = seedType;
+            seedChooser->ClickedSeedInChooser_Orgin(chosenSeed, ownerPlayerIndex);
         } break;
         case EVENT_VSSETUPMENU_RANDOM_PICK: {
             U16x12_Event *event1 = (U16x12_Event *)event;

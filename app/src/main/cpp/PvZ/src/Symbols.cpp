@@ -898,6 +898,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy13SexyCommonApp11getGameInfoEv", Sexy_SexyCommonApp_getGameInfoAddr);
     libGameMain.GetSymbol("_ZN4Sexy10GamepadApp12CheckGamepadEv", Sexy_GamepadApp_CheckGamepadAddr);
     libGameMain.GetSymbol("_ZN4Sexy10GamepadApp10HasGamepadEv", Sexy_GamepadApp_HasGamepadAddr);
+    libGameMain.GetSymbol("_ZN4Sexy10GamepadApp13SwapGamepadIdEii", Sexy_GamepadApp_SwapGamepadIdAddr);
     libGameMain.GetSymbol("_ZN4Sexy4RandEi", Sexy_RandIntAddr);
     libGameMain.GetSymbol("_ZN4Sexy4RandEf", Sexy_RandFloatAddr);
     libGameMain.GetSymbol("_ZN4Sexy12GetTickCountEv", Sexy_GetTickCountAddr);
