@@ -128,6 +128,7 @@ public:
     bool mServerP2PFailSent;
     bool mServerP2PDoneReceived;
     bool mServerGameStarting;
+    std::uint32_t mServerRelayEpoch;
     int mServerP2PLocalPort;
     int mServerP2PProbePort;
     int mServerP2PProbePort2;
@@ -162,6 +163,7 @@ public:
     void ServerResetP2PState(bool keepListener);
     void ServerHandleP2PInfo(const uint8_t *payload, uint16_t len);
     void ServerAdoptP2PSocket();
+    bool ServerSendRelayReady(std::uint32_t relayEpoch);
 
 
     bool ServerTryReadOneFrame(uint8_t &outType, uint8_t *outPayload, uint16_t &outLen);

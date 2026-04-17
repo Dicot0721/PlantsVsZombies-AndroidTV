@@ -101,6 +101,12 @@ static bool BindSocketToAnyPort(int fd, int port) {
     return bind(fd, (sockaddr *)&sa, sizeof(sa)) == 0;
 }
 
+static void ResetVsStreamBuffersForServerMode() {
+    clientRecvBuffer.clear();
+    serverRecvBuffer.clear();
+    netplay::ClearSendBuffer();
+}
+
 static bool HasSameBroadcastAddr(const std::vector<BroadcastTarget> &targets, const sockaddr_in &addr) {
     for (const auto &t : targets) {
         if (t.addr.sin_addr.s_addr == addr.sin_addr.s_addr && t.addr.sin_port == addr.sin_port) {
@@ -468,6 +474,7 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mServerP2PFailSent = false;
     mServerP2PDoneReceived = false;
     mServerGameStarting = false;
+    mServerRelayEpoch = 0;
     mServerP2PLocalPort = 0;
     mServerP2PProbePort = 0;
     mServerP2PProbePort2 = 0;
@@ -2008,6 +2015,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 break;
             }
             case 0x85: { // RELAY_BEGIN
+                mServerRelayEpoch = (len >= 4) ? (std::uint32_t)homura::ReadBEI32(payload) : 0;
                 mServerStatusText = TodStringTranslate("[STATUS_BATTLE_BEGIN]");
                 mServerP2PStatusText = "P2P: relay fallback active";
                 mServerP2PFailSent = true;
@@ -2037,6 +2045,16 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 }
                 gTcpConnected = false;
                 gTcpConnecting = false;
+                ResetVsStreamBuffersForServerMode();
+
+                if (mServerRelayEpoch != 0 && !ServerSendRelayReady(mServerRelayEpoch)) {
+                    ServerDisconnect("relay ready send fail");
+                    break;
+                }
+                mServerStatusText = "Relay ready sent, waiting relay go...";
+                mServerP2PStatusText = "P2P: relay fallback active, waiting relay go";
+                LOG_DEBUG("[MODE3] RELAY_BEGIN epoch={}, waiting RELAY_GO", mServerRelayEpoch);
+                break;
 
                 if (mServerHosting) {
                     // 我是房主：后续走 gTcpClientSocket（你的 MODE2 host 收包逻辑就是读 gTcpClientSocket）
@@ -2063,6 +2081,52 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 return;
             }
 
+            case 0x8B: { // RELAY_GO
+                const std::uint32_t relayGoEpoch = (len >= 4) ? (std::uint32_t)homura::ReadBEI32(payload) : 0;
+                if (mServerRelayEpoch != 0 && relayGoEpoch != 0 && relayGoEpoch != mServerRelayEpoch) {
+                    LOG_WARN("[MODE3] RELAY_GO epoch mismatch recv={} expect={}", relayGoEpoch, mServerRelayEpoch);
+                    break;
+                }
+
+                mServerStatusText = TodStringTranslate("[STATUS_BATTLE_BEGIN]");
+                mServerP2PStatusText = "P2P: relay active";
+
+                if (mServerSock < 0) {
+                    LOG_DEBUG("[MODE3] RELAY_GO ignored (already handed off)");
+                    break;
+                }
+
+                if (gTcpClientSocket >= 0) {
+                    close(gTcpClientSocket);
+                    gTcpClientSocket = -1;
+                }
+                if (gTcpServerSocket >= 0) {
+                    close(gTcpServerSocket);
+                    gTcpServerSocket = -1;
+                }
+                gTcpConnected = false;
+                gTcpConnecting = false;
+                ResetVsStreamBuffersForServerMode();
+
+                if (mServerHosting) {
+                    gTcpClientSocket = mServerSock;
+                    mServerSock = -1;
+                } else if (mServerJoined) {
+                    gTcpServerSocket = mServerSock;
+                    gTcpConnected = true;
+                    gTcpConnecting = false;
+                    mServerSock = -1;
+                } else {
+                    LOG_DEBUG("[MODE3] RELAY_GO but role unknown, disconnect");
+                    ServerDisconnect("relay role unknown");
+                    break;
+                }
+
+                gIsServerModeNetplay = true;
+                gServerModeTransport = ServerModeTransport::RELAY;
+                LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Enter);
+                return;
+            }
 
             case 0xFF: { // ERROR
                 int ec = (len >= 1) ? (payload[0] & 0xFF) : -1;
@@ -2114,6 +2178,7 @@ void WaitForSecondPlayerDialog::ServerResetP2PState(bool keepListener) {
     mServerP2PFailSent = false;
     mServerP2PDoneReceived = false;
     mServerGameStarting = false;
+    mServerRelayEpoch = 0;
     mServerP2PDeadlineTick = 0;
     mServerP2PNextRetryTick = 0;
     mServerP2PTargetRoomId = 0;
@@ -2432,6 +2497,7 @@ void WaitForSecondPlayerDialog::ServerAdoptP2PSocket() {
     }
     gTcpConnected = false;
     gTcpConnecting = false;
+    ResetVsStreamBuffersForServerMode();
 
     int directSock = mServerP2PPendingSock;
     mServerP2PPendingSock = -1;
@@ -2639,6 +2705,18 @@ bool WaitForSecondPlayerDialog::ServerSendU8(uint8_t b) {
         return false;
     return SendAll(mServerSock, &b, 1);
 }
+
+bool WaitForSecondPlayerDialog::ServerSendRelayReady(std::uint32_t relayEpoch) {
+    if (mServerSock < 0 || relayEpoch == 0) {
+        return false;
+    }
+
+    uint8_t buf[5];
+    buf[0] = 0x0B;
+    homura::WriteBEI32(buf + 1, (int32_t)relayEpoch);
+    return SendAll(mServerSock, buf, sizeof(buf));
+}
+
 void WaitForSecondPlayerDialog::ServerSendQuery() {
     // MsgType.QUERY = 0x02
     ServerSendU8(0x02);
