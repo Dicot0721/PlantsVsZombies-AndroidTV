@@ -93,10 +93,10 @@ public:
     // （可选）模式3：服务器房间列表选择
     int mSelectedRoomIndex_Server;
 
-    int mServerSock;          // TCP socket to server
-    bool mServerConnecting;   // non-blocking connect in progress
-    bool mServerHosting;      // created a room
-    bool mServerJoined;       // joined a room as guest
+    int mServerSock;        // TCP socket to server
+    bool mServerConnecting; // non-blocking connect in progress
+    bool mServerHosting;    // created a room
+    bool mServerJoined;     // joined a room as guest
     bool mServerCreatePending;
     bool mServerHostProbeDone;
     bool mServerGuestProbeDone;
