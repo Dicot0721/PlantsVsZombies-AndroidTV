@@ -47,13 +47,25 @@ bool IsLocalChooserInputAllowed(SeedChooserScreen *screen) {
     }
 
     VSSide chooserSide = screen->mIsZombieChooser ? VSSide::VS_SIDE_ZOMBIE : VSSide::VS_SIDE_PLANT;
+    VSSide localSide = VSSide::VS_SIDE_NONE;
     if (gTcpConnected) {
-        return vsSetup->mSides[1] == chooserSide;
+        localSide = vsSetup->mSides[1];
+    } else if (gTcpClientSocket >= 0) {
+        localSide = vsSetup->mSides[0];
+    } else {
+        return true;
     }
-    if (gTcpClientSocket >= 0) {
-        return vsSetup->mSides[0] == chooserSide;
+
+    bool isBanMode = (vsSetup->mAddonWidget != nullptr) && vsSetup->mAddonWidget->mBanMode;
+    VSSide controlledSide = localSide;
+    if (isBanMode) {
+        if (localSide == VSSide::VS_SIDE_PLANT) {
+            controlledSide = VSSide::VS_SIDE_ZOMBIE;
+        } else if (localSide == VSSide::VS_SIDE_ZOMBIE) {
+            controlledSide = VSSide::VS_SIDE_PLANT;
+        }
     }
-    return true;
+    return controlledSide == chooserSide;
 }
 
 inline void NormalizeLocalPoint(SeedChooserScreen *screen, int &x, int &y) {
@@ -1269,7 +1281,9 @@ void SeedChooserScreen::MouseUp(int x, int y) {
             ButtonDepress(SeedChooserScreen_ViewLawn);
             break;
         case SeedChooserTouchState::SeedChooser:
-            if (!mIsZombieChooser && m1PChoosingSeeds && mApp->IsCoopMode()) {
+            if (mApp->IsVSMode()) {
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, mPlayerIndex);
+            } else if (!mIsZombieChooser && m1PChoosingSeeds && mApp->IsCoopMode()) {
                 GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0);
             } else {
                 GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
