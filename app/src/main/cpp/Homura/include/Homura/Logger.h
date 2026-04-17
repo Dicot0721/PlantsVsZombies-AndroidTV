@@ -68,8 +68,8 @@ public:
     }
 
 protected:
-    constexpr Logger() = default;
-    constexpr ~Logger() = default;
+    Logger() = default;
+    ~Logger() = default;
 
     android_LogPriority level_ = ANDROID_LOG_DEBUG;
 };

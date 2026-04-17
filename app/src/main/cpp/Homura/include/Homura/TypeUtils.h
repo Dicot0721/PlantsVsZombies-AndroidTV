@@ -36,7 +36,7 @@ class Storage {
 public:
     using ElementType = T;
 
-    constexpr Storage() = default;
+    Storage() = default;
 
     Storage(const Storage &) = delete;
     Storage(Storage &&) = delete;

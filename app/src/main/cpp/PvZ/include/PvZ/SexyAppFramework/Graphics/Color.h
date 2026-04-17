@@ -137,21 +137,21 @@ public:
 
 } // namespace Sexy
 
-constexpr Sexy::Color colorBlack{0, 0, 0, 255};
+inline constexpr Sexy::Color gColorBlack{0, 0, 0, 255};
 
-constexpr Sexy::Color colorGray{80, 80, 80, 255};
+inline constexpr Sexy::Color gColorGray{80, 80, 80, 255};
 
-constexpr Sexy::Color colorWhite{255, 255, 255, 255};
+inline constexpr Sexy::Color gColorWhite{255, 255, 255, 255};
 
-constexpr Sexy::Color colorBlue{0, 255, 255, 255};
+inline constexpr Sexy::Color gColorBlue{0, 255, 255, 255};
 
-constexpr Sexy::Color colorYellow{255, 255, 0, 255};
+inline constexpr Sexy::Color gColorYellow{255, 255, 0, 255};
 
-constexpr Sexy::Color colorBrown{205, 133, 63, 255};
+inline constexpr Sexy::Color gColorBrown{205, 133, 63, 255};
 
-constexpr Sexy::Color colorGreen{0, 250, 154, 255};
+inline constexpr Sexy::Color gColorGreen{0, 250, 154, 255};
 
-constexpr Sexy::Color gZombatarSkinColor[] = {
+inline constexpr Sexy::Color gZombatarSkinColor[] = {
     {134, 147, 122, 255},
     {79, 135, 94, 255},
     {127, 135, 94, 255},
@@ -166,7 +166,7 @@ constexpr Sexy::Color gZombatarSkinColor[] = {
     {104, 121, 90, 255},
 };
 
-constexpr Sexy::Color gZombatarAccessoryColor[] = {
+inline constexpr Sexy::Color gZombatarAccessoryColor[] = {
     {151, 33, 33, 255},
     {199, 53, 53, 255},
     {220, 112, 47, 255},
@@ -187,7 +187,7 @@ constexpr Sexy::Color gZombatarAccessoryColor[] = {
     {255, 255, 255, 255},
 };
 
-constexpr Sexy::Color gZombatarAccessoryColor2[] = {
+inline constexpr Sexy::Color gZombatarAccessoryColor2[] = {
     {238, 19, 24, 255},
     {247, 89, 215, 255},
     {239, 198, 253, 255},

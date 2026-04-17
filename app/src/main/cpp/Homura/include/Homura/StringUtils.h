@@ -78,7 +78,7 @@ public:
     [[nodiscard]] constexpr bool operator()(std::string_view sv) const noexcept {
         return std::ranges::all_of(sv, *this);
     }
-} constexpr IsBlank{};
+} inline constexpr IsBlank{};
 
 class {
 public:
@@ -91,7 +91,7 @@ public:
     [[nodiscard]] constexpr bool operator()(std::string_view sv) const noexcept {
         return std::ranges::all_of(sv, *this);
     }
-} constexpr IsSpace{};
+} inline constexpr IsSpace{};
 
 /**
  * @warning 字符串含非 ASCII 字符时可能会出现意外

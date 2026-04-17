@@ -5563,7 +5563,7 @@ void Board::FixReanimErrorAfterLoad() {
     while (IterateParticles(aParticle)) {
         if (aParticle->mEffectType == ParticleEffect::PARTICLE_ZOMBIE_DAISIES || aParticle->mEffectType == ParticleEffect::PARTICLE_ZOMBIE_PINATA) {
             // 设置颜色
-            aParticle->OverrideColor(nullptr, colorWhite);
+            aParticle->OverrideColor(nullptr, gColorWhite);
         } else if (aParticle->mEffectType == ParticleEffect::PARTICLE_POOL_SPARKLY) {
             // 直接删除泳池闪光特效
             aParticle->ParticleSystemDie();
