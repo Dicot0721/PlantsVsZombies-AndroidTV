@@ -388,6 +388,9 @@ inline bool doCheatCodeDialog; // 菜单DoCheatCodeDialog
 inline int gPingNetPingPongCounter = 0;
 inline int gPingNetDelayCounter = -1;
 inline int gNetDelayNow = 0;
+inline bool gNetPingAwaitingPong = false;
+inline int gNetPingAwaitTicks = 0;
+inline int gNetPingUpdateTick = 0;
 
 inline std::vector<char> clientRecvBuffer;
 inline std::vector<char> serverRecvBuffer;

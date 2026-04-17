@@ -40,6 +40,39 @@
 
 using namespace Sexy;
 
+namespace {
+constexpr int kNetPingIntervalTicks = 100;       // ~1s
+constexpr int kNetPingTimeoutTicks = 1200;       // ~12s
+constexpr int kNetPingProgressUpdateTicks = 100; // ~1s
+
+void ResetNetDelayState() {
+    gPingNetPingPongCounter = 0;
+    gPingNetDelayCounter = -1;
+    gNetDelayNow = 0;
+    gNetPingAwaitingPong = false;
+    gNetPingAwaitTicks = 0;
+    gNetPingUpdateTick = 0;
+}
+
+void TickNetDelayAwaitingPong() {
+    if (!gNetPingAwaitingPong) {
+        return;
+    }
+
+    ++gNetPingAwaitTicks;
+    ++gNetPingUpdateTick;
+
+    if (gNetPingUpdateTick >= kNetPingProgressUpdateTicks) {
+        gNetPingUpdateTick = 0;
+        gNetDelayNow = gNetPingAwaitTicks;
+    }
+
+    if (gNetPingAwaitTicks >= kNetPingTimeoutTicks) {
+        gNetPingAwaitingPong = false;
+    }
+}
+} // namespace
+
 // 此处写明具体每个贴图对应哪个文件.
 void LawnApp::LoadAddonImages() {
     addonImages.pole_night = GetImageByFileName("addonFiles/images/pole_night");
@@ -211,7 +244,7 @@ void LawnApp::ClearSecondPlayer() {
         close(gUdpBroadcastSocket);
         gUdpBroadcastSocket = -1;
     }
-    gNetDelayNow = 0; // 清除旧的延时数据
+    ResetNetDelayState();
     clientRecvBuffer.clear();
     serverRecvBuffer.clear();
     old_LawnApp_ClearSecondPlayer(this);
@@ -264,10 +297,12 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
 
             if (eventPing->data == 1) {
                 U8_Event eventPong = {{EVENT_SERVER_PONG}, 1};
-                gPingNetDelayCounter = 0; // 开始计时
+                gPingNetDelayCounter = 0;
                 netplay::PutEvent(eventPong);
             } else if (eventPing->data == 2) {
-                gNetDelayNow = gPingNetDelayCounter;
+                if (gPingNetDelayCounter >= 0) {
+                    gNetDelayNow = gPingNetDelayCounter;
+                }
                 gPingNetDelayCounter = -1;
             }
 
@@ -355,8 +390,15 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
                        //            U8_Event *eventPong = static_cast<U8_Event *>(base);
 
             U8_Event eventPing = {{EVENT_CLIENT_PING}, 2};
-            gNetDelayNow = gPingNetDelayCounter;
-            gPingNetDelayCounter = -1; // 停止计时
+            if (gNetPingAwaitingPong) {
+                gNetDelayNow = gNetPingAwaitTicks;
+            } else if (gPingNetDelayCounter >= 0) {
+                gNetDelayNow = gPingNetDelayCounter;
+            }
+            gPingNetDelayCounter = -1;
+            gNetPingAwaitingPong = false;
+            gNetPingAwaitTicks = 0;
+            gNetPingUpdateTick = 0;
             gPingNetPingPongCounter = 0;
             netplay::PutEvent(eventPing);
 
@@ -438,8 +480,14 @@ void LawnApp::UpdateFrames() {
 
         netplay::FlushSendBuffer(gTcpClientSocket);
 
-        if (gPingNetDelayCounter != -1) {
-            gPingNetDelayCounter++;
+        if (gPingNetDelayCounter >= 0) {
+            ++gPingNetDelayCounter;
+            if (gPingNetDelayCounter % kNetPingProgressUpdateTicks == 0) {
+                gNetDelayNow = gPingNetDelayCounter;
+            }
+            if (gPingNetDelayCounter >= kNetPingTimeoutTicks) {
+                gPingNetDelayCounter = -1;
+            }
         }
 
         char buf[1024];
@@ -460,6 +508,7 @@ void LawnApp::UpdateFrames() {
                 clientRecvBuffer.clear();
                 serverRecvBuffer.clear();
                 netplay::ClearSendBuffer();
+                ResetNetDelayState();
                 if (!GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER)) {
                     if (gTcpListenSocket >= 0) {
                         close(gTcpListenSocket);
@@ -488,6 +537,7 @@ void LawnApp::UpdateFrames() {
                     clientRecvBuffer.clear();
                     serverRecvBuffer.clear();
                     netplay::ClearSendBuffer();
+                    ResetNetDelayState();
                     LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 }
@@ -499,13 +549,14 @@ void LawnApp::UpdateFrames() {
 
         netplay::FlushSendBuffer(gTcpServerSocket);
 
-        if (gPingNetDelayCounter != -1) {
-            gPingNetDelayCounter++;
-        }
+        TickNetDelayAwaitingPong();
 
-        gPingNetPingPongCounter++;
-        if (gPingNetPingPongCounter == 100) {
-            gPingNetDelayCounter = 0; // 开始计时
+        ++gPingNetPingPongCounter;
+        if (gPingNetPingPongCounter >= kNetPingIntervalTicks) {
+            gPingNetPingPongCounter = 0;
+            gNetPingAwaitingPong = true;
+            gNetPingAwaitTicks = 0;
+            gNetPingUpdateTick = 0;
             U8_Event eventPing = {{EVENT_CLIENT_PING}, 1};
             netplay::PutEvent(eventPing);
         }
@@ -527,6 +578,7 @@ void LawnApp::UpdateFrames() {
                 clientRecvBuffer.clear();
                 serverRecvBuffer.clear();
                 netplay::ClearSendBuffer();
+                ResetNetDelayState();
                 LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
                 break;
             } else {
@@ -545,6 +597,7 @@ void LawnApp::UpdateFrames() {
                     clientRecvBuffer.clear();
                     serverRecvBuffer.clear();
                     netplay::ClearSendBuffer();
+                    ResetNetDelayState();
                     LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 }

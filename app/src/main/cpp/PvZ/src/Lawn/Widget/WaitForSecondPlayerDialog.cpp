@@ -2051,7 +2051,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     ServerDisconnect("relay ready send fail");
                     break;
                 }
-                mServerStatusText = "Relay ready sent, waiting relay go...";
+                mServerStatusText = TodStringTranslate("[STATUS_RELAY_WAIT_START]");
                 mServerP2PStatusText = "P2P: relay fallback active, waiting relay go";
                 LOG_DEBUG("[MODE3] RELAY_BEGIN epoch={}, waiting RELAY_GO", mServerRelayEpoch);
                 break;
