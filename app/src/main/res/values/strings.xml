@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name">PvZ TV Touch</string>
     <string name="pvz_name">PvZ TV Touch</string>
+    <string name="close">Close</string>
+    <string name="minimize">Minimize</string>
+    <string name="cheat_menu_close_description">Long press to close cheat menu</string>
+    <string name="cheat_menu_close_message">Cheat menu was closed</string>
     <string name="without_button">Launch Original Edition of PvZ TV</string>
     <string name="addon_set">Additional Settings</string>
     <string name="second_player">2P Keyboard Mode</string>

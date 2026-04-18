@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name">PvZ TV 触控版</string>
     <string name="pvz_name">PvZ TV 触控版</string>
+    <string name="close">关闭</string>
+    <string name="minimize">最小化</string>
+    <string name="cheat_menu_close_description">长按结束菜单服务</string>
+    <string name="cheat_menu_close_message">菜单服务结束</string>
     <string name="without_button">启动原版 TV 版</string>
     <string name="addon_set">附加设置</string>
     <string name="second_player">键盘双人模式</string>

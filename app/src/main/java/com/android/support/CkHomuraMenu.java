@@ -229,11 +229,11 @@ public class CkHomuraMenu {
         Button hideBtn = new Button(context);
         hideBtn.setLayoutParams(lParamsHideBtn);
         hideBtn.setBackgroundColor(Color.TRANSPARENT);
-        hideBtn.setText("结束");
+        hideBtn.setText(context.getString(R.string.close));
         hideBtn.setTextColor(TEXT_COLOR);
-        hideBtn.setOnClickListener(view -> Toast.makeText(getContext, "长按结束菜单服务", Toast.LENGTH_LONG).show());
+        hideBtn.setOnClickListener(view -> Toast.makeText(getContext, context.getString(R.string.cheat_menu_close_description), Toast.LENGTH_LONG).show());
         hideBtn.setOnLongClickListener(view -> {
-            Toast.makeText(getContext, "菜单服务结束", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext, context.getString(R.string.cheat_menu_close_message), Toast.LENGTH_LONG).show();
             rootFrame.removeView(mRootContainer);
             mWindowManager.removeViewImmediate(rootFrame);
             return false;
@@ -246,7 +246,7 @@ public class CkHomuraMenu {
         Button closeBtn = new Button(context);
         closeBtn.setLayoutParams(lParamsCloseBtn);
         closeBtn.setBackgroundColor(Color.TRANSPARENT);
-        closeBtn.setText("最小化");
+        closeBtn.setText(context.getString(R.string.minimize));
         closeBtn.setTextColor(TEXT_COLOR);
         closeBtn.setOnClickListener(view -> {
 
