@@ -54,67 +54,61 @@ void GridItem::GridItemDie() {
 
     mDead = true;
 
-    struct CleanupHelper {
-        GridItem *thiz;
-        ~CleanupHelper() {
-            Reanimation *aGridItemReanim = thiz->mApp->ReanimationTryToGet(thiz->mGridItemReanimID);
-            if (aGridItemReanim) {
-                aGridItemReanim->ReanimationDie();
-                thiz->mGridItemReanimID = ReanimationID::REANIMATIONID_NULL;
+    bool processVsDie = mApp->IsVSMode();
+    if (processVsDie) {
+        if (mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
+            if ((unsigned int)(Challenge::gVSResourseDropMode - 2) <= 1 && Challenge::gVSResourceDropCount > 0) {
+                for (int i = 0; i < Challenge::gVSResourceDropCount; ++i) {
+                    int x = mBoard->GridToPixelX(mGridX, mGridY);
+                    int y = mBoard->GridToPixelY(mGridX, mGridY);
+                    mBoard->AddCoin(x, y, CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_GRAVE_STONE);
+                }
             }
-
-            TodParticleSystem *aGridItemParticle = thiz->mApp->ParticleTryToGet(thiz->mGridItemParticleID);
-            if (aGridItemParticle) {
-                aGridItemParticle->ParticleSystemDie();
-                thiz->mGridItemParticleID = ParticleSystemID::PARTICLESYSTEMID_NULL;
-            }
+            processVsDie = false;
+        } else if (mGridItemType != GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
+            processVsDie = false;
         }
-    } cleanupHelper{this};
-
-    if (mApp->mGameMode != GameMode::GAMEMODE_MP_VS) {
-        return;
     }
 
-    if (mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
-        if ((Challenge::gVSResourseDropMode == 2 || Challenge::gVSResourseDropMode == 3) && Challenge::gVSResourceDropCount > 0) {
-            for (int i = 0; i < Challenge::gVSResourceDropCount; ++i) {
-                int x = mBoard->GridToPixelX(mGridX, mGridY);
-                int y = mBoard->GridToPixelY(mGridX, mGridY);
-                mBoard->AddCoin(x, y, CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_GRAVE_STONE);
+    if (processVsDie) {
+        if ((Challenge::gVSResourseDropMode & ~2) == 1) {
+            if (Challenge::gVSResourceDropCount > 0) {
+                for (int i = 0; i < Challenge::gVSResourceDropCount; ++i) {
+                    int x = mBoard->GridToPixelX(mGridX, mGridY);
+                    int y = mBoard->GridToPixelY(mGridX, mGridY);
+                    mBoard->AddCoin(x, y, CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_GRAVE_STONE);
+                }
             }
+            processVsDie = false;
         }
-        return;
     }
 
-    int targetsRemain = mBoard->GetMPTargetCount();
-    if (mApp->mGameScene == GameScenes::SCENE_PLAYING && !mBoard->mLevelAwardSpawned) {
+    if (processVsDie && mApp->mGameScene == SCENE_PLAYING && !mBoard->mLevelAwardSpawned) {
+        bool triggerPlantsWon = false;
         if (Challenge::gVSWinMode == 1) {
-            if (targetsRemain <= (mBoard->StageHas6Rows() ? 3 : 2)) {
-                mBoard->FreezeEffectsForCutscene(true);
-                mBoard->PlantsWon(this);
-                mGridItemReanimID = ReanimationID::REANIMATIONID_NULL;
-                return;
-            }
+            triggerPlantsWon = mBoard->GetMPTargetCount() <= (mBoard->StageHas6Rows() ? 3 : 2);
+        }
+        if (!triggerPlantsWon) {
+            triggerPlantsWon = mBoard->GetMPTargetCount() == 0;
         }
 
-        if (targetsRemain == 0) {
+        if (triggerPlantsWon) {
             mBoard->FreezeEffectsForCutscene(true);
             mBoard->PlantsWon(this);
             mGridItemReanimID = ReanimationID::REANIMATIONID_NULL;
-            return;
         }
     }
 
-    if (mGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
-        bool shouldDrop = (Challenge::gVSResourseDropMode == 1 || Challenge::gVSResourseDropMode == 3);
-        if (shouldDrop && Challenge::gVSResourceDropCount > 0) {
-            for (int i = 0; i < Challenge::gVSResourceDropCount; ++i) {
-                int x = mBoard->GridToPixelX(mGridX, mGridY);
-                int y = mBoard->GridToPixelY(mGridX, mGridY);
-                mBoard->AddCoin(x, y, CoinType::COIN_VS_ZOMBIE_BRAIN, CoinMotion::COIN_MOTION_FROM_GRAVE_STONE);
-            }
-        }
-        return;
+    Reanimation *aGridItemReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+    if (aGridItemReanim) {
+        aGridItemReanim->ReanimationDie();
+        mGridItemReanimID = ReanimationID::REANIMATIONID_NULL;
+    }
+
+    TodParticleSystem *aGridItemParticle = mApp->ParticleTryToGet(mGridItemParticleID);
+    if (aGridItemParticle) {
+        aGridItemParticle->ParticleSystemDie();
+        mGridItemParticleID = ParticleSystemID::PARTICLESYSTEMID_NULL;
     }
 }
 
