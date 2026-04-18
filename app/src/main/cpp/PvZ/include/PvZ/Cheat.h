@@ -23,8 +23,9 @@
 /**
  * @file 修改器菜单相关
  *
- * 区域命名空间的命名由 'language' 与 'country' 组成:
+ * 区域命名空间的命名由 'language'(必需), 'script', 'country' 等组成:
  * 'language' 为 两个字母组成的 ISO 639-1 语言代码
+ * 'script' 为 四个字母组成的 ISO 15924 文字代码
  * 'country' 为 两个字母组成的 ISO 3166-1-alpha-2 区域码
  */
 
@@ -250,7 +251,7 @@ namespace en_US {
     static_assert(CheckList(featureList));
 } // namespace en_US
 
-namespace zh_CN {
+namespace zh_Hans {
     inline constexpr SettingsList settingsList = {
         "Category_菜单设置",
         "-1_Toggle_退出时保存设置", //-1 is checked on Preferences.java
@@ -444,7 +445,7 @@ namespace zh_CN {
 
     static_assert(CheckList(settingsList));
     static_assert(CheckList(featureList));
-} // namespace zh_CN
+} // namespace zh_Hans
 
 } // namespace cheat
 

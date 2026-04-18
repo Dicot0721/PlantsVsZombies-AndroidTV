@@ -18,6 +18,7 @@
  */
 
 #include "Homura/ExceptionUtils.h"
+#include "Homura/JniUtils.h"
 #include "Homura/Logger.h"
 #include "PvZ/Cheat.h"
 #include "PvZ/Formation.h"
@@ -40,33 +41,6 @@
 #include <cmath>
 
 #include <numbers>
-
-static std::string JStringToString(JNIEnv *env, jstring str) {
-    const char *buffer = env->GetStringUTFChars(str, nullptr);
-    std::string result(buffer);
-    env->ReleaseStringUTFChars(str, buffer);
-    return result;
-}
-
-static std::pair<std::string, std::string> GetSystemLocale(JNIEnv *env) {
-    jclass localeClass = env->FindClass("java/util/Locale");
-
-    jmethodID getDefault = env->GetStaticMethodID(localeClass, "getDefault", "()Ljava/util/Locale;");
-    jobject localeObj = env->CallStaticObjectMethod(localeClass, getDefault);
-
-    jmethodID getLanguage = env->GetMethodID(localeClass, "getLanguage", "()Ljava/lang/String;");
-    jstring langJStr = (jstring)env->CallObjectMethod(localeObj, getLanguage);
-
-    jmethodID getCountry = env->GetMethodID(localeClass, "getCountry", "()Ljava/lang/String;");
-    jstring countryJStr = (jstring)env->CallObjectMethod(localeObj, getCountry);
-
-    auto result = std::make_pair(JStringToString(env, langJStr), JStringToString(env, countryJStr));
-
-    env->DeleteLocalRef(langJStr);
-    env->DeleteLocalRef(countryJStr);
-
-    return result;
-}
 
 /**
  * @brief Homura 模块的初始化函数.
@@ -381,7 +355,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_android_support_Preferences_Changes(J
             // case 123:
             // break; // 复制阵型代码
         case 124:
-            customFormation = JStringToString(env, str); // 粘贴阵型代码
+            customFormation = homura::JStringToString(env, str); // 粘贴阵型代码
             break;
         case 125:
             layPastedFormation = boolean; // 布置粘贴阵型
@@ -502,10 +476,10 @@ extern "C" JNIEXPORT void JNICALL Java_com_android_support_Preferences_Changes(J
 }
 
 extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_GetFeatureList(JNIEnv *env, jobject thiz) {
-    const auto [language, country] = GetSystemLocale(env);
-    const auto &featureList =                           //
-        (language == "zh") ? cheat::zh_CN::featureList  //
-                           : cheat::en_US::featureList; //
+    const std::string language = homura::GetLocaleLanguage(env);
+    const auto &featureList =                            //
+        (language == "zh") ? cheat::zh_Hans::featureList //
+                           : cheat::en_US::featureList;  //
 
     const jsize featuresCount = static_cast<jsize>(featureList.size());
     jobjectArray ret = env->NewObjectArray(featuresCount, env->FindClass("java/lang/String"), nullptr);
@@ -516,10 +490,10 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
 }
 
 extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_SettingsList(JNIEnv *env, jobject thiz) {
-    const auto [language, country] = GetSystemLocale(env);
-    const auto &settingsList =                           //
-        (language == "zh") ? cheat::zh_CN::settingsList  //
-                           : cheat::en_US::settingsList; //
+    const std::string language = homura::GetLocaleLanguage(env);
+    const auto &settingsList =                            //
+        (language == "zh") ? cheat::zh_Hans::settingsList //
+                           : cheat::en_US::settingsList;  //
 
     const jsize settingsCount = static_cast<jsize>(settingsList.size());
     jobjectArray ret = env->NewObjectArray(settingsCount, env->FindClass("java/lang/String"), nullptr);
@@ -699,7 +673,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_NativeView_onTextInputNative2(JNIEnv *env, jobject thiz, jstring text) {
-    std::string input = JStringToString(env, text);
+    std::string input = homura::JStringToString(env, text);
     if (input.empty()) {
         return;
     }
