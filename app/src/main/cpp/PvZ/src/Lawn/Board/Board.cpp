@@ -69,6 +69,9 @@ IdMap serverPlantIDMap;
 IdMap serverZombieIDMap;
 IdMap serverCoinIDMap;
 IdMap serverGridItemIDMap;
+
+// 新增：远端暂停同步保护
+bool gPauseSyncFromRemote = false;
 } // namespace
 
 void Board::_constructor(LawnApp *theApp) {
@@ -2929,23 +2932,43 @@ void Board::Draw(Sexy::Graphics *g) {
 void Board::PauseFromSecondPlayer(bool thePause) {
     if (mPaused == thePause)
         return;
+
+    LOG_DEBUG("PauseFromSecondPlayer={}", thePause);
+
+    gPauseSyncFromRemote = true;
+
     if (thePause) {
         mApp->PlaySample(*Sexy_SOUND_PAUSE_Addr);
-        mApp->DoNewOptions(false, 0);
+
+        // 防止重复开菜单
+        if (mApp->GetDialog(Dialogs::DIALOG_NEWOPTIONS) == nullptr) {
+            mApp->DoNewOptions(false, 0);
+        }
     } else {
-        mApp->KillNewOptionsDialog();
+        // 防止重复关菜单
+        if (mApp->GetDialog(Dialogs::DIALOG_NEWOPTIONS) != nullptr) {
+            mApp->KillNewOptionsDialog();
+        }
     }
-    Pause(thePause);
+
+    gPauseSyncFromRemote = false;
+
+    // 兜底：如果 DoNewOptions / KillNewOptionsDialog 内部没有把暂停态改到目标值，
+    // 再手动补一次 old_Board_Pause
+    if (mPaused != thePause) {
+        old_Board_Pause(this, thePause);
+    }
 }
 
 
 void Board::Pause(bool thePause) {
-    // 能在这里得知游戏是否暂停
-    // if (thePause) Music2_StopAllMusic((Music2*)this->mApp->mMusic);
-    // else Music2_StartGameMusic((Music2*)this->mApp->mMusic, true);
-    if (mApp->mGameMode == GAMEMODE_MP_VS && !mApp->mVSSetupMenu) {
-        if (mPaused == thePause)
-            return;
+    LOG_DEBUG("Pause={}, remoteSync={}", thePause, gPauseSyncFromRemote);
+
+    if (mPaused == thePause)
+        return;
+
+    // 只有“本地主动触发”的暂停/恢复才发网络包
+    if (!gPauseSyncFromRemote && mApp->mGameMode == GAMEMODE_MP_VS && !mApp->mVSSetupMenu) {
 
         if (gTcpConnected) {
             U8_Event event = {{EventType::EVENT_CLIENT_BOARD_PAUSE}, thePause};
