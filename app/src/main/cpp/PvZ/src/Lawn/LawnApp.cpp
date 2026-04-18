@@ -41,8 +41,8 @@
 using namespace Sexy;
 
 namespace {
-constexpr int kNetPingIntervalTicks = 100;       // ~1s
-constexpr int kNetPingTimeoutTicks = 1200;       // ~12s
+constexpr int kNetPingIntervalTicks = 100; // ~1s
+constexpr int kNetPingTimeoutTicks = 1200; // ~12s
 
 void ResetNetDelayState() {
     gNetPingSendCounter = 0;
