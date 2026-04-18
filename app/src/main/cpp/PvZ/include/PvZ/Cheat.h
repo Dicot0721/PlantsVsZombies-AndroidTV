@@ -33,18 +33,18 @@
 
 namespace cheat {
 
-using SettingsList = const std::array<const char *, 4>;
-using FeatureList = const std::array<const char *, 121>;
+using SettingsList = std::array<const char *const, 4>;
+using FeatureList = std::array<const char *const, 121>;
 
 template <std::size_t N>
-consteval bool CheckList(const std::array<const char *, N> &list) {
+consteval bool CheckList(const std::array<const char *const, N> &list) {
     return std::ranges::none_of(list, [](const char *item) { return item == nullptr || *item == '\0'; });
 }
 
 namespace en_US {
     inline constexpr SettingsList settingsList = {
         "Category_Cheat Menu Settings",
-        "-1_Toggle_Save Settings On Exit", //-1 is checked on Preferences.java
+        "-1_Toggle_Save Settings on Exit", //-1 is checked on Preferences.java
         "Category_More Options",
         "-6_Button_<font color='yellow'>Back to Cheat Menu</font>",
     };
@@ -64,10 +64,10 @@ namespace en_US {
         "Collapse_Debug",
         "CollapseAdd_RichTextView_<font color='green'>Show Plant Health:",
         "21_CollapseAdd_Toggle_All Plants",
-        "22_CollapseAdd_Toggle_Cob Cannon And Tough Plant",
+        "22_CollapseAdd_Toggle_Cob Cannon and Tough Plant",
         "CollapseAdd_RichTextView_<font color='green'>Show Zombie Health:",
-        "23_CollapseAdd_Toggle_Health Of Body",
-        "24_CollapseAdd_Toggle_Heath Of Helm And Shield",
+        "23_CollapseAdd_Toggle_Health of Body",
+        "24_CollapseAdd_Toggle_Heath of Helm and Shield",
         "25_CollapseAdd_Toggle_Gargantuar",
         "CollapseAdd_RichTextView_<font color='green'>Show Game Message:",
         "26_CollapseAdd_Toggle_Zombie Spawn",
@@ -80,30 +80,30 @@ namespace en_US {
         "45_CollapseAdd_Toggle_Zombie Cannot Enter House",
         "44_CollapseAdd_Toggle_Wall-nut Cause Zombie Bloat Certainly",
         "7_CollapseAdd_Toggle_Not Drop Loot",
-        "48_CollapseAdd_Spinner_<font color='green'>Control Dancing Zombies：_Off,Keep Moving Forward,Keep Dancing In Place,Keep Trying Summon",
+        "48_CollapseAdd_Spinner_<font color='green'>Control Dancing Zombies：_Off,Keep Moving Forward,Keep Dancing in Place,Keep Trying Summon",
         "46_CollapseAdd_Spinner_<font color='green'>Further Back Baseline：_Off,10,20,30,40,50,60,70,80",
         "47_CollapseAdd_Spinner_<font color='green'>Set Zombie Size：_Off,0.2x,0.4x,0.6x,0.8x,1x,1.2x,1.4x,1.6x,1.8x,2x",
-        "CollapseAdd_RichTextView_<font color='yellow'>#Blood volume is squarely related to size!",
+        "CollapseAdd_RichTextView_<font color='yellow'># Blood volume is squarely related to size!",
         "41_CollapseAdd_OnceCheckBox_Cheat Code Dialog",
 
 
         "Collapse_Level Setting",
         "87_CollapseAdd_Toggle_Spawning Pause",
         "88_CollapseAdd_Toggle_No Lawn Mower",
-        "83_CollapseAdd_Toggle_No Seeds Picked By Crazy Dave",
+        "83_CollapseAdd_Toggle_No Seeds Picked by Crazy Dave",
         "84_CollapseAdd_Toggle_Last Stand Endless",
         "89_CollapseAdd_Toggle_Disable Deleting Save Data",
         "90_CollapseAdd_Toggle_Disable Saving Save Data",
         "81_CollapseAdd_OnceCheckBox_Cheat Dialog",
         "102_CollapseAdd_Spinner_<font color='green'>Set Game Scene：_Off,Day,Night,Pool,Fog,Roof,Night Roof,Zen Garden,Mushroom Garden,Aquarium Garden",
-        "CollapseAdd_RichTextView_<font color='green'>Set Rounds Of Survival Endless:",
+        "CollapseAdd_RichTextView_<font color='green'>Set Rounds of Survival Endless:",
         "85_CollapseAdd_InputValue_The Rounds Your Want",
         "86_CollapseAdd_OnceCheckBox_Set Rounds",
-        "CollapseAdd_RichTextView_<font color='yellow'>#Set Rounds ONLY After Completing Seed Choosing!",
+        "CollapseAdd_RichTextView_<font color='yellow'># Set Rounds ONLY after Completing Seed Choosing!",
 
 
         "Collapse_Seed Slot Setting",
-        "141_CollapseAdd_Spinner_<font color='green'>The Side Of Slots：_Left Slots,Right Slots",
+        "141_CollapseAdd_Spinner_<font color='green'>The Side of Slots：_Left Slots,Right Slots",
         "142_CollapseAdd_Spinner_<font color='green'>Target Seed Slot：_1st,2nd,3rd,4th,5th,6th,7th,8th,9th,10th",
         //            "143_CollapseAdd_Spinner_<font
         //            color='green'>全部卡片类型：_关闭,豌豆射手,向日葵,樱桃炸弹,坚果,土豆地雷,寒冰射手,大嘴花,双重射手,小喷菇,阳光菇,大喷菇,咬咬碑,迷惑菇,胆小菇,冰川菇,末日菇,莲叶,窝瓜,三重射手,缠绕水草,火爆辣椒,地刺,火炬树桩,高坚果,水兵菇,路灯花,仙人掌,三叶草,双向射手,星星果,南瓜头,磁力菇,卷心菜投手,花盆,玉米投手,咖啡豆,大蒜,叶子保护伞,金盏花,西瓜投手,机枪射手,双胞向日葵,多嘴小蘑菇,猫尾草,冰西瓜,吸金磁,钢地刺,玉米加农炮,变身茄子,无(可选植物种类总数),爆炸坚果,巨型坚果,幼苗,反向双重射手,无(植物种类总数),刷新阵型(僵尸迷阵),消除炸弹坑(僵尸迷阵),阳光(拉霸),钻石(拉霸),潜水僵尸(僵尸水族馆),奖杯(僵尸水族馆),墓碑,普通僵尸,垃圾桶僵尸,路障僵尸,撑杆僵尸,铁桶僵尸,旗帜僵尸,报纸僵尸,铁网门僵尸,橄榄球僵尸,舞者僵尸,雪橇车僵尸,玩偶匣僵尸,矿工僵尸,蹦蹦僵尸,蹦极僵尸,梯子僵尸,投石车僵尸,巨人僵尸,无,鸭子救生圈僵尸,潜水僵尸,海豚骑士僵尸,小鬼僵尸,气球僵尸",
@@ -124,19 +124,19 @@ namespace en_US {
 
 
         "Collapse_Projectile Setting",
-        "62_CollapseAdd_Toggle_Deal Damage At Every Frame",
-        "61_CollapseAdd_Toggle_Torchwood Ignored By Snow Pea",
+        "62_CollapseAdd_Toggle_Deal Damage at Every Frame",
+        "61_CollapseAdd_Toggle_Torchwood Ignored by Snow Pea",
         "63_CollapseAdd_Spinner_<font color='green'>Modify Projectile Type：_Off,Pea,SnowPea,Cabbage,Melon,Puff,WinterMelon,Fireball,Star,Spike,Basketball,Kernel,CobBig,Butter,Zombie Pea",
         "64_CollapseAdd_Toggle_Random Projectile Type",
-        "65_CollapseAdd_Toggle_Only Change The Type Of Pea",
-        "66_CollapseAdd_Toggle_Pea Change Type After Hitting Torchwood",
+        "65_CollapseAdd_Toggle_Only Change The Type of Pea",
+        "66_CollapseAdd_Toggle_Pea Change Type after Hitting Torchwood",
         "67_CollapseAdd_CheckBox_Random Type Exclude BigCob",
         "68_CollapseAdd_CheckBox_Random Type Exclude Star",
 
 
         "Collapse_Spawn Setting",
         "CollapseAdd_RichTextView_<font color='green'>Check Zombie Type:",
-        "200_CollapseAdd_CheckBox_Zombie(Appear In Natural Spawn Mode Certainly)",
+        "200_CollapseAdd_CheckBox_Zombie(Appear in Natural Spawn Mode Certainly)",
         "202_CollapseAdd_CheckBox_Conehead Zombie",
         "203_CollapseAdd_CheckBox_Pole Vaulting Zombie",
         "204_CollapseAdd_CheckBox_Buckethead Zombie",
@@ -164,12 +164,12 @@ namespace en_US {
         "230_CollapseAdd_CheckBox_Gatling Zombie",
         "231_CollapseAdd_CheckBox_Squash Head Zombie",
         "232_CollapseAdd_CheckBox_Tall-nut Head Zombie",
-        "234_CollapseAdd_Spinner_<font color='green'>Choose Spawn Mode：_Off,Natural (Zombies In Wave is Automatically Picked By The Game),Extreme (Populate Zombies In Wave Evenly)",
+        "234_CollapseAdd_Spinner_<font color='green'>Choose Spawn Mode：_Off,Natural (Zombies in Wave is Automatically Picked by The Game),Extreme (Populate Zombies in Wave Evenly)",
         "236_CollapseAdd_OnceCheckBox_Set Zombie Spawn",
 
 
         "Collapse_Battlefield Layout",
-        "101_CollapseAdd_Toggle_Add Ladder When Planting Pumpkin",
+        "101_CollapseAdd_Toggle_Add Ladder when Planting Pumpkin",
         "105_CollapseAdd_Spinner_<font color='yellow'>Target Column："
         "_1st Column,2nd Column,3rd Column,4th Column,5th Column,6th Column,7th Column,8th Column,9th Column,All Columns,Zombie Spawning Location",
         "106_CollapseAdd_Spinner_<font color='yellow'>Target Row：_1st Row,2nd Row,3rd Row,4th Row,5th Row,6th Row,All Rows",
@@ -207,7 +207,7 @@ namespace en_US {
 
 
         "Collapse_Quick Embattle",
-        "121_CollapseAdd_Spinner_<font color='green'>Choose Formation For Pool：_Not Selected,"
+        "121_CollapseAdd_Spinner_<font color='green'>Choose Formation for Pool：_Not Selected,"
         "[0]Radio Clock Cobless,[1]Minimalist Cobless,[2]Pseudo-Unharmed Cobless,[3]Automatically Subdue Jack-in-the-box Cobless,[4]Fiery Cobless,"
         "[5]Split Fiery Cobless,[6]Rear Cobless,[7]Super Forward Cobless,[8]Prince Cobless,[9]Mechanical Clock Cobless,"
         "[10]Sideless Cobless,[11]Quartz Clock Cobless,[12]Sunflowerless Cobless,[13]Square Gloomless Cobless,[14]56 Row Accelerated Gloomless Cobless,"
@@ -216,20 +216,20 @@ namespace en_US {
         "[25]Square 4 Cob,[26]Verdant 4 Cob,[27]Waterless 4 Cob,[28]Diamond 4 Cob,[29]Sideless 4 Cob,"
         "[30]Nuclear Back 4 Cob,[31]Classic 4 Cob,[32]Fiery 4 Cob,[33]Back 4 Cob,[34]Traditional 4 Cob,"
         "[35]Half 5 Cob,[36]Scattershot 5 Cob,[37]Heart 5 Cob,[38]Landless 6 Cob,[39]Waterless 6 Cob,"
-        "[40]Verdant 6 Cob,[41]Zen Room Deep In Flowers And Plants,[42]Sideless 6 Cob,[43]Kernel 6 Cob,[44]Air Bomb 6 Cob,"
-        "[45]Super Rear 6 Cob,[46]Square 6 Cob,[47]Butterfly Rhyme,[48]A Spoonful Of Sweet Soup Balls,[49]Separated 7 Cob,"
+        "[40]Verdant 6 Cob,[41]Zen Room Deep in Flowers and Plants,[42]Sideless 6 Cob,[43]Kernel 6 Cob,[44]Air Bomb 6 Cob,"
+        "[45]Super Rear 6 Cob,[46]Square 6 Cob,[47]Butterfly Rhyme,[48]A Spoonful of Sweet Soup Balls,[49]Separated 7 Cob,"
         "[50]Jade Rabbit,[51]Pumpkinless 8 Cob,[52]Christmas Tree 8 Cob,[53]Centered Christmas Tree 8 Cob,[54]Rectangular 8 Cob,"
-        "[55]Sideless 8 Cob,[56]Yin And Yang 8 Cob,[57]Duckweed 8 Cob,[58]Rear 8 Cob,[59]To Feed a Dolphin,"
+        "[55]Sideless 8 Cob,[56]Yin and Yang 8 Cob,[57]Duckweed 8 Cob,[58]Rear 8 Cob,[59]To Feed a Dolphin,"
         "[60]Kernel 8 Cob,[61]Classic 8 Cob,[62]Sea of Flowers 8 Cob,[63]C2 8 Cob,[64]Separation 8 Cob,"
         "[65]Full-Symmetrical 8 Cob,[66]3C 8 Cob,[67]Lampstand 8 Cob,[68]⑨ Cob,[69]Square 9 Cob,"
         "[70]C6i 9 Cob,[71]Heart 9 Cob,[72]Alternate 9 Cob,[73]② Cob,[74]Hexagram 10 Cob,"
         "[75]Hexagon 10 Cob,[76]Square 10 Cob,[77]Diamond 10 Cob,[78]Simplified 10 Cob,[79]Rear 10 Cob,"
         "[80]Classic 10 Cob,[81]To Imprison 6 Zombies,[82]Diagonal 10 Cob,[83]Rubik's Cube 10 Cob,[84]Dave's Hamburger,"
-        "[85]Cocktail,[86]A Spoonful Of Sweet Soup Balls 12 Cob,[87]Porcelain Vase 12 Cob,[88]Half 12 Cob,[89]Simplified 12 Cob,"
+        "[85]Cocktail,[86]A Spoonful of Sweet Soup Balls 12 Cob,[87]Porcelain Vase 12 Cob,[88]Half 12 Cob,[89]Simplified 12 Cob,"
         "[90]Classic 12 Cob,[91]Fiery 12 Cob,[92]Ice Rain 12 Cob (remodelled),[93]Ice Rain 12 Cob (remodelled x2),[94]Single Purple Card 12 Cob,"
         "[95]Sideless Column 12 Cob,[96]Sideless 12 Cob,[97]Waterless 12 Cob,[98]Pure White Card Impending 12 Cob,[99]Backyard 12 Cob,"
         "[100]Kernel 8 Cob,[101]Two Row Accelerated 12 Cob,[102]Front 12 Cob,[103]Ladder & Gloom-shroom 12 Cob,[104]Jun Hai 12 Cob,"
-        "[105]A Poem For The Harp,[106]Plum Blossom 13 Cob,[107]Last Order,[108]Ice Lantern 14 Cob,[109]Tai Chi 14 Cob,"
+        "[105]A Poem for The Harp,[106]Plum Blossom 13 Cob,[107]Last Order,[108]Ice Lantern 14 Cob,[109]Tai Chi 14 Cob,"
         "[110]Real ④ Cob,[111]God Stick 14 Cob,[112]Sideless 14 Cob,[113]Timeslip 14 Cob,[114]Diamond 15 Cob,"
         "[115]Sideless 15 Cob,[116]Real ② Cob,[117]Icebox 16 Cob,[118]Cob Ring 12 Sunflower,[119]Single Ice 16 Cob,"
         "[120]Symmetrical 16 Cob,[121]Sideless 16 Cob,[122]Streaking 16 Cob,[123]Double Ice 16 Cob,[124]Super Forward 16 Cob,"
@@ -439,7 +439,7 @@ namespace zh_CN {
         "123_CollapseAdd_FormationCopy_复制阵型代码",
         "124_CollapseAdd_InputText_粘贴阵型代码",
         "125_CollapseAdd_OnceCheckBox_布置粘贴阵型",
-        "CollapseAdd_RichTextView_<font color='yellow'># 可以暂停游戏后进行布阵",
+        "CollapseAdd_RichTextView_<font color='yellow'>#可以暂停游戏后进行布阵",
     };
 
     static_assert(CheckList(settingsList));
