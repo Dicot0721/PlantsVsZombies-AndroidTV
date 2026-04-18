@@ -43,33 +43,58 @@ using namespace Sexy;
 namespace {
 constexpr int kNetPingIntervalTicks = 100;       // ~1s
 constexpr int kNetPingTimeoutTicks = 1200;       // ~12s
-constexpr int kNetPingProgressUpdateTicks = 100; // ~1s
 
 void ResetNetDelayState() {
-    gPingNetPingPongCounter = 0;
-    gPingNetDelayCounter = -1;
+    gNetPingSendCounter = 0;
     gNetDelayNow = 0;
+    gNetPingHasValidDelay = false;
     gNetPingAwaitingPong = false;
-    gNetPingAwaitTicks = 0;
-    gNetPingUpdateTick = 0;
+    gNetPingNowTick = 0;
+    gNetPingLatestSentTick = 0;
+    gNetPingLastPongTick = 0;
 }
 
 void TickNetDelayAwaitingPong() {
-    if (!gNetPingAwaitingPong) {
+    if (gNetPingAwaitingPong) {
+        const uint16_t elapsedTicks = static_cast<uint16_t>(gNetPingNowTick - gNetPingLatestSentTick);
+        if (elapsedTicks >= static_cast<uint16_t>(kNetPingTimeoutTicks)) {
+            gNetDelayNow = kNetPingTimeoutTicks;
+            gNetPingHasValidDelay = true;
+            gNetPingAwaitingPong = false;
+        }
         return;
     }
 
-    ++gNetPingAwaitTicks;
-    ++gNetPingUpdateTick;
+    if (gNetPingHasValidDelay) {
+        const uint16_t elapsedTicks = static_cast<uint16_t>(gNetPingNowTick - gNetPingLastPongTick);
+        if (elapsedTicks >= static_cast<uint16_t>(kNetPingTimeoutTicks)) {
+            gNetPingHasValidDelay = false;
+            gNetDelayNow = 0;
+        }
+    }
+}
 
-    if (gNetPingUpdateTick >= kNetPingProgressUpdateTicks) {
-        gNetPingUpdateTick = 0;
-        gNetDelayNow = gNetPingAwaitTicks;
+void SendPeriodicNetPing() {
+    ++gNetPingSendCounter;
+    if (gNetPingSendCounter < kNetPingIntervalTicks) {
+        return;
     }
 
-    if (gNetPingAwaitTicks >= kNetPingTimeoutTicks) {
-        gNetPingAwaitingPong = false;
+    gNetPingSendCounter = 0;
+    if (!gNetPingAwaitingPong) {
+        gNetPingLatestSentTick = gNetPingNowTick;
+        gNetPingAwaitingPong = true;
+    } else {
+        const uint16_t elapsedTicks = static_cast<uint16_t>(gNetPingNowTick - gNetPingLatestSentTick);
+        const uint16_t clampedElapsed = elapsedTicks > static_cast<uint16_t>(kNetPingTimeoutTicks) ? static_cast<uint16_t>(kNetPingTimeoutTicks) : elapsedTicks;
+        if (!gNetPingHasValidDelay || clampedElapsed > static_cast<uint16_t>(gNetDelayNow)) {
+            gNetDelayNow = static_cast<int>(clampedElapsed);
+            gNetPingHasValidDelay = true;
+        }
     }
+
+    U16_Event eventPing = {{EVENT_CLIENT_PING}, gNetPingLatestSentTick};
+    netplay::PutEvent(eventPing);
 }
 } // namespace
 
@@ -290,20 +315,28 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
     while (clientRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
         BaseEvent *base = (BaseEvent *)&clientRecvBuffer[offset];
         if (base->type == EVENT_CLIENT_PING) {
-            size_t eventSize = sizeof(U8_Event);
+            size_t eventSize = sizeof(U16_Event);
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
-            U8_Event *eventPing = static_cast<U8_Event *>(base);
+            auto *eventPing = reinterpret_cast<U16_Event *>(base);
+            U16_Event eventPong = {{EVENT_SERVER_PONG}, reinterpret_cast<U16_Event *>(base)->data};
+            netplay::PutEvent(eventPong);
 
-            if (eventPing->data == 1) {
-                U8_Event eventPong = {{EVENT_SERVER_PONG}, 1};
-                gPingNetDelayCounter = 0;
-                netplay::PutEvent(eventPong);
-            } else if (eventPing->data == 2) {
-                if (gPingNetDelayCounter >= 0) {
-                    gNetDelayNow = gPingNetDelayCounter;
+            offset += eventSize;
+        } else if (base->type == EVENT_SERVER_PONG) {
+            size_t eventSize = sizeof(U16_Event);
+            if (clientRecvBuffer.size() - offset < eventSize)
+                break;
+
+            auto *eventPong = reinterpret_cast<U16_Event *>(base);
+            if (gNetPingAwaitingPong && eventPong->data == gNetPingLatestSentTick) {
+                const uint16_t rttTicks = static_cast<uint16_t>(gNetPingNowTick - eventPong->data);
+                if (rttTicks <= static_cast<uint16_t>(kNetPingTimeoutTicks)) {
+                    gNetDelayNow = static_cast<int>(rttTicks);
+                    gNetPingHasValidDelay = true;
+                    gNetPingLastPongTick = gNetPingNowTick;
+                    gNetPingAwaitingPong = false;
                 }
-                gPingNetDelayCounter = -1;
             }
 
             offset += eventSize;
@@ -383,24 +416,33 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
     while (serverRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
         BaseEvent *base = (BaseEvent *)&serverRecvBuffer[offset];
         LOG_DEBUG("base.type ={}", (int)base->type);
-        if (base->type == EVENT_SERVER_PONG) {
-            size_t eventSize = sizeof(U8_Event);
+        if (base->type == EVENT_CLIENT_PING) {
+            size_t eventSize = sizeof(U16_Event);
+            if (serverRecvBuffer.size() - offset < eventSize)
+                break;
+
+            U16_Event eventPong = {{EVENT_SERVER_PONG}, reinterpret_cast<U16_Event *>(base)->data};
+            netplay::PutEvent(eventPong);
+            offset += eventSize;
+        } else if (base->type == EVENT_SERVER_PONG) {
+            size_t eventSize = sizeof(U16_Event);
             if (serverRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
                        //            U8_Event *eventPong = static_cast<U8_Event *>(base);
 
-            U8_Event eventPing = {{EVENT_CLIENT_PING}, 2};
-            if (gNetPingAwaitingPong) {
-                gNetDelayNow = gNetPingAwaitTicks;
-            } else if (gPingNetDelayCounter >= 0) {
-                gNetDelayNow = gPingNetDelayCounter;
+            {
+                auto *eventPong = reinterpret_cast<U16_Event *>(base);
+
+                if (gNetPingAwaitingPong && eventPong->data == gNetPingLatestSentTick) {
+                    const uint16_t rttTicks = static_cast<uint16_t>(gNetPingNowTick - eventPong->data);
+                    if (rttTicks <= static_cast<uint16_t>(kNetPingTimeoutTicks)) {
+                        gNetDelayNow = static_cast<int>(rttTicks);
+                        gNetPingHasValidDelay = true;
+                        gNetPingLastPongTick = gNetPingNowTick;
+                        gNetPingAwaitingPong = false;
+                    }
+                }
             }
-            gPingNetDelayCounter = -1;
-            gNetPingAwaitingPong = false;
-            gNetPingAwaitTicks = 0;
-            gNetPingUpdateTick = 0;
-            gPingNetPingPongCounter = 0;
-            netplay::PutEvent(eventPing);
 
             offset += eventSize;
         } else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE && base->type < NUM_EVENT_CHALLENGESCREEN) {
@@ -476,19 +518,15 @@ void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
 
 void LawnApp::UpdateFrames() {
 
+    if (gTcpClientSocket >= 0 || gTcpConnected) {
+        ++gNetPingNowTick;
+        TickNetDelayAwaitingPong();
+        SendPeriodicNetPing();
+    }
+
     if (gTcpClientSocket >= 0) {
 
         netplay::FlushSendBuffer(gTcpClientSocket);
-
-        if (gPingNetDelayCounter >= 0) {
-            ++gPingNetDelayCounter;
-            if (gPingNetDelayCounter % kNetPingProgressUpdateTicks == 0) {
-                gNetDelayNow = gPingNetDelayCounter;
-            }
-            if (gPingNetDelayCounter >= kNetPingTimeoutTicks) {
-                gPingNetDelayCounter = -1;
-            }
-        }
 
         char buf[1024];
         while (true) {
@@ -549,17 +587,6 @@ void LawnApp::UpdateFrames() {
 
         netplay::FlushSendBuffer(gTcpServerSocket);
 
-        TickNetDelayAwaitingPong();
-
-        ++gPingNetPingPongCounter;
-        if (gPingNetPingPongCounter >= kNetPingIntervalTicks) {
-            gPingNetPingPongCounter = 0;
-            gNetPingAwaitingPong = true;
-            gNetPingAwaitTicks = 0;
-            gNetPingUpdateTick = 0;
-            U8_Event eventPing = {{EVENT_CLIENT_PING}, 1};
-            netplay::PutEvent(eventPing);
-        }
         char buf[1024];
         while (true) {
             ssize_t n = recv(gTcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);

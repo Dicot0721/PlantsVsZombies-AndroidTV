@@ -30,6 +30,7 @@
 #include "PvZ/TodLib/Common/TodFoley.h"
 #include "PvZ/TodLib/Effect/EffectSystem.h"
 #include "PvZ/TodLib/Effect/TodParticle.h"
+#include <cstdint>
 
 class ZenGarden;
 class Board;
@@ -385,12 +386,13 @@ protected:
 inline bool disableShop;
 inline bool doCheatDialog;     // 菜单DoCheatDialog
 inline bool doCheatCodeDialog; // 菜单DoCheatCodeDialog
-inline int gPingNetPingPongCounter = 0;
-inline int gPingNetDelayCounter = -1;
 inline int gNetDelayNow = 0;
+inline bool gNetPingHasValidDelay = false;
 inline bool gNetPingAwaitingPong = false;
-inline int gNetPingAwaitTicks = 0;
-inline int gNetPingUpdateTick = 0;
+inline int gNetPingSendCounter = 0;
+inline uint16_t gNetPingNowTick = 0;
+inline uint16_t gNetPingLatestSentTick = 0;
+inline uint16_t gNetPingLastPongTick = 0;
 
 inline std::vector<char> clientRecvBuffer;
 inline std::vector<char> serverRecvBuffer;

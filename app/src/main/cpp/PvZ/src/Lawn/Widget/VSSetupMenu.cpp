@@ -91,7 +91,7 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
         g->SetColorizeImages(false);
     }
 
-    if (gVSSetupRequestState != 0) {
+    if (gVSSetupRequestState != 0 && mState == VS_SETUP_STATE_SELECT_BATTLE) {
 
         // ======================
         // 我是 guest：已提醒房主...
