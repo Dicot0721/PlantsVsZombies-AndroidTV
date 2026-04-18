@@ -25,6 +25,7 @@
 #include "PvZ/Lawn/Board/SeedPacket.h"
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/SeedChooserScreen.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
@@ -57,9 +58,10 @@ void SeedBank::Draw(Sexy::Graphics *g) {
     // (*(void (**)(uint32_t, int *, bool))(**((uint32_t **)g + 1) + 140))(*((uint32_t *)g + 1),transform,true);
     // }
 
-    if (mApp->mVSSetupMenu) {
-        VSSetupAddonWidget *addonWidget = mApp->mVSSetupMenu->mAddonWidget;
-        if (addonWidget && addonWidget->mBanMode) {
+    if (mApp->IsVSMode()) {
+        // 选卡禁用阶段或开启禁选模式时种子栏变灰
+        SeedChooserScreen *seedChooser = mApp->mSeedChooserScreen;
+        if (seedChooser ? seedChooser->mBanningPhase : mApp->mPlayerInfo->mVSBanMode) {
             g->SetColorizeImages(true);
             g->SetColor(Color(155, 155, 155));
         }
@@ -87,7 +89,7 @@ void SeedBank::Draw(Sexy::Graphics *g) {
         }
     } else if (mApp->IsCoopMode()) {
         g->DrawImage(*Sexy_IMAGE_SEEDBANK_COOP_Addr, 0, 0);
-    } else if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS && mIsZombie) {
+    } else if (mApp->IsVSMode() && mIsZombie) {
         int theSeedBankExtraWidth = mBoard->GetSeedBankExtraWidth();
         g->DrawImage(*Sexy_IMAGE_ZOMBIE_SEEDBANK_Addr, theSeedBankExtraWidth, 0);
     } else {

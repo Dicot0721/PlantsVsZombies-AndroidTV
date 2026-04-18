@@ -63,6 +63,15 @@ public:
     bool mCrazyDavePicked;      // 60
 };
 
+class BannedSeed {
+public:
+    int mX = 0;
+    int mY = 0;
+    int mChosenPlayerIndex = 0;
+    SeedType mSeedType = SEED_NONE;
+    BannedSeedState mSeedState = SEED_NOT_BANNED;
+};
+
 class SeedChooserScreen : public Sexy::Widget, public Sexy::ButtonListener {
 private:
     enum {
@@ -122,6 +131,12 @@ public:
     // 大小966个整数
     NewLawnButton *mPageButton = nullptr;
     int mPageIndex = 0;
+    int mNumBanPackets = 2;
+    int mSeedsInBanned = 0;
+    BannedSeed mBannedSeed[NUM_ZOMBIE_SEED_TYPES]{};
+    bool mBanningPhase = false;
+    bool mShowExtraSeeds = false;
+    bool mHas7Packets = false;
 
     SeedChooserScreen(bool theIsZombieChooser) {
         _constructor(theIsZombieChooser);

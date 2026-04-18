@@ -31,7 +31,6 @@ constexpr int VS_BUTTON_EXTRA_SEEDS_Y = 240;
 constexpr int VS_BUTTON_BAN_MODE_Y = 280;
 constexpr int VS_BUTTON_BALANCE_PATCH_Y = 320;
 constexpr int VS_BUTTON_SHUFFLE_MODE_Y = 360;
-constexpr int NUM_VS_BAN_PACKETS = 4;
 
 enum VSSetupAddonButton {
     VS_SETUP_ADDON_BUTTON_EXTRA_PACKETS,
@@ -39,15 +38,6 @@ enum VSSetupAddonButton {
     VS_SETUP_ADDON_BUTTON_BAN_MODE,
     VS_SETUP_ADDON_BUTTON_BALANCE_PATCH,
     NUM_VS_SETUP_ADDON_BUTTON,
-};
-
-class BannedSeed {
-public:
-    int mX = 0;
-    int mY = 0;
-    int mChosenPlayerIndex = 0;
-    SeedType mSeedType = SEED_NONE;
-    BannedSeedState mSeedState = SEED_NOT_BANNED;
 };
 
 namespace Sexy {
@@ -78,9 +68,6 @@ public:
     bool mExtraSeedsMode = false;
     bool mBanMode = false;
     bool mBalancePatchMode = false;
-    int mNumBanPackets = NUM_VS_BAN_PACKETS;
-    int mSeedsInBanned = 0;
-    BannedSeed mBannedSeed[NUM_ZOMBIE_SEED_TYPES];
     bool mDrawString = true;
 
     VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu);
