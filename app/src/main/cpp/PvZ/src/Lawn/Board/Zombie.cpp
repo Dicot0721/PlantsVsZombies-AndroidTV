@@ -22,6 +22,7 @@
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Challenge.h"
+#include "PvZ/Lawn/Board/Cutscene.h"
 #include "PvZ/Lawn/Board/GridItem.h"
 #include "PvZ/Lawn/Board/OpeningEncounter.h"
 #include "PvZ/Lawn/Board/Plant.h"
@@ -280,7 +281,67 @@ void Zombie::Update() {
             reanimation->Update();
     }
 
-    old_Zombie_Update(this);
+    mUnk95 = 0;
+    ++mZombieAge;
+    bool doUpdate = false;
+    if (mApp->mGameScene == GameScenes::SCENE_LEVEL_INTRO && mZombieType == ZombieType::ZOMBIE_BOSS) {
+        doUpdate = true;
+    } else if (IsOnBoard() && mBoard->mCutScene->ShouldRunUpsellBoard()) {
+        doUpdate = true;
+    } else if (mApp->mGameScene == GameScenes::SCENE_PLAYING || !IsOnBoard() || mFromWave == Zombie::ZOMBIE_WAVE_WINNER) {
+        doUpdate = true;
+    }
+
+    if (doUpdate) {
+        if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_BURNED) {
+            UpdateBurn();
+        } else if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_MOWERED) {
+            UpdateMowered();
+        } else if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_DYING) {
+            UpdateDeath();
+            UpdateZombieWalking();
+        } else {
+            if (mPhaseCounter > 0 && !IsImmobilizied() && /*修复蹦极空投中的僵尸会更新阶段*/ mZombieHeight != ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED) {
+                --mPhaseCounter;
+            }
+
+            if (mApp->mGameScene == SCENE_ZOMBIES_WON) {
+                UpdateZombieChimney();
+                UpdateZombieWalkingIntoHouse();
+            } else if (IsOnBoard()) {
+                UpdatePlaying();
+            }
+
+            if (mZombieType == ZOMBIE_BUNGEE) {
+                UpdateZombieBungee();
+            }
+            if (mZombieType == ZOMBIE_POGO) {
+                UpdateZombiePogo();
+            }
+
+            Animate();
+        }
+
+        --mJustGotShotCounter;
+        if (mShieldJustGotShotCounter > 0) {
+            --mShieldJustGotShotCounter;
+        }
+        if (mShieldRecoilCounter > 0) {
+            --mShieldRecoilCounter;
+        }
+        if (mZombieFade > 0) {
+            --mZombieFade;
+            if (mZombieFade == 0) {
+                DieNoLoot();
+            }
+        }
+
+        mX = int(mPosX);
+        mY = int(mPosY);
+
+        AttachmentUpdateAndMove(mAttachmentID, mPosX, mPosY);
+        UpdateReanim();
+    }
 }
 
 void Zombie::UpdateActions() {
@@ -855,10 +916,6 @@ void Zombie::UpdateZombiePeaHead() {
     if (!mHasHead)
         return;
 
-    // 被蹦极空投时不发射
-    if (mZombieHeight == ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED)
-        return;
-
     if (mPhaseCounter == 35) {
         Reanimation *aHeadReanim = mApp->ReanimationGet(mSpecialHeadReanimID);
         aHeadReanim->PlayReanim("anim_shooting", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 35.0f);
@@ -894,10 +951,6 @@ void Zombie::UpdateZombieGatlingHead() {
     // 游戏原版逻辑是判断是否hasHead 且 是否isEating。这里去除对吃植物的判断
 
     if (!mHasHead)
-        return;
-
-    // 被蹦极空投时不发射
-    if (mZombieHeight == ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED)
         return;
 
     if (mPhaseCounter == 100) {
@@ -1701,7 +1754,7 @@ bool Zombie::IsBouncingPogo() {
 
 void Zombie::UpdateZombiePogo() {
     if (IsDeadOrDying() || IsImmobilizied() || !IsBouncingPogo() || mZombieHeight == ZombieHeight::HEIGHT_IN_TO_CHIMNEY
-        || mZombieHeight == ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED /* 被蹦极空投时不更新 */)
+        /*|| mZombieHeight == ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED*/ /* 被蹦极空投时不更新 */)
         return;
 
     float aHeight = 40.0f;

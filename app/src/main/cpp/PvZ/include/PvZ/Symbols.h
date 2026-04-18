@@ -486,6 +486,13 @@ inline void *Zombie_CheckForHighGroundAddr;
 inline void *Zombie_UpdateBossAddr;
 inline void *Zombie_UpdateZombiePogoAddr;
 inline void *Zombie_PogoBreakAddr;
+inline void *Zombie_UpdateBurnAddr;
+inline void *Zombie_UpdateMoweredAddr;
+inline void *Zombie_UpdateDeathAddr;
+inline void *Zombie_UpdateZombieChimneyAddr;
+inline void *Zombie_UpdateZombieWalkingIntoHouseAddr;
+inline void *Zombie_UpdateZombieBungeeAddr;
+inline void *Zombie_AnimateAddr;
 
 
 inline void *SeedChooserScreen_UpdateAddr;
@@ -976,6 +983,7 @@ inline void *AttachmentUpdateAndSetMatrixAddr;
 inline void *AttachParticleAddr;
 inline void *AttachmentDetachCrossFadeParticleTypeAddr;
 inline void *FindReanimAttachmentAddr;
+inline void *AttachmentUpdateAndMoveAddr;
 
 
 inline void *TodScaleRotateTransformMatrixAddr;

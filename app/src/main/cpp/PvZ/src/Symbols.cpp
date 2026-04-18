@@ -483,6 +483,13 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN6Zombie10UpdateBossEv", Zombie_UpdateBossAddr);
     libGameMain.GetSymbol("_ZN6Zombie16UpdateZombiePogoEv", Zombie_UpdateZombiePogoAddr);
     libGameMain.GetSymbol("_ZN6Zombie9PogoBreakEj", Zombie_PogoBreakAddr);
+    libGameMain.GetSymbol("_ZN6Zombie10UpdateBurnEv", Zombie_UpdateBurnAddr);
+    libGameMain.GetSymbol("_ZN6Zombie13UpdateMoweredEv", Zombie_UpdateMoweredAddr);
+    libGameMain.GetSymbol("_ZN6Zombie11UpdateDeathEv", Zombie_UpdateDeathAddr);
+    libGameMain.GetSymbol("_ZN6Zombie19UpdateZombieChimneyEv", Zombie_UpdateZombieChimneyAddr);
+    libGameMain.GetSymbol("_ZN6Zombie28UpdateZombieWalkingIntoHouseEv", Zombie_UpdateZombieWalkingIntoHouseAddr);
+    libGameMain.GetSymbol("_ZN6Zombie18UpdateZombieBungeeEv", Zombie_UpdateZombieBungeeAddr);
+    libGameMain.GetSymbol("_ZN6Zombie7AnimateEv", Zombie_AnimateAddr);
 
 
     libGameMain.GetSymbol("_ZN17SeedChooserScreen6UpdateEv", SeedChooserScreen_UpdateAddr);
@@ -924,6 +931,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_Z14AttachParticleR12AttachmentIDP17TodParticleSystemff", AttachParticleAddr);
     libGameMain.GetSymbol("_Z37AttachmentDetachCrossFadeParticleTypeR12AttachmentID14ParticleEffectPKc", AttachmentDetachCrossFadeParticleTypeAddr);
     libGameMain.GetSymbol("_Z20FindReanimAttachmentRK12AttachmentID", FindReanimAttachmentAddr);
+    libGameMain.GetSymbol("_Z23AttachmentUpdateAndMoveR12AttachmentIDff", AttachmentUpdateAndMoveAddr);
 
 
     libGameMain.GetSymbol("_Z29TodScaleRotateTransformMatrixRN4Sexy11SexyMatrix3Efffff", TodScaleRotateTransformMatrixAddr);

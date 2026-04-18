@@ -184,7 +184,12 @@ public:
     ReanimationID mMoweredReanimID;                   // 88
     int mLastPortalX;                                 // 89
     bool mBloated;                                    // 360
-    int unkMems[6];                                   // 91 ~ 96
+    int mUnk91;                                       // 91
+    int mUnk92;                                       // 92
+    int mUnk93;                                       // 93
+    int mUnk94;                                       // 94
+    int mUnk95;                                       // 95
+    int mUnk96;                                       // 96
     // 大小96个整数
 
     void RemoveColdEffects() {
@@ -297,6 +302,27 @@ public:
     }
     void PogoBreak(unsigned int theDamageFlags) {
         reinterpret_cast<void (*)(Zombie *, unsigned int)>(Zombie_PogoBreakAddr)(this, theDamageFlags);
+    }
+    void UpdateBurn() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateBurnAddr)(this);
+    }
+    void UpdateMowered() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateMoweredAddr)(this);
+    }
+    void UpdateDeath() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateDeathAddr)(this);
+    }
+    void UpdateZombieChimney() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateZombieChimneyAddr)(this);
+    }
+    void UpdateZombieWalkingIntoHouse() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateZombieWalkingIntoHouseAddr)(this);
+    }
+    void UpdateZombieBungee() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_UpdateZombieBungeeAddr)(this);
+    }
+    void Animate() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_AnimateAddr)(this);
     }
 
     Zombie() {
@@ -449,8 +475,6 @@ inline int maidCheats; // 女仆秘籍
 inline int boardEdgeAdjust;
 inline int zombieSetScale;
 
-
-inline void (*old_Zombie_Update)(Zombie *a1);
 
 inline void (*old_Zombie_UpdateActions)(Zombie *);
 

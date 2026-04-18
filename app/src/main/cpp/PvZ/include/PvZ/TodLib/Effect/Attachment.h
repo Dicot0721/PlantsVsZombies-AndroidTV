@@ -77,6 +77,10 @@ inline Reanimation *FindReanimAttachment(AttachmentID &theAttachmentID) {
     return reinterpret_cast<Reanimation *(*)(AttachmentID &)>(FindReanimAttachmentAddr)(theAttachmentID);
 }
 
+inline void AttachmentUpdateAndMove(AttachmentID &theAttachmentID, float theX, float theY) {
+    reinterpret_cast<void (*)(AttachmentID &, float, float)>(AttachmentUpdateAndMoveAddr)(theAttachmentID, theX, theY);
+}
+
 class AttachmentHolder {};
 
 #endif // PVZ_SEXYAPPFRAMEWORK_EFFECT_ATTACHMENT_H

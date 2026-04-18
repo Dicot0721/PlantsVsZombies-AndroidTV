@@ -377,7 +377,7 @@ void InitHookFunction() {
     homura::HookFunction(SeedPacket_SlotMachineStartAddr, &SeedPacket::SlotMachineStart, nullptr);
 
 
-    homura::HookFunction(Zombie_UpdateAddr, &Zombie::Update, &old_Zombie_Update);
+    homura::HookFunction(Zombie_UpdateAddr, &Zombie::Update, nullptr);
     homura::HookFunction(Zombie_UpdateActionsAddr, &Zombie::UpdateActions, &old_Zombie_UpdateActions);
     homura::HookFunction(Zombie_UpdatePlayingAddr, &Zombie::UpdatePlaying, nullptr);
     homura::HookFunction(Zombie_UpdateYetiAddr, &Zombie::UpdateYeti, nullptr);
