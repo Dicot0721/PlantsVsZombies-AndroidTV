@@ -61,7 +61,7 @@ void SeedBank::Draw(Sexy::Graphics *g) {
     if (mApp->IsVSMode()) {
         // 选卡禁用阶段或开启禁选模式时种子栏变灰
         SeedChooserScreen *seedChooser = mApp->mSeedChooserScreen;
-        if (seedChooser ? seedChooser->mBanningPhase : mApp->mPlayerInfo->mVSBanMode) {
+        if (seedChooser ? seedChooser->mBanningPhase : (mApp->mVSSetupMenu && mApp->mPlayerInfo->mVSBanMode)) {
             g->SetColorizeImages(true);
             g->SetColor(Color(155, 155, 155));
         }
