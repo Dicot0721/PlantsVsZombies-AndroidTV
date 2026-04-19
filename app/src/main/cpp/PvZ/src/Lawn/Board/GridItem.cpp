@@ -448,7 +448,7 @@ void GridItem::DrawStinky(Sexy::Graphics *g) {
     // 在玩家选取巧克力时，高亮显示光标下方且没喂巧克力的Stinky。
     // 从而修复Stinky无法在醒着时喂巧克力、修复Stinky在喂过巧克力后还能继续喂巧克力。
     // 因为游戏通过Stinky是否高亮来判断是否能喂Stinky。这个机制是为鼠标操作而生，但渡维不加改动地将其用于按键操作，导致无法在Stinky醒着时喂它。
-    GamepadControls *aGamePad = mBoard->mGamepadControls1;
+    GamepadControls *aGamePad = mBoard->mGamepadControls[0];
     int aCursorX = aGamePad->mCursorPositionX;
     int aCursorY = aGamePad->mCursorPositionY;
     int aCursorGridX = mBoard->PixelToGridX(aCursorX, aCursorY);
@@ -462,7 +462,7 @@ void GridItem::DrawStinky(Sexy::Graphics *g) {
         return;
     }
     // 如果Stinky在光标位置处
-    CursorObject *aCursorObject = mBoard->mCursorObject1;
+    CursorObject *aCursorObject = mBoard->mCursorObject[0];
     CursorType aCursorType = aCursorObject->mCursorType;
     if (aCursorType == CursorType::CURSOR_TYPE_CHOCOLATE) {
         // 如果光标类型为巧克力

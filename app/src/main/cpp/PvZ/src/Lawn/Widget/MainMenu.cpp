@@ -115,8 +115,8 @@ void MainMenu::Update() {
 
         if (InTransition()) {
             gFoleyVolumeCounter++;
-            FoleyType aType = GetFoleyTypeByScene(mScene);
-            FoleyType aNextType = GetFoleyTypeByScene(mSceneNext);
+            FoleyType aType = GetFoleyTypeByScene(mMenuScene);
+            FoleyType aNextType = GetFoleyTypeByScene(mTargetMenuScene);
             if (!mApp->mSoundSystem->IsFoleyPlaying(aNextType)) {
                 mApp->PlayFoley(aNextType);
                 mApp->SetFoleyVolume(aNextType, 0);
@@ -132,7 +132,7 @@ void MainMenu::Update() {
             }
         } else {
             gFoleyVolumeCounter = 0;
-            FoleyType aType = GetFoleyTypeByScene(mScene);
+            FoleyType aType = GetFoleyTypeByScene(mMenuScene);
             if (gAchievementState == NOT_SHOWING) {
                 if (!mApp->mSoundSystem->IsFoleyPlaying(aType) && mExitCounter == 0) {
                     // mApp->PlayFoley(aType);
@@ -603,7 +603,7 @@ void MainMenu::Draw(Sexy::Graphics *g) {
         houseAnim->DrawRenderGroup(g, 0);
     }
     mainMenuReanim->DrawRenderGroup(g, 0);
-    if (mScene == 2) {
+    if (mMenuScene == 2) {
         Reanimation *butterFlyReanim = mApp->ReanimationTryToGet(mButterflyReanimID);
         if (butterFlyReanim != nullptr) {
             butterFlyReanim->Draw(g);

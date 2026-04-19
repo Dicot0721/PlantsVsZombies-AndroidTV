@@ -114,7 +114,7 @@ void SeedBank::Draw(Sexy::Graphics *g) {
             if (!mApp->IsSlotMachineLevel()) {
                 if (mApp->IsCoopMode() || mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
                     bool rightSideSeedbank = mBoard->mSeedBank[1] == this;
-                    GamepadControls *gamepadControls = rightSideSeedbank ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1;
+                    GamepadControls *gamepadControls = rightSideSeedbank ? mBoard->mGamepadControls[1] : mBoard->mGamepadControls[0];
                     if (gamepadControls->mPlayerIndex2 != -1 && i == gamepadControls->mSelectedSeedIndex) {
                         if (rightSideSeedbank) {
                             seedPacket2 = seedPacket;
@@ -124,12 +124,12 @@ void SeedBank::Draw(Sexy::Graphics *g) {
                         continue;
                     }
                 } else {
-                    GamepadControls *gamepadControls1 = mBoard->mGamepadControls1;
+                    GamepadControls *gamepadControls1 = mBoard->mGamepadControls[0];
                     if (gamepadControls1->mPlayerIndex2 != -1 && i == gamepadControls1->mSelectedSeedIndex) {
                         seedPacket1 = seedPacket;
                         continue;
                     }
-                    GamepadControls *gamepadControls2 = mBoard->mGamepadControls2;
+                    GamepadControls *gamepadControls2 = mBoard->mGamepadControls[1];
                     if (gamepadControls2->mPlayerIndex2 != -1 && i == gamepadControls2->mSelectedSeedIndex) {
                         seedPacket2 = seedPacket;
                         continue;

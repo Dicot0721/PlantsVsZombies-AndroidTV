@@ -67,8 +67,8 @@ public:
     float mCameraPositionY;               // 72
     LawnApp *mApp;                        // 73
     int unkMem1;                          // 74
-    int mScene;                           // 75
-    int mSceneNext;                       // 76
+    int mMenuScene;                       // 75
+    int mTargetMenuScene;                 // 76
     char *MPlayingTrackName;              // 77
     int mTransitionCounter;               // 78
     ReanimationID mSkyReanimID;           // 79 ,PSV 68

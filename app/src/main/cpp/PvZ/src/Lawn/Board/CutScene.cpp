@@ -71,7 +71,7 @@ void CutScene::Update() {
                     // seedBank2->~SeedBank();
                     // mApp->mBoard->mSeedBank[1] = nullptr;
                     mApp->SetSecondPlayer(1);
-                    mApp->mBoard->mGamepadControls2->mPlayerIndex2 = 1;
+                    mApp->mBoard->mGamepadControls[1]->mPlayerIndex2 = 1;
                     for (int i = 0; i < seedBank->mNumPackets; ++i) {
                         seedBank->mSeedPackets[i].mSeedBank = seedBank;
                     }

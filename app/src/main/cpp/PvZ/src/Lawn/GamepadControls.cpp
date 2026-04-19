@@ -121,7 +121,7 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
     if (mPlayerIndex2 != -1) {
         LawnApp *anApp = mGameObject->mApp;
         bool is2P = mPlayerIndex1 == 1;
-        CursorObject *aCursorObject = is2P ? mBoard->mCursorObject2 : mBoard->mCursorObject1;
+        CursorObject *aCursorObject = is2P ? mBoard->mCursorObject[1] : mBoard->mCursorObject[0];
 
 
         if (!anApp->IsCoopMode()) {
@@ -256,11 +256,11 @@ void GamepadControls::Update(float a2) {
     }
 
     if (positionAutoFix && !anApp->IsWhackAZombieLevel() && anApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZOMBIQUARIUM && gTcpServerSocket == -1) {
-        if (this == mBoard->mGamepadControls1 && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER1 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
+        if (this == mBoard->mGamepadControls[0] && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER1 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
             mCursorPositionX += (aGridCenterPosX - mCursorPositionX) / 10;
             mCursorPositionY += (aGridCenterPosY - mCursorPositionY) / 10;
         }
-        if (this == mBoard->mGamepadControls2 && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER2 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER2) {
+        if (this == mBoard->mGamepadControls[1] && gPlayerIndex != TouchPlayerIndex::TOUCHPLAYER_PLAYER2 && gPlayerIndexSecond != TouchPlayerIndex::TOUCHPLAYER_PLAYER2) {
             mCursorPositionX += (aGridCenterPosX - mCursorPositionX) / 10;
             mCursorPositionY += (aGridCenterPosY - mCursorPositionY) / 10;
         }
@@ -323,7 +323,7 @@ void GamepadControls::UpdatePreviewReanim() {
     // TV后续版本仅在PreviewingSeedType切换时进行一次Reanimation::Update，而TV 1.0.1则是无时无刻进行Reanimation::Update。我们恢复1.0.1的逻辑即可。
 
     LawnApp *anApp = mGameObject->mApp;
-    CursorObject *aCursorObject = mPlayerIndex1 ? mBoard->mCursorObject2 : mBoard->mCursorObject1;
+    CursorObject *aCursorObject = mPlayerIndex1 ? mBoard->mCursorObject[1] : mBoard->mCursorObject[0];
 
     if (!dynamicPreview) { // 如果没开启动态预览，则开启砸罐子无尽和锤僵尸关卡的动态预览，并执行旧游戏函数。
         if ((anApp->IsWhackAZombieLevel() || anApp->IsScaryPotterLevel()) && mGamepadState == 7) {
@@ -634,7 +634,7 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
     LawnApp *anApp = mGameObject->mApp;
     GameMode mGameMode = anApp->mGameMode;
     if (mGameMode == GameMode::GAMEMODE_CHALLENGE_RAINING_SEEDS) { // 为种子雨添加种植预览
-        CursorObject *cursorObject = mPlayerIndex1 ? mBoard->mCursorObject2 : mBoard->mCursorObject1;
+        CursorObject *cursorObject = mPlayerIndex1 ? mBoard->mCursorObject[1] : mBoard->mCursorObject[0];
         if (cursorObject->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
             mGamepadState = 7;
             old_GamepadControls_DrawPreview(this, g);

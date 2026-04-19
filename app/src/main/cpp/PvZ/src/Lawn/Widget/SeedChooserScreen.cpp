@@ -84,7 +84,7 @@ void SeedChooserScreen::_constructor(bool theIsZombieChooser) {
     mBoard = mApp->mBoard;
     GameMode mGameMode = mApp->mGameMode;
     if (mBoard->mCutScene->IsSurvivalRepick() && !mApp->IsCoopMode()) {
-        GamepadControls *gamePad = mBoard->mGamepadControls1;
+        GamepadControls *gamePad = mBoard->mGamepadControls[0];
         SeedBank *mSeedBank = gamePad->GetSeedBank();
         int mNumPackets = mSeedBank->mNumPackets;
         std::vector<SeedType> aSeedArray(mNumPackets);
@@ -651,7 +651,7 @@ void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int the
         }
     }
 
-    GamepadControls *controls = playerIndex == 0 ? mBoard->mGamepadControls1 : mBoard->mGamepadControls2;
+    GamepadControls *controls = playerIndex == 0 ? mBoard->mGamepadControls[0] : mBoard->mGamepadControls[1];
     if (controls == nullptr || controls->mPlayerIndex1 == -1) {
         return;
     }
@@ -1551,11 +1551,11 @@ void SeedChooserScreen::Draw(Graphics *g) {
         }
 
         // Check if being dragged
-        if (mSeedIndex1 == aSeedType && mBoard->mGamepadControls1->mPlayerIndex1 != -1 && aSeedState == SEED_IN_CHOOSER) {
+        if (mSeedIndex1 == aSeedType && mBoard->mGamepadControls[0]->mPlayerIndex1 != -1 && aSeedState == SEED_IN_CHOOSER) {
             mSeedIndex1 = aSeedType;
         }
 
-        if (mSeedIndex2 == aSeedType && mBoard->mGamepadControls2->mPlayerIndex2 != -1 && aSeedState == SEED_IN_CHOOSER) {
+        if (mSeedIndex2 == aSeedType && mBoard->mGamepadControls[1]->mPlayerIndex2 != -1 && aSeedState == SEED_IN_CHOOSER) {
             mSeedIndex2 = aSeedType;
         }
 
@@ -1575,7 +1575,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
 
     // Draw cursor selectors for two players
     for (int aPlayerIndex = 0; aPlayerIndex < 2; aPlayerIndex++) {
-        int aPlayerState = (aPlayerIndex ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1)->mPlayerIndex2;
+        int aPlayerState = (aPlayerIndex ? mBoard->mGamepadControls[1] : mBoard->mGamepadControls[0])->mPlayerIndex2;
         if (aPlayerState != -1 && !unkMems3[3]) {
             if (aPlayerState == mPlayerIndex || !mApp->IsVSMode()) {
                 Image *aSelectorImage = (aPlayerState == mApp->mSecondPlayerGamepadIndex) ? *Sexy::IMAGE_SEED_SELECTOR_BLUE : *Sexy::IMAGE_SEED_SELECTOR;
@@ -1632,7 +1632,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
 
     // Draw cursor arrows for players
     for (int aPlayerIndex = 0; aPlayerIndex < 2; aPlayerIndex++) {
-        if (ShouldDisplayCursor(aPlayerIndex) && (aPlayerIndex ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1)->mPlayerIndex2 != -1) {
+        if (ShouldDisplayCursor(aPlayerIndex) && (aPlayerIndex ? mBoard->mGamepadControls[1] : mBoard->mGamepadControls[0])->mPlayerIndex2 != -1) {
             Image *aArrowImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_ARROW_P2 : *Sexy::IMAGE_CURSOR_ARROW_P1;
             Image *aTextImage = aPlayerIndex ? *Sexy_IMAGE_CURSOR_P2_TEXT_Addr : *Sexy_IMAGE_CURSOR_P1_TEXT_Addr;
 

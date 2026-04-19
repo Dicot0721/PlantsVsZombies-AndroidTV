@@ -45,7 +45,7 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                     // 客户端点击投降
                     BaseEvent event = {EventType::EVENT_CLIENT_BOARD_CONCEDE};
                     netplay::PutEvent(event);
-                    if (mApp->mBoard->mGamepadControls2->mPlayerIndex2 == 1) {
+                    if (mApp->mBoard->mGamepadControls[1]->mPlayerIndex2 == 1) {
                         mApp->SetBoardResult(7);
                         mApp->mGameScene = SCENE_ZOMBIES_WON;
                     } else {
@@ -58,7 +58,7 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                     // 主机端点击投降
                     BaseEvent event = {EventType::EVENT_SERVER_BOARD_CONCEDE};
                     netplay::PutEvent(event);
-                    if (mApp->mBoard->mGamepadControls1->mPlayerIndex2 == 1) {
+                    if (mApp->mBoard->mGamepadControls[0]->mPlayerIndex2 == 1) {
                         mApp->SetBoardResult(7);
                         mApp->mGameScene = SCENE_ZOMBIES_WON;
                     } else {

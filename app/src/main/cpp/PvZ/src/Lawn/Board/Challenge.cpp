@@ -751,7 +751,7 @@ void Challenge::IZombieSetupPlant(Plant *thePlant) {
 }
 
 void Challenge::MouseDownWhackAZombie(int theX, int theY, int thePlayerIndex) {
-    CursorObject *aCursorObject = (thePlayerIndex == 4) ? mBoard->mCursorObject2 : mBoard->mCursorObject1;
+    CursorObject *aCursorObject = (thePlayerIndex == 4) ? mBoard->mCursorObject[1] : mBoard->mCursorObject[0];
     mApp->ReanimationTryToGet(aCursorObject->mReanimCursorID)->mAnimTime = 0.2f;
     mApp->PlayFoley(FoleyType::FOLEY_SWING);
 

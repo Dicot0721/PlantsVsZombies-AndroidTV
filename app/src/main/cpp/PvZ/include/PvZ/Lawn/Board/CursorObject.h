@@ -29,7 +29,7 @@ class Plant;
 
 class CursorObject : public GameObject {
 public:
-    int mSeedBankIndex;            // 13
+    int mSelectedIndex;            // 13
     SeedType mType;                // 14
     SeedType mImitaterType;        // 15
     CursorType mCursorType;        // 16

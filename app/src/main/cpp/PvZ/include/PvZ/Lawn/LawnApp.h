@@ -84,7 +84,7 @@ public:
     EffectSystem *mEffectSystem;             // 585
     ReanimatorCache *mReanimatorCache;       // 586
     LawnPlayerInfo *mPlayerInfo;             // 587
-    DefaultPlayerInfo *mPlayerInfo2P;        // 588 , 游戏内没有初始化，但有一些判定
+    DefaultPlayerInfo *mPlayer2Info;         // 588 , 游戏内没有初始化，但有一些判定
     int *mLastLevelStats;                    // 589
     bool mCloseRequest;                      // 2360
     int mAppCounter;                         // 591

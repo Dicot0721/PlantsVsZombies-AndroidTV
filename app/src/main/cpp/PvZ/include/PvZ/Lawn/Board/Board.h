@@ -154,12 +154,9 @@ public:
     CustomMessageWidget *mAdvice;                                     // 130
     SeedBank *mSeedBank[2];                                           // 131 ~ 132
     int unknownMembers3[7];                                           // 133 ~ 139
-    GamepadControls *mGamepadControls1;                               // 140
-    GamepadControls *mGamepadControls2;                               // 141
-    CursorObject *mCursorObject1;                                     // 142
-    CursorObject *mCursorObject2;                                     // 143
-    CursorPreview *mCursorPreview1;                                   // 144
-    CursorPreview *mCursorPreview2;                                   // 145
+    GamepadControls *mGamepadControls[2];                             // 140 ~ 141
+    CursorObject *mCursorObject[2];                                   // 142 ~ 143
+    CursorPreview *mCursorPreview[2];                                 // 144 ~ 145
     ToolTipWidget *mToolTip;                                          // 146
     Sexy::Font *mDebugFont;                                           // 147
     CutScene *mCutScene;                                              // 148

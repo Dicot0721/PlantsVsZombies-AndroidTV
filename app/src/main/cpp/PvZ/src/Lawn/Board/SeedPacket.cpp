@@ -99,7 +99,7 @@ void SeedPacket::UpdateSelected() {
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS || mApp->IsCoopMode()) {
         // 如果是双人模式关卡(对战或结盟)，则使用下面的逻辑来更新当前选中的卡片。用于修复1P和2P的卡片选择框同时出现在两个人各自的植物栏里(也就是植物栏一共出现四个选择框)的问题。
 
-        GamepadControls *theGamepad = GetPlayerIndex() ? mBoard->mGamepadControls2 : mBoard->mGamepadControls1;
+        GamepadControls *theGamepad = GetPlayerIndex() ? mBoard->mGamepadControls[1] : mBoard->mGamepadControls[0];
 
         mSelected = theGamepad->mSelectedSeedIndex == mIndex;
         mSelectedBy2P = theGamepad->mPlayerIndex1 == 1 && theGamepad->mSelectedSeedIndex == mIndex;
@@ -255,7 +255,7 @@ void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, See
         LawnApp *app = *gLawnApp_Addr;
         Board *board = app->mBoard;
         int aCelCol = 2;
-        GamepadControls *aGamepad = board->mGamepadControls1->mIsZombie ? board->mGamepadControls1 : (board->mGamepadControls2->mIsZombie ? board->mGamepadControls2 : nullptr);
+        GamepadControls *aGamepad = board->mGamepadControls[0]->mIsZombie ? board->mGamepadControls[0] : (board->mGamepadControls[1]->mIsZombie ? board->mGamepadControls[1] : nullptr);
         int aGridX = board->PixelToGridXKeepOnBoard(int(aGamepad->mCursorPositionX), int(aGamepad->mCursorPositionY));
         int aGridY = board->PixelToGridYKeepOnBoard(int(aGamepad->mCursorPositionX), int(aGamepad->mCursorPositionY));
         GridItem *aMound = board->GetMoundAt(aGridX, aGridY);
