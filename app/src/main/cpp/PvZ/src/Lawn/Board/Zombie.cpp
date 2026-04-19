@@ -1207,7 +1207,7 @@ void Zombie::UpdateZombieDancer() {
             PickRandomSpeed();
         }
     } else if (mZombiePhase == ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS || mZombiePhase == ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_WITH_LIGHT) {
-        Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
         if (aBodyReanim->mLoopCount > 0) {
             if (mZombiePhase == ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS && mBoard->CountZombiesOnScreen() <= 15) {
                 mApp->PlayFoley(FoleyType::FOLEY_DANCER);
@@ -1237,7 +1237,7 @@ void Zombie::UpdateZombieDancer() {
                 case ZombiePhase::PHASE_DANCER_WALK_TO_RAISE:
                     mZombiePhase = aDancerPhase;
                     PlayZombieReanim("anim_armraise", ReanimLoopType::REANIM_LOOP, 10, 18.0f);
-                    mApp->ReanimationTryToGet(mBodyReanimID)->mAnimTime = 0.6f;
+                    mApp->ReanimationGet(mBodyReanimID)->mAnimTime = 0.6f;
                     break;
 
                 case ZombiePhase::PHASE_DANCER_RAISE_LEFT_1:
@@ -1408,12 +1408,19 @@ int Zombie::GetDancerFrame() {
             break;
     }
 
+    int aFrameLength = 20;
+    int aFramesCount = 23;
+    if (mZombiePhase == ZombiePhase::PHASE_DANCER_DANCING_IN) {
+        aFramesCount = 11;
+        aFrameLength = 10;
+    }
     // 修复女仆秘籍问题、修复舞王和舞者的跳舞时间不吃高级暂停也不吃倍速
-    // 关键就是用mBoard->mMainCounter代替mApp->mAppCounter做计时
-    int num1 = mZombiePhase == ZombiePhase::PHASE_DANCER_DANCING_IN ? 10 : 20;
-    int num2 = mZombiePhase == ZombiePhase::PHASE_DANCER_DANCING_IN ? 110 : 460;
-    return mBoard->mMainCounter % num2 / num1;
-    // return *(uint32_t *) (lawnApp + 2368) % num2 / num1;
+    if (mBoard) {
+        // 关键就是用 mBoard->mMainCounter 代替 mApp->mAppCounter 做计时
+        return (mBoard->mMainCounter % (aFrameLength * aFramesCount)) / aFrameLength;
+    } else {
+        return (mApp->mAppCounter % (aFrameLength * aFramesCount)) / aFrameLength;
+    }
 }
 
 bool Zombie::IsZombotany(ZombieType theZombieType) {
@@ -3394,16 +3401,19 @@ void Zombie::UpdateZombieWalking() {
 ZombiePhase Zombie::GetDancerPhase() {
     int aFrame = GetDancerFrame();
 
-    return aFrame <= 11 || aFrame > 21 ? ZombiePhase::PHASE_DANCER_DANCING_LEFT
-        : aFrame <= 12                 ? ZombiePhase::PHASE_DANCER_WALK_TO_RAISE
-        : aFrame <= 15                 ? ZombiePhase::PHASE_DANCER_RAISE_RIGHT_1
-        : aFrame <= 18                 ? ZombiePhase::PHASE_DANCER_RAISE_LEFT_1
-        : aFrame <= 21                 ? ZombiePhase::PHASE_DANCER_RAISE_RIGHT_2
-                                       : ZombiePhase::PHASE_DANCER_RAISE_LEFT_2;
+    return aFrame <= 11 ? ZombiePhase::PHASE_DANCER_DANCING_LEFT
+        : aFrame <= 12  ? ZombiePhase::PHASE_DANCER_WALK_TO_RAISE
+        : aFrame <= 15  ? ZombiePhase::PHASE_DANCER_RAISE_RIGHT_1
+        : aFrame <= 18  ? ZombiePhase::PHASE_DANCER_RAISE_LEFT_1
+        : aFrame <= 21  ? ZombiePhase::PHASE_DANCER_RAISE_RIGHT_2
+                        : ZombiePhase::PHASE_DANCER_RAISE_LEFT_2;
 }
 
 ZombieID Zombie::SummonBackupDancer(int theRow, int thePosX) {
     if (!mBoard->RowCanHaveZombieType(theRow, ZombieType::ZOMBIE_BACKUP_DANCER))
+        return ZombieID::ZOMBIEID_NULL;
+
+    if (thePosX < -80)
         return ZombieID::ZOMBIEID_NULL;
 
     Zombie *aZombie = mBoard->AddZombie_Origin(ZombieType::ZOMBIE_BACKUP_DANCER, mFromWave, false);
@@ -3461,12 +3471,11 @@ void Zombie::SummonBackupDancers_Origin() {
         return;
 
     for (int i = 0; i < NUM_BACKUP_DANCERS; i++) {
-        Zombie *aZombie = mBoard->ZombieTryToGet(mFollowerZombieID[i]);
-        if (aZombie != nullptr && !aZombie->IsDeadOrDying()) {
+        if (mBoard->ZombieTryToGet(mFollowerZombieID[i]) != nullptr)
             continue;
-        }
+
         int aRow = mRow;
-        int aPosX = mPosX;
+        int aPosX = int(mPosX);
         switch (i) {
             case 0:
                 --aRow;
