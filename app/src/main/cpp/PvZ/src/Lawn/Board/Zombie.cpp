@@ -3773,7 +3773,7 @@ void Zombie::UpdateZombieCatapult() {
 
             Plant *thePlant = FindCatapultTarget();
             if (gTcpClientSocket >= 0) {
-                U16U16_Event event;
+                U16U16_Event event{};
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_FIRE;
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2 = thePlant == nullptr ? uint16_t(PLANTID_NULL) : uint16_t(mBoard->mPlants.DataArrayGetID(thePlant));
@@ -3811,7 +3811,7 @@ void Zombie::UpdateZombieCatapult() {
     if (mZombiePhase == PHASE_ZOMBIE_NORMAL) {
         if (mPosX <= 650 && FindCatapultTarget() != nullptr && mSummonCounter > 0) {
             if (gTcpClientSocket >= 0) {
-                U16UNI32_Event event;
+                U16UNI32_Event event{};
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_LAUNCHIING;
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2.f32 = mPosX;
@@ -3826,7 +3826,7 @@ void Zombie::UpdateZombieCatapult() {
         Plant *plant = FindCatapultTarget();
         if (plant != nullptr) {
             if (gTcpClientSocket >= 0) {
-                U16UNI32_Event event;
+                U16UNI32_Event event{};
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_LAUNCHIING;
                 event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
                 event.data2.f32 = mPosX;
@@ -3839,5 +3839,59 @@ void Zombie::UpdateZombieCatapult() {
         }
         PlayZombieReanim("anim_walk", REANIM_LOOP, 20, 6.0f);
         mZombiePhase = PHASE_ZOMBIE_NORMAL;
+    }
+}
+
+void Zombie::UpdateLadder() {
+    if (mMindControlled || !mHasHead || IsDeadOrDying()) {
+        return;
+    }
+    if (mZombiePhase == PHASE_LADDER_CARRYING && mZombieHeight == HEIGHT_ZOMBIE_NORMAL) {
+        Plant *plant = FindPlantTarget(ATTACKTYPE_LADDER);
+        if (plant != nullptr) {
+            if (mApp->IsVSMode() && gTcpConnected) {
+                return;
+            }
+
+            if (gTcpClientSocket >= 0) {
+                U16UNI32_Event event{};
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_LADDER_START_PLACING;
+                event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+                event.data2.f32 = mPosX;
+                netplay::PutEvent(event);
+            }
+
+            StopEating();
+            mZombiePhase = PHASE_LADDER_PLACING;
+            PlayZombieReanim("anim_placeladder", REANIM_PLAY_ONCE_AND_HOLD, 10, 24.0f);
+            return;
+        }
+    } else if (mZombiePhase == PHASE_LADDER_PLACING) {
+        Reanimation *reanimation = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (reanimation != nullptr && reanimation->mLoopCount > 0) {
+            if (mApp->IsVSMode() && gTcpConnected && mShieldType == SHIELDTYPE_LADDER) {
+                return;
+            }
+
+            Plant *plant2 = FindPlantTarget(ATTACKTYPE_LADDER);
+            if (plant2 != nullptr) {
+                if (gTcpClientSocket >= 0) {
+                    U16U16_Event event{};
+                    event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_LADDER_PLACED;
+                    event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+                    event.data2 = plant2->mPlantCol;
+                    netplay::PutEvent(event);
+                }
+
+                mBoard->AddALadder(plant2->mPlantCol, plant2->mRow);
+                mApp->PlaySample(*SOUND_LADDER_ZOMBIE);
+                mZombieHeight = HEIGHT_UP_LADDER;
+                mUseLadderCol = plant2->mPlantCol;
+                DetachShield();
+                return;
+            }
+            mZombiePhase = PHASE_LADDER_CARRYING;
+            StartWalkAnim(0);
+        }
     }
 }

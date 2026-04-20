@@ -1520,6 +1520,7 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK_LADDER:
         case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_HIT_UMBRELLA:
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP:
+        case EVENT_SERVER_BOARD_ZOMBIE_LADDER_PLACED:
             return sizeof(U16U16_Event);
 
         // --- 僵尸状态计数 ---
@@ -1536,6 +1537,7 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW:
         case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH:
         case EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_LAUNCHIING:
+        case EVENT_SERVER_BOARD_ZOMBIE_LADDER_START_PLACING:
             return sizeof(U16UNI32_Event);
 
         case EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_FIRE:
@@ -2057,11 +2059,12 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 aZombie->SummonBackupDancers_Origin();
 
                 for (int i = 0; i < NUM_BACKUP_DANCERS; ++i) {
-                    if (aZombie->mFollowerZombieID[i] != ZombieID::ZOMBIEID_NULL)
-                        serverZombieIDMap[uint16_t(eventSummonBackupDancers->data3[i])] = uint16_t(aZombie->mFollowerZombieID[i]);
                     Zombie *backupZombie = ZombieTryToGet(aZombie->mFollowerZombieID[i]);
-                    float aVelX = eventSummonBackupDancers->data4[i].f32;
-                    backupZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
+                    if (backupZombie) {
+                        serverZombieIDMap[uint16_t(eventSummonBackupDancers->data3[i])] = uint16_t(aZombie->mFollowerZombieID[i]);
+                        float aVelX = eventSummonBackupDancers->data4[i].f32;
+                        backupZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
+                    }
                 }
             }
         } break;
@@ -2183,6 +2186,30 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
                 aZombie->ZombieCatapultFire(aPlant);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_LADDER_START_PLACING: {
+            auto *event1 = reinterpret_cast<U16UNI32_Event *>(event);
+            uint16_t serverZombieID = event1->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                aZombie->mPosX = event1->data2.f32;
+                aZombie->StopEating();
+                aZombie->mZombiePhase = PHASE_LADDER_PLACING;
+                aZombie->PlayZombieReanim("anim_placeladder", REANIM_PLAY_ONCE_AND_HOLD, 10, 24.0f);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_LADDER_PLACED: {
+            auto *event1 = reinterpret_cast<U16U16_Event *>(event);
+            uint16_t serverZombieID = event1->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                aZombie->mApp->PlaySample(*SOUND_LADDER_ZOMBIE);
+                aZombie->mZombieHeight = HEIGHT_UP_LADDER;
+                aZombie->mUseLadderCol = event1->data2;
+                aZombie->DetachShield();
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE: {

@@ -498,6 +498,7 @@ inline void *Zombie_AnimateAddr;
 inline void *Zombie_FindCatapultTargetAddr;
 inline void *Zombie_ZombieCatapultFireAddr;
 inline void *Zombie_BungeeLandingAddr;
+inline void *Zombie_UpdateLadderAddr;
 
 
 inline void *SeedChooserScreen_UpdateAddr;
@@ -1370,6 +1371,7 @@ inline int *SOUND_BALLOON_POP;
 inline int *SOUND_BOING;
 inline int *SOUND_POTATO_MINE;
 inline int *SOUND_GULP;
+inline int *SOUND_LADDER_ZOMBIE;
 } // namespace Sexy
 
 inline Sexy::Image **Sexy_IMAGE_SEEDPACKETFLASH_Addr;

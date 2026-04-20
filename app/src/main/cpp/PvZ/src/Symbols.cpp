@@ -495,6 +495,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN6Zombie18FindCatapultTargetEv", Zombie_FindCatapultTargetAddr);
     libGameMain.GetSymbol("_ZN6Zombie18ZombieCatapultFireEP5Plant", Zombie_ZombieCatapultFireAddr);
     libGameMain.GetSymbol("_ZN6Zombie13BungeeLandingEv", Zombie_BungeeLandingAddr);
+    libGameMain.GetSymbol("_ZN6Zombie12UpdateLadderEv", Zombie_UpdateLadderAddr);
 
 
     libGameMain.GetSymbol("_ZN17SeedChooserScreen6UpdateEv", SeedChooserScreen_UpdateAddr);
@@ -1418,6 +1419,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN4Sexy11SOUND_BOINGE", Sexy::SOUND_BOING);
     libGameMain.GetSymbol("_ZN4Sexy17SOUND_POTATO_MINEE", Sexy::SOUND_POTATO_MINE);
     libGameMain.GetSymbol("_ZN4Sexy10SOUND_GULPE", Sexy::SOUND_GULP);
+    libGameMain.GetSymbol("_ZN4Sexy19SOUND_LADDER_ZOMBIEE", Sexy::SOUND_LADDER_ZOMBIE);
     libGameMain.GetSymbol("_ZN4Sexy12SOUND_FROZENE", Sexy_SOUND_FROZEN_Addr);
     libGameMain.GetSymbol("_ZN4Sexy9SOUND_TAPE", Sexy_SOUND_TAP_Addr);
     libGameMain.GetSymbol("_ZN4Sexy15SOUND_FINALWAVEE", Sexy_SOUND_FINALWAVE_Addr);

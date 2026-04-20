@@ -450,6 +450,7 @@ public:
     void DoSpecial();
     void UpdateZombieCatapult();
     void BungeeLanding();
+    void UpdateLadder();
 
 protected:
     void _constructor() {
