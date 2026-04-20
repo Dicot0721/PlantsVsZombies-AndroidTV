@@ -1579,7 +1579,9 @@ void SeedChooserScreen::Draw(Graphics *g) {
         if (aPlayerState != -1 && !unkMems3[3]) {
             if (aPlayerState == mPlayerIndex || !mApp->IsVSMode()) {
                 Image *aSelectorImage = (aPlayerState == mApp->mSecondPlayerGamepadIndex) ? *Sexy::IMAGE_SEED_SELECTOR_BLUE : *Sexy::IMAGE_SEED_SELECTOR;
-
+                if (mBanningPhase) {
+                    aSelectorImage = (aSelectorImage == *Sexy::IMAGE_SEED_SELECTOR_BLUE) ? *Sexy::IMAGE_SEED_SELECTOR : *Sexy::IMAGE_SEED_SELECTOR_BLUE;
+                }
                 g->DrawImage(aSelectorImage, aCursorX - 8, aCursorY - 4, 64, 85);
             }
         }

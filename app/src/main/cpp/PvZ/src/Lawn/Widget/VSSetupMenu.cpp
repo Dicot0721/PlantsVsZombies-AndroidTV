@@ -482,6 +482,10 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             if (seedIndex < 0 || seedIndex >= NUM_SEEDS_IN_CHOOSER) {
                 break;
             }
+            int cursorSeedIndex = seedIndex;
+            if (seedChooser->mIsZombieChooser && seedChooser->mPageIndex == 1 && cursorSeedIndex >= 25) {
+                cursorSeedIndex -= 25;
+            }
             VSSide targetSide = isZombieChooser ? VSSide::VS_SIDE_ZOMBIE : VSSide::VS_SIDE_PLANT;
             if (mSides[0] != targetSide && mSides[1] != targetSide) {
                 break;
@@ -489,11 +493,11 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             int ownerPlayerIndex = seedChooser->mPlayerIndex;
             int *cursorX = (ownerPlayerIndex == 0) ? &seedChooser->mCursorPositionX1 : &seedChooser->mCursorPositionX2;
             int *cursorY = (ownerPlayerIndex == 0) ? &seedChooser->mCursorPositionY1 : &seedChooser->mCursorPositionY2;
-            seedChooser->GetSeedPositionInChooser(seedIndex, *cursorX, *cursorY);
+            seedChooser->GetSeedPositionInChooser(cursorSeedIndex, *cursorX, *cursorY);
             if (ownerPlayerIndex == 0)
-                seedChooser->mSeedIndex1 = seedIndex;
+                seedChooser->mSeedIndex1 = cursorSeedIndex;
             else
-                seedChooser->mSeedIndex2 = seedIndex;
+                seedChooser->mSeedIndex2 = cursorSeedIndex;
             ChosenSeed &chosenSeed = seedChooser->mChosenSeeds[seedIndex];
             if (chosenSeed.mSeedState != ChosenSeedState::SEED_IN_CHOOSER) {
                 break;
@@ -608,6 +612,10 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             if (seedIndex < 0 || seedIndex >= NUM_SEEDS_IN_CHOOSER) {
                 break;
             }
+            int cursorSeedIndex = seedIndex;
+            if (seedChooser->mIsZombieChooser && seedChooser->mPageIndex == 1 && cursorSeedIndex >= 25) {
+                cursorSeedIndex -= 25;
+            }
             VSSide targetSide = isZombieChooser ? VSSide::VS_SIDE_ZOMBIE : VSSide::VS_SIDE_PLANT;
             if (mSides[0] != targetSide && mSides[1] != targetSide) {
                 break;
@@ -615,11 +623,11 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             int ownerPlayerIndex = seedChooser->mPlayerIndex;
             int *cursorX = (ownerPlayerIndex == 0) ? &seedChooser->mCursorPositionX1 : &seedChooser->mCursorPositionX2;
             int *cursorY = (ownerPlayerIndex == 0) ? &seedChooser->mCursorPositionY1 : &seedChooser->mCursorPositionY2;
-            seedChooser->GetSeedPositionInChooser(seedIndex, *cursorX, *cursorY);
+            seedChooser->GetSeedPositionInChooser(cursorSeedIndex, *cursorX, *cursorY);
             if (ownerPlayerIndex == 0)
-                seedChooser->mSeedIndex1 = seedIndex;
+                seedChooser->mSeedIndex1 = cursorSeedIndex;
             else
-                seedChooser->mSeedIndex2 = seedIndex;
+                seedChooser->mSeedIndex2 = cursorSeedIndex;
             ChosenSeed &chosenSeed = seedChooser->mChosenSeeds[seedIndex];
             if (chosenSeed.mSeedState != ChosenSeedState::SEED_IN_CHOOSER) {
                 break;
