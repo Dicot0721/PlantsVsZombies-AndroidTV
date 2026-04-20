@@ -70,7 +70,7 @@ jobs:
           ./gradlew assemble${VERSION^}${BUILD_TYPE^}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: PvZ-TV-${{ matrix.version }}-${{ matrix.build_type }}
           path: app/build/outputs/apk/${{ matrix.version }}/${{ matrix.build_type }}/*.apk
@@ -107,13 +107,13 @@ jobs:
           echo "commits_count=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Download artifact
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: PvZ-TV-v115-release
           path: artifact
 
       - name: Publish release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           repository: Dicot0721/PvZ-TV-builds
           token: ${{ secrets.BUILDS_TOKEN }}
