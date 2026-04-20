@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          sparse-checkout: app/src/main/cpp
 
       - name: Run clang-format style check
         uses: jidicula/clang-format-action@v4.18.0
