@@ -199,6 +199,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN5Board24CountDeathBeingCollectedEv", Board_CountDeathBeingCollectedAddr);
     libGameMain.GetSymbol("_ZN5Board16GetMPTargetCountEv", Board_GetMPTargetCountAddr);
     libGameMain.GetSymbol("_ZN5Board24FreezeEffectsForCutsceneEb", Board_FreezeEffectsForCutsceneAddr);
+    libGameMain.GetSymbol("_ZN5Board17FindUmbrellaPlantEii", Board_FindUmbrellaPlantAddr);
 
 
     libGameMain.GetSymbol("_Z9SyncBoardP15SaveGameContextP5Board", SyncBoardAddr);
