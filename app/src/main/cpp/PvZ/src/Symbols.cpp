@@ -482,6 +482,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN6Zombie18CheckForHighGroundEv", Zombie_CheckForHighGroundAddr);
     libGameMain.GetSymbol("_ZN6Zombie10UpdateBossEv", Zombie_UpdateBossAddr);
     libGameMain.GetSymbol("_ZN6Zombie16UpdateZombiePogoEv", Zombie_UpdateZombiePogoAddr);
+    libGameMain.GetSymbol("_ZN6Zombie20UpdateZombieCatapultEv", Zombie_UpdateZombieCatapultAddr);
     libGameMain.GetSymbol("_ZN6Zombie9PogoBreakEj", Zombie_PogoBreakAddr);
     libGameMain.GetSymbol("_ZN6Zombie10UpdateBurnEv", Zombie_UpdateBurnAddr);
     libGameMain.GetSymbol("_ZN6Zombie13UpdateMoweredEv", Zombie_UpdateMoweredAddr);
@@ -490,6 +491,8 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN6Zombie28UpdateZombieWalkingIntoHouseEv", Zombie_UpdateZombieWalkingIntoHouseAddr);
     libGameMain.GetSymbol("_ZN6Zombie18UpdateZombieBungeeEv", Zombie_UpdateZombieBungeeAddr);
     libGameMain.GetSymbol("_ZN6Zombie7AnimateEv", Zombie_AnimateAddr);
+    libGameMain.GetSymbol("_ZN6Zombie18FindCatapultTargetEv", Zombie_FindCatapultTargetAddr);
+    libGameMain.GetSymbol("_ZN6Zombie18ZombieCatapultFireEP5Plant", Zombie_ZombieCatapultFireAddr);
 
 
     libGameMain.GetSymbol("_ZN17SeedChooserScreen6UpdateEv", SeedChooserScreen_UpdateAddr);

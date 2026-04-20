@@ -3696,3 +3696,83 @@ void Zombie::DoSpecial() {
             break;
     }
 }
+
+
+void Zombie::UpdateZombieCatapult() {
+    if (mZombiePhase == PHASE_CATAPULT_LAUNCHING) {
+        Reanimation *reanimation = mApp->ReanimationGet(mBodyReanimID);
+        if (reanimation->ShouldTriggerTimedEvent(0.545f)) {
+            if (mApp->IsVSMode() && gTcpConnected) {
+                return;
+            }
+
+            Plant *thePlant = FindCatapultTarget();
+            if (gTcpClientSocket >= 0) {
+                U16U16_Event event;
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_FIRE;
+                event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+                event.data2 = thePlant == nullptr ? uint16_t(PLANTID_NULL) : uint16_t(mBoard->mPlants.DataArrayGetID(thePlant));
+                netplay::PutEvent(event);
+            }
+            ZombieCatapultFire(thePlant);
+        }
+        if (reanimation->mLoopCount > 0) {
+            mSummonCounter--;
+            if (mSummonCounter == 4) {
+                ReanimShowTrack("Zombie_catapult_basketball", -1);
+            } else if (mSummonCounter == 3) {
+                ReanimShowTrack("Zombie_catapult_basketball2", -1);
+            } else if (mSummonCounter == 2) {
+                ReanimShowTrack("Zombie_catapult_basketball3", -1);
+            } else if (mSummonCounter == 1) {
+                ReanimShowTrack("Zombie_catapult_basketball4", -1);
+            }
+            if (mSummonCounter == 0) {
+                PlayZombieReanim("anim_walk", REANIM_LOOP, 20, 6.0f);
+                mZombiePhase = PHASE_ZOMBIE_NORMAL;
+                return;
+            }
+            PlayZombieReanim("anim_idle", REANIM_LOOP, 20, 12.0f);
+            mZombiePhase = PHASE_CATAPULT_RELOADING;
+            return;
+        }
+        return;
+    }
+
+    if (mApp->IsVSMode() && gTcpConnected) {
+        return;
+    }
+
+    if (mZombiePhase == PHASE_ZOMBIE_NORMAL) {
+        if (mPosX <= 650 && FindCatapultTarget() != nullptr && mSummonCounter > 0) {
+            if (gTcpClientSocket >= 0) {
+                U16UNI32_Event event;
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_LAUNCHIING;
+                event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+                event.data2.f32 = mPosX;
+                netplay::PutEvent(event);
+            }
+            mZombiePhase = PHASE_CATAPULT_LAUNCHING;
+            mPhaseCounter = 300;
+            PlayZombieReanim("anim_shoot", REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
+            return;
+        }
+    } else if (mZombiePhase == PHASE_CATAPULT_RELOADING && mPhaseCounter == 0) {
+        Plant *plant = FindCatapultTarget();
+        if (plant != nullptr) {
+            if (gTcpClientSocket >= 0) {
+                U16UNI32_Event event;
+                event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_LAUNCHIING;
+                event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+                event.data2.f32 = mPosX;
+                netplay::PutEvent(event);
+            }
+            mZombiePhase = PHASE_CATAPULT_LAUNCHING;
+            mPhaseCounter = 300;
+            PlayZombieReanim("anim_shoot", REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
+            return;
+        }
+        PlayZombieReanim("anim_walk", REANIM_LOOP, 20, 6.0f);
+        mZombiePhase = PHASE_ZOMBIE_NORMAL;
+    }
+}

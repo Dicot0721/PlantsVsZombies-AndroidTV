@@ -1534,7 +1534,11 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_POST_VAULT:
         case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW:
         case EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH:
+        case EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_LAUNCHIING:
             return sizeof(U16UNI32_Event);
+
+        case EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_FIRE:
+            return sizeof(U16U16_Event);
 
         // --- 舞王召唤舞伴 ---
         case EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS:
@@ -2137,6 +2141,30 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 aZombie->mPosX = event1->data2.f32;
                 aZombie->mZombiePhase = PHASE_GARGANTUAR_THROWING;
                 aZombie->PlayZombieReanim("anim_throw", REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_LAUNCHIING: {
+            auto *event1 = reinterpret_cast<U16UNI32_Event *>(event);
+            uint16_t serverZombieID = event1->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                aZombie->mPosX = event1->data2.f32;
+                aZombie->mZombiePhase = PHASE_CATAPULT_LAUNCHING;
+                aZombie->mPhaseCounter = 300;
+                aZombie->PlayZombieReanim("anim_shoot", REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_FIRE: {
+            auto *event1 = reinterpret_cast<U16U16_Event *>(event);
+            uint16_t serverZombieID = event1->data1;
+            uint16_t clientZombieID;
+            uint16_t serverPlantID = event1->data2;
+            uint16_t clientPlantID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID) && homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
+                aZombie->ZombieCatapultFire(aPlant);
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE: {

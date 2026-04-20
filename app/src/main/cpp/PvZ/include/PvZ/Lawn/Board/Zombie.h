@@ -324,6 +324,13 @@ public:
     void Animate() {
         reinterpret_cast<void (*)(Zombie *)>(Zombie_AnimateAddr)(this);
     }
+    Plant *FindCatapultTarget() {
+        return reinterpret_cast<Plant *(*)(Zombie *)>(Zombie_FindCatapultTargetAddr)(this);
+    }
+    void ZombieCatapultFire(Plant *plant) {
+        reinterpret_cast<void (*)(Zombie *, Plant *)>(Zombie_ZombieCatapultFireAddr)(this, plant);
+    }
+
 
     Zombie() {
         _constructor();
@@ -441,6 +448,7 @@ public:
     void UpdateYuckyFace();
     void UpdateZombiePool();
     void DoSpecial();
+    void UpdateZombieCatapult();
 
 protected:
     void _constructor() {

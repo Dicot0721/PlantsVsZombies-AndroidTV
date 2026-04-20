@@ -485,6 +485,7 @@ inline void *Zombie_CheckForPoolAddr;
 inline void *Zombie_CheckForHighGroundAddr;
 inline void *Zombie_UpdateBossAddr;
 inline void *Zombie_UpdateZombiePogoAddr;
+inline void *Zombie_UpdateZombieCatapultAddr;
 inline void *Zombie_PogoBreakAddr;
 inline void *Zombie_UpdateBurnAddr;
 inline void *Zombie_UpdateMoweredAddr;
@@ -493,6 +494,8 @@ inline void *Zombie_UpdateZombieChimneyAddr;
 inline void *Zombie_UpdateZombieWalkingIntoHouseAddr;
 inline void *Zombie_UpdateZombieBungeeAddr;
 inline void *Zombie_AnimateAddr;
+inline void *Zombie_FindCatapultTargetAddr;
+inline void *Zombie_ZombieCatapultFireAddr;
 
 
 inline void *SeedChooserScreen_UpdateAddr;
