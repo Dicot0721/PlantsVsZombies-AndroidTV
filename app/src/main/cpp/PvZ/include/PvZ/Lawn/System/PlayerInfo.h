@@ -53,6 +53,12 @@ public:
     int mLastChocolateTime;     // 4
 };
 
+class Mode3RecentServerStorage {
+public:
+    char mRecentServerAddr[3][22];
+};
+
+
 class PlayerInfo {
 public:
     int *vTable;                                         // 0
@@ -74,7 +80,9 @@ public:
     bool mVSExtraSeedsMode;
     bool mVSBanMode;
     bool mVSBalancePatchMode;
-    bool mUnused[139];
+    bool mUnused606[2]; // 606 - 607
+    Mode3RecentServerStorage serverStorage;
+    bool mUnused674[71];
     bool mIsVibrateClosed;
     bool mZombatarEnabled;
     unsigned char mZombatarHat;

@@ -55,6 +55,17 @@ constexpr int kServerRoomListTitleY = 200;
 constexpr int kServerRoomListItemStartY = 200;
 constexpr int kServerRoomListLineH = 45;
 constexpr int kServerP2PConnectRetryTicks = 8;
+constexpr int kMode3ServerOfficialTitleY = 150;
+constexpr int kMode3ServerOfficialItemStartY = 190;
+constexpr int kMode3ServerRecentTitleY = 266;
+constexpr int kMode3ServerRecentItemStartY = 304;
+constexpr int kMode3ServerTargetLineH = 38;
+constexpr int kMode3ServerTargetMaxLen = 22; // "255.255.255.255:65535" + '\0'
+constexpr int kMode3ServerRecentCount = 3;
+constexpr const char *kOfficialServer1Name = "官方1服";
+constexpr const char *kOfficialServer1Addr = "8.163.89.131:6667";
+constexpr const char *kOfficialServer2Name = "官方2服";
+constexpr const char *kOfficialServer2Addr = "39.107.81.44:6667";
 
 static void CloseSocketFd(int &fd, bool do_shutdown = true) {
     if (fd < 0) {
@@ -217,6 +228,199 @@ static bool CollectAllBroadcastTargets(std::vector<BroadcastTarget> &out_targets
 
     return !out_targets.empty();
 }
+
+static bool ParseMode3IpPort(std::string_view inputRaw, std::string &outIp, int &outPort) {
+    const std::string input = homura::Trim(inputRaw);
+    const size_t colonPos = input.find(':');
+    if (colonPos == std::string::npos) {
+        return false;
+    }
+
+    const std::string ip = homura::Trim(std::string_view{input}.substr(0, colonPos));
+    const std::string portStr = homura::Trim(std::string_view{input}.substr(colonPos + 1));
+    const int port = std::atoi(portStr.c_str());
+    if (port < 1 || port > 65535) {
+        return false;
+    }
+
+    in_addr addr{};
+    if (inet_pton(AF_INET, ip.c_str(), &addr) != 1) {
+        return false;
+    }
+
+    outIp = ip;
+    outPort = port;
+    return true;
+}
+
+
+static bool Mode3LoadRecentServer(const LawnPlayerInfo *playerInfo, int idx, char outAddr[kMode3ServerTargetMaxLen]) {
+    if (!playerInfo || idx < 0 || idx >= kMode3ServerRecentCount) {
+        return false;
+    }
+
+    std::memset(outAddr, 0, kMode3ServerTargetMaxLen);
+    std::memcpy(outAddr, playerInfo->serverStorage.mRecentServerAddr[idx], kMode3ServerTargetMaxLen - 1);
+    outAddr[kMode3ServerTargetMaxLen - 1] = '\0';
+
+    std::string ip;
+    int port = 0;
+    if (!ParseMode3IpPort(outAddr, ip, port)) {
+        outAddr[0] = '\0';
+        return false;
+    }
+    return true;
+}
+
+static void Mode3RememberRecentServer(LawnPlayerInfo *playerInfo, std::string_view addrRaw) {
+    if (!playerInfo) {
+        return;
+    }
+
+    std::string ip;
+    int port = 0;
+    if (!ParseMode3IpPort(addrRaw, ip, port)) {
+        return;
+    }
+
+    const std::string normalized = ip + ":" + std::to_string(port);
+    char ordered[kMode3ServerRecentCount][kMode3ServerTargetMaxLen]{};
+    std::strncpy(ordered[0], normalized.c_str(), kMode3ServerTargetMaxLen - 1);
+
+    int writeIdx = 1;
+    for (int i = 0; i < kMode3ServerRecentCount && writeIdx < kMode3ServerRecentCount; ++i) {
+        char oldAddr[kMode3ServerTargetMaxLen]{};
+        if (!Mode3LoadRecentServer(playerInfo, i, oldAddr)) {
+            continue;
+        }
+        if (normalized == oldAddr) {
+            continue;
+        }
+        std::strncpy(ordered[writeIdx], oldAddr, kMode3ServerTargetMaxLen - 1);
+        ++writeIdx;
+    }
+
+    for (int i = 0; i < kMode3ServerRecentCount; ++i) {
+        std::memset(playerInfo->serverStorage.mRecentServerAddr[i], 0, kMode3ServerTargetMaxLen);
+        std::memcpy(playerInfo->serverStorage.mRecentServerAddr[i], ordered[i], kMode3ServerTargetMaxLen - 1);
+    }
+    playerInfo->SaveDetails();
+}
+
+static bool Mode3ConnectToTarget(WaitForSecondPlayerDialog *dialog, std::string_view ipRaw, int port) {
+    if (!dialog) {
+        return false;
+    }
+
+    const std::string ip = homura::Trim(ipRaw);
+    if (dialog->mServerSock >= 0) {
+        dialog->ServerDisconnect("reconnect");
+    }
+
+    dialog->mServerIp[ip.copy(dialog->mServerIp, INET_ADDRSTRLEN - 1)] = '\0';
+    dialog->mServerPort = port;
+    LOG_DEBUG("target: {}:{}", &dialog->mServerIp[0], dialog->mServerPort);
+
+    dialog->mServerSock = socket(AF_INET, SOCK_STREAM, 0);
+    if (dialog->mServerSock < 0) {
+        dialog->mServerStatusText = TodStringTranslate("[STATUS_SOCKET_FAIL]");
+        return false;
+    }
+
+    int one = 1;
+    setsockopt(dialog->mServerSock, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
+
+    int flags = fcntl(dialog->mServerSock, F_GETFL, 0);
+    fcntl(dialog->mServerSock, F_SETFL, flags | O_NONBLOCK);
+
+    sockaddr_in sa{
+        .sin_family = AF_INET,
+        .sin_port = htons(uint16_t(dialog->mServerPort)),
+    };
+    inet_pton(AF_INET, dialog->mServerIp, &sa.sin_addr);
+
+    int ret = connect(dialog->mServerSock, (sockaddr *)&sa, sizeof(sa));
+    int err = errno;
+    LOG_DEBUG("[MODE3] connect ret={} errno={}", ret, err);
+    if (ret == 0) {
+        dialog->mServerConnecting = false;
+        dialog->mServerConnected = true;
+        dialog->mServerStatusText = TodStringTranslate("[STATUS_CONNECTED]");
+        dialog->ServerResetP2PState(false);
+        dialog->ServerOpenP2PListener();
+        if (dialog->mServerP2PListenSock >= 0) {
+            dialog->ServerSendNatPort();
+        }
+        dialog->mServerRoomCount = 0;
+        dialog->mSrvRecvLen = 0;
+        dialog->ServerSendQuery();
+        return true;
+    }
+
+    if (err == EINPROGRESS) {
+        dialog->mServerConnecting = true;
+        dialog->mServerConnected = false;
+        dialog->mServerStatusText = TodStringTranslate("[STATUS_CONNECTING]");
+        return true;
+    }
+
+    dialog->ServerDisconnect("connect fail");
+    pvzstl::string strFmt = TodStringTranslate("[STATUS_CONNECT_FAIL_ERRNO_FMT]");
+    dialog->mServerStatusText = StrFormat(strFmt.c_str(), std::strerror(err));
+    return false;
+}
+
+static int Mode3ServerTargetCount(const WaitForSecondPlayerDialog *dialog) {
+    if (!dialog) {
+        return 0;
+    }
+    return 2 + kMode3ServerRecentCount;
+}
+
+static bool Mode3GetSelectedTargetAddr(WaitForSecondPlayerDialog *dialog, std::string &outAddr) {
+    if (!dialog) {
+        return false;
+    }
+    int idx = dialog->mSelectedRoomIndex_Server;
+    const int count = Mode3ServerTargetCount(dialog);
+    if (idx < 0) {
+        idx = 0;
+    }
+    if (idx >= count) {
+        idx = count - 1;
+    }
+    dialog->mSelectedRoomIndex_Server = idx;
+
+    if (idx == 0) {
+        outAddr = kOfficialServer1Addr;
+        return true;
+    }
+    if (idx == 1) {
+        outAddr = kOfficialServer2Addr;
+        return true;
+    }
+    if (dialog->mApp && dialog->mApp->mPlayerInfo) {
+        char recentAddr[kMode3ServerTargetMaxLen]{};
+        if (Mode3LoadRecentServer(dialog->mApp->mPlayerInfo, idx - 2, recentAddr)) {
+            outAddr = recentAddr;
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool Mode3ConnectSelectedTarget(WaitForSecondPlayerDialog *dialog) {
+    std::string targetAddr;
+    if (!Mode3GetSelectedTargetAddr(dialog, targetAddr)) {
+        return false;
+    }
+    std::string ip;
+    int port = 0;
+    if (!ParseMode3IpPort(targetAddr, ip, port)) {
+        return false;
+    }
+    return Mode3ConnectToTarget(dialog, ip, port);
+}
 } // namespace
 
 bool WaitForSecondPlayerDialog::ServerHostRoomLocked() const {
@@ -258,6 +462,8 @@ void WaitForSecondPlayerDialog::SetMode(UIMode mode) {
         mIsCreatingRoom = false;
         mIsJoiningRoom = false;
         InitUdpScanSocket();
+    } else if (mUIMode == UIMode::MODE3_SERVER) {
+        mSelectedRoomIndex_Server = 0; // 默认选中官方服第1项
     }
 
     RefreshButtons();
@@ -329,8 +535,16 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
         case UIMode::MODE3_SERVER: {
             const bool startBusy = mServerGameStarting;
             const bool hostLocked = ServerHostRoomLocked();
-            // left: 加入 / 离开
-            mLeftButton->SetLabel(mServerJoined ? "[LEAVE_ROOM_BUTTON]" : "[JOIN_ROOM_BUTTON]");
+            const bool inServerListMode = (!mServerConnected && !mServerConnecting && !mServerHosting && !mServerJoined);
+            if (mServerHosting) {
+                mLeftButton->SetLabel("[KICK_GUEST_BUTTON]");
+            } else if (mServerJoined) {
+                mLeftButton->SetLabel("[LEAVE_ROOM_BUTTON]");
+            } else if (inServerListMode) {
+                mLeftButton->SetLabel("[CONNECT_THIS_SERVER]");
+            } else {
+                mLeftButton->SetLabel("[JOIN_ROOM_BUTTON]");
+            }
 
             // right: 创建 / 退出
             mRightButton->SetLabel(mServerHosting ? "[EXIT_ROOM_BUTTON]" : "[CREATE_ROOM_BUTTON]");
@@ -342,18 +556,35 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
             } else if (mServerJoined) {
                 mLawnYesButton->SetLabel("[START_GAME]");
                 mLawnYesButton->mDisabled = true; // ✅ guest 永远禁用
+            } else if (mServerConnecting) {
+                mLawnYesButton->SetLabel("[CONNECT_STOP]");
+                mLawnYesButton->mDisabled = startBusy || hostLocked;
+            } else if (mServerConnected) {
+                mLawnYesButton->SetLabel("[DISCONNECT_SERVER]");
+                mLawnYesButton->mDisabled = startBusy || hostLocked;
             } else {
-                // ✅ 已连接后显示“更换服务器”，功能仍然是弹输入框重新连接
-                mLawnYesButton->SetLabel((mServerConnected || mServerConnecting) ? "[CHANGE_SERVER]" : "[CONNECT_SERVER]");
+                mLawnYesButton->SetLabel("[CONNECT_CUSTOM_SERVER]");
                 mLawnYesButton->mDisabled = startBusy || hostLocked;
             }
 
             mLawnNoButton->SetLabel("[BACK_TO_MODE_SELECT]");
             mLawnNoButton->mDisabled = hostLocked;
 
-            // ✅ 加入按钮：连接后且“房间数量>0”才允许（空闲态）
+            bool canJoinServer = false;
+            if (inServerListMode) {
+                std::string targetAddr;
+                canJoinServer = Mode3GetSelectedTargetAddr(this, targetAddr);
+            }
+
             bool canJoinIdle = (mServerConnected && !mServerConnecting && !mServerHosting && !mServerJoined && !mServerCreatePending && !startBusy && (mServerRoomCount > 0));
-            mLeftButton->mDisabled = !canJoinIdle && !mServerJoined; // 离开房间时应可点
+            if (inServerListMode) {
+                mLeftButton->mDisabled = !canJoinServer || startBusy || hostLocked;
+            } else {
+                mLeftButton->mDisabled = !canJoinIdle && !mServerJoined; // 离开房间时应可点
+            }
+            if (mServerHosting) {
+                mLeftButton->mDisabled = (!mServerConnected || mServerConnecting || !mServerHostHasGuest || startBusy);
+            }
             if (mServerJoined) {
                 mLeftButton->mDisabled = (!mServerConnected || mServerConnecting || startBusy);
             }
@@ -651,10 +882,39 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
 
 
         if (!mServerConnected) {
-            TodDrawString(g, TodStringTranslate("[SERVER_CONNECT_TIP1]"), 400, 240, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
-            TodDrawString(g, TodStringTranslate("[SERVER_CONNECT_TIP2]"), 400, 280, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
-            //            DrawServerP2PStatus(g, 160, 340);
+            if (!mServerConnecting) {
+                const int targetCount = Mode3ServerTargetCount(this);
+                mSelectedRoomIndex_Server = std::clamp(mSelectedRoomIndex_Server, 0, std::max(0, targetCount - 1));
 
+                Sexy::Color oldColor = g->mColor;
+                const int officialRow0 = 0;
+                const int officialRow1 = 1;
+                const int y0 = kMode3ServerOfficialItemStartY;
+                const int y1 = kMode3ServerOfficialItemStartY + kMode3ServerTargetLineH;
+
+                TodDrawImageScaledF(g, addonImages.leaderboard_selector, 230, y0 - 25, 0.45, 0.45);
+                g->SetColor(mSelectedRoomIndex_Server == officialRow0 ? Sexy::Color(0, 205, 0, 255) : oldColor);
+                pvzstl::string fmt = TodStringTranslate("[OFFICIAL_SERVER_NAME]");
+                TodDrawString(g, StrFormat(fmt.c_str(), 1, kOfficialServer1Addr), 400, y0, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
+
+                TodDrawImageScaledF(g, addonImages.leaderboard_selector, 230, y1 - 25, 0.45, 0.45);
+                g->SetColor(mSelectedRoomIndex_Server == officialRow1 ? Sexy::Color(0, 205, 0, 255) : oldColor);
+                TodDrawString(g, StrFormat(fmt.c_str(), 2, kOfficialServer2Addr), 400, y1, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
+                pvzstl::string iFmt = TodStringTranslate("[CUSTOM_SERVER_NAME]");
+                TodDrawString(g, TodStringTranslate("[CUSTOM_SERVER_LIST]"), 400, kMode3ServerRecentTitleY, g->GetFont(), oldColor, DS_ALIGN_CENTER);
+                for (int i = 0; i < kMode3ServerRecentCount; ++i) {
+                    char recentAddr[kMode3ServerTargetMaxLen]{};
+                    const bool hasRecent = (mApp && mApp->mPlayerInfo) ? Mode3LoadRecentServer(mApp->mPlayerInfo, i, recentAddr) : false;
+                    pvzstl::string iCustomServerName = StrFormat(iFmt.c_str(), i + 1, (hasRecent ? recentAddr : TodStringTranslate("[CUSTOM_SERVER_EMPTY]").c_str()));
+
+                    const int rowY = kMode3ServerRecentItemStartY + i * kMode3ServerTargetLineH;
+                    const int rowIndex = 2 + i;
+                    TodDrawImageScaledF(g, addonImages.leaderboard_selector, 230, rowY - 25, 0.45, 0.45);
+                    g->SetColor(mSelectedRoomIndex_Server == rowIndex ? Sexy::Color(0, 205, 0, 255) : oldColor);
+                    TodDrawString(g, iCustomServerName, 400, rowY, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
+                }
+                g->SetColor(oldColor);
+            }
         } else {
             // hosting/joined 提示
             if (mServerHosting) {
@@ -888,7 +1148,7 @@ void WaitForSecondPlayerDialog::Update() {
         // 自动 Query：仅在“空闲态”每秒一次
         // 空闲态定义：已连接 && 未创建房间 && 未加入房间 && 未进入 relay
         mServerLastQueryTick++;
-        if (mServerConnected && !mServerGameStarting) {
+        if (mServerConnected && !mServerGameStarting && !mServerHosting && !mServerJoined && !mServerCreatePending) {
             if (mServerLastQueryTick >= 100) { // ~1秒
                 mServerLastQueryTick = 0;
                 ServerSendQuery();
@@ -1590,12 +1850,20 @@ void WaitForSecondPlayerDialog::ButtonDepress_Thunk(this ButtonListener &self, i
                     break;
                 case UIMode::MODE3_SERVER:
                     if (aDialog->mServerHosting) {
-                        // ✅ 开始游戏（只有 host 且有人加入时按钮才会启用）
                         aDialog->ServerSendStart();
                         return;
                     }
+                    if (aDialog->mServerConnecting) {
+                        aDialog->ServerDisconnect("user stop connect");
+                        aDialog->RefreshButtons();
+                        return;
+                    }
+                    if (aDialog->mServerConnected && !aDialog->mServerJoined) {
+                        aDialog->ServerDisconnect("user disconnect");
+                        aDialog->RefreshButtons();
+                        return;
+                    }
 
-                    // 未创建房间：连接服务器
                     aDialog->mInputPurpose = InputPurpose::SERVER_CONNECT_ADDR;
                     aDialog->ShowTextInput("[INPUT_TITLE_CONNECT_SERVER]", "[HINT_IP_PORT]");
                     return;
@@ -1647,11 +1915,17 @@ void WaitForSecondPlayerDialog::ButtonDepress_Thunk(this ButtonListener &self, i
                         return;
                     }
                     if (!aDialog->mServerConnected) {
+                        if (!aDialog->mServerConnecting && !aDialog->mServerHosting && !aDialog->mServerJoined) {
+                            Mode3ConnectSelectedTarget(aDialog);
+                            aDialog->RefreshButtons();
+                        }
                         return;
                     }
-                    if (aDialog->mServerJoined) {
+                    if (aDialog->mServerHosting) {
+                        aDialog->ServerSendKickGuest();
+                    } else if (aDialog->mServerJoined) {
                         aDialog->ServerSendLeaveRoom(); // LEAVE_ROOM(0x07)
-                    } else if (!aDialog->mServerHosting) {
+                    } else {
                         // 空闲态才能 join
                         aDialog->ServerSendJoinSelected(); // JOIN(0x03)
                     }
@@ -1797,6 +2071,8 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     mServerHostedRoomId = id;
                     mServerJoinedRoomId = 0;
                     mServerJoinedRoomName[0] = '\0';
+                    mServerRoomCount = 0;
+                    mSelectedRoomIndex_Server = 0;
                     gSecondPlayerName[0] = '\0';
                     if (mApp && mApp->mPlayerInfo && mApp->mPlayerInfo->mName) {
                         std::strncpy(mServerHostedRoomName, mApp->mPlayerInfo->mName, sizeof(mServerHostedRoomName) - 1);
@@ -1810,6 +2086,11 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             }
             case 0x82: { // ROOM_LIST
                 // payload: [count:1] + count*([roomId:4][flags:1][version:4][nameLen:1][nameBytes])
+                if (mServerHosting || mServerJoined || mServerCreatePending) {
+                    mServerRoomCount = 0;
+                    mSelectedRoomIndex_Server = 0;
+                    break;
+                }
                 mServerRoomCount = 0;
                 bool foundCurrentRoomProbe = false;
                 if (len < 1)
@@ -1933,6 +2214,18 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                         mServerHostHasGuest = false;
                         gSecondPlayerName[0] = '\0';
                         mServerStatusText = TodStringTranslate("[STATUS_GUEST_LEFT]");
+                    }
+                }
+                break;
+            }
+            case 0x8C: { // ROOM_PROBE_STATE
+                if (len >= 6) {
+                    int rid = homura::ReadBEI32(payload);
+                    bool hostReady = payload[4] != 0;
+                    bool guestReady = payload[5] != 0;
+                    if ((mServerHosting && rid == mServerHostedRoomId) || (mServerJoined && rid == mServerJoinedRoomId)) {
+                        mServerHostProbeDone = hostReady;
+                        mServerGuestProbeDone = guestReady;
                     }
                 }
                 break;
@@ -2740,6 +3033,8 @@ void WaitForSecondPlayerDialog::ServerSendCreate() {
     head[1] = (uint8_t)nlen; // nameLen
 
     mServerCreatePending = true;
+    mServerRoomCount = 0;
+    mSelectedRoomIndex_Server = 0;
     if (!SendAll(mServerSock, head, 2)) {
         mServerCreatePending = false;
         mServerStatusText = TodStringTranslate("[STATUS_SEND_CREATE_FAIL]");
@@ -2809,12 +3104,41 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
 void WaitForSecondPlayerDialog::ServerSelectRoomByMouse(int x, int y) {
     (void)x;
 
-    // 与 DrawServerRoomList 的 yPos 对齐
+    if (!mServerConnected) {
+        if (mServerConnecting || mServerHosting || mServerJoined) {
+            return;
+        }
+
+        int targetIndex = -1;
+        const int officialListY = kMode3ServerOfficialItemStartY - 24;
+        if (y >= officialListY && y < officialListY + 2 * kMode3ServerTargetLineH) {
+            targetIndex = (y - officialListY) / kMode3ServerTargetLineH;
+        } else {
+            const int recentListY = kMode3ServerRecentItemStartY - 24;
+            if (y >= recentListY && y < recentListY + kMode3ServerRecentCount * kMode3ServerTargetLineH) {
+                targetIndex = 2 + (y - recentListY) / kMode3ServerTargetLineH;
+            }
+        }
+        if (targetIndex < 0) {
+            return;
+        }
+        if (mSelectedRoomIndex_Server != targetIndex) {
+            mSelectedRoomIndex_Server = targetIndex;
+            mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+        }
+        return;
+    }
+
+    if (mServerHosting || mServerJoined) {
+        return;
+    }
+
     const int listY = kServerRoomListItemStartY - 30;
     const int lineH = kServerRoomListLineH;
 
-    if (mServerRoomCount <= 0)
+    if (mServerRoomCount <= 0) {
         return;
+    }
 
     if (y >= listY && y < listY + mServerRoomCount * lineH) {
         int idx = (y - listY) / lineH;
@@ -2884,6 +3208,17 @@ void WaitForSecondPlayerDialog::ServerSendLeaveRoom() {
     }
 }
 
+void WaitForSecondPlayerDialog::ServerSendKickGuest() {
+    // KICK_GUEST = 0x0C
+    if (!mServerHosting || !mServerHostHasGuest) {
+        return;
+    }
+    if (!ServerSendU8(0x0C)) {
+        mServerStatusText = "kick guest failed";
+        ServerDisconnect("kick send fail");
+    }
+}
+
 void WaitForSecondPlayerDialog::ServerSendStart() {
     // START = 0x05
     ServerResetP2PState(true);
@@ -2908,85 +3243,19 @@ bool WaitForSecondPlayerDialog::ServerConnectFromInput() {
     gHasInputContent.notify_one();
     LOG_DEBUG("input: '{}'", input);
 
-    const size_t colonPos = input.find(':');
-    if (colonPos == std::string::npos) {
+    std::string ip;
+    int port = 0;
+    if (!ParseMode3IpPort(input, ip, port)) {
         mServerStatusText = TodStringTranslate("[STATUS_ADDR_FORMAT_ERROR]");
         return false;
     }
 
-    const std::string portStr = homura::Trim(std::string_view{input}.substr(colonPos + 1));
-    const int port = std::atoi(portStr.c_str());
-    if (port < 1 || port > 65535) {
-        mServerStatusText = TodStringTranslate("[STATUS_PORT_ERROR]");
-        return false;
+    if (mApp && mApp->mPlayerInfo) {
+        const std::string normalizedAddr = ip + ":" + std::to_string(port);
+        Mode3RememberRecentServer(mApp->mPlayerInfo, normalizedAddr);
     }
 
-    const std::string ip = homura::Trim(std::string_view{input}.substr(0, colonPos));
-    in_addr addr{};
-    if (inet_pton(AF_INET, ip.c_str(), &addr) != 1) {
-        mServerStatusText = TodStringTranslate("[STATUS_IP_ERROR]");
-        return false;
-    }
-
-    // 如果之前连着，先断
-    if (mServerSock >= 0) {
-        ServerDisconnect("reconnect");
-    }
-
-    mServerIp[ip.copy(mServerIp, INET_ADDRSTRLEN - 1)] = '\0';
-    mServerPort = port;
-    LOG_DEBUG("target: {}:{}", &mServerIp[0], mServerPort);
-
-    // 建 socket + 非阻塞 connect
-    mServerSock = socket(AF_INET, SOCK_STREAM, 0);
-    if (mServerSock < 0) {
-        mServerStatusText = TodStringTranslate("[STATUS_SOCKET_FAIL]");
-        return false;
-    }
-
-    int one = 1;
-    setsockopt(mServerSock, IPPROTO_TCP, TCP_NODELAY, &one, sizeof(one));
-
-    int flags = fcntl(mServerSock, F_GETFL, 0);
-    fcntl(mServerSock, F_SETFL, flags | O_NONBLOCK);
-
-    sockaddr_in sa{
-        .sin_family = AF_INET,
-        .sin_port = htons(uint16_t(mServerPort)),
-    };
-    inet_pton(AF_INET, mServerIp, &sa.sin_addr);
-
-    int ret = connect(mServerSock, (sockaddr *)&sa, sizeof(sa));
-    int err = errno; // 立刻保存
-    LOG_DEBUG("[MODE3] connect ret={} errno={}", ret, err);
-    if (ret == 0) {
-        mServerConnecting = false;
-        mServerConnected = true;
-        mServerStatusText = TodStringTranslate("[STATUS_CONNECTED]");
-        ServerResetP2PState(false);
-        ServerOpenP2PListener();
-        if (mServerP2PListenSock >= 0) {
-            ServerSendNatPort();
-        }
-
-        // 刚连上先拉一次列表
-        mServerRoomCount = 0;
-        mSrvRecvLen = 0;
-        ServerSendQuery();
-        return true;
-    }
-
-    if (err == EINPROGRESS) {
-        mServerConnecting = true;
-        mServerConnected = false;
-        mServerStatusText = TodStringTranslate("[STATUS_CONNECTING]");
-        return true;
-    }
-
-    ServerDisconnect("connect fail");
-    pvzstl::string strFmt = TodStringTranslate("[STATUS_CONNECT_FAIL_ERRNO_FMT]");
-    mServerStatusText = StrFormat(strFmt.c_str(), std::strerror(err));
-    return false;
+    return Mode3ConnectToTarget(this, ip, port);
 }
 
 void WaitForSecondPlayerDialog::ServerDisconnect([[maybe_unused]] const char *why) {
@@ -3026,12 +3295,8 @@ void WaitForSecondPlayerDialog::Resize(int theX, int theY, int theWidth, int the
 
 
 void WaitForSecondPlayerDialog::MouseDown(int x, int y, int theClickCount) {
-    // MODE3：点选服务器房间
+    (void)theClickCount;
     if (mUIMode == UIMode::MODE3_SERVER) {
-        if (!mServerConnected)
-            return;
-        if (mServerHosting || mServerJoined)
-            return; // 在房间里不让选（你也可以允许）
         ServerSelectRoomByMouse(x, y);
         return;
     }

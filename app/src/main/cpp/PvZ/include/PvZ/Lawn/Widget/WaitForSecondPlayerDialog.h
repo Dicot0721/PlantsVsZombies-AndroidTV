@@ -156,6 +156,7 @@ public:
     void ServerSendJoinSelected();
     void ServerSendExitRoom();
     void ServerSendLeaveRoom();
+    void ServerSendKickGuest();
     void ServerSendStart(); // host start (optional)
     bool ServerSendNatPort();
     bool ServerSendP2PProbe();
