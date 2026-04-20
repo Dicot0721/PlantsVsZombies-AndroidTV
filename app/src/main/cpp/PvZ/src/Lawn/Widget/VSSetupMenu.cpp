@@ -439,7 +439,7 @@ size_t VSSetupMenu::getClientEventSize(EventType type) {
         case EVENT_CLIENT_SEEDCHOOSER_BUTTON_DEPRESS:
             return sizeof(U8_Event);
         case EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED:
-            return sizeof(U8U8_Event);
+            return sizeof(U8x3_Event);
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER:
             return sizeof(U16_Event);
         case EVENT_VSSETUPMENU_SET_CONTROLLER:
@@ -462,9 +462,10 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             mApp->mZombieChooserScreen->ButtonDepress_Origin(eventBtnDepress->data);
         } break;
         case EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED: {
-            auto *event1 = reinterpret_cast<U8U8_Event *>(event);
-            auto seedType = SeedType(event1->data1);
-            bool isZombieChooser = event1->data2;
+            auto *event1 = reinterpret_cast<U8x3_Event *>(event);
+            auto seedType = SeedType(event1->data[0]);
+            bool isZombieChooser = event1->data[1] != 0;
+            bool moveOnly = event1->data[2] != 0;
             SeedChooserScreen *seedChooser = (isZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
             if (seedChooser == nullptr) {
                 break;
@@ -498,17 +499,26 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
                 seedChooser->mSeedIndex1 = cursorSeedIndex;
             else
                 seedChooser->mSeedIndex2 = cursorSeedIndex;
+
+            if (gTcpClientSocket >= 0) {
+                U8x3_Event syncEvent = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, {event1->data[0], event1->data[1], event1->data[2]}};
+                netplay::PutEvent(syncEvent);
+            }
+
+            if (moveOnly) {
+                break;
+            }
+
+            if (seedChooser->SeedNotAllowedToPick(seedType) || seedChooser->SeedNotAllowedDuringTrial(seedType)) {
+                break;
+            }
+
             ChosenSeed &chosenSeed = seedChooser->mChosenSeeds[seedIndex];
             if (chosenSeed.mSeedState != ChosenSeedState::SEED_IN_CHOOSER) {
                 break;
             }
             chosenSeed.mSeedType = seedType;
             seedChooser->ClickedSeedInChooser_Orgin(chosenSeed, ownerPlayerIndex);
-
-            if (gTcpClientSocket >= 0) {
-                U8U8_Event syncEvent = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, uint8_t(seedType), uint8_t(isZombieChooser)};
-                netplay::PutEvent(syncEvent);
-            }
         } break;
         case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND: {
             U8_Event *event1 = (U8_Event *)event;
@@ -551,7 +561,7 @@ size_t VSSetupMenu::getServerEventSize(EventType type) {
         case EVENT_SERVER_SEEDCHOOSER_BUTTON_DEPRESS:
             return sizeof(U8_Event);
         case EVENT_SERVER_SEEDCHOOSER_SELECT_SEED:
-            return sizeof(U8U8_Event);
+            return sizeof(U8x3_Event);
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT:
             return sizeof(B1x8_Event);
         case EVENT_VSSETUPMENU_RANDOM_PICK:
@@ -592,9 +602,10 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             // GoToState(aState);
         } break;
         case EVENT_SERVER_SEEDCHOOSER_SELECT_SEED: {
-            auto *event1 = reinterpret_cast<U8U8_Event *>(event);
-            auto seedType = SeedType(event1->data1);
-            bool isZombieChooser = event1->data2;
+            auto *event1 = reinterpret_cast<U8x3_Event *>(event);
+            auto seedType = SeedType(event1->data[0]);
+            bool isZombieChooser = event1->data[1] != 0;
+            bool moveOnly = event1->data[2] != 0;
             SeedChooserScreen *seedChooser = (isZombieChooser ? mApp->mZombieChooserScreen : mApp->mSeedChooserScreen);
             if (seedChooser == nullptr) {
                 break;
@@ -628,6 +639,15 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
                 seedChooser->mSeedIndex1 = cursorSeedIndex;
             else
                 seedChooser->mSeedIndex2 = cursorSeedIndex;
+
+            if (moveOnly) {
+                break;
+            }
+
+            if (seedChooser->SeedNotAllowedToPick(seedType) || seedChooser->SeedNotAllowedDuringTrial(seedType)) {
+                break;
+            }
+
             ChosenSeed &chosenSeed = seedChooser->mChosenSeeds[seedIndex];
             if (chosenSeed.mSeedState != ChosenSeedState::SEED_IN_CHOOSER) {
                 break;

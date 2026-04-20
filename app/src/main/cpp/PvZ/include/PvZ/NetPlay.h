@@ -216,6 +216,10 @@ struct U8U8_Event : BaseEvent {
     uint8_t data2;
 };
 
+struct U8x3_Event : BaseEvent {
+    uint8_t data[3];
+};
+
 struct U8U8U16_Event : BaseEvent {
     uint8_t data1;
     uint8_t data2;

@@ -35,6 +35,9 @@ using namespace Sexy;
 
 namespace {
 SeedChooserScreen *gSeedChooserTouchOwner = nullptr;
+constexpr uint32_t kSeedChooserDragSyncIntervalMs = 50;
+SeedType gLastDragSyncSeedType[2][2] = {{SeedType::SEED_NONE, SeedType::SEED_NONE}, {SeedType::SEED_NONE, SeedType::SEED_NONE}};
+uint32_t gLastDragSyncTickMs[2][2] = {{0, 0}, {0, 0}};
 
 bool IsLocalChooserInputAllowed(SeedChooserScreen *screen) {
     if (!screen->mApp->IsVSMode()) {
@@ -359,16 +362,19 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
     selectedSeed.mSeedType = selectedSeedType;
 
     if (mApp->IsVSMode()) {
-        if (mSeedsInBank == mSeedBank1->mNumPackets || !CanPickNow()) {
-            return;
-        }
         if (gTcpConnected) {
-            U8U8_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED}, uint8_t(selectedSeedType), mIsZombieChooser};
+            // 客户端始终上报点击事件：即使选卡失败，也用于同步光标位置。
+            U8x3_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED}, {uint8_t(selectedSeedType), uint8_t(mIsZombieChooser), 0}};
             netplay::PutEvent(event);
             return;
         } else if (gTcpClientSocket >= 0) {
-            U8U8_Event event = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, uint8_t(selectedSeedType), mIsZombieChooser};
+            // 主机也广播该点击，远端可据此同步光标，再由主机权威决定是否入槽。
+            U8x3_Event event = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, {uint8_t(selectedSeedType), uint8_t(mIsZombieChooser), 0}};
             netplay::PutEvent(event);
+        }
+
+        if (mSeedsInBank == mSeedBank1->mNumPackets || !CanPickNow()) {
+            return;
         }
     }
 
@@ -592,6 +598,25 @@ void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int the
 
     // VS 模式回退到原始逻辑，避免破坏“选满自动开局”等原行为。
     if (mApp->IsVSMode()) {
+        if (theButton == GamepadButton::GAMEPAD_BUTTON_A && IsLocalChooserInputAllowed(this)) {
+            int playerIndex = mApp->GamepadToPlayerIndex(thePlayerIndex);
+            if (playerIndex < 0 || playerIndex > 1) {
+                playerIndex = mPlayerIndex;
+            }
+
+            int cursorX = (playerIndex == 0) ? mCursorPositionX1 : mCursorPositionX2;
+            int cursorY = (playerIndex == 0) ? mCursorPositionY1 : mCursorPositionY2;
+            SeedType aSeedType = SeedHitTest(cursorX, cursorY);
+            if (aSeedType != SeedType::SEED_NONE) {
+                if (gTcpConnected) {
+                    U8x3_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED}, {uint8_t(aSeedType), uint8_t(mIsZombieChooser), 1}};
+                    netplay::PutEvent(event);
+                } else if (gTcpClientSocket >= 0) {
+                    U8x3_Event event = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, {uint8_t(aSeedType), uint8_t(mIsZombieChooser), 1}};
+                    netplay::PutEvent(event);
+                }
+            }
+        }
         old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
         return;
     }
@@ -1265,6 +1290,36 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
         } else {
             GetSeedPositionInChooser(aSeedType, mCursorPositionX2, mCursorPositionY2);
             mSeedIndex2 = aSeedType;
+        }
+    }
+
+    if (mApp->IsVSMode() && IsLocalChooserInputAllowed(this)) {
+        int ownerPlayerIndex = mPlayerIndex;
+        if (ownerPlayerIndex < 0 || ownerPlayerIndex > 1) {
+            ownerPlayerIndex = 0;
+        }
+        int chooserIndex = mIsZombieChooser ? 1 : 0;
+        int cursorX = (ownerPlayerIndex == 0) ? mCursorPositionX1 : mCursorPositionX2;
+        int cursorY = (ownerPlayerIndex == 0) ? mCursorPositionY1 : mCursorPositionY2;
+        SeedType hoverSeedType = SeedHitTest(cursorX, cursorY);
+        if (hoverSeedType != SeedType::SEED_NONE) {
+            uint32_t nowMs = Sexy::GetTickCount();
+            bool sameSeed = (gLastDragSyncSeedType[chooserIndex][ownerPlayerIndex] == hoverSeedType);
+            uint32_t elapsedMs = nowMs - gLastDragSyncTickMs[chooserIndex][ownerPlayerIndex];
+            if (sameSeed && elapsedMs < kSeedChooserDragSyncIntervalMs) {
+                return;
+            }
+
+            // data2: bit0 = isZombieChooser, bit7 = moveOnly(sync cursor without picking)
+            if (gTcpConnected) {
+                U8x3_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED}, {uint8_t(hoverSeedType), uint8_t(mIsZombieChooser), 1}};
+                netplay::PutEvent(event);
+            } else if (gTcpClientSocket >= 0) {
+                U8x3_Event event = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, {uint8_t(hoverSeedType), uint8_t(mIsZombieChooser), 1}};
+                netplay::PutEvent(event);
+            }
+            gLastDragSyncSeedType[chooserIndex][ownerPlayerIndex] = hoverSeedType;
+            gLastDragSyncTickMs[chooserIndex][ownerPlayerIndex] = nowMs;
         }
     }
 }
