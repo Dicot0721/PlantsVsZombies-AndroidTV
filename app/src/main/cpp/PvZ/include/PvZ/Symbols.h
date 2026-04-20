@@ -496,6 +496,7 @@ inline void *Zombie_UpdateZombieBungeeAddr;
 inline void *Zombie_AnimateAddr;
 inline void *Zombie_FindCatapultTargetAddr;
 inline void *Zombie_ZombieCatapultFireAddr;
+inline void *Zombie_BungeeLandingAddr;
 
 
 inline void *SeedChooserScreen_UpdateAddr;

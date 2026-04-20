@@ -354,7 +354,6 @@ public:
     void DisplayAdviceAgain(const pvzstl::string &theAdvice, MessageStyle theMessageStyle, AdviceType theHelpIndex) {
         reinterpret_cast<void (*)(Board *, const pvzstl::string &, MessageStyle, AdviceType)>(Board_DisplayAdviceAgainAddr)(this, theAdvice, theMessageStyle, theHelpIndex);
     }
-
     Plant *NewPlant(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int thePlayerIndex) {
         return reinterpret_cast<Plant *(*)(Board *, int, int, SeedType, SeedType, int)>(Board_NewPlantAddr)(this, theGridX, theGridY, theSeedType, theImitaterType, thePlayerIndex);
     }
@@ -477,6 +476,9 @@ public:
     }
     void FreezeEffectsForCutscene(bool theFreeze) {
         reinterpret_cast<int (*)(Board *, bool)>(Board_FreezeEffectsForCutsceneAddr)(this, theFreeze);
+    }
+    Plant *FindUmbrellaPlant(int theGridX, int theGridY) {
+        return reinterpret_cast<Plant *(*)(Board *, int, int)>(Board_FindUmbrellaPlantAddr)(this, theGridX, theGridY);
     }
 
     Board(LawnApp *theApp) = delete;

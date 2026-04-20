@@ -449,6 +449,7 @@ public:
     void UpdateZombiePool();
     void DoSpecial();
     void UpdateZombieCatapult();
+    void BungeeLanding();
 
 protected:
     void _constructor() {

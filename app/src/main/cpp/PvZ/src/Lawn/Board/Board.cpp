@@ -1518,6 +1518,7 @@ size_t Board::getServerEventSize(EventType type) {
         case EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT:
         case EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK:
         case EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK_LADDER:
+        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_HIT_UMBRELLA:
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP:
             return sizeof(U16U16_Event);
 
@@ -1999,6 +2000,23 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             if (homura::FindInMap(serverZombieIDMap, serverDroppedZombieID, clientDroppedZombieID)) {
                 Zombie *droppedZombie = mZombies.DataArrayGet(clientDroppedZombieID);
                 aBungeeZombie->BungeeDropZombie_Origin(droppedZombie, gridX, gridY);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_HIT_UMBRELLA: {
+            auto *eventBungeeHitUmbrella = reinterpret_cast<U16U16_Event *>(event);
+            uint16_t serverZombieID = eventBungeeHitUmbrella->data1;
+            uint16_t serverPlantID = eventBungeeHitUmbrella->data2;
+            uint16_t clientZombieID;
+            uint16_t clientPlantID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID) && homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
+                mApp->PlaySample(*SOUND_BOING);
+                mApp->PlayFoley(FoleyType::FOLEY_UMBRELLA);
+                aPlant->DoSpecial();
+                aZombie->mZombiePhase = ZombiePhase::PHASE_BUNGEE_RISING;
+                aZombie->mRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 1);
+                aZombie->mHitUmbrella = true;
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT: {

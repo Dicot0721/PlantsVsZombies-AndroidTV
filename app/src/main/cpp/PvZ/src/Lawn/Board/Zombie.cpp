@@ -3697,6 +3697,64 @@ void Zombie::DoSpecial() {
     }
 }
 
+void Zombie::BungeeLanding() {
+    if (mZombiePhase == ZombiePhase::PHASE_BUNGEE_DIVING && mAltitude < 1500.0f && !mApp->IsFinalBossLevel()) {
+        mApp->PlayFoley(FoleyType::FOLEY_BUNGEE_SCREAM);
+        mZombiePhase = ZombiePhase::PHASE_BUNGEE_DIVING_SCREAMING;
+    }
+
+    if (mAltitude > 40.0f)
+        return;
+
+    Plant *aPlant = mBoard->FindUmbrellaPlant(mTargetCol, mRow);
+    if (aPlant) {
+        if (mApp->IsVSMode()) {
+            if (gTcpConnected)
+                return;
+
+            if (gTcpClientSocket >= 0) {
+                U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_HIT_UMBRELLA}, uint16_t(mBoard->mZombies.DataArrayGetID(this)), uint16_t(mBoard->mPlants.DataArrayGetID(aPlant))};
+                netplay::PutEvent(event);
+            }
+        }
+
+        mApp->PlaySample(*SOUND_BOING);
+        mApp->PlayFoley(FoleyType::FOLEY_UMBRELLA);
+
+        aPlant->DoSpecial();
+
+        mZombiePhase = ZombiePhase::PHASE_BUNGEE_RISING;
+        mRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 1);
+        mHitUmbrella = true;
+
+        return;
+    }
+
+    //    伪C代码，无用法故注释
+    //    mBoard->GetTopPlantAt(mTargetCol, mRow, PlantPriority::TOPPLANT_BUNGEE_ORDER);
+
+    if (mAltitude > 0.0f)
+        return;
+
+    mAltitude = 0.0f;
+    Zombie *aZombie = mBoard->ZombieTryToGet(mRelatedZombieID);
+    if (aZombie) // 存在关联的僵尸时，释放空投的僵尸
+    {
+        aZombie->mZombieHeight = ZombieHeight::HEIGHT_ZOMBIE_NORMAL;
+        aZombie->StartWalkAnim(0);
+
+        mRelatedZombieID = ZombieID::ZOMBIEID_NULL;
+        mZombiePhase = ZombiePhase::PHASE_BUNGEE_RISING;
+        PlayZombieReanim("anim_raise", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 36.0f);
+    } else // 不存在关联的僵尸时，开始偷取植物
+    {
+        mZombiePhase = ZombiePhase::PHASE_BUNGEE_AT_BOTTOM;
+        mPhaseCounter = 300;
+        PlayZombieReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 5, 24.0f);
+        mApp->ReanimationGet(mBodyReanimID)->mAnimTime = 0.5f;
+    }
+}
+
 
 void Zombie::UpdateZombieCatapult() {
     if (mZombiePhase == PHASE_CATAPULT_LAUNCHING) {
