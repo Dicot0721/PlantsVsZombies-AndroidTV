@@ -3460,7 +3460,9 @@ void Zombie::SummonBackupDancers() {
         for (int i = 0; i < NUM_BACKUP_DANCERS; i++) {
             event.data3[i] = uint16_t(mFollowerZombieID[i]);
             Zombie *aZombie = mBoard->ZombieTryToGet(mFollowerZombieID[i]);
-            event.data4[i].f32 = aZombie->mVelX;
+            if (aZombie) {
+                event.data4[i].f32 = aZombie->mVelX;
+            }
         }
         netplay::PutEvent(event);
     }
