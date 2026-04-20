@@ -2794,8 +2794,7 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
         pvzstl::string probeTag = TodStringTranslate(r.hostProbeDone ? "[P2P_READY]" : "[P2P_NOT_READY]");
         tag = tag.empty() ? probeTag : tag + " " + probeTag;
         if (versionMismatch) {
-            pvzstl::string verErr = TodStringTranslate("[SERVER_ROOM_VERSION_ERROR]");
-            tag = tag.empty() ? verErr : tag + " " + verErr;
+            tag = TodStringTranslate("[SERVER_ROOM_VERSION_ERROR]");
         }
 
         pvzstl::string roomTitle = StrFormat(TodStringTranslate("[SERVER_ROOM_JOINED]").c_str(), r.name);
