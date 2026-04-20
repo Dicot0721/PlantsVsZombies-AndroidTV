@@ -683,6 +683,9 @@ inline void *Plant_BlowAwayFliersAddr;
 inline void *Plant_UpdateChomperAddr;
 inline void *Plant_UpdateSquashAddr;
 inline void *Plant_IsUpgradableToAddr;
+inline void *Plant_MagnetShroomAttactItemAddr;
+inline void *Plant_GetFreeMagnetItemAddr;
+inline void *Plant_UpdateMagnetShroomAddr;
 
 
 inline void *Projectile_UpdateAddr;

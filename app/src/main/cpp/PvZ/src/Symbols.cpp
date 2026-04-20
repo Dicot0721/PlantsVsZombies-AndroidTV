@@ -680,6 +680,9 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_ZN5Plant13UpdateChomperEv", Plant_UpdateChomperAddr);
     libGameMain.GetSymbol("_ZN5Plant12UpdateSquashEv", Plant_UpdateSquashAddr);
     libGameMain.GetSymbol("_ZN5Plant14IsUpgradableToE8SeedType", Plant_IsUpgradableToAddr);
+    libGameMain.GetSymbol("_ZN5Plant22MagnetShroomAttactItemEP6Zombie", Plant_MagnetShroomAttactItemAddr);
+    libGameMain.GetSymbol("_ZN5Plant17GetFreeMagnetItemEv", Plant_GetFreeMagnetItemAddr);
+    libGameMain.GetSymbol("_ZN5Plant18UpdateMagnetShroomEv", Plant_UpdateMagnetShroomAddr);
 
 
     libGameMain.GetSymbol("_ZN10Projectile6UpdateEv", Projectile_UpdateAddr);

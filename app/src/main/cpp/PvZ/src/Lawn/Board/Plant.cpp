@@ -2224,6 +2224,149 @@ void Plant::UpdateChomper() {
     }
 }
 
+void Plant::UpdateMagnetShroom() {
+    for (int i = 0; i < MAX_MAGNET_ITEMS; i++) {
+        MagnetItem *aMagnetItem = &mMagnetItems[i];
+        if (aMagnetItem->mItemType != MagnetItemType::MAGNET_ITEM_NONE) {
+            SexyVector2 aVectorToPlant(mX + aMagnetItem->mDestOffsetX - aMagnetItem->mPosX, mY + aMagnetItem->mDestOffsetY - aMagnetItem->mPosY);
+            if (aVectorToPlant.Magnitude() > 20.0f) {
+                aMagnetItem->mPosX += aVectorToPlant.x * 0.05f;
+                aMagnetItem->mPosY += aVectorToPlant.y * 0.05f;
+            }
+        }
+    }
+
+    if (mState == PlantState::STATE_MAGNETSHROOM_CHARGING) {
+        if (mStateCountdown == 0) {
+            mState = PlantState::STATE_READY;
+
+            float aAnimRate = RandRangeFloat(10.0f, 15.0f);
+            PlayBodyReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 30, aAnimRate);
+            if (mApp->IsIZombieLevel()) {
+                Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+                aBodyReanim->SetAnimRate(0.0f);
+            }
+
+            mMagnetItems[0].mItemType = MagnetItemType::MAGNET_ITEM_NONE;
+        }
+    } else if (mState == PlantState::STATE_MAGNETSHROOM_SUCKING) {
+        Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (aBodyReanim->mLoopCount > 0) {
+            PlayBodyReanim("anim_nonactive_idle2", ReanimLoopType::REANIM_LOOP, 20, 2.0f);
+            if (mApp->IsIZombieLevel()) {
+                aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+                aBodyReanim->mAnimRate = 0.0f;
+            }
+
+            mState = PlantState::STATE_MAGNETSHROOM_CHARGING;
+        }
+    } else {
+        float aClosestDistance = 0.0f;
+        Zombie *aClosestZombie = nullptr;
+
+        Zombie *aZombie = nullptr;
+        while (mBoard->IterateZombies(aZombie)) {
+            int aDiffY = aZombie->mRow - mRow;
+            Rect aZombieRect = aZombie->GetZombieRect();
+
+            if (aZombie->mMindControlled)
+                continue;
+
+            if (!aZombie->mHasHead)
+                continue;
+
+            if (aZombie->mZombieHeight != ZombieHeight::HEIGHT_ZOMBIE_NORMAL || aZombie->mZombiePhase == ZombiePhase::PHASE_RISING_FROM_GRAVE)
+                continue;
+
+            if (aZombie->IsDeadOrDying())
+                continue;
+
+            if (aZombieRect.mX > BOARD_WIDTH || aDiffY > 2 || aDiffY < -2)
+                continue;
+
+            if (aZombie->mZombiePhase == ZombiePhase::PHASE_DIGGER_TUNNELING || aZombie->mZombiePhase == ZombiePhase::PHASE_DIGGER_STUNNED || aZombie->mZombiePhase == ZombiePhase::PHASE_DIGGER_WALKING
+                || aZombie->mZombieType == ZombieType::ZOMBIE_POGO) {
+                if (!aZombie->mHasObject)
+                    continue;
+            } else if (!(aZombie->mHelmType == HelmType::HELMTYPE_PAIL || aZombie->mHelmType == HelmType::HELMTYPE_FOOTBALL || aZombie->mShieldType == ShieldType::SHIELDTYPE_DOOR
+                         || aZombie->mShieldType == ShieldType::SHIELDTYPE_LADDER || aZombie->mShieldType == ShieldType::SHIELDTYPE_TRASHCAN
+                         || aZombie->mZombiePhase == ZombiePhase::PHASE_JACK_IN_THE_BOX_RUNNING))
+                continue;
+
+            int aRadius = aZombie->mIsEating ? 320 : 270;
+            if (GetCircleRectOverlap(mX, mY + 20, aRadius, aZombieRect)) {
+                float aDistance = Distance2D(mX, mY, aZombieRect.mX, aZombieRect.mY);
+                aDistance += abs(aDiffY) * 80.0f;
+
+                if (aClosestZombie == nullptr || aDistance < aClosestDistance) {
+                    aClosestZombie = aZombie;
+                    aClosestDistance = aDistance;
+                }
+            }
+        }
+
+        if (aClosestZombie) {
+            if (gTcpConnected)
+                return;
+
+            if (gTcpClientSocket >= 0) {
+                U16U16_Event event = {
+                    {EventType::EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mBoard->mZombies.DataArrayGetID(aClosestZombie))};
+                netplay::PutEvent(event);
+            }
+
+            MagnetShroomAttactItem(aClosestZombie);
+            return;
+        }
+
+        ////////////////////
+
+        float aClosestLadderDist = 0.0f;
+        GridItem *aClosestLadder = nullptr;
+
+        GridItem *aGridItem = nullptr;
+        while (mBoard->IterateGridItems(aGridItem)) {
+            if (aGridItem->mGridItemType == GridItemType::GRIDITEM_LADDER) {
+                int aDiffX = abs(aGridItem->mGridX - mPlantCol);
+                int aDiffY = abs(aGridItem->mGridY - mRow);
+                int aSquareDistance = std::max(aDiffX, aDiffY);
+                if (aSquareDistance <= 2) {
+                    float aDistance = aSquareDistance + aDiffY * 0.05f;
+                    if (aClosestLadder == nullptr || aDistance < aClosestLadderDist) {
+                        aClosestLadder = aGridItem;
+                        aClosestLadderDist = aDistance;
+                    }
+                }
+            }
+        }
+
+        if (aClosestLadder) {
+            if (gTcpConnected)
+                return;
+
+            if (gTcpClientSocket >= 0) {
+                U16U16_Event event = {
+                    {EventType::EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK_LADDER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mBoard->mGridItems.DataArrayGetID(aClosestLadder))};
+                netplay::PutEvent(event);
+            }
+
+            mState = PlantState::STATE_MAGNETSHROOM_SUCKING;
+            mStateCountdown = 1500;
+            PlayBodyReanim("anim_shooting", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 12.0f);
+            mApp->PlayFoley(FoleyType::FOLEY_MAGNETSHROOM);
+
+            aClosestLadder->GridItemDie();
+
+            MagnetItem *aMagnetItem = GetFreeMagnetItem();
+            aMagnetItem->mPosX = mBoard->GridToPixelX(aClosestLadder->mGridX, aClosestLadder->mGridY) + 40;
+            aMagnetItem->mPosY = mBoard->GridToPixelY(aClosestLadder->mGridX, aClosestLadder->mGridY);
+            aMagnetItem->mDestOffsetX = RandRangeFloat(-10.0f, 10.0f) + 10.0f;
+            aMagnetItem->mDestOffsetY = RandRangeFloat(-10.0f, 10.0f);
+            aMagnetItem->mItemType = MagnetItemType::MAGNET_ITEM_LADDER_PLACED;
+        }
+    }
+}
+
 void Plant::UpdateSquash() {
     old_Plant_UpdateSquash(this);
 

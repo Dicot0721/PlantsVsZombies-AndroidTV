@@ -251,6 +251,12 @@ public:
     bool IsUpgradableTo(SeedType theUpgradedType) {
         return reinterpret_cast<bool (*)(Plant *, SeedType)>(Plant_IsUpgradableToAddr)(this, theUpgradedType);
     }
+    void MagnetShroomAttactItem(Zombie *theZombie) {
+        reinterpret_cast<void (*)(Plant *, Zombie *)>(Plant_MagnetShroomAttactItemAddr)(this, theZombie);
+    }
+    MagnetItem *GetFreeMagnetItem() {
+        return reinterpret_cast<MagnetItem *(*)(Plant *)>(Plant_GetFreeMagnetItemAddr)(this);
+    }
 
     void PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, SeedType theImitaterType, int a6);
     void Update();
@@ -301,6 +307,7 @@ public:
     void SyncAnimationToClient();
     void SyncPingPongAnimationToClient();
     void UpdateChomper();
+    void UpdateMagnetShroom();
     void UpdateSquash();
 };
 

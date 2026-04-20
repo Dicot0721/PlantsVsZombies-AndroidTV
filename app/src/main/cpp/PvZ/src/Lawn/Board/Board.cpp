@@ -1516,6 +1516,8 @@ size_t Board::getServerEventSize(EventType type) {
 
         // --- 大嘴花吞咬、僵尸冻结、巨人投掷小鬼、僵尸状态计数 ---
         case EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT:
+        case EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK:
+        case EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK_LADDER:
         case EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP:
             return sizeof(U16U16_Event);
 
@@ -1865,6 +1867,43 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 aZombie->DieWithLoot();
                 aPlant->mState = PlantState::STATE_CHOMPER_BITING_GOT_ONE;
+            }
+        } break;
+        case EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK: {
+            auto *eventMagnetshroomAttack = reinterpret_cast<U16U16_Event *>(event);
+            uint16_t serverPlantID = eventMagnetshroomAttack->data1;
+            uint16_t serverZombieID = eventMagnetshroomAttack->data2;
+            uint16_t clientPlantID;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID) && homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                aPlant->MagnetShroomAttactItem(aZombie);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK_LADDER: {
+            auto *eventMagnetshroomAttackLadder = reinterpret_cast<U16U16_Event *>(event);
+            uint16_t serverPlantID = eventMagnetshroomAttackLadder->data1;
+            uint16_t serverGridItemID = eventMagnetshroomAttackLadder->data2;
+            uint16_t clientPlantID;
+            uint16_t clientGridItemID;
+            if (homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID) && homura::FindInMap(serverGridItemIDMap, serverGridItemID, clientGridItemID)) {
+                Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
+                GridItem *aGridItem = mGridItems.DataArrayGet(clientGridItemID);
+
+                aPlant->mState = PlantState::STATE_MAGNETSHROOM_SUCKING;
+                aPlant->mStateCountdown = 1500;
+                aPlant->PlayBodyReanim("anim_shooting", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 12.0f);
+                aPlant->mApp->PlayFoley(FoleyType::FOLEY_MAGNETSHROOM);
+
+                aGridItem->GridItemDie();
+
+                MagnetItem *aMagnetItem = aPlant->GetFreeMagnetItem();
+                aMagnetItem->mPosX = aPlant->mBoard->GridToPixelX(aGridItem->mGridX, aGridItem->mGridY) + 40;
+                aMagnetItem->mPosY = aPlant->mBoard->GridToPixelY(aGridItem->mGridX, aGridItem->mGridY);
+                aMagnetItem->mDestOffsetX = RandRangeFloat(-10.0f, 10.0f) + 10.0f;
+                aMagnetItem->mDestOffsetY = RandRangeFloat(-10.0f, 10.0f);
+                aMagnetItem->mItemType = MagnetItemType::MAGNET_ITEM_LADDER_PLACED;
             }
         } break;
         case EVENT_SERVER_BOARD_PLANT_WIN: {
