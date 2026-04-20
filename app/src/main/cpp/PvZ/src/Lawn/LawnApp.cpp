@@ -319,7 +319,7 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
             if (clientRecvBuffer.size() - offset < eventSize)
                 break; // 不完整
             auto *eventPing = reinterpret_cast<U16_Event *>(base);
-            U16_Event eventPong = {{EVENT_SERVER_PONG}, reinterpret_cast<U16_Event *>(base)->data};
+            U16_Event eventPong = {{EVENT_SERVER_PONG}, eventPing->data};
             netplay::PutEvent(eventPong);
 
             offset += eventSize;

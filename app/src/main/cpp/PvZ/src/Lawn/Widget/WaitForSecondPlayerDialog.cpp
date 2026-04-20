@@ -55,16 +55,14 @@ constexpr int kServerRoomListTitleY = 200;
 constexpr int kServerRoomListItemStartY = 200;
 constexpr int kServerRoomListLineH = 45;
 constexpr int kServerP2PConnectRetryTicks = 8;
-constexpr int kMode3ServerOfficialTitleY = 150;
+[[maybe_unused]] constexpr int kMode3ServerOfficialTitleY = 150;
 constexpr int kMode3ServerOfficialItemStartY = 190;
 constexpr int kMode3ServerRecentTitleY = 266;
 constexpr int kMode3ServerRecentItemStartY = 304;
 constexpr int kMode3ServerTargetLineH = 38;
 constexpr int kMode3ServerTargetMaxLen = 22; // "255.255.255.255:65535" + '\0'
 constexpr int kMode3ServerRecentCount = 3;
-constexpr const char *kOfficialServer1Name = "官方1服";
 constexpr const char *kOfficialServer1Addr = "8.163.89.131:6667";
-constexpr const char *kOfficialServer2Name = "官方2服";
 constexpr const char *kOfficialServer2Addr = "39.107.81.44:6667";
 
 static void CloseSocketFd(int &fd, bool do_shutdown = true) {
