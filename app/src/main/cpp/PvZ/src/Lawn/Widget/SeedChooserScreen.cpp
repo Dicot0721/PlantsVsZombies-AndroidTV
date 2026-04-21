@@ -445,8 +445,6 @@ void SeedChooserScreen::ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, in
                 mBannedSeed[aSeedBanned].mX = theChosenSeed.mX;
                 mBannedSeed[aSeedBanned].mY = theChosenSeed.mY;
                 mBannedSeed[aSeedBanned].mSeedState = BannedSeedState::SEED_BANNED; // 将被选卡设为禁用状态
-                                                                                    //                if (mIsZombieChooser)
-                                                                                    //                    mBannedSeed[aSeedBanned].mChosenPlayerIndex = 1;
 
                 mSeedsInBanned++; // 已禁用卡片数量 + 1
                 if (!mIsZombieChooser) {
@@ -457,7 +455,7 @@ void SeedChooserScreen::ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, in
                     }
                 }
 
-                mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
+                mApp->PlayFoley(FoleyType::FOLEY_FLOOP);
                 OnPlayerPickedSeed(aGamepadIndex);
             }
             return;
@@ -1817,7 +1815,6 @@ void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
 
     for (auto &aBannedSeed : mBannedSeed) {
         if (aBannedSeed.mSeedState == BannedSeedState::SEED_BANNED) {
-            //            if (aBannedSeed.mChosenPlayerIndex == (mIsZombieChooser ? 1 : 0)) {
             int x = aBannedSeed.mX;
             int y = aBannedSeed.mY;
             if (mIsZombieChooser) {
@@ -1831,7 +1828,6 @@ void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
                 }
             }
             g->DrawImage(*IMAGE_MP_TARGETS_X, x + 5, y + 5);
-            //            }
         }
     }
 }

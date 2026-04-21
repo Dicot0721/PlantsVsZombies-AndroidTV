@@ -67,7 +67,6 @@ class BannedSeed {
 public:
     int mX = 0;
     int mY = 0;
-    int mChosenPlayerIndex = 0;
     SeedType mSeedType = SEED_NONE;
     BannedSeedState mSeedState = SEED_NOT_BANNED;
 };
