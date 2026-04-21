@@ -23,6 +23,7 @@
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
+#include "PvZ/SexyAppFramework/Widget/CheckboxListener.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 
 constexpr int VS_ADDON_BUTTON_X = 800;
@@ -30,21 +31,13 @@ constexpr int VS_BUTTON_EXTRA_PACKETS_Y = 200;
 constexpr int VS_BUTTON_EXTRA_SEEDS_Y = 240;
 constexpr int VS_BUTTON_BAN_MODE_Y = 280;
 constexpr int VS_BUTTON_BALANCE_PATCH_Y = 320;
-constexpr int VS_BUTTON_SHUFFLE_MODE_Y = 360;
-
-enum VSSetupAddonButton {
-    VS_SETUP_ADDON_BUTTON_EXTRA_PACKETS,
-    VS_SETUP_ADDON_BUTTON_EXTRA_SEEDS,
-    VS_SETUP_ADDON_BUTTON_BAN_MODE,
-    VS_SETUP_ADDON_BUTTON_BALANCE_PATCH,
-    NUM_VS_SETUP_ADDON_BUTTON,
-};
 
 namespace Sexy {
 class ButtonWidget;
-}
+class Widget;
+} // namespace Sexy
 
-class VSSetupAddonWidget {
+class VSSetupAddonWidget : public Sexy::CheckboxListener {
 public:
     enum {
         VSSetupAddonWidget_ExtraPackets = 12,
@@ -59,11 +52,10 @@ public:
     Board *mBoard = mApp->mBoard;
     Sexy::ButtonListener *mButtonListener;
     NewLawnButton *mBackButton = nullptr;
-    NewLawnButton *mExtraPacketsButton = nullptr;
-    NewLawnButton *mExtraSeedsButton = nullptr;
-    NewLawnButton *mBanModeButton = nullptr;
-    NewLawnButton *mBalancePatchButton = nullptr;
-    Sexy::Image *mButtonImage[NUM_VS_SETUP_ADDON_BUTTON] = {nullptr};
+    Sexy::Checkbox *mExtraPacketsCheckbox = nullptr;
+    Sexy::Checkbox *mExtraSeedsCheckbox = nullptr;
+    Sexy::Checkbox *mBanModeCheckbox = nullptr;
+    Sexy::Checkbox *mBalancePatchCheckbox = nullptr;
     bool mExtraPacketsMode = false;
     bool mExtraSeedsMode = false;
     bool mBanMode = false;
@@ -72,8 +64,7 @@ public:
 
     VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu);
     ~VSSetupAddonWidget();
-    void Update();
-    void SetDisable(Sexy::ButtonWidget *theButton);
+    void SetDisable(Sexy::Widget *theWidget);
     void ButtonDepress(this VSSetupAddonWidget &self, int theId);
     void CheckboxChecked(int theId, bool checked);
     void Draw(Sexy::Graphics *g);

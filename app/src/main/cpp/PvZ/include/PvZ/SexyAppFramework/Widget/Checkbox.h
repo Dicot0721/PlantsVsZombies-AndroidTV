@@ -42,9 +42,12 @@ public:
     // 大小97个整数
 
     Checkbox() = delete;
-
     ~Checkbox() {
         _destructor();
+    }
+
+    void SetChecked(bool checked, bool tellListener = true) {
+        reinterpret_cast<void (*)(Checkbox *, bool, bool)>(Sexy_Checkbox_SetCheckedAddr)(this, checked, tellListener);
     }
 
 protected:

@@ -18,46 +18,19 @@
  */
 
 #include "PvZ/Lawn/Widget/VSSetupAddonWidget.h"
+#include "Homura/MemberUtils.h"
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/Board/SeedPacket.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
+#include "PvZ/SexyAppFramework/Widget/Checkbox.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
 using namespace Sexy;
 
 VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     mButtonListener = theVSSetupMenu;
-
-    mExtraPacketsMode = mApp->mPlayerInfo->mVSExtraPacketsMode;
-    mExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
-    mBanMode = mApp->mPlayerInfo->mVSBanMode;
-    mBalancePatchMode = mApp->mPlayerInfo->mVSBalancePatchMode;
-
-    Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
-    Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
-    mExtraPacketsButton = MakeNewButton(VSSetupAddonWidget_ExtraPackets, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
-    mExtraSeedsButton = MakeNewButton(VSSetupAddonWidget_ExtraSeeds, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
-    mBanModeButton = MakeNewButton(VSSetupAddonWidget_BanMode, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
-    mBalancePatchButton = MakeNewButton(VSSetupAddonWidget_BalancePatch, mButtonListener, theVSSetupMenu, "", nullptr, aCheckbox, aCheckboxPressed, aCheckboxPressed);
-
-    mExtraPacketsButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTRA_PACKETS_Y, 175, 50);
-    mExtraSeedsButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTRA_SEEDS_Y, 175, 50);
-    mBanModeButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
-    mBalancePatchButton->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BALANCE_PATCH_Y, 175, 50);
-
-    mBoard->AddWidget(mBalancePatchButton);
-    mBoard->AddWidget(mExtraPacketsButton);
-    mBoard->AddWidget(mExtraSeedsButton);
-    mBoard->AddWidget(mBanModeButton);
-
-    if (gIsVSShuffleMode) {
-        SetDisable(mExtraPacketsButton);
-        SetDisable(mExtraSeedsButton);
-        SetDisable(mBanModeButton);
-        mBanMode = false;
-    }
 
     mBackButton = MakeNewButton(VSSetupAddonWidget::VSSetupAddonWidget_Back,
                                 mButtonListener,
@@ -75,68 +48,80 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     (*mBackButton->mColors)[ButtonWidget::COLOR_LABEL] = Color(0, 205, 0);
     mBackButton->Resize(800, 520, 160, 50);
     mBoard->AddWidget(mBackButton);
+
+    mExtraPacketsMode = mApp->mPlayerInfo->mVSExtraPacketsMode;
+    mExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
+    mBanMode = mApp->mPlayerInfo->mVSBanMode;
+    mBalancePatchMode = mApp->mPlayerInfo->mVSBalancePatchMode;
+
+    mExtraPacketsCheckbox = MakeNewCheckbox(VSSetupAddonWidget_ExtraPackets, this, theVSSetupMenu, mExtraPacketsMode);
+    mExtraSeedsCheckbox = MakeNewCheckbox(VSSetupAddonWidget_ExtraSeeds, this, theVSSetupMenu, mExtraSeedsMode);
+    mBanModeCheckbox = MakeNewCheckbox(VSSetupAddonWidget_BanMode, this, theVSSetupMenu, mBanMode);
+    mBalancePatchCheckbox = MakeNewCheckbox(VSSetupAddonWidget_BalancePatch, this, theVSSetupMenu, mBalancePatchMode);
+
+    mBoard->AddWidget(mExtraPacketsCheckbox);
+    mBoard->AddWidget(mExtraSeedsCheckbox);
+    mBoard->AddWidget(mBanModeCheckbox);
+    mBoard->AddWidget(mBalancePatchCheckbox);
+
+    mExtraPacketsCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTRA_PACKETS_Y, 175, 50);
+    mExtraSeedsCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTRA_SEEDS_Y, 175, 50);
+    mBanModeCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
+    mBalancePatchCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BALANCE_PATCH_Y, 175, 50);
+
+    if (gIsVSShuffleMode) {
+        SetDisable(mExtraPacketsCheckbox);
+        SetDisable(mExtraSeedsCheckbox);
+        SetDisable(mBanModeCheckbox);
+        mBanMode = false;
+        mBanModeCheckbox->SetChecked(false, false);
+    }
 }
 
 VSSetupAddonWidget::~VSSetupAddonWidget() {
-    delete mBackButton;
-    delete mExtraPacketsButton;
-    delete mExtraSeedsButton;
-    delete mBanModeButton;
-    delete mBalancePatchButton;
-
     if (mBoard) {
-        mBoard->RemoveWidget(mBackButton);
+        if (mBackButton) {
+            mBoard->RemoveWidget(mBackButton);
+        }
+        if (mExtraPacketsCheckbox) {
+            mBoard->RemoveWidget(mExtraPacketsCheckbox);
+        }
+        if (mExtraSeedsCheckbox) {
+            mBoard->RemoveWidget(mExtraSeedsCheckbox);
+        }
+        if (mBanModeCheckbox) {
+            mBoard->RemoveWidget(mBanModeCheckbox);
+        }
+        if (mBalancePatchCheckbox) {
+            mBoard->RemoveWidget(mBalancePatchCheckbox);
+        }
+    }
 
-        if (mExtraPacketsButton) {
-            mBoard->RemoveWidget(mExtraPacketsButton);
-        }
-        if (mExtraSeedsButton) {
-            mBoard->RemoveWidget(mExtraSeedsButton);
-        }
-        if (mBanModeButton) {
-            mBoard->RemoveWidget(mBanModeButton);
-        }
-        if (mBalancePatchButton) {
-            mBoard->RemoveWidget(mBalancePatchButton);
-        }
+    delete mBackButton;
+    if (mExtraPacketsCheckbox) {
+        homura::CallVirtualFunc<Sexy::Widget, 1, void>(static_cast<Sexy::Widget *>(mExtraPacketsCheckbox));
+        mExtraPacketsCheckbox = nullptr;
+    }
+    if (mExtraSeedsCheckbox) {
+        homura::CallVirtualFunc<Sexy::Widget, 1, void>(static_cast<Sexy::Widget *>(mExtraSeedsCheckbox));
+        mExtraSeedsCheckbox = nullptr;
+    }
+    if (mBanModeCheckbox) {
+        homura::CallVirtualFunc<Sexy::Widget, 1, void>(static_cast<Sexy::Widget *>(mBanModeCheckbox));
+        mBanModeCheckbox = nullptr;
+    }
+    if (mBalancePatchCheckbox) {
+        homura::CallVirtualFunc<Sexy::Widget, 1, void>(static_cast<Sexy::Widget *>(mBalancePatchCheckbox));
+        mBalancePatchCheckbox = nullptr;
     }
 }
 
-void VSSetupAddonWidget::Update() {
-    Image *aCheckbox = *Sexy_IMAGE_OPTIONS_CHECKBOX0_Addr;
-    Image *aCheckboxPressed = *Sexy_IMAGE_OPTIONS_CHECKBOX1_Addr;
-    Image *a7PacketsImage = mExtraPacketsMode ? aCheckboxPressed : aCheckbox;
-    Image *aExtraSeedsImage = mExtraSeedsMode ? aCheckboxPressed : aCheckbox;
-    Image *aBanModeImage = mBanMode ? aCheckboxPressed : aCheckbox;
-    Image *aBalancePatchImage = mBalancePatchMode ? aCheckboxPressed : aCheckbox;
-    if (mButtonImage[VS_SETUP_ADDON_BUTTON_EXTRA_PACKETS] != a7PacketsImage)
-        mExtraPacketsButton->mButtonImage = a7PacketsImage;
-    if (mButtonImage[VS_SETUP_ADDON_BUTTON_EXTRA_SEEDS] != aExtraSeedsImage)
-        mExtraSeedsButton->mButtonImage = aExtraSeedsImage;
-    if (mButtonImage[VS_SETUP_ADDON_BUTTON_BAN_MODE] != aBanModeImage)
-        mBanModeButton->mButtonImage = aBanModeImage;
-    if (mButtonImage[VS_SETUP_ADDON_BUTTON_BALANCE_PATCH] != aBalancePatchImage)
-        mBalancePatchButton->mButtonImage = aBalancePatchImage;
-}
-
-void VSSetupAddonWidget::SetDisable(Sexy::ButtonWidget *theButton) {
-    theButton->mBtnNoDraw = true;
-    theButton->mDisabled = true;
+void VSSetupAddonWidget::SetDisable(Sexy::Widget *theWidget) {
+    theWidget->mDisabled = true;
+    theWidget->SetVisible(false);
 }
 
 void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId) {
-    if (theId == VSSetupAddonWidget_ExtraPackets) {
-        self.CheckboxChecked(VSSetupAddonWidget_ExtraPackets, self.mExtraPacketsMode);
-    }
-    if (theId == VSSetupAddonWidget_ExtraSeeds) {
-        self.CheckboxChecked(VSSetupAddonWidget_ExtraSeeds, self.mExtraSeedsMode);
-    }
-    if (theId == VSSetupAddonWidget_BanMode) {
-        self.CheckboxChecked(VSSetupAddonWidget_BanMode, self.mBanMode);
-    }
-    if (theId == VSSetupAddonWidget_BalancePatch) {
-        self.CheckboxChecked(VSSetupAddonWidget_BalancePatch, self.mBalancePatchMode);
-    }
     if (theId == VSSetupAddonWidget_Back) {
         self.mApp->mVSSetupMenu->CloseVSSetup(true);
         self.mApp->KillBoard();
@@ -145,21 +130,27 @@ void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId)
 }
 
 void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
+    mApp->PlaySample(*Sexy_SOUND_BUTTONCLICK_Addr);
+
     switch (theId) {
         case VSSetupAddonWidget_ExtraPackets:
-            mExtraPacketsMode = !checked;
+            mExtraPacketsMode = checked;
+            mExtraPacketsCheckbox->SetChecked(mExtraPacketsMode, false);
             mApp->mPlayerInfo->mVSExtraPacketsMode = mExtraPacketsMode;
             break;
         case VSSetupAddonWidget_ExtraSeeds:
-            mExtraSeedsMode = !checked;
+            mExtraSeedsMode = checked;
+            mExtraSeedsCheckbox->SetChecked(mExtraSeedsMode, false);
             mApp->mPlayerInfo->mVSExtraSeedsMode = mExtraSeedsMode;
             break;
         case VSSetupAddonWidget_BanMode:
-            mBanMode = !checked;
+            mBanMode = checked;
+            mBanModeCheckbox->SetChecked(mBanMode, false);
             mApp->mPlayerInfo->mVSBanMode = mBanMode;
             break;
         case VSSetupAddonWidget_BalancePatch:
-            mBalancePatchMode = !checked;
+            mBalancePatchMode = checked;
+            mBalancePatchCheckbox->SetChecked(mBalancePatchMode, false);
             mApp->mPlayerInfo->mVSBalancePatchMode = mBalancePatchMode;
             break;
         default:
@@ -174,15 +165,15 @@ void VSSetupAddonWidget::Draw(Graphics *g) {
         return;
 
     g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-    if (!mExtraPacketsButton->mBtnNoDraw) {
+    if (mExtraPacketsCheckbox->mVisible) {
         g->SetColor(mExtraPacketsMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
         g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SLOTS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_PACKETS_Y + 25);
     }
-    if (!mExtraSeedsButton->mBtnNoDraw) {
+    if (mExtraSeedsCheckbox->mVisible) {
         g->SetColor(mExtraSeedsMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
         g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SEEDS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_SEEDS_Y + 25);
     }
-    if (!mBanModeButton->mBtnNoDraw) {
+    if (mBanModeCheckbox->mVisible) {
         g->SetColor(mBanMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
         g->DrawString(TodStringTranslate("[VS_UI_BAN_MODE]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_BAN_MODE_Y + 25);
         if (mBanMode) {
@@ -190,7 +181,7 @@ void VSSetupAddonWidget::Draw(Graphics *g) {
             g->DrawString(TodStringTranslate("[VS_UI_BAN_PHASE_BIG]"), 200, 45);
         }
     }
-    if (!mBalancePatchButton->mBtnNoDraw) {
+    if (mBalancePatchCheckbox->mVisible) {
         g->SetColor(mBalancePatchMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
         g->DrawString(TodStringTranslate("[VS_UI_BALANCE_PATCH]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_BALANCE_PATCH_Y + 25);
     }

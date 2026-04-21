@@ -1085,6 +1085,7 @@ bool LoadGameMain() {
     libGameMain.GetSymbol("_Z16DrawCheckboxTextPN4Sexy8GraphicsERKSsPNS_6WidgetEPKc", DrawCheckboxTextAddr);
     libGameMain.GetSymbol("_ZN4Sexy8CheckboxC2EPNS_5ImageES2_iPNS_16CheckboxListenerE", Sexy_Checkbox_CheckBoxAddr);
     libGameMain.GetSymbol("_ZN4Sexy8CheckboxD0Ev", Sexy_Checkbox_DeleteAddr);
+    libGameMain.GetSymbol("_ZN4Sexy8Checkbox10SetCheckedEbb", Sexy_Checkbox_SetCheckedAddr);
     libGameMain.GetSymbol("_Z21PlantDrawHeightOffsetP5BoardP5Plant8SeedTypeii", PlantDrawHeightOffsetAddr);
     libGameMain.GetSymbol("_Z23FilterEffectCreateImagePN4Sexy5ImageE12FilterEffect", FilterEffectCreateImageAddr);
     libGameMain.GetSymbol("_Z23FilterEffectDoWashedOutPN4Sexy11MemoryImageE", FilterEffectDoWashedOutAddr);

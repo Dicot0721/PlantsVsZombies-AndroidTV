@@ -1086,6 +1086,7 @@ inline void *TodParticleSystem_UpdateAddr;
 inline void *DrawCheckboxTextAddr;
 inline void *Sexy_Checkbox_CheckBoxAddr;
 inline void *Sexy_Checkbox_DeleteAddr;
+inline void *Sexy_Checkbox_SetCheckedAddr;
 inline void *PlantDrawHeightOffsetAddr;
 inline void *FilterEffectCreateImageAddr;
 inline void *FilterEffectDoWashedOutAddr;

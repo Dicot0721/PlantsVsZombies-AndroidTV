@@ -27,6 +27,7 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/SeedChooserScreen.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
+#include "PvZ/SexyAppFramework/Widget/Checkbox.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
 #include <unistd.h>
@@ -316,9 +317,6 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
 }
 
 void VSSetupMenu::Update() {
-    if (mAddonWidget)
-        mAddonWidget->Update();
-
     drawTipArrowAlphaCounter++;
 
     if (is1PControllerMoving || is2PControllerMoving) {
@@ -860,10 +858,10 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 GoToState(VSSetupState::VS_SETUP_STATE_CUSTOM_BATTLE);
 
                 if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
-                    mAddonWidget->SetDisable(mAddonWidget->mExtraPacketsButton);
-                    mAddonWidget->SetDisable(mAddonWidget->mExtraSeedsButton);
-                    mAddonWidget->SetDisable(mAddonWidget->mBanModeButton);
-                    mAddonWidget->SetDisable(mAddonWidget->mBalancePatchButton);
+                    mAddonWidget->SetDisable(mAddonWidget->mExtraPacketsCheckbox);
+                    mAddonWidget->SetDisable(mAddonWidget->mExtraSeedsCheckbox);
+                    mAddonWidget->SetDisable(mAddonWidget->mBanModeCheckbox);
+                    mAddonWidget->SetDisable(mAddonWidget->mBalancePatchCheckbox);
                     mAddonWidget->SetDisable(mAddonWidget->mBackButton);
                     mAddonWidget->mDrawString = false;
                     PickBackgroundImmediately();
