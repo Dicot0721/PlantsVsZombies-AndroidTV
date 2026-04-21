@@ -378,8 +378,8 @@ protected:
 
 /***************************************************************************************************************/
 inline bool disableShop;
-inline bool doCheatDialog;     // 鑿滃崟DoCheatDialog
-inline bool doCheatCodeDialog; // 鑿滃崟DoCheatCodeDialog
+inline bool doCheatDialog;     // 菜单DoCheatDialog
+inline bool doCheatCodeDialog; // 菜单DoCheatCodeDialog
 inline int gNetDelayNow = 0;
 inline bool gNetPingHasValidDelay = false;
 inline bool gNetPingAwaitingPong = false;
