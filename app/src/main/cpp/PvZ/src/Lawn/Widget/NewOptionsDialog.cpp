@@ -73,6 +73,7 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                 mApp->KillBoard();
             }
         }
+        return;
     }
 
 

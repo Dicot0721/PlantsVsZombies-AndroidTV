@@ -971,7 +971,7 @@ void LawnApp::KillLeaderboards() {
         return;
 
     mWidgetManager->RemoveWidget(gMainMenuLeaderboardsWidget);
-    (*((void (**)(LawnApp *, Sexy::Widget *))vTable + 47))(this, gMainMenuLeaderboardsWidget); // MSGBOX()
+    SafeDeleteWidget(gMainMenuLeaderboardsWidget);
     gMainMenuLeaderboardsWidget = nullptr;
 }
 
@@ -987,7 +987,7 @@ void LawnApp::KillZombatarScreen() {
         return;
 
     mWidgetManager->RemoveWidget(gMainMenuZombatarWidget);
-    (*((void (**)(LawnApp *, Sexy::Widget *))vTable + 47))(this, gMainMenuZombatarWidget); // MSGBOX()
+    SafeDeleteWidget(gMainMenuZombatarWidget);
     gMainMenuZombatarWidget = nullptr;
 }
 
