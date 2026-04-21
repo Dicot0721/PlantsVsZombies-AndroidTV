@@ -267,6 +267,7 @@ inline void *LawnApp_ReanimationTryToGetAddr;
 inline void *LawnApp_IsTwoPlayerGameAddr;
 inline void *LawnApp_GamepadToPlayerIndexAddr;
 inline void *LawnApp_DoBackToMainAddr;
+inline void *LawnApp_DoSettingsDialogAddr;
 inline void *LawnApp_DoNewOptionsAddr;
 inline void *LawnApp_DoConfirmBackToMainAddr;
 inline void *LawnApp_TrophiesNeedForGoldSunflowerAddr;
@@ -917,10 +918,12 @@ inline void *MessageWidget_DrawAddr;
 inline void *MessageWidget_ClearLabelAddr;
 inline void *MessageWidget_SetLabelAddr;
 inline void *MessageWidget_UpdateAddr;
+inline void *CenterDialogAddr;
+inline void *SettingsDialog_SettingsDialogAddr;
 inline void *SettingsDialog_AddedToManagerAddr;
 inline void *SettingsDialog_RemovedFromManagerAddr;
 inline void *SettingsDialog_DrawAddr;
-inline void *SettingsDialog_Delete2Addr;
+inline void *SettingsDialog__destructorAddr;
 
 
 inline void *ImitaterDialog_ImitaterDialogAddr;
@@ -1085,7 +1088,7 @@ inline void *TodParticleSystem_UpdateAddr;
 
 inline void *DrawCheckboxTextAddr;
 inline void *Sexy_Checkbox_CheckBoxAddr;
-inline void *Sexy_Checkbox_DeleteAddr;
+inline void *Sexy_Checkbox__destructorAddr;
 inline void *Sexy_Checkbox_SetCheckedAddr;
 inline void *PlantDrawHeightOffsetAddr;
 inline void *FilterEffectCreateImageAddr;

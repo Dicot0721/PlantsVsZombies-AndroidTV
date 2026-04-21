@@ -86,4 +86,8 @@ inline void (*old_Sexy_Dialog_AddedToManager)(Sexy::Dialog *, Sexy::WidgetManage
 
 inline void (*old_Sexy_Dialog_RemovedFromManager)(Sexy::Dialog *, Sexy::WidgetManager *);
 
+inline void CenterDialog(Sexy::Dialog *theDialog, int theWidth, int theHeight) {
+    reinterpret_cast<void (*)(Sexy::Dialog *, int, int)>(CenterDialogAddr)(theDialog, theWidth, theHeight);
+}
+
 #endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_DIALOG_H

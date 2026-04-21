@@ -66,7 +66,7 @@ public:
     ~VSSetupAddonWidget();
     void SetDisable(Sexy::Widget *theWidget);
     void ButtonDepress(this VSSetupAddonWidget &self, int theId);
-    void CheckboxChecked(int theId, bool checked);
+    void CheckboxChecked(int theId, bool checked) override;
     void Draw(Sexy::Graphics *g);
 
 private:

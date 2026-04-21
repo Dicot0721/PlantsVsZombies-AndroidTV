@@ -72,6 +72,7 @@ void InitHookFunction() {
     homura::HookFunction(LawnApp_IsNightAddr, &LawnApp::IsNight, &old_LawnApp_IsNight);
     homura::HookFunction(LawnApp_HardwareInitAddr, &LawnApp::HardwareInit, &old_LawnApp_HardwareInit);
     homura::HookFunction(LawnApp_DoBackToMainAddr, &LawnApp::DoBackToMain, &old_LawnApp_DoBackToMain);
+    homura::HookFunction(LawnApp_DoSettingsDialogAddr, &LawnApp::DoSettingsDialog, nullptr);
     homura::HookFunction(LawnApp_CanShopLevelAddr, &LawnApp::CanShopLevel, &old_LawnApp_CanShopLevel);
     homura::HookFunction(LawnApp_DoNewOptionsAddr, &LawnApp::DoNewOptions, &old_LawnApp_DoNewOptions);
     homura::HookFunction(LawnApp_GetNumPreloadingTasksAddr, &LawnApp::GetNumPreloadingTasks, &old_LawnApp_GetNumPreloadingTasks);
@@ -595,10 +596,11 @@ void InitHookFunction() {
     homura::HookFunction(Sexy_SexyAppBase_SexyAppBaseAddr, &Sexy::SexyAppBase::_constructor, &old_Sexy_SexyAppBase_SexyAppBase);
     homura::HookFunction(Sexy_SexyAppBase_EraseFileAddr, &Sexy::SexyAppBase::EraseFile, &old_Sexy_SexyAppBase_EraseFile);
 
-    homura::HookFunction(SettingsDialog_AddedToManagerAddr, &SettingsDialog_AddedToManager, &old_SettingsDialog_AddedToManager);
-    homura::HookFunction(SettingsDialog_RemovedFromManagerAddr, &SettingsDialog_RemovedFromManager, &old_SettingsDialog_RemovedFromManager);
-    homura::HookFunction(SettingsDialog_DrawAddr, &SettingsDialog_Draw, &old_SettingsDialog_Draw);
-    homura::HookFunction(SettingsDialog_Delete2Addr, &SettingsDialog_Delete2, &old_SettingsDialog_Delete2);
+    homura::HookFunction(SettingsDialog_SettingsDialogAddr, &SettingsDialog::_constructor, &old_SettingsDialog__constructor);
+    homura::HookFunction(SettingsDialog__destructorAddr, &SettingsDialog::_destructor, &old_SettingsDialog__destructor);
+    homura::HookFunction(SettingsDialog_AddedToManagerAddr, &SettingsDialog::AddedToManager, &old_SettingsDialog_AddedToManager);
+    homura::HookFunction(SettingsDialog_RemovedFromManagerAddr, &SettingsDialog::RemovedFromManager, &old_SettingsDialog_RemovedFromManager);
+    homura::HookFunction(SettingsDialog_DrawAddr, &SettingsDialog::Draw, &old_SettingsDialog_Draw);
     homura::HookFunction(ReanimatorLoadDefinitionsAddr, &ReanimatorLoadDefinitions, &old_ReanimatorLoadDefinitions);
     homura::HookFunction(DefinitionGetCompiledFilePathFromXMLFilePathAddr, &DefinitionGetCompiledFilePathFromXMLFilePath, &old_DefinitionGetCompiledFilePathFromXMLFilePath);
     homura::HookFunction(TestMenuWidget_DeleteAddr, &TestMenuWidget_Delete, &old_TestMenuWidget_Delete);
@@ -719,7 +721,7 @@ void InitVTableHookFunction() {
 
     homura::HookVirtualFunc(vTableForConfirmBackToMainDialogAddr, 83, &ConfirmBackToMainDialog_MouseDrag, &old_ConfirmBackToMainDialog_MouseDrag);
 
-    homura::HookVirtualFunc(vTableForSettingsDialogAddr, 153, &SettingsDialog_CheckboxChecked, nullptr);
+    homura::HookVirtualFunc(vTableForSettingsDialogAddr, 153, &SettingsDialog::CheckboxChecked, nullptr);
 
     homura::HookVirtualFunc(vTableForCreditScreenAddr, 133, &CreditScreen::ButtonDepress, nullptr);
 

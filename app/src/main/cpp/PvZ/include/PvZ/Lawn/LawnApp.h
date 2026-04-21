@@ -300,6 +300,7 @@ public:
     }
     void HardwareInit();
     void DoBackToMain();
+    void DoSettingsDialog(bool theIsModal);
     bool CanShopLevel();
     void DoNewOptions(bool theFromGameSelector, unsigned int a3);
     int GetNumPreloadingTasks();
@@ -354,15 +355,8 @@ public:
     void LoadZombatarResources();
     PottedPlant *GetPottedPlantByIndex(int thePottedPlantIndex);
     void ClearSecondPlayer();
-    bool Is3DAccelerated() {
-        // 修复关闭3D加速后MV错位
-        return mNewIs3DAccelerated || (mCreditScreen != nullptr);
-    }
-
-    void Set3DAccelerated(bool isAccelerated) {
-        mNewIs3DAccelerated = isAccelerated;
-        mPlayerInfo->mIs3DAcceleratedClosed = !isAccelerated;
-    }
+    bool Is3DAccelerated();
+    void Set3DAccelerated(bool isAccelerated);
     void HandleTcpClientMessage(void *buf, ssize_t bufSize);
     void HandleTcpServerMessage(void *buf, ssize_t bufSize);
     void UpdateFrames();
@@ -384,8 +378,8 @@ protected:
 
 /***************************************************************************************************************/
 inline bool disableShop;
-inline bool doCheatDialog;     // 菜单DoCheatDialog
-inline bool doCheatCodeDialog; // 菜单DoCheatCodeDialog
+inline bool doCheatDialog;     // 鑿滃崟DoCheatDialog
+inline bool doCheatCodeDialog; // 鑿滃崟DoCheatCodeDialog
 inline int gNetDelayNow = 0;
 inline bool gNetPingHasValidDelay = false;
 inline bool gNetPingAwaitingPong = false;

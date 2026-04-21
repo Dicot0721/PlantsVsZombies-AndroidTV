@@ -19,101 +19,84 @@
 
 #include "PvZ/Lawn/Widget/SettingsDialog.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/Lawn/Common/LawnCommon.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Widget/Checkbox.h"
 #include "PvZ/Symbols.h"
-#include "PvZ/TodLib/Common/TodCommon.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
 using namespace Sexy;
 
-namespace {
-Sexy::Checkbox *g3DAccleratedCheckbox;
-Sexy::Checkbox *gVibrateCheckbox;
-} // namespace
+void SettingsDialog::_constructor(LawnApp *theApp) {
+    old_SettingsDialog__constructor(this, theApp);
 
+    mHardwareAccelerationCheckbox = MakeNewCheckbox(SettingsDialog::SettingsDialog_HardwareAcceleration, &mCheckboxListener, this, theApp->Is3DAccelerated());
+    mHapticFeedbackCheckbox = MakeNewCheckbox(SettingsDialog::SettingsDialog_HapticFeedback, &mCheckboxListener, this, !theApp->mPlayerInfo->mIsHapticFeedbackClosed);
 
-void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, WidgetManager *theWidgetManager) {
-    old_SettingsDialog_AddedToManager(settingsDialog, theWidgetManager);
+    mHardwareAccelerationCheckbox->Resize(80, 260, 300, 50);
+    mHapticFeedbackCheckbox->Resize(80, 320, 300, 50);
 
+    mSoundSlider->mFocusLinks[1] = mHardwareAccelerationCheckbox;
+    mHardwareAccelerationCheckbox->mFocusLinks[1] = mHapticFeedbackCheckbox;
+    mHapticFeedbackCheckbox->mFocusLinks[1] = mBackButton;
+
+    mBackButton->mFocusLinks[0] = mHapticFeedbackCheckbox;
+    mHapticFeedbackCheckbox->mFocusLinks[0] = mHardwareAccelerationCheckbox;
+    mHardwareAccelerationCheckbox->mFocusLinks[0] = mSoundSlider;
+}
+
+void SettingsDialog::AddedToManager(WidgetManager *theWidgetManager) {
+    old_SettingsDialog_AddedToManager(this, theWidgetManager);
+
+    AddWidget(mHardwareAccelerationCheckbox);
+    AddWidget(mHapticFeedbackCheckbox);
+}
+
+void SettingsDialog::RemovedFromManager(WidgetManager *theWidgetManager) {
+    old_SettingsDialog_RemovedFromManager(this, theWidgetManager);
+
+    RemoveWidget(mHardwareAccelerationCheckbox);
+    RemoveWidget(mHapticFeedbackCheckbox);
+}
+
+void SettingsDialog::_destructor() {
+    old_SettingsDialog__destructor(this);
+
+    delete mHardwareAccelerationCheckbox;
+    delete mHapticFeedbackCheckbox;
+}
+
+void SettingsDialog::Draw(Sexy::Graphics *g) {
+    old_SettingsDialog_Draw(this, g);
+
+    if (mHardwareAccelerationCheckbox) {
+        const Color color = (mFocusedChildWidget == mHardwareAccelerationCheckbox) ? Color(0, 255, 0) : Color(107, 110, 145);
+        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        g->SetColor(color);
+        g->DrawString(TodStringTranslate("[OPTIONS_3D_ACCELERATION]"), mHardwareAccelerationCheckbox->mX + 80, mHardwareAccelerationCheckbox->mY + 20);
+    }
+
+    if (mHapticFeedbackCheckbox) {
+        const Color color = (mFocusedChildWidget == mHapticFeedbackCheckbox) ? Color(0, 255, 0) : Color(107, 110, 145);
+        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        g->SetColor(color);
+        g->DrawString(TodStringTranslate("[OPTIONS_HAPTIC_FEEDBACK]"), mHapticFeedbackCheckbox->mX + 80, mHapticFeedbackCheckbox->mY + 20);
+    }
+}
+
+void SettingsDialog::CheckboxChecked(int theId, bool isChecked) {
     LawnApp *lawnApp = *gLawnApp_Addr;
-    Sexy::Widget *mSoundSlider = settingsDialog->mSoundSlider;
-    Sexy::Widget *mBackButton = settingsDialog->mBackButton;
 
-
-    g3DAccleratedCheckbox = MakeNewCheckbox(1024, &settingsDialog->mCheckboxListener, settingsDialog, lawnApp->Is3DAccelerated());
-    gVibrateCheckbox = MakeNewCheckbox(1025, &settingsDialog->mCheckboxListener, settingsDialog, !lawnApp->mPlayerInfo->mIsVibrateClosed);
-
-    g3DAccleratedCheckbox->Resize(80, 260, 300, 50);
-    gVibrateCheckbox->Resize(80, 320, 300, 50);
-
-    settingsDialog->AddWidget(g3DAccleratedCheckbox);
-    settingsDialog->AddWidget(gVibrateCheckbox);
-
-    mSoundSlider->mFocusLinks[1] = g3DAccleratedCheckbox;
-    g3DAccleratedCheckbox->mFocusLinks[1] = gVibrateCheckbox;
-    gVibrateCheckbox->mFocusLinks[1] = mBackButton;
-
-    mBackButton->mFocusLinks[0] = gVibrateCheckbox;
-    gVibrateCheckbox->mFocusLinks[0] = g3DAccleratedCheckbox;
-    g3DAccleratedCheckbox->mFocusLinks[0] = mSoundSlider;
-}
-
-void SettingsDialog_RemovedFromManager(SettingsDialog *settingsDialog, WidgetManager *theWidgetManager) {
-    old_SettingsDialog_RemovedFromManager(settingsDialog, theWidgetManager);
-
-    settingsDialog->RemoveWidget(g3DAccleratedCheckbox);
-    settingsDialog->RemoveWidget(gVibrateCheckbox);
-}
-
-void SettingsDialog_Delete2(SettingsDialog *settingsDialog) {
-    old_SettingsDialog_Delete2(settingsDialog);
-    // Sexy_Checkbox_Delete(g3DAccleratedCheckbox); // 在安卓4.2上，这么Delete会闪退
-    (*((void (**)(Sexy::Widget *))g3DAccleratedCheckbox->vTable + 1))(g3DAccleratedCheckbox); // Delete() ，用这种方式Delete在安卓4.2上就不会闪退，虽然我也不知道为什么会这样
-    g3DAccleratedCheckbox = nullptr;
-    (*((void (**)(Sexy::Widget *))gVibrateCheckbox->vTable + 1))(gVibrateCheckbox); // Delete() ，用这种方式Delete在安卓4.2上就不会闪退，虽然我也不知道为什么会这样
-    gVibrateCheckbox = nullptr;
-}
-
-void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g) {
-    old_SettingsDialog_Draw(settingsDialog, g);
-
-    Color color = {107, 110, 145, 255};
-    if (settingsDialog->mFocusedChildWidget == g3DAccleratedCheckbox) {
-        color.mRed = 0;
-        color.mGreen = 255;
-        color.mBlue = 0;
-        color.mAlpha = 255;
-    }
-    pvzstl::string str = TodStringTranslate("[OPTIONS_3D_ACCELERATION]");
-    g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-    g->SetColor(color);
-    g->DrawString(str, g3DAccleratedCheckbox->mX + 80, g3DAccleratedCheckbox->mY + 20);
-
-    Color color1 = {107, 110, 145, 255};
-    if (settingsDialog->mFocusedChildWidget == gVibrateCheckbox) {
-        color1.mRed = 0;
-        color1.mGreen = 255;
-        color1.mBlue = 0;
-        color1.mAlpha = 255;
-    }
-    pvzstl::string str1 = TodStringTranslate("[OPTIONS_HAPTIC_FEEDBACK]");
-    g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
-    g->SetColor(color1);
-    g->DrawString(str1, gVibrateCheckbox->mX + 80, gVibrateCheckbox->mY + 20);
-}
-
-void SettingsDialog_CheckboxChecked(SettingsDialog *settingsDialog, int id, bool isChecked) {
-    switch (id) {
-        case 1024: {
-            LawnApp *lawnApp = *gLawnApp_Addr;
+    switch (theId) {
+        case SettingsDialog::SettingsDialog_HardwareAcceleration:
             lawnApp->Set3DAccelerated(isChecked);
-        } break;
-        case 1025: {
-            LawnApp *lawnApp = *gLawnApp_Addr;
-            lawnApp->mPlayerInfo->mIsVibrateClosed = !isChecked;
-        } break;
+            break;
+        case SettingsDialog::SettingsDialog_HapticFeedback:
+            lawnApp->mPlayerInfo->mIsHapticFeedbackClosed = !isChecked;
+            break;
+        default:
+            break;
     }
 }

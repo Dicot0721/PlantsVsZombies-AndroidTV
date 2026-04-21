@@ -52,7 +52,7 @@ public:
 
 protected:
     void _destructor() {
-        reinterpret_cast<void (*)(Checkbox *)>(Sexy_Checkbox_DeleteAddr)(this);
+        reinterpret_cast<void (*)(Checkbox *)>(Sexy_Checkbox__destructorAddr)(this);
     }
 };
 

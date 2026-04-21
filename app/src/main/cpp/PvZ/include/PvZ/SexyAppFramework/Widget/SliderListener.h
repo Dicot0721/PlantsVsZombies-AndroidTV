@@ -17,22 +17,16 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "PvZ/Misc.h"
-#include "PvZ/Android/Native/BridgeApp.h"
-#include "PvZ/Android/Native/NativeApp.h"
-#include "PvZ/Lawn/LawnApp.h"
+#ifndef PVZ_SEXYAPPFRAMEWORK_WIDGET_SLIDER_LISTENER_H
+#define PVZ_SEXYAPPFRAMEWORK_WIDGET_SLIDER_LISTENER_H
 
-void TriggerVibration(VibrationEffect theVibrationEffect) {
-    LawnApp *app = *gLawnApp_Addr;
-    if (app->mPlayerInfo->mIsHapticFeedbackClosed) {
-        return;
-    }
+namespace Sexy {
 
-    Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
-    JNIEnv *env = bridgeApp->getJNIEnv();
-    jobject activity = bridgeApp->mNativeApp->getActivity();
-    jclass clazz = env->GetObjectClass(activity);
-    jmethodID methodID = env->GetMethodID(clazz, "startVibration", "(I)V");
-    env->CallVoidMethod(activity, methodID, theVibrationEffect);
-    env->DeleteLocalRef(clazz);
-}
+class SliderListener {
+public:
+    virtual void SliderVal(int theId, double theVal) {};
+};
+
+} // namespace Sexy
+
+#endif // PVZ_SEXYAPPFRAMEWORK_WIDGET_SLIDER_LISTENER_H

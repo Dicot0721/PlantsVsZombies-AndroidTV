@@ -98,22 +98,10 @@ VSSetupAddonWidget::~VSSetupAddonWidget() {
     }
 
     delete mBackButton;
-    if (mExtraPacketsCheckbox) {
-        homura::CallVirtualFunc<Sexy::Widget, 1, void>(static_cast<Sexy::Widget *>(mExtraPacketsCheckbox));
-        mExtraPacketsCheckbox = nullptr;
-    }
-    if (mExtraSeedsCheckbox) {
-        homura::CallVirtualFunc<Sexy::Widget, 1, void>(static_cast<Sexy::Widget *>(mExtraSeedsCheckbox));
-        mExtraSeedsCheckbox = nullptr;
-    }
-    if (mBanModeCheckbox) {
-        homura::CallVirtualFunc<Sexy::Widget, 1, void>(static_cast<Sexy::Widget *>(mBanModeCheckbox));
-        mBanModeCheckbox = nullptr;
-    }
-    if (mBalancePatchCheckbox) {
-        homura::CallVirtualFunc<Sexy::Widget, 1, void>(static_cast<Sexy::Widget *>(mBalancePatchCheckbox));
-        mBalancePatchCheckbox = nullptr;
-    }
+    delete mExtraPacketsCheckbox;
+    delete mExtraSeedsCheckbox;
+    delete mBanModeCheckbox;
+    delete mBalancePatchCheckbox;
 }
 
 void VSSetupAddonWidget::SetDisable(Sexy::Widget *theWidget) {

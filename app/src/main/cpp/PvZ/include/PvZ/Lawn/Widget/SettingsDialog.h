@@ -23,10 +23,21 @@
 #include "LawnDialog.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Widget/CheckboxListener.h"
+#include "PvZ/SexyAppFramework/Widget/SliderListener.h"
+
+namespace Sexy {
+class Checkbox;
+}
 
 class SettingsDialog : public LawnDialog {
+private:
+    enum {
+        SettingsDialog_HardwareAcceleration = 1024,
+        SettingsDialog_HapticFeedback,
+    };
+
 public:
-    int *mSliderListener;                     // 191
+    Sexy::SliderListener *mSliderListener;    // 191
     Sexy::CheckboxListener mCheckboxListener; // 192
     LawnApp *mApp;                            // 193
     Sexy::Widget *mMusicSlider;               // 194
@@ -34,25 +45,37 @@ public:
     GameButton *mBackButton;                  // 196
     GameButton *mSelectDeviceButton;          // 197
     int unk[5];                               // 198 ~ 202
-}; // 115: 203, 111: 205
+    // 115: 203, 111: 205
+    Sexy::Checkbox *mHardwareAccelerationCheckbox = nullptr;
+    Sexy::Checkbox *mHapticFeedbackCheckbox = nullptr;
+
+    SettingsDialog(LawnApp *theApp) {
+        _constructor(theApp);
+    }
+    ~SettingsDialog() {
+        _destructor();
+    };
+
+    void AddedToManager(Sexy::WidgetManager *manager);
+    void RemovedFromManager(Sexy::WidgetManager *manager);
+    void Draw(Sexy::Graphics *g);
+    void CheckboxChecked(int theId, bool isChecked);
+
+protected:
+    friend void InitHookFunction();
+
+    void _constructor(LawnApp *theApp);
+    void _destructor();
+};
 
 inline void (*old_SettingsDialog_AddedToManager)(SettingsDialog *settingsDialog, Sexy::WidgetManager *manager);
 
 inline void (*old_SettingsDialog_RemovedFromManager)(SettingsDialog *settingsDialog, Sexy::WidgetManager *manager);
 
-inline void (*old_SettingsDialog_Delete2)(SettingsDialog *settingsDialog);
+inline void (*old_SettingsDialog__constructor)(SettingsDialog *settingsDialog, LawnApp *theApp);
+
+inline void (*old_SettingsDialog__destructor)(SettingsDialog *settingsDialog);
 
 inline void (*old_SettingsDialog_Draw)(SettingsDialog *settingsDialog, Sexy::Graphics *graphics);
-
-
-void SettingsDialog_AddedToManager(SettingsDialog *settingsDialog, Sexy::WidgetManager *manager);
-
-void SettingsDialog_RemovedFromManager(SettingsDialog *settingsDialog, Sexy::WidgetManager *theWidgetManager);
-
-void SettingsDialog_Delete2(SettingsDialog *settingsDialog);
-
-void SettingsDialog_Draw(SettingsDialog *settingsDialog, Sexy::Graphics *g);
-
-void SettingsDialog_CheckboxChecked(SettingsDialog *settingsDialog, int id, bool isChecked);
 
 #endif // PVZ_LAWN_WIDGET_SETTINGS_DIALOG_H

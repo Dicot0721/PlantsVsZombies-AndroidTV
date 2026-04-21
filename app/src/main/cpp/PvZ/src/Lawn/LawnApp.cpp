@@ -28,11 +28,13 @@
 #include "PvZ/Lawn/Widget/ConfirmBackToMainDialog.h"
 #include "PvZ/Lawn/Widget/MainMenu.h"
 #include "PvZ/Lawn/Widget/SeedChooserScreen.h"
+#include "PvZ/Lawn/Widget/SettingsDialog.h"
 #include "PvZ/Lawn/Widget/TitleScreen.h"
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/STL/pvzstl_string.h"
+#include "PvZ/SexyAppFramework/Widget/Dialog.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
@@ -282,8 +284,26 @@ void LawnApp::DoBackToMain() {
     old_LawnApp_DoBackToMain(this);
 }
 
+void LawnApp::DoSettingsDialog(bool theIsModal) {
+    auto *aSettingsDialog = new SettingsDialog(this);
+    AddDialog(aSettingsDialog);
+    CenterDialog(aSettingsDialog, 413, 535);
+    mWidgetManager->AddWidget(aSettingsDialog);
+    aSettingsDialog->WaitForResult(true);
+}
+
 void LawnApp::DoNewOptions(bool theFromGameSelector, unsigned int a3) {
     old_LawnApp_DoNewOptions(this, theFromGameSelector, a3);
+}
+
+bool LawnApp::Is3DAccelerated() {
+    // 修复关闭3D加速后MV错位
+    return mNewIs3DAccelerated || (mCreditScreen != nullptr);
+}
+
+void LawnApp::Set3DAccelerated(bool isAccelerated) {
+    mNewIs3DAccelerated = isAccelerated;
+    mPlayerInfo->mIs3DAcceleratedClosed = !isAccelerated;
 }
 
 void LawnApp::OnSessionTaskFailed() {
