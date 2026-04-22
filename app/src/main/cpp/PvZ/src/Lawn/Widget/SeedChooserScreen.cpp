@@ -180,9 +180,9 @@ void SeedChooserScreen::_constructor(bool theIsZombieChooser) {
             mStartButton->mBtnNoDraw = true;
         }
 
-        mBanningPhase = mApp->mPlayerInfo->mVSBanMode;
-        mShowExtraSeeds = mApp->mPlayerInfo->mVSExtraSeedsMode;
-        mHas7Packets = mApp->mPlayerInfo->mVSExtraPacketsMode;
+        mBanningPhase = mApp->mVSSetupMenu->mAddonWidget->mBanMode;
+        mShowExtraSeeds = mApp->mVSSetupMenu->mAddonWidget->mExtraSeedsMode;
+        mHas7Packets = mApp->mVSSetupMenu->mAddonWidget->mExtraPacketsMode;
         if (mIsZombieChooser && mShowExtraSeeds) {
             mPageButton =
                 MakeNewButton(SeedChooserScreen::SeedChooserScreen_Page, this, this, "", nullptr, *Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, *Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, *Sexy_IMAGE_ZEN_NEXTGARDEN_Addr);
@@ -955,7 +955,7 @@ void SeedChooserScreen::GetSeedPositionInChooser(int theIndex, int &x, int &y) {
     }
     int aRow = theIndex / NumColumns();
     int aCol = theIndex % NumColumns();
-    bool isExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
+    bool isExtraSeedsMode = mShowExtraSeeds;
     if (mIsZombieChooser && aRow == 3 && !isExtraSeedsMode) {
         x = 53 * aCol + 48;
     } else {

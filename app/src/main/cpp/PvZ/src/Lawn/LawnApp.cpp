@@ -900,7 +900,11 @@ bool LawnApp::IsChallengeWithoutSeedBank() {
 
 int LawnApp::GetSeedsAvailable(bool theIsZombieChooser) {
     // 解锁僵尸方拓展卡片
-    if (theIsZombieChooser && mPlayerInfo->mVSExtraSeedsMode) {
+    bool isExtraSeedsMode = mPlayerInfo->mVSExtraSeedsMode;
+    if (mVSSetupMenu && mVSSetupMenu->mAddonWidget) {
+        isExtraSeedsMode = mVSSetupMenu->mAddonWidget->mExtraSeedsMode;
+    }
+    if (theIsZombieChooser && isExtraSeedsMode) {
         return NUM_ZOMBIE_SEED_IN_CHOOSER;
     }
 

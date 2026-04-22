@@ -435,6 +435,7 @@ size_t VSSetupMenu::getClientEventSize(EventType type) {
     switch (type) {
         case EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS:
         case EVENT_CLIENT_SEEDCHOOSER_BUTTON_DEPRESS:
+        case EVENT_CLIENT_VSSETUP_ADDON_CHECKBOX_CHECKED:
             return sizeof(U8_Event);
         case EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED:
             return sizeof(U8x3_Event);
@@ -454,6 +455,10 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
         case EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS: {
             auto *eventBtnDepress = reinterpret_cast<U8_Event *>(event);
             gVSSetupRequestState = eventBtnDepress->data;
+        } break;
+        case EVENT_CLIENT_VSSETUP_ADDON_CHECKBOX_CHECKED: {
+            auto *eventCheckbox = reinterpret_cast<U8_Event *>(event);
+            gVSSetupRequestState = eventCheckbox->data;
         } break;
         case EVENT_CLIENT_SEEDCHOOSER_BUTTON_DEPRESS: {
             auto *eventBtnDepress = reinterpret_cast<U8_Event *>(event);
@@ -558,6 +563,8 @@ size_t VSSetupMenu::getServerEventSize(EventType type) {
         case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND:
         case EVENT_SERVER_SEEDCHOOSER_BUTTON_DEPRESS:
             return sizeof(U8_Event);
+        case EVENT_SERVER_VSSETUP_ADDON_CHECKBOX_CHECKED:
+            return sizeof(U8U8_Event);
         case EVENT_SERVER_SEEDCHOOSER_SELECT_SEED:
             return sizeof(U8x3_Event);
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT:
@@ -687,15 +694,20 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT: {
-            B1x8_Event *eventButtonInit = static_cast<B1x8_Event *>(event);
-            mAddonWidget->mExtraPacketsMode = eventButtonInit->data1;
-            mAddonWidget->mExtraSeedsMode = eventButtonInit->data2;
-            mAddonWidget->mBanMode = eventButtonInit->data3;
-            mAddonWidget->mBalancePatchMode = eventButtonInit->data4;
-            mApp->mPlayerInfo->mVSExtraPacketsMode = eventButtonInit->data1;
-            mApp->mPlayerInfo->mVSExtraSeedsMode = eventButtonInit->data2;
-            mApp->mPlayerInfo->mVSBanMode = eventButtonInit->data3;
-            mApp->mPlayerInfo->mVSBalancePatchMode = eventButtonInit->data4;
+            auto *eventButtonInit = reinterpret_cast<B1x8_Event *>(event);
+            mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets, eventButtonInit->data1, false);
+            mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds, eventButtonInit->data2, false);
+            mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_BanMode, eventButtonInit->data3, false);
+            mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_BalancePatch, eventButtonInit->data4, false);
+        } break;
+        case EVENT_SERVER_VSSETUP_ADDON_CHECKBOX_CHECKED: {
+            auto *eventCheckbox = reinterpret_cast<U8U8_Event *>(event);
+            int id = eventCheckbox->data1;
+            bool checked = eventCheckbox->data2 != 0;
+            mAddonWidget->SetAddonMode(id, checked, false);
+            if (gVSSetupRequestState == id) {
+                gVSSetupRequestState = 0;
+            }
         } break;
         case EVENT_SERVER_ENCOUNTER_PICK: {
             auto *eventEncounterPick = reinterpret_cast<U16_Event *>(event);
@@ -836,7 +848,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
                 mSetupMode = VSSetupMode::VS_SETUP_MODE_QUICK_PLAY;
                 CloseVSSetup(false);
 
-                if (mApp->mPlayerInfo->mVSExtraPacketsMode) { // 额外卡槽
+                if (mAddonWidget->mExtraPacketsMode) { // 额外卡槽
                     aPlantBank->mSeedPackets[6].SetPacketType(SeedType::SEED_TORCHWOOD, SeedType::SEED_NONE);
                     aZombieBank->mSeedPackets[6].SetPacketType(SeedType::SEED_ZOMBIE_PAIL, SeedType::SEED_NONE);
                 }
@@ -927,11 +939,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
     }
 
     switch (theId) {
-        case VSSetupAddonWidget::VSSetupAddonWidget_Back:         // 返回模式选择
-        case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets: // 额外卡槽
-        case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds:   // 拓展选卡
-        case VSSetupAddonWidget::VSSetupAddonWidget_BanMode:      // 禁选模式
-        case VSSetupAddonWidget::VSSetupAddonWidget_BalancePatch: // 平衡调整
+        case VSSetupAddonWidget::VSSetupAddonWidget_Back: // 返回模式选择
             mAddonWidget->ButtonDepress(theId);
             break;
         default:

@@ -1136,7 +1136,7 @@ GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
                     continue;
                 }
                 if (mSeedType == SeedType::SEED_PUFFSHROOM || mSeedType == SeedType::SEED_SEASHROOM) {
-                    if (mApp->mPlayerInfo->mVSBalancePatchMode && aGridX - mPlantCol > 2) {
+                    if (VSSetupAddonWidget::msBalancePatchMode && aGridX - mPlantCol > 2) {
                         continue;
                     }
                     // 如果是小喷菇或水兵菇，则索敌三格以内的墓碑
@@ -1234,7 +1234,7 @@ int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
         if (theSeedType == SeedType::SEED_IMITATER && theImitaterType != SeedType::SEED_NONE) {
             theSeedType = theImitaterType;
         }
-        if (gLawnApp->mPlayerInfo->mVSBalancePatchMode) {
+        if (VSSetupAddonWidget::msBalancePatchMode) {
             return GetCostBalanced(theSeedType);
         } else {
             switch (theSeedType) {
@@ -1318,7 +1318,7 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
             theSeedType = theImitaterType;
         }
         int aRefreshTime;
-        if (gLawnApp->mPlayerInfo->mVSBalancePatchMode) {
+        if (VSSetupAddonWidget::msBalancePatchMode) {
             aRefreshTime = GetRefreshTimeBalanced(theSeedType);
         } else {
             if (Challenge::IsMPSeedType(theSeedType)) {
@@ -1403,7 +1403,7 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_JALAPENO:
                 case SeedType::SEED_DOOMSHROOM:
                 case SeedType::SEED_ICESHROOM:
-                    if (gLawnApp->mPlayerInfo->mVSBalancePatchMode)
+                    if (VSSetupAddonWidget::msBalancePatchMode)
                         return aRefreshTime / 3 * 2;
                 default:
                     return aRefreshTime / 3;

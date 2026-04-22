@@ -24,6 +24,7 @@
 #include "PvZ/Lawn/Board/SeedPacket.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
+#include "PvZ/NetPlay.h"
 #include "PvZ/SexyAppFramework/Widget/Checkbox.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 
@@ -53,6 +54,7 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     mExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
     mBanMode = mApp->mPlayerInfo->mVSBanMode;
     mBalancePatchMode = mApp->mPlayerInfo->mVSBalancePatchMode;
+    msBalancePatchMode = mBalancePatchMode;
 
     mExtraPacketsCheckbox = MakeNewCheckbox(VSSetupAddonWidget_ExtraPackets, this, theVSSetupMenu, mExtraPacketsMode);
     mExtraSeedsCheckbox = MakeNewCheckbox(VSSetupAddonWidget_ExtraSeeds, this, theVSSetupMenu, mExtraSeedsMode);
@@ -118,34 +120,84 @@ void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId)
 }
 
 void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
-    mApp->PlaySample(*Sexy_SOUND_BUTTONCLICK_Addr);
+    if (theId < VSSetupAddonWidget_ExtraPackets || theId > VSSetupAddonWidget_BalancePatch) {
+        return;
+    }
+    // guest 不能直接改选项，只能发起请求，随后回滚到当前状态
+    if (gTcpConnected) {
+        U8_Event event = {{EventType::EVENT_CLIENT_VSSETUP_ADDON_CHECKBOX_CHECKED}, uint8_t(theId)};
+        netplay::PutEvent(event);
+        gVSSetupRequestState = theId;
+        SetAddonMode(theId, GetAddonMode(theId), false);
+        return;
+    }
 
+    mApp->PlaySample(*Sexy_SOUND_BUTTONCLICK_Addr);
+    SetAddonMode(theId, checked, true);
+
+    if (gVSSetupRequestState == theId) {
+        gVSSetupRequestState = 0;
+    }
+
+    if (gTcpClientSocket >= 0) {
+        U8U8_Event event = {{EventType::EVENT_SERVER_VSSETUP_ADDON_CHECKBOX_CHECKED}, uint8_t(theId), uint8_t(checked)};
+        netplay::PutEvent(event);
+    }
+}
+
+bool VSSetupAddonWidget::GetAddonMode(int theId) const {
+    switch (theId) {
+        case VSSetupAddonWidget_ExtraPackets:
+            return mExtraPacketsMode;
+        case VSSetupAddonWidget_ExtraSeeds:
+            return mExtraSeedsMode;
+        case VSSetupAddonWidget_BanMode:
+            return mBanMode;
+        case VSSetupAddonWidget_BalancePatch:
+            return mBalancePatchMode;
+        default:
+            return false;
+    }
+}
+
+void VSSetupAddonWidget::SetAddonMode(int theId, bool checked, bool saveDetails) {
     switch (theId) {
         case VSSetupAddonWidget_ExtraPackets:
             mExtraPacketsMode = checked;
             mExtraPacketsCheckbox->SetChecked(mExtraPacketsMode, false);
-            mApp->mPlayerInfo->mVSExtraPacketsMode = mExtraPacketsMode;
+            if (saveDetails) {
+                mApp->mPlayerInfo->mVSExtraPacketsMode = mExtraPacketsMode;
+            }
             break;
         case VSSetupAddonWidget_ExtraSeeds:
             mExtraSeedsMode = checked;
             mExtraSeedsCheckbox->SetChecked(mExtraSeedsMode, false);
-            mApp->mPlayerInfo->mVSExtraSeedsMode = mExtraSeedsMode;
+            if (saveDetails) {
+                mApp->mPlayerInfo->mVSExtraSeedsMode = mExtraSeedsMode;
+            }
             break;
         case VSSetupAddonWidget_BanMode:
             mBanMode = checked;
             mBanModeCheckbox->SetChecked(mBanMode, false);
-            mApp->mPlayerInfo->mVSBanMode = mBanMode;
+            if (saveDetails) {
+                mApp->mPlayerInfo->mVSBanMode = mBanMode;
+            }
             break;
         case VSSetupAddonWidget_BalancePatch:
             mBalancePatchMode = checked;
             mBalancePatchCheckbox->SetChecked(mBalancePatchMode, false);
-            mApp->mPlayerInfo->mVSBalancePatchMode = mBalancePatchMode;
+            msBalancePatchMode = mBalancePatchMode;
+            if (saveDetails) {
+                mApp->mPlayerInfo->mVSBalancePatchMode = mBalancePatchMode;
+            }
             break;
         default:
             break;
     }
 
-    mApp->mPlayerInfo->SaveDetails();
+    if (saveDetails) {
+        mApp->mPlayerInfo->SaveDetails();
+    }
 }
 
 void VSSetupAddonWidget::Draw(Graphics *g) {

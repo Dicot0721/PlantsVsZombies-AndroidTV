@@ -60,8 +60,16 @@ void SeedBank::Draw(Sexy::Graphics *g) {
 
     if (mApp->IsVSMode()) {
         // 选卡禁用阶段或开启禁选模式时种子栏变灰
+        bool grayed = false;
         SeedChooserScreen *seedChooser = mApp->mSeedChooserScreen;
-        if (seedChooser ? seedChooser->mBanningPhase : (mApp->mVSSetupMenu && mApp->mPlayerInfo->mVSBanMode)) {
+        VSSetupMenu *vsSetup = mApp->mVSSetupMenu;
+        if (seedChooser && seedChooser->mBanningPhase) {
+            grayed = true;
+        } else if (vsSetup && vsSetup->mAddonWidget->mBanMode) {
+            grayed = true;
+        }
+
+        if (grayed) {
             g->SetColorizeImages(true);
             g->SetColor(Color(155, 155, 155));
         }

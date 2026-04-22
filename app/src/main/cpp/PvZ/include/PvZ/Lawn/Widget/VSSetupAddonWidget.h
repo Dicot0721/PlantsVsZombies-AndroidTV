@@ -47,7 +47,8 @@ public:
         VSSetupAddonWidget_Back,
     };
 
-public:
+    static inline bool msBalancePatchMode = false;
+
     LawnApp *mApp = *gLawnApp_Addr;
     Board *mBoard = mApp->mBoard;
     Sexy::ButtonListener *mButtonListener;
@@ -68,6 +69,8 @@ public:
     void ButtonDepress(this VSSetupAddonWidget &self, int theId);
     void CheckboxChecked(int theId, bool checked) override;
     void Draw(Sexy::Graphics *g);
+    bool GetAddonMode(int theId) const;
+    void SetAddonMode(int theId, bool checked, bool saveDetails);
 
 private:
     static inline const Sexy::ButtonListener::VTable sButtonListenerVtable{

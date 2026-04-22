@@ -185,7 +185,7 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
 
     // 此处修改对战开局的初始冷却
     if (mApp->IsVSMode()) {
-        bool aIsBalancePatch = mApp->mPlayerInfo->mVSBalancePatchMode;
+        bool aIsBalancePatch = VSSetupAddonWidget::msBalancePatchMode;
         bool aIsStageNight = mBoard->StageIsNight();
         switch (theSeedType) {
             case SEED_SUNSHROOM:

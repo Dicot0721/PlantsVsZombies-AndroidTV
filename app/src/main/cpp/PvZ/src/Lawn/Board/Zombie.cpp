@@ -188,7 +188,7 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
             break;
 
         case ZombieType::ZOMBIE_TRASHCAN:
-            if (mApp->mPlayerInfo->mVSBalancePatchMode) {
+            if (VSSetupAddonWidget::msBalancePatchMode) {
                 mShieldHealth = 1100; // 800 -> 1100
             }
             break;
