@@ -594,7 +594,7 @@ void InitHookFunction() {
     homura::HookFunction(TrashBin_TrashBinAddr, &TrashBin::_constructor, &old_TrashBin_TrashBin);
     homura::HookFunction(Sexy_SexyAppBase_Is3DAcceleratedAddr, &LawnApp::Is3DAccelerated, nullptr);
     homura::HookFunction(Sexy_SexyAppBase_SexyAppBaseAddr, &Sexy::SexyAppBase::_constructor, &old_Sexy_SexyAppBase_SexyAppBase);
-    homura::HookFunction(Sexy_SexyAppBase_EraseFileAddr, &Sexy::SexyAppBase::EraseFile, &old_Sexy_SexyAppBase_EraseFile);
+    homura::HookFunction(Sexy_SexyAppBase_EraseFileAddr, &Sexy::SexyAppBase::EraseFile, nullptr);
 
     homura::HookFunction(SettingsDialog_SettingsDialogAddr, &SettingsDialog::_constructor, &old_SettingsDialog__constructor);
     homura::HookFunction(SettingsDialog__destructorAddr, &SettingsDialog::_destructor, &old_SettingsDialog__destructor);

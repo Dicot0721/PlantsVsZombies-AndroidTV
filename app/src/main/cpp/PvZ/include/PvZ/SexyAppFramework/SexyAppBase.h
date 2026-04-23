@@ -113,6 +113,4 @@ inline void (*old_Sexy_SexyAppBase_SexyAppBase)(Sexy::SexyAppBase *appBase);
 
 inline bool (*old_Sexy_SexyAppBase_UpdateApp)(Sexy::SexyAppBase *appBase);
 
-inline bool (*old_Sexy_SexyAppBase_EraseFile)(Sexy::SexyAppBase *thiz, const pvzstl::string &theFileName);
-
 #endif // PVZ_SEXYAPPFRAMEWORK_SEXY_APP_BASE_H

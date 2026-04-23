@@ -23,6 +23,8 @@
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/PlayerInfo.h"
 
+#include <unistd.h>
+
 void Sexy::SexyAppBase::_constructor() {
     old_Sexy_SexyAppBase_SexyAppBase(this);
     // LOGD("%d",*((uint32_t *)appBase + 464));
@@ -42,7 +44,7 @@ bool Sexy::SexyAppBase::UpdateApp() {
 
 bool Sexy::SexyAppBase::EraseFile(const pvzstl::string &theFileName) {
     if (disableDeleteUserdata) {
-        return false;
+        return true;
     }
-    return old_Sexy_SexyAppBase_EraseFile(this, theFileName);
+    return unlink(theFileName.c_str()) == 0;
 }

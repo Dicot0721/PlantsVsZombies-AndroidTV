@@ -154,7 +154,7 @@ void Board::SetGrids() {
 bool LawnSaveGame(Board *theBoard, const pvzstl::string &theFilePath) {
     if (disableSaveUserdata) {
         old_LawnSaveGame(theBoard, ""); // 用于从暂停菜单返回主界面
-        return false;
+        return true;
     }
 
     // 结盟模式存档，将SeedBank2的4个种子放到SeedBank1里面。因为原版存档逻辑难以改动，只好出此下策，凑合着存吧。
