@@ -70,6 +70,19 @@ bool IsLocalChooserInputAllowed(SeedChooserScreen *screen) {
     return controlledSide == chooserSide;
 }
 
+bool IsExtraSeedsModeEnabled(SeedChooserScreen *screen) {
+    if (screen == nullptr || screen->mApp == nullptr || !screen->mApp->IsVSMode()) {
+        return false;
+    }
+
+    VSSetupMenu *vsSetup = screen->mApp->mVSSetupMenu;
+    if (vsSetup == nullptr || vsSetup->mAddonWidget == nullptr) {
+        return false;
+    }
+
+    return vsSetup->mAddonWidget->mExtraSeedsMode;
+}
+
 inline void NormalizeLocalPoint(SeedChooserScreen *screen, int &x, int &y) {
     // Some platforms/reporting paths send global coordinates; normalize to widget-local.
     if (x < 0 || x >= screen->mWidth || y < 0 || y >= screen->mHeight) {
@@ -955,7 +968,7 @@ void SeedChooserScreen::GetSeedPositionInChooser(int theIndex, int &x, int &y) {
     }
     int aRow = theIndex / NumColumns();
     int aCol = theIndex % NumColumns();
-    bool isExtraSeedsMode = mShowExtraSeeds;
+    bool isExtraSeedsMode = IsExtraSeedsModeEnabled(this);
     if (mIsZombieChooser && aRow == 3 && !isExtraSeedsMode) {
         x = 53 * aCol + 48;
     } else {

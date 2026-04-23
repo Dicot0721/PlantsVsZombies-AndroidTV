@@ -65,7 +65,7 @@ void SeedBank::Draw(Sexy::Graphics *g) {
         VSSetupMenu *vsSetup = mApp->mVSSetupMenu;
         if (seedChooser && seedChooser->mBanningPhase) {
             grayed = true;
-        } else if (vsSetup && vsSetup->mAddonWidget->mBanMode) {
+        } else if (vsSetup && vsSetup->mAddonWidget->mBanMode && vsSetup->mState != VSSetupMenu::VS_SETUP_STATE_CUSTOM_BATTLE) {
             grayed = true;
         }
 
