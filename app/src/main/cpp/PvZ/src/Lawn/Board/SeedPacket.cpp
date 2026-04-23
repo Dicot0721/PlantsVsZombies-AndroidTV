@@ -69,9 +69,6 @@ void SeedPacket::Update() {
             FlashIfReady();
 
             SetNextRandomSeed(); // 对战刷牌模式更换卡片
-            if (mSeedBank->mIsZombie ? mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE : mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
-                gFreeForFristShuffle[mSeedBank->mIsZombie] = false; // 对战免费刷新已使用
-            }
         }
     }
 
@@ -629,6 +626,10 @@ void DrawSeedPacket(Sexy::Graphics *g,
 
 void SeedPacket::WasPlanted(int thePlayerIndex) {
     old_SeedPacket_WasPlanted(this, thePlayerIndex);
+
+    if (mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE || mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
+        gFreeForFristShuffle[mSeedBank->mIsZombie] = false; // 首次免费在使用当下失效
+    }
 
     if (gTcpClientSocket >= 0) {
         U8U8_Event event = {{EventType::EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED}, uint8_t(mIndex), mSeedBank == mBoard->mSeedBank[0]};
