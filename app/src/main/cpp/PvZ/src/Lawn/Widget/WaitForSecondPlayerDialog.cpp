@@ -54,6 +54,11 @@ std::vector<BroadcastTarget> gBroadcastTargets;
 constexpr int kServerRoomListTitleY = 200;
 constexpr int kServerRoomListItemStartY = 200;
 constexpr int kServerRoomListLineH = 45;
+constexpr int kServerRoomListPageSize = 5;
+constexpr int kServerRoomListPrevPageX = 150;
+constexpr int kServerRoomListNextPageX = 610;
+constexpr int kServerRoomListPageArrowY = 325;
+constexpr int kServerRoomListPageNumberY = 440;
 constexpr int kServerP2PConnectRetryTicks = 8;
 [[maybe_unused]] constexpr int kMode3ServerOfficialTitleY = 150;
 constexpr int kMode3ServerOfficialItemStartY = 190;
@@ -350,6 +355,7 @@ static bool Mode3ConnectToTarget(WaitForSecondPlayerDialog *dialog, std::string_
             dialog->ServerSendNatPort();
         }
         dialog->mServerRoomCount = 0;
+        dialog->mServerRoomPage = 0;
         dialog->mSrvRecvLen = 0;
         dialog->ServerSendQuery();
         return true;
@@ -462,6 +468,7 @@ void WaitForSecondPlayerDialog::SetMode(UIMode mode) {
         InitUdpScanSocket();
     } else if (mUIMode == UIMode::MODE3_SERVER) {
         mSelectedRoomIndex_Server = 0; // 默认选中官方服第1项
+        mServerRoomPage = 0;
     }
 
     RefreshButtons();
@@ -669,6 +676,7 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mInputPurpose = InputPurpose::NONE;
     mServerConnected = false;
     mSelectedRoomIndex_Server = 0;
+    mServerRoomPage = 0;
 
 
     // ===== MODE3 init =====
@@ -692,6 +700,7 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mServerPort = 0;
 
     mServerRoomCount = 0;
+    mServerRoomPage = 0;
     mSrvRecvLen = 0;
     mServerP2PListenSock = -1;
     mServerP2PPendingSock = -1;
@@ -2071,6 +2080,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     mServerJoinedRoomName[0] = '\0';
                     mServerRoomCount = 0;
                     mSelectedRoomIndex_Server = 0;
+                    mServerRoomPage = 0;
                     gSecondPlayerName[0] = '\0';
                     if (mApp && mApp->mPlayerInfo && mApp->mPlayerInfo->mName) {
                         std::strncpy(mServerHostedRoomName, mApp->mPlayerInfo->mName, sizeof(mServerHostedRoomName) - 1);
@@ -2087,6 +2097,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 if (mServerHosting || mServerJoined || mServerCreatePending) {
                     mServerRoomCount = 0;
                     mSelectedRoomIndex_Server = 0;
+                    mServerRoomPage = 0;
                     break;
                 }
                 mServerRoomCount = 0;
@@ -2142,6 +2153,13 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     mSelectedRoomIndex_Server = mServerRoomCount - 1;
                 if (mSelectedRoomIndex_Server < 0)
                     mSelectedRoomIndex_Server = 0;
+                int totalPages = (mServerRoomCount + kServerRoomListPageSize - 1) / kServerRoomListPageSize;
+                if (totalPages < 1)
+                    totalPages = 1;
+                if (mServerRoomPage < 0)
+                    mServerRoomPage = 0;
+                if (mServerRoomPage >= totalPages)
+                    mServerRoomPage = totalPages - 1;
                 break;
             }
             case 0x83: { // JOIN_RESULT
@@ -3033,6 +3051,7 @@ void WaitForSecondPlayerDialog::ServerSendCreate() {
     mServerCreatePending = true;
     mServerRoomCount = 0;
     mSelectedRoomIndex_Server = 0;
+    mServerRoomPage = 0;
     if (!SendAll(mServerSock, head, 2)) {
         mServerCreatePending = false;
         mServerStatusText = TodStringTranslate("[STATUS_SEND_CREATE_FAIL]");
@@ -3060,6 +3079,20 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
         return;
     }
 
+    int totalPages = (mServerRoomCount + kServerRoomListPageSize - 1) / kServerRoomListPageSize;
+    if (totalPages < 1)
+        totalPages = 1;
+    if (mServerRoomPage < 0)
+        mServerRoomPage = 0;
+    if (mServerRoomPage >= totalPages)
+        mServerRoomPage = totalPages - 1;
+
+    const int pageStart = mServerRoomPage * kServerRoomListPageSize;
+    int pageEnd = pageStart + kServerRoomListPageSize;
+    if (pageEnd > mServerRoomCount) {
+        pageEnd = mServerRoomCount;
+    }
+
     int yPos = kServerRoomListItemStartY;
     Sexy::Color oldColor = g->mColor;
 
@@ -3071,7 +3104,7 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
         idx = mServerRoomCount - 1;
     mSelectedRoomIndex_Server = idx;
 
-    for (int i = 0; i < mServerRoomCount; i++) {
+    for (int i = pageStart; i < pageEnd; i++) {
         if (i == mSelectedRoomIndex_Server) {
             TodDrawImageScaledF(g, addonImages.leaderboard_selector, 140, yPos - 35, 0.7, 0.7);
             g->SetColor(Sexy::Color(0, 255, 0));
@@ -3094,6 +3127,16 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
         pvzstl::string line = tag.empty() ? roomTitle : StrFormat("%s [%s]", roomTitle.c_str(), tag.c_str());
         TodDrawString(g, line, 400, yPos, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
         yPos += kServerRoomListLineH;
+    }
+
+    if (totalPages > 1) {
+        if (mServerRoomPage > 0) {
+            g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, kServerRoomListPrevPageX, kServerRoomListPageArrowY, true);
+        }
+        if (mServerRoomPage + 1 < totalPages) {
+            g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, kServerRoomListNextPageX, kServerRoomListPageArrowY);
+        }
+        TodDrawString(g, StrFormat("%d/%d", mServerRoomPage + 1, totalPages), 390, kServerRoomListPageNumberY, g->GetFont(), oldColor, DS_ALIGN_CENTER);
     }
 
     g->SetColor(oldColor);
@@ -3138,8 +3181,22 @@ void WaitForSecondPlayerDialog::ServerSelectRoomByMouse(int x, int y) {
         return;
     }
 
-    if (y >= listY && y < listY + mServerRoomCount * lineH) {
-        int idx = (y - listY) / lineH;
+    int totalPages = (mServerRoomCount + kServerRoomListPageSize - 1) / kServerRoomListPageSize;
+    if (totalPages < 1)
+        totalPages = 1;
+    if (mServerRoomPage < 0)
+        mServerRoomPage = 0;
+    if (mServerRoomPage >= totalPages)
+        mServerRoomPage = totalPages - 1;
+
+    const int pageStart = mServerRoomPage * kServerRoomListPageSize;
+    int pageCount = mServerRoomCount - pageStart;
+    if (pageCount > kServerRoomListPageSize) {
+        pageCount = kServerRoomListPageSize;
+    }
+
+    if (y >= listY && y < listY + pageCount * lineH) {
+        int idx = pageStart + (y - listY) / lineH;
         if (idx >= 0 && idx < mServerRoomCount) {
             if (mSelectedRoomIndex_Server != idx) {
                 mSelectedRoomIndex_Server = idx;
@@ -3277,6 +3334,7 @@ void WaitForSecondPlayerDialog::ServerDisconnect([[maybe_unused]] const char *wh
 
     mServerRoomCount = 0;
     mSelectedRoomIndex_Server = 0;
+    mServerRoomPage = 0;
     mSrvRecvLen = 0;
     mServerP2PTick = 0;
 
@@ -3295,6 +3353,41 @@ void WaitForSecondPlayerDialog::Resize(int theX, int theY, int theWidth, int the
 void WaitForSecondPlayerDialog::MouseDown(int x, int y, int theClickCount) {
     (void)theClickCount;
     if (mUIMode == UIMode::MODE3_SERVER) {
+        if (mServerConnected && !mServerHosting && !mServerJoined && mServerRoomCount > kServerRoomListPageSize) {
+            int totalPages = (mServerRoomCount + kServerRoomListPageSize - 1) / kServerRoomListPageSize;
+            if (totalPages < 1)
+                totalPages = 1;
+            if (mServerRoomPage < 0)
+                mServerRoomPage = 0;
+            if (mServerRoomPage >= totalPages)
+                mServerRoomPage = totalPages - 1;
+
+            const int arrowW = (*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr)->GetCelWidth();
+            const int arrowH = (*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr)->GetHeight();
+
+            if (mServerRoomPage > 0) {
+                if (x >= kServerRoomListPrevPageX && x < kServerRoomListPrevPageX + arrowW && y >= kServerRoomListPageArrowY && y < kServerRoomListPageArrowY + arrowH) {
+                    mServerRoomPage--;
+                    int first = mServerRoomPage * kServerRoomListPageSize;
+                    if (mSelectedRoomIndex_Server < first || mSelectedRoomIndex_Server >= first + kServerRoomListPageSize) {
+                        mSelectedRoomIndex_Server = first;
+                    }
+                    mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+                    return;
+                }
+            }
+            if (mServerRoomPage + 1 < totalPages) {
+                if (x >= kServerRoomListNextPageX && x < kServerRoomListNextPageX + arrowW && y >= kServerRoomListPageArrowY && y < kServerRoomListPageArrowY + arrowH) {
+                    mServerRoomPage++;
+                    int first = mServerRoomPage * kServerRoomListPageSize;
+                    if (mSelectedRoomIndex_Server < first || mSelectedRoomIndex_Server >= first + kServerRoomListPageSize) {
+                        mSelectedRoomIndex_Server = first;
+                    }
+                    mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+                    return;
+                }
+            }
+        }
         ServerSelectRoomByMouse(x, y);
         return;
     }

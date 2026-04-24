@@ -113,6 +113,7 @@ public:
 
     ServerRoomItem mServerRooms[255];
     int mServerRoomCount;
+    int mServerRoomPage;
 
     // recv buffer for framed protocol
     uint8_t mSrvRecvBuf[8192];
