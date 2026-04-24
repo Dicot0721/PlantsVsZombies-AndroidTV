@@ -21,6 +21,7 @@ add_library(Homura SHARED Main.cpp ${SRC_FILES})
 target_compile_options(Homura PRIVATE
     -Wall
     -Werror=array-bounds
+    -Werror=nonnull
     -Werror=return-type
     -Werror=unused-result
 )

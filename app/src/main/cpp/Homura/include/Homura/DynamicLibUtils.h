@@ -17,46 +17,42 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef HOMURA_SHAREDLIBUTILS_H
-#define HOMURA_SHAREDLIBUTILS_H
+#ifndef HOMURA_DYNAMICLIBUTILS_H
+#define HOMURA_DYNAMICLIBUTILS_H
 
 namespace homura {
 
-class SharedLibLoader {
+class SharedObjLoader {
 public:
-    SharedLibLoader(const SharedLibLoader &) = delete;
+    SharedObjLoader(const SharedObjLoader &) = delete;
 
-    SharedLibLoader(SharedLibLoader &&other) noexcept
+    SharedObjLoader(SharedObjLoader &&other) noexcept
         : handle_{other.handle_} {
         other.handle_ = nullptr;
     }
 
-    explicit SharedLibLoader(const char *filename);
-    ~SharedLibLoader();
+    explicit SharedObjLoader([[gnu::nonnull]] const char *filename);
+    ~SharedObjLoader();
 
-    SharedLibLoader &operator=(const SharedLibLoader &) = delete;
+    SharedObjLoader &operator=(const SharedObjLoader &) = delete;
 
-    SharedLibLoader &operator=(SharedLibLoader &&other) noexcept;
+    SharedObjLoader &operator=(SharedObjLoader &&other) noexcept;
 
     [[nodiscard]] bool IsOpen() const noexcept {
         return handle_ != nullptr;
     }
 
-    /**
-     * Note: 即使未发生错误, 输出仍可能为空指针. (此时找到的符号的值本身就是 NULL)
-     *
-     * @retval false 仅在发生错误时返回 false.
-     */
-    bool GetSymbol(const char *name, auto *&output) const {
-        return GetSymbolImpl(name, reinterpret_cast<void *&>(output));
+    template <typename T = void>
+    T *GetSymbol([[gnu::nonnull]] const char *name) const {
+        return reinterpret_cast<T *>(GetSymbolImpl(name));
     }
 
 protected:
-    bool GetSymbolImpl(const char *name, void *&output) const;
+    void *GetSymbolImpl([[gnu::nonnull]] const char *name) const;
 
     void *handle_ = nullptr;
 };
 
 } // namespace homura
 
-#endif // HOMURA_SHAREDLIBUTILS_H
+#endif // HOMURA_DYNAMICLIBUTILS_H

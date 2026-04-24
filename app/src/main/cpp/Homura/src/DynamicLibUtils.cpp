@@ -17,56 +17,55 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "Homura/SharedLibUtils.h"
+#include "Homura/DynamicLibUtils.h"
 #include "Homura/Logger.h"
 #include "Homura/StringUtils.h"
 
 #include <dlfcn.h>
 
-#include <cassert>
-
-#include <map>
+#include <unordered_map>
 #include <unordered_set>
 
-homura::SharedLibLoader::SharedLibLoader(const char *filename) {
-    assert((filename != nullptr) && (*filename != '\0') && !IsBlank(filename));
+homura::SharedObjLoader::SharedObjLoader(const char *filename) {
     handle_ = dlopen(filename, RTLD_NOW | RTLD_NOLOAD);
-    if (!IsOpen()) [[unlikely]] {
+    if (!IsOpen()) {
         LOG_ERROR("Failed to load shared library '{}': {}", filename, dlerror());
     }
 }
 
-homura::SharedLibLoader::~SharedLibLoader() {
+homura::SharedObjLoader::~SharedObjLoader() {
     if (IsOpen()) {
         dlclose(handle_);
     }
 }
 
-auto homura::SharedLibLoader::operator=(SharedLibLoader &&other) noexcept -> SharedLibLoader & {
+auto homura::SharedObjLoader::operator=(SharedObjLoader &&other) noexcept -> SharedObjLoader & {
     std::swap(handle_, other.handle_);
     return *this;
 }
 
-bool homura::SharedLibLoader::GetSymbolImpl(const char *name, void *&output) const {
-    assert((name != nullptr) && (*name != '\0') && !IsBlank(name));
+void *homura::SharedObjLoader::GetSymbolImpl(const char *name) const {
+    if (!IsOpen()) [[unlikely]] {
+        return nullptr;
+    }
 #ifdef PVZ_DEBUG
     // Using 'string_view' is usually safe, because we usually call this function with a string literal
-    static std::map<void *, std::unordered_set<std::string_view>> symbolMap;
+    static std::unordered_map<void *, std::unordered_set<std::string_view>> symbolMap;
     auto &symbolSet = symbolMap[handle_];
     if (std::string_view view{name}; !symbolSet.contains(view)) {
         symbolSet.emplace(view);
     } else {
-        LOG_WARN("Rebinding symbol {:?}", view);
+        LOG_WARN("Getting the symbol {:?} more than once", view);
     }
 #endif
     dlerror(); // clear the error
-    if ((output = dlsym(handle_, name)) != nullptr) {
-        return true;
+    void *symbol = dlsym(handle_, name);
+    if (symbol == nullptr) {
+        if (const char *msg = dlerror()) {
+            LOG_ERROR("Failed to get symbol {:?}: {}", name, msg);
+        } else {
+            LOG_WARN("The value of symbol {:?} is NULL", name);
+        }
     }
-    if (const char *msg = dlerror()) {
-        LOG_ERROR("Failed to get symbol {:?}: {}", name, msg);
-        return false;
-    }
-    LOG_WARN("The value of symbol {:?} is NULL", name);
-    return true;
+    return symbol;
 }
