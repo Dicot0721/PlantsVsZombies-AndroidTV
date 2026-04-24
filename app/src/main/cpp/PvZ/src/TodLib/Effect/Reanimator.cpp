@@ -19,7 +19,7 @@
 
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/Lawn/Common/ConstEnums.h"
-#include "PvZ/Lawn/Widget/MainMenu.h"
+#include "PvZ/Lawn/Widget/ZombatarWidget.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 
 #include <format>
@@ -141,7 +141,7 @@ void Reanimation_SetZombatarHats(Reanimation *zombatarReanim, unsigned char hats
         char hatsChar[] = "hats_00";
         std::format_to_n(std::end(hatsChar) - 3, 2, "{:02}", hats);
         Reanimation_HideTrackByPrefix(zombatarReanim, hatsChar, false);
-        if (hatsColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::HAT, hats)) {
+        if (hatsColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::HAT, hats)) {
             int theTrackIndex = zombatarReanim->FindTrackIndex(hatsChar);
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[hatsColor];
@@ -156,7 +156,7 @@ void Reanimation_SetZombatarHair(Reanimation *zombatarReanim, unsigned char hair
         char hairChar[] = "hair_00";
         std::format_to_n(std::end(hairChar) - 3, 2, "{:02}", hair);
         Reanimation_HideTrackByPrefix(zombatarReanim, hairChar, false);
-        if (hairColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::HAIR, hair)) {
+        if (hairColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::HAIR, hair)) {
             int theTrackIndex = zombatarReanim->FindTrackIndex(hairChar);
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor[hairColor];
@@ -171,7 +171,7 @@ void Reanimation_SetZombatarFHair(Reanimation *zombatarReanim, unsigned char fac
         char facialHairChar[] = "facialHair_00";
         std::format_to_n(std::end(facialHairChar) - 3, 2, "{:02}", facialHair);
         Reanimation_HideTrackByPrefix(zombatarReanim, facialHairChar, false);
-        if (facialHairColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::FHAIR, facialHair)) {
+        if (facialHairColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::FHAIR, facialHair)) {
             int theTrackIndex = zombatarReanim->FindTrackIndex(facialHairChar);
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor[facialHairColor];
@@ -219,7 +219,7 @@ void Reanimation_SetZombatarAccessories(Reanimation *zombatarReanim, unsigned ch
         char accessoriesChar[] = "accessories_00";
         std::format_to_n(std::end(accessoriesChar) - 3, 2, "{:02}", accessoriesFix);
         Reanimation_HideTrackByPrefix(zombatarReanim, accessoriesChar, false);
-        if (accessoriesColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::ACCESSORY, accessories)) {
+        if (accessoriesColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::ACCESSORY, accessories)) {
             int theTrackIndex = zombatarReanim->FindTrackIndex(accessoriesChar);
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[accessoriesColor];
@@ -234,7 +234,7 @@ void Reanimation_SetZombatarEyeWear(Reanimation *zombatarReanim, unsigned char e
         char eyeWearChar[] = "eyeWear_00";
         std::format_to_n(std::end(eyeWearChar) - 3, 2, "{:02}", eyeWear);
         Reanimation_HideTrackByPrefix(zombatarReanim, eyeWearChar, false);
-        if (eyeWearColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::EYEWEAR, eyeWear)) {
+        if (eyeWearColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::EYEWEAR, eyeWear)) {
             int theTrackIndex = zombatarReanim->FindTrackIndex(eyeWearChar);
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[eyeWearColor];
@@ -249,7 +249,7 @@ void Reanimation_SetZombatarTidBits(Reanimation *zombatarReanim, unsigned char t
         char tidBitsChar[] = "tidBits_00";
         std::format_to_n(std::end(tidBitsChar) - 3, 2, "{:02}", tidBits);
         Reanimation_HideTrackByPrefix(zombatarReanim, tidBitsChar, false);
-        if (tidBitsColor != 255 && ZombatarWidget_AccessoryIsColorized(ZombatarWidget::TIDBIT, tidBits)) {
+        if (tidBitsColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::TIDBIT, tidBits)) {
             int theTrackIndex = zombatarReanim->FindTrackIndex(tidBitsChar);
             ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
             reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[tidBitsColor];

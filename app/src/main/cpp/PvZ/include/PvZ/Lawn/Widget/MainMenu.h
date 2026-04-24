@@ -183,45 +183,15 @@ inline void (*old_MainMenu_DrawOverlay)(MainMenu *mainMenu, Sexy::Graphics *a2);
 
 inline void (*old_MainMenu_DrawFade)(MainMenu *mainMenu, Sexy::Graphics *a2);
 
-inline void (*old_TestMenuWidget_RemovedFromManager)(ZombatarWidget *zombatarWidget, Sexy::WidgetManager *manager);
-
-inline void (*old_TestMenuWidget_Delete2)(ZombatarWidget *zombatarWidget);
-
-inline void (*old_TestMenuWidget_Delete)(ZombatarWidget *zombatarWidget);
-
-
-void ZombatarWidget_ZombatarWidget(ZombatarWidget *zombatarWidget, LawnApp *lawnApp);
-
-void TestMenuWidget_DrawPortrait(ZombatarWidget *zombatarWidget, Sexy::Graphics *graphics, int x, int y);
-
-bool ZombatarWidget_AccessoryIsColorized(int tab, int accessory);
 
 void MaskHelpWidget_Update(AchievementsWidget *achievementsWidget);
 
 void MaskHelpWidget_Draw(AchievementsWidget *achievementsWidget, Sexy::Graphics *g);
-
-void TestMenuWidget_Delete(ZombatarWidget *zombatarWidget);
-
-void TestMenuWidget_Delete2(ZombatarWidget *zombatarWidget);
 
 void MaskHelpWidget_MouseDown(AchievementsWidget *achievementsWidget, int x, int y, int theClickCount);
 
 void MaskHelpWidget_MouseUp(AchievementsWidget *achievementsWidget, int x, int y);
 
 void MaskHelpWidget_MouseDrag(AchievementsWidget *achievementsWidget, int x, int y);
-
-void TestMenuWidget_RemovedFromManager(ZombatarWidget *zombatarWidget, Sexy::WidgetManager *manager);
-
-void TestMenuWidget_Update(ZombatarWidget *zombatarWidget);
-
-void TestMenuWidget_Draw(ZombatarWidget *zombatarWidget, Sexy::Graphics *graphics);
-
-void TestMenuWidget_MouseDown(ZombatarWidget *zombatarWidget, int x, int y);
-
-void TestMenuWidget_MouseUp(ZombatarWidget *zombatarWidget, int x, int y);
-
-void TestMenuWidget_MouseDrag(ZombatarWidget *zombatarWidget, int x, int y);
-
-void TestMenuWidget_KeyDown(ZombatarWidget *zombatarWidget, int keyCode);
 
 #endif // PVZ_LAWN_WIDGET_MAIN_MENU_H
