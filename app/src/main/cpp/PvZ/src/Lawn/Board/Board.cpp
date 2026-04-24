@@ -6031,9 +6031,8 @@ void Board::ShuffleButtonDown(SeedPacket *theSeedPacket) {
         if (!CanTakeSunMoney(aPacketCost, 0) || !theSeedPacket->CanPickUp() || HasLevelAwardDropped())
             return;
 
-        std::vector<SeedType> aPlantSeeds;
-        std::vector<SeedType> aZombieSeeds;
-        PickMPRandomSeeds(mApp, aPlantSeeds, aZombieSeeds, false);
+        std::vector<SeedType> aPlantSeeds, aZombieSeeds;
+        PickShuffleSeeds(mApp, aPlantSeeds, aZombieSeeds, false);
         if (!aPlantSeeds.empty()) {
             for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
                 SeedType aSeedType = aPlantSeeds[aPacketIndex - 1];
@@ -6058,9 +6057,8 @@ void Board::ShuffleButtonDown(SeedPacket *theSeedPacket) {
         if (!CanTakeDeathMoney(aPacketCost) || !theSeedPacket->CanPickUp() || HasLevelAwardDropped())
             return;
 
-        std::vector<SeedType> aPlantSeeds;
-        std::vector<SeedType> aZombieSeeds;
-        PickMPRandomSeeds(mApp, aPlantSeeds, aZombieSeeds, true);
+        std::vector<SeedType> aPlantSeeds, aZombieSeeds;
+        PickShuffleSeeds(mApp, aPlantSeeds, aZombieSeeds, true);
         if (!aZombieSeeds.empty()) {
             for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
                 SeedType aSeedType = aZombieSeeds[aPacketIndex - 1];

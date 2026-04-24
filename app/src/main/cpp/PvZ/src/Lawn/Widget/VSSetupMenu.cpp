@@ -51,9 +51,9 @@ void VSSetupMenu::_constructor() {
 }
 
 void VSSetupMenu::_destructor() {
-    old_VSSetupMenu_Destructor(this);
-
     delete mAddonWidget;
+
+    old_VSSetupMenu_Destructor(this);
 }
 
 void VSSetupMenu::Draw(Graphics *g) {

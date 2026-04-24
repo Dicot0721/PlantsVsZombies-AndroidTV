@@ -280,30 +280,18 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
             }
         }
     } else {
-        if (NeedSeedInstantCoffee(theApp)) {
-            // 如果随到的新卡组中没有蘑菇则不生成咖啡豆
+        // 如果卡组中有咖啡豆但没有蘑菇, 则替换豌豆射手为卡池3里的随机蘑菇(小喷, 大喷, 胆小)
+        if (!aSeeds.empty() && aSeeds[0] == SeedType::SEED_INSTANT_COFFEE) {
+            bool replacePeashooter = false;
             for (int i = 0; i < 5; ++i) {
-                if (!Plant::IsNocturnal(aSeeds[i]))
-                    return;
-            }
-
-            if (!aSeeds.empty()) {
-                aSeeds[0] = SeedType::SEED_INSTANT_COFFEE;
-            }
-        } else {
-            // 如果卡组中有咖啡豆但没有蘑菇, 则替换豌豆射手为卡池3里的随机蘑菇(小喷, 大喷, 胆小)
-            if (!aSeeds.empty() && aSeeds[0] == SeedType::SEED_INSTANT_COFFEE) {
-                bool replacePeashooter = false;
-                for (int i = 0; i < 5; ++i) {
-                    if (!Plant::IsNocturnal(aSeeds[i])) {
-                        replacePeashooter = true;
-                        break;
-                    }
+                if (!Plant::IsNocturnal(aSeeds[i])) {
+                    replacePeashooter = true;
+                    break;
                 }
-                if (replacePeashooter) {
-                    const int seedIndex = Sexy::Rand(3);
-                    aSeeds[1] = VSSetupMenu::msRandomPools[3][seedIndex];
-                }
+            }
+            if (replacePeashooter) {
+                const int seedIndex = Sexy::Rand(3);
+                aSeeds[1] = VSSetupMenu::msRandomPools[3][seedIndex];
             }
         }
         if (NeedSeedTallnut(theApp)) {
@@ -330,16 +318,21 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
                 *it = SeedType::SEED_SPLITPEA;
             }
         }
+    }
+}
 
-        int numPeasInBank = 0;
-        for (int i = 0; i < 5; ++i) {
-            if (IsPeaSeedType(aSeeds[i])) {
-                ++numPeasInBank;
+void PickShuffleSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie) {
+    PickMPRandomSeeds(theApp, thePlantSeeds, theZombieSeeds, theIsZombie);
+
+    if (!theIsZombie) {
+        if (NeedSeedInstantCoffee(theApp, thePlantSeeds, true)) {
+            if (!thePlantSeeds.empty()) {
+                thePlantSeeds[0] = SeedType::SEED_INSTANT_COFFEE;
             }
         }
-        if (numPeasInBank >= 2 || CountPeasOnScreen(theApp) >= 3) {
-            auto it = std::ranges::find(aSeeds, SeedType::SEED_GRAVEBUSTER);
-            if (it != aSeeds.end()) {
+        if (NeedSeedTorchwood(theApp, thePlantSeeds, true)) {
+            auto it = std::ranges::find(thePlantSeeds, SeedType::SEED_GRAVEBUSTER);
+            if (it != thePlantSeeds.end()) {
                 *it = SeedType::SEED_TORCHWOOD;
             }
         }
@@ -350,25 +343,9 @@ SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeed
     PickMPRandomSeeds(theApp, thePlantSeeds, theZombieSeeds, theIsZombie);
     SeedType aSeedType = theIsZombie ? theZombieSeeds[theSeedIndex - 1] : thePlantSeeds[theSeedIndex - 1];
 
-    if (theIsZombie) {
-        if (NeedSeedTallnut(theApp) && aSeedType == SeedType::SEED_ZOMBIE_NORMAL) {
-            aSeedType = SeedType::SEED_ZOMBIE_IMP;
-        }
-    } else {
+    if (!theIsZombie) {
         if (NeedSeedInstantCoffee(theApp) && theSeedIndex == 1) {
             aSeedType = SeedType::SEED_INSTANT_COFFEE;
-        }
-        if (NeedSeedTallnut(theApp) && aSeedType == SeedType::SEED_WALLNUT) {
-            aSeedType = SeedType::SEED_TALLNUT;
-        }
-        if (NeedSeedUmbrella(theApp) && aSeedType == SeedType::SEED_SPIKEWEED) {
-            aSeedType = SeedType::SEED_UMBRELLA;
-        }
-        if (NeedSeedMagnetshroom(theApp) && aSeedType == SeedType::SEED_ICESHROOM) {
-            aSeedType = SeedType::SEED_MAGNETSHROOM;
-        }
-        if (NeedSeedSplitPea(theApp) && aSeedType == SeedType::SEED_PEASHOOTER) {
-            aSeedType = SeedType::SEED_SPLITPEA;
         }
         if (NeedSeedTorchwood(theApp) && aSeedType == SeedType::SEED_GRAVEBUSTER) {
             aSeedType = SeedType::SEED_TORCHWOOD;
@@ -378,14 +355,24 @@ SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeed
     return aSeedType;
 }
 
-bool NeedSeedInstantCoffee(LawnApp *theApp) {
-    // 种子栏存在可用的蘑菇
-    for (int i = 1; i < 6; ++i) {
-        SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[0]->mSeedPackets[i];
-        if (Plant::IsNocturnal(aSeedPacket.mPacketType) && aSeedPacket.mActive) {
-            return true;
+bool NeedSeedInstantCoffee(LawnApp *theApp, const std::vector<SeedType> &thePlantSeeds, bool theIsShuffle) {
+    if (theIsShuffle) {
+        // 刷出的新卡组中有蘑菇
+        for (SeedType aSeedType : thePlantSeeds) {
+            if (Plant::IsNocturnal(aSeedType)) {
+                return true;
+            }
+        }
+    } else {
+        // 种子栏存在可用的蘑菇
+        for (int i = 1; i < 6; ++i) {
+            SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[0]->mSeedPackets[i];
+            if (Plant::IsNocturnal(aSeedPacket.mPacketType) && aSeedPacket.mActive) {
+                return true;
+            }
         }
     }
+
     // 场上存在未唤醒且头顶没有咖啡豆的植物
     Plant *aPlant = nullptr;
     while (theApp->mBoard->IteratePlants(aPlant)) {
@@ -509,18 +496,32 @@ int CountPeasOnScreen(LawnApp *theApp) {
     return aCount;
 }
 
-bool NeedSeedTorchwood(LawnApp *theApp) {
-    // 种子栏存在2株以上可用的豌豆类种子
-    int aNumPeasInBank = 0;
-    for (int i = 1; i < 6; ++i) {
-        SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[0]->mSeedPackets[i];
-        if (IsPeaSeedType(aSeedPacket.mPacketType) && aSeedPacket.mActive) {
-            ++aNumPeasInBank;
+bool NeedSeedTorchwood(LawnApp *theApp, const std::vector<SeedType> &thePlantSeeds, bool theIsShuffle) {
+    if (theIsShuffle) {
+        // 刷出的新卡组中有两个以上的豌豆类植物
+        int numPeasInBank = 0;
+        for (SeedType aSeedType : thePlantSeeds) {
+            if (IsPeaSeedType(aSeedType)) {
+                ++numPeasInBank;
+            }
+            if (numPeasInBank >= 2) {
+                return true;
+            }
+        }
+    } else {
+        // 种子栏存在2株以上可用的豌豆类种子替换咬咬碑为火炬树桩
+        int aNumPeasInBank = 0;
+        for (int i = 1; i < 6; ++i) {
+            SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[0]->mSeedPackets[i];
+            if (IsPeaSeedType(aSeedPacket.mPacketType) && aSeedPacket.mActive) {
+                ++aNumPeasInBank;
+            }
+            if (aNumPeasInBank >= 2) {
+                return true;
+            }
         }
     }
-    if (aNumPeasInBank >= 2) {
-        return true;
-    }
+
     // 场上存在3株以上的豌豆类植物
     if (CountPeasOnScreen(theApp) >= 3) {
         return true;

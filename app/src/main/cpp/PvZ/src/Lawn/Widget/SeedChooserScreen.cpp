@@ -968,8 +968,7 @@ void SeedChooserScreen::GetSeedPositionInChooser(int theIndex, int &x, int &y) {
     }
     int aRow = theIndex / NumColumns();
     int aCol = theIndex % NumColumns();
-    bool isExtraSeedsMode = IsExtraSeedsModeEnabled(this);
-    if (mIsZombieChooser && aRow == 3 && !isExtraSeedsMode) {
+    if (mIsZombieChooser && aRow == 3 && !IsExtraSeedsModeEnabled(this)) {
         x = 53 * aCol + 48;
     } else {
         x = 53 * aCol + 22;

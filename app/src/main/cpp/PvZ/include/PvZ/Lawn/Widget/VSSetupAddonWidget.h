@@ -81,15 +81,16 @@ private:
 };
 
 void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie);
+void PickShuffleSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie);
 SeedType PickNextRandomSeed(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie, int theSeedIndex);
-bool NeedSeedInstantCoffee(LawnApp *theApp);
+bool NeedSeedInstantCoffee(LawnApp *theApp, const std::vector<SeedType> &thePlantSeeds = {}, bool theIsShuffle = false);
 bool NeedSeedTallnut(LawnApp *theApp);
 bool NeedSeedUmbrella(LawnApp *theApp);
 bool NeedSeedMagnetshroom(LawnApp *theApp);
 bool NeedSeedSplitPea(LawnApp *theApp);
 bool IsPeaSeedType(SeedType theSeedType);
 int CountPeasOnScreen(LawnApp *theApp);
-bool NeedSeedTorchwood(LawnApp *theApp);
+bool NeedSeedTorchwood(LawnApp *theApp, const std::vector<SeedType> &thePlantSeeds = {}, bool theIsShuffle = false);
 bool NeedSeedZombieImp(LawnApp *theApp);
 
 #endif // PVZ_LAWN_WIDGET_VSSETUPADDONWIDGET_H

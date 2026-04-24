@@ -745,13 +745,12 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                 return;
 
             if (aPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
-                std::vector<SeedType> aPlantSeeds;
-                std::vector<SeedType> aZombieSeeds;
-                PickMPRandomSeeds(mGameObject->mApp, aPlantSeeds, aZombieSeeds, true);
+                std::vector<SeedType> aPlantSeeds, aZombieSeeds;
+                PickShuffleSeeds(mGameObject->mApp, aPlantSeeds, aZombieSeeds, true);
                 if (!aZombieSeeds.empty()) {
                     for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
                         SeedType aSeedType = aZombieSeeds[aPacketIndex - 1];
-                        aSeedPacket[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
+                        aSeedBank->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
                     }
                 }
                 mBoard->TakeDeathMoney(aCost);
@@ -839,13 +838,12 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
             }
 
             if (aPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
-                std::vector<SeedType> aPlantSeeds;
-                std::vector<SeedType> aZombieSeeds;
-                PickMPRandomSeeds(mGameObject->mApp, aPlantSeeds, aZombieSeeds, false);
+                std::vector<SeedType> aPlantSeeds, aZombieSeeds;
+                PickShuffleSeeds(mGameObject->mApp, aPlantSeeds, aZombieSeeds, false);
                 if (!aPlantSeeds.empty()) {
                     for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
                         SeedType aSeedType = aPlantSeeds[aPacketIndex - 1];
-                        aSeedPacket[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
+                        aSeedBank->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
                     }
                 }
                 mBoard->TakeSunMoney(aCost, 0);
