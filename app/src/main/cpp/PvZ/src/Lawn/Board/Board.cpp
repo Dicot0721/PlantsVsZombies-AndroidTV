@@ -5107,7 +5107,7 @@ void Board::FadeOutLevel() {
 
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         if ((VSResultsMenu::msPlayerRecords[VSSide::VS_SIDE_PLANT][3] == 4 && mApp->mBoardResult == BoardResult::BOARDRESULT_VS_PLANT_WON)
-            || (VSResultsMenu::msPlayerRecords[VSSide::VS_SIDE_PLANT][3] == 4 && mApp->mBoardResult == BoardResult::BOARDRESULT_VS_ZOMBIE_WON)) {
+            || (VSResultsMenu::msPlayerRecords[VSSide::VS_SIDE_ZOMBIE][3] == 4 && mApp->mBoardResult == BoardResult::BOARDRESULT_VS_ZOMBIE_WON)) {
             GrantAchievement(AchievementId::ACHIEVEMENT_VERSUS, true);
         }
     }
