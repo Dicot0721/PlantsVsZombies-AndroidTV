@@ -37,11 +37,11 @@ bool homura::SetProtection(std::uintptr_t address, std::size_t length, int prot)
 }
 
 bool homura::WriteMemory(std::uintptr_t address, const std::vector<std::uint8_t> &buffer) {
-    if ((address == 0) || buffer.empty()) [[unlikely]] {
+    if ((address == 0) || buffer.empty()) {
         LOG_ERROR("Invalid argument(s)");
         return false;
     }
-    if (!SetProtection(address, buffer.size(), PROT_READ | PROT_WRITE | PROT_EXEC)) [[unlikely]] {
+    if (!SetProtection(address, buffer.size(), PROT_READ | PROT_WRITE | PROT_EXEC)) {
         LOG_ERROR("Failed to set protection: {}", std::strerror(errno));
         return false;
     }

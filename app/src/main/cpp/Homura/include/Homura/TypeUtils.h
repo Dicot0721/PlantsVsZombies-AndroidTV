@@ -31,7 +31,7 @@ namespace homura {
  * 对象使用 placement new 创建, 并使用显式析构函数调用销毁.
  */
 template <typename T>
-    requires requires { sizeof(T); }
+    requires(requires { sizeof(T); } && !std::is_reference_v<T>)
 class Storage {
 public:
     using ElementType = T;

@@ -26,8 +26,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
-homura::SharedObjLoader::SharedObjLoader(const char *filename) {
-    handle_ = dlopen(filename, RTLD_NOW | RTLD_NOLOAD);
+homura::SharedObjLoader::SharedObjLoader(const char *filename)
+    : handle_{dlopen(filename, RTLD_NOW | RTLD_NOLOAD)} {
     if (!IsOpen()) {
         LOG_ERROR("Failed to load shared library '{}': {}", filename, dlerror());
     }
@@ -45,7 +45,7 @@ auto homura::SharedObjLoader::operator=(SharedObjLoader &&other) noexcept -> Sha
 }
 
 void *homura::SharedObjLoader::GetSymbolImpl(const char *name) const {
-    if (!IsOpen()) [[unlikely]] {
+    if (!IsOpen()) {
         return nullptr;
     }
 #ifdef PVZ_DEBUG

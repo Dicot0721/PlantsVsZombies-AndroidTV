@@ -54,7 +54,7 @@ void homura::RegisterAccessViolationHandler() {
         .sa_flags = SA_SIGINFO,
     };
     sigemptyset(&sa.sa_mask);
-    if (sigaction(SIGSEGV, &sa, nullptr) == -1) [[unlikely]] {
+    if (sigaction(SIGSEGV, &sa, nullptr) == -1) {
         LOG_ERROR("Failed to register an exception handler");
     }
 }

@@ -36,7 +36,7 @@ bool homura::details::HookVirtualFuncImpl(void *vTableSymbol, std::size_t index,
     assert((vTableSymbol != nullptr) && (newFunc != nullptr));
 
     auto funcPtrAddr = reinterpret_cast<void **>(vTableSymbol) + index;
-    if (!SetProtection(std::uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ | PROT_WRITE)) [[unlikely]] {
+    if (!SetProtection(std::uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ | PROT_WRITE)) {
         LOG_ERROR("Failed to set protection: {}", std::strerror(errno));
         return false;
     }
@@ -61,7 +61,7 @@ bool homura::details::HookPltFunctionImpl(std::string_view libName, std::uintptr
     }
 
     auto funcPtrAddr = reinterpret_cast<void **>(baseAddr + offset);
-    if (!SetProtection(std::uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ | PROT_WRITE)) [[unlikely]] {
+    if (!SetProtection(std::uintptr_t(funcPtrAddr), sizeof(funcPtrAddr), PROT_READ | PROT_WRITE)) {
         LOG_ERROR("Failed to set protection: {}", std::strerror(errno));
         return false;
     }
