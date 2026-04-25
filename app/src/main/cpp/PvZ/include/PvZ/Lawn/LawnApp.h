@@ -130,6 +130,7 @@ public:
     int unk10;                               // 668
     bool mMuteSoundsForCutscene;             // 2676
     bool unkBool2;                           // 2677
+    bool mUnkBoolA76;                        // 2678
     int unk11;                               // 670
     int mSecondPlayerGamepadIndex;           // 671
     int unk12[3];                            // 672 ~ 674

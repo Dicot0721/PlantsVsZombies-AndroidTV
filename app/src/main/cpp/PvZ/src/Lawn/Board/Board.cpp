@@ -153,7 +153,7 @@ void Board::SetGrids() {
 
 bool LawnSaveGame(Board *theBoard, const pvzstl::string &theFilePath) {
     if (disableSaveUserdata) {
-        old_LawnSaveGame(theBoard, ""); // 用于从暂停菜单返回主界面
+        theBoard->mApp->mUnkBoolA76 = false; // 用于从暂停菜单返回主界面
         return true;
     }
 

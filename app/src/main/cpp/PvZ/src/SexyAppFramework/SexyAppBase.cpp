@@ -43,7 +43,7 @@ bool Sexy::SexyAppBase::UpdateApp() {
 }
 
 bool Sexy::SexyAppBase::EraseFile(const pvzstl::string &theFileName) {
-    if (disableDeleteUserdata) {
+    if (disableDeleteUserdata && theFileName.ends_with(".dat")) {
         return true;
     }
     return unlink(theFileName.c_str()) == 0;
