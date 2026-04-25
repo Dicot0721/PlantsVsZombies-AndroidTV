@@ -37,7 +37,7 @@ class ButtonWidget;
 class Widget;
 } // namespace Sexy
 
-class VSSetupAddonWidget : public Sexy::CheckboxListener {
+class VSSetupAddonWidget final : public Sexy::CheckboxListener {
 public:
     enum {
         VSSetupAddonWidget_ExtraPackets = 12,
