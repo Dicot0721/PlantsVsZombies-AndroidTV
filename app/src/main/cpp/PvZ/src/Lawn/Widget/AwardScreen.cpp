@@ -26,7 +26,7 @@
 void AwardScreen::MouseDown(int x, int y, int theClickCount) {
     Sexy::Rect aRect = {mStartButton->mX, mStartButton->mY, mStartButton->mWidth, mStartButton->mHeight};
     if (aRect.Contains(x, y)) {
-        mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
+        mApp->PlaySample(Sexy::SOUND_TAP);
     }
 }
 

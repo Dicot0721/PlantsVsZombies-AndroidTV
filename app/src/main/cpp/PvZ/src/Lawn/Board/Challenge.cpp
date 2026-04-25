@@ -129,7 +129,7 @@ void Challenge::Update() {
             --mBobSledMPCounter;
             if (mBobSledMPCounter <= 0) {
                 // SD模式雪橇车召唤倒计时缩减至 1/3
-                mBobSledMPCounter = (IsMPSuddenDeath() && *Challenge_gVSSuddenDeathMode_Addr == 1) ? 2000 : 6000;
+                mBobSledMPCounter = (IsMPSuddenDeath() && Challenge::gVSSuddenDeathMode == 1) ? 2000 : 6000;
                 mBoard->AddZombie(ZombieType::ZOMBIE_BOBSLED, Zombie::ZOMBIE_WAVE_VS, true);
             }
             return;
@@ -293,7 +293,7 @@ bool Challenge::IZombieEatBrain(Zombie *theZombie) {
     int mHealth = aBrain->mGridItemCounter - 2; // 一次吃掉脑子的两滴血
     aBrain->mGridItemCounter = mHealth;
     if (mHealth <= 0) {
-        mApp->PlaySample(*SOUND_GULP);
+        mApp->PlaySample(SOUND_GULP);
         aBrain->GridItemDie();
         IZombieScoreBrain(aBrain);
     }
@@ -630,7 +630,7 @@ void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int t
 
 void Challenge::DrawHeavyWeapon(Sexy::Graphics *g) {
     // 修复僵尸进家后重型武器关卡长草露馅
-    g->DrawImage(*Sexy_IMAGE_HEAVY_WEAPON_OVERLAY_Addr, -73, 559);
+    g->DrawImage(Sexy::IMAGE_HEAVY_WEAPON_OVERLAY, -73, 559);
 }
 
 bool Challenge::UpdateZombieSpawning() {

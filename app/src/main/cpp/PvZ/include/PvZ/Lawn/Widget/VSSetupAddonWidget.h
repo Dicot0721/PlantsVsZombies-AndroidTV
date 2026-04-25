@@ -49,7 +49,7 @@ public:
 
     static inline bool msBalancePatchMode = false;
 
-    LawnApp *mApp = *gLawnApp_Addr;
+    LawnApp *mApp = gLawnApp;
     Board *mBoard = mApp->mBoard;
     Sexy::ButtonListener *mButtonListener;
     NewLawnButton *mBackButton = nullptr;

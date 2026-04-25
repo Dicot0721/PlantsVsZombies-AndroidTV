@@ -46,7 +46,8 @@
  * @brief Homura 模块的初始化函数.
  *
  * Java 层已指定模块加载顺序: 先 libGameMain.so, 后 libHomura.so.<br/>
- * [[gnu::constructor(102)]] -> call after patchlist variables are initialized
+ * <br/>
+ * constructor(102) -> call after some variables are initialized
  */
 [[gnu::constructor(102)]] static void LibMain() {
     homura::RegisterExceptionHandler();
@@ -88,16 +89,16 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
         return;
     }
     requestPause = enable;
-    LawnApp *lawnApp = *gLawnApp_Addr;
+    LawnApp *lawnApp = gLawnApp;
 
     // if (lawnApp->mPlayerInfo != nullptr){
     // lawnApp->mPlayerInfo->mChallengeRecords[GameMode::ChallengeButteredPopcorn - 2] = 0;
     // lawnApp->mPlayerInfo->mChallengeRecords[GameMode::ChallengeHeavyWeapon - 2] = 0;
     // }
     if (enable) {
-        lawnApp->PlaySample(*Sexy_SOUND_PAUSE_Addr);
+        lawnApp->PlaySample(Sexy::SOUND_PAUSE);
     } else {
-        lawnApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+        lawnApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
     }
 }
 
@@ -125,7 +126,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     if (gTcpConnected || gTcpClientSocket >= 0) {
         return;
     }
-    Board *aBoard = (*gLawnApp_Addr)->mBoard;
+    Board *aBoard = (gLawnApp)->mBoard;
     if (aBoard == nullptr) {
         return;
     }
@@ -504,7 +505,7 @@ extern "C" JNIEXPORT jobjectArray JNICALL Java_com_android_support_CkHomuraMenu_
 }
 
 extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCurrentFormation(JNIEnv *env, jobject thiz) {
-    Board *aBoard = (*gLawnApp_Addr)->mBoard;
+    Board *aBoard = (gLawnApp)->mBoard;
     if (aBoard == nullptr) {
         return env->NewStringUTF("");
     }
@@ -512,7 +513,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_android_support_CkHomuraMenu_GetCu
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native1PButtonDown(JNIEnv *env, jclass clazz, jint code) {
-    Board *aBoard = (*gLawnApp_Addr)->mBoard;
+    Board *aBoard = (gLawnApp)->mBoard;
     if (aBoard) {
         gButtonDownP1 = true;
         gButtonCodeP1 = Sexy::GamepadButton(code);
@@ -520,7 +521,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_native2PButtonDown(JNIEnv *env, jclass clazz, jint code) {
-    Board *aBoard = (*gLawnApp_Addr)->mBoard;
+    Board *aBoard = (gLawnApp)->mBoard;
     if (aBoard) {
         gButtonDownP2 = true;
         gButtonCodeP2 = Sexy::GamepadButton(code);
@@ -533,7 +534,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     if (is_on) {
         return;
     }
-    LawnApp *anApp = *gLawnApp_Addr;
+    LawnApp *anApp = gLawnApp;
     Board *aBoard = anApp->mBoard;
     if (anApp->IsCoopMode() || anApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         return;
@@ -546,7 +547,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 }
 
 extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIsInGame(JNIEnv *env, jclass clazz) {
-    LawnApp *anApp = *gLawnApp_Addr;
+    LawnApp *anApp = gLawnApp;
     Board *aBoard = anApp->mBoard;
     auto *aFocusWidget = anApp->mWidgetManager->mFocusWidget;
     if (aBoard && aFocusWidget == aBoard) {
@@ -569,7 +570,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     bool aGamepad1Is2P = gGamepad1ToPlayerIndex == 1;
     Sexy::GamepadButton aButtonCode = Sexy::GamepadButton(aIsPlayer2 ? button_code - 256 : button_code);
 
-    LawnApp *anApp = *gLawnApp_Addr;
+    LawnApp *anApp = gLawnApp;
     Board *aBoard = anApp->mBoard;
     auto *aFocusWidget = anApp->mWidgetManager->mFocusWidget;
 
@@ -661,7 +662,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIntroVideoCompleted(JNIEnv *env, jclass clazz) {
-    TitleScreen *aTitleScreen = (*gLawnApp_Addr)->mTitleScreen;
+    TitleScreen *aTitleScreen = (gLawnApp)->mTitleScreen;
     if (aTitleScreen != nullptr) {
         aTitleScreen->mVideoCompleted = true;
     }

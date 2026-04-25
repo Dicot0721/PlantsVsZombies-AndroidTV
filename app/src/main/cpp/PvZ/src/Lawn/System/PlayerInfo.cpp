@@ -33,7 +33,6 @@ void LawnPlayerInfo::AddCoins(int theAmount) {
     if (theAmount < 0) {
         mUsedCoins -= theAmount;
         if (mUsedCoins >= 2500) {
-            LawnApp *gLawnApp = *gLawnApp_Addr;
             gLawnApp->GrantAchievement(AchievementId::ACHIEVEMENT_SHOP);
         }
     }

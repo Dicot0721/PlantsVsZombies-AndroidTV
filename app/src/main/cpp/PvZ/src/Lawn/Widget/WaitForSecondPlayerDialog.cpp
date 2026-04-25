@@ -862,7 +862,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
         // （可选）标题
         TodDrawString(g, TodStringTranslate("[AVAILABLE_ROOMS]"), 400, 140, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
 
-        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
         for (int i = 0; i < gScannedServerCount; i++) {
             if (i == mSelectedServerIndex) {
                 // 选中高亮（你原本用 leaderboard_selector）
@@ -1510,7 +1510,7 @@ void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
     gLastBroadcastTime = 0;
     if (gUdpBroadcastSocket < 0)
         return;
-    LawnApp *lawnApp = *gLawnApp_Addr;
+    LawnApp *lawnApp = gLawnApp;
     if (!lawnApp || !lawnApp->mPlayerInfo || !lawnApp->mPlayerInfo->mName)
         return;
 
@@ -3096,7 +3096,7 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
     int yPos = kServerRoomListItemStartY;
     Sexy::Color oldColor = g->mColor;
 
-    g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+    g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
     int idx = mSelectedRoomIndex_Server;
     if (idx < 0)
         idx = 0;
@@ -3131,10 +3131,10 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
 
     if (totalPages > 1) {
         if (mServerRoomPage > 0) {
-            g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, kServerRoomListPrevPageX, kServerRoomListPageArrowY, true);
+            g->DrawImageMirror(Sexy::IMAGE_ZEN_NEXTGARDEN, kServerRoomListPrevPageX, kServerRoomListPageArrowY, true);
         }
         if (mServerRoomPage + 1 < totalPages) {
-            g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, kServerRoomListNextPageX, kServerRoomListPageArrowY);
+            g->DrawImage(Sexy::IMAGE_ZEN_NEXTGARDEN, kServerRoomListNextPageX, kServerRoomListPageArrowY);
         }
         TodDrawString(g, StrFormat("%d/%d", mServerRoomPage + 1, totalPages), 390, kServerRoomListPageNumberY, g->GetFont(), oldColor, DS_ALIGN_CENTER);
     }
@@ -3165,7 +3165,7 @@ void WaitForSecondPlayerDialog::ServerSelectRoomByMouse(int x, int y) {
         }
         if (mSelectedRoomIndex_Server != targetIndex) {
             mSelectedRoomIndex_Server = targetIndex;
-            mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+            mApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
         }
         return;
     }
@@ -3200,7 +3200,7 @@ void WaitForSecondPlayerDialog::ServerSelectRoomByMouse(int x, int y) {
         if (idx >= 0 && idx < mServerRoomCount) {
             if (mSelectedRoomIndex_Server != idx) {
                 mSelectedRoomIndex_Server = idx;
-                mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+                mApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
             }
         }
     }
@@ -3362,8 +3362,8 @@ void WaitForSecondPlayerDialog::MouseDown(int x, int y, int theClickCount) {
             if (mServerRoomPage >= totalPages)
                 mServerRoomPage = totalPages - 1;
 
-            const int arrowW = (*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr)->GetCelWidth();
-            const int arrowH = (*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr)->GetHeight();
+            const int arrowW = (Sexy::IMAGE_ZEN_NEXTGARDEN)->GetCelWidth();
+            const int arrowH = (Sexy::IMAGE_ZEN_NEXTGARDEN)->GetHeight();
 
             if (mServerRoomPage > 0) {
                 if (x >= kServerRoomListPrevPageX && x < kServerRoomListPrevPageX + arrowW && y >= kServerRoomListPageArrowY && y < kServerRoomListPageArrowY + arrowH) {
@@ -3372,7 +3372,7 @@ void WaitForSecondPlayerDialog::MouseDown(int x, int y, int theClickCount) {
                     if (mSelectedRoomIndex_Server < first || mSelectedRoomIndex_Server >= first + kServerRoomListPageSize) {
                         mSelectedRoomIndex_Server = first;
                     }
-                    mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+                    mApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
                     return;
                 }
             }
@@ -3383,7 +3383,7 @@ void WaitForSecondPlayerDialog::MouseDown(int x, int y, int theClickCount) {
                     if (mSelectedRoomIndex_Server < first || mSelectedRoomIndex_Server >= first + kServerRoomListPageSize) {
                         mSelectedRoomIndex_Server = first;
                     }
-                    mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+                    mApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
                     return;
                 }
             }
@@ -3407,7 +3407,7 @@ void WaitForSecondPlayerDialog::MouseDown(int x, int y, int theClickCount) {
         if (idx >= 0 && idx < gScannedServerCount) {
             if (mSelectedServerIndex != idx) {
                 mSelectedServerIndex = idx;
-                mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+                mApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
             }
         }
     }

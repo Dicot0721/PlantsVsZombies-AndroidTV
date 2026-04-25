@@ -229,12 +229,12 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
     old_ChallengeScreen_ChallengeScreen(this, theApp, thePage);
 
     mBackButton = MakeNewButton(
-        ChallengeScreen::ChallengeScreen_Back, this, this, "[CLOSE]", nullptr, *Sexy::IMAGE_SEEDCHOOSER_BUTTON_DISABLED, *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW, *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
+        ChallengeScreen::ChallengeScreen_Back, this, this, "[CLOSE]", nullptr, Sexy::IMAGE_SEEDCHOOSER_BUTTON_DISABLED, Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW, Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
     mBackButton->mTextOffsetX = -2;
     mBackButton->mTextOffsetY = -4;
     mBackButton->mTextDownOffsetX = 1;
     mBackButton->mTextDownOffsetY = 1;
-    mBackButton->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+    mBackButton->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
     (*mBackButton->mColors)[ButtonWidget::COLOR_LABEL_HILITE] = Color(0, 205, 0);
     mBackButton->Resize(800, 520, 160, 50);
 
@@ -263,14 +263,14 @@ ChallengeDefinition &GetChallengeDefinition(int theChallengeMode) {
 }
 
 void ChallengeScreen::Draw(Sexy::Graphics *g) {
-    g->DrawImage(*Sexy::IMAGE_CHALLENGE_BACKGROUND, *LawnApp_FULLSCREEN_RECT_Addr, -60);
+    g->DrawImage(Sexy::IMAGE_CHALLENGE_BACKGROUND, LawnApp::FULLSCREEN_RECT, -60);
 
     pvzstl::string aTitleString = mPageIndex == CHALLENGE_PAGE_SURVIVAL ? "[PICK_AREA]"
         : mPageIndex == CHALLENGE_PAGE_PUZZLE                           ? "[SCARY_POTTER]"
         : mPageIndex == CHALLENGE_PAGE_VS                               ? "[VS_MODE]"
         : mPageIndex == CHALLENGE_PAGE_COOP                             ? "[XBOX_COOP]"
                                                                         : "[PICK_CHALLENGE]";
-    TodDrawString(g, aTitleString, 400, 45, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(220, 220, 220), DS_ALIGN_CENTER);
+    TodDrawString(g, aTitleString, 400, 45, Sexy::FONT_HOUSEOFTERROR28, Color(220, 220, 220), DS_ALIGN_CENTER);
 
     int aTrophiesGot = mApp->GetNumTrophies(mPageIndex);
     int aTrophiesTotal = (mPageIndex == CHALLENGE_PAGE_SURVIVAL || mPageIndex == CHALLENGE_PAGE_COOP) ? 10 : mPageIndex == CHALLENGE_PAGE_PUZZLE ? 18 : 0;
@@ -283,10 +283,10 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
     }
     if (aTrophiesTotal > 0) {
         pvzstl::string aTrophyString = StrFormat(TodStringTranslate("[NUMBER_OF_TROPHIES]").c_str(), aTrophiesGot, aTrophiesTotal);
-        TodDrawString(g, aTrophyString, 711, 62, *Sexy_FONT_BRIANNETOD16_Addr, Color(255, 240, 0), DS_ALIGN_CENTER);
+        TodDrawString(g, aTrophyString, 711, 62, Sexy::FONT_BRIANNETOD16, Color(255, 240, 0), DS_ALIGN_CENTER);
     }
     if (mPageIndex != CHALLENGE_PAGE_VS) {
-        TodDrawImageScaledF(g, *Sexy::IMAGE_TROPHY, 690.0f, 15.0f, 0.5f, 0.5f);
+        TodDrawImageScaledF(g, Sexy::IMAGE_TROPHY, 690.0f, 15.0f, 0.5f, 0.5f);
     }
 
     g->PushState();
@@ -335,7 +335,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
 
     g->ClearClipRect();
     g->SetColorizeImages(false);
-    g->DrawImageBox(Rect(scrollBarX, scrollBarY, scrollBarWidth, scrollBarHeight), *Sexy::IMAGE_DLG_SELECTORFRAME);
+    g->DrawImageBox(Rect(scrollBarX, scrollBarY, scrollBarWidth, scrollBarHeight), Sexy::IMAGE_DLG_SELECTORFRAME);
 
     g->PopState();
 
@@ -367,21 +367,17 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
 
         if (gTcpConnected) {
             if (gNetDelayNow == 0) {
-                TodDrawString(
-                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
-                TodDrawString(
-                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             }
         } else if (gTcpClientSocket >= 0) {
             if (gNetDelayNow == 0) {
-                TodDrawString(
-                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_HOST]").c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_HOST]").c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_HOST_MS_FMT]");
-                TodDrawString(
-                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             }
         }
 
@@ -420,7 +416,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
                 }
 
 
-                TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
             }
 
             // ======================
@@ -453,7 +449,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
                     default:
                         break;
                 }
-                TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
+                TodDrawString(g, StrFormat(fmt.c_str(), name.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153, 255), DrawStringJustification::DS_ALIGN_LEFT);
             }
         }
     }
@@ -544,7 +540,7 @@ void ChallengeScreen::MouseDown(int x, int y, int theClickCount) {
     }
     gChallengeScreenTouchDownX = x;
     gChallengeScreenTouchDownY = y;
-    gChallengeItemHeight = (*Sexy_IMAGE_CHALLENGE_NAME_BACK_Addr)->GetHeight() + 2; // 2为缝隙大小
+    gChallengeItemHeight = (Sexy::IMAGE_CHALLENGE_NAME_BACK)->GetHeight() + 2; // 2为缝隙大小
 
     gChallengeScreenGameIndex = mScreenTopChallengeIndex;
 
@@ -588,7 +584,7 @@ void ChallengeScreen::MouseUp(int x, int y) {
         if (mSelectedMode == mUnk1[gameIndex]) {
             KeyDown(Sexy::KEYCODE_RETURN);
         } else {
-            mApp->PlaySample(*Sexy_SOUND_BUTTONCLICK_Addr);
+            mApp->PlaySample(Sexy::SOUND_BUTTONCLICK);
             if (gTcpConnected) {
                 // 房客
                 U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mUnk1[gameIndex])};

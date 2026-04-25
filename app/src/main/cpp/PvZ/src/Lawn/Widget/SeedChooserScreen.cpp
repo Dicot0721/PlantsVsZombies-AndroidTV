@@ -96,7 +96,7 @@ inline void NormalizeLocalPoint(SeedChooserScreen *screen, int &x, int &y) {
 void SeedChooserScreen::_constructor(bool theIsZombieChooser) {
     // 记录当前游戏状态，同时修复在没解锁商店图鉴时依然显示相应按钮的问题、对战选种子界面的按钮问题；
     // 还添加了生存模式保留上次选卡，添加坚果艺术关卡默认选择坚果，添加向日葵艺术关卡默认选择坚果、杨桃、萝卜伞
-    mApp = reinterpret_cast<LawnApp *>(*Sexy_gSexyAppBase_Addr);
+    mApp = reinterpret_cast<LawnApp *>(Sexy::gSexyAppBase);
     mBoard = mApp->mBoard;
     GameMode mGameMode = mApp->mGameMode;
     if (mBoard->mCutScene->IsSurvivalRepick() && !mApp->IsCoopMode()) {
@@ -197,8 +197,7 @@ void SeedChooserScreen::_constructor(bool theIsZombieChooser) {
         mShowExtraSeeds = mApp->mVSSetupMenu->mAddonWidget->mExtraSeedsMode;
         mHas7Packets = mApp->mVSSetupMenu->mAddonWidget->mExtraPacketsMode;
         if (mIsZombieChooser && mShowExtraSeeds) {
-            mPageButton =
-                MakeNewButton(SeedChooserScreen::SeedChooserScreen_Page, this, this, "", nullptr, *Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, *Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, *Sexy_IMAGE_ZEN_NEXTGARDEN_Addr);
+            mPageButton = MakeNewButton(SeedChooserScreen::SeedChooserScreen_Page, this, this, "", nullptr, Sexy::IMAGE_ZEN_NEXTGARDEN, Sexy::IMAGE_ZEN_NEXTGARDEN, Sexy::IMAGE_ZEN_NEXTGARDEN);
             mPageButton->Resize(225, 525, 60, 60);
             AddWidget(mPageButton);
         }
@@ -427,7 +426,7 @@ void SeedChooserScreen::ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, in
 
     // VS模式检查
     if (mApp->IsVSMode() && !CanPickNow()) {
-        mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
+        mApp->PlaySample(Sexy::SOUND_BUZZER);
         canPickSeed = false;
     }
 
@@ -526,7 +525,7 @@ void SeedChooserScreen::ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, in
 
     // 播放音效并更新UI
     RemoveToolTip(thePlayerIndex);
-    mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
+    mApp->PlaySample(Sexy::SOUND_TAP);
 
     // 检查是否启用开始按钮
     if (!mApp->IsCoopMode() && mSeedsInBank == mSeedBank1->mNumPackets) {
@@ -774,12 +773,12 @@ void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int the
             }
 
             if (SeedNotAllowedToPick(aSeedType)) {
-                mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
+                mApp->PlaySample(Sexy::SOUND_BUZZER);
                 return;
             }
 
             if (SeedNotAllowedDuringTrial(aSeedType)) {
-                mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
+                mApp->PlaySample(Sexy::SOUND_TAP);
                 if (mApp->LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[GET_FULL_VERSION_TITLE]", "[GET_FULL_VERSION_BODY]", "[GET_FULL_VERSION_YES_BUTTON]", "[GET_FULL_VERSION_NO_BUTTON]", 1) == 1000) {
                     mApp->DoBackToMain();
                 }
@@ -797,7 +796,7 @@ void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int the
             }
 
             if (aChosenSeed.mRefreshing) {
-                mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
+                mApp->PlaySample(Sexy::SOUND_BUZZER);
                 return;
             }
 
@@ -898,7 +897,7 @@ void SeedChooserScreen::DrawPacket(
 }
 
 void SeedChooserScreen::ButtonPress(int theId) {
-    LawnApp *lawnApp = *gLawnApp_Addr;
+    LawnApp *lawnApp = gLawnApp;
     lawnApp->mSeedChooserScreen->mFocusedChildWidget = nullptr; // 修复点击菜单后无法按键选取植物卡片
 }
 
@@ -926,7 +925,7 @@ void SeedChooserScreen::ButtonDepress_Origin(int theId) {
     }
 
     if (theId == SeedChooserScreen_Menu) {
-        mApp->PlaySample(*Sexy_SOUND_PAUSE_Addr);
+        mApp->PlaySample(Sexy::SOUND_PAUSE);
         mApp->DoNewOptions(false, 0);
         return;
     }
@@ -1149,7 +1148,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         Sexy::Rect mViewLawnButtonRect = {mViewLawnButton->mX, mViewLawnButton->mY, mViewLawnButton->mWidth, 50};
         // LOGD("mStoreButtonRect:%d %d %d %d",mStoreButtonRect[0],mStoreButtonRect[1],mStoreButtonRect[2],mStoreButtonRect[3]);
         if (TRect_Contains(&mViewLawnButtonRect, x, y)) {
-            mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
+            mApp->PlaySample(Sexy::SOUND_TAP);
             gSeedChooserTouchState = SeedChooserTouchState::ViewLawnButton;
             gSeedChooserTouchOwner = this;
             // GameButtonDown(seedChooserScreen, 8, 0);
@@ -1161,7 +1160,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         Sexy::Rect mStoreButtonRect = {mStoreButton->mX, mStoreButton->mY, mStoreButton->mWidth, 50};
         // LOGD("mStoreButtonRect:%d %d %d %d",mStoreButtonRect[0],mStoreButtonRect[1],mStoreButtonRect[2],mStoreButtonRect[3]);
         if (TRect_Contains(&mStoreButtonRect, x, y)) {
-            mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
+            mApp->PlaySample(Sexy::SOUND_TAP);
             gSeedChooserTouchState = SeedChooserTouchState::StoreButton;
             gSeedChooserTouchOwner = this;
             // GameButtonDown(seedChooserScreen, 8, 0);
@@ -1172,7 +1171,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
     if (!mStartButtonDisabled) { // !mDisabled
         Sexy::Rect mStartButtonRect = {mStartButton->mX, mStartButton->mY, mStartButton->mWidth, 50};
         if (TRect_Contains(&mStartButtonRect, x, y)) {
-            mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
+            mApp->PlaySample(Sexy::SOUND_TAP);
             gSeedChooserTouchState = SeedChooserTouchState::StartButton;
             gSeedChooserTouchOwner = this;
 
@@ -1184,7 +1183,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
     if (!mAlmanacButtonDisabled) { // !mDisabled
         Sexy::Rect mAlmanacButtonRect = {mAlmanacButton->mX, mAlmanacButton->mY, mAlmanacButton->mWidth, 50};
         if (TRect_Contains(&mAlmanacButtonRect, x, y)) {
-            mApp->PlaySample(*Sexy_SOUND_TAP_Addr);
+            mApp->PlaySample(Sexy::SOUND_TAP);
             gSeedChooserTouchState = SeedChooserTouchState::AlmanacButton;
             gSeedChooserTouchOwner = this;
 
@@ -1457,12 +1456,12 @@ void SeedChooserScreen::Draw(Graphics *g) {
     }
 
     // Draw background
-    Image *aBackgroundImage = mIsZombieChooser ? *Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr : *Sexy_IMAGE_SEEDCHOOSER_BACKGROUND_Addr;
+    Image *aBackgroundImage = mIsZombieChooser ? Sexy::IMAGE_SEEDCHOOSER_BACKGROUND2 : Sexy::IMAGE_SEEDCHOOSER_BACKGROUND;
     g->DrawImage(aBackgroundImage, 0, 87);
 
     // Draw imitater addon for plant chooser
     if (!mIsZombieChooser && HasPacket(SEED_IMITATER, false) && !mApp->IsVSMode()) {
-        g->DrawImage(*Sexy::IMAGE_SEEDCHOOSER_IMITATERADDON, mImitaterButton->mX - 5, mImitaterButton->mY - 12);
+        g->DrawImage(Sexy::IMAGE_SEEDCHOOSER_IMITATERADDON, mImitaterButton->mX - 5, mImitaterButton->mY - 12);
     }
 
     // Draw title text
@@ -1476,7 +1475,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
         aTitleText = "[CHOOSE_YOUR_PLANTS]";
     }
 
-    TodDrawString(g, aTitleText, aBackgroundImage->mWidth / 2, 114, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aTitleColor, DS_ALIGN_CENTER);
+    TodDrawString(g, aTitleText, aBackgroundImage->mWidth / 2, 114, Sexy::FONT_DWARVENTODCRAFT18, aTitleColor, DS_ALIGN_CENTER);
 
     // Calculate seed count
     int aNumSeeds = 19;
@@ -1520,7 +1519,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
 
             if (aDisplaySeedType == SEED_NONE || !HasPacket(aDisplaySeedType, mIsZombieChooser)) {
                 if (aDrawShadow)
-                    g->DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
+                    g->DrawImage(Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
             } else {
                 ChosenSeed &aChosenSeed = mChosenSeeds[aSeedShadow];
                 if (aChosenSeed.mSeedState != SEED_IN_CHOOSER) {
@@ -1543,7 +1542,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
         if (FindSeedInBank(anIndex, false) == SEED_NONE) {
             int x, y;
             GetSeedPositionInBank(anIndex, x, y, 0);
-            g->DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
+            g->DrawImage(Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
         }
     }
 
@@ -1553,7 +1552,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
             if (FindSeedInBank(anIndex, true) == SEED_NONE) {
                 int x, y;
                 GetSeedPositionInBank(anIndex, x, y, 1);
-                g->DrawImage(*Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
+                g->DrawImage(Sexy::IMAGE_SEEDPACKETSILHOUETTE, x, y);
             }
         }
     }
@@ -1643,9 +1642,9 @@ void SeedChooserScreen::Draw(Graphics *g) {
         int aPlayerState = (aPlayerIndex ? mBoard->mGamepadControls[1] : mBoard->mGamepadControls[0])->mPlayerIndex2;
         if (aPlayerState != -1 && !unkMems3[3]) {
             if (aPlayerState == mPlayerIndex || !mApp->IsVSMode()) {
-                Image *aSelectorImage = (aPlayerState == mApp->mSecondPlayerGamepadIndex) ? *Sexy::IMAGE_SEED_SELECTOR_BLUE : *Sexy::IMAGE_SEED_SELECTOR;
+                Image *aSelectorImage = (aPlayerState == mApp->mSecondPlayerGamepadIndex) ? Sexy::IMAGE_SEED_SELECTOR_BLUE : Sexy::IMAGE_SEED_SELECTOR;
                 if (mBanningPhase) {
-                    aSelectorImage = (aSelectorImage == *Sexy::IMAGE_SEED_SELECTOR_BLUE) ? *Sexy::IMAGE_SEED_SELECTOR : *Sexy::IMAGE_SEED_SELECTOR_BLUE;
+                    aSelectorImage = (aSelectorImage == Sexy::IMAGE_SEED_SELECTOR_BLUE) ? Sexy::IMAGE_SEED_SELECTOR : Sexy::IMAGE_SEED_SELECTOR_BLUE;
                 }
                 g->DrawImage(aSelectorImage, aCursorX - 8, aCursorY - 4, 64, 85);
             }
@@ -1700,12 +1699,12 @@ void SeedChooserScreen::Draw(Graphics *g) {
     // Draw cursor arrows for players
     for (int aPlayerIndex = 0; aPlayerIndex < 2; aPlayerIndex++) {
         if (ShouldDisplayCursor(aPlayerIndex) && (aPlayerIndex ? mBoard->mGamepadControls[1] : mBoard->mGamepadControls[0])->mPlayerIndex2 != -1) {
-            Image *aArrowImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_ARROW_P2 : *Sexy::IMAGE_CURSOR_ARROW_P1;
-            Image *aTextImage = aPlayerIndex ? *Sexy_IMAGE_CURSOR_P2_TEXT_Addr : *Sexy_IMAGE_CURSOR_P1_TEXT_Addr;
+            Image *aArrowImage = aPlayerIndex ? Sexy::IMAGE_CURSOR_ARROW_P2 : Sexy::IMAGE_CURSOR_ARROW_P1;
+            Image *aTextImage = aPlayerIndex ? Sexy::IMAGE_CURSOR_P2_TEXT : Sexy::IMAGE_CURSOR_P1_TEXT;
 
             if (mApp->IsVSMode() && mBanningPhase) {
-                aArrowImage = aPlayerIndex ? *Sexy::IMAGE_CURSOR_ARROW_P1 : *Sexy::IMAGE_CURSOR_ARROW_P2;
-                aTextImage = aPlayerIndex ? *Sexy_IMAGE_CURSOR_P1_TEXT_Addr : *Sexy_IMAGE_CURSOR_P2_TEXT_Addr;
+                aArrowImage = aPlayerIndex ? Sexy::IMAGE_CURSOR_ARROW_P1 : Sexy::IMAGE_CURSOR_ARROW_P2;
+                aTextImage = aPlayerIndex ? Sexy::IMAGE_CURSOR_P1_TEXT : Sexy::IMAGE_CURSOR_P2_TEXT;
             }
 
             float aBounce = sinf(unkF * 5.0f) * 2.0f;
@@ -1724,7 +1723,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
                         color = mPlayerIndex ? Color(68, 207, 255, 255) : Color(255, 242, 14, 255);
                     }
                     g->DrawImageF(aArrowImage, float(aCursorX + 25 - aArrowImage->mWidth / 2), float(aCursorY - 8) + aBounce);
-                    TodDrawString(g, name, aCursorX + 25 - aArrowImage->mWidth / 2, aCursorY - 10, *Sexy_FONT_DWARVENTODCRAFT18_Addr, color, DrawStringJustification::DS_ALIGN_CENTER);
+                    TodDrawString(g, name, aCursorX + 25 - aArrowImage->mWidth / 2, aCursorY - 10, Sexy::FONT_DWARVENTODCRAFT18, color, DrawStringJustification::DS_ALIGN_CENTER);
                 }
             } else {
                 g->DrawImageF(aArrowImage, float(aCursorX + 25 - aArrowImage->mWidth / 2), float(aCursorY - 8) + aBounce);
@@ -1773,7 +1772,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
         else
             aTextColor = Color::White;
 
-        TodDrawString(g, "[HELP_TEXT_2_START]", aTextX, aTextY, *Sexy::FONT_DWARVENTODCRAFT24, aTextColor, DS_ALIGN_CENTER);
+        TodDrawString(g, "[HELP_TEXT_2_START]", aTextX, aTextY, Sexy::FONT_DWARVENTODCRAFT24, aTextColor, DS_ALIGN_CENTER);
     }
     //    else {
     //        // Check for disconnected controller warning
@@ -1803,7 +1802,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
     //                    int aTextY = aBackgroundImage->mHeight - 63;
     //                    Color aWarningColor(255, 0, 0);
     //
-    //                    TodDrawString(g, aWarningText, aTextX, aTextY, *Sexy::FONT_DWARVENTODCRAFT24, aWarningColor, DS_ALIGN_CENTER);
+    //                    TodDrawString(g, aWarningText, aTextX, aTextY, Sexy::FONT_DWARVENTODCRAFT24, aWarningColor, DS_ALIGN_CENTER);
     //                }
     //            }
     //        }
@@ -1821,7 +1820,7 @@ void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
         aBanGraphics.mTransX = 0;
         aBanGraphics.mTransY = 0;
         aBanGraphics.SetColor(Color(205, 0, 0, 255));
-        aBanGraphics.SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        aBanGraphics.SetFont(Sexy::FONT_DWARVENTODCRAFT18);
         aBanGraphics.DrawString(TodStringTranslate("[VS_UI_BAN_PHASE_BIG]"), 440, 110);
     }
 
@@ -1839,7 +1838,7 @@ void SeedChooserScreen::DrawBanIcon(Sexy::Graphics *g) {
                     y = aBannedSeed.mY - 5 * (SEED_PACKET_HEIGHT + 3);
                 }
             }
-            g->DrawImage(*IMAGE_MP_TARGETS_X, x + 5, y + 5);
+            g->DrawImage(IMAGE_MP_TARGETS_X, x + 5, y + 5);
         }
     }
 }

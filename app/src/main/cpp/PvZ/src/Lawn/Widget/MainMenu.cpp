@@ -218,7 +218,6 @@ void MainMenu::Update() {
 
 void MainMenu::ButtonPress(MainMenuButtonId theSelectedButton) {
     // 按下按钮的声音
-    LawnApp *gLawnApp = *gLawnApp_Addr;
     if (gLawnApp->mGameSelector->InTransition())
         return;
 
@@ -237,7 +236,7 @@ void MainMenu::ButtonPress(MainMenuButtonId theSelectedButton) {
             gLawnApp->PlayFoley(FoleyType::FOLEY_CERAMIC);
             break;
         default:
-            gLawnApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+            gLawnApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
             break;
     }
 }
@@ -718,12 +717,12 @@ void MaskHelpWidget_Draw(AchievementsWidget *achievementsWidget, Sexy::Graphics 
         Color theColor = {0, 255, 0, 255};
         Color theColor1 = {255, 255, 255, 255};
         Sexy::Rect rect = {460, theAchievementY + 60, 540, 0};
-        TodDrawString(g, str, 460, theAchievementY + 40, *Sexy_FONT_HOUSEOFTERROR28_Addr, theColor, DrawStringJustification::DS_ALIGN_LEFT);
+        TodDrawString(g, str, 460, theAchievementY + 40, Sexy::FONT_HOUSEOFTERROR28, theColor, DrawStringJustification::DS_ALIGN_LEFT);
         if (i == AchievementId::ACHIEVEMENT_SHOP) {
             str = TodReplaceNumberString(str1, "{coin}", achievementsWidget->mApp->mPlayerInfo->mUsedCoins * 10);
-            TodDrawStringWrapped(g, str, rect, *Sexy_FONT_HOUSEOFTERROR20_Addr, theColor1, DrawStringJustification::DS_ALIGN_LEFT, false);
+            TodDrawStringWrapped(g, str, rect, Sexy::FONT_HOUSEOFTERROR20, theColor1, DrawStringJustification::DS_ALIGN_LEFT, false);
         } else {
-            TodDrawStringWrapped(g, str1, rect, *Sexy_FONT_HOUSEOFTERROR20_Addr, theColor1, DrawStringJustification::DS_ALIGN_LEFT, false);
+            TodDrawStringWrapped(g, str1, rect, Sexy::FONT_HOUSEOFTERROR20, theColor1, DrawStringJustification::DS_ALIGN_LEFT, false);
         }
         g->SetColorizeImages(false);
         theAchievementY += theDiffY * 2 / 3;
@@ -736,7 +735,7 @@ void MaskHelpWidget_Draw(AchievementsWidget *achievementsWidget, Sexy::Graphics 
     }
     pvzstl::string str = StrFormat("%d/%d", theAccomplishedNum, AchievementId::MAX_ACHIEVEMENTS);
     Color theColor = {255, 240, 0, 255};
-    TodDrawString(g, str, 1060, 173, *Sexy_FONT_DWARVENTODCRAFT18_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
+    TodDrawString(g, str, 1060, 173, Sexy::FONT_DWARVENTODCRAFT18, theColor, DrawStringJustification::DS_ALIGN_CENTER);
 }
 
 void MaskHelpWidget_MouseDown(AchievementsWidget *achievementsWidget, int x, int y, int theClickCount) {

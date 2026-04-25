@@ -185,40 +185,40 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
         }
     }
     if (mIsCobCannonSelected && useNewCobCannon && !keyboardMode) {
-        Sexy::Image *cobcannon_1 = *Sexy_IMAGE_COBCANNON_TARGET_1_Addr;
-        *Sexy_IMAGE_COBCANNON_TARGET_1_Addr = addonImages.custom_cobcannon;
+        Sexy::Image *cobcannon_1 = Sexy::IMAGE_COBCANNON_TARGET_1;
+        Sexy::IMAGE_COBCANNON_TARGET_1 = addonImages.custom_cobcannon;
         old_GamepadControls_Draw(this, g);
-        *Sexy_IMAGE_COBCANNON_TARGET_1_Addr = cobcannon_1;
+        Sexy::IMAGE_COBCANNON_TARGET_1 = cobcannon_1;
         return;
     }
     // 联机光标上绘制双方玩家昵称
     if (gTcpConnected || gTcpClientSocket >= 0) {
         if (mPlayerIndex1 == 0 && gSecondPlayerName[0] != '\0') {
-            Image *tmp1 = *Sexy_IMAGE_CURSOR_P1_TEXT_Addr;
-            *Sexy_IMAGE_CURSOR_P1_TEXT_Addr = *IMAGE_BLANK;
+            Image *tmp1 = Sexy::IMAGE_CURSOR_P1_TEXT;
+            Sexy::IMAGE_CURSOR_P1_TEXT = IMAGE_BLANK;
             old_GamepadControls_Draw(this, g);
             TodDrawString(g,
                           gTcpConnected ? gSecondPlayerName : mBoard->mApp->mPlayerInfo->mName,
                           mCursorPositionX - 5,
                           mCursorPositionY - 60,
-                          *Sexy_FONT_DWARVENTODCRAFT18_Addr,
+                          Sexy::FONT_DWARVENTODCRAFT18,
                           Color(255, 242, 14, 255),
                           DrawStringJustification::DS_ALIGN_CENTER);
-            *Sexy_IMAGE_CURSOR_P1_TEXT_Addr = tmp1;
+            Sexy::IMAGE_CURSOR_P1_TEXT = tmp1;
             return;
         }
         if (mPlayerIndex1 == 1 && gSecondPlayerName[0] != '\0') {
-            Image *tmp = *Sexy_IMAGE_CURSOR_P2_TEXT_Addr;
-            *Sexy_IMAGE_CURSOR_P2_TEXT_Addr = *IMAGE_BLANK;
+            Image *tmp = Sexy::IMAGE_CURSOR_P2_TEXT;
+            Sexy::IMAGE_CURSOR_P2_TEXT = IMAGE_BLANK;
             old_GamepadControls_Draw(this, g);
             TodDrawString(g,
                           gTcpClientSocket >= 0 ? gSecondPlayerName : mBoard->mApp->mPlayerInfo->mName,
                           mCursorPositionX - 5,
                           mCursorPositionY - 60,
-                          *Sexy_FONT_DWARVENTODCRAFT18_Addr,
+                          Sexy::FONT_DWARVENTODCRAFT18,
                           Color(68, 207, 255, 255),
                           DrawStringJustification::DS_ALIGN_CENTER);
-            *Sexy_IMAGE_CURSOR_P2_TEXT_Addr = tmp;
+            Sexy::IMAGE_CURSOR_P2_TEXT = tmp;
             return;
         }
     }
@@ -407,13 +407,13 @@ void GamepadControls::UpdatePreviewReanim() {
                     AttachReanim(TrackInstanceByName->mAttachmentID, zombieReanimAttachment, 0.0, 0.0);
                     zombieReanim->mFrameBasePose = 0;
                 } else if (aZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR) {
-                    zombieReanim->SetImageOverride("anim_head1", *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD_REDEYE_Addr);
+                    zombieReanim->SetImageOverride("anim_head1", Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD_REDEYE);
                 } else if (aZombieType == ZombieType::ZOMBIE_PEA_HEAD) {
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_head2", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("anim_head1");
-                    aTrackInstance->mImageOverride = *IMAGE_BLANK;
+                    aTrackInstance->mImageOverride = IMAGE_BLANK;
                     Reanimation *aPeaHeadReanim = anApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_PEASHOOTER);
                     aPeaHeadReanim->PlayReanim("anim_head_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aPeaHeadReanim, 0.0f, 0.0f);
@@ -457,7 +457,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_head2", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("anim_head1");
-                    aTrackInstance->mImageOverride = *IMAGE_BLANK;
+                    aTrackInstance->mImageOverride = IMAGE_BLANK;
                     Reanimation *aGatlingHeadReanim = anApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_GATLINGPEA);
                     aGatlingHeadReanim->PlayReanim("anim_head_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aGatlingHeadReanim, 0.0f, 0.0f);
@@ -468,7 +468,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     Reanimation_HideTrackByPrefix(zombieReanim, "anim_head2", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("anim_head1");
-                    aTrackInstance->mImageOverride = *IMAGE_BLANK;
+                    aTrackInstance->mImageOverride = IMAGE_BLANK;
                     Reanimation *aSquashHeadReanim = anApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_SQUASH);
                     aSquashHeadReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0f);
                     AttachEffect *aAttachEffect = AttachReanim(aTrackInstance->mAttachmentID, aSquashHeadReanim, 0.0f, 0.0f);
@@ -559,7 +559,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     uint16_t mAttachmentID = reanimatorTrackInstance->mAttachmentID;
                     if (mAttachmentID == 0)
                         continue;
-                    Attachment **attachmentSystem = *(Attachment ***)(*gEffectSystem_Addr + 12);
+                    Attachment **attachmentSystem = *(Attachment ***)(gEffectSystem + 12);
                     Attachment *attachment = &(*attachmentSystem)[mAttachmentID];
                     int mNumEffects = attachment->mNumEffects;
                     for (int j = 0; j < mNumEffects; ++j) {
@@ -702,7 +702,7 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
         Color aColor = Color(255, 255, 255, 125);
         g->SetColor(aColor);
 
-        Image *aImage = *Sexy::IMAGE_TOMBSTONES;
+        Image *aImage = Sexy::IMAGE_TOMBSTONES;
         int aCelWidth = aImage->GetCelWidth();
         int aCelCol = 2;
         int aGridX = mBoard->PixelToGridXKeepOnBoard(int(mCursorPositionX), int(mCursorPositionY));
@@ -761,7 +761,7 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
 
             if (mBoard->HasLevelAwardDropped() || (mBoard->mChallenge->IsMPSuddenDeath() && Challenge::gVSSuddenDeathMode <= 1 && Challenge::IsMPResourceProducer(aSeedPacket->mPacketType))
                 || mBoard->mChallenge->ISMPSeedSuddenDeathDisabled(aSeedBank->mIsZombie, aPacketType)) {
-                mGameObject->mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
+                mGameObject->mApp->PlaySample(Sexy::SOUND_BUZZER);
                 return;
             }
 

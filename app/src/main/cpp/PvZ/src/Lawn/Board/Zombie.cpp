@@ -439,7 +439,7 @@ void Zombie::UpdatePlaying() {
 
 void Zombie::LandFlyer(unsigned int theDamageFlags) {
     if (!TestBit(theDamageFlags, (int)DamageFlags::DAMAGE_DOESNT_LEAVE_BODY) && mZombiePhase == ZombiePhase::PHASE_BALLOON_FLYING) {
-        mApp->PlaySample(*SOUND_BALLOON_POP);
+        mApp->PlaySample(SOUND_BALLOON_POP);
         mZombiePhase = ZombiePhase::PHASE_BALLOON_POPPING;
         PlayZombieReanim("anim_pop", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
     }
@@ -584,7 +584,7 @@ void Zombie::UpdateZombieJackInTheBox() {
                 mZombiePhase = ZombiePhase::PHASE_JACK_IN_THE_BOX_POPPING;
 
                 StopZombieSound();
-                mApp->PlaySample(*SOUND_BOING);
+                mApp->PlaySample(SOUND_BOING);
                 PlayZombieReanim("anim_pop", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 28.0f);
             }
         }
@@ -925,7 +925,7 @@ void Zombie::UpdateZombiePeaHead() {
         mApp->PlayFoley(FoleyType::FOLEY_THROW);
 
         Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
-        int index = aBodyReanim->FindTrackIndexById(*ReanimTrackId_anim_head1_Addr);
+        int index = aBodyReanim->FindTrackIndexById(ReanimTrackId_anim_head1);
         ReanimatorTransform aTransForm = ReanimatorTransform();
         aBodyReanim->GetCurrentTransform(index, &aTransForm);
 
@@ -960,7 +960,7 @@ void Zombie::UpdateZombieGatlingHead() {
         mApp->PlayFoley(FoleyType::FOLEY_THROW);
 
         Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
-        int aTrackIndex = aBodyReanim->FindTrackIndexById(*ReanimTrackId_anim_head1_Addr);
+        int aTrackIndex = aBodyReanim->FindTrackIndexById(ReanimTrackId_anim_head1);
         ReanimatorTransform aTransForm = ReanimatorTransform();
         aBodyReanim->GetCurrentTransform(aTrackIndex, &aTransForm);
 
@@ -1342,7 +1342,7 @@ void Zombie::Draw(Sexy::Graphics *g) {
     int drawHeightOffset = 0;
     if (showZombieBodyHealth || (showGargantuarHealth && (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR))) { // 如果玩家开了"僵尸显血"
         g->SetColor(gColorWhite);
-        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
         if (mZombieType == ZombieType::ZOMBIE_BOSS) {
             // 如果是僵王,将血量绘制到僵王头顶。从而修复图鉴中僵王血量绘制位置不正确。
             // 此处仅在图鉴中生效,实战中僵王绘制不走Zombie_Draw()，走Zombie_DrawBossPart()
@@ -1356,14 +1356,14 @@ void Zombie::Draw(Sexy::Graphics *g) {
     if (showHelmAndShieldHealth) {
         if (mHelmHealth > 0) { // 如果有头盔，绘制头盔血量
             g->SetColor(gColorYellow);
-            g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+            g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
             g->DrawString(StrFormat("%d/%d", mHelmHealth, mHelmMaxHealth), 0, drawHeightOffset);
             g->SetFont(nullptr);
             drawHeightOffset += 20;
         }
         if (mShieldHealth > 0) { // 如果有盾牌，绘制盾牌血量
             g->SetColor(gColorBlue);
-            g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+            g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
             g->DrawString(StrFormat("%d/%d", mShieldHealth, mShieldMaxHealth), 0, drawHeightOffset);
             g->SetFont(nullptr);
         }
@@ -1379,7 +1379,7 @@ void Zombie::DrawBossPart(Sexy::Graphics *g, int theBossPart) {
         if (showZombieBodyHealth) { // 如果玩家开了"僵尸显血"
             pvzstl::string str = StrFormat("%d/%d", mBodyHealth, mBodyMaxHealth);
             g->SetColor(gColorWhite);
-            g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+            g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
             float tmpTransX = g->mTransX;
             float tmpTransY = g->mTransY;
             g->mTransX = 800.0f;
@@ -1430,7 +1430,7 @@ bool Zombie::IsZombotany(ZombieType theZombieType) {
 
 bool Zombie::ZombieTypeCanGoInPool(ZombieType theZombieType) {
     // 修复泳池对战的僵尸走水路时不索敌植物
-    if ((*gLawnApp_Addr)->IsVSMode()) {
+    if ((gLawnApp)->IsVSMode()) {
         if (gVSBackground == BackgroundType::BACKGROUND_3_POOL || gVSBackground == BackgroundType::BACKGROUND_4_FOG)
             return theZombieType != ZombieType::ZOMBIE_BUNGEE; // 蹦极不能落水
     }
@@ -1695,7 +1695,7 @@ void Zombie::EatPlant(Plant *thePlant) {
 
     if (thePlant->mPlantHealth <= 0) {
         if (!(mApp->IsVSMode() && gTcpConnected)) {
-            mApp->PlaySample(*SOUND_GULP);
+            mApp->PlaySample(SOUND_GULP);
         }
         if (gTcpClientSocket >= 0) {
             BaseEvent event = {EventType::EVENT_SERVER_BOARD_PLANT_EATEN};
@@ -1993,7 +1993,7 @@ void Zombie::SetZombatarReanim() {
         return;
     Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
     ReanimatorTrackInstance *aHeadTrackInstance = aBodyReanim->GetTrackInstanceByName("anim_head1");
-    aHeadTrackInstance->mImageOverride = *IMAGE_BLANK;
+    aHeadTrackInstance->mImageOverride = IMAGE_BLANK;
     Reanimation *aZombatarHeadReanim = mApp->AddReanimation(0, 0, 0, ReanimationType::REANIM_ZOMBATAR_HEAD);
     Reanimation_SetZombatarHats(aZombatarHeadReanim, aPlayerInfo->mZombatarHat, aPlayerInfo->mZombatarHatColor);
     Reanimation_SetZombatarHair(aZombatarHeadReanim, aPlayerInfo->mZombatarHair, aPlayerInfo->mZombatarHairColor);
@@ -2082,7 +2082,7 @@ void Zombie::StopZombieSound() {
 
 void Zombie::DrawBungeeCord(Sexy::Graphics *g, int theOffsetX, int theOffsetY) {
     // 修复在Boss关的蹦极绳子不绑在Boss手上
-    int aCordCelHeight = (*Sexy_IMAGE_BUNGEECORD_Addr)->GetCelHeight() * mScaleZombie;
+    int aCordCelHeight = (Sexy::IMAGE_BUNGEECORD)->GetCelHeight() * mScaleZombie;
     float aPosX = 0.0f;
     float aPosY = 0.0f;
     GetTrackPosition("Zombie_bungi_body", aPosX, aPosY);
@@ -2106,7 +2106,7 @@ void Zombie::DrawBungeeCord(Sexy::Graphics *g, int theOffsetX, int theOffsetY) {
     for (float y = aPosY - aCordCelHeight; y > -60 - aCordCelHeight; y -= aCordCelHeight) {
         float thePosX = theOffsetX + 61.0f - 4.0f / mScaleZombie;
         float thePosY = y - mPosY;
-        TodDrawImageScaledF(g, *Sexy_IMAGE_BUNGEECORD_Addr, thePosX, thePosY, mScaleZombie, mScaleZombie);
+        TodDrawImageScaledF(g, Sexy::IMAGE_BUNGEECORD, thePosX, thePosY, mScaleZombie, mScaleZombie);
     }
     if (aSetClip) {
         g->ClearClipRect();
@@ -2901,63 +2901,63 @@ void Zombie::SetupLostArmReanim() {
     if (reanimation != nullptr) {
         switch (mZombieType) {
             case ZombieType::ZOMBIE_FOOTBALL:
-                reanimation->SetImageOverride("zombie_football_leftarm_hand", *Sexy_IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_UPPER2_Addr);
+                reanimation->SetImageOverride("zombie_football_leftarm_hand", Sexy::IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_UPPER2);
                 break;
             case ZombieType::ZOMBIE_NEWSPAPER:
-                reanimation->SetImageOverride("Zombie_paper_leftarm_lower", *Sexy_IMAGE_REANIM_ZOMBIE_PAPER_LEFTARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_paper_leftarm_lower", Sexy::IMAGE_REANIM_ZOMBIE_PAPER_LEFTARM_UPPER2);
                 break;
             case ZombieType::ZOMBIE_POLEVAULTER:
-                reanimation->SetImageOverride("Zombie_polevaulter_outerarm_lower", *Sexy_IMAGE_REANIM_ZOMBIE_POLEVAULTER_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_polevaulter_outerarm_lower", Sexy::IMAGE_REANIM_ZOMBIE_POLEVAULTER_OUTERARM_UPPER2);
                 break;
             case ZombieType::ZOMBIE_BALLOON:
-                reanimation->SetImageOverride("zombie_outerarm_lower", *Sexy_IMAGE_REANIM_ZOMBIE_BALLOON_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("zombie_outerarm_lower", Sexy::IMAGE_REANIM_ZOMBIE_BALLOON_OUTERARM_UPPER2);
                 break;
             case ZombieType::ZOMBIE_IMP:
-                reanimation->SetImageOverride("Zombie_imp_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONE_Addr);
+                reanimation->SetImageOverride("Zombie_imp_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONE);
                 break;
             case ZombieType::ZOMBIE_DIGGER:
-                reanimation->SetImageOverride("Zombie_digger_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_DIGGER_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_digger_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONE);
                 break;
             case ZombieType::ZOMBIE_BOBSLED:
-                reanimation->SetImageOverride("Zombie_dolphinrider_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_BOBSLED_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_dolphinrider_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_BOBSLED_OUTERARM_UPPER2);
                 break;
             case ZombieType::ZOMBIE_JACK_IN_THE_BOX:
-                reanimation->SetImageOverride("Zombie_jackbox_outerarm_lower", *Sexy_IMAGE_REANIM_ZOMBIE_JACKBOX_OUTERARM_LOWER2_Addr);
+                reanimation->SetImageOverride("Zombie_jackbox_outerarm_lower", Sexy::IMAGE_REANIM_ZOMBIE_JACKBOX_OUTERARM_LOWER2);
                 break;
             case ZombieType::ZOMBIE_SNORKEL:
-                reanimation->SetImageOverride("Zombie_snorkle_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_SNORKLE_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_snorkle_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_SNORKLE_OUTERARM_UPPER2);
                 break;
             case ZombieType::ZOMBIE_DOLPHIN_RIDER:
-                reanimation->SetImageOverride("Zombie_dolphinrider_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_DOLPHINRIDER_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_dolphinrider_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_DOLPHINRIDER_OUTERARM_UPPER2);
                 break;
             case ZombieType::ZOMBIE_POGO:
-                reanimation->SetImageOverride("Zombie_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_POGO_OUTERARM_UPPER2_Addr);
-                reanimation->SetImageOverride("Zombie_pogo_stickhands", *Sexy_IMAGE_REANIM_ZOMBIE_POGO_STICKHANDS2_Addr);
-                reanimation->SetImageOverride("Zombie_pogo_stick", *Sexy_IMAGE_REANIM_ZOMBIE_POGO_STICKDAMAGE2_Addr);
-                reanimation->SetImageOverride("Zombie_pogo_stick2", *Sexy_IMAGE_REANIM_ZOMBIE_POGO_STICK2DAMAGE2_Addr);
+                reanimation->SetImageOverride("Zombie_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_POGO_OUTERARM_UPPER2);
+                reanimation->SetImageOverride("Zombie_pogo_stickhands", Sexy::IMAGE_REANIM_ZOMBIE_POGO_STICKHANDS2);
+                reanimation->SetImageOverride("Zombie_pogo_stick", Sexy::IMAGE_REANIM_ZOMBIE_POGO_STICKDAMAGE2);
+                reanimation->SetImageOverride("Zombie_pogo_stick2", Sexy::IMAGE_REANIM_ZOMBIE_POGO_STICK2DAMAGE2);
                 break;
             case ZombieType::ZOMBIE_FLAG: {
-                reanimation->SetImageOverride("Zombie_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_OUTERARM_UPPER2);
                 Reanimation *reanimation2 = mApp->ReanimationTryToGet(mSpecialHeadReanimID);
                 if (reanimation2 != nullptr) {
-                    reanimation2->SetImageOverride("Zombie_flag", *Sexy_IMAGE_REANIM_ZOMBIE_FLAG3_Addr);
+                    reanimation2->SetImageOverride("Zombie_flag", Sexy::IMAGE_REANIM_ZOMBIE_FLAG3);
                 }
                 break;
             }
             case ZombieType::ZOMBIE_DANCER:
-                reanimation->SetImageOverride("Zombie_disco_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_DISCO_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_disco_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_DISCO_OUTERARM_UPPER2);
                 break;
             case ZombieType::ZOMBIE_BACKUP_DANCER:
-                reanimation->SetImageOverride("Zombie_disco_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_BACKUP_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_disco_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_BACKUP_OUTERARM_UPPER2);
                 break;
             case ZombieType::ZOMBIE_LADDER:
-                reanimation->SetImageOverride("Zombie_ladder_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_LADDER_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_ladder_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_LADDER_OUTERARM_UPPER2);
                 break;
             case ZombieType::ZOMBIE_YETI:
-                reanimation->SetImageOverride("Zombie_yeti_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_YETI_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_yeti_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_YETI_OUTERARM_UPPER2);
                 break;
             default:
-                reanimation->SetImageOverride("Zombie_outerarm_upper", *Sexy_IMAGE_REANIM_ZOMBIE_OUTERARM_UPPER2_Addr);
+                reanimation->SetImageOverride("Zombie_outerarm_upper", Sexy::IMAGE_REANIM_ZOMBIE_OUTERARM_UPPER2);
                 break;
         }
     }
@@ -3160,8 +3160,8 @@ void Zombie::ApplyBurn() {
         } else if (mZombieType == ZombieType::ZOMBIE_DIGGER) {
             aCharredReanim->SetFramesForLayer("anim_crumble");
         } else if ((mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR) && !mHasObject) {
-            aCharredReanim->SetImageOverride("impblink", *IMAGE_BLANK);
-            aCharredReanim->SetImageOverride("imphead", *IMAGE_BLANK);
+            aCharredReanim->SetImageOverride("impblink", IMAGE_BLANK);
+            aCharredReanim->SetImageOverride("imphead", IMAGE_BLANK);
         }
 
         if (mScaleZombie != 1.0f) {
@@ -3725,7 +3725,7 @@ void Zombie::BungeeLanding() {
             }
         }
 
-        mApp->PlaySample(*SOUND_BOING);
+        mApp->PlaySample(SOUND_BOING);
         mApp->PlayFoley(FoleyType::FOLEY_UMBRELLA);
 
         aPlant->DoSpecial();
@@ -3884,7 +3884,7 @@ void Zombie::UpdateLadder() {
                 }
 
                 mBoard->AddALadder(plant2->mPlantCol, plant2->mRow);
-                mApp->PlaySample(*SOUND_LADDER_ZOMBIE);
+                mApp->PlaySample(SOUND_LADDER_ZOMBIE);
                 mZombieHeight = HEIGHT_UP_LADDER;
                 mUseLadderCol = plant2->mPlantCol;
                 DetachShield();

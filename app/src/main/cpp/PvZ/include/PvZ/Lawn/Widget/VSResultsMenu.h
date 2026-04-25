@@ -33,6 +33,8 @@ public:
         VSResultsMenu_Quit_VS = 1,
     };
 
+    static int (&msPlayerRecords)[2][5];
+
     int unk[3];                          // 70 ~ 72
     int mSparkleCounter;                 // 73
     int mSmokeCounter;                   // 74

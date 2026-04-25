@@ -49,8 +49,8 @@ void HelpTextScreen_Update(HelpTextScreen *helpTextScreen) {
 
 void HelpTextScreen_Draw(HelpTextScreen *helpTextScreen, Sexy::Graphics *g) {
     old_HelpTextScreen_Draw(helpTextScreen, g);
-    g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, nextPageButtonX, nextPageButtonY);
-    g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, prevPageButtonX, prevPageButtonY, true);
+    g->DrawImage(Sexy::IMAGE_ZEN_NEXTGARDEN, nextPageButtonX, nextPageButtonY);
+    g->DrawImageMirror(Sexy::IMAGE_ZEN_NEXTGARDEN, prevPageButtonX, prevPageButtonY, true);
 }
 
 void HelpTextScreen_HelpTextScreen(HelpTextScreen *helpTextScreen, int *lawnApp, int pageIndex) {
@@ -70,8 +70,8 @@ void HelpTextScreen::MouseDown(int x, int y, int theClickCount) {
     // prevPageButtonX = x;
     // prevPageButtonY = y;
 
-    int imageWidth = (*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr)->GetCelWidth();
-    int imageHeight = (*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr)->GetHeight();
+    int imageWidth = (Sexy::IMAGE_ZEN_NEXTGARDEN)->GetCelWidth();
+    int imageHeight = (Sexy::IMAGE_ZEN_NEXTGARDEN)->GetHeight();
 
     Sexy::Rect nextPageRect = {nextPageButtonX, nextPageButtonY, imageWidth, imageHeight};
     if (TRect_Contains(&nextPageRect, x, y)) {
@@ -105,7 +105,6 @@ void HelpTextScreen_Delete2(HelpTextScreen *helpTextScreen) {
 
 void HelpTextScreen_ButtonDepress(HelpTextScreen *helpTextScreen, int id) {
     if (id == 1000) {
-        LawnApp *gLawnApp = *gLawnApp_Addr;
         gLawnApp->KillHelpTextScreen();
     } else
         old_HelpTextScreen_ButtonDepress(helpTextScreen, id);

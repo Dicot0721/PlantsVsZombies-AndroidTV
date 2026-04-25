@@ -120,7 +120,7 @@ void GridItem::DrawGridItem(Graphics *g) {
         //        int y = mBoard->GridToPixelY(mGridX, mGridY);
         //        Graphics aHealthG = Graphics(*g);
         //        pvzstl::string str = StrFormat("%d/%d", mVSGraveStoneHealth, 350);
-        //        aHealthG.SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        //        aHealthG.SetFont(Sexy::FONT_DWARVENTODCRAFT18);
         //        aHealthG.SetColor(Color::White);
         //        aHealthG.DrawString(str, x, y + 34);
         //        aHealthG.SetFont(nullptr);
@@ -144,7 +144,7 @@ void GridItem::DrawGridItem(Graphics *g) {
     //            DrawLadder(g);
     //            break;
     //        case GridItemType::GRIDITEM_BRAIN:
-    //            g->DrawImageF(*IMAGE_BRAIN, mPosX, mPosY);
+    //            g->DrawImageF(IMAGE_BRAIN, mPosX, mPosY);
     //            break;
     //        case GridItemType::GRIDITEM_SCARY_POT:
     //            DrawScaryPot(g);
@@ -182,10 +182,10 @@ void GridItem::DrawScaryPot(Sexy::Graphics *g) {
 
     int aXPos = mBoard->GridToPixelX(mGridX, mGridY) - 5;
     int aYPos = mBoard->GridToPixelY(mGridX, mGridY) - 15;
-    TodDrawImageCelCenterScaledF(g, *Sexy_IMAGE_PLANTSHADOW2_Addr, aXPos - 5.0, aYPos + 72.0, 0, 1.3, 1.3);
+    TodDrawImageCelCenterScaledF(g, Sexy::IMAGE_PLANTSHADOW2, aXPos - 5.0, aYPos + 72.0, 0, 1.3, 1.3);
 
     if (mTransparentCounter > 0) { // 如果罐子要被照透(透明度不为0)
-        g->DrawImageCel(*Sexy_IMAGE_SCARY_POT_Addr, aXPos, aYPos, aImageCol, 0);
+        g->DrawImageCel(Sexy::IMAGE_SCARY_POT, aXPos, aYPos, aImageCol, 0);
 
         Graphics *aInsideGraphics = new Graphics(*g);
         if (mScaryPotType == ScaryPotType::SCARYPOT_SEED) {
@@ -248,7 +248,7 @@ void GridItem::DrawScaryPot(Sexy::Graphics *g) {
         delete aInsideGraphics;
     }
 
-    g->DrawImageCel(*Sexy_IMAGE_SCARY_POT_Addr, aXPos, aYPos, aImageCol, 1);
+    g->DrawImageCel(Sexy::IMAGE_SCARY_POT, aXPos, aYPos, aImageCol, 1);
     if (mHighlighted) {
         g->SetDrawMode(Graphics::DRAWMODE_ADDITIVE);
         g->SetColorizeImages(true);
@@ -256,7 +256,7 @@ void GridItem::DrawScaryPot(Sexy::Graphics *g) {
             Color aColor = {255, 255, 255, 196};
             g->SetColor(aColor);
         }
-        g->DrawImageCel(*Sexy_IMAGE_SCARY_POT_Addr, aXPos, aYPos, aImageCol, 1);
+        g->DrawImageCel(Sexy::IMAGE_SCARY_POT, aXPos, aYPos, aImageCol, 1);
         g->SetDrawMode(Graphics::DRAWMODE_NORMAL);
     }
 
@@ -511,14 +511,14 @@ void GridItem::DrawCrater(Sexy::Graphics *g) {
     }
 
     bool fading = mGridItemCounter < 9000;
-    Sexy::Image *aImage = *Sexy_IMAGE_CRATER_Addr;
+    Sexy::Image *aImage = Sexy::IMAGE_CRATER;
     int aCelCol = 0;
 
     if (mBoard->IsPoolSquare(mGridX, mGridY)) {
         if (mBoard->StageIsNight()) {
-            aImage = *Sexy_IMAGE_CRATER_WATER_NIGHT_Addr;
+            aImage = Sexy::IMAGE_CRATER_WATER_NIGHT;
         } else {
-            aImage = *Sexy_IMAGE_CRATER_WATER_DAY_Addr;
+            aImage = Sexy::IMAGE_CRATER_WATER_DAY;
         }
 
         if (fading) {
@@ -533,7 +533,7 @@ void GridItem::DrawCrater(Sexy::Graphics *g) {
             if (mBoard->StageIsNight()) {
                 aImage = addonImages.crater_night_roof_left;
             } else {
-                aImage = *Sexy_IMAGE_CRATER_ROOF_LEFT_Addr;
+                aImage = Sexy::IMAGE_CRATER_ROOF_LEFT;
             }
             aXPos += 16.0f;
             aYPos += -16.0f;
@@ -541,7 +541,7 @@ void GridItem::DrawCrater(Sexy::Graphics *g) {
             if (mBoard->StageIsNight()) {
                 aImage = addonImages.crater_night_roof_center;
             } else {
-                aImage = *Sexy_IMAGE_CRATER_ROOF_CENTER_Addr;
+                aImage = Sexy::IMAGE_CRATER_ROOF_CENTER;
             }
             aXPos += 18.0f;
             aYPos += -9.0f;
@@ -553,10 +553,10 @@ void GridItem::DrawCrater(Sexy::Graphics *g) {
     } else if (mBoard->StageIsNight()) {
         aCelCol = 1;
         if (fading) {
-            aImage = *Sexy_IMAGE_CRATER_FADING_Addr;
+            aImage = Sexy::IMAGE_CRATER_FADING;
         }
     } else if (fading) {
-        aImage = *Sexy_IMAGE_CRATER_FADING_Addr;
+        aImage = Sexy::IMAGE_CRATER_FADING;
     }
 
     TodDrawImageCelF(g, aImage, aXPos, aYPos, aCelCol, 0);
@@ -571,8 +571,8 @@ void GridItem::DrawGraveStone(Graphics *g) {
     int aGridCelLook = mBoard->mGridCelLook[mGridX][mGridY];
     int aGridCelOffsetX = mBoard->mGridCelOffset[mGridX][mGridY][0];
     int aGridCelOffsetY = mBoard->mGridCelOffset[mGridX][mGridY][1];
-    int aCelWidth = (*IMAGE_TOMBSTONES)->GetCelWidth();
-    int aCelHeight = (*IMAGE_TOMBSTONES)->GetCelHeight();
+    int aCelWidth = (IMAGE_TOMBSTONES)->GetCelWidth();
+    int aCelHeight = (IMAGE_TOMBSTONES)->GetCelHeight();
     int aGraveCol = aGridCelLook % 5;
     int aGraveRow;
     if (mGridY == 0) {
@@ -619,7 +619,7 @@ void GridItem::DrawGraveStone(Graphics *g) {
             g->ClearClipRect();
 
             bool isPlantRowPool = mBoard->mPlantRow[mGridY] == PlantRowType::PLANTROW_POOL;
-            Image *bottomImage = isPlantRowPool ? addonImages.zombie_duckytube_inwater : *IMAGE_VS_STONE_DIRT; // 泳池绘制鸭子救生圈，草坪绘制泥土
+            Image *bottomImage = isPlantRowPool ? addonImages.zombie_duckytube_inwater : IMAGE_VS_STONE_DIRT; // 泳池绘制鸭子救生圈，草坪绘制泥土
             int offsetX = 0, offsetY = 0;
             if (isPlantRowPool) {
                 offsetX = -20;
@@ -635,8 +635,8 @@ void GridItem::DrawGraveStone(Graphics *g) {
         }
         g->DrawString(StrFormat("%d", mVSGraveStoneHealth), x, y);
     } else {
-        g->DrawImage(*IMAGE_TOMBSTONES, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
-        g->DrawImage(*IMAGE_TOMBSTONE_MOUNDS, x, y - aVisibleHeightDirt, aSrcRectDirt);
+        g->DrawImage(IMAGE_TOMBSTONES, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
+        g->DrawImage(IMAGE_TOMBSTONE_MOUNDS, x, y - aVisibleHeightDirt, aSrcRectDirt);
     }
 }
 
@@ -682,9 +682,9 @@ void GridItem::AddGraveStoneParticles() {
 void GridItem::DrawMPTarget(Graphics *g) {
     //    Reanimation *reanim = mApp->ReanimationTryToGet(mGridItemReanimID);
     //    pvzstl::string fmt = StrFormat("%d %d %d", mGridItemReanimID, (int)reanim,mRenderOrder);
-    //    g->SetFont(*Sexy_FONT_CONTINUUMBOLD14OUTLINE_Addr);
+    //    g->SetFont(Sexy::FONT_CONTINUUMBOLD14OUTLINE);
     //    g->DrawString(fmt,0,50 * mGridY);
-    //    TodDrawString(g,fmt,0,0,*Sexy_FONT_CONTINUUMBOLD14OUTLINE_Addr,Color(0,0,255,255),DS_ALIGN_LEFT);
+    //    TodDrawString(g,fmt,0,0,Sexy::FONT_CONTINUUMBOLD14OUTLINE,Color(0,0,255,255),DS_ALIGN_LEFT);
     old_GridItem_DrawMPTarget(this, g);
 }
 

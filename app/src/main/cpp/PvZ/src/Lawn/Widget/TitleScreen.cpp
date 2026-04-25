@@ -25,9 +25,9 @@
 
 void TitleScreen_Draw(TitleScreen *titleScreen, Sexy::Graphics *graphics) {
     old_TitleScreen_Draw(titleScreen, graphics);
-    // LOGD("%d",*Sexy_IMAGE_ESRB_RATING_Addr);
-    // if (*Sexy_IMAGE_ESRB_RATING_Addr)
-    // DrawImage(graphics,*Sexy_IMAGE_ESRB_RATING_Addr,0,0);
+    // LOGD("%d",Sexy::IMAGE_ESRB_RATING);
+    // if (Sexy::IMAGE_ESRB_RATING)
+    // DrawImage(graphics,Sexy::IMAGE_ESRB_RATING,0,0);
     // LOGD("draw");
     // int *q = nullptr;
     // q[1] = 1;

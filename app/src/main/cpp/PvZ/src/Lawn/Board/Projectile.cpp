@@ -320,7 +320,7 @@ void Projectile::DoImpact(Zombie *theZombie) {
         int aRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_GROUND, mCobTargetRow, 2);
         mApp->AddTodParticle(mPosX + 80.0f, mPosY + 40.0f, aRenderOrder, ParticleEffect::PARTICLE_BLASTMARK);
         mApp->AddTodParticle(mPosX + 80.0f, mPosY + 40.0f, mRenderOrder + 1, ParticleEffect::PARTICLE_POPCORNSPLASH);
-        mApp->PlaySample(*Sexy_SOUND_DOOMSHROOM_Addr);
+        mApp->PlaySample(Sexy::SOUND_DOOMSHROOM);
         mBoard->ShakeBoard(3, -4);
     } else if (mProjectileType == ProjectileType::PROJECTILE_PEA) {
         aSplatPosX -= 15.0f;
@@ -416,8 +416,8 @@ GridItem *Projectile::FindCollisionTargetGridItem() {
 
             int x = mBoard->GridToPixelX(aGridItem->mGridX, mRow);
             int y = mBoard->GridToPixelY(aGridItem->mGridX, aGridItem->mGridY);
-            int aCelWidth = (*IMAGE_TOMBSTONES)->GetCelWidth();
-            int aCelHeight = (*IMAGE_TOMBSTONES)->GetCelHeight();
+            int aCelWidth = (IMAGE_TOMBSTONES)->GetCelWidth();
+            int aCelHeight = (IMAGE_TOMBSTONES)->GetCelHeight();
 
             Rect aGraveRect = Rect(x, y, aCelWidth, aCelHeight);
             if (GetRectOverlap(aProjectileRect, aGraveRect) > 12) {
@@ -435,8 +435,8 @@ GridItem *Projectile::FindCollisionTargetGridItem() {
                     int x = mBoard->GridToPixelX(aGridItem->mGridX, mRow);
                     int y = mBoard->GridToPixelY(aGridItem->mGridX, aGridItem->mGridY);
                     int aPosX = x + mBoard->GridCellWidth(aGridItem->mGridX, aGridItem->mGridY) / 2;
-                    int aCelWidth = (*IMAGE_MP_TARGET)->GetCelWidth();
-                    int aCelHeight = (*IMAGE_MP_TARGET)->GetCelHeight();
+                    int aCelWidth = (IMAGE_MP_TARGET)->GetCelWidth();
+                    int aCelHeight = (IMAGE_MP_TARGET)->GetCelHeight();
 
                     Rect aTargetRect = Rect(aPosX, y, aCelWidth, aCelHeight);
                     if (GetRectOverlap(aProjectileRect, aTargetRect) > 12) {
@@ -698,5 +698,5 @@ void Projectile::DrawShadow(Graphics *g) {
         aScale *= 200.0f / (aHeight + 200.0f);
     }
 
-    TodDrawImageCelScaledF(g, *IMAGE_PEA_SHADOWS, aOffsetX, (mShadowY - mPosY + aOffsetY), aCelCol, 0, aScale * aStretch, aScale);
+    TodDrawImageCelScaledF(g, IMAGE_PEA_SHADOWS, aOffsetX, (mShadowY - mPosY + aOffsetY), aCelCol, 0, aScale * aStretch, aScale);
 }

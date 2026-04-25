@@ -91,7 +91,6 @@ void VSResultsMenu::Update() {
 }
 
 void VSResultsMenu::OnExit() {
-    LawnApp *gLawnApp = *gLawnApp_Addr;
     if (mResultsButtonId == VSResultsMenu_Quit_VS) {
         gLawnApp->ShowMainMenuScreen();
         gLawnApp->KillVSResultsScreen();
@@ -136,7 +135,7 @@ void VSResultsMenu::Draw(Graphics *g) {
     if (gTcpConnected) {
         switch (gVSResultRequestState) {
             case VSResultsMenu::VSResultsMenu_Play_Again:
-                TodDrawString(g, "[VS_RESULT_REMIND_HOST_PLAY_AGAIN]", 400, -20, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
+                TodDrawString(g, "[VS_RESULT_REMIND_HOST_PLAY_AGAIN]", 400, -20, Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
                 break;
             default:
                 break;
@@ -146,7 +145,7 @@ void VSResultsMenu::Draw(Graphics *g) {
     if (gTcpClientSocket >= 0) {
         switch (gVSResultRequestState) {
             case VSResultsMenu::VSResultsMenu_Play_Again:
-                TodDrawString(g, "[VS_RESULT_OPPONENT_REQUEST_PLAY_AGAIN]", 400, -20, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
+                TodDrawString(g, "[VS_RESULT_OPPONENT_REQUEST_PLAY_AGAIN]", 400, -20, Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
                 break;
             default:
                 break;
@@ -156,7 +155,7 @@ void VSResultsMenu::Draw(Graphics *g) {
 
 
 void VSResultsMenu::DrawInfoBox(Sexy::Graphics *a2, int a3) {
-    // Sexy::Image* tmp = *Sexy_IMAGE_NO_GAMERPIC_Addr;
+    // Sexy::Image* tmp = Sexy::IMAGE_NO_GAMERPIC;
     // if (addonImages.gamerpic == nullptr && addonImages.zombatar_portrait != nullptr) {
     // int width = tmp->mWidth;
     // int height = tmp->mHeight;
@@ -167,8 +166,8 @@ void VSResultsMenu::DrawInfoBox(Sexy::Graphics *a2, int a3) {
     // Sexy_Graphics_Graphics2(&graphics,addonImages.gamerpic);
     // TodDrawImageScaledF(&graphics,addonImages.zombatar_portrait,0,0,width / addonImages.zombatar_portrait->mWidth,height / addonImages.zombatar_portrait->mHeight);
     // Sexy_Graphics_Delete2(&graphics);
-    // *Sexy_IMAGE_NO_GAMERPIC_Addr = addonImages.gamerpic;
+    // Sexy::IMAGE_NO_GAMERPIC = addonImages.gamerpic;
     // }
     old_VSResultsMenu_DrawInfoBox(this, a2, a3);
-    // *Sexy_IMAGE_NO_GAMERPIC_Addr = tmp;
+    // Sexy::IMAGE_NO_GAMERPIC = tmp;
 }

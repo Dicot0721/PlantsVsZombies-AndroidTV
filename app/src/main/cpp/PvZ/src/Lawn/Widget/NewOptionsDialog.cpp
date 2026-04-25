@@ -27,7 +27,7 @@
 void NewOptionsDialog::ButtonDepress(int buttonId) {
 
     if (buttonId == 5 && (gTcpConnected || gTcpClientSocket >= 0)) {
-        mApp->PlaySample(*Sexy_SOUND_GRAVEBUTTON_Addr);
+        mApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
 
         this->Sexy::Dialog::ButtonDepress(buttonId);
 

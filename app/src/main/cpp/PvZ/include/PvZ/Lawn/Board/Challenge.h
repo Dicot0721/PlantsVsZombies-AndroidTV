@@ -61,10 +61,10 @@ struct BeghouledBoardState {
 
 class Challenge {
 public:
-    static inline int &gVSResourseDropMode = *Challenge_gVSResourseDropModeAddr;   // 常为0
-    static inline int &gVSResourceDropCount = *Challenge_gVSResourceDropCountAddr; // 常为4
-    static inline int &gVSWinMode = *Challenge_gVSWinModeAddr;
-    static inline int &gVSSuddenDeathMode = *Challenge_gVSSuddenDeathMode_Addr;
+    static int &gVSResourseDropMode;  // 常为0
+    static int &gVSResourceDropCount; // 常为4
+    static int &gVSWinMode;
+    static int &gVSSuddenDeathMode;
 
     int *vTable;                                            // 0
     int unk1[3];                                            // 1 ~ 3

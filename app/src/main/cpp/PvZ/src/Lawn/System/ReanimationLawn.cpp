@@ -59,7 +59,7 @@ void ReanimatorCache::GetPlantImageSize(SeedType theSeedType, int &theOffsetX, i
 }
 
 void ReanimatorCache::ReanimatorCacheInitialize() {
-    mApp = reinterpret_cast<LawnApp *>(*Sexy_gSexyAppBase_Addr);
+    mApp = reinterpret_cast<LawnApp *>(Sexy::gSexyAppBase);
     for (int i = 0; i < SeedType::NUM_SEED_TYPES; i++)
         mPlantImages[i] = nullptr;
     for (int i = 0; i < LawnMowerType::NUM_MOWER_TYPES; i++)
@@ -165,7 +165,7 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
         aReanim.AssignRenderGroupToPrefix("anim_head2", RENDER_GROUP_HIDDEN);
 
         ReanimatorTrackInstance *aTrackInstance = aReanim.GetTrackInstanceByName("anim_head1");
-        aTrackInstance->mImageOverride = *IMAGE_BLANK;
+        aTrackInstance->mImageOverride = IMAGE_BLANK;
 
         ReanimationType aHeadType;
 
@@ -250,7 +250,7 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
         } else if (theZombieType == ZombieType::ZOMBIE_TRASHCAN) {
             aReanim.AssignRenderGroupToTrack("anim_screendoor", RENDER_GROUP_NORMAL);
             aReanim.AssignRenderGroupToTrack("Zombie_outerarm_screendoor", RENDER_GROUP_NORMAL);
-            aReanim.SetImageOverride("anim_screendoor", *Sexy_IMAGE_REANIM_ZOMBIE_TRASHCAN1_Addr);
+            aReanim.SetImageOverride("anim_screendoor", Sexy::IMAGE_REANIM_ZOMBIE_TRASHCAN1);
         } else if (theZombieType == ZombieType::ZOMBIE_FLAG) {
             Reanimation aReanimFlag;
             aReanimFlag.ReanimationInitializeType(aPosX, aPosY, ReanimationType::REANIM_ZOMBIE_FLAGPOLE);
@@ -278,7 +278,7 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
         aReanim.ReanimationInitializeType(aPosX, aPosY + 20, aZombieDef.mReanimationType);
         aReanim.SetFramesForLayer("anim_idle");
         Zombie::SetupReanimLayers(&aReanim, ZombieType::ZOMBIE_REDEYE_GARGANTUAR);
-        aReanim.SetImageOverride("anim_head1", *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD_REDEYE_Addr);
+        aReanim.SetImageOverride("anim_head1", Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD_REDEYE);
         aReanim.Update();
         aReanim.Draw(&aMemoryGraphics);
         mZombieImages[theZombieType] = aMemoryImage;

@@ -73,21 +73,21 @@ void SettingsDialog::Draw(Sexy::Graphics *g) {
 
     if (mHardwareAccelerationCheckbox) {
         const Color color = (mFocusedChildWidget == mHardwareAccelerationCheckbox) ? Color(0, 255, 0) : Color(107, 110, 145);
-        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
         g->SetColor(color);
         g->DrawString(TodStringTranslate("[OPTIONS_3D_ACCELERATION]"), mHardwareAccelerationCheckbox->mX + 80, mHardwareAccelerationCheckbox->mY + 20);
     }
 
     if (mHapticFeedbackCheckbox) {
         const Color color = (mFocusedChildWidget == mHapticFeedbackCheckbox) ? Color(0, 255, 0) : Color(107, 110, 145);
-        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
         g->SetColor(color);
         g->DrawString(TodStringTranslate("[OPTIONS_HAPTIC_FEEDBACK]"), mHapticFeedbackCheckbox->mX + 80, mHapticFeedbackCheckbox->mY + 20);
     }
 }
 
 void SettingsDialog::CheckboxChecked(int theId, bool isChecked) {
-    LawnApp *lawnApp = *gLawnApp_Addr;
+    LawnApp *lawnApp = gLawnApp;
 
     switch (theId) {
         case SettingsDialog::SettingsDialog_HardwareAcceleration:

@@ -48,7 +48,7 @@ public:
     }
 
 protected:
-    void *GetSymbolImpl([[gnu::nonnull]] const char *name) const;
+    void *GetSymbolImpl(const char *name) const;
 
     void *handle_ = nullptr;
 };

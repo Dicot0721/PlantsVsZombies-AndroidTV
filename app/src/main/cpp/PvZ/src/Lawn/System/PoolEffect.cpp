@@ -72,13 +72,13 @@ void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
             for (int aPoolOffsetY : thePoolOffsetY) {
                 g->mTransY += (float)aPoolOffsetY;
                 if (theIsNight) {
-                    g->DrawImage(*Sexy_IMAGE_POOL_NIGHT_Addr, 34, 278);
-                    //                g->DrawTrianglesTex(*Sexy_IMAGE_POOL_BASE_NIGHT_Addr, v140[0], 150);
-                    //                g->DrawTrianglesTex(*Sexy_IMAGE_POOL_SHADING_NIGHT_Addr, v140[1], 150);
+                    g->DrawImage(Sexy::IMAGE_POOL_NIGHT, 34, 278);
+                    //                g->DrawTrianglesTex(Sexy::IMAGE_POOL_BASE_NIGHT, v140[0], 150);
+                    //                g->DrawTrianglesTex(Sexy::IMAGE_POOL_SHADING_NIGHT, v140[1], 150);
                 } else {
-                    g->DrawImage(*Sexy_IMAGE_POOL_Addr, 34, 278);
-                    //                g->DrawTrianglesTex(*Sexy_IMAGE_POOL_BASE_Addr, v140[0], 150);
-                    //                g->DrawTrianglesTex(*Sexy_IMAGE_POOL_SHADING_Addr, v140[1], 150);
+                    g->DrawImage(Sexy::IMAGE_POOL, 34, 278);
+                    //                g->DrawTrianglesTex(Sexy::IMAGE_POOL_BASE, v140[0], 150);
+                    //                g->DrawTrianglesTex(Sexy::IMAGE_POOL_SHADING, v140[1], 150);
                     TodParticleSystem *aPoolSparkle = mApp->ParticleTryToGet(mApp->mBoard->mPoolSparklyParticleID);
                     if (aPoolSparkle != nullptr) {
                         aPoolSparkle->Draw(g);
@@ -88,16 +88,16 @@ void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
             }
         } else {
             if (theIsNight) {
-                g->DrawImage(*Sexy_IMAGE_POOL_NIGHT_Addr, 34, 278);
+                g->DrawImage(Sexy::IMAGE_POOL_NIGHT, 34, 278);
             } else {
-                g->DrawImage(*Sexy_IMAGE_POOL_Addr, 34, 278);
+                g->DrawImage(Sexy::IMAGE_POOL, 34, 278);
             }
         }
         return;
     }
 
-    float aGridSquareX = (float)(*Sexy_IMAGE_POOL_Addr)->GetWidth() / 15.0f;
-    float aGridSquareY = (float)(*Sexy_IMAGE_POOL_Addr)->GetHeight() / 5.0f;
+    float aGridSquareX = (float)(Sexy::IMAGE_POOL)->GetWidth() / 15.0f;
+    float aGridSquareY = (float)(Sexy::IMAGE_POOL)->GetHeight() / 5.0f;
     float aOffsetArray[3][16][6][2] = {{{{0.0f}}}};
     for (int x = 0; x <= 15; x++) {
         for (int y = 0; y <= 5; y++) {
@@ -172,11 +172,11 @@ void PoolEffect::PoolEffectDraw(Sexy::Graphics *g, bool theIsNight) {
     aPoolEffectG.SetWrapMode(0, 0); // 用于修复除mCausticImage绘制重复·外其他都是裁切，g本应当为全局平铺重复
 
     if (theIsNight) {
-        g->DrawTrianglesTex(*Sexy_IMAGE_POOL_BASE_NIGHT_Addr, aVertArray[0], 150);
-        g->DrawTrianglesTex(*Sexy_IMAGE_POOL_SHADING_NIGHT_Addr, aVertArray[1], 150);
+        g->DrawTrianglesTex(Sexy::IMAGE_POOL_BASE_NIGHT, aVertArray[0], 150);
+        g->DrawTrianglesTex(Sexy::IMAGE_POOL_SHADING_NIGHT, aVertArray[1], 150);
     } else {
-        g->DrawTrianglesTex(*Sexy_IMAGE_POOL_BASE_Addr, aVertArray[0], 150);
-        g->DrawTrianglesTex(*Sexy_IMAGE_POOL_SHADING_Addr, aVertArray[1], 150);
+        g->DrawTrianglesTex(Sexy::IMAGE_POOL_BASE, aVertArray[0], 150);
+        g->DrawTrianglesTex(Sexy::IMAGE_POOL_SHADING, aVertArray[1], 150);
     }
 
     UpdateWaterEffect();

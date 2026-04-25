@@ -24,15 +24,15 @@
 #include "PvZ/Symbols.h"
 
 bool HouseChooserDialog::IsHouseAvaliable(HouseType houseType) {
-    LawnApp *lawnApp = *gLawnApp_Addr;
+    LawnApp *lawnApp = gLawnApp;
     return houseType == 0 || lawnApp->mPlayerInfo->mPurchases[StoreItem::STORE_ITEM_BLUEPRINT_BLING + int(houseType)] > 0;
 }
 
 void HouseChooserDialog::MouseDown(int x, int y, int theClickCount) {
     old_HouseChooserDialog_MouseDown(this, x, y, theClickCount);
 
-    int width = (*Sexy_IMAGE_STORE_BLUEPRINT_CLOWN_Addr)->GetWidth();
-    int height = (*Sexy_IMAGE_STORE_BLUEPRINT_CLOWN_Addr)->GetHeight();
+    int width = (Sexy::IMAGE_STORE_BLUEPRINT_CLOWN)->GetWidth();
+    int height = (Sexy::IMAGE_STORE_BLUEPRINT_CLOWN)->GetHeight();
     int houseIdToSelect = HouseType::BLUEPRINT_INVALID;
     for (int i = 0; i < 5; ++i) {
         Sexy::Rect rect = {75 + 90 * i, 125, width, height};

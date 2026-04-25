@@ -29,7 +29,7 @@ void SaveGameContext::SyncReanimationDef(ReanimatorDefinition *&theDefinition) {
             theDefinition = nullptr;
         } else if (reanimationType <= ReanimationType::REANIM_ZOMBATAR_HEAD) {
             ReanimatorEnsureDefinitionLoaded((ReanimationType)reanimationType, true);
-            ReanimatorDefinition *v6 = *gReanimatorDefArray_Addr; // r3
+            ReanimatorDefinition *v6 = gReanimatorDefArray; // r3
             theDefinition = v6 + reanimationType;
         } else {
             *((uint8_t *)this + 28) = true;
@@ -37,8 +37,8 @@ void SaveGameContext::SyncReanimationDef(ReanimatorDefinition *&theDefinition) {
     } else {
         int v3 = 0;
         int reanimationType = -1;
-        ReanimatorDefinition *v5 = theDefinition;             // r1
-        ReanimatorDefinition *v6 = *gReanimatorDefArray_Addr; // r3
+        ReanimatorDefinition *v5 = theDefinition;       // r1
+        ReanimatorDefinition *v6 = gReanimatorDefArray; // r3
         while (v5 != v6++) {
             if (++v3 == ReanimationType::REANIM_ZOMBATAR_HEAD + 1)
                 goto LABEL_7;

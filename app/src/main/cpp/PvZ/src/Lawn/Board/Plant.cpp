@@ -191,7 +191,7 @@ void Plant::PlayBodyReanim(const char *theTrackName, ReanimLoopType theLoopType,
 void Plant::SpikeweedAttack() {
     if (mState != PlantState::STATE_SPIKEWEED_ATTACKING) {
         PlayBodyReanim("anim_attack", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 18.0f);
-        mApp->PlaySample(*Sexy_SOUND_THROW_Addr);
+        mApp->PlaySample(Sexy::SOUND_THROW);
 
         mState = PlantState::STATE_SPIKEWEED_ATTACKING;
         mStateCountdown = 100;
@@ -482,7 +482,7 @@ void Plant::Draw(Sexy::Graphics *g) {
             && (mSeedType == SeedType::SEED_WALLNUT || mSeedType == SeedType::SEED_TALLNUT || mSeedType == SeedType::SEED_PUMPKINSHELL || mSeedType == SeedType::SEED_GARLIC
                 || mSeedType == SeedType::SEED_SPIKEROCK))) { // 如果玩家开了 植物显血
         pvzstl::string str = StrFormat("%d/%d", mPlantHealth, mPlantMaxHealth);
-        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT12_Addr);
+        g->SetFont(Sexy::FONT_DWARVENTODCRAFT12);
         if (mSeedType == SeedType::SEED_PUMPKINSHELL) {
             g->SetColor(gColorYellow);
             g->DrawString(str, 0, 52);
@@ -545,7 +545,7 @@ void Plant::DrawSeedType(Sexy::Graphics *g, SeedType theSeedType, SeedType theIm
                 break;
         }
     }
-    LawnApp *lawnApp = *gLawnApp_Addr;
+    LawnApp *lawnApp = gLawnApp;
     float v24, v25;
     if (lawnApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BIG_TIME
         && (theSeedType2 == SeedType::SEED_SUNFLOWER || theSeedType2 == SeedType::SEED_WALLNUT || theSeedType2 == SeedType::SEED_MARIGOLD)) {
@@ -572,7 +572,7 @@ void Plant::DrawSeedType(Sexy::Graphics *g, SeedType theSeedType, SeedType theIm
         if (theSeedType2 == SeedType::SEED_GIANT_WALLNUT) {
             g->mScaleX = g->mScaleX * 1.4;
             g->mScaleY = g->mScaleY * 1.4;
-            TodDrawImageScaledF(g, *Sexy_IMAGE_REANIM_WALLNUT_BODY_Addr, thePosX - 53.0, thePosY - 56.0, g->mScaleX, g->mScaleY);
+            TodDrawImageScaledF(g, Sexy::IMAGE_REANIM_WALLNUT_BODY, thePosX - 53.0, thePosY - 56.0, g->mScaleX, g->mScaleY);
         } else if (aPlantDef.mReanimationType == -1) {
             int v29;
             if (theSeedType2 == SeedType::SEED_KERNELPULT)
@@ -659,7 +659,7 @@ void Plant::DoSpecial_Origin() {
             break;
         }
         case SeedType::SEED_DOOMSHROOM: {
-            mApp->PlaySample(*Sexy_SOUND_DOOMSHROOM_Addr);
+            mApp->PlaySample(Sexy::SOUND_DOOMSHROOM);
 
             mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, 250, 3, true, aDamageRangeFlags);
             KillAllPlantsNearDoom();
@@ -710,7 +710,7 @@ void Plant::DoSpecial_Origin() {
             aPosX = mX + mWidth / 2 - 20;
             aPosY = mY + mHeight / 2;
 
-            mApp->PlaySample(*SOUND_POTATO_MINE);
+            mApp->PlaySample(SOUND_POTATO_MINE);
             mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, 60, 0, false, aDamageRangeFlags);
 
             int aRenderPosition = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PARTICLE, mRow, 0);
@@ -1334,7 +1334,6 @@ static int GetVSRefreshTimeDefault(SeedType theSeedType) {
 }
 
 static int GetVSCostBalanced(SeedType theSeedType) {
-    LawnApp *gLawnApp = *gLawnApp_Addr;
     int aCost = GetVSCostDefault(theSeedType);
     switch (theSeedType) {
         case SeedType::SEED_SUNSHROOM:
@@ -1418,7 +1417,6 @@ static int GetVSRefreshTimeBalanced(SeedType theSeedType) {
 }
 
 int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
-    LawnApp *gLawnApp = *gLawnApp_Addr;
     if (gLawnApp->IsVSMode()) {
         if (theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
             if (gFreeForFristShuffle[0])
@@ -1444,7 +1442,6 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
         return 0;
     }
 
-    LawnApp *gLawnApp = *gLawnApp_Addr;
     if (gLawnApp->IsVSMode()) {
         if (theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE || theSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)
             return 3000;
@@ -1453,7 +1450,7 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
             theSeedType = theImitaterType;
         }
         int aRefreshTime = VSSetupAddonWidget::msBalancePatchMode ? GetVSRefreshTimeBalanced(theSeedType) : GetVSRefreshTimeDefault(theSeedType);
-        if (gLawnApp->mBoard->mChallenge->IsMPSuddenDeath() && *Challenge_gVSSuddenDeathMode_Addr == 1) {
+        if (gLawnApp->mBoard->mChallenge->IsMPSuddenDeath() && Challenge::gVSSuddenDeathMode == 1) {
             // sd不减冷却的卡片
             switch (theSeedType) { // 此处用switch-case替换旧的if-else，方便后续增删
                 // 墓碑和向日葵，sd用不到
@@ -1501,7 +1498,7 @@ bool Plant::IsFlying(SeedType theSeedType) {
 bool Plant::IsUpgrade(SeedType theSeedType) {
     // 修复机枪射手在SeedBank光标移动到shop栏后变为绿卡。
     if (theSeedType == SeedType::SEED_GATLINGPEA) {
-        LawnApp *lawnApp = *gLawnApp_Addr;
+        LawnApp *lawnApp = gLawnApp;
         Board *board = lawnApp->mBoard;
         if (board == nullptr) {
             return old_Plant_IsUpgrade(theSeedType); // 等价于直接return true;但方便改版修改所以返回旧函数

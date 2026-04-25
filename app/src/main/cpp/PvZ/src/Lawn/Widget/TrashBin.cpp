@@ -27,7 +27,7 @@ void TrashBin::_constructor(TrashPileType theTrashPileType, float theHeight) {
     int thePileNum = theHeight / (theTrashPileType == TrashBin::ZOMBIE_PILE ? zombiePileHeight : plantPileHeight) + 1;
     if (thePileNum >= 10)
         thePileNum = 10;
-    DefaultPlayerInfo *mPlayerInfo = (*gLawnApp_Addr)->mPlayerInfo;
+    DefaultPlayerInfo *mPlayerInfo = (gLawnApp)->mPlayerInfo;
     int aLevel = mPlayerInfo->mLevel;
     LawnPlayerInfo *aPlayerInfo = reinterpret_cast<LawnPlayerInfo *>(mPlayerInfo);
     if (aPlayerInfo->GetFlag(1) || aPlayerInfo->GetFlag(0x8000))
@@ -176,7 +176,7 @@ void TrashBin::Draw(Sexy::Graphics *g) {
     //
     // if (mTrashPileType == ZOMBIE_TRASHCAN::PLANT_PILE) {
     // Rect theRect ={317,658,120,50};
-    // Sexy::Font* theFont = *Sexy_FONT_CONTINUUMBOLD14_Addr;
+    // Sexy::Font* theFont = Sexy::FONT_CONTINUUMBOLD14;
     // TodDrawStringWrapped(g, holder1, &theRect, theFont, &yellow, DrawStringJustification::DS_ALIGN_CENTER, false);
     // }else {
     // Sexy_Graphics_DrawImageF(g, addonImages.zombie_can, trashBin->mX, trashBin->mY);

@@ -77,7 +77,7 @@ void StoreScreen::ButtonDepress(int theId) {
         case StoreScreen::StoreScreen_Prev:
             mHatchTimer = 50;
             unk197 = 1;
-            mApp->PlaySample(*Sexy_SOUND_HATCHBACK_CLOSE_Addr);
+            mApp->PlaySample(Sexy::SOUND_HATCHBACK_CLOSE);
             mBubbleCountDown = 0;
             mApp->CrazyDaveStopTalking();
             EnableButtons(false);
@@ -97,7 +97,7 @@ void StoreScreen::ButtonDepress(int theId) {
         case StoreScreen::StoreScreen_Next:
             mHatchTimer = 50;
             unk197 = 2;
-            mApp->PlaySample(*Sexy_SOUND_HATCHBACK_CLOSE_Addr);
+            mApp->PlaySample(Sexy::SOUND_HATCHBACK_CLOSE);
             mBubbleCountDown = 0;
             mApp->CrazyDaveStopTalking();
             EnableButtons(false);
@@ -152,7 +152,7 @@ void StoreScreen::Draw(Sexy::Graphics *g) {
 
     int aPage = mPage == 5 ? 5 : mPage + 1;
     pvzstl::string aPageString = StrFormat("%d/%d", aPage, aNumPages);
-    TodDrawString(g, aPageString, 410, 512, *Sexy_FONT_BRIANNETOD16_Addr, Color(200, 200, 200, 255), DrawStringJustification::DS_ALIGN_CENTER);
+    TodDrawString(g, aPageString, 410, 512, Sexy::FONT_BRIANNETOD16, Color(200, 200, 200, 255), DrawStringJustification::DS_ALIGN_CENTER);
 }
 
 bool StoreScreen::IsPottedPlant(StoreItem theStoreItem) {
@@ -172,12 +172,12 @@ void StoreScreen::MouseDown(int x, int y, int theClickCount) {
         // 翻页过程中无法触控
         return;
     }
-    int mPrevButtonWidth = (*Sexy_IMAGE_STORE_PREVBUTTON_Addr)->GetWidth();
-    int mPrevButtonHeight = (*Sexy_IMAGE_STORE_PREVBUTTON_Addr)->GetHeight();
-    int mNextButtonWidth = (*Sexy_IMAGE_STORE_NEXTBUTTON_Addr)->GetWidth();
-    int mNextButtonHeight = (*Sexy_IMAGE_STORE_NEXTBUTTON_Addr)->GetHeight();
-    int mBackButtonWidth = (*Sexy_IMAGE_STORE_MAINMENUBUTTON_Addr)->GetWidth();
-    int mBackButtonHeight = (*Sexy_IMAGE_STORE_MAINMENUBUTTON_Addr)->GetHeight();
+    int mPrevButtonWidth = (Sexy::IMAGE_STORE_PREVBUTTON)->GetWidth();
+    int mPrevButtonHeight = (Sexy::IMAGE_STORE_PREVBUTTON)->GetHeight();
+    int mNextButtonWidth = (Sexy::IMAGE_STORE_NEXTBUTTON)->GetWidth();
+    int mNextButtonHeight = (Sexy::IMAGE_STORE_NEXTBUTTON)->GetHeight();
+    int mBackButtonWidth = (Sexy::IMAGE_STORE_MAINMENUBUTTON)->GetWidth();
+    int mBackButtonHeight = (Sexy::IMAGE_STORE_MAINMENUBUTTON)->GetHeight();
     Sexy::Rect mPrevButtonRect = {mShakeX + 172, mShakeY + 375, mPrevButtonWidth, mPrevButtonHeight};
     Sexy::Rect mNextButtonRect = {mShakeX + 573, mShakeY + 373, mNextButtonWidth, mNextButtonHeight};
     Sexy::Rect mBackButtonRect = {mShakeX + 305, mShakeY + 510, mBackButtonWidth, mBackButtonHeight};

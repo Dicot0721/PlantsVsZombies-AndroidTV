@@ -65,9 +65,9 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
     old_VSSetupMenu_DrawOverlay(this, g);
 
     if (mState == VSSetupState::VS_SETUP_STATE_SIDES) {
-        TodDrawString(g, "[VS_PICK_SIDES]", 350, 110, *Sexy_FONT_DWARVENTODCRAFT18_Addr, Color::White, DrawStringJustification::DS_ALIGN_LEFT);
+        TodDrawString(g, "[VS_PICK_SIDES]", 350, 110, Sexy::FONT_DWARVENTODCRAFT18, Color::White, DrawStringJustification::DS_ALIGN_LEFT);
     } else if (mState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE) {
-        TodDrawString(g, "[VS_PICK_BATTLES]", 350, 110, *Sexy_FONT_DWARVENTODCRAFT18_Addr, Color::White, DrawStringJustification::DS_ALIGN_LEFT);
+        TodDrawString(g, "[VS_PICK_BATTLES]", 350, 110, Sexy::FONT_DWARVENTODCRAFT18, Color::White, DrawStringJustification::DS_ALIGN_LEFT);
     }
 
     if (drawTipArrowAlphaCounter > 200) {
@@ -77,15 +77,15 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
 
         if (!gTcpConnected && mSides[0] == VSSide::VS_SIDE_NONE) {
             Sexy::Widget *theController1Widget = FindWidget(7);
-            g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController1Widget->mX + 160, theController1Widget->mY + 40);
-            g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController1Widget->mX - 50, theController1Widget->mY + 40, true);
+            g->DrawImage(Sexy::IMAGE_ZEN_NEXTGARDEN, theController1Widget->mX + 160, theController1Widget->mY + 40);
+            g->DrawImageMirror(Sexy::IMAGE_ZEN_NEXTGARDEN, theController1Widget->mX - 50, theController1Widget->mY + 40, true);
         }
 
 
         if (gTcpClientSocket < 0 && mSides[1] == VSSide::VS_SIDE_NONE) {
             Sexy::Widget *theController2Widget = FindWidget(8);
-            g->DrawImage(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController2Widget->mX + 160, theController2Widget->mY + 40);
-            g->DrawImageMirror(*Sexy_IMAGE_ZEN_NEXTGARDEN_Addr, theController2Widget->mX - 50, theController2Widget->mY + 40, true);
+            g->DrawImage(Sexy::IMAGE_ZEN_NEXTGARDEN, theController2Widget->mX + 160, theController2Widget->mY + 40);
+            g->DrawImageMirror(Sexy::IMAGE_ZEN_NEXTGARDEN, theController2Widget->mX - 50, theController2Widget->mY + 40, true);
         }
 
         g->SetColorizeImages(false);
@@ -102,49 +102,49 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
                 case VSSetupMenu_Quick_Play: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
                     pvzstl::string opt = TodStringTranslate("[VS_OPT_QUICK_GAME]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupMenu_Custom_Battle: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
                     pvzstl::string opt = TodStringTranslate("[VS_OPT_CUSTOM_ARENA]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupMenu_Random_Battle: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
                     pvzstl::string opt = TodStringTranslate("[VS_OPT_RANDOM_ARENA]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
                     pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraPacketsMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
                     pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraSeedsMode) ? "[VS_OPT_ENABLE_EXTRA_SEEDS]" : "[VS_OPT_DISABLE_EXTRA_SEEDS]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_BanMode: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
                     pvzstl::string opt = TodStringTranslate((!mAddonWidget->mBanMode) ? "[VS_OPT_ENABLE_BAN_MODE]" : "[VS_OPT_DISABLE_BAN_MODE]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_BalancePatch: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
                     pvzstl::string opt = TodStringTranslate((!mAddonWidget->mBalancePatchMode) ? "[VS_OPT_ENABLE_BALANCE_PATCH]" : "[VS_OPT_DISABLE_BALANCE_PATCH]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_Back: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
                     pvzstl::string opt = TodStringTranslate("[BACK_TO_MODE_SELECT]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 default:
@@ -161,49 +161,49 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
                 case VSSetupMenu_Quick_Play: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_PLAY_FMT]");
                     pvzstl::string opt = TodStringTranslate("[VS_OPT_QUICK_GAME]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupMenu_Custom_Battle: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_PLAY_FMT]");
                     pvzstl::string opt = TodStringTranslate("[VS_OPT_CUSTOM_ARENA]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupMenu_Random_Battle: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_PLAY_FMT]");
                     pvzstl::string opt = TodStringTranslate("[VS_OPT_RANDOM_ARENA]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
                     pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraPacketsMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
                     pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraSeedsMode) ? "[VS_OPT_ENABLE_EXTRA_SEEDS]" : "[VS_OPT_DISABLE_EXTRA_SEEDS]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_BanMode: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
                     pvzstl::string opt = TodStringTranslate((!mAddonWidget->mBanMode) ? "[VS_OPT_ENABLE_BAN_MODE]" : "[VS_OPT_DISABLE_BAN_MODE]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_BalancePatch: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
                     pvzstl::string opt = TodStringTranslate((!mAddonWidget->mBalancePatchMode) ? "[VS_OPT_ENABLE_BALANCE_PATCH]" : "[VS_OPT_DISABLE_BALANCE_PATCH]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 case VSSetupAddonWidget::VSSetupAddonWidget_Back: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
                     pvzstl::string opt = TodStringTranslate("[BACK_TO_MODE_SELECT]");
-                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, *Sexy_FONT_HOUSEOFTERROR28_Addr, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
+                    TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
                 default:

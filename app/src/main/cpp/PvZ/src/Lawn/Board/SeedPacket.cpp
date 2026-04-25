@@ -117,7 +117,7 @@ void SeedPacket::DrawOverlay(Sexy::Graphics *g) {
         int coolDownRemaining = mRefreshTime - mRefreshCounter;
         pvzstl::string str = StrFormat("%1.1f", coolDownRemaining / 100.0f);
         g->SetColor(GetPlayerIndex() ? gColorYellow : gColorBlue);
-        g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+        g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
         g->DrawString(str, coolDownRemaining < 1000 ? 10 : 0, 39);
         g->SetFont(nullptr);
     }
@@ -247,9 +247,9 @@ void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, See
     g->mScaleX = g->mScaleX * theScale;
     g->mScaleY = g->mScaleY * theScale;
     if (theSeedType == SeedType::SEED_ZOMBIE_GRAVESTONE) {
-        TodDrawImageCelScaledF(g, *Sexy_IMAGE_MP_TOMBSTONE_Addr, x + theOffsetX, y + theOffsetY, 0, 0, g->mScaleX, g->mScaleY);
+        TodDrawImageCelScaledF(g, Sexy::IMAGE_MP_TOMBSTONE, x + theOffsetX, y + theOffsetY, 0, 0, g->mScaleX, g->mScaleY);
     } else if (theSeedType == SeedType::SEED_ZOMBIE_MOUND) {
-        LawnApp *app = *gLawnApp_Addr;
+        LawnApp *app = gLawnApp;
         Board *board = app->mBoard;
         int aCelCol = 2;
         GamepadControls *aGamepad = board->mGamepadControls[0]->mIsZombie ? board->mGamepadControls[0] : (board->mGamepadControls[1]->mIsZombie ? board->mGamepadControls[1] : nullptr);
@@ -267,7 +267,7 @@ void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, See
                 aCelCol = 1;
             }
         }
-        TodDrawImageCelScaledF(g, *IMAGE_TOMBSTONES, x + theOffsetX, y + theOffsetY, aCelCol, 0, g->mScaleX, g->mScaleY);
+        TodDrawImageCelScaledF(g, IMAGE_TOMBSTONES, x + theOffsetX, y + theOffsetY, aCelCol, 0, g->mScaleX, g->mScaleY);
     } else {
         if (theSeedType == SeedType::SEED_IMITATER && theImitaterType != SeedType::SEED_NONE) {
             // 卡槽内的模仿者SeedPacket卡且为冷却状态，此时需要交换theImitaterType和theSeedType。
@@ -327,18 +327,18 @@ void DrawSeedPacket(Sexy::Graphics *g,
         if (g->mScaleX > 1.0f && theSeedType < SeedType::NUM_SEEDS_IN_CHOOSER) {
             // 紫卡背景BUG就是在这里修复的
             if (celToDraw == 2) {
-                TodDrawImageCelScaledF(g, *Sexy_IMAGE_SEEDPACKET_LARGER_Addr, x, y, 0, 0, g->mScaleX * 0.5f, g->mScaleY * 0.5f);
+                TodDrawImageCelScaledF(g, Sexy::IMAGE_SEEDPACKET_LARGER, x, y, 0, 0, g->mScaleX * 0.5f, g->mScaleY * 0.5f);
             } else {
-                TodDrawImageCelScaledF(g, *Sexy_IMAGE_SEEDS_Addr, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
+                TodDrawImageCelScaledF(g, Sexy::IMAGE_SEEDS, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
             }
         } else if (theIsZombieSeed && theSeedType != SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
             float heightOffset = g->mScaleX > 1.2 ? -1.5f : 0.0f;
-            TodDrawImageScaledF(g, *Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr, x, y + heightOffset, g->mScaleX, g->mScaleY);
+            TodDrawImageScaledF(g, Sexy::IMAGE_ZOMBIE_SEEDPACKET, x, y + heightOffset, g->mScaleX, g->mScaleY);
             if (theSeedType == SeedType::SEED_ZOMBIE_MOUND) {
-                TodDrawImageCelScaledF(g, *Sexy_IMAGE_SEEDS_Addr, x, y, 1, 0, g->mScaleX, g->mScaleY);
+                TodDrawImageCelScaledF(g, Sexy::IMAGE_SEEDS, x, y, 1, 0, g->mScaleX, g->mScaleY);
             }
         } else {
-            TodDrawImageCelScaledF(g, *Sexy_IMAGE_SEEDS_Addr, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
+            TodDrawImageCelScaledF(g, Sexy::IMAGE_SEEDS, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
         }
     }
     bool isPlant = theSeedType < SeedType::SEED_BEGHOULED_BUTTON_SHUFFLE || theSeedType > SeedType::SEED_ZOMBIQUARIUM_TROPHY;
@@ -549,7 +549,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
             theDrawScale = 0.5;
             break;
     }
-    LawnApp *lawnApp = *gLawnApp_Addr;
+    LawnApp *lawnApp = gLawnApp;
     float v28, v29;
     if (lawnApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BIG_TIME) {
         if (realSeedType == SeedType::SEED_SUNFLOWER || realSeedType == SeedType::SEED_WALLNUT || realSeedType == SeedType::SEED_MARIGOLD) {
@@ -577,12 +577,12 @@ void DrawSeedPacket(Sexy::Graphics *g,
         aPlantG.ClipRect(x, y, g->mScaleX * 50.0f, coolDownHeight * g->mScaleY);
         if (theIsPacketSelected) {
             if (Challenge::IsMPSeedType(theSeedType)) {
-                TodDrawImageScaledF(&aPlantG, *Sexy_IMAGE_ZOMBIE_SEEDPACKET_Addr, x, y, g->mScaleX, g->mScaleY);
+                TodDrawImageScaledF(&aPlantG, Sexy::IMAGE_ZOMBIE_SEEDPACKET, x, y, g->mScaleX, g->mScaleY);
                 if (theSeedType == SeedType::SEED_ZOMBIE_MOUND) {
-                    TodDrawImageCelScaledF(&aPlantG, *Sexy_IMAGE_SEEDS_Addr, x, y, 1, 0, g->mScaleX, g->mScaleY);
+                    TodDrawImageCelScaledF(&aPlantG, Sexy::IMAGE_SEEDS, x, y, 1, 0, g->mScaleX, g->mScaleY);
                 }
             } else {
-                TodDrawImageCelScaledF(&aPlantG, *Sexy_IMAGE_SEEDS_Addr, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
+                TodDrawImageCelScaledF(&aPlantG, Sexy::IMAGE_SEEDS, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
             }
         }
         if (isPlant && theIsPacketSelected)
@@ -603,7 +603,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
             }
         }
 
-        Sexy::Font *font = *Sexy_FONT_BRIANNETOD12_Addr;
+        Sexy::Font *font = Sexy::FONT_BRIANNETOD12;
         int width = 31 - (*((int (**)(Sexy::Font *, const pvzstl::string &))font->vTable + 8))(font, aCostStr); // 33 -> 31，微调一下文字位置，左移2个像素点
         int height = 48 + (*((int (**)(Sexy::Font *))font->vTable + 2))(font);                                  // 50 -> 48, 微调一下文字位置，上移2个像素点
         Color theColor = {0, 0, 0, 255};

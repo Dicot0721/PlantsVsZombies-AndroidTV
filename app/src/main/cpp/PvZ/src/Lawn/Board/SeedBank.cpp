@@ -84,24 +84,24 @@ void SeedBank::Draw(Sexy::Graphics *g) {
         return;
     }
     if (mApp->IsSlotMachineLevel()) {
-        g->DrawImage(*Sexy_IMAGE_SUNBANK_Addr, 0, 0);
+        g->DrawImage(Sexy::IMAGE_SUNBANK, 0, 0);
     } else if (mBoard->HasConveyorBeltSeedBank(mIsZombie)) {
         if (mApp->IsCoopMode()) {
-            g->DrawImage(*Sexy_IMAGE_CONVEYORBELT_BACKDROP_COOP_Addr, 0, 0);
-            g->DrawImageCel(*Sexy_IMAGE_CONVEYORBELT_COOP_Addr, 7, 63, 0, mConveyorBeltCounter / 4 % 6);
+            g->DrawImage(Sexy::IMAGE_CONVEYORBELT_BACKDROP_COOP, 0, 0);
+            g->DrawImageCel(Sexy::IMAGE_CONVEYORBELT_COOP, 7, 63, 0, mConveyorBeltCounter / 4 % 6);
             g->SetClipRect(7, 0, 313, 600);
         } else {
-            g->DrawImage(*Sexy_IMAGE_CONVEYORBELT_BACKDROP_Addr, 83, 0);
-            g->DrawImageCel(*Sexy_IMAGE_CONVEYORBELT_Addr, 90, 63, 0, mConveyorBeltCounter / 4 % 6);
+            g->DrawImage(Sexy::IMAGE_CONVEYORBELT_BACKDROP, 83, 0);
+            g->DrawImageCel(Sexy::IMAGE_CONVEYORBELT, 90, 63, 0, mConveyorBeltCounter / 4 % 6);
             g->SetClipRect(90, 0, 501, 600);
         }
     } else if (mApp->IsCoopMode()) {
-        g->DrawImage(*Sexy_IMAGE_SEEDBANK_COOP_Addr, 0, 0);
+        g->DrawImage(Sexy::IMAGE_SEEDBANK_COOP, 0, 0);
     } else if (mApp->IsVSMode() && mIsZombie) {
         int theSeedBankExtraWidth = mBoard->GetSeedBankExtraWidth();
-        g->DrawImage(*Sexy_IMAGE_ZOMBIE_SEEDBANK_Addr, theSeedBankExtraWidth, 0);
+        g->DrawImage(Sexy::IMAGE_ZOMBIE_SEEDBANK, theSeedBankExtraWidth, 0);
     } else {
-        Sexy::Image *seedBankImage = *Sexy_IMAGE_SEEDBANK_Addr;
+        Sexy::Image *seedBankImage = Sexy::IMAGE_SEEDBANK;
         int theSeedBankExtraWidth = mBoard->GetSeedBankExtraWidth();
         int theRect[4];
         theRect[0] = seedBankImage->mWidth - 12 - theSeedBankExtraWidth;
@@ -191,8 +191,8 @@ void SeedBank::Draw(Sexy::Graphics *g) {
     }
     g->ClearClipRect();
     if (mApp->IsSlotMachineLevel()) {
-        if (mY > -(*(int (**)(Sexy::Image *))(*Sexy_IMAGE_SEEDBANK_Addr + 20))(*Sexy_IMAGE_SEEDBANK_Addr))
-            g->DrawImage(*Sexy_IMAGE_SLOTMACHINE_OVERLAY_Addr, 189, -2);
+        if (mY > -(*(int (**)(Sexy::Image *))(Sexy::IMAGE_SEEDBANK + 20))(Sexy::IMAGE_SEEDBANK))
+            g->DrawImage(Sexy::IMAGE_SLOTMACHINE_OVERLAY, 189, -2);
     }
     if (!mBoard->HasConveyorBeltSeedBank(0)) {
         int theMoney;
@@ -214,11 +214,11 @@ void SeedBank::Draw(Sexy::Graphics *g) {
             theColor.mBlue = 0;
             theColor.mAlpha = 255;
         }
-        TodDrawString(g, str, mIsZombie ? (408 + mBoard->GetSeedBankExtraWidth()) : 38, 78, *Sexy_FONT_CONTINUUMBOLD14_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
+        TodDrawString(g, str, mIsZombie ? (408 + mBoard->GetSeedBankExtraWidth()) : 38, 78, Sexy::FONT_CONTINUUMBOLD14, theColor, DrawStringJustification::DS_ALIGN_CENTER);
 
         if (mApp->IsTwinSunbankMode()) {
             pvzstl::string str1 = StrFormat("%d", mBoard->mSunMoney2 & ~mBoard->mSunMoney2 >> 31);
-            TodDrawString(g, str1, 644, 49, *Sexy_FONT_CONTINUUMBOLD14_Addr, theColor, DrawStringJustification::DS_ALIGN_CENTER);
+            TodDrawString(g, str1, 644, 49, Sexy::FONT_CONTINUUMBOLD14, theColor, DrawStringJustification::DS_ALIGN_CENTER);
         }
     }
     if (mApp->mGameScene != GameScenes::SCENE_PLAYING) {

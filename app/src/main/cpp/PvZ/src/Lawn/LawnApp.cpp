@@ -193,7 +193,7 @@ void LawnApp::LoadAddonImages() {
     //    addonImages.VSRoof = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
     //    addonImages.VSRoofNight = CopyImage(*Sexy_IMAGE_CHALLENGE_THUMBNAILS_Addr, rect);
 
-    (*IMAGE_BLANK)->ClearRect({0, 0, (*IMAGE_BLANK)->mWidth, (*IMAGE_BLANK)->mHeight}); // 手动把IMAGE_BLANK清空
+    (IMAGE_BLANK)->ClearRect({0, 0, (IMAGE_BLANK)->mWidth, (IMAGE_BLANK)->mHeight}); // 手动把IMAGE_BLANK清空
 
     int addonImagesNum = (sizeof(AddonImages) / sizeof(Sexy::Image *));
     mCompletedLoadingThreadTasks += 9 * addonImagesNum;
@@ -819,9 +819,7 @@ void LawnApp::Init() {
     mDaisyCheck = new TypingCheck("daisies");
     mSukhbirCheck = new TypingCheck("sukhbir");
 
-    ReanimatorLoadDefinitions(gLawnReanimationArrayAddr, 178);
-
-    //    ((Widget *)*gDaveWidgetAddr)->Resize(0, 0, unkMem1_1[18], unkMem1_1[19]);
+    ReanimatorLoadDefinitions(gLawnReanimationArray, 178);
 
     mIsFullVersion = true;
     Sexy::Graphics::SetTrackingDeviceState(false);
@@ -871,10 +869,10 @@ void LawnApp::LoadingThreadProc() {
     TodStringListLoad("addonFiles/properties/AddonStrings.txt"); // 加载自定义字符串
 
     // 加载三个主界面背景白噪音Foley
-    *gFoleyParamArraySizeAddr += 3;
-    gMenuLeftFoley.mSfxID[0] = Sexy_SOUND_MENU_L_ST_Addr;
-    gMenuCenterFoley.mSfxID[0] = Sexy_SOUND_MENU_C_ST_Addr;
-    gMenuRightFoley.mSfxID[0] = Sexy_SOUND_MENU_R_ST_Addr;
+    gFoleyParamArraySize += 3;
+    gMenuLeftFoley.mSfxID[0] = &Sexy::SOUND_MENU_L_ST;
+    gMenuCenterFoley.mSfxID[0] = &Sexy::SOUND_MENU_C_ST;
+    gMenuRightFoley.mSfxID[0] = &Sexy::SOUND_MENU_R_ST;
 
     // //试图修复偶现的地图错位现象。不知道是否有效
     // LawnApp_Load(lawnApp,"DelayLoad_Background1");
@@ -1172,7 +1170,7 @@ PottedPlant *LawnApp::GetPottedPlantByIndex(int thePottedPlantIndex) {
 
 void LawnApp::ShowSeedChooserScreen() {
     mSeedChooserScreen = new SeedChooserScreen(false);
-    mSeedChooserScreen->Resize(0, 0, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND_Addr)->mWidth, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND_Addr)->mHeight);
+    mSeedChooserScreen->Resize(0, 0, (Sexy::IMAGE_SEEDCHOOSER_BACKGROUND)->mWidth, (Sexy::IMAGE_SEEDCHOOSER_BACKGROUND)->mHeight);
     mWidgetManager->AddWidget(mSeedChooserScreen);
     mWidgetManager->BringToFront(mSeedChooserScreen);
 }
@@ -1194,7 +1192,7 @@ void LawnApp::KillSeedChooserScreen() {
 
 void LawnApp::ShowZombieChooserScreen() {
     mZombieChooserScreen = new SeedChooserScreen(true);
-    mZombieChooserScreen->Resize(800 - (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mWidth, 0, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mWidth, (*Sexy_IMAGE_SEEDCHOOSER_BACKGROUND2_Addr)->mHeight);
+    mZombieChooserScreen->Resize(800 - (Sexy::IMAGE_SEEDCHOOSER_BACKGROUND2)->mWidth, 0, (Sexy::IMAGE_SEEDCHOOSER_BACKGROUND2)->mWidth, (Sexy::IMAGE_SEEDCHOOSER_BACKGROUND2)->mHeight);
     mWidgetManager->AddWidget(mZombieChooserScreen);
     mWidgetManager->BringToFront(mZombieChooserScreen);
 }

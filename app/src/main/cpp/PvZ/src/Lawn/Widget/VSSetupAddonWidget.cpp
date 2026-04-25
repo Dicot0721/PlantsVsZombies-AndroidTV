@@ -38,14 +38,14 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
                                 theVSSetupMenu,
                                 "[BACK_TO_MODE_SELECT]",
                                 nullptr,
-                                *Sexy::IMAGE_SEEDCHOOSER_BUTTON_DISABLED,
-                                *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW,
-                                *Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
+                                Sexy::IMAGE_SEEDCHOOSER_BUTTON_DISABLED,
+                                Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW,
+                                Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
     mBackButton->mTextOffsetX = -2;
     mBackButton->mTextOffsetY = -4;
     mBackButton->mTextDownOffsetX = 1;
     mBackButton->mTextDownOffsetY = 1;
-    mBackButton->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+    mBackButton->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
     (*mBackButton->mColors)[ButtonWidget::COLOR_LABEL] = Color(0, 205, 0);
     mBackButton->Resize(800, 520, 160, 50);
     mBoard->AddWidget(mBackButton);
@@ -132,7 +132,7 @@ void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
         return;
     }
 
-    mApp->PlaySample(*Sexy_SOUND_BUTTONCLICK_Addr);
+    mApp->PlaySample(Sexy::SOUND_BUTTONCLICK);
     SetAddonMode(theId, checked, true);
 
     if (gVSSetupRequestState == theId) {
@@ -204,7 +204,7 @@ void VSSetupAddonWidget::Draw(Graphics *g) {
     if (!mDrawString)
         return;
 
-    g->SetFont(*Sexy_FONT_DWARVENTODCRAFT18_Addr);
+    g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
     if (mExtraPacketsCheckbox->mVisible) {
         g->SetColor(mExtraPacketsMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
         g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SLOTS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_PACKETS_Y + 25);

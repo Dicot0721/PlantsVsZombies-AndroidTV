@@ -846,7 +846,7 @@ void Board::UpdateSunSpawning() {
 
         int aSpawnCount = 1;
         if (mChallenge->IsMPSuddenDeath()) {
-            aSpawnCount = (*Challenge_gVSSuddenDeathMode_Addr == 1) ? 2 : 1;
+            aSpawnCount = (Challenge::gVSSuddenDeathMode == 1) ? 2 : 1;
         }
 
         for (int aSpawnIndex = 0; aSpawnIndex < aSpawnCount; ++aSpawnIndex) {
@@ -985,21 +985,21 @@ void Board::DrawCoverLayer(Sexy::Graphics *g, int theRow) {
                     // 在重型武器关卡中不绘制栏杆。
                     return;
                 }
-                g->DrawImage(*Sexy_IMAGE_BACKGROUND1_COVER_Addr, 684, 557);
+                g->DrawImage(Sexy::IMAGE_BACKGROUND1_COVER, 684, 557);
                 break;
             case BackgroundType::BACKGROUND_2_NIGHT: // 前院夜晚
-                g->DrawImage(*Sexy_IMAGE_BACKGROUND2_COVER_Addr, 684, 557);
+                g->DrawImage(Sexy::IMAGE_BACKGROUND2_COVER, 684, 557);
                 break;
             case BackgroundType::BACKGROUND_3_POOL: // 泳池白天
-                g->DrawImage(*Sexy_IMAGE_BACKGROUND3_COVER_Addr, 671, 613);
+                g->DrawImage(Sexy::IMAGE_BACKGROUND3_COVER, 671, 613);
                 break;
             case BackgroundType::BACKGROUND_4_FOG: // 泳池夜晚
-                g->DrawImage(*Sexy_IMAGE_BACKGROUND4_COVER_Addr, 672, 613);
+                g->DrawImage(Sexy::IMAGE_BACKGROUND4_COVER, 672, 613);
                 break;
             case BackgroundType::BACKGROUND_5_ROOF: // 屋顶白天
-                g->DrawImage(*Sexy_IMAGE_ROOF_TREE_Addr, mOffsetMoved * 1.5f + 628, -60);
+                g->DrawImage(Sexy::IMAGE_ROOF_TREE, mOffsetMoved * 1.5f + 628, -60);
                 // 对战模式电线杆会遮挡僵尸卡槽，严重影响游戏体验
-                g->DrawImage(*Sexy_IMAGE_ROOF_POLE_Addr, mOffsetMoved * 2.0f + 628 + (mApp->IsVSMode() ? 65 : 0), -60);
+                g->DrawImage(Sexy::IMAGE_ROOF_POLE, mOffsetMoved * 2.0f + 628 + (mApp->IsVSMode() ? 65 : 0), -60);
                 break;
             case BackgroundType::BACKGROUND_6_BOSS:
                 // 可在此处添加代码绘制月夜电线杆喔
@@ -1790,7 +1790,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             serverPlantIDMap[eventPlantAdd->data5.u16x2.u16_1] = uint16_t(mPlants.DataArrayGetID(plant));
         } break;
         case EVENT_SERVER_BOARD_PLANT_EATEN:
-            mApp->PlaySample(*SOUND_GULP);
+            mApp->PlaySample(SOUND_GULP);
             break;
         case EVENT_SERVER_BOARD_PLANT_DIE: {
             auto *eventPlantDie = reinterpret_cast<U16_Event *>(event);
@@ -2013,7 +2013,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID) && homura::FindInMap(serverPlantIDMap, serverPlantID, clientPlantID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 Plant *aPlant = mPlants.DataArrayGet(clientPlantID);
-                mApp->PlaySample(*SOUND_BOING);
+                mApp->PlaySample(SOUND_BOING);
                 mApp->PlayFoley(FoleyType::FOLEY_UMBRELLA);
                 aPlant->DoSpecial();
                 aZombie->mZombiePhase = ZombiePhase::PHASE_BUNGEE_RISING;
@@ -2206,14 +2206,14 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             uint16_t clientZombieID;
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
-                aZombie->mApp->PlaySample(*SOUND_LADDER_ZOMBIE);
+                aZombie->mApp->PlaySample(SOUND_LADDER_ZOMBIE);
                 aZombie->mZombieHeight = HEIGHT_UP_LADDER;
                 aZombie->mUseLadderCol = event1->data2;
                 aZombie->DetachShield();
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE: {
-            mApp->PlaySample(*Sexy_SOUND_HUGE_WAVE_Addr);
+            mApp->PlaySample(Sexy::SOUND_HUGE_WAVE);
             DisplayAdviceAgain("[ADVICE_HUGE_WAVE]", MESSAGE_STYLE_HUGE_WAVE, ADVICE_HUGE_WAVE);
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_YUCKY_SETROW: {
@@ -2846,7 +2846,7 @@ void Board::SpawnZombiesFromGraves() {
 void Board::SpawnZombieWave() {
     // 在对战模式中放出一大波僵尸时播放大波僵尸音效
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        mApp->PlaySample(*Sexy_SOUND_HUGE_WAVE_Addr);
+        mApp->PlaySample(Sexy::SOUND_HUGE_WAVE);
     }
 
     // 在联机对战模式同步大波僵尸事件
@@ -2896,13 +2896,13 @@ void Board::DrawHammerButton(Sexy::Graphics *g, LawnApp *theApp) {
         return;
     float tmp = g->mTransY;
     Rect rect = GetButterButtonRect();
-    g->DrawImage(*Sexy_IMAGE_SHOVELBANK_Addr, rect.mX, rect.mY);
-    g->DrawImage(*Sexy_IMAGE_HAMMER_ICON_Addr, rect.mX - 7, rect.mY - 3);
+    g->DrawImage(Sexy::IMAGE_SHOVELBANK, rect.mX, rect.mY);
+    g->DrawImage(Sexy::IMAGE_HAMMER_ICON, rect.mX - 7, rect.mY - 3);
 
     if (theApp->HasGamepad() || (theApp->mGamePad1IsOn && theApp->mGamePad2IsOn)) {
-        g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS_Addr, rect.mX + 36, rect.mY + 40, 2);
+        g->DrawImageCel(Sexy::IMAGE_HELP_BUTTONS, rect.mX + 36, rect.mY + 40, 2);
     } else {
-        g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS2_Addr, rect.mX + 36, rect.mY + 40, 2);
+        g->DrawImageCel(Sexy::IMAGE_HELP_BUTTONS2, rect.mX + 36, rect.mY + 40, 2);
     }
     g->SetColorizeImages(false);
     g->mTransY = tmp;
@@ -2917,7 +2917,7 @@ void Board::DrawButterButton(Sexy::Graphics *g, LawnApp *theApp) {
     }
     float tmp = g->mTransY;
     Rect rect = GetButterButtonRect();
-    g->DrawImage(*Sexy_IMAGE_SHOVELBANK_Addr, rect.mX, rect.mY);
+    g->DrawImage(Sexy::IMAGE_SHOVELBANK, rect.mX, rect.mY);
     if (mChallenge->mChallengeState == ChallengeState::STATECHALLENGE_SHOVEL_FLASHING) {
         Color color = GetFlashingColor(mMainCounter, 75);
         g->SetColorizeImages(true);
@@ -2925,10 +2925,10 @@ void Board::DrawButterButton(Sexy::Graphics *g, LawnApp *theApp) {
     }
     // 实现拿着黄油的时候不在栏内绘制黄油
     if (!requestDrawButterInCursor) {
-        g->DrawImage(*Sexy_IMAGE_BUTTER_ICON_Addr, rect.mX - 7, rect.mY - 3);
+        g->DrawImage(Sexy::IMAGE_BUTTER_ICON, rect.mX - 7, rect.mY - 3);
     }
     if (keyboardMode) {
-        g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS_Addr, rect.mX + 36, rect.mY + 40, 2);
+        g->DrawImageCel(Sexy::IMAGE_HELP_BUTTONS, rect.mX + 36, rect.mY + 40, 2);
     }
     g->SetColorizeImages(false);
     g->mTransY = tmp;
@@ -2942,15 +2942,15 @@ void Board::DrawShovelButton(Sexy::Graphics *g, LawnApp *theApp) {
         // return;  原版游戏在此处就return了，所以对战中不绘制铲子按钮。
         if (keyboardMode)
             return;
-        TodDrawImageScaledF(g, *Sexy_IMAGE_SHOVELBANK_Addr, mTouchVSShovelRect.mX, mTouchVSShovelRect.mY, 0.8f, 0.8f);
+        TodDrawImageScaledF(g, Sexy::IMAGE_SHOVELBANK, mTouchVSShovelRect.mX, mTouchVSShovelRect.mY, 0.8f, 0.8f);
         if (!requestDrawShovelInCursor)
-            TodDrawImageScaledF(g, *Sexy_IMAGE_SHOVEL_Addr, -6, 78, 0.8f, 0.8f);
+            TodDrawImageScaledF(g, Sexy::IMAGE_SHOVEL, -6, 78, 0.8f, 0.8f);
         return;
     }
 
     float tmp = g->mTransY;
     Rect rect = GetShovelButtonRect();
-    g->DrawImage(*Sexy_IMAGE_SHOVELBANK_Addr, rect.mX, rect.mY);
+    g->DrawImage(Sexy::IMAGE_SHOVELBANK, rect.mX, rect.mY);
 
     if (mChallenge->mChallengeState == ChallengeState::STATECHALLENGE_SHOVEL_FLASHING) {
         Color color = GetFlashingColor(mMainCounter, 75);
@@ -2963,23 +2963,23 @@ void Board::DrawShovelButton(Sexy::Graphics *g, LawnApp *theApp) {
         if (theApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND) {
             Challenge *challenge = mChallenge;
             if (challenge->mChallengeState == ChallengeState::STATECHALLENGE_NORMAL && theApp->mGameScene == GameScenes::SCENE_PLAYING) {
-                g->DrawImage(*Sexy_IMAGE_ZEN_MONEYSIGN_Addr, rect.mX - 7, rect.mY - 3);
+                g->DrawImage(Sexy::IMAGE_ZEN_MONEYSIGN, rect.mX - 7, rect.mY - 3);
             } else {
-                g->DrawImage(*Sexy_IMAGE_SHOVEL_Addr, rect.mX - 7, rect.mY - 3);
+                g->DrawImage(Sexy::IMAGE_SHOVEL, rect.mX - 7, rect.mY - 3);
             }
         } else {
-            g->DrawImage(*Sexy_IMAGE_SHOVEL_Addr, rect.mX - 7, rect.mY - 3);
+            g->DrawImage(Sexy::IMAGE_SHOVEL, rect.mX - 7, rect.mY - 3);
         }
     }
 
     if (keyboardMode) {
         if (theApp->IsCoopMode()) {
-            g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS_Addr, rect.mX + 40, rect.mY + 40, 1);
+            g->DrawImageCel(Sexy::IMAGE_HELP_BUTTONS, rect.mX + 40, rect.mY + 40, 1);
         } else {
             if (theApp->HasGamepad() || (theApp->mGamePad1IsOn && theApp->mGamePad2IsOn)) {
-                g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS_Addr, rect.mX + 50, rect.mY + 40, 1);
+                g->DrawImageCel(Sexy::IMAGE_HELP_BUTTONS, rect.mX + 50, rect.mY + 40, 1);
             } else {
-                g->DrawImageCel(*Sexy_IMAGE_HELP_BUTTONS2_Addr, rect.mX + 50, rect.mY + 40, 1);
+                g->DrawImageCel(Sexy::IMAGE_HELP_BUTTONS2, rect.mX + 50, rect.mY + 40, 1);
             }
         }
     }
@@ -3020,21 +3020,17 @@ void Board::Draw(Sexy::Graphics *g) {
 
         if (gTcpConnected) {
             if (gNetDelayNow == 0) {
-                TodDrawString(
-                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
-                TodDrawString(
-                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             }
         } else if (gTcpClientSocket >= 0) {
             if (gNetDelayNow == 0) {
-                TodDrawString(
-                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_HOST]").c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_HOST]").c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_HOST_MS_FMT]");
-                TodDrawString(
-                    g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, *Sexy_FONT_DWARVENTODCRAFT18_Addr, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             }
         }
     }
@@ -3050,7 +3046,7 @@ void Board::PauseFromSecondPlayer(bool thePause) {
     gPauseSyncFromRemote = true;
 
     if (thePause) {
-        mApp->PlaySample(*Sexy_SOUND_PAUSE_Addr);
+        mApp->PlaySample(Sexy::SOUND_PAUSE);
 
         // 防止重复开菜单
         if (mApp->GetDialog(Dialogs::DIALOG_NEWOPTIONS) == nullptr) {
@@ -3594,7 +3590,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                 if (seedPacket->CanPickUp()) {
                     mSendKeyWhenTouchUp = true;
                 } else {
-                    mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
+                    mApp->PlaySample(Sexy::SOUND_BUZZER);
                     return;
                 }
             }
@@ -3610,7 +3606,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
             if (currentSeedBankIndex != newSeedPacketIndex || mGameState != 7) {
                 mGamepadControls[0]->mGamepadState = 7;
                 mGamepadControls[0]->mIsInShopSeedBank = false;
-                mApp->PlaySample(*Sexy_SOUND_SEEDLIFT_Addr);
+                mApp->PlaySample(Sexy::SOUND_SEEDLIFT);
             } else if (currentSeedBankIndex == newSeedPacketIndex && mGameState == 7) {
                 mGamepadControls[0]->mGamepadState = 1;
                 if (!isTwoSeedBankMode)
@@ -3627,7 +3623,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                 if (seedPacket->CanPickUp()) {
                     mSendKeyWhenTouchUp = true;
                 } else {
-                    mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
+                    mApp->PlaySample(Sexy::SOUND_BUZZER);
                     return;
                 }
             }
@@ -3644,7 +3640,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
             if (currentSeedBankIndex_2P != newSeedPacketIndex_2P || mGameState_2P != 7) {
                 mGamepadControls[1]->mGamepadState = 7;
                 mGamepadControls[1]->mIsInShopSeedBank = false;
-                mApp->PlaySample(*Sexy_SOUND_SEEDLIFT_Addr);
+                mApp->PlaySample(Sexy::SOUND_SEEDLIFT);
             } else if (currentSeedBankIndex_2P == newSeedPacketIndex_2P && mGameState_2P == 7) {
                 mGamepadControls[1]->mGamepadState = 1;
                 if (!isTwoSeedBankMode)
@@ -4278,7 +4274,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
                 if (seedPacket->CanPickUp()) {
                     gSendKeyWhenTouchUpSecond = true;
                 } else {
-                    mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
+                    mApp->PlaySample(Sexy::SOUND_BUZZER);
                     return;
                 }
             }
@@ -4295,7 +4291,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
             if (currentSeedBankIndex != newSeedPacketIndex || mGameState != 7) {
                 mGamepadControls[0]->mGamepadState = 7;
                 mGamepadControls[0]->mIsInShopSeedBank = false;
-                mApp->PlaySample(*Sexy_SOUND_SEEDLIFT_Addr);
+                mApp->PlaySample(Sexy::SOUND_SEEDLIFT);
             } else if (currentSeedBankIndex == newSeedPacketIndex && mGameState == 7) {
                 mGamepadControls[0]->mGamepadState = 1;
                 if (!isTwoSeedBankMode)
@@ -4312,7 +4308,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
                 if (seedPacket->CanPickUp()) {
                     gSendKeyWhenTouchUpSecond = true;
                 } else {
-                    mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
+                    mApp->PlaySample(Sexy::SOUND_BUZZER);
                     return;
                 }
             }
@@ -4329,7 +4325,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
             if (currentSeedBankIndex_2P != newSeedPacketIndex_2P || mGameState_2P != 7) {
                 mGamepadControls[1]->mGamepadState = 7;
                 mGamepadControls[1]->mIsInShopSeedBank = false;
-                mApp->PlaySample(*Sexy_SOUND_SEEDLIFT_Addr);
+                mApp->PlaySample(Sexy::SOUND_SEEDLIFT);
             } else if (currentSeedBankIndex_2P == newSeedPacketIndex_2P && mGameState_2P == 7) {
                 mGamepadControls[1]->mGamepadState = 1;
                 if (!isTwoSeedBankMode)
@@ -4976,16 +4972,16 @@ void Board::UpdateButtons() {
 
 void Board::ButtonDepress(int theId) {
     if (theId == 1000) {
-        LawnApp *lawnApp = *gLawnApp_Addr;
+        LawnApp *lawnApp = gLawnApp;
         if (lawnApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || lawnApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {
             lawnApp->DoBackToMain();
             return;
         }
-        lawnApp->PlaySample(*Sexy_SOUND_PAUSE_Addr);
+        lawnApp->PlaySample(Sexy::SOUND_PAUSE);
         lawnApp->DoNewOptions(false, 0);
         return;
     } else if (theId == 1001) {
-        LawnApp *lawnApp = *gLawnApp_Addr;
+        LawnApp *lawnApp = gLawnApp;
         if (lawnApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND) {
             Board *mBoard = lawnApp->mBoard;
             mBoard->mChallenge->mChallengeState = ChallengeState::STATECHALLENGE_LAST_STAND_ONSLAUGHT;
@@ -5110,8 +5106,8 @@ void Board::FadeOutLevel() {
     }
 
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        if ((VSResultsMenu_msPlayerRecords_Addr[3] == 4 && mApp->mBoardResult == BoardResult::BOARDRESULT_VS_PLANT_WON)
-            || (VSResultsMenu_msPlayerRecords_Addr[8] == 4 && mApp->mBoardResult == BoardResult::BOARDRESULT_VS_ZOMBIE_WON)) {
+        if ((VSResultsMenu::msPlayerRecords[VSSide::VS_SIDE_PLANT][3] == 4 && mApp->mBoardResult == BoardResult::BOARDRESULT_VS_PLANT_WON)
+            || (VSResultsMenu::msPlayerRecords[VSSide::VS_SIDE_PLANT][3] == 4 && mApp->mBoardResult == BoardResult::BOARDRESULT_VS_ZOMBIE_WON)) {
             GrantAchievement(AchievementId::ACHIEVEMENT_VERSUS, true);
         }
     }
@@ -5193,22 +5189,22 @@ void Board::DrawBackdrop(Sexy::Graphics *g) {
     if (mGameMode == GameMode::GAMEMODE_MP_VS) {
         switch (mBackground) {
             case BackgroundType::BACKGROUND_1_DAY:
-                g->DrawImage(*Sexy_IMAGE_WALLNUT_BOWLINGSTRIPE_Addr, 512, 73);
+                g->DrawImage(Sexy::IMAGE_WALLNUT_BOWLINGSTRIPE, 512, 73);
                 break;
             case BackgroundType::BACKGROUND_2_NIGHT:
-                g->DrawImage(*Sexy_IMAGE_WALLNUT_BOWLINGSTRIPE_Addr, 512, 73);
+                g->DrawImage(Sexy::IMAGE_WALLNUT_BOWLINGSTRIPE, 512, 73);
                 break;
             case BackgroundType::BACKGROUND_3_POOL:
-                g->DrawImage(*Sexy_IMAGE_WALLNUT_BOWLINGSTRIPE_Addr, 512, 73);
+                g->DrawImage(Sexy::IMAGE_WALLNUT_BOWLINGSTRIPE, 512, 73);
                 break;
             case BackgroundType::BACKGROUND_4_FOG:
-                g->DrawImage(*Sexy_IMAGE_WALLNUT_BOWLINGSTRIPE_Addr, 512, 73);
+                g->DrawImage(Sexy::IMAGE_WALLNUT_BOWLINGSTRIPE, 512, 73);
                 break;
             case BackgroundType::BACKGROUND_5_ROOF:
-                g->DrawImage(*Sexy_IMAGE_WALLNUT_BOWLINGSTRIPE_Addr, 512, 73);
+                g->DrawImage(Sexy::IMAGE_WALLNUT_BOWLINGSTRIPE, 512, 73);
                 break;
             case BackgroundType::BACKGROUND_6_BOSS:
-                g->DrawImage(*Sexy_IMAGE_WALLNUT_BOWLINGSTRIPE_Addr, 512, 73);
+                g->DrawImage(Sexy::IMAGE_WALLNUT_BOWLINGSTRIPE, 512, 73);
                 break;
             default:
                 break;
@@ -5500,7 +5496,7 @@ void Board::FixReanimErrorAfterLoad() {
         }
         // 修复读档后豌豆、机枪、倭瓜僵尸头部变为普通僵尸
         if (zombieType == ZombieType::ZOMBIE_PEA_HEAD || zombieType == ZombieType::ZOMBIE_GATLING_HEAD || zombieType == ZombieType::ZOMBIE_SQUASH_HEAD) {
-            mBodyReanim->SetImageOverride("anim_head1", *IMAGE_BLANK);
+            mBodyReanim->SetImageOverride("anim_head1", IMAGE_BLANK);
         }
 
         // 修复读档后盾牌贴图变为满血盾牌贴图、垃圾桶变为铁门
@@ -5510,43 +5506,43 @@ void Board::FixReanimErrorAfterLoad() {
                 case ShieldType::SHIELDTYPE_DOOR:
                     switch (shieldDamageIndex) {
                         case 1:
-                            mBodyReanim->SetImageOverride("anim_screendoor", *Sexy_IMAGE_REANIM_ZOMBIE_SCREENDOOR2_Addr);
+                            mBodyReanim->SetImageOverride("anim_screendoor", Sexy::IMAGE_REANIM_ZOMBIE_SCREENDOOR2);
                             break;
                         case 2:
-                            mBodyReanim->SetImageOverride("anim_screendoor", *Sexy_IMAGE_REANIM_ZOMBIE_SCREENDOOR3_Addr);
+                            mBodyReanim->SetImageOverride("anim_screendoor", Sexy::IMAGE_REANIM_ZOMBIE_SCREENDOOR3);
                             break;
                     }
                     break;
                 case ShieldType::SHIELDTYPE_NEWSPAPER:
                     switch (shieldDamageIndex) {
                         case 1:
-                            mBodyReanim->SetImageOverride("Zombie_paper_paper", *Sexy_IMAGE_REANIM_ZOMBIE_PAPER_PAPER2_Addr);
+                            mBodyReanim->SetImageOverride("Zombie_paper_paper", Sexy::IMAGE_REANIM_ZOMBIE_PAPER_PAPER2);
                             break;
                         case 2:
-                            mBodyReanim->SetImageOverride("Zombie_paper_paper", *Sexy_IMAGE_REANIM_ZOMBIE_PAPER_PAPER3_Addr);
+                            mBodyReanim->SetImageOverride("Zombie_paper_paper", Sexy::IMAGE_REANIM_ZOMBIE_PAPER_PAPER3);
                             break;
                     }
                     break;
                 case ShieldType::SHIELDTYPE_LADDER:
                     switch (shieldDamageIndex) {
                         case 1:
-                            mBodyReanim->SetImageOverride("Zombie_ladder_1", *Sexy_IMAGE_REANIM_ZOMBIE_LADDER_1_DAMAGE1_Addr);
+                            mBodyReanim->SetImageOverride("Zombie_ladder_1", Sexy::IMAGE_REANIM_ZOMBIE_LADDER_1_DAMAGE1);
                             break;
                         case 2:
-                            mBodyReanim->SetImageOverride("Zombie_ladder_1", *Sexy_IMAGE_REANIM_ZOMBIE_LADDER_1_DAMAGE2_Addr);
+                            mBodyReanim->SetImageOverride("Zombie_ladder_1", Sexy::IMAGE_REANIM_ZOMBIE_LADDER_1_DAMAGE2);
                             break;
                     }
                     break;
                 case ShieldType::SHIELDTYPE_TRASHCAN:
                     switch (shieldDamageIndex) {
                         case 0:
-                            mBodyReanim->SetImageOverride("anim_screendoor", *Sexy_IMAGE_REANIM_ZOMBIE_TRASHCAN1_Addr);
+                            mBodyReanim->SetImageOverride("anim_screendoor", Sexy::IMAGE_REANIM_ZOMBIE_TRASHCAN1);
                             break;
                         case 1:
-                            mBodyReanim->SetImageOverride("anim_screendoor", *Sexy_IMAGE_REANIM_ZOMBIE_TRASHCAN2_Addr);
+                            mBodyReanim->SetImageOverride("anim_screendoor", Sexy::IMAGE_REANIM_ZOMBIE_TRASHCAN2);
                             break;
                         case 2:
-                            mBodyReanim->SetImageOverride("anim_screendoor", *Sexy_IMAGE_REANIM_ZOMBIE_TRASHCAN3_Addr);
+                            mBodyReanim->SetImageOverride("anim_screendoor", Sexy::IMAGE_REANIM_ZOMBIE_TRASHCAN3);
                             break;
                     }
                     break;
@@ -5562,40 +5558,40 @@ void Board::FixReanimErrorAfterLoad() {
                 case HelmType::HELMTYPE_TRAFFIC_CONE:
                     switch (helmDamageIndex) {
                         case 1:
-                            mBodyReanim->SetImageOverride("anim_cone", *Sexy_IMAGE_REANIM_ZOMBIE_CONE2_Addr);
+                            mBodyReanim->SetImageOverride("anim_cone", Sexy::IMAGE_REANIM_ZOMBIE_CONE2);
                             break;
                         case 2:
-                            mBodyReanim->SetImageOverride("anim_cone", *Sexy_IMAGE_REANIM_ZOMBIE_CONE3_Addr);
+                            mBodyReanim->SetImageOverride("anim_cone", Sexy::IMAGE_REANIM_ZOMBIE_CONE3);
                             break;
                     }
                     break;
                 case HelmType::HELMTYPE_PAIL:
                     switch (helmDamageIndex) {
                         case 1:
-                            mBodyReanim->SetImageOverride("anim_bucket", *Sexy_IMAGE_REANIM_ZOMBIE_BUCKET2_Addr);
+                            mBodyReanim->SetImageOverride("anim_bucket", Sexy::IMAGE_REANIM_ZOMBIE_BUCKET2);
                             break;
                         case 2:
-                            mBodyReanim->SetImageOverride("anim_bucket", *Sexy_IMAGE_REANIM_ZOMBIE_BUCKET3_Addr);
+                            mBodyReanim->SetImageOverride("anim_bucket", Sexy::IMAGE_REANIM_ZOMBIE_BUCKET3);
                             break;
                     }
                     break;
                 case HelmType::HELMTYPE_FOOTBALL:
                     switch (helmDamageIndex) {
                         case 1:
-                            mBodyReanim->SetImageOverride("zombie_football_helmet", *Sexy_IMAGE_REANIM_ZOMBIE_FOOTBALL_HELMET2_Addr);
+                            mBodyReanim->SetImageOverride("zombie_football_helmet", Sexy::IMAGE_REANIM_ZOMBIE_FOOTBALL_HELMET2);
                             break;
                         case 2:
-                            mBodyReanim->SetImageOverride("zombie_football_helmet", *Sexy_IMAGE_REANIM_ZOMBIE_FOOTBALL_HELMET3_Addr);
+                            mBodyReanim->SetImageOverride("zombie_football_helmet", Sexy::IMAGE_REANIM_ZOMBIE_FOOTBALL_HELMET3);
                             break;
                     }
                     break;
                 case HelmType::HELMTYPE_DIGGER:
                     switch (helmDamageIndex) {
                         case 1:
-                            mBodyReanim->SetImageOverride("Zombie_digger_hardhat", *Sexy_IMAGE_REANIM_ZOMBIE_DIGGER_HARDHAT2_Addr);
+                            mBodyReanim->SetImageOverride("Zombie_digger_hardhat", Sexy::IMAGE_REANIM_ZOMBIE_DIGGER_HARDHAT2);
                             break;
                         case 2:
-                            mBodyReanim->SetImageOverride("Zombie_digger_hardhat", *Sexy_IMAGE_REANIM_ZOMBIE_DIGGER_HARDHAT3_Addr);
+                            mBodyReanim->SetImageOverride("Zombie_digger_hardhat", Sexy::IMAGE_REANIM_ZOMBIE_DIGGER_HARDHAT3);
                             break;
                     }
                     break;
@@ -5603,10 +5599,10 @@ void Board::FixReanimErrorAfterLoad() {
                     Reanimation *mSpecialHeadReanim = mApp->ReanimationGet(aZombie->mSpecialHeadReanimID);
                     switch (helmDamageIndex) {
                         case 1:
-                            mSpecialHeadReanim->SetImageOverride("anim_face", *Sexy_IMAGE_REANIM_WALLNUT_CRACKED1_Addr);
+                            mSpecialHeadReanim->SetImageOverride("anim_face", Sexy::IMAGE_REANIM_WALLNUT_CRACKED1);
                             break;
                         case 2:
-                            mSpecialHeadReanim->SetImageOverride("anim_face", *Sexy_IMAGE_REANIM_WALLNUT_CRACKED2_Addr);
+                            mSpecialHeadReanim->SetImageOverride("anim_face", Sexy::IMAGE_REANIM_WALLNUT_CRACKED2);
                             break;
                     }
                 } break;
@@ -5614,10 +5610,10 @@ void Board::FixReanimErrorAfterLoad() {
                     Reanimation *mSpecialHeadReanim = mApp->ReanimationGet(aZombie->mSpecialHeadReanimID);
                     switch (helmDamageIndex) {
                         case 1:
-                            mSpecialHeadReanim->SetImageOverride("anim_face", *Sexy_IMAGE_REANIM_TALLNUT_CRACKED1_Addr);
+                            mSpecialHeadReanim->SetImageOverride("anim_face", Sexy::IMAGE_REANIM_TALLNUT_CRACKED1);
                             break;
                         case 2:
-                            mSpecialHeadReanim->SetImageOverride("anim_face", *Sexy_IMAGE_REANIM_TALLNUT_CRACKED2_Addr);
+                            mSpecialHeadReanim->SetImageOverride("anim_face", Sexy::IMAGE_REANIM_TALLNUT_CRACKED2);
                             break;
                     }
                 } break;
@@ -5632,20 +5628,20 @@ void Board::FixReanimErrorAfterLoad() {
             switch (bodyDamageIndex) {
                 case 0:
                     if (zombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR)
-                        mBodyReanim->SetImageOverride("anim_head1", *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD_REDEYE_Addr);
+                        mBodyReanim->SetImageOverride("anim_head1", Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD_REDEYE);
                     break;
                 case 1:
                     if (zombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR)
-                        mBodyReanim->SetImageOverride("anim_head1", *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD_REDEYE_Addr);
-                    mBodyReanim->SetImageOverride("Zombie_gargantua_body1", *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_BODY1_2_Addr);
-                    mBodyReanim->SetImageOverride("Zombie_gargantuar_outerarm_lower", *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_OUTERARM_LOWER2_Addr);
+                        mBodyReanim->SetImageOverride("anim_head1", Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD_REDEYE);
+                    mBodyReanim->SetImageOverride("Zombie_gargantua_body1", Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_BODY1_2);
+                    mBodyReanim->SetImageOverride("Zombie_gargantuar_outerarm_lower", Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_OUTERARM_LOWER2);
                     break;
                 case 2:
-                    mBodyReanim->SetImageOverride("Zombie_gargantua_body1", *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_BODY1_3_Addr);
-                    mBodyReanim->SetImageOverride("Zombie_gargantuar_outerleg_foot", *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_FOOT2_Addr);
-                    mBodyReanim->SetImageOverride("Zombie_gargantuar_outerarm_lower", *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_OUTERARM_LOWER2_Addr);
-                    mBodyReanim->SetImageOverride(
-                        "anim_head1", zombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR ? *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD2_REDEYE_Addr : *Sexy_IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD2_Addr);
+                    mBodyReanim->SetImageOverride("Zombie_gargantua_body1", Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_BODY1_3);
+                    mBodyReanim->SetImageOverride("Zombie_gargantuar_outerleg_foot", Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_FOOT2);
+                    mBodyReanim->SetImageOverride("Zombie_gargantuar_outerarm_lower", Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_OUTERARM_LOWER2);
+                    mBodyReanim->SetImageOverride("anim_head1",
+                                                  zombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR ? Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD2_REDEYE : Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD2);
             }
         }
 
@@ -5654,18 +5650,18 @@ void Board::FixReanimErrorAfterLoad() {
             int bodyDamageIndex = aZombie->GetBodyDamageIndex();
             switch (bodyDamageIndex) {
                 case 1:
-                    mBodyReanim->SetImageOverride("Boss_head", *Sexy_IMAGE_REANIM_ZOMBIE_BOSS_HEAD_DAMAGE1_Addr);
-                    mBodyReanim->SetImageOverride("Boss_jaw", *Sexy_IMAGE_REANIM_ZOMBIE_BOSS_JAW_DAMAGE1_Addr);
-                    mBodyReanim->SetImageOverride("Boss_outerarm_hand", *Sexy_IMAGE_REANIM_ZOMBIE_BOSS_OUTERARM_HAND_DAMAGE1_Addr);
-                    mBodyReanim->SetImageOverride("Boss_outerarm_thumb2", *Sexy_IMAGE_REANIM_ZOMBIE_BOSS_OUTERARM_THUMB_DAMAGE1_Addr);
-                    mBodyReanim->SetImageOverride("Boss_innerleg_foot", *Sexy_IMAGE_REANIM_ZOMBIE_BOSS_FOOT_DAMAGE1_Addr);
+                    mBodyReanim->SetImageOverride("Boss_head", Sexy::IMAGE_REANIM_ZOMBIE_BOSS_HEAD_DAMAGE1);
+                    mBodyReanim->SetImageOverride("Boss_jaw", Sexy::IMAGE_REANIM_ZOMBIE_BOSS_JAW_DAMAGE1);
+                    mBodyReanim->SetImageOverride("Boss_outerarm_hand", Sexy::IMAGE_REANIM_ZOMBIE_BOSS_OUTERARM_HAND_DAMAGE1);
+                    mBodyReanim->SetImageOverride("Boss_outerarm_thumb2", Sexy::IMAGE_REANIM_ZOMBIE_BOSS_OUTERARM_HAND_DAMAGE2);
+                    mBodyReanim->SetImageOverride("Boss_innerleg_foot", Sexy::IMAGE_REANIM_ZOMBIE_BOSS_FOOT_DAMAGE1);
                     break;
                 case 2:
-                    mBodyReanim->SetImageOverride("Boss_head", *Sexy_IMAGE_REANIM_ZOMBIE_BOSS_HEAD_DAMAGE2_Addr);
-                    mBodyReanim->SetImageOverride("Boss_jaw", *Sexy_IMAGE_REANIM_ZOMBIE_BOSS_JAW_DAMAGE2_Addr);
-                    mBodyReanim->SetImageOverride("Boss_outerarm_hand", *Sexy_IMAGE_REANIM_ZOMBIE_BOSS_OUTERARM_HAND_DAMAGE2_Addr);
-                    mBodyReanim->SetImageOverride("Boss_outerarm_thumb2", *Sexy_IMAGE_REANIM_ZOMBIE_BOSS_OUTERARM_THUMB_DAMAGE2_Addr);
-                    mBodyReanim->SetImageOverride("Boss_outerleg_foot", *Sexy_IMAGE_REANIM_ZOMBIE_BOSS_FOOT_DAMAGE2_Addr);
+                    mBodyReanim->SetImageOverride("Boss_head", Sexy::IMAGE_REANIM_ZOMBIE_BOSS_HEAD_DAMAGE2);
+                    mBodyReanim->SetImageOverride("Boss_jaw", Sexy::IMAGE_REANIM_ZOMBIE_BOSS_JAW_DAMAGE2);
+                    mBodyReanim->SetImageOverride("Boss_outerarm_hand", Sexy::IMAGE_REANIM_ZOMBIE_BOSS_OUTERARM_HAND_DAMAGE2);
+                    mBodyReanim->SetImageOverride("Boss_outerarm_thumb2", Sexy::IMAGE_REANIM_ZOMBIE_BOSS_OUTERARM_THUMB_DAMAGE2);
+                    mBodyReanim->SetImageOverride("Boss_outerleg_foot", Sexy::IMAGE_REANIM_ZOMBIE_BOSS_FOOT_DAMAGE2);
                     break;
             }
         }
@@ -5675,12 +5671,12 @@ void Board::FixReanimErrorAfterLoad() {
             int bodyDamageIndex = aZombie->GetBodyDamageIndex();
             switch (bodyDamageIndex) {
                 case 1:
-                    mBodyReanim->SetImageOverride("Zombie_zamboni_1", *Sexy_IMAGE_REANIM_ZOMBIE_ZAMBONI_1_DAMAGE1_Addr);
-                    mBodyReanim->SetImageOverride("Zombie_zamboni_2", *Sexy_IMAGE_REANIM_ZOMBIE_ZAMBONI_2_DAMAGE1_Addr);
+                    mBodyReanim->SetImageOverride("Zombie_zamboni_1", Sexy::IMAGE_REANIM_ZOMBIE_ZAMBONI_1_DAMAGE1);
+                    mBodyReanim->SetImageOverride("Zombie_zamboni_2", Sexy::IMAGE_REANIM_ZOMBIE_ZAMBONI_2_DAMAGE1);
                     break;
                 case 2:
-                    mBodyReanim->SetImageOverride("Zombie_zamboni_1", *Sexy_IMAGE_REANIM_ZOMBIE_ZAMBONI_1_DAMAGE2_Addr);
-                    mBodyReanim->SetImageOverride("Zombie_zamboni_2", *Sexy_IMAGE_REANIM_ZOMBIE_ZAMBONI_2_DAMAGE2_Addr);
+                    mBodyReanim->SetImageOverride("Zombie_zamboni_1", Sexy::IMAGE_REANIM_ZOMBIE_ZAMBONI_1_DAMAGE2);
+                    mBodyReanim->SetImageOverride("Zombie_zamboni_2", Sexy::IMAGE_REANIM_ZOMBIE_ZAMBONI_2_DAMAGE2);
                     break;
             }
         }
@@ -5691,7 +5687,7 @@ void Board::FixReanimErrorAfterLoad() {
             switch (bodyDamageIndex) {
                 case 1:
                 case 2:
-                    mBodyReanim->SetImageOverride("Zombie_catapult_siding", *Sexy_IMAGE_REANIM_ZOMBIE_CATAPULT_SIDING_DAMAGE_Addr);
+                    mBodyReanim->SetImageOverride("Zombie_catapult_siding", Sexy::IMAGE_REANIM_ZOMBIE_CATAPULT_SIDING_DAMAGE);
                     break;
             }
         }
@@ -6004,7 +6000,7 @@ bool Board::TakeDeathMoney(int theAmount) {
     bool result;
     if (theAmount > mDeathMoney + CountDeathBeingCollected()) {
         result = false;
-        mApp->PlaySample(*Sexy_SOUND_BUZZER_Addr);
+        mApp->PlaySample(Sexy::SOUND_BUZZER);
         mOutOfMoneyCounter = 70;
     } else {
         result = true;
@@ -6110,7 +6106,7 @@ void Board::DrawLevel(Graphics *g) {
             }
             int aPosX = 593;
             int aPosY = 595;
-            TodDrawString(g, aLevelStr, aPosX, aPosY, *Sexy::FONT_HOUSEOFTERROR16, Color(224, 187, 98), DrawStringJustification::DS_ALIGN_RIGHT);
+            TodDrawString(g, aLevelStr, aPosX, aPosY, Sexy::FONT_HOUSEOFTERROR16, Color(224, 187, 98), DrawStringJustification::DS_ALIGN_RIGHT);
         }
         return;
     }
