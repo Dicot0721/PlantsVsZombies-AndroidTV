@@ -17,22 +17,13 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef PVZ_LAWN_SYSTEM_SAVE_GAME_H
-#define PVZ_LAWN_SYSTEM_SAVE_GAME_H
+#ifndef HOMURA_PRAGMAUTILS_H
+#define HOMURA_PRAGMAUTILS_H
 
-#include "PvZ/Symbols.h"
+#define HOMURA_STRINGIZE(x) #x
 
-class SaveGameContext {
-public:
-    unsigned char mBuffer[28]; // unknown type
-    bool mFailed;
-    bool mReading;
+// See https://gcc.gnu.org/onlinedocs/gcc/Diagnostic-Pragmas.html
+#define DISABLE_WARNING_BEGIN(flag) _Pragma("GCC diagnostic push") _Pragma(HOMURA_STRINGIZE(GCC diagnostic ignored flag))
+#define DISABLE_WARNING_END _Pragma("GCC diagnostic pop")
 
-    void SyncInt(int &theInt) {
-        reinterpret_cast<void (*)(SaveGameContext *, int &)>(SaveGameContext_SyncIntAddr)(this, theInt);
-    }
-
-    void SyncReanimationDef(ReanimatorDefinition *&theDefinition);
-};
-
-#endif // PVZ_LAWN_SYSTEM_SAVE_GAME_H
+#endif // HOMURA_PRAGMAUTILS_H

@@ -19,6 +19,7 @@
 
 #include "PvZ/Symbols.h"
 #include "Homura/DynamicLibUtils.h"
+#include "Homura/PragmaUtils.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/LawnApp.h"
@@ -1257,7 +1258,7 @@ bool LoadGameMain() {
 }
 
 
-// 不要在命名空间中定义, 防止意外地定义新变量
+// 在命名空间作用域中定义可能会意外地定义新变量
 
 Sexy::Font *&Sexy::FONT_HOUSEOFTERROR28 = *libGameMain.GetSymbol<Sexy::Font *>("_ZN4Sexy20FONT_HOUSEOFTERROR28E");
 Sexy::Font *&Sexy::FONT_HOUSEOFTERROR20 = *libGameMain.GetSymbol<Sexy::Font *>("_ZN4Sexy20FONT_HOUSEOFTERROR20E");
@@ -1451,12 +1452,16 @@ int &Challenge::gVSResourceDropCount = *libGameMain.GetSymbol<int>("_ZN9Challeng
 int &LawnApp::FULLSCREEN_RECT = *libGameMain.GetSymbol<int>("_ZN7LawnApp15FULLSCREEN_RECTE");
 int (&VSResultsMenu::msPlayerRecords)[2][5] = *libGameMain.GetSymbol<int[2][5]>("_ZN13VSResultsMenu15msPlayerRecordsE");
 
-int & ::gEffectSystem = *libGameMain.GetSymbol<int>("gEffectSystem");
+DISABLE_WARNING_BEGIN("-Wextra-qualification") // warning: extra qualification on member 'xxx'
+
+EffectSystem *& ::gEffectSystem = *libGameMain.GetSymbol<EffectSystem *>("gEffectSystem");
 int & ::gFoleyParamArraySize = *libGameMain.GetSymbol<int>("gFoleyParamArraySize");
 LawnApp *& ::gLawnApp = *libGameMain.GetSymbol<LawnApp *>("gLawnApp");
 ReanimationParams (&::gLawnReanimationArray)[ReanimationType::NUM_REANIMS] = *libGameMain.GetSymbol<ReanimationParams[ReanimationType::NUM_REANIMS]>("gLawnReanimationArray");
 ReanimatorDefinition *& ::gReanimatorDefArray = *libGameMain.GetSymbol<ReanimatorDefinition *>("gReanimatorDefArray");
 char *& ::ReanimTrackId_anim_head1 = *libGameMain.GetSymbol<char *>("ReanimTrackId_anim_head1");
+
+DISABLE_WARNING_END
 
 bool LoadNativeCode() {
     static homura::SharedObjLoader libnative_code{"libnative_code.so"};

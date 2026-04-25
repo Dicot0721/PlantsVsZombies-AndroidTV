@@ -559,8 +559,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     uint16_t mAttachmentID = reanimatorTrackInstance->mAttachmentID;
                     if (mAttachmentID == 0)
                         continue;
-                    Attachment **attachmentSystem = *(Attachment ***)(gEffectSystem + 12);
-                    Attachment *attachment = &(*attachmentSystem)[mAttachmentID];
+                    Attachment *attachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayGet(mAttachmentID);
                     int mNumEffects = attachment->mNumEffects;
                     for (int j = 0; j < mNumEffects; ++j) {
                         if (attachment->mEffectArray[j].mEffectType == EffectType::EFFECT_REANIM) {

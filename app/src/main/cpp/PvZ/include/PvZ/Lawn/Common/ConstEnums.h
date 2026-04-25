@@ -996,7 +996,8 @@ enum ReanimationType {
     REANIM_BACKUP_DANCER2,
     REANIM_GIGA_FOOTBALL,
     REANIM_SUPER_FAN_IMP,
-    NUM_REANIMS
+    EXTENDED_NUM_REANIMS,
+    NUM_REANIMS = 179,
 };
 enum ReanimLoopType {
     REANIM_LOOP = 0,

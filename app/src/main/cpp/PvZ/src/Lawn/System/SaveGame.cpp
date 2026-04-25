@@ -22,29 +22,26 @@
 
 void SaveGameContext::SyncReanimationDef(ReanimatorDefinition *&theDefinition) {
     // 解决大头贴动画的读档问题
-    if (*((uint8_t *)this + 29)) {
-        int reanimationType;
-        SyncInt(*&reanimationType);
-        if (reanimationType == -1) {
+    if (mReading) {
+        int aReanimType;
+        SyncInt(aReanimType);
+        if (aReanimType == ReanimationType::REANIM_NONE) {
             theDefinition = nullptr;
-        } else if (reanimationType <= ReanimationType::REANIM_ZOMBATAR_HEAD) {
-            ReanimatorEnsureDefinitionLoaded((ReanimationType)reanimationType, true);
-            ReanimatorDefinition *v6 = gReanimatorDefArray; // r3
-            theDefinition = v6 + reanimationType;
+        } else if (aReanimType >= 0 && aReanimType < NUM_REANIMS) {
+            ReanimatorEnsureDefinitionLoaded(ReanimationType(aReanimType), true);
+            theDefinition = &gReanimatorDefArray[aReanimType];
         } else {
-            *((uint8_t *)this + 28) = true;
+            mFailed = true;
         }
     } else {
-        int v3 = 0;
-        int reanimationType = -1;
-        ReanimatorDefinition *v5 = theDefinition;       // r1
-        ReanimatorDefinition *v6 = gReanimatorDefArray; // r3
-        while (v5 != v6++) {
-            if (++v3 == ReanimationType::REANIM_ZOMBATAR_HEAD + 1)
-                goto LABEL_7;
+        int aReanimType = ReanimationType::REANIM_NONE;
+        for (int i = 0; i < ReanimationType::NUM_REANIMS; ++i) {
+            ReanimatorDefinition *aDef = &gReanimatorDefArray[i];
+            if (theDefinition == aDef) {
+                aReanimType = i;
+                break;
+            }
         }
-        reanimationType = v3;
-    LABEL_7:
-        SyncInt(reanimationType);
+        SyncInt(aReanimType);
     }
 }

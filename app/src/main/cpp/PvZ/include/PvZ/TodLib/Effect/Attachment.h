@@ -81,6 +81,12 @@ inline void AttachmentUpdateAndMove(AttachmentID &theAttachmentID, float theX, f
     reinterpret_cast<void (*)(AttachmentID &, float, float)>(AttachmentUpdateAndMoveAddr)(theAttachmentID, theX, theY);
 }
 
-class AttachmentHolder {};
+class AttachmentHolder {
+public:
+    DataArray<Attachment> mAttachments;
+
+    AttachmentHolder() = delete;
+    ~AttachmentHolder() = delete;
+};
 
 #endif // PVZ_SEXYAPPFRAMEWORK_EFFECT_ATTACHMENT_H

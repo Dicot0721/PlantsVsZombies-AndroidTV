@@ -921,7 +921,7 @@ void LawnApp::HardwareInit() {
 int LawnApp::GetNumPreloadingTasks() {
     int oldResult = old_LawnApp_GetNumPreloadingTasks(this);
 
-    int addonReanimsNum = (NUM_REANIMS - REANIM_ZOMBATAR_HEAD) + (showHouse ? 1 : 0);
+    int addonReanimsNum = (EXTENDED_NUM_REANIMS - REANIM_ZOMBATAR_HEAD) + (showHouse ? 1 : 0);
     int addonSoundsNum = (sizeof(addonSounds) / sizeof(int));
     int addonImagesNum = (sizeof(AddonImages) / sizeof(Sexy::Image *));
 
