@@ -27,7 +27,7 @@ void SaveGameContext::SyncReanimationDef(ReanimatorDefinition *&theDefinition) {
         SyncInt(aReanimType);
         if (aReanimType == ReanimationType::REANIM_NONE) {
             theDefinition = nullptr;
-        } else if (aReanimType >= 0 && aReanimType < NUM_REANIMS) {
+        } else if (aReanimType >= 0 && aReanimType < ReanimationType::EXTENDED_NUM_REANIMS) {
             ReanimatorEnsureDefinitionLoaded(ReanimationType(aReanimType), true);
             theDefinition = &gReanimatorDefArray[aReanimType];
         } else {
@@ -35,7 +35,7 @@ void SaveGameContext::SyncReanimationDef(ReanimatorDefinition *&theDefinition) {
         }
     } else {
         int aReanimType = ReanimationType::REANIM_NONE;
-        for (int i = 0; i < ReanimationType::NUM_REANIMS; ++i) {
+        for (int i = 0; i < ReanimationType::EXTENDED_NUM_REANIMS; ++i) {
             ReanimatorDefinition *aDef = &gReanimatorDefArray[i];
             if (theDefinition == aDef) {
                 aReanimType = i;
