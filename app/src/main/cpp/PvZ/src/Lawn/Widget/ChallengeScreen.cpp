@@ -493,8 +493,6 @@ void ChallengeScreen::ButtonPress(int theButtonId) {
 }
 
 void ChallengeScreen::ButtonDepress(int theId) {
-
-
     if (theId == ChallengeScreen::ChallengeScreen_Back) {
         mApp->KillChallengeScreen();
         mApp->DoBackToMain();
@@ -606,26 +604,30 @@ void ChallengeScreen::MouseUp(int x, int y) {
 }
 
 void ChallengeScreen::KeyDown(Sexy::KeyCode theKey) {
+    if (theKey == Sexy::KEYCODE_RETURN && mPageIndex == ChallengePage::CHALLENGE_PAGE_VS) {
+        if (gTcpConnected) {
+            U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mSelectedMode)};
+            netplay::PutEvent(event);
+            gChallengeScreenRequestState = mSelectedMode;
+            return;
+        }
+
+        if (gTcpClientSocket >= 0) {
+            U16_Event event = {{EventType::EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS}, uint16_t(mSelectedMode)};
+            netplay::PutEvent(event);
+        }
+    }
+
+    KeyDown_Origin(theKey);
+}
+
+void ChallengeScreen::KeyDown_Origin(Sexy::KeyCode theKey) {
     if (theKey == Sexy::KEYCODE_RETURN) {
         // 更新对战战场选择
         if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS) {
-
             if (gChallengeScreenRequestState == mSelectedMode) {
                 gChallengeScreenRequestState = 0;
             }
-
-            if (gTcpConnected) {
-                U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mSelectedMode)};
-                netplay::PutEvent(event);
-                gChallengeScreenRequestState = mSelectedMode;
-                return;
-            }
-
-            if (gTcpClientSocket >= 0) {
-                U16_Event event = {{EventType::EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS}, uint16_t(mSelectedMode)};
-                netplay::PutEvent(event);
-            }
-
 
             switch (mSelectedMode) {
                 case GAMEMODE_MP_VS_DAY:
@@ -698,13 +700,10 @@ void ChallengeScreen::processServerEvent(void *buf, ssize_t bufSize) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS: {
-            U16_Event *event1 = (U16_Event *)event;
-            int theId = event1->data;
-            LOG_DEBUG("theId={}", theId);
-            gTcpConnected = false;
+            auto *eventBtnDepress = reinterpret_cast<U16_Event *>(event);
+            int theId = eventBtnDepress->data;
             mSelectedMode = GameMode(theId);
-            KeyDown(Sexy::KEYCODE_RETURN);
-            gTcpConnected = true;
+            KeyDown_Origin(Sexy::KEYCODE_RETURN);
         } break;
         case EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE: {
             U16_Event *event1 = (U16_Event *)event;

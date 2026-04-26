@@ -104,6 +104,7 @@ public:
     void MouseUp(int x, int y);
     void MouseDrag(int x, int y);
     void KeyDown(Sexy::KeyCode theKey);
+    void KeyDown_Origin(Sexy::KeyCode theKey);
     static size_t getClientEventSize(EventType type);
     static size_t getServerEventSize(EventType type);
     void processClientEvent(void *buf, ssize_t bufSize);

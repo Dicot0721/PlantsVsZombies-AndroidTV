@@ -565,7 +565,7 @@ void GamepadControls::UpdatePreviewReanim() {
                     if (mAttachmentID == 0)
                         continue;
                     if (gEffectSystem == nullptr || gEffectSystem->mAttachmentHolder == nullptr)
-                        continue;
+                        break;
                     Attachment *attachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet(mAttachmentID);
                     if (attachment == nullptr)
                         continue;
