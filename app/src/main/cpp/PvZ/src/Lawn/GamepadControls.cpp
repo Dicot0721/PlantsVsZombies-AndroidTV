@@ -324,11 +324,15 @@ void GamepadControls::UpdatePreviewReanim() {
 
     LawnApp *anApp = mGameObject->mApp;
     CursorObject *aCursorObject = mPlayerIndex1 ? mBoard->mCursorObject[1] : mBoard->mCursorObject[0];
+    SeedBank *aSeedBank = GetSeedBank();
 
     if (!dynamicPreview) { // 如果没开启动态预览，则开启砸罐子无尽和锤僵尸关卡的动态预览，并执行旧游戏函数。
         if ((anApp->IsWhackAZombieLevel() || anApp->IsScaryPotterLevel()) && mGamepadState == 7) {
-            SeedBank *seedBank = GetSeedBank();
-            SeedPacket *seedPacket = &seedBank->mSeedPackets[mSelectedSeedIndex];
+            if (aSeedBank == nullptr || mSelectedSeedIndex < 0 || mSelectedSeedIndex >= 10) {
+                old_GamepadControls_UpdatePreviewReanim(this);
+                return;
+            }
+            SeedPacket *seedPacket = &aSeedBank->mSeedPackets[mSelectedSeedIndex];
             aCursorObject->mType = seedPacket->mPacketType;
             aCursorObject->mImitaterType = seedPacket->mImitaterType;
         }
@@ -339,14 +343,15 @@ void GamepadControls::UpdatePreviewReanim() {
     GameMode aGameMode = anApp->mGameMode;
     int aGridX = mBoard->PixelToGridXKeepOnBoard(mCursorPositionX, mCursorPositionY);
     int aGridY = mBoard->PixelToGridYKeepOnBoard(mCursorPositionX, mCursorPositionY);
-    SeedBank *aSeedBank = GetSeedBank();
+    if (aSeedBank == nullptr || mSelectedSeedIndex < 0 || mSelectedSeedIndex >= 10) {
+        return;
+    }
     SeedType aSeedType = aCursorObject->mType;
     bool isImitater = aSeedBank->mSeedPackets[mSelectedSeedIndex].mPacketType == SeedType::SEED_IMITATER;
 
     if ((anApp->IsWhackAZombieLevel() || aGameMode == GameMode::GAMEMODE_SCARY_POTTER_ENDLESS) && mGamepadState == 7) {
         // 开启砸罐子无尽和锤僵尸关卡的动态预览
-        SeedBank *seedBank = GetSeedBank();
-        SeedPacket *seedPacket = &seedBank->mSeedPackets[mSelectedSeedIndex];
+        SeedPacket *seedPacket = &aSeedBank->mSeedPackets[mSelectedSeedIndex];
         aCursorObject->mType = seedPacket->mPacketType;
         aCursorObject->mImitaterType = seedPacket->mImitaterType;
     }
@@ -559,7 +564,11 @@ void GamepadControls::UpdatePreviewReanim() {
                     uint16_t mAttachmentID = reanimatorTrackInstance->mAttachmentID;
                     if (mAttachmentID == 0)
                         continue;
-                    Attachment *attachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayGet(mAttachmentID);
+                    if (gEffectSystem == nullptr || gEffectSystem->mAttachmentHolder == nullptr)
+                        continue;
+                    Attachment *attachment = gEffectSystem->mAttachmentHolder->mAttachments.DataArrayTryToGet(mAttachmentID);
+                    if (attachment == nullptr)
+                        continue;
                     int mNumEffects = attachment->mNumEffects;
                     for (int j = 0; j < mNumEffects; ++j) {
                         if (attachment->mEffectArray[j].mEffectType == EffectType::EFFECT_REANIM) {
@@ -583,7 +592,7 @@ void GamepadControls::UpdatePreviewReanim() {
     if (mSelectedSeedIndex == -1)
         return;
 
-    SeedPacket *seedPacket = &GetSeedBank()->mSeedPackets[mSelectedSeedIndex];
+    SeedPacket *seedPacket = &aSeedBank->mSeedPackets[mSelectedSeedIndex];
     if (!seedPacket->mActive) {
         flagUpdateCanPlant = false;
         flagDrawGray = true;
