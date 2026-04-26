@@ -4,6 +4,9 @@
     <string name="pvz_name">PvZ TV Touch</string>
     <string name="close">Close</string>
     <string name="minimize">Minimize</string>
+    <string name="about">About</string>
+    <string name="about_message">Version: %1$s\nCommit SHA: %2$s</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="cheat_menu_close_description">Long press to close cheat menu</string>
     <string name="cheat_menu_close_message">Cheat menu was closed</string>
     <string name="without_button">Launch Original Edition of PvZ TV</string>

@@ -36,6 +36,8 @@ android {
         ndk {
             abiFilters "armeabi-v7a"
         }
+
+        buildConfigField("String", "GIT_COMMIT_SHA", "\"${'git rev-parse --short HEAD'.execute().text.trim()}\"")
     }
 
     signingConfigs {
@@ -111,6 +113,10 @@ android {
         cmake {
             path = "src/main/cpp/CMakeLists.txt"
         }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     lintOptions {

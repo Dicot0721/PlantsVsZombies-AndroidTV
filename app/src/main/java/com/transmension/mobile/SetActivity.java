@@ -26,6 +26,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -73,6 +75,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.trans.pvztv.BuildConfig;
 import com.trans.pvztv.R;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -1593,8 +1596,10 @@ public class SetActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item1 = menu.add(0, 1, 1, R.string.addon_hide_self_itemname);
-        item1.setCheckable(true);
+        MenuItem hideSelfItem = menu.add(Menu.NONE, 1, Menu.NONE, R.string.addon_hide_self_itemname);
+        hideSelfItem.setCheckable(true);
+
+        menu.add(Menu.NONE, 2, Menu.NONE, R.string.about);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -1606,12 +1611,38 @@ public class SetActivity extends Activity {
 
     @Override
     public boolean onMenuItemSelected(int i, MenuItem menuItem) {
-        hideOrNot();
+        switch (menuItem.getItemId()) {
+            case 1:
+                hideOrNot();
+                break;
+            case 2:
+                String aboutMsg = getString(R.string.about_message, BuildConfig.VERSION_NAME, BuildConfig.GIT_COMMIT_SHA);
+                new AlertDialog.Builder(this)
+                        .setTitle(R.string.about)
+                        .setMessage(aboutMsg)
+                        .setNegativeButton(R.string.close, null)
+                        .setPositiveButton(
+                                android.R.string.copy,
+                                (dialogInterface, n) -> {
+                                    var clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                    clipboard.setPrimaryClip(
+                                            ClipData.newPlainText(getString(R.string.about), aboutMsg)
+                                    );
+                                    Toast.makeText(
+                                            this,
+                                            getString(R.string.copied_to_clipboard),
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+                        ).show();
+                break;
+            default:
+                break;
+        }
         return super.onMenuItemSelected(i, menuItem);
     }
 
     public void hideOrNot() {
-
         PackageManager packageManager = getPackageManager();
         ComponentName set = new ComponentName(getPackageName(), SetActivityEntrance.class.getName());
         if (packageManager.getComponentEnabledSetting(set) == PackageManager.COMPONENT_ENABLED_STATE_DISABLED) {
