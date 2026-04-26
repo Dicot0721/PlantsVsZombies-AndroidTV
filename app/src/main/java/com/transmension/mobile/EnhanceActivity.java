@@ -1127,9 +1127,15 @@ public class EnhanceActivity extends MainActivity {
     static final int HAPITIC_BOSS_HIT = 12;
 
     private void startVibration(int hapiticEffect) {
+        if (context == null) {
+            return;
+        }
         Vibrator vibrator = (Vibrator) context.getSystemService(VIBRATOR_SERVICE);
+        if (vibrator == null) {
+            return;
+        }
         VibrationComposition composition = new VibrationComposition();
-        if (vibrator != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             switch (hapiticEffect) {
                 case HAPITIC_THUMP:
                     composition.timings = new long[]{100, 25, 25, 25, 25, 25, 25, 25, 25};
