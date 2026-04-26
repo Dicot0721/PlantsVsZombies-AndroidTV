@@ -437,6 +437,7 @@ public:
     void ApplyBurn();
     void ApplyChill(bool theIsIceTrap);
     void HitIceTrap();
+    void ApplySyncedIceTrap(int theIceTrapCounter);
     bool ZombieNotWalking();
     bool IsMovingAtChilledSpeed();
     void UpdateZombieWalking();

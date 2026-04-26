@@ -2099,7 +2099,7 @@ void Board::processServerEvent(void *buf, ssize_t bufSize) {
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 uint16_t aIceTrapCounter = eventIceTrap->data2;
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
-                aZombie->mIceTrapCounter = aIceTrapCounter;
+                aZombie->ApplySyncedIceTrap(aIceTrapCounter);
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW: {

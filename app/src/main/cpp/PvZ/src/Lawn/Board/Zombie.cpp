@@ -3203,6 +3203,9 @@ void Zombie::ApplyChill(bool theIsIceTrap) {
 }
 
 void Zombie::HitIceTrap() {
+    if (mApp->IsVSMode() && gTcpConnected)
+        return;
+
     bool cold = false;
     if (mChilledCounter > 0 || mIceTrapCounter != 0) {
         cold = true;
@@ -3215,19 +3218,9 @@ void Zombie::HitIceTrap() {
     if (mInPool) {
         mIceTrapCounter = 300;
     } else if (cold) {
-        if (!(mApp->IsVSMode() && gTcpConnected))
-            mIceTrapCounter = RandRangeInt(300, 400);
+        mIceTrapCounter = RandRangeInt(300, 400);
     } else {
-        if (!(mApp->IsVSMode() && gTcpConnected))
-            mIceTrapCounter = RandRangeInt(400, 600);
-    }
-
-    if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
-        U16U16_Event event;
-        event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP;
-        event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
-        event.data2 = uint16_t(mIceTrapCounter);
-        netplay::PutEvent(event);
+        mIceTrapCounter = RandRangeInt(400, 600);
     }
 
     StopZombieSound();
@@ -3239,6 +3232,37 @@ void Zombie::HitIceTrap() {
     }
 
     TakeDamage(20, 1U);
+    UpdateAnimSpeed();
+
+    if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
+        U16U16_Event event{};
+        event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP;
+        event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+        event.data2 = uint16_t(mIceTrapCounter);
+        netplay::PutEvent(event);
+    }
+}
+
+void Zombie::ApplySyncedIceTrap(int theIceTrapCounter) {
+    bool cold = false;
+    if (mChilledCounter > 0 || mIceTrapCounter != 0) {
+        cold = true;
+    }
+
+    ApplyChill(true);
+    if (!CanBeFrozen())
+        return;
+
+    mIceTrapCounter = theIceTrapCounter;
+
+    StopZombieSound();
+    if (mZombieType == ZombieType::ZOMBIE_BALLOON) {
+        BalloonPropellerHatSpin(false);
+    }
+    if (mZombiePhase == ZombiePhase::PHASE_BOSS_HEAD_SPIT) {
+        mBoard->RemoveParticleByType(ParticleEffect::PARTICLE_ZOMBIE_BOSS_FIREBALL);
+    }
+
     UpdateAnimSpeed();
 }
 
