@@ -2034,7 +2034,7 @@ void Zombie::DieNoLoot() {
     }
 
     if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR && mBoard != nullptr && mApp->mGameScene == GameScenes::SCENE_PLAYING) {
-        mBoard->GrantAchievement(AchievementId::ACHIEVEMENT_GARG, true);
+        mBoard->GrantAchievement(AchievementType::ACHIEVEMENT_GARG, true);
     }
 
     if (IsZombatarZombie(mZombieType)) {

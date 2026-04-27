@@ -22,22 +22,50 @@
 
 #include "PvZ/SexyAppFramework/Widget/ButtonListener.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
+#include "PvZ/Symbols.h"
 
-enum AchievementId {
-    ACHIEVEMENT_HOME_SECURITY = 0,    // 完成冒险模式
-    ACHIEVEMENT_MORTICULTURALIST = 1, // 收集全部49种植物
-    ACHIEVEMENT_IMMORTAL = 2,         // 生存泳池无尽达到40波
-    ACHIEVEMENT_SOILPLANTS = 3,       // 在一个关卡内种植10个豌豆射手
-    ACHIEVEMENT_CLOSESHAVE = 4,       // 用完全部小推车过一关
-    ACHIEVEMENT_CHOMP = 5,            // 只使用大嘴花、坚果墙、向日葵过一关
-    ACHIEVEMENT_VERSUS = 6,           // 对战模式获得5连胜
-    ACHIEVEMENT_GARG = 7,             // 打败巨人僵尸
-    ACHIEVEMENT_COOP = 8,             // 通关结盟坚果保龄球关卡
-    ACHIEVEMENT_SHOP = 9,             // 在戴夫商店消费25000元
-    ACHIEVEMENT_EXPLODONATOR = 10,    // 使用一个樱桃炸弹消灭10只僵尸
-    ACHIEVEMENT_TREE = 11,            // 让智慧树长到100英尺高
-    MAX_ACHIEVEMENTS
+constexpr int ACHIEVEMENT_HOLE_LENGTH = 136;
+constexpr int ACHIEVEMENT_HOLE_WORM_POS = 0x10;
+constexpr int ACHIEVEMENT_HOLE_GEMS_POS = 0x19;
+constexpr int ACHIEVEMENT_HOLE_CHUZZLE_POS = 0x26;
+constexpr int ACHIEVEMENT_HOLE_BJORN_POS = 0x34;
+constexpr int ACHIEVEMENT_HOLE_PIPE_POS = 0x45;
+constexpr int ACHIEVEMENT_HOLE_TIKI_POS = 0x55;
+constexpr int ACHIEVEMENT_HOLE_HEAVY_ROCKS_POS = 0x65;
+constexpr int ACHIEVEMENT_HOLE_DU_WEI_POS = 0x72;
+constexpr int MAIN_MENU_HEIGHT = 720 - 2; // 作用：将成就界面上升2个像素点，以更紧密地贴合主界面。奇怪，理论上720是严丝合缝，为什么实际有2像素偏差呢？
+constexpr int KEYBOARD_SCROLL_TIME = 20;
+
+enum AchievementType {
+    ACHIEVEMENT_HOME_SECURITY = 0,
+    ACHIEVEMENT_MORTICULTURALIST = 1,
+    ACHIEVEMENT_IMMORTAL = 2,
+    ACHIEVEMENT_SOILPLANTS = 3,
+    ACHIEVEMENT_CLOSESHAVE = 4,
+    ACHIEVEMENT_CHOMP = 5,
+    ACHIEVEMENT_VERSUS = 6,
+    ACHIEVEMENT_GARG = 7,
+    ACHIEVEMENT_COOP = 8,
+    ACHIEVEMENT_SHOP = 9,
+    ACHIEVEMENT_EXPLODONATOR = 10,
+    ACHIEVEMENT_TREE = 11,
+    NUM_ACHIEVEMENT_TYPES
 };
+
+enum AchievementWidgetState {
+    NOT_SHOWING = 0,
+    SLIDING_IN = 1,
+    SHOWING = 2,
+    SLIDING_OUT = 3,
+};
+
+inline AchievementWidgetState gAchievementState = NOT_SHOWING;
+
+class LawnApp;
+
+namespace Sexy {
+class Graphics;
+}
 
 class AchievementsWidget : public Sexy::Widget, public Sexy::ButtonListener {
 public:
@@ -50,7 +78,16 @@ public:
     float mVelocity;
     float mAccY;
     bool mIsScrolling;
-}; // 我想用AchievementsWidget取代MaskHelpWidget。MaskHelpWidget的大小是66个整数。
+
+    AchievementsWidget(LawnApp *theApp);
+    ~AchievementsWidget();
+
+    void Update();
+    void Draw(Sexy::Graphics *g);
+    void MouseDown(int x, int y, int theClickCount);
+    void MouseUp(int x, int y);
+    void MouseDrag(int x, int y);
+};
 
 class MaskHelpWidget : public Sexy::Widget {
 public:
@@ -69,5 +106,11 @@ protected:
         reinterpret_cast<void (*)(MaskHelpWidget *)>(MaskHelpWidget_DeleteAddr)(this);
     }
 };
+
+void MaskHelpWidget_Update(AchievementsWidget *achievementsWidget);
+void MaskHelpWidget_Draw(AchievementsWidget *achievementsWidget, Sexy::Graphics *g);
+void MaskHelpWidget_MouseDown(AchievementsWidget *achievementsWidget, int x, int y, int theClickCount);
+void MaskHelpWidget_MouseUp(AchievementsWidget *achievementsWidget, int x, int y);
+void MaskHelpWidget_MouseDrag(AchievementsWidget *achievementsWidget, int x, int y);
 
 #endif // PVZ_LAWN_WIDGET_ACHIEVEMENTS_WIDGET_H

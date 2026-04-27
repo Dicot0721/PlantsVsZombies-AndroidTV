@@ -62,48 +62,48 @@ int GameStats::ChangeMiscStat(MiscStat theMiscStat, int theChangeIndex) {
 }
 
 int LeaderboardsWidget_GetAchievementIdByReanimationType(ReanimationType type) {
-    AchievementId id = AchievementId::ACHIEVEMENT_HOME_SECURITY;
+    AchievementType id = AchievementType::ACHIEVEMENT_HOME_SECURITY;
     switch (type) {
         case ReanimationType::REANIM_ACHIEVEMENT_HOME_SECURITY:
-            id = AchievementId::ACHIEVEMENT_HOME_SECURITY;
+            id = AchievementType::ACHIEVEMENT_HOME_SECURITY;
             break;
         case ReanimationType::REANIM_ACHIEVEMENT_MORTICULTURALIST:
-            id = AchievementId::ACHIEVEMENT_MORTICULTURALIST;
+            id = AchievementType::ACHIEVEMENT_MORTICULTURALIST;
             break;
         case ReanimationType::REANIM_ACHIEVEMENT_SMARTY_BRANCHES:
-            id = AchievementId::ACHIEVEMENT_TREE;
+            id = AchievementType::ACHIEVEMENT_TREE;
             break;
         case ReanimationType::REANIM_ACHIEVEMENT_CRASH_OF_THE_TITAN:
-            id = AchievementId::ACHIEVEMENT_GARG;
+            id = AchievementType::ACHIEVEMENT_GARG;
             break;
         case ReanimationType::REANIM_ACHIEVEMENT_Zffs4Evr:
-            id = AchievementId::ACHIEVEMENT_COOP;
+            id = AchievementType::ACHIEVEMENT_COOP;
             break;
         case ReanimationType::REANIM_ACHIEVEMENT_ALIVE_AND_PLANTING:
-            id = AchievementId::ACHIEVEMENT_IMMORTAL;
+            id = AchievementType::ACHIEVEMENT_IMMORTAL;
             break;
         case ReanimationType::REANIM_ACHIEVEMENT_VERSUS:
-            id = AchievementId::ACHIEVEMENT_VERSUS;
+            id = AchievementType::ACHIEVEMENT_VERSUS;
             break;
         case ReanimationType::REANIM_ACHIEVEMENT_SOIL_YOUR_PLANTS:
-            id = AchievementId::ACHIEVEMENT_SOILPLANTS;
+            id = AchievementType::ACHIEVEMENT_SOILPLANTS;
             break;
         case ReanimationType::REANIM_ACHIEVEMENT_EXPLODONATOR:
-            id = AchievementId::ACHIEVEMENT_EXPLODONATOR;
+            id = AchievementType::ACHIEVEMENT_EXPLODONATOR;
             break;
         case ReanimationType::REANIM_ACHIEVEMENT_CLOSE_SHAVE:
-            id = AchievementId::ACHIEVEMENT_CLOSESHAVE;
+            id = AchievementType::ACHIEVEMENT_CLOSESHAVE;
             break;
         case ReanimationType::REANIM_ACHIEVEMENT_SHOP:
-            id = AchievementId::ACHIEVEMENT_SHOP;
+            id = AchievementType::ACHIEVEMENT_SHOP;
             break;
         case ReanimationType::REANIM_ACHIEVEMENT_NOM_NOM_NOM:
-            id = AchievementId::ACHIEVEMENT_CHOMP;
+            id = AchievementType::ACHIEVEMENT_CHOMP;
             break;
         default:
             break;
     }
-    return id - AchievementId::ACHIEVEMENT_HOME_SECURITY;
+    return id - AchievementType::ACHIEVEMENT_HOME_SECURITY;
 }
 
 int LeaderboardsWidget_GetAchievementIdByDrawOrder(int drawOrder) {
@@ -190,7 +190,7 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     mPlantTrashBin = new TrashBin(TrashBin::PLANT_PILE, theApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED] / 125.0f);
     mPlantTrashBin->Move(plantSexyTransform2D.m[0][2], plantSexyTransform2D.m[1][2]);
 
-    for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {
+    for (int i = 0; i < AchievementType::NUM_ACHIEVEMENT_TYPES; ++i) {
         mAchievements[i] = theApp->mPlayerInfo->mAchievements[LeaderboardsWidget_GetAchievementIdByReanimationType((ReanimationType)(ReanimationType::REANIM_ACHIEVEMENT_HOME_SECURITY + i))];
         // Reanimation *reanim = (Reanimation *)operator new(sizeof(Reanimation));
         // Reanimation_Reanimation(reanim);
@@ -226,7 +226,7 @@ void DaveHelp_Update(LeaderboardsWidget *leaderboardsWidget) {
         reanim->Update();
     }
 
-    for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {
+    for (int i = 0; i < AchievementType::NUM_ACHIEVEMENT_TYPES; ++i) {
         if (!leaderboardsWidget->mAchievements[i])
             continue;
         leaderboardsWidget->mLeaderboardReanimations->achievementReanim[i]->Update();
@@ -242,13 +242,13 @@ void DaveHelp_Draw(LeaderboardsWidget *leaderboardsWidget, Sexy::Graphics *g) {
     leaderboardsWidget->mPlantTrashBin->TrashBin::Draw(g);
     leaderboardsWidget->mZombieTrashBin->TrashBin::Draw(g);
 
-    for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {
+    for (int i = 0; i < AchievementType::NUM_ACHIEVEMENT_TYPES; ++i) {
         int num = LeaderboardsWidget_GetAchievementIdByDrawOrder(i);
         if (!leaderboardsWidget->mAchievements[num])
             continue;
         if (leaderboardsWidget->mHighLightAchievement && num == leaderboardsWidget->mFocusedAchievementIndex) {
-            auto id = AchievementId(LeaderboardsWidget_GetAchievementIdByReanimationType(ReanimationType(num + ReanimationType::REANIM_ACHIEVEMENT_HOME_SECURITY))
-                                    + AchievementId::ACHIEVEMENT_HOME_SECURITY);
+            auto id = AchievementType(LeaderboardsWidget_GetAchievementIdByReanimationType(ReanimationType(num + ReanimationType::REANIM_ACHIEVEMENT_HOME_SECURITY))
+                                      + AchievementType::ACHIEVEMENT_HOME_SECURITY);
             Sexy::Image *image = GetIconByAchievementId(id);
             Color color = GetFlashingColor(leaderboardsWidget->mApp->mAppCounter, 120);
             g->SetColorizeImages(true);
@@ -315,7 +315,7 @@ void DaveHelp_Delete2(LeaderboardsWidget *leaderboardsWidget) {
     for (int i = 0; i < 5; ++i) {
         delete leaderboardsWidget->mLeaderboardReanimations->backgroundReanim[i];
     }
-    for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {
+    for (int i = 0; i < AchievementType::NUM_ACHIEVEMENT_TYPES; ++i) {
         delete leaderboardsWidget->mLeaderboardReanimations->achievementReanim[i];
     }
     leaderboardsWidget->mBackButton->~GameButton();
@@ -325,8 +325,8 @@ void DaveHelp_Delete2(LeaderboardsWidget *leaderboardsWidget) {
 }
 
 void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, int theClickCount) {
-    for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {
-        int num = LeaderboardsWidget_GetAchievementIdByDrawOrder(AchievementId::MAX_ACHIEVEMENTS - 1 - i);
+    for (int i = 0; i < AchievementType::NUM_ACHIEVEMENT_TYPES; ++i) {
+        int num = LeaderboardsWidget_GetAchievementIdByDrawOrder(AchievementType::NUM_ACHIEVEMENT_TYPES - 1 - i);
         if (!leaderboardsWidget->mAchievements[num])
             continue;
         if (TRect_Contains(&gLeaderboardAchievementsRect[num][0], x, y) || TRect_Contains(&gLeaderboardAchievementsRect[num][1], x, y)) {

@@ -4999,69 +4999,69 @@ void Board::ButtonDepress(int theId) {
     old_Board_ButtonDepress(this, theId);
 }
 
-Image *GetIconByAchievementId(AchievementId theAchievementId) {
+Image *GetIconByAchievementId(AchievementType theAchievementId) {
     switch (theAchievementId) {
-        case AchievementId::ACHIEVEMENT_HOME_SECURITY:
+        case AchievementType::ACHIEVEMENT_HOME_SECURITY:
             return addonImages.achievement_homeLawnsecurity;
-        case AchievementId::ACHIEVEMENT_MORTICULTURALIST:
+        case AchievementType::ACHIEVEMENT_MORTICULTURALIST:
             return addonImages.achievement_morticulturalist;
-        case AchievementId::ACHIEVEMENT_IMMORTAL:
+        case AchievementType::ACHIEVEMENT_IMMORTAL:
             return addonImages.achievement_immortal;
-        case AchievementId::ACHIEVEMENT_SOILPLANTS:
+        case AchievementType::ACHIEVEMENT_SOILPLANTS:
             return addonImages.achievement_soilplants;
-        case AchievementId::ACHIEVEMENT_CLOSESHAVE:
+        case AchievementType::ACHIEVEMENT_CLOSESHAVE:
             return addonImages.achievement_closeshave;
-        case AchievementId::ACHIEVEMENT_CHOMP:
+        case AchievementType::ACHIEVEMENT_CHOMP:
             return addonImages.achievement_chomp;
-        case AchievementId::ACHIEVEMENT_VERSUS:
+        case AchievementType::ACHIEVEMENT_VERSUS:
             return addonImages.achievement_versusz;
-        case AchievementId::ACHIEVEMENT_GARG:
+        case AchievementType::ACHIEVEMENT_GARG:
             return addonImages.achievement_garg;
-        case AchievementId::ACHIEVEMENT_COOP:
+        case AchievementType::ACHIEVEMENT_COOP:
             return addonImages.achievement_coop;
-        case AchievementId::ACHIEVEMENT_SHOP:
+        case AchievementType::ACHIEVEMENT_SHOP:
             return addonImages.achievement_shop;
-        case AchievementId::ACHIEVEMENT_EXPLODONATOR:
+        case AchievementType::ACHIEVEMENT_EXPLODONATOR:
             return addonImages.achievement_explodonator;
-        case AchievementId::ACHIEVEMENT_TREE:
+        case AchievementType::ACHIEVEMENT_TREE:
             return addonImages.achievement_tree;
         default:
             return nullptr;
     }
 }
 
-const char *GetNameByAchievementId(AchievementId theAchievementId) {
+const char *GetNameByAchievementId(AchievementType theAchievementId) {
     switch (theAchievementId) {
-        case AchievementId::ACHIEVEMENT_HOME_SECURITY:
+        case AchievementType::ACHIEVEMENT_HOME_SECURITY:
             return "ACHIEVEMENT_HOME_SECURITY";
-        case AchievementId::ACHIEVEMENT_MORTICULTURALIST:
+        case AchievementType::ACHIEVEMENT_MORTICULTURALIST:
             return "ACHIEVEMENT_MORTICULTURALIST";
-        case AchievementId::ACHIEVEMENT_IMMORTAL:
+        case AchievementType::ACHIEVEMENT_IMMORTAL:
             return "ACHIEVEMENT_IMMORTAL";
-        case AchievementId::ACHIEVEMENT_SOILPLANTS:
+        case AchievementType::ACHIEVEMENT_SOILPLANTS:
             return "ACHIEVEMENT_SOILPLANTS";
-        case AchievementId::ACHIEVEMENT_CLOSESHAVE:
+        case AchievementType::ACHIEVEMENT_CLOSESHAVE:
             return "ACHIEVEMENT_CLOSESHAVE";
-        case AchievementId::ACHIEVEMENT_CHOMP:
+        case AchievementType::ACHIEVEMENT_CHOMP:
             return "ACHIEVEMENT_CHOMP";
-        case AchievementId::ACHIEVEMENT_VERSUS:
+        case AchievementType::ACHIEVEMENT_VERSUS:
             return "ACHIEVEMENT_VERSUS";
-        case AchievementId::ACHIEVEMENT_GARG:
+        case AchievementType::ACHIEVEMENT_GARG:
             return "ACHIEVEMENT_GARG";
-        case AchievementId::ACHIEVEMENT_COOP:
+        case AchievementType::ACHIEVEMENT_COOP:
             return "ACHIEVEMENT_COOP";
-        case AchievementId::ACHIEVEMENT_SHOP:
+        case AchievementType::ACHIEVEMENT_SHOP:
             return "ACHIEVEMENT_SHOP";
-        case AchievementId::ACHIEVEMENT_EXPLODONATOR:
+        case AchievementType::ACHIEVEMENT_EXPLODONATOR:
             return "ACHIEVEMENT_EXPLODONATOR";
-        case AchievementId::ACHIEVEMENT_TREE:
+        case AchievementType::ACHIEVEMENT_TREE:
             return "ACHIEVEMENT_TREE";
         default:
             return "";
     }
 }
 
-bool Board::GrantAchievement(AchievementId theAchievementId, bool theIsShow) {
+bool Board::GrantAchievement(AchievementType theAchievementId, bool theIsShow) {
     LawnApp *lawnApp = mApp;
     DefaultPlayerInfo *playerInfo = lawnApp->mPlayerInfo;
     if (!playerInfo->mAchievements[theAchievementId]) {
@@ -5083,7 +5083,7 @@ void Board::FadeOutLevel() {
     old_Board_FadeOutLevel(this);
 
     if (mApp->IsSurvivalMode() && mChallenge->mSurvivalStage >= 19) {
-        GrantAchievement(AchievementId::ACHIEVEMENT_IMMORTAL, true);
+        GrantAchievement(AchievementType::ACHIEVEMENT_IMMORTAL, true);
     }
 
     if (!mApp->IsSurvivalMode()) {
@@ -5094,21 +5094,21 @@ void Board::FadeOutLevel() {
             }
         }
         if (mTriggeredLawnMowers == theNumLawnMowers) {
-            GrantAchievement(AchievementId::ACHIEVEMENT_CLOSESHAVE, true);
+            GrantAchievement(AchievementType::ACHIEVEMENT_CLOSESHAVE, true);
         }
     }
     if (mLevel == 50) {
-        GrantAchievement(AchievementId::ACHIEVEMENT_HOME_SECURITY, true);
+        GrantAchievement(AchievementType::ACHIEVEMENT_HOME_SECURITY, true);
     }
 
     if (mApp->mGameMode == GameMode::GAMEMODE_TWO_PLAYER_COOP_BOWLING) {
-        GrantAchievement(AchievementId::ACHIEVEMENT_COOP, true);
+        GrantAchievement(AchievementType::ACHIEVEMENT_COOP, true);
     }
 
     if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
         if ((VSResultsMenu::msPlayerRecords[VSSide::VS_SIDE_PLANT][3] == 4 && mApp->mBoardResult == BoardResult::BOARDRESULT_VS_PLANT_WON)
             || (VSResultsMenu::msPlayerRecords[VSSide::VS_SIDE_ZOMBIE][3] == 4 && mApp->mBoardResult == BoardResult::BOARDRESULT_VS_ZOMBIE_WON)) {
-            GrantAchievement(AchievementId::ACHIEVEMENT_VERSUS, true);
+            GrantAchievement(AchievementType::ACHIEVEMENT_VERSUS, true);
         }
     }
 
@@ -5117,7 +5117,7 @@ void Board::FadeOutLevel() {
         for (int i = 0; i < num; ++i) {
             SeedType theType = mSeedBank[0]->mSeedPackets[i].mPacketType;
             if (theType == SeedType::SEED_CHOMPER || theType == SeedType::SEED_WALLNUT || theType == SeedType::SEED_SUNFLOWER) {
-                GrantAchievement(AchievementId::ACHIEVEMENT_CHOMP, true);
+                GrantAchievement(AchievementType::ACHIEVEMENT_CHOMP, true);
                 break;
             }
         }
@@ -5131,7 +5131,7 @@ void Board::DoPlantingAchievementCheck(SeedType theSeedType) {
     if (theSeedType == SeedType::SEED_PEASHOOTER && !HasConveyorBeltSeedBank(0)) {
         mNewPeaShooterCount++;
         if (mNewPeaShooterCount >= 10) {
-            GrantAchievement(AchievementId::ACHIEVEMENT_SOILPLANTS, true);
+            GrantAchievement(AchievementType::ACHIEVEMENT_SOILPLANTS, true);
         }
     }
 }

@@ -480,7 +480,7 @@ void Challenge::TreeOfWisdomFertilize() {
     // 检查智慧树成就
     PlayerInfo *playerInfo = mApp->mPlayerInfo;
     if (playerInfo->mChallengeRecords[GameMode::GAMEMODE_TREE_OF_WISDOM - 2] >= 99) {
-        mBoard->GrantAchievement(AchievementId::ACHIEVEMENT_TREE, true);
+        mBoard->GrantAchievement(AchievementType::ACHIEVEMENT_TREE, true);
     }
 }
 

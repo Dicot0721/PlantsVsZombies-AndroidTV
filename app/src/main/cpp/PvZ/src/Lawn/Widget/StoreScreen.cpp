@@ -128,7 +128,7 @@ void StoreScreen::PurchaseItem(StoreItem theStoreItem) {
             return;
         }
     }
-    mApp->GrantAchievement(AchievementId::ACHIEVEMENT_MORTICULTURALIST);
+    mApp->GrantAchievement(AchievementType::ACHIEVEMENT_MORTICULTURALIST);
 }
 
 void StoreScreen::Draw(Sexy::Graphics *g) {

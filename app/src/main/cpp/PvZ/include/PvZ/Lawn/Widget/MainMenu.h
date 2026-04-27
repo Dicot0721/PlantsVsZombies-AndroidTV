@@ -183,15 +183,4 @@ inline void (*old_MainMenu_DrawOverlay)(MainMenu *mainMenu, Sexy::Graphics *a2);
 
 inline void (*old_MainMenu_DrawFade)(MainMenu *mainMenu, Sexy::Graphics *a2);
 
-
-void MaskHelpWidget_Update(AchievementsWidget *achievementsWidget);
-
-void MaskHelpWidget_Draw(AchievementsWidget *achievementsWidget, Sexy::Graphics *g);
-
-void MaskHelpWidget_MouseDown(AchievementsWidget *achievementsWidget, int x, int y, int theClickCount);
-
-void MaskHelpWidget_MouseUp(AchievementsWidget *achievementsWidget, int x, int y);
-
-void MaskHelpWidget_MouseDrag(AchievementsWidget *achievementsWidget, int x, int y);
-
 #endif // PVZ_LAWN_WIDGET_MAIN_MENU_H

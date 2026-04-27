@@ -932,7 +932,7 @@ int LawnApp::GetNumPreloadingTasks() {
     return oldResult;
 }
 
-bool LawnApp::GrantAchievement(AchievementId theAchievementId) {
+bool LawnApp::GrantAchievement(AchievementType theAchievementId) {
     // 一些非Board的成就在这里处理
     if (!mPlayerInfo->mAchievements[theAchievementId]) {
         PlaySample(addonSounds.achievement);

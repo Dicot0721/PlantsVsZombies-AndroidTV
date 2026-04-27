@@ -40,27 +40,6 @@
 using namespace Sexy;
 
 namespace {
-
-enum AchievementWidgetState {
-    NOT_SHOWING = 0,
-    SLIDING_IN = 1,
-    SHOWING = 2,
-    SLIDING_OUT = 3,
-};
-
-constexpr int gAchievementHoleLength = 136;
-constexpr int gAchievementHoleWormPos = 0x10;
-constexpr int gAchievementHoleGemsPos = 0x19;
-constexpr int gAchievementHoleChuzzlePos = 0x26;
-constexpr int gAchievementHoleBjornPos = 0x34;
-constexpr int gAchievementHolePipePos = 0x45;
-constexpr int gAchievementHoleTikiPos = 0x55;
-constexpr int gAchievementHoleHeavyRocksPos = 0x65;
-constexpr int gAchievementHoleDuWeiPos = 0x72;
-
-constexpr int gKeyboardScrollTime = 20;
-constexpr int gMainMenuHeight = 720 - 2; // 作用：将成就界面上升2个像素点，以更紧密地贴合主界面。奇怪，理论上720是严丝合缝，为什么实际有2像素偏差呢？
-
 bool isPatched;
 int gMainMenuAchievementCounter;
 int gMainMenuAchievementsWidgetY;
@@ -68,7 +47,6 @@ int gMainMenuAchievementsKeyboardScrollWidgetY;
 int gMainMenuAchievementKeyboardScrollCounter;
 bool gMainMenuAchievementKeyboardScrollDirection;
 
-AchievementWidgetState gAchievementState = NOT_SHOWING;
 AchievementsWidget *gMainMenuAchievementsWidget;
 GameButton *gMainMenuAchievementsBack;
 int gFoleyVolumeCounter;
@@ -158,12 +136,12 @@ void MainMenu::Update() {
     if (gMainMenuAchievementKeyboardScrollCounter != 0) {
         gMainMenuAchievementKeyboardScrollCounter--;
         if (gMainMenuAchievementsWidget != nullptr) {
-            int theY = TodAnimateCurve(gKeyboardScrollTime, 0, gMainMenuAchievementKeyboardScrollCounter, 0, 192, TodCurves::CURVE_LINEAR);
+            int theY = TodAnimateCurve(KEYBOARD_SCROLL_TIME, 0, gMainMenuAchievementKeyboardScrollCounter, 0, 192, TodCurves::CURVE_LINEAR);
             int theNewY = gMainMenuAchievementsKeyboardScrollWidgetY - (gMainMenuAchievementKeyboardScrollDirection ? theY : -theY);
-            if (theNewY > gMainMenuHeight)
-                theNewY = gMainMenuHeight;
-            if (theNewY < 720 + gMainMenuHeight - (gAchievementHoleLength + 1) * addonImages.hole->mHeight)
-                theNewY = 720 + gMainMenuHeight - (gAchievementHoleLength + 1) * addonImages.hole->mHeight;
+            if (theNewY > MAIN_MENU_HEIGHT)
+                theNewY = MAIN_MENU_HEIGHT;
+            if (theNewY < 720 + MAIN_MENU_HEIGHT - (ACHIEVEMENT_HOLE_LENGTH + 1) * addonImages.hole->mHeight)
+                theNewY = 720 + MAIN_MENU_HEIGHT - (ACHIEVEMENT_HOLE_LENGTH + 1) * addonImages.hole->mHeight;
             gMainMenuAchievementsWidget->Move(gMainMenuAchievementsWidget->mX, theNewY);
         }
     }
@@ -189,14 +167,14 @@ void MainMenu::Update() {
                 int theY = TodAnimateCurve(100, 0, gMainMenuAchievementCounter, -780, -60, TodCurves::CURVE_EASE_IN_OUT);
                 Move(mX, theY);
             } else {
-                int theAchievementsY = TodAnimateCurve(150, 100, gMainMenuAchievementCounter, gMainMenuAchievementsWidgetY, gMainMenuHeight, TodCurves::CURVE_EASE_IN_OUT);
+                int theAchievementsY = TodAnimateCurve(150, 100, gMainMenuAchievementCounter, gMainMenuAchievementsWidgetY, MAIN_MENU_HEIGHT, TodCurves::CURVE_EASE_IN_OUT);
                 gMainMenuAchievementsWidget->Move(gMainMenuAchievementsWidget->mX, theAchievementsY);
             }
         }
         if (gMainMenuAchievementCounter == 0) {
             gAchievementState = NOT_SHOWING;
             RemoveWidget(gMainMenuAchievementsWidget);
-            reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->~MaskHelpWidget();
+            gMainMenuAchievementsWidget->~AchievementsWidget();
             gMainMenuAchievementsWidget = nullptr;
             if (gMainMenuAchievementsBack != nullptr) {
                 RemoveWidget((Widget *)gMainMenuAchievementsBack);
@@ -297,14 +275,14 @@ void MainMenu::ButtonDepress(MainMenuButtonId theSelectedButton) {
                 gAchievementState = SLIDING_IN;
                 gMainMenuAchievementCounter = 100;
                 gMainMenuAchievementsWidget = (AchievementsWidget *)operator new(sizeof(AchievementsWidget));
-                new (gMainMenuAchievementsWidget) MaskHelpWidget{mApp};
+                new (gMainMenuAchievementsWidget) AchievementsWidget{mApp};
                 gMainMenuAchievementsWidget->mIsScrolling = false;
-                gMainMenuAchievementsWidget->Resize(0, gMainMenuHeight, 1280, addonImages.hole->mHeight * (gAchievementHoleLength + 1));
+                gMainMenuAchievementsWidget->Resize(0, MAIN_MENU_HEIGHT, 1280, addonImages.hole->mHeight * (ACHIEVEMENT_HOLE_LENGTH + 1));
                 gMainMenuAchievementsWidget->mWidgetId = ACHIEVEMENTS_BUTTON;
                 AddWidget(gMainMenuAchievementsWidget);
             } else {
                 gAchievementState = SLIDING_OUT;
-                gMainMenuAchievementCounter = gMainMenuAchievementsWidget->mY == gMainMenuHeight ? 100 : 150;
+                gMainMenuAchievementCounter = gMainMenuAchievementsWidget->mY == MAIN_MENU_HEIGHT ? 100 : 150;
                 gMainMenuAchievementsWidgetY = gMainMenuAchievementsWidget->mY;
             }
             return;
@@ -340,11 +318,11 @@ void MainMenu::KeyDown(Sexy::KeyCode theKeyCode) {
             if (gMainMenuAchievementKeyboardScrollCounter != 0) {
                 return;
                 // int theNewY = gMainMenuAchievementsKeyboardScrollWidgetY -(gMainMenuAchievementKeyboardScrollDirection ? 192 : -192);
-                // if (theNewY > gMainMenuHeight) theNewY = gMainMenuHeight;
-                // if (theNewY < 720 +gMainMenuHeight - (gAchievementHoleLength + 1) * addonImages.hole->mHeight) theNewY =  720 +gMainMenuHeight - (gAchievementHoleLength + 1) *
+                // if (theNewY > MAIN_MENU_HEIGHT) theNewY = MAIN_MENU_HEIGHT;
+                // if (theNewY < 720 +MAIN_MENU_HEIGHT - (ACHIEVEMENT_HOLE_LENGTH + 1) * addonImages.hole->mHeight) theNewY =  720 +MAIN_MENU_HEIGHT - (ACHIEVEMENT_HOLE_LENGTH + 1) *
                 // addonImages.hole->mHeight; Sexy_Widget_Move(gMainMenuAchievementsWidget, gMainMenuAchievementsWidget->mX, theNewY);
             }
-            gMainMenuAchievementKeyboardScrollCounter = gKeyboardScrollTime;
+            gMainMenuAchievementKeyboardScrollCounter = KEYBOARD_SCROLL_TIME;
             gMainMenuAchievementsKeyboardScrollWidgetY = gMainMenuAchievementsWidget->mY;
             gMainMenuAchievementKeyboardScrollDirection = theKeyCode == Sexy::KEYCODE_DOWN;
         }
@@ -550,7 +528,7 @@ void MainMenu::RemovedFromManager(WidgetManager *theWidgetManager) {
 void MainMenu::_destructor2() {
     old_MainMenu_Delete2(this);
     if (gMainMenuAchievementsWidget != nullptr) {
-        reinterpret_cast<MaskHelpWidget *>(gMainMenuAchievementsWidget)->~MaskHelpWidget();
+        gMainMenuAchievementsWidget->~AchievementsWidget();
         gMainMenuAchievementsWidget = nullptr;
     }
 
@@ -675,119 +653,4 @@ void MainMenu::DrawFade(Sexy::Graphics *g) {
     // }
     old_MainMenu_DrawFade(this, g);
     mFadeCounterFloat = num;
-}
-
-void MaskHelpWidget_Draw(AchievementsWidget *achievementsWidget, Sexy::Graphics *g) {
-    int theY = 0;
-    int theDiffY = addonImages.hole->mHeight;
-    for (int i = 0; i < gAchievementHoleLength; i++) {
-        if (i == gAchievementHoleWormPos) {
-            g->DrawImage(addonImages.hole_worm, 0, theY);
-        } else if (i == gAchievementHoleGemsPos) {
-            g->DrawImage(addonImages.hole_gems, 0, theY);
-        } else if (i == gAchievementHoleChuzzlePos) {
-            g->DrawImage(addonImages.hole_chuzzle, 0, theY);
-        } else if (i == gAchievementHoleBjornPos) {
-            g->DrawImage(addonImages.hole_bjorn, 0, theY);
-        } else if (i == gAchievementHolePipePos) {
-            g->DrawImage(addonImages.hole_pipe, 0, theY);
-        } else if (i == gAchievementHoleTikiPos) {
-            g->DrawImage(addonImages.hole_tiki, 0, theY);
-        } else if (i == gAchievementHoleHeavyRocksPos) {
-            g->DrawImage(addonImages.hole_heavyrocks, 0, theY);
-        } else if (i == gAchievementHoleDuWeiPos) {
-            g->DrawImage(addonImages.hole_duwei, 0, theY);
-        } else {
-            g->DrawImage(addonImages.hole, 0, theY);
-        }
-        theY += theDiffY;
-    }
-    g->DrawImage(addonImages.hole_china, 0, theY);
-    g->DrawImage(addonImages.hole_top, 0, 0);
-    int theAchievementY = 300;
-    for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {
-        if (!achievementsWidget->mApp->mPlayerInfo->mAchievements[i]) {
-            g->SetColorizeImages(true);
-            g->SetColor(gColorGray);
-        }
-        g->DrawImage(GetIconByAchievementId((AchievementId)i), 330, theAchievementY - 5);
-        const char *theAchievementName = GetNameByAchievementId((AchievementId)i);
-        pvzstl::string str = StrFormat("[%s]", theAchievementName);
-        pvzstl::string str1 = StrFormat("[%s_TEXT]", theAchievementName);
-        Color theColor = {0, 255, 0, 255};
-        Color theColor1 = {255, 255, 255, 255};
-        Sexy::Rect rect = {460, theAchievementY + 60, 540, 0};
-        TodDrawString(g, str, 460, theAchievementY + 40, Sexy::FONT_HOUSEOFTERROR28, theColor, DrawStringJustification::DS_ALIGN_LEFT);
-        if (i == AchievementId::ACHIEVEMENT_SHOP) {
-            str = TodReplaceNumberString(str1, "{coin}", achievementsWidget->mApp->mPlayerInfo->mUsedCoins * 10);
-            TodDrawStringWrapped(g, str, rect, Sexy::FONT_HOUSEOFTERROR20, theColor1, DrawStringJustification::DS_ALIGN_LEFT, false);
-        } else {
-            TodDrawStringWrapped(g, str1, rect, Sexy::FONT_HOUSEOFTERROR20, theColor1, DrawStringJustification::DS_ALIGN_LEFT, false);
-        }
-        g->SetColorizeImages(false);
-        theAchievementY += theDiffY * 2 / 3;
-    }
-    int theAccomplishedNum = 0;
-    for (int i = 0; i < AchievementId::MAX_ACHIEVEMENTS; ++i) {
-        if (achievementsWidget->mApp->mPlayerInfo->mAchievements[i]) {
-            theAccomplishedNum++;
-        }
-    }
-    pvzstl::string str = StrFormat("%d/%d", theAccomplishedNum, AchievementId::MAX_ACHIEVEMENTS);
-    Color theColor = {255, 240, 0, 255};
-    TodDrawString(g, str, 1060, 173, Sexy::FONT_DWARVENTODCRAFT18, theColor, DrawStringJustification::DS_ALIGN_CENTER);
-}
-
-void MaskHelpWidget_MouseDown(AchievementsWidget *achievementsWidget, int x, int y, int theClickCount) {
-    achievementsWidget->mIsScrolling = false;
-    achievementsWidget->mMouseDownY = y;
-    achievementsWidget->mLastDownY = y;
-    achievementsWidget->mLastDownY1 = achievementsWidget->mLastDownY;
-    timeval tp;
-    gettimeofday(&tp, nullptr);
-    achievementsWidget->mLastTimeMs = tp.tv_sec * 1000 + tp.tv_usec / 1000; // Convert to milliseconds
-    achievementsWidget->mLastTimeMs1 = achievementsWidget->mLastTimeMs;
-}
-
-void MaskHelpWidget_MouseDrag(AchievementsWidget *achievementsWidget, int x, int y) {
-    if (gAchievementState != SHOWING)
-        return;
-    int theNewY = std::clamp(achievementsWidget->mY + (y - achievementsWidget->mMouseDownY), 720 + gMainMenuHeight - (gAchievementHoleLength + 1) * addonImages.hole->mHeight, gMainMenuHeight);
-    achievementsWidget->Move(achievementsWidget->mX, theNewY);
-    achievementsWidget->mLastDownY1 = achievementsWidget->mLastDownY;
-    achievementsWidget->mLastDownY = y;
-    timeval tp;
-    gettimeofday(&tp, nullptr);
-    achievementsWidget->mLastTimeMs1 = achievementsWidget->mLastTimeMs;
-    achievementsWidget->mLastTimeMs = tp.tv_sec * 1000 + tp.tv_usec / 1000; // Convert to milliseconds
-}
-
-void MaskHelpWidget_MouseUp(AchievementsWidget *achievementsWidget, int x, int y) {
-    timeval tp;
-    gettimeofday(&tp, nullptr);
-    long currentTimeMs = tp.tv_sec * 1000 + tp.tv_usec / 1000; // Convert to milliseconds
-    long deltaT = currentTimeMs - achievementsWidget->mLastTimeMs;
-    int deltaX = achievementsWidget->mLastDownY - achievementsWidget->mMouseDownY;
-    if (deltaT == 0) {
-        deltaT = currentTimeMs - achievementsWidget->mLastTimeMs1;
-        deltaX = achievementsWidget->mLastDownY1 - achievementsWidget->mMouseDownY;
-    }
-    if (deltaX != 0 && deltaT != 0) {
-        achievementsWidget->mIsScrolling = true;
-        achievementsWidget->mVelocity = 5.0f * deltaX / deltaT;
-    }
-    achievementsWidget->mLastTimeMs = currentTimeMs;
-}
-
-void MaskHelpWidget_Update(AchievementsWidget *achievementsWidget) {
-    // 实现滚动
-    if (achievementsWidget->mIsScrolling) {
-        int theNewY = std::clamp<int>(achievementsWidget->mY + achievementsWidget->mVelocity, 720 + gMainMenuHeight - (gAchievementHoleLength + 1) * addonImages.hole->mHeight, gMainMenuHeight);
-        achievementsWidget->Move(achievementsWidget->mX, theNewY);
-        achievementsWidget->mVelocity *= 0.96;
-        if (fabs(achievementsWidget->mVelocity) < 1.0f) {
-            achievementsWidget->mIsScrolling = false;
-        }
-    }
-    achievementsWidget->MarkDirty();
 }

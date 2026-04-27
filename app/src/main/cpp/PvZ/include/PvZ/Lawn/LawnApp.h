@@ -348,7 +348,7 @@ public:
     void Load(const char *theGroupName);
     void DoConvertImitaterImages();
     int GetSeedsAvailable(bool theIsZombieChooser);
-    bool GrantAchievement(AchievementId theAchievementId);
+    bool GrantAchievement(AchievementType theAchievementId);
     void SetFoleyVolume(FoleyType theFoleyType, double theVolume);
     void ShowLeaderboards();
     void KillLeaderboards();

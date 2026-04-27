@@ -650,7 +650,7 @@ void Plant::DoSpecial_Origin() {
 
             if (mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, 115, 1, true, aDamageRangeFlags) >= 10)
                 if (!mApp->IsLittleTroubleLevel())
-                    mBoard->GrantAchievement(AchievementId::ACHIEVEMENT_EXPLODONATOR, true);
+                    mBoard->GrantAchievement(AchievementType::ACHIEVEMENT_EXPLODONATOR, true);
 
             mApp->AddTodParticle(aPosX, aPosY, (int)RenderLayer::RENDER_LAYER_TOP, ParticleEffect::PARTICLE_POWIE);
             mBoard->ShakeBoard(3, -4);

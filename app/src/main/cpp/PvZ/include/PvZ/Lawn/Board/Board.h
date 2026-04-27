@@ -563,7 +563,7 @@ public:
     Zombie *GetLiveZombieByType(ZombieType theZombieType);
     void FixReanimErrorAfterLoad();
     void DoPlantingAchievementCheck(SeedType theSeedType);
-    bool GrantAchievement(AchievementId theAchievementId, bool theIsShow);
+    bool GrantAchievement(AchievementType theAchievementId, bool theIsShow);
     int CountPlantByType(SeedType theSeedType);
     bool ZenGardenItemNumIsZero(CursorType theCursorType);
     int GetSeedBankExtraWidth();
@@ -641,8 +641,8 @@ void FixBoardAfterLoad(Board *board);
 void SyncReanimation(Board *a1, Reanimation *a2, int *theSaveGameContext);
 bool LawnSaveGame(Board *theBoard, const pvzstl::string &theFilePath);
 bool LawnLoadGame(Board *theBoard, SaveGameContext *theFilePath);
-const char *GetNameByAchievementId(AchievementId theAchievementId);
-Sexy::Image *GetIconByAchievementId(AchievementId theAchievementId);
+const char *GetNameByAchievementId(AchievementType theAchievementId);
+Sexy::Image *GetIconByAchievementId(AchievementType theAchievementId);
 bool TRect_Contains(Sexy::Rect *rect, int x, int y);
 /***************************************************************************************************************/
 inline int theBuildLadderX;
