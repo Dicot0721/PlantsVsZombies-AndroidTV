@@ -123,9 +123,9 @@ void Board::_constructor(LawnApp *theApp) {
 }
 
 void Board::_destructor() {
-    old_Board__destructor(this);
-
     delete gOpeningEncounter;
+
+    old_Board__destructor(this);
 }
 
 void Board::InitLevel() {

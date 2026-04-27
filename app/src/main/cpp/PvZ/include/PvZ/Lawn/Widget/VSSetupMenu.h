@@ -157,6 +157,7 @@ public:
     void MouseUp(int x, int y, int theCount);
     void ButtonPress(int theId);
     void ButtonDepress(int theId);
+    void ButtonDepress_Origin(int theId);
     void KeyDown(Sexy::KeyCode theKey);
 
     void processClientEvent(void *buf, ssize_t bufSize);
@@ -170,7 +171,7 @@ protected:
     void PickRandomZombies(std::vector<SeedType> &theZombieSeeds);
     void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds);
 
-    void PickBackgroundImmediately();
+    //    void PickBackgroundImmediately();
 };
 
 inline int gVSSetupRequestState = 0;

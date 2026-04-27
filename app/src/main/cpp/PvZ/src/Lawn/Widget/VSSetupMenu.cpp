@@ -91,7 +91,7 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
         g->SetColorizeImages(false);
     }
 
-    if (gVSSetupRequestState != 0 && mState == VS_SETUP_STATE_SELECT_BATTLE) {
+    if (gVSSetupRequestState != 0) {
 
         // ======================
         // 我是 guest：已提醒房主...
@@ -428,6 +428,14 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
             *it = SEED_TALLNUT;
         }
     }
+
+    if (gTcpClientSocket >= 0) {
+        U16x12_Event event{};
+        event.type = EventType::EVENT_VSSETUPMENU_RANDOM_PICK;
+        std::ranges::copy(thePlantSeeds, event.data);
+        std::ranges::copy(theZombieSeeds, event.data + 6);
+        netplay::PutEvent(event);
+    }
 }
 
 size_t VSSetupMenu::getClientEventSize(EventType type) {
@@ -522,15 +530,15 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             chosenSeed.mSeedType = seedType;
             seedChooser->ClickedSeedInChooser_Orgin(chosenSeed, ownerPlayerIndex);
         } break;
-        case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND: {
-            U8_Event *event1 = (U8_Event *)event;
-            int tmp = VSBackGround;
-            VSBackGround = event1->data;
-            gTcpConnected = false;
-            PickBackgroundImmediately();
-            gTcpConnected = true;
-            VSBackGround = tmp;
-        } break;
+            //        case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND: {
+            //            U8_Event *event1 = (U8_Event *)event;
+            //            int tmp = VSBackGround;
+            //            VSBackGround = event1->data;
+            //            gTcpConnected = false;
+            //            PickBackgroundImmediately();
+            //            gTcpConnected = true;
+            //            VSBackGround = tmp;
+            //        } break;
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
             U16_Event *event1 = (U16_Event *)event;
             Sexy::Widget *theController2Widget = FindWidget(8);
@@ -592,9 +600,7 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             if (theId == VSSetupMenu_Random_Battle && mState == VS_SETUP_STATE_SELECT_BATTLE) { // 随机战场
                 break;
             }
-            gTcpConnected = false;
-            ButtonDepress(theId);
-            gTcpConnected = true;
+            ButtonDepress_Origin(theId);
         } break;
         case EVENT_SERVER_SEEDCHOOSER_BUTTON_DEPRESS: {
             auto *eventBtnDepress = reinterpret_cast<U8_Event *>(event);
@@ -660,17 +666,12 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             seedChooser->ClickedSeedInChooser_Orgin(chosenSeed, ownerPlayerIndex);
         } break;
         case EVENT_VSSETUPMENU_RANDOM_PICK: {
-            U16x12_Event *event1 = (U16x12_Event *)event;
-            gTcpConnected = false;
-            ButtonDepress(VSSetupMenu_Random_Battle);
-            gTcpConnected = true;
+            auto *eventRandPick = reinterpret_cast<U16x12_Event *>(event);
+            ButtonDepress_Origin(VSSetupMenu::VSSetupMenu_Random_Battle);
 
             for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(false) - 1; ++i) {
-                mApp->mBoard->mSeedBank[0]->mSeedPackets[i + 1].SetPacketType(SeedType(event1->data[i]), SeedType::SEED_NONE);
-            }
-
-            for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(true) - 1; ++i) {
-                mApp->mBoard->mSeedBank[1]->mSeedPackets[i + 1].SetPacketType(SeedType(event1->data[i + 6]), SeedType::SEED_NONE);
+                mApp->mBoard->mSeedBank[0]->mSeedPackets[i + 1].SetPacketType(SeedType(eventRandPick->data[i]), SeedType::SEED_NONE);
+                mApp->mBoard->mSeedBank[1]->mSeedPackets[i + 1].SetPacketType(SeedType(eventRandPick->data[i + 6]), SeedType::SEED_NONE);
             }
         } break;
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
@@ -823,6 +824,10 @@ void VSSetupMenu::ButtonDepress(int theId) {
         netplay::PutEvent(event);
     }
 
+    ButtonDepress_Origin(theId);
+}
+
+void VSSetupMenu::ButtonDepress_Origin(int theId) {
     int aNumPackets = mApp->mBoard->GetNumSeedsInBank(false);
 
     SeedBank *aPlantBank = mApp->mBoard->mSeedBank[0];
@@ -875,7 +880,7 @@ void VSSetupMenu::ButtonDepress(int theId) {
                     mAddonWidget->SetDisable(mAddonWidget->mBalancePatchCheckbox);
                     mAddonWidget->SetDisable(mAddonWidget->mBackButton);
                     mAddonWidget->mDrawString = false;
-                    PickBackgroundImmediately();
+                    //                    PickBackgroundImmediately();
                 }
             } break;
 
@@ -913,14 +918,6 @@ void VSSetupMenu::ButtonDepress(int theId) {
 
                 mSetupMode = VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE;
                 CloseVSSetup(false);
-
-                if (gTcpClientSocket >= 0) {
-                    U16x12_Event event;
-                    event.type = EventType::EVENT_VSSETUPMENU_RANDOM_PICK;
-                    std::ranges::copy(aPlantSeeds, event.data);
-                    std::ranges::copy(aZombieSeeds, event.data + 6);
-                    netplay::PutEvent(event);
-                }
             } break;
 
             default:
@@ -946,35 +943,35 @@ void VSSetupMenu::ButtonDepress(int theId) {
     }
 }
 
-void VSSetupMenu::PickBackgroundImmediately() {
-    // 如果修改器里开启了更换场地
-    if (VSBackGround != 0 && VSBackGround != mApp->mBoard->mBackground + 1) {
-
-        if (gTcpConnected) {
-            // 客户端
-            return;
-        }
-
-        for (int i = 0; i < 6; ++i) {
-            mApp->RemoveReanimation(mApp->mBoard->mCoverLayerAnimIDs[i]);
-        }
-        mApp->mBoard->PickBackground(); // 立即更换
-        mApp->mBoard->RemoveAllMowers();
-        mApp->mBoard->RemoveAllPlants();
-        mApp->mBoard->RemoveAllGridItems();
-        mApp->mBoard->mCutScene->mPlacedLawnItems = false;
-        mApp->mBoard->mCutScene->PlaceLawnItems();
-
-
-        if (gTcpClientSocket >= 0) {
-            U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND}, uint8_t(VSBackGround)};
-            netplay::PutEvent(event);
-        }
-    }
-}
+// void VSSetupMenu::PickBackgroundImmediately() {
+//     // 如果修改器里开启了更换场地
+//     if (VSBackGround != 0 && VSBackGround != mApp->mBoard->mBackground + 1) {
+//
+//         if (gTcpConnected) {
+//             // 客户端
+//             return;
+//         }
+//
+//         for (int i = 0; i < 6; ++i) {
+//             mApp->RemoveReanimation(mApp->mBoard->mCoverLayerAnimIDs[i]);
+//         }
+//         mApp->mBoard->PickBackground(); // 立即更换
+//         mApp->mBoard->RemoveAllMowers();
+//         mApp->mBoard->RemoveAllPlants();
+//         mApp->mBoard->RemoveAllGridItems();
+//         mApp->mBoard->mCutScene->mPlacedLawnItems = false;
+//         mApp->mBoard->mCutScene->PlaceLawnItems();
+//
+//
+//         if (gTcpClientSocket >= 0) {
+//             U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND}, uint8_t(VSBackGround)};
+//             netplay::PutEvent(event);
+//         }
+//     }
+// }
 
 void VSSetupMenu::CloseVSSetup(bool theShowGameSelector) {
-    PickBackgroundImmediately();
+    //    PickBackgroundImmediately();
 
     old_VSSetupMenu_CloseVSSetup(this, theShowGameSelector);
 }
