@@ -5874,10 +5874,10 @@ GamepadControls *Board::GetGamepadControlsByPlayerIndex(int thePlayerIndex) {
 
 GridItem *Board::AddACrater_Origin(int theGridX, int theGridY) {
     GridItem *aCrater = mGridItems.DataArrayAlloc();
+    aCrater->mGridItemType = GridItemType::GRIDITEM_CRATER;
+    aCrater->mRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GROUND, theGridY, 1);
     aCrater->mGridX = theGridX;
     aCrater->mGridY = theGridY;
-    aCrater->mGridItemType = GRIDITEM_CRATER;
-    aCrater->mRenderOrder = 10000 * theGridY + 200001;
     return aCrater;
 }
 
@@ -5898,10 +5898,10 @@ GridItem *Board::AddACrater(int theGridX, int theGridY) {
 
 GridItem *Board::AddALadder_Origin(int theGridX, int theGridY) {
     GridItem *aLadder = mGridItems.DataArrayAlloc();
+    aLadder->mGridItemType = GridItemType::GRIDITEM_LADDER;
+    aLadder->mRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PLANT, theGridY, 800);
     aLadder->mGridX = theGridX;
     aLadder->mGridY = theGridY;
-    aLadder->mGridItemType = GRIDITEM_LADDER;
-    aLadder->mRenderOrder = 10000 * theGridY + 302800;
     return aLadder;
 }
 
@@ -5968,7 +5968,6 @@ GridItem *Board::AddAMound(int theGridX, int theGridY, int theMoundLevel) {
     aMound->mGridItemCounter = -Rand(50);
     aMound->mSummonCounter = RandRangeInt(300, 1500);
     aMound->mRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, theGridY, 3);
-    ;
 
     if (gTcpClientSocket >= 0 && mApp->mGameScene == SCENE_PLAYING) {
         U8x3U16x3_Event event{};
