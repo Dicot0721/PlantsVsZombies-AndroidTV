@@ -1219,6 +1219,37 @@ PlantDefinition &GetPlantDefinition(SeedType theSeedType) {
 
 static int GetVSCostDefault(SeedType theSeedType) {
     switch (theSeedType) {
+        case SeedType::SEED_INSTANT_COFFEE:
+        case SeedType::SEED_ZOMBIE_NORMAL:
+        case SeedType::SEED_ZOMBIE_IMP:
+            return 25;
+        case SeedType::SEED_ZOMBIE_GRAVESTONE:
+        case SeedType::SEED_ZOMBIE_TRASHCAN:
+        case SeedType::SEED_ZOMBIE_NEWSPAPER:
+        case SeedType::SEED_ZOMBIE_YETI:
+        case SeedType::SEED_ZOMBIE_PEA_HEAD:
+        case SeedType::SEED_ZOMBIE_SQUASH_HEAD:
+        case SeedType::SEED_ZOMBIE_MOUND:
+            return 50;
+        case SeedType::SEED_SQUASH:
+        case SeedType::SEED_GARLIC:
+        case SeedType::SEED_ZOMBIE_TRAFFIC_CONE:
+        case SeedType::SEED_ZOMBIE_BOBSLED:
+            return 75;
+        case SeedType::SEED_CACTUS:
+        case SeedType::SEED_ZOMBIE_POLEVAULTER:
+        case SeedType::SEED_ZOMBIE_PAIL:
+        case SeedType::SEED_ZOMBIE_SCREEN_DOOR:
+        case SeedType::SEED_ZOMBIE_JACK_IN_THE_BOX:
+        case SeedType::SEED_ZOMBIE_BALLOON:
+        case SeedType::SEED_ZOMBIE_WALLNUT_HEAD:
+            return 100;
+        case SeedType::SEED_TORCHWOOD:
+        case SeedType::SEED_ZOMBIE_BUNGEE:
+        case SeedType::SEED_ZOMBIE_SNORKEL:
+        case SeedType::SEED_ZOMBIE_DOLPHIN_RIDER:
+        case SeedType::SEED_ZOMBIE_JALAPENO_HEAD:
+            return 125;
         case SeedType::SEED_SNOWPEA:
         case SeedType::SEED_REPEATER:
         case SeedType::SEED_ZOMBIE_FOOTBALL:
@@ -1228,50 +1259,19 @@ static int GetVSCostDefault(SeedType theSeedType) {
         case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD:
         case SeedType::SEED_ZOMBIE_TALLNUT_HEAD:
             return 150;
-        case SeedType::SEED_SQUASH:
-        case SeedType::SEED_GARLIC:
-        case SeedType::SEED_ZOMBIE_TRAFFIC_CONE:
-        case SeedType::SEED_ZOMBIE_BOBSLED:
-        case SeedType::SEED_ZOMBIE_MOUND:
-            return 75;
-        case SeedType::SEED_THREEPEATER:
-        case SeedType::SEED_ZOMBIE_CATAPULT:
-            return 200;
-        case SeedType::SEED_TORCHWOOD:
-        case SeedType::SEED_ZOMBIE_BUNGEE:
-        case SeedType::SEED_ZOMBIE_SNORKEL:
-        case SeedType::SEED_ZOMBIE_DOLPHIN_RIDER:
-        case SeedType::SEED_ZOMBIE_JALAPENO_HEAD:
-            return 125;
-        case SeedType::SEED_CACTUS:
-        case SeedType::SEED_ZOMBIE_POLEVAULTER:
-        case SeedType::SEED_ZOMBIE_PAIL:
-        case SeedType::SEED_ZOMBIE_SCREEN_DOOR:
-        case SeedType::SEED_ZOMBIE_JACK_IN_THE_BOX:
-        case SeedType::SEED_ZOMBIE_BALLOON:
-        case SeedType::SEED_ZOMBIE_WALLNUT_HEAD:
-            return 100;
         case SeedType::SEED_STARFRUIT:
         case SeedType::SEED_ZOMBONI:
             return 175;
-        case SeedType::SEED_INSTANT_COFFEE:
-        case SeedType::SEED_ZOMBIE_NORMAL:
-        case SeedType::SEED_ZOMBIE_IMP:
-            return 25;
-        case SeedType::SEED_MELONPULT:
-        case SeedType::SEED_ZOMBIE_FLAG:
-            return 300;
-        case SeedType::SEED_ZOMBIE_GRAVESTONE:
-        case SeedType::SEED_ZOMBIE_TRASHCAN:
-        case SeedType::SEED_ZOMBIE_NEWSPAPER:
-        case SeedType::SEED_ZOMBIE_YETI:
-        case SeedType::SEED_ZOMBIE_PEA_HEAD:
-        case SeedType::SEED_ZOMBIE_SQUASH_HEAD:
-            return 50;
+        case SeedType::SEED_THREEPEATER:
+        case SeedType::SEED_ZOMBIE_CATAPULT:
+            return 200;
         case SeedType::SEED_ZOMBIE_POGO:
             return 225;
         case SeedType::SEED_ZOMBIE_GARGANTUAR:
             return 250;
+        case SeedType::SEED_MELONPULT:
+        case SeedType::SEED_ZOMBIE_FLAG:
+            return 300;
         default:
             return GetPlantDefinition(theSeedType).mSeedCost;
     }

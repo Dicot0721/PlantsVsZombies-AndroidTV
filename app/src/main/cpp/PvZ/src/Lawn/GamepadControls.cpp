@@ -776,14 +776,30 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
             if (aPacketType == SeedType::SEED_ZOMBIE_MOUND) {
                 GridItem *aGraveStone = mBoard->GetGraveStoneAt(aGridX, aGridY);
                 GridItem *aMound = mBoard->GetMoundAt(aGridX, aGridY);
-                if (aGraveStone && mBoard->TakeDeathMoney(aCost)) {
-                    mBoard->AddAMound(aGridX, aGridY, 0);
-                    aGraveStone->GridItemDie();
-                    aSeedPacket->Deactivate();
-                    aSeedPacket->WasPlanted(mPlayerIndex1);
-                } else if (aMound && aMound->mMoundLevel < 4 && mBoard->TakeDeathMoney(aCost)) {
-                    mBoard->AddAMound(aGridX, aGridY, aMound->mMoundLevel + 1);
-                    aMound->GridItemDie();
+
+                int aTargetLevel = -1;
+                GridItem *aTargetGridItem = nullptr;
+
+                if (aGraveStone) {
+                    aTargetLevel = 0;
+                    aTargetGridItem = aGraveStone;
+                } else if (aMound && aMound->mMoundLevel < 4) {
+                    aTargetLevel = aMound->mMoundLevel + 1;
+                    aTargetGridItem = aMound;
+                }
+
+                if (aTargetLevel >= 0 && mBoard->TakeDeathMoney(aCost)) {
+                    mBoard->AddAMound(aGridX, aGridY, aTargetLevel);
+
+                    GridItem *aUpgradeMound = mBoard->GetMoundAt(aGridX, aGridY);
+                    if (aUpgradeMound) {
+                        aUpgradeMound->mVSGraveStoneHealth = 350 + 70 * aTargetLevel;
+                    }
+
+                    if (aTargetGridItem) {
+                        aTargetGridItem->GridItemDie();
+                    }
+
                     aSeedPacket->Deactivate();
                     aSeedPacket->WasPlanted(mPlayerIndex1);
                 }

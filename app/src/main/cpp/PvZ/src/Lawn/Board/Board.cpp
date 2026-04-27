@@ -6086,7 +6086,8 @@ bool Board::CanAddGraveStoneAt(int theGridX, int theGridY) {
     GridItem *aGridItem = nullptr;
     while (IterateGridItems(aGridItem)) {
         if (aGridItem->mGridX == theGridX && aGridItem->mGridY == theGridY) {
-            if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE || aGridItem->mGridItemType == GridItemType::GRIDITEM_CRATER || aGridItem->mGridItemType == GridItemType::GRIDITEM_LADDER)
+            if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE || aGridItem->mGridItemType == GridItemType::GRIDITEM_CRATER || aGridItem->mGridItemType == GridItemType::GRIDITEM_LADDER
+                || aGridItem->mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND /* 禁止墓碑和召唤墓碑叠种 */)
                 return false;
         }
     }

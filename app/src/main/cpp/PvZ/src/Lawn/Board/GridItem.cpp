@@ -440,8 +440,25 @@ void GridItem::UpdateBurialMound() {
 }
 
 int GridItem::GetMoundUpgradeCost() {
-    int aCost = Plant::GetCost(SeedType::SEED_ZOMBIE_MOUND, SeedType::SEED_NONE);
-    return mMoundLevel < 4 ? aCost + 50 * (mMoundLevel + 1) : aCost;
+    int aCost = 0;
+    switch (mMoundLevel) {
+        case 0:
+            aCost = 150;
+            break;
+        case 1:
+            aCost = 200;
+            break;
+        case 2:
+            aCost = 300;
+            break;
+        case 3:
+            aCost = 450;
+            break;
+        default:
+            aCost = Plant::GetCost(SeedType::SEED_ZOMBIE_MOUND, SeedType::SEED_NONE);
+            break;
+    }
+    return aCost;
 }
 
 void GridItem::DrawStinky(Sexy::Graphics *g) {

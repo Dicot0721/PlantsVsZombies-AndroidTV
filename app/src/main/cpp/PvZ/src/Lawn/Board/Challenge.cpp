@@ -792,7 +792,7 @@ void Challenge::MouseDownWhackAZombie(int theX, int theY, int thePlayerIndex) {
 
 bool Challenge::IsMPResourceProducer(SeedType theSeedType) {
     return theSeedType == SeedType::SEED_SUNFLOWER || theSeedType == SeedType::SEED_SUNSHROOM || theSeedType == SeedType::SEED_TWINSUNFLOWER || theSeedType == SeedType::SEED_ZOMBIE_GRAVESTONE
-        || theSeedType == SeedType::SEED_ZOMBIE_MOUND;
+        /* || theSeedType == SeedType::SEED_ZOMBIE_MOUND */;
 }
 
 bool Challenge::IsMPZombieTypeAddInRow(ZombieType theZombieType) {
