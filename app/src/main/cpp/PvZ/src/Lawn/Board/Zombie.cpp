@@ -2521,10 +2521,9 @@ void Zombie::DropHead(unsigned int theDamageFlags) {
         }
     }
 
-    // 负责 大头贴掉头
-    // TODO: 大头贴僵尸掉头时掉饰品(掉 hat 和 eyeWear)
     old_Zombie_DropHead(this, theDamageFlags);
 
+    // 大头贴僵尸掉头时掉饰品(掉帽子和眼镜)
     if (IsZombatarZombie(mZombieType)) {
         Reanimation *aHeadReanim = mApp->ReanimationTryToGet(mBossFireBallReanimID);
         if (aHeadReanim != nullptr) {

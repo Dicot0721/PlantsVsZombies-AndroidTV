@@ -992,6 +992,7 @@ void ZombatarWidget::ButtonDepress(this ZombatarWidget &self, int theId) {
 
         playerInfo->mZombatarEnabled = playerInfo->mZombatarHat != 255 || playerInfo->mZombatarHair != 255 || playerInfo->mZombatarFacialHair != 255 || playerInfo->mZombatarAccessory != 255
             || playerInfo->mZombatarTidBit != 255 || playerInfo->mZombatarEyeWear != 255;
+        playerInfo->SaveDetails();
         gMainMenuZombatarWidget->SetDefault();
         return;
     }

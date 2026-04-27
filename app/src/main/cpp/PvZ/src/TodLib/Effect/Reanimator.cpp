@@ -268,6 +268,7 @@ void Reanimation_GetZombatarTrackIndex(Reanimation *zombatarReanim, int *indexAr
     // char *stringArray[] = {"hats","hair","facialHair","accessories","eyeWear","tidBits"};
     ReanimatorTrack *mTracks = mDefinition->mTracks;
     for (int i = 0; i < 2; ++i) {
+        indexArray[i] = -1;
         for (int j = 0; j < mTrackCount; ++j) {
             const char *mName = (mTracks + j)->mName;
             // LOGD("%s",mName);
@@ -280,7 +281,6 @@ void Reanimation_GetZombatarTrackIndex(Reanimation *zombatarReanim, int *indexAr
                 }
             }
         }
-        indexArray[i] = -1;
     }
 }
 
