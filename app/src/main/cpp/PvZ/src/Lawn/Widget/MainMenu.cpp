@@ -365,14 +365,14 @@ void MainMenu::UpdateHouseReanim() {
     Reanimation *aMainMenuReanim = mApp->ReanimationTryToGet(mMainMenuReanimID);
     if (aMainMenuReanim == nullptr)
         return;
-    Reanimation_SetImageDefinition(aMainMenuReanim, "leaderboards", addonImages.leaderboards);
+    aMainMenuReanim->SetImageDefinition("leaderboards", addonImages.leaderboards);
     if (!showHouse)
         return;
-    Reanimation_SetImageOrigin(aMainMenuReanim, "Hood1", addonImages.hood1_house);
-    Reanimation_SetImageOrigin(aMainMenuReanim, "Hood2", addonImages.hood2_house);
-    Reanimation_SetImageOrigin(aMainMenuReanim, "Hood3", addonImages.hood3_house);
-    Reanimation_SetImageOrigin(aMainMenuReanim, "Hood4", addonImages.hood4_house);
-    Reanimation_SetImageOrigin(aMainMenuReanim, "ground color copy", addonImages.house_hill_house);
+    aMainMenuReanim->SetImageOrigin("Hood1", addonImages.hood1_house);
+    aMainMenuReanim->SetImageOrigin("Hood2", addonImages.hood2_house);
+    aMainMenuReanim->SetImageOrigin("Hood3", addonImages.hood3_house);
+    aMainMenuReanim->SetImageOrigin("Hood4", addonImages.hood4_house);
+    aMainMenuReanim->SetImageOrigin("ground color copy", addonImages.house_hill_house);
     Reanimation *aHouseReanim = mApp->ReanimationTryToGet(mHouseReanimID);
     if (aHouseReanim == nullptr)
         return;
@@ -416,7 +416,7 @@ void MainMenu::EnableButtons() {
     Reanimation *mainMenuReanim = mApp->ReanimationTryToGet(mMainMenuReanimID);
     if (mainMenuReanim == nullptr)
         return;
-    Reanimation_HideTrack(mainMenuReanim, "unlock stem", true);
+    mainMenuReanim->HideTrack("unlock stem", true);
 
     int index[3] = {mainMenuReanim->FindTrackIndex("unlock"), mainMenuReanim->FindTrackIndex("unlock pressed"), mainMenuReanim->FindTrackIndex("unlock selected")};
 

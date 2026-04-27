@@ -294,6 +294,19 @@ public:
     ReanimatorTrackInstance *GetTrackInstanceByName(const char *theTrackName);
     int GetZombatarHatTrackIndex();
     int GetZombatarEyeWearTrackIndex();
+    void SetImageOrigin(const char *theTrackName, Sexy::Image *theImage);
+    void SetImageDefinition(const char *theTrackName, Sexy::Image *theImage);
+    int HideTrack(const char *theTrackName, bool theIsHide);
+    void HideTrackById(int theTrackIndex, bool theIsHide);
+    void HideTrackByPrefix(const char *theTrackPrefix, bool theIsHide);
+    void SetZombatarReanim();
+    void SetZombatarHats(unsigned char theHats, unsigned char theColor);
+    void SetZombatarHair(unsigned char theHair, unsigned char theColor);
+    void SetZombatarFHair(unsigned char theFacialHair, unsigned char theColor);
+    void SetZombatarAccessories(unsigned char theAccessories, unsigned char theColor);
+    void SetZombatarEyeWear(unsigned char theEyeWear, unsigned char theColor);
+    void SetZombatarTidBits(unsigned char theTidBits, unsigned char theColor);
+    void GetZombatarTrackIndex(int *theIndexArray);
 
 protected:
     void _constructor() {
@@ -312,33 +325,6 @@ inline bool (*old_Reanimation_DrawTrack)(Reanimation *reanim, Sexy::Graphics *g,
 inline void (*old_ReanimatorLoadDefinitions)(ReanimationParams *theReanimationParamArray, int theReanimationParamArraySize);
 
 inline void (*old_DefinitionGetCompiledFilePathFromXMLFilePath)(homura::Storage<pvzstl::string> &result, const pvzstl::string &defPathString);
-
-
-void Reanimation_SetImageOrigin(Reanimation *, const char *, Sexy::Image *);
-
-void Reanimation_SetImageDefinition(Reanimation *reanim, const char *trackName, Sexy::Image *theImage);
-
-int Reanimation_HideTrack(Reanimation *reanim, const char *trackName, bool hide);
-
-void Reanimation_HideTrackById(Reanimation *reanim, int trackIndex, bool hide);
-
-void Reanimation_HideTrackByPrefix(Reanimation *reanim, const char *trackPrefix, bool hide);
-
-void Reanimation_SetZombatarReanim(Reanimation *zombatarReanim);
-
-void Reanimation_SetZombatarHats(Reanimation *zombatarReanim, unsigned char hats, unsigned char hatsColor);
-
-void Reanimation_SetZombatarHair(Reanimation *zombatarReanim, unsigned char hair, unsigned char hairColor);
-
-void Reanimation_SetZombatarFHair(Reanimation *zombatarReanim, unsigned char facialHair, unsigned char facialHairColor);
-
-void Reanimation_SetZombatarAccessories(Reanimation *zombatarReanim, unsigned char accessories, unsigned char accessoriesColor);
-
-void Reanimation_SetZombatarEyeWear(Reanimation *zombatarReanim, unsigned char eyeWear, unsigned char eyeWearColor);
-
-void Reanimation_SetZombatarTidBits(Reanimation *zombatarReanim, unsigned char tidBits, unsigned char tidBitsColor);
-
-void Reanimation_GetZombatarTrackIndex(Reanimation *zombatarReanim, int *indexArray);
 
 void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int theReanimationParamArraySize);
 

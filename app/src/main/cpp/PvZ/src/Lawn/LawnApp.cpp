@@ -1038,10 +1038,10 @@ void LawnApp::SetHouseReanim(Reanimation *theHouseAnim) {
     theHouseAnim->PlayReanim(houseControl[currentHouseLevel], ReanimLoopType::REANIM_LOOP, 0, 12.0f);
 
     for (int i = 0; i < 5; ++i) {
-        Reanimation_HideTrackByPrefix(theHouseAnim, housePrefix[i], i != currentHouseType);
+        theHouseAnim->HideTrackByPrefix(housePrefix[i], i != currentHouseType);
     }
 
-    Reanimation_HideTrackByPrefix(theHouseAnim, "achievement", true);
+    theHouseAnim->HideTrackByPrefix("achievement", true);
 }
 
 bool LawnApp::IsIZombieLevel() {

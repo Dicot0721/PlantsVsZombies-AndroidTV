@@ -414,8 +414,8 @@ void GamepadControls::UpdatePreviewReanim() {
                 } else if (aZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR) {
                     zombieReanim->SetImageOverride("anim_head1", Sexy::IMAGE_REANIM_ZOMBIE_GARGANTUAR_HEAD_REDEYE);
                 } else if (aZombieType == ZombieType::ZOMBIE_PEA_HEAD) {
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_head2", true);
+                    zombieReanim->HideTrackByPrefix("anim_hair", true);
+                    zombieReanim->HideTrackByPrefix("anim_head2", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("anim_head1");
                     aTrackInstance->mImageOverride = IMAGE_BLANK;
@@ -425,9 +425,9 @@ void GamepadControls::UpdatePreviewReanim() {
                     zombieReanim->mFrameBasePose = 0;
                     TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 65.0f, -8.0f, 0.2f, -1.0f, 1.0f);
                 } else if (aZombieType == ZombieType::ZOMBIE_WALLNUT_HEAD) {
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_head", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "Zombie_tie", true);
+                    zombieReanim->HideTrackByPrefix("anim_hair", true);
+                    zombieReanim->HideTrackByPrefix("anim_head", true);
+                    zombieReanim->HideTrackByPrefix("Zombie_tie", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("zombie_body");
                     Reanimation *aWallnutHeadReanim = anApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_WALLNUT);
@@ -436,9 +436,9 @@ void GamepadControls::UpdatePreviewReanim() {
                     zombieReanim->mFrameBasePose = 0;
                     TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 50.0f, 0.0f, 0.2f, -0.8f, 0.8f);
                 } else if (aZombieType == ZombieType::ZOMBIE_TALLNUT_HEAD) {
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_head", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "Zombie_tie", true);
+                    zombieReanim->HideTrackByPrefix("anim_hair", true);
+                    zombieReanim->HideTrackByPrefix("anim_head", true);
+                    zombieReanim->HideTrackByPrefix("Zombie_tie", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("zombie_body");
                     Reanimation *aTallnutHeadReanim = anApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_TALLNUT);
@@ -447,9 +447,9 @@ void GamepadControls::UpdatePreviewReanim() {
                     zombieReanim->mFrameBasePose = 0;
                     TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 37.0f, 0.0f, 0.2f, -0.8f, 0.8f);
                 } else if (aZombieType == ZombieType::ZOMBIE_JALAPENO_HEAD) {
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_head", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "Zombie_tie", true);
+                    zombieReanim->HideTrackByPrefix("anim_hair", true);
+                    zombieReanim->HideTrackByPrefix("anim_head", true);
+                    zombieReanim->HideTrackByPrefix("Zombie_tie", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("zombie_body");
                     Reanimation *aJalapenoHeadReanim = anApp->AddReanimation(0.0f, 0.0f, 0, ReanimationType::REANIM_JALAPENO);
@@ -458,8 +458,8 @@ void GamepadControls::UpdatePreviewReanim() {
                     zombieReanim->mFrameBasePose = 0;
                     TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 55.0f, -5.0f, 0.2f, -1.0f, 1.0f);
                 } else if (aZombieType == ZombieType::ZOMBIE_GATLING_HEAD) {
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_head2", true);
+                    zombieReanim->HideTrackByPrefix("anim_hair", true);
+                    zombieReanim->HideTrackByPrefix("anim_head2", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("anim_head1");
                     aTrackInstance->mImageOverride = IMAGE_BLANK;
@@ -469,8 +469,8 @@ void GamepadControls::UpdatePreviewReanim() {
                     zombieReanim->mFrameBasePose = 0;
                     TodScaleRotateTransformMatrix((SexyMatrix3 &)aAttachEffect->mOffset, 65.0f, -5.0f, 0.2f, -1.0f, 1.0f);
                 } else if (aZombieType == ZombieType::ZOMBIE_SQUASH_HEAD) {
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_hair", true);
-                    Reanimation_HideTrackByPrefix(zombieReanim, "anim_head2", true);
+                    zombieReanim->HideTrackByPrefix("anim_hair", true);
+                    zombieReanim->HideTrackByPrefix("anim_head2", true);
                     zombieReanim->SetFramesForLayer("anim_walk2");
                     ReanimatorTrackInstance *aTrackInstance = zombieReanim->GetTrackInstanceByName("anim_head1");
                     aTrackInstance->mImageOverride = IMAGE_BLANK;

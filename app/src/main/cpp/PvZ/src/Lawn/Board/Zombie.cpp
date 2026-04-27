@@ -1995,12 +1995,12 @@ void Zombie::SetZombatarReanim() {
     ReanimatorTrackInstance *aHeadTrackInstance = aBodyReanim->GetTrackInstanceByName("anim_head1");
     aHeadTrackInstance->mImageOverride = IMAGE_BLANK;
     Reanimation *aZombatarHeadReanim = mApp->AddReanimation(0, 0, 0, ReanimationType::REANIM_ZOMBATAR_HEAD);
-    Reanimation_SetZombatarHats(aZombatarHeadReanim, aPlayerInfo->mZombatarHat, aPlayerInfo->mZombatarHatColor);
-    Reanimation_SetZombatarHair(aZombatarHeadReanim, aPlayerInfo->mZombatarHair, aPlayerInfo->mZombatarHairColor);
-    Reanimation_SetZombatarFHair(aZombatarHeadReanim, aPlayerInfo->mZombatarFacialHair, aPlayerInfo->mZombatarFacialHairColor);
-    Reanimation_SetZombatarAccessories(aZombatarHeadReanim, aPlayerInfo->mZombatarAccessory, aPlayerInfo->mZombatarAccessoryColor);
-    Reanimation_SetZombatarEyeWear(aZombatarHeadReanim, aPlayerInfo->mZombatarEyeWear, aPlayerInfo->mZombatarEyeWearColor);
-    Reanimation_SetZombatarTidBits(aZombatarHeadReanim, aPlayerInfo->mZombatarTidBit, aPlayerInfo->mZombatarTidBitColor);
+    aZombatarHeadReanim->SetZombatarHats(aPlayerInfo->mZombatarHat, aPlayerInfo->mZombatarHatColor);
+    aZombatarHeadReanim->SetZombatarHair(aPlayerInfo->mZombatarHair, aPlayerInfo->mZombatarHairColor);
+    aZombatarHeadReanim->SetZombatarFHair(aPlayerInfo->mZombatarFacialHair, aPlayerInfo->mZombatarFacialHairColor);
+    aZombatarHeadReanim->SetZombatarAccessories(aPlayerInfo->mZombatarAccessory, aPlayerInfo->mZombatarAccessoryColor);
+    aZombatarHeadReanim->SetZombatarEyeWear(aPlayerInfo->mZombatarEyeWear, aPlayerInfo->mZombatarEyeWearColor);
+    aZombatarHeadReanim->SetZombatarTidBits(aPlayerInfo->mZombatarTidBit, aPlayerInfo->mZombatarTidBitColor);
     aZombatarHeadReanim->PlayReanim("anim_head_idle", ReanimLoopType::REANIM_LOOP, 0, 15.0);
     aZombatarHeadReanim->AssignRenderGroupToTrack("anim_hair", -1);
     mBossFireBallReanimID = mApp->ReanimationGetID(aZombatarHeadReanim);

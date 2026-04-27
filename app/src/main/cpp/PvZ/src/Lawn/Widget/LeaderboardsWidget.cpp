@@ -173,8 +173,8 @@ LeaderboardsWidget::LeaderboardsWidget(LawnApp *theApp) {
     }
     mLeaderboardReanimations->backgroundReanim[1]->AssignRenderGroupToTrack("survival button 1", 1);                   // 设置无尽模式按钮
     mLeaderboardReanimations->backgroundReanim[1]->SetImageOverride("survival button 1", addonImages.survival_button); // 设置无尽模式按钮
-    Reanimation_HideTrack(mLeaderboardReanimations->backgroundReanim[1], "house 1", true);                             // 隐藏默认房屋
-    Reanimation_HideTrack(mLeaderboardReanimations->backgroundReanim[1], "house achievements 1", true);                // 隐藏默认房屋
+    mLeaderboardReanimations->backgroundReanim[1]->HideTrack("house 1", true);                                         // 隐藏默认房屋
+    mLeaderboardReanimations->backgroundReanim[1]->HideTrack("house achievements 1", true);                            // 隐藏默认房屋
     // Reanimation_HideTrack(this_->mLeaderboardReanimations->backgroundReanim[1],"house 2",true); // 隐藏默认房屋
     // Reanimation_HideTrack(this_->mLeaderboardReanimations->backgroundReanim[1],"house achievements 2",true); // 隐藏默认房屋
 

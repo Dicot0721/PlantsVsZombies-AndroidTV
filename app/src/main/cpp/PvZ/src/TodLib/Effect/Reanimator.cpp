@@ -47,55 +47,54 @@ bool Reanimation::DrawTrack(Sexy::Graphics *g, int theTrackIndex, int theRenderG
     return old_Reanimation_DrawTrack(this, g, theTrackIndex, theRenderGroup, theTriangleGroup);
 }
 
-int Reanimation_HideTrack(Reanimation *reanim, const char *trackName, bool hide) {
-    int trackIndex = reanim->FindTrackIndex(trackName);
+int Reanimation::HideTrack(const char *theTrackName, bool theIsHide) {
+    int trackIndex = FindTrackIndex(theTrackName);
     if (trackIndex != -1) {
-        ReanimatorTrackInstance *reanimatorTrackInstance = reanim->mTrackInstances + trackIndex;
-        reanimatorTrackInstance->mRenderGroup = hide ? RENDER_GROUP_HIDDEN : RENDER_GROUP_NORMAL;
+        ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + trackIndex;
+        reanimatorTrackInstance->mRenderGroup = theIsHide ? RENDER_GROUP_HIDDEN : RENDER_GROUP_NORMAL;
     }
     return trackIndex;
 }
 
-void Reanimation_HideTrackById(Reanimation *reanim, int trackIndex, bool hide) {
-    if (trackIndex != -1) {
-        ReanimatorTrackInstance *reanimatorTrackInstance = reanim->mTrackInstances + trackIndex;
-        reanimatorTrackInstance->mRenderGroup = hide ? RENDER_GROUP_HIDDEN : RENDER_GROUP_NORMAL;
+void Reanimation::HideTrackById(int theTrackIndex, bool theIsHide) {
+    if (theTrackIndex != -1) {
+        ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + theTrackIndex;
+        reanimatorTrackInstance->mRenderGroup = theIsHide ? RENDER_GROUP_HIDDEN : RENDER_GROUP_NORMAL;
     }
 }
 
-void Reanimation_HideTrackByPrefix(Reanimation *reanim, const char *trackPrefix, bool hide) {
-    ReanimatorDefinition *mDefinition = reanim->mDefinition;
-    int mTrackCount = mDefinition->mTrackCount;
-    if (mTrackCount <= 0) {
+void Reanimation::HideTrackByPrefix(const char *theTrackPrefix, bool theIsHide) {
+    int aTrackCount = mDefinition->mTrackCount;
+    if (aTrackCount <= 0) {
         return;
     }
-    ReanimatorTrack *mTracks = mDefinition->mTracks;
-    for (int i = 0; i < mTrackCount; ++i) {
-        const char *mName = (mTracks + i)->mName;
-        if (trackPrefix == nullptr || strstr(mName, trackPrefix) != nullptr) {
-            Reanimation_HideTrackById(reanim, i, hide);
+
+    for (int i = 0; i < aTrackCount; ++i) {
+        const char *aName = (mDefinition->mTracks + i)->mName;
+        if (theTrackPrefix == nullptr || strstr(aName, theTrackPrefix) != nullptr) {
+            HideTrackById(i, theIsHide);
         }
     }
 }
 
-void Reanimation_SetImageOrigin(Reanimation *reanim, const char *trackName, Sexy::Image *theImage) {
+void Reanimation::SetImageOrigin(const char *theTrackName, Sexy::Image *theImage) {
     // 和Reanimation_SetImageOverride不一样的是，这个直接替换原始图像。
-    int theTrackIndex = reanim->FindTrackIndex(trackName);
-    if (theTrackIndex != -1) {
-        ReanimatorTransform *reanimatorTransform = reanim->mReanimatorTransforms + theTrackIndex;
-        reanimatorTransform->mImage = theImage;
+    int aTrackIndex = FindTrackIndex(theTrackName);
+    if (aTrackIndex != -1) {
+        ReanimatorTransform *reanimatorTrack = mReanimatorTransforms + aTrackIndex;
+        reanimatorTrack->mImage = theImage;
     }
 }
 
-void Reanimation_SetImageDefinition(Reanimation *reanim, const char *trackName, Sexy::Image *theImage) {
+void Reanimation::SetImageDefinition(const char *theTrackName, Sexy::Image *theImage) {
     // 和Reanimation_SetImageOrigin不一样的是，这个能对默认动画中没有贴图的生效。
-    int theTrackIndex = reanim->FindTrackIndex(trackName);
-    if (theTrackIndex != -1) {
+    int aTrackIndex = FindTrackIndex(theTrackName);
+    if (aTrackIndex != -1) {
         // ReanimatorFrameTime theFrameTime;
         // Reanimation_GetFrameTime(reanim, &theFrameTime);
-        ReanimatorTrack *reanimatorTrack = reanim->mDefinition->mTracks + theTrackIndex;
-        int mTransformCount = reanimatorTrack->mTransformCount;
-        for (int i = 0; i < mTransformCount; ++i) {
+        ReanimatorTrack *reanimatorTrack = mDefinition->mTracks + aTrackIndex;
+        int aTransformCount = reanimatorTrack->mTransformCount;
+        for (int i = 0; i < aTransformCount; ++i) {
             reanimatorTrack->mTransforms[i].mImage = theImage;
         }
     }
@@ -125,66 +124,66 @@ void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int 
     old_ReanimatorLoadDefinitions(newReanimationParamArray, theReanimationParamArraySize + newReanimationArraySize);
 }
 
-void Reanimation_SetZombatarReanim(Reanimation *zombatarReanim) {
-    Reanimation_HideTrackByPrefix(zombatarReanim, "hats", true);
-    Reanimation_HideTrackByPrefix(zombatarReanim, "hair", true);
-    Reanimation_HideTrackByPrefix(zombatarReanim, "facialHair", true);
-    Reanimation_HideTrackByPrefix(zombatarReanim, "accessories", true);
-    Reanimation_HideTrackByPrefix(zombatarReanim, "eyeWear", true);
-    Reanimation_HideTrackByPrefix(zombatarReanim, "tidBits", true);
-    zombatarReanim->Update(); // 一次Update是必要的，否则绘制出来是Empty
+void Reanimation::SetZombatarReanim() {
+    HideTrackByPrefix("hats", true);
+    HideTrackByPrefix("hair", true);
+    HideTrackByPrefix("facialHair", true);
+    HideTrackByPrefix("accessories", true);
+    HideTrackByPrefix("eyeWear", true);
+    HideTrackByPrefix("tidBits", true);
+    Update(); // 一次Update是必要的，否则绘制出来是Empty
 }
 
-void Reanimation_SetZombatarHats(Reanimation *zombatarReanim, unsigned char hats, unsigned char hatsColor) {
-    Reanimation_HideTrackByPrefix(zombatarReanim, "hats", true);
-    if (hats != 255) {
+void Reanimation::SetZombatarHats(unsigned char theHats, unsigned char theColor) {
+    HideTrackByPrefix("theHats", true);
+    if (theHats != 255) {
         char hatsChar[] = "hats_00";
-        std::format_to_n(std::end(hatsChar) - 3, 2, "{:02}", hats);
-        Reanimation_HideTrackByPrefix(zombatarReanim, hatsChar, false);
-        if (hatsColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::HAT, hats)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(hatsChar);
-            ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
-            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[hatsColor];
+        std::format_to_n(std::end(hatsChar) - 3, 2, "{:02}", theHats);
+        HideTrackByPrefix(hatsChar, false);
+        if (theColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::HAT, theHats)) {
+            int aTrackIndex = FindTrackIndex(hatsChar);
+            ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + aTrackIndex;
+            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[theColor];
         }
     }
-    zombatarReanim->Update(); // 一次Update是必要的，否则绘制出来是Empty
+    Update(); // 一次Update是必要的，否则绘制出来是Empty
 }
 
-void Reanimation_SetZombatarHair(Reanimation *zombatarReanim, unsigned char hair, unsigned char hairColor) {
-    Reanimation_HideTrackByPrefix(zombatarReanim, "hair", true);
-    if (hair != 255) {
+void Reanimation::SetZombatarHair(unsigned char theHair, unsigned char theColor) {
+    HideTrackByPrefix("theHair", true);
+    if (theHair != 255) {
         char hairChar[] = "hair_00";
-        std::format_to_n(std::end(hairChar) - 3, 2, "{:02}", hair);
-        Reanimation_HideTrackByPrefix(zombatarReanim, hairChar, false);
-        if (hairColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::HAIR, hair)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(hairChar);
-            ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
-            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor[hairColor];
+        std::format_to_n(std::end(hairChar) - 3, 2, "{:02}", theHair);
+        HideTrackByPrefix(hairChar, false);
+        if (theColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::HAIR, theHair)) {
+            int aTrackIndex = FindTrackIndex(hairChar);
+            ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + aTrackIndex;
+            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor[theColor];
         }
     }
-    zombatarReanim->Update(); // 一次Update是必要的，否则绘制出来是Empty
+    Update(); // 一次Update是必要的，否则绘制出来是Empty
 }
 
-void Reanimation_SetZombatarFHair(Reanimation *zombatarReanim, unsigned char facialHair, unsigned char facialHairColor) {
-    Reanimation_HideTrackByPrefix(zombatarReanim, "facialHair", true);
-    if (facialHair != 255) {
+void Reanimation::SetZombatarFHair(unsigned char theFacialHair, unsigned char theColor) {
+    HideTrackByPrefix("theFacialHair", true);
+    if (theFacialHair != 255) {
         char facialHairChar[] = "facialHair_00";
-        std::format_to_n(std::end(facialHairChar) - 3, 2, "{:02}", facialHair);
-        Reanimation_HideTrackByPrefix(zombatarReanim, facialHairChar, false);
-        if (facialHairColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::FHAIR, facialHair)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(facialHairChar);
-            ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
-            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor[facialHairColor];
+        std::format_to_n(std::end(facialHairChar) - 3, 2, "{:02}", theFacialHair);
+        HideTrackByPrefix(facialHairChar, false);
+        if (theColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::FHAIR, theFacialHair)) {
+            int aTrackIndex = FindTrackIndex(facialHairChar);
+            ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + aTrackIndex;
+            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor[theColor];
         }
     }
-    zombatarReanim->Update(); // 一次Update是必要的，否则绘制出来是Empty
+    Update(); // 一次Update是必要的，否则绘制出来是Empty
 }
 
-void Reanimation_SetZombatarAccessories(Reanimation *zombatarReanim, unsigned char accessories, unsigned char accessoriesColor) {
-    Reanimation_HideTrackByPrefix(zombatarReanim, "accessories", true);
-    if (accessories != 255) {
+void Reanimation::SetZombatarAccessories(unsigned char theAccessories, unsigned char theColor) {
+    HideTrackByPrefix("theAccessories", true);
+    if (theAccessories != 255) {
         unsigned char accessoriesFix;
-        switch (accessories) {
+        switch (theAccessories) {
             case 5:
                 accessoriesFix = 14;
                 break;
@@ -213,70 +212,68 @@ void Reanimation_SetZombatarAccessories(Reanimation *zombatarReanim, unsigned ch
                 accessoriesFix = 8;
                 break;
             default:
-                accessoriesFix = accessories;
+                accessoriesFix = theAccessories;
                 break;
         }
         char accessoriesChar[] = "accessories_00";
         std::format_to_n(std::end(accessoriesChar) - 3, 2, "{:02}", accessoriesFix);
-        Reanimation_HideTrackByPrefix(zombatarReanim, accessoriesChar, false);
-        if (accessoriesColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::ACCESSORY, accessories)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(accessoriesChar);
-            ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
-            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[accessoriesColor];
+        HideTrackByPrefix(accessoriesChar, false);
+        if (theColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::ACCESSORY, theAccessories)) {
+            int aTrackIndex = FindTrackIndex(accessoriesChar);
+            ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + aTrackIndex;
+            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[theColor];
         }
     }
-    zombatarReanim->Update(); // 一次Update是必要的，否则绘制出来是Empty
+    Update(); // 一次Update是必要的，否则绘制出来是Empty
 }
 
-void Reanimation_SetZombatarEyeWear(Reanimation *zombatarReanim, unsigned char eyeWear, unsigned char eyeWearColor) {
-    Reanimation_HideTrackByPrefix(zombatarReanim, "eyeWear", true);
-    if (eyeWear != 255) {
+void Reanimation::SetZombatarEyeWear(unsigned char theEyeWear, unsigned char theColor) {
+    HideTrackByPrefix("theEyeWear", true);
+    if (theEyeWear != 255) {
         char eyeWearChar[] = "eyeWear_00";
-        std::format_to_n(std::end(eyeWearChar) - 3, 2, "{:02}", eyeWear);
-        Reanimation_HideTrackByPrefix(zombatarReanim, eyeWearChar, false);
-        if (eyeWearColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::EYEWEAR, eyeWear)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(eyeWearChar);
-            ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
-            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[eyeWearColor];
+        std::format_to_n(std::end(eyeWearChar) - 3, 2, "{:02}", theEyeWear);
+        HideTrackByPrefix(eyeWearChar, false);
+        if (theColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::EYEWEAR, theEyeWear)) {
+            int aTrackIndex = FindTrackIndex(eyeWearChar);
+            ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + aTrackIndex;
+            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[theColor];
         }
     }
-    zombatarReanim->Update(); // 一次Update是必要的，否则绘制出来是Empty
+    Update(); // 一次Update是必要的，否则绘制出来是Empty
 }
 
-void Reanimation_SetZombatarTidBits(Reanimation *zombatarReanim, unsigned char tidBits, unsigned char tidBitsColor) {
-    Reanimation_HideTrackByPrefix(zombatarReanim, "tidBits", true);
-    if (tidBits != 255) {
+void Reanimation::SetZombatarTidBits(unsigned char theTidBits, unsigned char theColor) {
+    HideTrackByPrefix("theTidBits", true);
+    if (theTidBits != 255) {
         char tidBitsChar[] = "tidBits_00";
-        std::format_to_n(std::end(tidBitsChar) - 3, 2, "{:02}", tidBits);
-        Reanimation_HideTrackByPrefix(zombatarReanim, tidBitsChar, false);
-        if (tidBitsColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::TIDBIT, tidBits)) {
-            int theTrackIndex = zombatarReanim->FindTrackIndex(tidBitsChar);
-            ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + theTrackIndex;
-            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[tidBitsColor];
+        std::format_to_n(std::end(tidBitsChar) - 3, 2, "{:02}", theTidBits);
+        HideTrackByPrefix(tidBitsChar, false);
+        if (theColor != 255 && ZombatarWidget::AccessoryIsColorized(ZombatarWidget::TIDBIT, theTidBits)) {
+            int aTrackIndex = FindTrackIndex(tidBitsChar);
+            ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + aTrackIndex;
+            reanimatorTrackInstance->mTrackColor = gZombatarAccessoryColor2[theColor];
         }
     }
-    zombatarReanim->Update(); // 一次Update是必要的，否则绘制出来是Empty
+    Update(); // 一次Update是必要的，否则绘制出来是Empty
 }
 
-void Reanimation_GetZombatarTrackIndex(Reanimation *zombatarReanim, int *indexArray) {
-    ReanimatorDefinition *mDefinition = zombatarReanim->mDefinition;
-    int mTrackCount = mDefinition->mTrackCount;
-    if (mTrackCount <= 0) {
+void Reanimation::GetZombatarTrackIndex(int *theIndexArray) {
+    int aTrackCount = mDefinition->mTrackCount;
+    if (aTrackCount <= 0) {
         return;
     }
     const char *stringArray[] = {"hats", "eyeWear"};
     // char *stringArray[] = {"hats","hair","facialHair","accessories","eyeWear","tidBits"};
-    ReanimatorTrack *mTracks = mDefinition->mTracks;
     for (int i = 0; i < 2; ++i) {
-        indexArray[i] = -1;
-        for (int j = 0; j < mTrackCount; ++j) {
-            const char *mName = (mTracks + j)->mName;
+        theIndexArray[i] = -1;
+        for (int j = 0; j < aTrackCount; ++j) {
+            const char *aName = (mDefinition->mTracks + j)->mName;
             // LOGD("%s",mName);
-            if (strstr(mName, stringArray[i]) != nullptr) {
-                ReanimatorTrackInstance *reanimatorTrackInstance = zombatarReanim->mTrackInstances + j;
+            if (strstr(aName, stringArray[i]) != nullptr) {
+                ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + j;
                 // LOGD("%d",reanimatorTrackInstance->mRenderGroup);
                 if (reanimatorTrackInstance->mRenderGroup != -1) {
-                    indexArray[i] = j;
+                    theIndexArray[i] = j;
                     break;
                 }
             }
@@ -285,19 +282,18 @@ void Reanimation_GetZombatarTrackIndex(Reanimation *zombatarReanim, int *indexAr
 }
 
 int Reanimation::GetZombatarHatTrackIndex() {
-    int mTrackCount = mDefinition->mTrackCount;
-    if (mTrackCount <= 0) {
+    int aTrackCount = mDefinition->mTrackCount;
+    if (aTrackCount <= 0) {
         return -1;
     }
     std::regex pattern(R"(hats_\d{2})");
 
 
     // char *stringArray[] = {"hats","hair","facialHair","accessories","eyeWear","tidBits"};
-    ReanimatorTrack *mTracks = mDefinition->mTracks;
-    for (int j = 0; j < mTrackCount; ++j) {
-        const char *mName = (mTracks + j)->mName;
+    for (int j = 0; j < aTrackCount; ++j) {
+        const char *aName = (mDefinition->mTracks + j)->mName;
         // LOGD("%s,%d",mName,std::regex_match(mName, pattern));
-        if (std::regex_match(mName, pattern)) {
+        if (std::regex_match(aName, pattern)) {
             ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + j;
             if (reanimatorTrackInstance->mRenderGroup != -1) {
                 return j;
@@ -308,17 +304,16 @@ int Reanimation::GetZombatarHatTrackIndex() {
 }
 
 int Reanimation::GetZombatarEyeWearTrackIndex() {
-    int mTrackCount = mDefinition->mTrackCount;
-    if (mTrackCount <= 0) {
+    int aTrackCount = mDefinition->mTrackCount;
+    if (aTrackCount <= 0) {
         return -1;
     }
     std::regex pattern(R"(eyeWear_\d{2})");
 
-    ReanimatorTrack *mTracks = mDefinition->mTracks;
-    for (int j = 0; j < mTrackCount; ++j) {
-        const char *mName = (mTracks + j)->mName;
+    for (int j = 0; j < aTrackCount; ++j) {
+        const char *aName = (mDefinition->mTracks + j)->mName;
         // LOGD("%s,%d",mName,std::regex_match(mName, pattern));
-        if (std::regex_match(mName, pattern)) {
+        if (std::regex_match(aName, pattern)) {
             ReanimatorTrackInstance *reanimatorTrackInstance = mTrackInstances + j;
             if (reanimatorTrackInstance->mRenderGroup != -1) {
                 return j;
