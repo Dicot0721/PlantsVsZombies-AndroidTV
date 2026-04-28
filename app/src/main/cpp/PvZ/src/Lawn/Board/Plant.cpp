@@ -253,6 +253,10 @@ bool Plant::IsOnBoard() {
     return true;
 }
 
+bool Plant::IsOnHighGround() {
+    return mBoard && mBoard->mGridSquareType[mPlantCol][mRow] == GridSquareType::GRIDSQUARE_HIGH_GROUND;
+}
+
 bool Plant::IsInPlay() {
     return IsOnBoard() && mApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN && mApp->mGameMode != GameMode::GAMEMODE_TREE_OF_WISDOM;
 }
@@ -768,6 +772,81 @@ void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon
     }
 
     Fire_Origin(theTargetZombie, theRow, thePlantWeapon, theTargetGridItem);
+}
+
+void Plant::DoRowAreaDamage(int theDamage, unsigned int theDamageFlags) {
+    int aDamageRangeFlags = GetDamageRangeFlags(PlantWeapon::WEAPON_PRIMARY);
+    Rect aAttackRect = GetPlantAttackRect(PlantWeapon::WEAPON_PRIMARY);
+
+    Zombie *aZombie = nullptr;
+    while (mBoard->IterateZombies(aZombie)) {
+        int aDiffY = (aZombie->mZombieType == ZombieType::ZOMBIE_BOSS) ? 0 : (aZombie->mRow - mRow);
+        if (mSeedType == SeedType::SEED_GLOOMSHROOM) {
+            if (aDiffY < -1 || aDiffY > 1)
+                continue;
+        } else if (aDiffY) {
+            continue;
+        }
+
+        if (aZombie->mOnHighGround == IsOnHighGround() && aZombie->EffectedByDamage(aDamageRangeFlags)) {
+            Rect aZombieRect = aZombie->GetZombieRect();
+            if (GetRectOverlap(aAttackRect, aZombieRect) > 0) {
+                int aDamage = theDamage;
+                if ((aZombie->mZombieType == ZombieType::ZOMBIE_ZAMBONI || aZombie->mZombieType == ZombieType::ZOMBIE_CATAPULT) && TestBit(theDamageFlags, DamageFlags::DAMAGE_SPIKE)) {
+                    aDamage = 1800;
+
+                    if (mSeedType == SeedType::SEED_SPIKEROCK) {
+                        SpikeRockTakeDamage();
+                    } else {
+                        Die();
+                    }
+                }
+
+                aZombie->TakeDamage(aDamage, theDamageFlags);
+                mApp->PlayFoley(FoleyType::FOLEY_SPLAT);
+            }
+        }
+    }
+
+    // 对战模式下，大喷菇会命中前方最近的墓碑/靶子。这里补充召唤墓碑同逻辑。
+    if (mSeedType == SeedType::SEED_FUMESHROOM && mApp->IsVSMode()) {
+        int aStartGridX = mBoard->PixelToGridX(mX, mY);
+        for (int aDist = 1; aDist <= 3; ++aDist) {
+            int aGridX = aStartGridX + aDist;
+            GridItem *aGridItem = mBoard->GetGridItemAt(GridItemType::GRIDITEM_GRAVESTONE, aGridX, mRow);
+            if (!aGridItem) {
+                aGridItem = mBoard->GetGridItemAt(GridItemType::GRIDITEM_MP_BURIAL_MOUND, aGridX, mRow);
+            }
+            if (!aGridItem) {
+                aGridItem = mBoard->GetGridItemAt(GridItemType::GRIDITEM_MP_TARGET_ZOMBIE, aGridX, mRow);
+            }
+            if (aGridItem) {
+                aGridItem->TakeDamgae(theDamage, theDamageFlags);
+                return;
+            }
+        }
+        return;
+    }
+
+    GridItem *aGridItem = nullptr;
+    while (mBoard->IterateGridItems(aGridItem)) {
+        int aDiffY = aGridItem->mGridY - mRow;
+        if (mSeedType == SeedType::SEED_GLOOMSHROOM) {
+            if (aDiffY < -1 || aDiffY > 1) {
+                continue;
+            }
+        } else if (aDiffY) {
+            continue;
+        }
+
+        Rect aGridItemRect = aGridItem->GetItemRect();
+        if (GetRectOverlap(aAttackRect, aGridItemRect) <= 0) {
+            continue;
+        }
+
+        aGridItem->TakeDamgae(theDamage, theDamageFlags);
+        mApp->PlayFoley(FoleyType::FOLEY_SPLAT);
+    }
 }
 
 void Plant::Fire_Origin(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem) {

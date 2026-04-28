@@ -227,9 +227,7 @@ public:
     void RemoveEffects() {
         reinterpret_cast<void (*)(Plant *)>(Plant_RemoveEffectsAddr)(this);
     }
-    void DoRowAreaDamage(int theDamage, unsigned int theDamageFlags) {
-        reinterpret_cast<void (*)(Plant *, int, unsigned int)>(Plant_DoRowAreaDamageAddr)(this, theDamage, theDamageFlags);
-    }
+    void DoRowAreaDamage(int theDamage, unsigned int theDamageFlags);
     void StarFruitFire() {
         reinterpret_cast<void (*)(Plant *)>(Plant_StarFruitFireAddr)(this);
     }
@@ -283,6 +281,7 @@ public:
     void SetSleeping(bool theIsAsleep);
     void UpdateReanimColor();
     bool IsOnBoard();
+    bool IsOnHighGround();
     bool IsInPlay();
     void PlayBodyReanim(const char *theTrackName, ReanimLoopType theLoopType, int theBlendTime, float theAnimRate);
     void SpikeweedAttack();
@@ -360,6 +359,8 @@ inline void (*old_Plant_PlayBodyReanim)(Plant *, const char *theTrackName, Reani
 inline void (*old_Plant_UpdateProductionPlant)(Plant *);
 
 inline void (*old_Plant_UpdateShooter)(Plant *);
+
+inline void (*old_Plant_DoRowAreaDamage)(Plant *, int, unsigned int);
 
 inline bool (*old_Plant_FindTargetAndFire)(Plant *, int, PlantWeapon);
 

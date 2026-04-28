@@ -75,9 +75,7 @@ public:
     void DoImpactGridItem(GridItem *theGridItem) {
         return reinterpret_cast<void (*)(Projectile *, GridItem *)>(Projectile_DoImpactGridItemAddr)(this, theGridItem);
     }
-    void DoSplashDamage(Zombie *theZombie, GridItem *theGridItem) {
-        reinterpret_cast<void (*)(Projectile *, Zombie *, GridItem *)>(Projectile_DoSplashDamageAddr)(this, theZombie, theGridItem);
-    }
+    void DoSplashDamage(Zombie *theZombie, GridItem *theGridItem);
 
     void ProjectileInitialize(int theX, int theY, int theRenderOrder, int theRow, ProjectileType theProjectileType);
     void ConvertToFireball(int theGridX);
@@ -97,6 +95,8 @@ public:
     unsigned int GetDamageFlags(Zombie *theZombie);
     bool PeaAboutToHitTorchwood();
     Zombie *FindCollisionTarget();
+    bool IsZombieHitBySplash(Zombie *theZombie);
+    bool IsGridItemHitBySplash(GridItem *theGridItem);
     void Draw(Sexy::Graphics *g);
     void DrawShadow(Sexy::Graphics *g);
 };
@@ -132,5 +132,7 @@ inline void (*old_Projectile_Draw)(Projectile *, Sexy::Graphics *);
 inline void (*old_Projectile_DrawShadow)(Projectile *, Sexy::Graphics *);
 
 inline void (*old_Projectile_UpdateNormalMotion)(Projectile *);
+
+inline void (*old_Projectile_DoSplashDamage)(Projectile *, Zombie *, GridItem *);
 
 #endif // PVZ_LAWN_BOARD_PROJECTILE_H

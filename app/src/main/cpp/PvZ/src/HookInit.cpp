@@ -343,6 +343,7 @@ void InitHookFunction() {
     homura::HookFunction(Plant_PlayBodyReanimAddr, &Plant::PlayBodyReanim, &old_Plant_PlayBodyReanim);
     homura::HookFunction(Plant_UpdateProductionPlantAddr, &Plant::UpdateProductionPlant, &old_Plant_UpdateProductionPlant);
     homura::HookFunction(Plant_FireAddr, &Plant::Fire, nullptr);
+    homura::HookFunction(Plant_DoRowAreaDamageAddr, &Plant::DoRowAreaDamage, nullptr);
     //    homura::HookFunction(Plant_UpdateShootingAddr, &Plant::UpdateShooting, nullptr);
     homura::HookFunction(Plant_UpdateShooterAddr, &Plant::UpdateShooter, nullptr);
     homura::HookFunction(Plant_IceZombiesAddr, &Plant::IceZombies, nullptr);
@@ -361,6 +362,7 @@ void InitHookFunction() {
     homura::HookFunction(Projectile_UpdateAddr, &Projectile::Update, &old_Projectile_Update);
     homura::HookFunction(Projectile_UpdateNormalMotionAddr, &Projectile::UpdateNormalMotion, &old_Projectile_UpdateNormalMotion);
     homura::HookFunction(Projectile_DoImpactAddr, &Projectile::DoImpact, &old_Projectile_DoImpact);
+    homura::HookFunction(Projectile_DoSplashDamageAddr, &Projectile::DoSplashDamage, &old_Projectile_DoSplashDamage);
     homura::HookFunction(Projectile_CheckForCollisionAddr, &Projectile::CheckForCollision, nullptr);
     homura::HookFunction(Projectile_GetProjectileDefAddr, &Projectile::GetProjectileDef, nullptr);
     homura::HookFunction(Projectile_DrawAddr, &Projectile::Draw, &old_Projectile_Draw);

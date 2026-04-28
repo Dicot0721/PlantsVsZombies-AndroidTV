@@ -705,6 +705,10 @@ void GridItem::DrawMPTarget(Graphics *g) {
     old_GridItem_DrawMPTarget(this, g);
 }
 
+Rect GridItem::GetItemRect() {
+    return Rect(mBoard->GridToPixelX(mGridX, mGridY), mBoard->GridToPixelY(mGridX, mGridY), 63, 80);
+}
+
 void GridItem::TakeDamgae(int theDamage, unsigned int theDamageFlags) {
     //    if (!mApp->IsVSMode())
     //        return;

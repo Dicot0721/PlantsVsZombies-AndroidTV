@@ -113,6 +113,7 @@ public:
     void DrawMPTarget(Sexy::Graphics *g);
     void TakeDamgae(int theDamage, unsigned int theDamageFlags);
     void DrawBurialMound(Sexy::Graphics *g);
+    Sexy::Rect GetItemRect();
 
 protected:
     friend void InitHookFunction();

@@ -241,6 +241,52 @@ void Projectile::UpdateNormalMotion() {
     old_Projectile_UpdateNormalMotion(this);
 }
 
+void Projectile::DoSplashDamage(Zombie *theZombie, GridItem *theGridItem) {
+    const ProjectileDefinition &aProjectileDef = GetProjectileDef();
+
+    int aTargetsGetSplashed = 0;
+    Zombie *aZombie = nullptr;
+    while (mBoard->IterateZombies(aZombie)) {
+        if (aZombie != theZombie && IsZombieHitBySplash(aZombie)) {
+            ++aTargetsGetSplashed;
+        }
+    }
+
+    GridItem *aGridItem = nullptr;
+    while (mBoard->IterateGridItems(aGridItem)) {
+        if (aGridItem != theGridItem && IsGridItemHitBySplash(aGridItem)) {
+            ++aTargetsGetSplashed;
+        }
+    }
+
+    int aOriginalDamage = aProjectileDef.mDamage;
+    int aSplashDamage = aProjectileDef.mDamage / 3;
+    int aSplashDamageBudget = (mProjectileType == ProjectileType::PROJECTILE_FIREBALL) ? aOriginalDamage : (aOriginalDamage * 7);
+    if (aTargetsGetSplashed > 0 && aSplashDamage > 0) {
+        int aTotalSplashDamage = aTargetsGetSplashed * aSplashDamage;
+        if (aSplashDamageBudget < aTotalSplashDamage) {
+            int aScaledSplashDamage = aOriginalDamage * aSplashDamageBudget / (3 * aTargetsGetSplashed * aSplashDamage);
+            aSplashDamage = aScaledSplashDamage < 1 ? 1 : aScaledSplashDamage;
+        }
+    }
+
+    aZombie = nullptr;
+    while (mBoard->IterateZombies(aZombie)) {
+        if (IsZombieHitBySplash(aZombie)) {
+            unsigned int aDamageFlags = GetDamageFlags(aZombie);
+            int aDamage = (aZombie == theZombie) ? aOriginalDamage : aSplashDamage;
+            aZombie->TakeDamage(aDamage, aDamageFlags);
+        }
+    }
+
+    aGridItem = nullptr;
+    while (mBoard->IterateGridItems(aGridItem)) {
+        if (IsGridItemHitBySplash(aGridItem) && aGridItem == theGridItem) {
+            aGridItem->TakeDamgae(aOriginalDamage, 0U);
+        }
+    }
+}
+
 
 void Projectile::PlayImpactSound(Zombie *theZombie) {
     bool aPlayHelmSound = true;
@@ -549,6 +595,58 @@ bool Projectile::CantHitHighGround() {
     return (mProjectileType == ProjectileType::PROJECTILE_PEA || mProjectileType == ProjectileType::PROJECTILE_SNOWPEA || mProjectileType == ProjectileType::PROJECTILE_STAR
             || mProjectileType == ProjectileType::PROJECTILE_PUFF || mProjectileType == ProjectileType::PROJECTILE_FIREBALL)
         && !mOnHighGround;
+}
+
+bool Projectile::IsZombieHitBySplash(Zombie *theZombie) {
+    Rect aProjectileRect = GetProjectileRect();
+    if (mProjectileType == ProjectileType::PROJECTILE_FIREBALL) {
+        aProjectileRect.mWidth = 100;
+    }
+
+    int aRowDeviation = theZombie->mRow - mRow;
+    Rect aZombieRect = theZombie->GetZombieRect();
+    if (theZombie->IsFireResistant() && mProjectileType == ProjectileType::PROJECTILE_FIREBALL) {
+        return false;
+    }
+
+    if (theZombie->mZombieType == ZombieType::ZOMBIE_BOSS) {
+        aRowDeviation = 0;
+    }
+    if (mProjectileType == ProjectileType::PROJECTILE_FIREBALL) {
+        if (aRowDeviation != 0) {
+            return false;
+        }
+    } else if (aRowDeviation > 1 || aRowDeviation < -1) {
+        return false;
+    }
+
+    return theZombie->EffectedByDamage((unsigned int)mDamageRangeFlags) && GetRectOverlap(aProjectileRect, aZombieRect) >= 0;
+}
+
+bool Projectile::IsGridItemHitBySplash(GridItem *theGridItem) {
+    if (theGridItem == nullptr) {
+        return false;
+    }
+
+    GridItemType aGridItemType = theGridItem->mGridItemType;
+    bool isSplashTarget = aGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE || aGridItemType == GridItemType::GRIDITEM_GRAVESTONE || aGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND;
+    if (!isSplashTarget) {
+        return false;
+    }
+
+    Rect aProjectileRect = GetProjectileRect();
+    int aRowDeviation = theGridItem->mGridY - mRow;
+    if (mProjectileType == ProjectileType::PROJECTILE_FIREBALL) {
+        aProjectileRect.mWidth = 100;
+        if (aRowDeviation != 0) {
+            return false;
+        }
+    } else if (aRowDeviation > 1 || aRowDeviation < -1) {
+        return false;
+    }
+
+    Rect aGridItemRect = theGridItem->GetItemRect();
+    return GetRectOverlap(aProjectileRect, aGridItemRect) >= 0;
 }
 
 bool Projectile::IsSplashDamage(Zombie *theZombie) {
