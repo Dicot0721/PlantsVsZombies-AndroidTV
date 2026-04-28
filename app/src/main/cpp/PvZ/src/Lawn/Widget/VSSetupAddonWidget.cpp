@@ -71,12 +71,12 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     mBanModeCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
     mBalancePatchCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BALANCE_PATCH_Y, 175, 50);
 
-    if (gIsVSShuffleMode) {
+    if (Challenge::msVSShuffleMode) {
         SetDisable(mExtraPacketsCheckbox);
         SetDisable(mExtraSeedsCheckbox);
         SetDisable(mBanModeCheckbox);
+        SetDisable(mBalancePatchCheckbox);
         mBanMode = false;
-        mBanModeCheckbox->SetChecked(false, false);
     }
 }
 

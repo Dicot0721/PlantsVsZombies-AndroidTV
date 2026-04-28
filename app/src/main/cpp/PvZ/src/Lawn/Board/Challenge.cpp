@@ -424,7 +424,7 @@ void Challenge::InitLevel() {
             gVSAddUnderPlantsCounter = 2000;
         }
     } else {
-        gIsVSShuffleMode = false;
+        Challenge::msVSShuffleMode = false;
     }
 }
 

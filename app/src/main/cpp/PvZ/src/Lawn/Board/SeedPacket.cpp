@@ -204,7 +204,7 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
 
         bool aIsProducer = Challenge::IsMPResourceProducer(mPacketType);
         bool aIsShuffle = mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE || mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE;
-        if (gIsVSShuffleMode) {
+        if (Challenge::msVSShuffleMode) {
             if (!aIsProducer && !aIsShuffle) {
                 mRefreshTime = 0;
                 mRefreshing = false;
@@ -216,7 +216,7 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
 
 void SeedPacket::SetNextRandomSeed() {
     // 仅刷牌模式生效
-    if (!gIsVSShuffleMode)
+    if (!Challenge::msVSShuffleMode)
         return;
 
     // 不更换生产者和刷牌按钮

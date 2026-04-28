@@ -246,7 +246,7 @@ void ChallengeScreen::_constructor(LawnApp *theApp, ChallengePage thePage) {
 
     if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS) {
         mTotalGameInPage = NUM_VS_MODES;
-        gIsVSShuffleMode = false;
+        Challenge::msVSShuffleMode = false;
         gChallengeScreenRequestState = 0;
     }
 }
@@ -647,7 +647,7 @@ void ChallengeScreen::KeyDown_Origin(Sexy::KeyCode theKey) {
                     break;
                 case GAMEMODE_MP_VS_SHUFFLE_MODE:
                     gVSBackground = BackgroundType::BACKGROUND_1_DAY;
-                    gIsVSShuffleMode = true;
+                    Challenge::msVSShuffleMode = true;
                     break;
                 default:
                     break;

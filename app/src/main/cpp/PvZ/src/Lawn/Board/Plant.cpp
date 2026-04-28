@@ -1472,6 +1472,25 @@ static int GetVSCostBalanced(SeedType theSeedType) {
     return aCost;
 }
 
+static int GetVSCostShuffle(SeedType theSeedType) {
+    int aCost = GetVSCostDefault(theSeedType);
+    switch (theSeedType) {
+        case SeedType::SEED_ICESHROOM:   // 75 -> 50
+        case SeedType::SEED_GRAVEBUSTER: // 75 -> 50
+            return 50;
+        case SeedType::SEED_TORCHWOOD:  // 125 -> 175
+        case SeedType::SEED_DOOMSHROOM: // 125 -> 175
+            return 175;
+        case SeedType::SEED_MELONPULT: // 300 -> 225
+            return 225;
+        case SeedType::SEED_ZOMBIE_FLAG: // 300 -> 250
+            return 250;
+        default:
+            break;
+    }
+    return aCost;
+}
+
 static int GetVSRefreshTimeBalanced(SeedType theSeedType) {
     int aRefreshTime = GetVSRefreshTimeDefault(theSeedType);
     switch (theSeedType) {
@@ -1495,6 +1514,17 @@ static int GetVSRefreshTimeBalanced(SeedType theSeedType) {
     }
 }
 
+static int GetVSRefreshTimeShuffle(SeedType theSeedType) {
+    int aRefreshTime = GetVSRefreshTimeDefault(theSeedType);
+    switch (theSeedType) {
+        case SeedType::SEED_SNOWPEA:  // 7.5 -> 15
+        case SeedType::SEED_REPEATER: // 7.5 -> 15
+        default:
+            break;
+    }
+    return aRefreshTime;
+}
+
 int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
     if (gLawnApp->IsVSMode()) {
         if (theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
@@ -1509,6 +1539,9 @@ int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
 
         if (theSeedType == SeedType::SEED_IMITATER && theImitaterType != SeedType::SEED_NONE) {
             theSeedType = theImitaterType;
+        }
+        if (Challenge::msVSShuffleMode) {
+            return GetVSCostShuffle(theSeedType);
         }
         return VSSetupAddonWidget::msBalancePatchMode ? GetVSCostBalanced(theSeedType) : GetVSCostDefault(theSeedType);
     }
@@ -1528,7 +1561,8 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
         if (theSeedType == SeedType::SEED_IMITATER && theImitaterType != SeedType::SEED_NONE) {
             theSeedType = theImitaterType;
         }
-        int aRefreshTime = VSSetupAddonWidget::msBalancePatchMode ? GetVSRefreshTimeBalanced(theSeedType) : GetVSRefreshTimeDefault(theSeedType);
+        int aRefreshTime =
+            Challenge::msVSShuffleMode ? GetVSRefreshTimeShuffle(theSeedType) : (VSSetupAddonWidget::msBalancePatchMode ? GetVSRefreshTimeBalanced(theSeedType) : GetVSRefreshTimeDefault(theSeedType));
         if (gLawnApp->mBoard->mChallenge->IsMPSuddenDeath() && Challenge::gVSSuddenDeathMode == 1) {
             // sd不减冷却的卡片
             switch (theSeedType) { // 此处用switch-case替换旧的if-else，方便后续增删
@@ -1549,8 +1583,8 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_JALAPENO:
                 case SeedType::SEED_DOOMSHROOM:
                 case SeedType::SEED_ICESHROOM:
-                    if (VSSetupAddonWidget::msBalancePatchMode)
-                        return aRefreshTime / 3 * 2;
+                    if (Challenge::msVSShuffleMode || VSSetupAddonWidget::msBalancePatchMode)
+                        return aRefreshTime / 2;
                 default:
                     return aRefreshTime / 3;
             }

@@ -743,7 +743,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
     if (theState == VSSetupState::VS_SETUP_STATE_SIDES) {
         drawTipArrowAlphaCounter = 0;
 
-        if (gTcpClientSocket >= 0) {
+        if (gTcpClientSocket >= 0 && !Challenge::msVSShuffleMode) {
             B1x8_Event event = {
                 {EventType::EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT},
                 mAddonWidget->mExtraPacketsMode,
@@ -780,7 +780,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
     } else if (theState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE) {
         gGamepad1ToPlayerIndex = mSides[0];
 
-        if (gIsVSShuffleMode) {
+        if (Challenge::msVSShuffleMode) {
             if (Rand(10) == 0 && !gTcpConnected) {
                 gOpeningEncounter->mType = EncounterType(Rand(NUM_ENCOUNTER));
                 gOpeningEncounter->OpeningEncounterInitialize(gOpeningEncounter->mType);
@@ -909,7 +909,7 @@ void VSSetupMenu::ButtonDepress_Origin(int theId) {
                     }
                 }
 
-                if (gIsVSShuffleMode) {
+                if (Challenge::msVSShuffleMode) {
                     gFreeForFristShuffle[0] = gFreeForFristShuffle[1] = true;
                     aPlantBank->mNumPackets = aZombieBank->mNumPackets = 7;
                     aPlantBank->mSeedPackets[6].SetPacketType(SEED_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);

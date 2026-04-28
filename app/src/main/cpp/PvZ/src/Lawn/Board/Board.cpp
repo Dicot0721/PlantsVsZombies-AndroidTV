@@ -111,7 +111,7 @@ void Board::_constructor(LawnApp *theApp) {
     mAdvice->~CustomMessageWidget();
     mAdvice = new CustomMessageWidget(mApp);
 
-    if (gIsVSShuffleMode) {
+    if (Challenge::msVSShuffleMode) {
         gOpeningEncounter = new OpeningEncounter();
     }
     if (theApp->IsVSMode()) {
@@ -6014,7 +6014,7 @@ bool Board::TakeDeathMoney(int theAmount) {
 }
 
 void Board::ShuffleButtonDown(SeedPacket *theSeedPacket) {
-    if (!gIsVSShuffleMode)
+    if (!Challenge::msVSShuffleMode)
         return;
 
     if (gTcpConnected)
