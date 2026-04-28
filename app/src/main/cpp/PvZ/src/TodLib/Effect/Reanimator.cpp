@@ -135,7 +135,7 @@ void Reanimation::SetZombatarReanim() {
 }
 
 void Reanimation::SetZombatarHats(unsigned char theHats, unsigned char theColor) {
-    HideTrackByPrefix("theHats", true);
+    HideTrackByPrefix("hats", true);
     if (theHats != 255) {
         char hatsChar[] = "hats_00";
         std::format_to_n(std::end(hatsChar) - 3, 2, "{:02}", theHats);
@@ -150,7 +150,7 @@ void Reanimation::SetZombatarHats(unsigned char theHats, unsigned char theColor)
 }
 
 void Reanimation::SetZombatarHair(unsigned char theHair, unsigned char theColor) {
-    HideTrackByPrefix("theHair", true);
+    HideTrackByPrefix("hair", true);
     if (theHair != 255) {
         char hairChar[] = "hair_00";
         std::format_to_n(std::end(hairChar) - 3, 2, "{:02}", theHair);
@@ -165,7 +165,7 @@ void Reanimation::SetZombatarHair(unsigned char theHair, unsigned char theColor)
 }
 
 void Reanimation::SetZombatarFHair(unsigned char theFacialHair, unsigned char theColor) {
-    HideTrackByPrefix("theFacialHair", true);
+    HideTrackByPrefix("facialHair", true);
     if (theFacialHair != 255) {
         char facialHairChar[] = "facialHair_00";
         std::format_to_n(std::end(facialHairChar) - 3, 2, "{:02}", theFacialHair);
@@ -180,7 +180,7 @@ void Reanimation::SetZombatarFHair(unsigned char theFacialHair, unsigned char th
 }
 
 void Reanimation::SetZombatarAccessories(unsigned char theAccessories, unsigned char theColor) {
-    HideTrackByPrefix("theAccessories", true);
+    HideTrackByPrefix("accessories", true);
     if (theAccessories != 255) {
         unsigned char accessoriesFix;
         switch (theAccessories) {
@@ -228,7 +228,7 @@ void Reanimation::SetZombatarAccessories(unsigned char theAccessories, unsigned 
 }
 
 void Reanimation::SetZombatarEyeWear(unsigned char theEyeWear, unsigned char theColor) {
-    HideTrackByPrefix("theEyeWear", true);
+    HideTrackByPrefix("eyeWear", true);
     if (theEyeWear != 255) {
         char eyeWearChar[] = "eyeWear_00";
         std::format_to_n(std::end(eyeWearChar) - 3, 2, "{:02}", theEyeWear);
@@ -243,7 +243,7 @@ void Reanimation::SetZombatarEyeWear(unsigned char theEyeWear, unsigned char the
 }
 
 void Reanimation::SetZombatarTidBits(unsigned char theTidBits, unsigned char theColor) {
-    HideTrackByPrefix("theTidBits", true);
+    HideTrackByPrefix("tidBits", true);
     if (theTidBits != 255) {
         char tidBitsChar[] = "tidBits_00";
         std::format_to_n(std::end(tidBitsChar) - 3, 2, "{:02}", theTidBits);
