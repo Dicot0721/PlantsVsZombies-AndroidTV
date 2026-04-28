@@ -279,6 +279,18 @@ void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, st
                 *it = SeedType::SEED_ZOMBIE_IMP;
             }
         }
+        if (NeedSeedZombieScreenDoor(theApp)) {
+            auto it = std::ranges::find(aSeeds, SeedType::SEED_ZOMBIE_NEWSPAPER);
+            if (it != aSeeds.end()) {
+                *it = SeedType::SEED_ZOMBIE_SCREEN_DOOR;
+            }
+        }
+        if (NeedSeedZombieYeti(theApp)) {
+            auto it = std::ranges::find(aSeeds, SeedType::SEED_ZOMBIE_TRASHCAN);
+            if (it != aSeeds.end()) {
+                *it = SeedType::SEED_ZOMBIE_YETI;
+            }
+        }
     } else {
         // 如果卡组中有咖啡豆但没有蘑菇, 则替换豌豆射手为卡池3里的随机蘑菇(小喷, 大喷, 胆小)
         if (!aSeeds.empty() && aSeeds[0] == SeedType::SEED_INSTANT_COFFEE) {
@@ -482,7 +494,12 @@ bool NeedSeedSplitPea(LawnApp *theApp) {
 }
 
 bool IsPeaSeedType(SeedType theSeedType) {
-    return theSeedType == SeedType::SEED_PEASHOOTER || theSeedType == SeedType::SEED_REPEATER || theSeedType == SeedType::SEED_THREEPEATER || theSeedType == SeedType::SEED_SPLITPEA;
+    return theSeedType == SeedType::SEED_PEASHOOTER || theSeedType == SeedType::SEED_REPEATER || theSeedType == SeedType::SEED_THREEPEATER || theSeedType == SeedType::SEED_SPLITPEA
+        || theSeedType == SeedType::SEED_GATLINGPEA;
+}
+
+bool IsPultSeedType(SeedType theSeedType) {
+    return theSeedType == SeedType::SEED_CABBAGEPULT || theSeedType == SeedType::SEED_KERNELPULT || theSeedType == SeedType::SEED_MELONPULT || theSeedType == SeedType::SEED_WINTERMELON;
 }
 
 int CountPeasOnScreen(LawnApp *theApp) {
@@ -490,6 +507,17 @@ int CountPeasOnScreen(LawnApp *theApp) {
     Plant *aPlant = nullptr;
     while (theApp->mBoard->IteratePlants(aPlant)) {
         if (IsPeaSeedType(aPlant->mSeedType)) {
+            ++aCount;
+        }
+    }
+    return aCount;
+}
+
+int CountPultsOnScreen(LawnApp *theApp) {
+    int aCount = 0;
+    Plant *aPlant = nullptr;
+    while (theApp->mBoard->IteratePlants(aPlant)) {
+        if (IsPultSeedType(aPlant->mSeedType)) {
             ++aCount;
         }
     }
@@ -545,4 +573,50 @@ bool NeedSeedZombieImp(LawnApp *theApp) {
         }
     }
     return false;
+}
+
+bool NeedSeedZombieScreenDoor(LawnApp *theApp) {
+    bool hasPultOrFume = false;
+    bool hasStrongPea = false;
+    // 种子栏存在可用的寒冰射手或双发射手且无投手或大喷菇
+    for (int i = 1; i < 6; ++i) {
+        SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[0]->mSeedPackets[i];
+        if ((IsPultSeedType(aSeedPacket.mPacketType) || aSeedPacket.mPacketType == SeedType::SEED_FUMESHROOM) && aSeedPacket.mActive) {
+            hasPultOrFume = true;
+        }
+        if ((aSeedPacket.mPacketType == SeedType::SEED_SNOWPEA || aSeedPacket.mPacketType == SeedType::SEED_REPEATER) && aSeedPacket.mActive) {
+            hasStrongPea = true;
+        }
+    }
+    // 场上存在寒冰射手或双发射手且无投手或大喷菇
+    Plant *aPlant = nullptr;
+    while (theApp->mBoard->IteratePlants(aPlant)) {
+        if (IsPultSeedType(aPlant->mSeedType) || aPlant->mSeedType == SeedType::SEED_FUMESHROOM) {
+            hasPultOrFume = true;
+        }
+        if (aPlant->mSeedType == SeedType::SEED_SNOWPEA || aPlant->mSeedType == SeedType::SEED_REPEATER) {
+            hasStrongPea = true;
+        }
+    }
+    return !hasPultOrFume && hasStrongPea;
+}
+
+bool NeedSeedZombieYeti(LawnApp *theApp) {
+    // 场上存在3株以上的投手类植物
+    if (CountPultsOnScreen(theApp) >= 3) {
+        return true;
+    }
+    // 种子栏存在可用的投手或大喷菇且无射手
+    bool hasPea = false;
+    bool hasPult = false;
+    for (int i = 1; i < 6; ++i) {
+        SeedPacket aSeedPacket = theApp->mBoard->mSeedBank[0]->mSeedPackets[i];
+        if ((IsPeaSeedType(aSeedPacket.mPacketType) || aSeedPacket.mPacketType == SeedType::SEED_SNOWPEA) && aSeedPacket.mActive) {
+            hasPea = true;
+        }
+        if ((IsPultSeedType(aSeedPacket.mPacketType) || aSeedPacket.mPacketType == SeedType::SEED_FUMESHROOM) && aSeedPacket.mActive) {
+            hasPult = true;
+        }
+    }
+    return !hasPea && hasPult;
 }

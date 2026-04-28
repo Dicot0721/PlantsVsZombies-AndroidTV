@@ -89,8 +89,12 @@ bool NeedSeedUmbrella(LawnApp *theApp);
 bool NeedSeedMagnetshroom(LawnApp *theApp);
 bool NeedSeedSplitPea(LawnApp *theApp);
 bool IsPeaSeedType(SeedType theSeedType);
+bool IsPultSeedType(SeedType theSeedType);
 int CountPeasOnScreen(LawnApp *theApp);
+int CountPultsOnScreen(LawnApp *theApp);
 bool NeedSeedTorchwood(LawnApp *theApp, const std::vector<SeedType> &thePlantSeeds = {}, bool theIsShuffle = false);
 bool NeedSeedZombieImp(LawnApp *theApp);
+bool NeedSeedZombieScreenDoor(LawnApp *theApp);
+bool NeedSeedZombieYeti(LawnApp *theApp);
 
 #endif // PVZ_LAWN_WIDGET_VSSETUPADDONWIDGET_H
