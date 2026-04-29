@@ -76,7 +76,7 @@ void StoreScreen::ButtonDepress(int theId) {
             break;
         case StoreScreen::StoreScreen_Prev:
             mHatchTimer = 50;
-            unk197 = 1;
+            unk304 = 1;
             mApp->PlaySample(Sexy::SOUND_HATCHBACK_CLOSE);
             mBubbleCountDown = 0;
             mApp->CrazyDaveStopTalking();
@@ -96,7 +96,7 @@ void StoreScreen::ButtonDepress(int theId) {
             break;
         case StoreScreen::StoreScreen_Next:
             mHatchTimer = 50;
-            unk197 = 2;
+            unk304 = 2;
             mApp->PlaySample(Sexy::SOUND_HATCHBACK_CLOSE);
             mBubbleCountDown = 0;
             mApp->CrazyDaveStopTalking();

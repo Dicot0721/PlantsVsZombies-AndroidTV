@@ -20,11 +20,14 @@
 #ifndef PVZ_LAWN_WIDGET_STORE_SCREEN_H
 #define PVZ_LAWN_WIDGET_STORE_SCREEN_H
 
-#include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/Lawn/Board/Coin.h"
+#include "PvZ/Lawn/System/PlayerInfo.h"
+#include "PvZ/STL/pvzstl_string.h"
 #include "PvZ/SexyAppFramework/Widget/Dialog.h"
 #include "PvZ/Symbols.h"
+#include "PvZ/TodLib/Common/DataArray.h"
 
-enum StoreScreenTouchState { Prev, Next, Back, None };
+enum class StoreScreenTouchState { Prev, Next, Back, None };
 
 class StoreScreen : public Sexy::Dialog {
 private:
@@ -35,21 +38,41 @@ private:
     };
 
 public:
-    LawnApp *mApp;                    // 184
-    int unk185[3];                    // 185 ~ 187
-    int mBubbleCountDown;             // 188
-    int unk189[3];                    // 189 ~ 191
-    StorePages mPage;                 // 192
-    int unk193;                       // 193
-    StoreItem mSelectedStoreItemType; // 194
-    int mHatchTimer;                  // 195
-    int unk196;                       // 196
-    int unk197;                       // 197
-    int mShakeX;                      // 198
-    int mShakeY;                      // 199
-    int unk200[556];                  // 200 ~ 755
-    bool mBubbleClickToContinue;      // 756
+    LawnApp *mApp;
+    Sexy::Widget *mOverlayWidget;
+    int mStoreTime;
+    pvzstl::string mBubbleText;
+    int mBubbleCountDown;
+    bool mBubbleClickToContinue;
+    int mAmbientSpeechCountDown;
+    int mPreviousAmbientSpeechIndex;
+    StorePages mPage;
+    int unk304;
+    StoreItem mSelectedStoreItemType;
+    int mHatchTimer;
+    bool mHatchOpen;
+    int unk314;
+    int mShakeX;
+    int mShakeY;
+    int mStartDialog;
+    int unk324;
+    bool mEasyBuyingCheat;
+    bool mWaitForDialog;
+    PottedPlant mPottedPlantSpecs;
+    DataArray<Coin> mCoins;
+    bool mDrawnOnce;
+    bool mGoToTreeNow;
+    bool mPurchasedFullVersion;
+    bool mTrialLockedWhenStoreOpened;
+    int unk360;
+    char unk364[32];
+    float mCurve1DUtil[8];
+    unsigned char unk3A8[32];
+    int unk3C4;
+    int unk3C8;
 
+    StoreScreen() = delete;
+    ~StoreScreen() = delete;
 
     int SetSelectedSlot(int theIndex) {
         return reinterpret_cast<int (*)(StoreScreen *, int)>(StoreScreen_SetSelectedSlotAddr)(this, theIndex);
