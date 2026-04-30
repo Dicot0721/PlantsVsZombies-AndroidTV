@@ -346,6 +346,7 @@ inline void *LawnApp_MakeNewBoardAddr;
 inline void *LawnApp_ShowVSSetupScreenAddr;
 inline void *LawnApp_KillVSSetupScreenAddr;
 inline void *LawnApp_HasBeatenChallengeAddr;
+inline void *LawnApp_IsTrialStageLockedAddr;
 
 
 inline void *ChallengeScreen_UpdateAddr;

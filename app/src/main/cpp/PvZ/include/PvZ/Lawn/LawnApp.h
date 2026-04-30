@@ -290,6 +290,9 @@ public:
     void KillVSSetupScreen() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillVSSetupScreenAddr)(this);
     }
+    bool IsTrialStageLocked() {
+        return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_IsTrialStageLockedAddr)(this);
+    }
 
     LawnApp() {
         _constructor();

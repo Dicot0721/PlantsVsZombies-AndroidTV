@@ -25,7 +25,7 @@
 #include "PvZ/SexyAppFramework/Misc/TriVertex.h"
 #include "PvZ/Symbols.h"
 
-constexpr int MAX_TRIANGLES = 256;
+inline constexpr int MAX_TRIANGLES = 256;
 
 class TodTriangleGroup {
 public:

@@ -26,11 +26,11 @@
 #include "PvZ/SexyAppFramework/Widget/CheckboxListener.h"
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 
-constexpr int VS_ADDON_BUTTON_X = 800;
-constexpr int VS_BUTTON_EXTRA_PACKETS_Y = 200;
-constexpr int VS_BUTTON_EXTRA_SEEDS_Y = 240;
-constexpr int VS_BUTTON_BAN_MODE_Y = 280;
-constexpr int VS_BUTTON_BALANCE_PATCH_Y = 320;
+inline int VS_ADDON_BUTTON_X = 800;
+inline int VS_BUTTON_EXTRA_PACKETS_Y = 200;
+inline int VS_BUTTON_EXTRA_SEEDS_Y = 240;
+inline int VS_BUTTON_BAN_MODE_Y = 280;
+inline int VS_BUTTON_BALANCE_PATCH_Y = 320;
 
 namespace Sexy {
 class ButtonWidget;

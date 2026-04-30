@@ -38,14 +38,14 @@
 #include "Projectile.h"
 #include "Zombie.h"
 
-constexpr int MAX_GRID_SIZE_X = 9;
-constexpr int MAX_GRID_SIZE_Y = 6;
-constexpr int MAX_ZOMBIES_IN_WAVE = 50;
-constexpr int MAX_ZOMBIE_WAVES = 100;
-constexpr int MAX_GRAVE_STONES = MAX_GRID_SIZE_X * MAX_GRID_SIZE_Y;
-constexpr int MAX_POOL_GRID_SIZE = 10;
-constexpr int MAX_RENDER_ITEMS = 2048;
-constexpr int PROGRESS_METER_COUNTER = 150;
+inline constexpr int MAX_GRID_SIZE_X = 9;
+inline constexpr int MAX_GRID_SIZE_Y = 6;
+inline constexpr int MAX_ZOMBIES_IN_WAVE = 50;
+inline constexpr int MAX_ZOMBIE_WAVES = 100;
+inline constexpr int MAX_GRAVE_STONES = MAX_GRID_SIZE_X * MAX_GRID_SIZE_Y;
+inline constexpr int MAX_POOL_GRID_SIZE = 10;
+inline constexpr int MAX_RENDER_ITEMS = 2048;
+inline constexpr int PROGRESS_METER_COUNTER = 150;
 
 class LawnApp;
 class CursorObject;

@@ -24,17 +24,17 @@
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
 
-constexpr int ACHIEVEMENT_HOLE_LENGTH = 136;
-constexpr int ACHIEVEMENT_HOLE_WORM_POS = 0x10;
-constexpr int ACHIEVEMENT_HOLE_GEMS_POS = 0x19;
-constexpr int ACHIEVEMENT_HOLE_CHUZZLE_POS = 0x26;
-constexpr int ACHIEVEMENT_HOLE_BJORN_POS = 0x34;
-constexpr int ACHIEVEMENT_HOLE_PIPE_POS = 0x45;
-constexpr int ACHIEVEMENT_HOLE_TIKI_POS = 0x55;
-constexpr int ACHIEVEMENT_HOLE_HEAVY_ROCKS_POS = 0x65;
-constexpr int ACHIEVEMENT_HOLE_DU_WEI_POS = 0x72;
-constexpr int MAIN_MENU_HEIGHT = 720 - 2; // 作用：将成就界面上升2个像素点，以更紧密地贴合主界面。奇怪，理论上720是严丝合缝，为什么实际有2像素偏差呢？
-constexpr int KEYBOARD_SCROLL_TIME = 20;
+inline constexpr int ACHIEVEMENT_HOLE_LENGTH = 136;
+inline constexpr int ACHIEVEMENT_HOLE_WORM_POS = 0x10;
+inline constexpr int ACHIEVEMENT_HOLE_GEMS_POS = 0x19;
+inline constexpr int ACHIEVEMENT_HOLE_CHUZZLE_POS = 0x26;
+inline constexpr int ACHIEVEMENT_HOLE_BJORN_POS = 0x34;
+inline constexpr int ACHIEVEMENT_HOLE_PIPE_POS = 0x45;
+inline constexpr int ACHIEVEMENT_HOLE_TIKI_POS = 0x55;
+inline constexpr int ACHIEVEMENT_HOLE_HEAVY_ROCKS_POS = 0x65;
+inline constexpr int ACHIEVEMENT_HOLE_DU_WEI_POS = 0x72;
+inline constexpr int MAIN_MENU_HEIGHT = 720 - 2; // 作用：将成就界面上升2个像素点，以更紧密地贴合主界面。奇怪，理论上720是严丝合缝，为什么实际有2像素偏差呢？
+inline constexpr int KEYBOARD_SCROLL_TIME = 20;
 
 enum AchievementType {
     ACHIEVEMENT_HOME_SECURITY = 0,

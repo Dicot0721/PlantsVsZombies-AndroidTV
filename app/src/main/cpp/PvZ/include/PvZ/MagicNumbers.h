@@ -25,26 +25,26 @@
  */
 
 #if PVZ_VERSION == 111
-constexpr int SexyAppBaseSize = 553;
-constexpr int SexyAppBasePartSize = 527;
-constexpr int LAWNAPP_PLAYSAMPLE_OFFSET = 680;
-constexpr uintptr_t BOARD_UPDATE_ADDR_RELATIVE = 0x1669E4;
-constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET_ADDR_RELATIVE = 0x1AA288;
-constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET2_ADDR_RELATIVE = 0x1ACCE8;
-constexpr uintptr_t J_AUDIOWRITE_ADDR_RELATIVE = 0x524E28;
+inline constexpr int SexyAppBaseSize = 553;
+inline constexpr int SexyAppBasePartSize = 527;
+inline constexpr int LAWNAPP_PLAYSAMPLE_OFFSET = 680;
+inline constexpr uintptr_t BOARD_UPDATE_ADDR_RELATIVE = 0x1669E4;
+inline constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET_ADDR_RELATIVE = 0x1AA288;
+inline constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET2_ADDR_RELATIVE = 0x1ACCE8;
+inline constexpr uintptr_t J_AUDIOWRITE_ADDR_RELATIVE = 0x524E28;
 #elif PVZ_VERSION == 115
-constexpr int SexyAppBaseSize = 552;
-constexpr int SexyAppBasePartSize = 526;
-constexpr int LAWNAPP_PLAYSAMPLE_OFFSET = 676;
-constexpr uintptr_t BOARD_UPDATE_ADDR_RELATIVE = 0x164A88;
-constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET_ADDR_RELATIVE = 0x1AAD98;  // 符号重复，无法dlsym获取地址，只好常量封装
-constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET2_ADDR_RELATIVE = 0x1A8338; // 符号重复，无法dlsym获取地址，只好常量封装
-constexpr uintptr_t J_AUDIOWRITE_ADDR_RELATIVE = 0x12E6C4;
-constexpr uintptr_t AGVideoOpenOffset = 0x69394C;
-constexpr uintptr_t AGVideoShowOffset = 0x69393C;
-constexpr uintptr_t AGVideoEnableOffset = 0x693940;
-constexpr uintptr_t AGVideoIsPlayingOffset = 0x693944;
-constexpr uintptr_t AGVideoPlayOffset = 0x693950;
+inline constexpr int SexyAppBaseSize = 552;
+inline constexpr int SexyAppBasePartSize = 526;
+inline constexpr int LAWNAPP_PLAYSAMPLE_OFFSET = 676;
+inline constexpr uintptr_t BOARD_UPDATE_ADDR_RELATIVE = 0x164A88;
+inline constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET_ADDR_RELATIVE = 0x1AAD98;  // 符号重复，无法dlsym获取地址，只好常量封装
+inline constexpr uintptr_t ZOMBIE_ISTANGLEKELPTARGET2_ADDR_RELATIVE = 0x1A8338; // 符号重复，无法dlsym获取地址，只好常量封装
+inline constexpr uintptr_t J_AUDIOWRITE_ADDR_RELATIVE = 0x12E6C4;
+inline constexpr uintptr_t AGVideoOpenOffset = 0x69394C;
+inline constexpr uintptr_t AGVideoShowOffset = 0x69393C;
+inline constexpr uintptr_t AGVideoEnableOffset = 0x693940;
+inline constexpr uintptr_t AGVideoIsPlayingOffset = 0x693944;
+inline constexpr uintptr_t AGVideoPlayOffset = 0x693950;
 #endif // PVZ_VERSION
 
 #endif // PVZ_MAGICNUMBERS_H

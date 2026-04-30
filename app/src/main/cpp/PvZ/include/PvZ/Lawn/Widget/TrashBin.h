@@ -23,8 +23,8 @@
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 #include "PvZ/Symbols.h"
 
-constexpr int zombiePileHeight = 70;
-constexpr int plantPileHeight = 100;
+inline constexpr int zombiePileHeight = 70;
+inline constexpr int plantPileHeight = 100;
 
 class TrashBin : public Sexy::Widget {
 public:

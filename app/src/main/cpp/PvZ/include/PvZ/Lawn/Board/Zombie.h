@@ -25,39 +25,39 @@
 #include "PvZ/Lawn/Common/GameConstants.h"
 #include "PvZ/Symbols.h"
 
-constexpr int MAX_ZOMBIE_FOLLOWERS = 4;
-constexpr int NUM_BOBSLED_FOLLOWERS = 3;
-constexpr int NUM_BACKUP_DANCERS = 4;
-constexpr int NUM_BOSS_BUNGEES = 3;
+inline constexpr int MAX_ZOMBIE_FOLLOWERS = 4;
+inline constexpr int NUM_BOBSLED_FOLLOWERS = 3;
+inline constexpr int NUM_BACKUP_DANCERS = 4;
+inline constexpr int NUM_BOSS_BUNGEES = 3;
 
-constexpr int MAX_DEAD_FOLLOWERS = 15;
-constexpr int ProductorZombieLaunchRate = 2500;
+inline constexpr int MAX_DEAD_FOLLOWERS = 15;
+inline constexpr int ProductorZombieLaunchRate = 2500;
 
-constexpr int ZOMBIE_START_RANDOM_OFFSET = 40;
-constexpr int BUNGEE_ZOMBIE_HEIGHT = 3000;
-constexpr int RENDER_GROUP_SHIELD = 1;
-constexpr int RENDER_GROUP_ARMS = 2;
-constexpr int RENDER_GROUP_OVER_SHIELD = 3;
-constexpr int RENDER_GROUP_BOSS_BACK_LEG = 4;
-constexpr int RENDER_GROUP_BOSS_FRONT_LEG = 5;
-constexpr int RENDER_GROUP_BOSS_BACK_ARM = 6;
-constexpr int RENDER_GROUP_BOSS_FIREBALL_ADDITIVE = 7;
-constexpr int RENDER_GROUP_BOSS_FIREBALL_TOP = 8;
-constexpr int ZOMBIE_LIMP_SPEED_FACTOR = 2;
-constexpr int POGO_BOUNCE_TIME = 80;
-constexpr int DOLPHIN_JUMP_TIME = 120;
-constexpr int JackInTheBoxZombieRadius = 115;
-constexpr int JackInTheBoxPlantRadius = 90;
-constexpr int BOBSLED_CRASH_TIME = 150;
-constexpr int ZOMBIE_BACKUP_DANCER_RISE_HEIGHT = -200;
-constexpr int BOSS_FLASH_HEALTH_FRACTION = 10;
-constexpr int TICKS_BETWEEN_EATS = 8;
-constexpr int DAMAGE_PER_EAT = TICKS_BETWEEN_EATS;
-constexpr float THOWN_ZOMBIE_GRAVITY = 0.05f;
-constexpr float CHILLED_SPEED_FACTOR = 0.4f;
-constexpr float CLIP_HEIGHT_LIMIT = -100.0f;
-constexpr float CLIP_HEIGHT_OFF = -200.0f;
-constexpr Sexy::Color ZOMBIE_MINDCONTROLLED_COLOR{128, 0, 192, 255};
+inline constexpr int ZOMBIE_START_RANDOM_OFFSET = 40;
+inline constexpr int BUNGEE_ZOMBIE_HEIGHT = 3000;
+inline constexpr int RENDER_GROUP_SHIELD = 1;
+inline constexpr int RENDER_GROUP_ARMS = 2;
+inline constexpr int RENDER_GROUP_OVER_SHIELD = 3;
+inline constexpr int RENDER_GROUP_BOSS_BACK_LEG = 4;
+inline constexpr int RENDER_GROUP_BOSS_FRONT_LEG = 5;
+inline constexpr int RENDER_GROUP_BOSS_BACK_ARM = 6;
+inline constexpr int RENDER_GROUP_BOSS_FIREBALL_ADDITIVE = 7;
+inline constexpr int RENDER_GROUP_BOSS_FIREBALL_TOP = 8;
+inline constexpr int ZOMBIE_LIMP_SPEED_FACTOR = 2;
+inline constexpr int POGO_BOUNCE_TIME = 80;
+inline constexpr int DOLPHIN_JUMP_TIME = 120;
+inline constexpr int JackInTheBoxZombieRadius = 115;
+inline constexpr int JackInTheBoxPlantRadius = 90;
+inline constexpr int BOBSLED_CRASH_TIME = 150;
+inline constexpr int ZOMBIE_BACKUP_DANCER_RISE_HEIGHT = -200;
+inline constexpr int BOSS_FLASH_HEALTH_FRACTION = 10;
+inline constexpr int TICKS_BETWEEN_EATS = 8;
+inline constexpr int DAMAGE_PER_EAT = TICKS_BETWEEN_EATS;
+inline constexpr float THOWN_ZOMBIE_GRAVITY = 0.05f;
+inline constexpr float CHILLED_SPEED_FACTOR = 0.4f;
+inline constexpr float CLIP_HEIGHT_LIMIT = -100.0f;
+inline constexpr float CLIP_HEIGHT_OFF = -200.0f;
+inline constexpr Sexy::Color ZOMBIE_MINDCONTROLLED_COLOR{128, 0, 192, 255};
 
 enum ZombieAttackType {
     ATTACKTYPE_CHEW,

@@ -24,7 +24,7 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Symbols.h"
 
-constexpr int MAX_MAGNET_ITEMS = 5;
+inline constexpr int MAX_MAGNET_ITEMS = 5;
 
 enum PlantSubClass {
     SUBCLASS_NORMAL = 0,

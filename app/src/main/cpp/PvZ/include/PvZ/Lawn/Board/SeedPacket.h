@@ -25,8 +25,8 @@
 
 #include "GameObject.h"
 
-constexpr int SLOT_MACHINE_TIME = 400;
-constexpr int CONVEYOR_SPEED = 4;
+inline constexpr int SLOT_MACHINE_TIME = 400;
+inline constexpr int CONVEYOR_SPEED = 4;
 
 class HitResult;
 class SeedBank;

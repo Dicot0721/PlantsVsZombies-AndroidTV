@@ -29,7 +29,7 @@
 #include <string>
 #include <utility>
 
-constexpr std::uint32_t NETPLAY_VERSION = 3160;
+inline constexpr uint32_t NETPLAY_VERSION = 3160;
 
 enum EventType : uint8_t {
     EVENT_NULL,
@@ -334,7 +334,7 @@ struct U8x2U16x4UNI32x8_Event : BaseEvent {
 };
 
 // 双方都需要
-constexpr int UDP_PORT = 8888;
+inline constexpr int UDP_PORT = 8888;
 
 // 主机端需要
 inline int gUdpBroadcastSocket = -1;
@@ -348,9 +348,9 @@ inline std::string gIfname;
 inline char gSecondPlayerName[32];
 
 // 客户端需要
-constexpr int MAX_SERVERS = 3;
-constexpr int UDP_TIMEOUT = 3; // 超时时间为3秒
-constexpr int NAME_LENGTH = 256;
+inline constexpr int MAX_SERVERS = 3;
+inline constexpr int UDP_TIMEOUT = 3; // 超时时间为3秒
+inline constexpr int NAME_LENGTH = 256;
 
 // 全局变量，用于保存发现的服务端IP和时间戳
 struct ServerInfo {

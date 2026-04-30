@@ -24,8 +24,8 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/SexyAppFramework/Graphics/Image.h"
 
-constexpr int MAX_MESSAGE_LENGTH = 128;
-constexpr int MAX_REANIM_LINES = 5;
+inline constexpr int MAX_MESSAGE_LENGTH = 128;
+inline constexpr int MAX_REANIM_LINES = 5;
 
 class LawnApp;
 class Reanimation;

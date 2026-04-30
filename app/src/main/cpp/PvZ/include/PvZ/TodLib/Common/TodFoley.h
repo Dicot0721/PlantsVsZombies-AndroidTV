@@ -23,8 +23,8 @@
 #include "PvZ/Lawn/Common/Resources.h"
 #include "PvZ/Symbols.h"
 
-constexpr int MAX_FOLEY_TYPES = 110;
-constexpr int MAX_FOLEY_INSTANCES = 8;
+inline constexpr int MAX_FOLEY_TYPES = 110;
+inline constexpr int MAX_FOLEY_INSTANCES = 8;
 
 // ######################################################################################################################################################
 // ############################################################# 以下为拟音音效定义相关内容 #############################################################

@@ -22,7 +22,7 @@
 
 #include <cassert>
 
-constexpr int MAX_GLOBAL_ALLOCATORS = 128;
+inline constexpr int MAX_GLOBAL_ALLOCATORS = 128;
 
 class TodAllocator {
 public:

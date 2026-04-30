@@ -72,7 +72,7 @@ void StoreScreen::DrawItem(Sexy::Graphics *g, int a3, StoreItem theStoreItem) {
 }
 
 bool StoreScreen::IsPageShown(StorePages thePage) {
-    if constexpr (/* mApp->IsTrialStageLocked() */ false) {
+    if (mApp->IsTrialStageLocked()) [[unlikely]] {
         return thePage == STORE_PAGE_SLOT_UPGRADES;
     }
     // 一周目完成后，所有页全解锁
