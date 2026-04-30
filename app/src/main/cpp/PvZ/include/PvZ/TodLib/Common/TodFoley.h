@@ -144,10 +144,14 @@ enum FoleyType {
     FOLEY_CRAZY_DAVE_SCREAM = 102,
     FOLEY_CRAZY_DAVE_SCREAM_2 = 103,
     NUM_FOLEY = 104,
+    // extended begin
     FOLEY_MENU_LEFT = 105,
     FOLEY_MENU_CENTRE = 106,
     FOLEY_MENU_RIGHT = 107,
-    FOLEY_THRILLER
+    FOLEY_ALLSTAR_TACKLE,
+    FOLEY_THRILLER,
+    EXTENDED_NUM_FOLEY
+    // extended end
 };
 
 class FoleyParams {
@@ -159,8 +163,9 @@ public:
 };
 
 FoleyParams *LookupFoley(FoleyType theFoleyType);
+void TodFoleyInitialize(FoleyParams *theFoleyParamArray, int theFoleyParamArraySize);
 
-extern FoleyParams gNewLawnFoleyParamArray[];
+extern FoleyParams gExtendedLawnFoleyParamArray[EXTENDED_NUM_FOLEY - NUM_FOLEY];
 
 inline FoleyParams *(*old_LookupFoley)(FoleyType type);
 

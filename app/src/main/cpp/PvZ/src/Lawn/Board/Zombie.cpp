@@ -665,7 +665,7 @@ void Zombie::UpdateGigaFootball() {
             Zombie *aZombie = FindZombieTarget();
             Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW);
             if (aZombie || aPlant) {
-                mApp->PlaySample(addonSounds.allstardbl);
+                mApp->PlayFoley(FoleyType::FOLEY_ALLSTAR_TACKLE);
                 mBoard->ShakeBoard(-4 * aMindCtrlIndex, 1);
                 mPosX += 20.0f * aMindCtrlIndex;
             }

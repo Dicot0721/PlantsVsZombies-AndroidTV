@@ -32,6 +32,7 @@ class Widget;
 } // namespace Sexy
 
 class EffectSystem;
+class FoleyParams;
 class LawnApp;
 class ReanimatorDefinition;
 class ReanimationParams;
@@ -1430,6 +1431,8 @@ extern SexyAppBase *&gSexyAppBase;
 } // namespace Sexy
 
 extern EffectSystem *&gEffectSystem;
+extern FoleyParams *gLawnFoleyParamArray;
+extern FoleyParams *&gFoleyParamArray;
 extern int &gFoleyParamArraySize;
 extern LawnApp *&gLawnApp;
 extern ReanimationParams (&gLawnReanimationArray)[ReanimationType::NUM_REANIMS];

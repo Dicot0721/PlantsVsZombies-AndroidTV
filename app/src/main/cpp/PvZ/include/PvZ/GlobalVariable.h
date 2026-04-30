@@ -87,10 +87,6 @@ inline float gGamepadP2VelY;
 inline TouchPlayerIndex gPlayerIndex = TouchPlayerIndex::TOUCHPLAYER_NONE;
 inline TouchPlayerIndex gPlayerIndexSecond = TouchPlayerIndex::TOUCHPLAYER_NONE;
 
-inline FoleyParams gMenuLeftFoley = {FoleyType::FOLEY_MENU_LEFT, 0.0f, {nullptr}, 1u};
-inline FoleyParams gMenuCenterFoley = {FoleyType::FOLEY_MENU_CENTRE, 0.0f, {nullptr}, 1u};
-inline FoleyParams gMenuRightFoley = {FoleyType::FOLEY_MENU_RIGHT, 0.0f, {nullptr}, 1u};
-
 inline bool keyboardMode;
 
 inline LeaderboardsWidget *gMainMenuLeaderboardsWidget;

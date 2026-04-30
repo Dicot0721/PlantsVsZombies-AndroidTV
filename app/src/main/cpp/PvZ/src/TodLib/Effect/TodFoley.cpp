@@ -20,20 +20,22 @@
 #include "PvZ/TodLib/Common/TodFoley.h"
 #include "PvZ/GlobalVariable.h"
 
-FoleyParams gNewLawnFoleyParamArray[] = {
+FoleyParams gExtendedLawnFoleyParamArray[EXTENDED_NUM_FOLEY - NUM_FOLEY] = {
+    {FoleyType::FOLEY_MENU_LEFT, 0.0f, {&Sexy::SOUND_MENU_L_ST}, 0U},
+    {FoleyType::FOLEY_MENU_CENTRE, 0.0f, {&Sexy::SOUND_MENU_C_ST}, 0U},
+    {FoleyType::FOLEY_MENU_RIGHT, 0.0f, {&Sexy::SOUND_MENU_R_ST}, 0U},
+    {FoleyType::FOLEY_ALLSTAR_TACKLE, 10.0f, {&addonSounds.allstardbl}, 0U},
     {FoleyType::FOLEY_THRILLER, 0.0f, {&addonSounds.thriller}, 6U},
 };
 
+void TodFoleyInitialize(FoleyParams *theFoleyParamArray, int theFoleyParamArraySize) {
+    gFoleyParamArray = theFoleyParamArray;
+    gFoleyParamArraySize = theFoleyParamArraySize;
+}
+
 FoleyParams *LookupFoley(FoleyType theFoleyType) {
-    // 新增三个Foley，用于主界面白噪音
-    if (theFoleyType == FoleyType::FOLEY_MENU_LEFT) {
-        return &gMenuLeftFoley;
-    } else if (theFoleyType == FoleyType::FOLEY_MENU_CENTRE) {
-        return &gMenuCenterFoley;
-    } else if (theFoleyType == FoleyType::FOLEY_MENU_RIGHT) {
-        return &gMenuRightFoley;
-    } else if (theFoleyType > FoleyType::FOLEY_MENU_RIGHT) {
-        return &gNewLawnFoleyParamArray[theFoleyType - NUM_FOLEY - 4];
-    } else
-        return old_LookupFoley(theFoleyType);
+    if (theFoleyType > FoleyType::NUM_FOLEY) {
+        return &gExtendedLawnFoleyParamArray[theFoleyType - (FoleyType::NUM_FOLEY + 1)];
+    }
+    return old_LookupFoley(theFoleyType);
 }

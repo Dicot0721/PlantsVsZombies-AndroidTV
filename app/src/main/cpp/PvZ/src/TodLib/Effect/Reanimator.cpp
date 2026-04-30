@@ -100,9 +100,9 @@ void Reanimation::SetImageDefinition(const char *theTrackName, Sexy::Image *theI
     }
 }
 
-static ReanimationParams gExtendedReanimationParamsDefs[] = {
+static ReanimationParams gExtendedReanimationParamArray[] = {
     {ReanimationType::REANIM_ZOMBATAR_HEAD, "addonFiles/compiled/reanim/zombatar_zombie_head.reanim", 1},
-    {ReanimationType::REANIM_GIGA_FOOTBALL, "addonFiles/compiled/reanim/Zombie_Berserker.reanim", 0},
+    {ReanimationType::REANIM_GIGA_FOOTBALL, "addonFiles/compiled/reanim/Zombie_giga_football.reanim", 0},
     //    {ReanimationType::REANIM_SUPER_FAN_IMP, "addonFiles/compiled/reanim/Zombie_super_fan_imp.reanim", 0},
     //    {ReanimationType::REANIM_JACKSON, "addonFiles/compiled/reanim/Zombie_jackson.reanim", 0},
     //    {ReanimationType::REANIM_BACKUP_DANCER2, "addonFiles/compiled/reanim/Zombie_backup2.reanim", 0},
@@ -113,7 +113,7 @@ void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int 
         old_ReanimatorLoadDefinitions(theReanimationParamArray, theReanimationParamArraySize);
         return;
     }
-    int newReanimationArraySize = std::size(gExtendedReanimationParamsDefs);
+    int newReanimationArraySize = std::size(gExtendedReanimationParamArray);
     auto *newReanimationParamArray = (ReanimationParams *)malloc((theReanimationParamArraySize + newReanimationArraySize) * sizeof(ReanimationParams));
     for (int i = 0; i < theReanimationParamArraySize; ++i) {
         newReanimationParamArray[i].mReanimationType = theReanimationParamArray[i].mReanimationType;
@@ -121,9 +121,9 @@ void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int 
         newReanimationParamArray[i].mReanimParamFlags = theReanimationParamArray[i].mReanimParamFlags;
     }
     for (int i = 0; i < newReanimationArraySize; ++i) {
-        newReanimationParamArray[i + theReanimationParamArraySize].mReanimationType = gExtendedReanimationParamsDefs[i].mReanimationType;
-        newReanimationParamArray[i + theReanimationParamArraySize].mReanimFileName = gExtendedReanimationParamsDefs[i].mReanimFileName;
-        newReanimationParamArray[i + theReanimationParamArraySize].mReanimParamFlags = gExtendedReanimationParamsDefs[i].mReanimParamFlags;
+        newReanimationParamArray[i + theReanimationParamArraySize].mReanimationType = gExtendedReanimationParamArray[i].mReanimationType;
+        newReanimationParamArray[i + theReanimationParamArraySize].mReanimFileName = gExtendedReanimationParamArray[i].mReanimFileName;
+        newReanimationParamArray[i + theReanimationParamArraySize].mReanimParamFlags = gExtendedReanimationParamArray[i].mReanimParamFlags;
     }
     old_ReanimatorLoadDefinitions(newReanimationParamArray, theReanimationParamArraySize + newReanimationArraySize);
 }
