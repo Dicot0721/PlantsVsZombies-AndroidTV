@@ -1151,7 +1151,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
     if (!mViewLawnButtonDisabled) { // !mDisabled
         Sexy::Rect mViewLawnButtonRect = {mViewLawnButton->mX, mViewLawnButton->mY, mViewLawnButton->mWidth, 50};
         // LOGD("mStoreButtonRect:%d %d %d %d",mStoreButtonRect[0],mStoreButtonRect[1],mStoreButtonRect[2],mStoreButtonRect[3]);
-        if (TRect_Contains(&mViewLawnButtonRect, x, y)) {
+        if (mViewLawnButtonRect.Contains(x, y)) {
             mApp->PlaySample(Sexy::SOUND_TAP);
             gSeedChooserTouchState = SeedChooserTouchState::ViewLawnButton;
             gSeedChooserTouchOwner = this;
@@ -1163,7 +1163,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
     if (!mStoreButtonDisabled) { // !mDisabled
         Sexy::Rect mStoreButtonRect = {mStoreButton->mX, mStoreButton->mY, mStoreButton->mWidth, 50};
         // LOGD("mStoreButtonRect:%d %d %d %d",mStoreButtonRect[0],mStoreButtonRect[1],mStoreButtonRect[2],mStoreButtonRect[3]);
-        if (TRect_Contains(&mStoreButtonRect, x, y)) {
+        if (mStoreButtonRect.Contains(x, y)) {
             mApp->PlaySample(Sexy::SOUND_TAP);
             gSeedChooserTouchState = SeedChooserTouchState::StoreButton;
             gSeedChooserTouchOwner = this;
@@ -1174,7 +1174,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
 
     if (!mStartButtonDisabled) { // !mDisabled
         Sexy::Rect mStartButtonRect = {mStartButton->mX, mStartButton->mY, mStartButton->mWidth, 50};
-        if (TRect_Contains(&mStartButtonRect, x, y)) {
+        if (mStartButtonRect.Contains(x, y)) {
             mApp->PlaySample(Sexy::SOUND_TAP);
             gSeedChooserTouchState = SeedChooserTouchState::StartButton;
             gSeedChooserTouchOwner = this;
@@ -1186,7 +1186,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
 
     if (!mAlmanacButtonDisabled) { // !mDisabled
         Sexy::Rect mAlmanacButtonRect = {mAlmanacButton->mX, mAlmanacButton->mY, mAlmanacButton->mWidth, 50};
-        if (TRect_Contains(&mAlmanacButtonRect, x, y)) {
+        if (mAlmanacButtonRect.Contains(x, y)) {
             mApp->PlaySample(Sexy::SOUND_TAP);
             gSeedChooserTouchState = SeedChooserTouchState::AlmanacButton;
             gSeedChooserTouchOwner = this;
@@ -1201,7 +1201,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
         int mImitaterPositionY = 0;
         GetSeedPositionInChooser(SeedType::SEED_IMITATER, mImitaterPositionX, mImitaterPositionY);
         Sexy::Rect mImitaterPositionRect = {mImitaterPositionX, mImitaterPositionY, SEED_PACKET_WIDTH, SEED_PACKET_HEIGHT};
-        if (TRect_Contains(&mImitaterPositionRect, x, y)) {
+        if (mImitaterPositionRect.Contains(x, y)) {
             if (m1PChoosingSeeds) {
                 mCursorPositionX1 = mImitaterPositionX;
                 mCursorPositionY1 = mImitaterPositionY;

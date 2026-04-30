@@ -74,13 +74,13 @@ void HelpTextScreen::MouseDown(int x, int y, int theClickCount) {
     int imageHeight = (Sexy::IMAGE_ZEN_NEXTGARDEN)->GetHeight();
 
     Sexy::Rect nextPageRect = {nextPageButtonX, nextPageButtonY, imageWidth, imageHeight};
-    if (TRect_Contains(&nextPageRect, x, y)) {
+    if (nextPageRect.Contains(x, y)) {
         KeyDown(Sexy::KeyCode::KEYCODE_RIGHT);
         return;
     }
 
     Sexy::Rect prevPageRect = {prevPageButtonX, prevPageButtonY, imageWidth, imageHeight};
-    if (TRect_Contains(&prevPageRect, x, y)) {
+    if (prevPageRect.Contains(x, y)) {
         KeyDown(Sexy::KeyCode::KEYCODE_LEFT);
         return;
     }

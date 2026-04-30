@@ -329,7 +329,7 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
         int num = LeaderboardsWidget_GetAchievementIdByDrawOrder(AchievementType::NUM_ACHIEVEMENT_TYPES - 1 - i);
         if (!leaderboardsWidget->mAchievements[num])
             continue;
-        if (TRect_Contains(&gLeaderboardAchievementsRect[num][0], x, y) || TRect_Contains(&gLeaderboardAchievementsRect[num][1], x, y)) {
+        if (gLeaderboardAchievementsRect[num][0].Contains(x, y) || gLeaderboardAchievementsRect[num][1].Contains(x, y)) {
             if (leaderboardsWidget->mFocusedAchievementIndex == num && leaderboardsWidget->mHighLightAchievement) {
                 leaderboardsWidget->mHighLightAchievement = false;
             } else {
@@ -344,7 +344,7 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
     Sexy::Rect plantTrashBinRect = {
         leaderboardsWidget->mPlantTrashBin->mX, leaderboardsWidget->mPlantTrashBin->mY - plantHeight, addonImages.plant_can->mWidth, addonImages.plant_can->mHeight + plantHeight};
 
-    if (TRect_Contains(&plantTrashBinRect, x, y)) {
+    if (plantTrashBinRect.Contains(x, y)) {
         leaderboardsWidget->mApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
         pvzstl::string str1 = TodStringTranslate("[PLANTS_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{PLANTS}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::PLANTS_KILLED]);
@@ -356,7 +356,7 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
     Sexy::Rect zombieTrashBinRect = {
         leaderboardsWidget->mZombieTrashBin->mX, leaderboardsWidget->mZombieTrashBin->mY - zombieHeight, addonImages.zombie_can->mWidth, addonImages.zombie_can->mHeight + zombieHeight};
 
-    if (TRect_Contains(&zombieTrashBinRect, x, y)) {
+    if (zombieTrashBinRect.Contains(x, y)) {
         leaderboardsWidget->mApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
         pvzstl::string str1 = TodStringTranslate("[ZOMBIES_KILLED]");
         pvzstl::string str2 = TodReplaceNumberString(str1, "{ZOMBIES}", leaderboardsWidget->mApp->mPlayerInfo->mGameStats.mMiscStats[GameStats::ZOMBIES_KILLED]);
@@ -380,7 +380,7 @@ void DaveHelp_MouseDown(LeaderboardsWidget *leaderboardsWidget, int x, int y, in
     // }
 
     // Rect rect = {1066, 574, 72, 72};
-    // if (TRect_Contains(&rect, x, y)) {
+    // if (rect.Contains(x, y)) {
     // leaderboardsWidget->mTouchDownInBackRect = true;
     // leaderboardsWidget->mApp,->PlaySample(Sexy_SOUND_GRAVEBUTTON_Addr);
     // }

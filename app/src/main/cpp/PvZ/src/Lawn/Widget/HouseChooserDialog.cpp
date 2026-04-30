@@ -35,7 +35,7 @@ void HouseChooserDialog::MouseDown(int x, int y, int theClickCount) {
     int houseIdToSelect = HouseType::BLUEPRINT_INVALID;
     for (int i = 0; i < 5; ++i) {
         Sexy::Rect rect = {75 + 90 * i, 125, width, height};
-        if (TRect_Contains(&rect, x, y) && IsHouseAvaliable((HouseType)i)) {
+        if (rect.Contains(x, y) && IsHouseAvaliable((HouseType)i)) {
             houseIdToSelect = i;
             break;
         }

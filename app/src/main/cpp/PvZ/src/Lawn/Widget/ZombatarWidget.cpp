@@ -1574,7 +1574,7 @@ void ZombatarWidget::MouseDownSkin(int x, int y) {
         int theX = 160 + 285 + (i % 9) * 30;
         int theY = 432 + i / 9 * 30;
         Sexy::Rect rect = {theX, theY, 30, 30};
-        if (TRect_Contains(&rect, x, y)) {
+        if (rect.Contains(x, y)) {
             mSelectedSkinColor = i;
             return;
         }
@@ -1586,7 +1586,7 @@ void ZombatarWidget::MouseDownHair(int x, int y) {
         int theX = 160 + 198 + (i % 6) * 73;
         int theY = 162 + i / 6 * 79;
         Sexy::Rect rect = {theX, theY, 73, 79};
-        if (TRect_Contains(&rect, x, y)) {
+        if (rect.Contains(x, y)) {
             mSelectedHair = i;
             mZombatarReanim->SetZombatarHair(mSelectedHair, mSelectedHairColor);
             return;
@@ -1595,7 +1595,7 @@ void ZombatarWidget::MouseDownHair(int x, int y) {
     int theX = 160 + 198 + (16 % 6) * 73;
     int theY = 162 + 16 / 6 * 79;
     Sexy::Rect rect = {theX, theY, 73, 79};
-    if (TRect_Contains(&rect, x, y)) {
+    if (rect.Contains(x, y)) {
         mSelectedHair = 255;
         mZombatarReanim->SetZombatarHair(mSelectedHair, mSelectedHairColor);
         return;
@@ -1605,7 +1605,7 @@ void ZombatarWidget::MouseDownHair(int x, int y) {
             int theX = 160 + 285 + (i % 9) * 30;
             int theY = 432 + i / 9 * 30;
             Sexy::Rect rect = {theX, theY, 30, 30};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedHairColor = i;
                 mZombatarReanim->SetZombatarHair(mSelectedHair, mSelectedHairColor);
                 return;
@@ -1620,7 +1620,7 @@ void ZombatarWidget::MouseDownFHair(int x, int y) {
             int theX = 160 + 198 + (i % 6) * 73;
             int theY = 162 + i / 6 * 79;
             Sexy::Rect rect = {theX, theY, 73, 79};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedFHair = i;
                 mZombatarReanim->SetZombatarFHair(mSelectedFHair, mSelectedFHairColor);
                 return;
@@ -1629,13 +1629,13 @@ void ZombatarWidget::MouseDownFHair(int x, int y) {
         int theX = 160 + 198 + (17 % 6) * 73;
         int theY = 162 + 17 / 6 * 79;
         Sexy::Rect rect = {theX, theY, 73, 79};
-        if (TRect_Contains(&rect, x, y)) {
+        if (rect.Contains(x, y)) {
             mSelectedFHair = 255;
             mZombatarReanim->SetZombatarFHair(mSelectedFHair, mSelectedFHairColor);
             return;
         }
         Sexy::Rect next = {160 + 588, 436, addonZombatarImages.zombatar_next_button->mWidth, addonZombatarImages.zombatar_next_button->mHeight};
-        if (TRect_Contains(&next, x, y)) {
+        if (next.Contains(x, y)) {
             mSelectedFHairPage++;
             return;
         }
@@ -1644,7 +1644,7 @@ void ZombatarWidget::MouseDownFHair(int x, int y) {
             int theX = 160 + 198 + (i % 6) * 73;
             int theY = 162 + i / 6 * 79;
             Sexy::Rect rect = {theX, theY, 73, 79};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedFHair = i + 17;
                 mZombatarReanim->SetZombatarFHair(mSelectedFHair, mSelectedFHairColor);
                 return;
@@ -1653,13 +1653,13 @@ void ZombatarWidget::MouseDownFHair(int x, int y) {
         int theX = 160 + 198 + (7 % 6) * 73;
         int theY = 162 + 7 / 6 * 79;
         Sexy::Rect rect = {theX, theY, 73, 79};
-        if (TRect_Contains(&rect, x, y)) {
+        if (rect.Contains(x, y)) {
             mSelectedFHair = 255;
             mZombatarReanim->SetZombatarFHair(mSelectedFHair, mSelectedFHairColor);
             return;
         }
         Sexy::Rect prev = {160 + 209, 436, addonZombatarImages.zombatar_next_button->mWidth, addonZombatarImages.zombatar_next_button->mHeight};
-        if (TRect_Contains(&prev, x, y)) {
+        if (prev.Contains(x, y)) {
             mSelectedFHairPage--;
             return;
         }
@@ -1670,7 +1670,7 @@ void ZombatarWidget::MouseDownFHair(int x, int y) {
             int theX = 160 + 285 + (i % 9) * 30;
             int theY = 432 + i / 9 * 30;
             Sexy::Rect rect = {theX, theY, 30, 30};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedFHairColor = i;
                 mZombatarReanim->SetZombatarFHair(mSelectedFHair, mSelectedFHairColor);
                 return;
@@ -1684,7 +1684,7 @@ void ZombatarWidget::MouseDownTidBit(int x, int y) {
         int theX = 160 + 198 + (i % 6) * 73;
         int theY = 162 + i / 6 * 79;
         Sexy::Rect rect = {theX, theY, 73, 79};
-        if (TRect_Contains(&rect, x, y)) {
+        if (rect.Contains(x, y)) {
             mSelectedTidBit = i;
             mZombatarReanim->SetZombatarTidBits(mSelectedTidBit, mSelectedTidBitColor);
             return;
@@ -1693,7 +1693,7 @@ void ZombatarWidget::MouseDownTidBit(int x, int y) {
     int theX = 160 + 198 + (14 % 6) * 73;
     int theY = 162 + 14 / 6 * 79;
     Sexy::Rect rect = {theX, theY, 73, 79};
-    if (TRect_Contains(&rect, x, y)) {
+    if (rect.Contains(x, y)) {
         mSelectedTidBit = 255;
         mZombatarReanim->SetZombatarTidBits(mSelectedTidBit, mSelectedTidBitColor);
         return;
@@ -1704,7 +1704,7 @@ void ZombatarWidget::MouseDownTidBit(int x, int y) {
             int theX = 160 + 285 + (i % 9) * 30;
             int theY = 432 + i / 9 * 30;
             Sexy::Rect rect = {theX, theY, 30, 30};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedTidBitColor = i;
                 mZombatarReanim->SetZombatarTidBits(mSelectedTidBit, mSelectedTidBitColor);
                 return;
@@ -1719,7 +1719,7 @@ void ZombatarWidget::MouseDownEyeWear(int x, int y) {
         int theX = 160 + 198 + (i % 6) * 73;
         int theY = 162 + i / 6 * 79;
         Sexy::Rect rect = {theX, theY, 73, 79};
-        if (TRect_Contains(&rect, x, y)) {
+        if (rect.Contains(x, y)) {
             mSelectedEyeWear = i;
             mZombatarReanim->SetZombatarEyeWear(mSelectedEyeWear, mSelectedEyeWearColor);
             return;
@@ -1728,7 +1728,7 @@ void ZombatarWidget::MouseDownEyeWear(int x, int y) {
     int theX = 160 + 198 + (16 % 6) * 73;
     int theY = 162 + 16 / 6 * 79;
     Sexy::Rect rect = {theX, theY, 73, 79};
-    if (TRect_Contains(&rect, x, y)) {
+    if (rect.Contains(x, y)) {
         mSelectedEyeWear = 255;
         mZombatarReanim->SetZombatarEyeWear(mSelectedEyeWear, mSelectedEyeWearColor);
         return;
@@ -1739,7 +1739,7 @@ void ZombatarWidget::MouseDownEyeWear(int x, int y) {
             int theX = 160 + 285 + (i % 9) * 30;
             int theY = 432 + i / 9 * 30;
             Sexy::Rect rect = {theX, theY, 30, 30};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedEyeWearColor = i;
                 mZombatarReanim->SetZombatarEyeWear(mSelectedEyeWear, mSelectedEyeWearColor);
                 return;
@@ -1753,7 +1753,7 @@ void ZombatarWidget::MouseDownCloth(int x, int y) {
         int theX = 160 + 198 + (i % 6) * 73;
         int theY = 162 + i / 6 * 79;
         Sexy::Rect rect = {theX, theY, 73, 79};
-        if (TRect_Contains(&rect, x, y)) {
+        if (rect.Contains(x, y)) {
             mSelectedCloth = i;
             return;
         }
@@ -1761,7 +1761,7 @@ void ZombatarWidget::MouseDownCloth(int x, int y) {
     int theX = 160 + 198 + (12 % 6) * 73;
     int theY = 162 + 12 / 6 * 79;
     Sexy::Rect rect = {theX, theY, 73, 79};
-    if (TRect_Contains(&rect, x, y)) {
+    if (rect.Contains(x, y)) {
         mSelectedCloth = 255;
         return;
     }
@@ -1772,7 +1772,7 @@ void ZombatarWidget::MouseDownAccessory(int x, int y) {
         int theX = 160 + 198 + (i % 6) * 73;
         int theY = 162 + i / 6 * 79;
         Sexy::Rect rect = {theX, theY, 73, 79};
-        if (TRect_Contains(&rect, x, y)) {
+        if (rect.Contains(x, y)) {
             mSelectedAccessory = i;
             mZombatarReanim->SetZombatarAccessories(mSelectedAccessory, mSelectedAccessoryColor);
             return;
@@ -1781,7 +1781,7 @@ void ZombatarWidget::MouseDownAccessory(int x, int y) {
     int theX = 160 + 198 + (15 % 6) * 73;
     int theY = 162 + 15 / 6 * 79;
     Sexy::Rect rect = {theX, theY, 73, 79};
-    if (TRect_Contains(&rect, x, y)) {
+    if (rect.Contains(x, y)) {
         mSelectedAccessory = 255;
         mZombatarReanim->SetZombatarAccessories(mSelectedAccessory, mSelectedAccessoryColor);
         return;
@@ -1792,7 +1792,7 @@ void ZombatarWidget::MouseDownAccessory(int x, int y) {
             int theX = 160 + 285 + (i % 9) * 30;
             int theY = 432 + i / 9 * 30;
             Sexy::Rect rect = {theX, theY, 30, 30};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedAccessoryColor = i;
                 mZombatarReanim->SetZombatarAccessories(mSelectedAccessory, mSelectedAccessoryColor);
                 return;
@@ -1806,7 +1806,7 @@ void ZombatarWidget::MouseDownHat(int x, int y) {
         int theX = 160 + 198 + (i % 6) * 73;
         int theY = 162 + i / 6 * 79;
         Sexy::Rect rect = {theX, theY, 73, 79};
-        if (TRect_Contains(&rect, x, y)) {
+        if (rect.Contains(x, y)) {
             mSelectedHat = i;
             mZombatarReanim->SetZombatarHats(mSelectedHat, mSelectedHatColor);
             return;
@@ -1815,7 +1815,7 @@ void ZombatarWidget::MouseDownHat(int x, int y) {
     int theX = 160 + 198 + (14 % 6) * 73;
     int theY = 162 + 14 / 6 * 79;
     Sexy::Rect rect = {theX, theY, 73, 79};
-    if (TRect_Contains(&rect, x, y)) {
+    if (rect.Contains(x, y)) {
         mSelectedHat = 255;
         mZombatarReanim->SetZombatarHats(mSelectedHat, mSelectedHatColor);
         return;
@@ -1826,7 +1826,7 @@ void ZombatarWidget::MouseDownHat(int x, int y) {
             int theX = 160 + 285 + (i % 9) * 30;
             int theY = 432 + i / 9 * 30;
             Sexy::Rect rect = {theX, theY, 30, 30};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedHatColor = i;
                 mZombatarReanim->SetZombatarHats(mSelectedHat, mSelectedHatColor);
                 return;
@@ -1841,13 +1841,13 @@ void ZombatarWidget::MouseDownBackground(int x, int y) {
             int theX = 160 + 198 + (i % 6) * 73;
             int theY = 162 + i / 6 * 79;
             Sexy::Rect rect = {theX, theY, 73, 79};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedBackground = i;
                 return;
             }
         }
         Sexy::Rect next = {160 + 588, 436, addonZombatarImages.zombatar_next_button->mWidth, addonZombatarImages.zombatar_next_button->mHeight};
-        if (TRect_Contains(&next, x, y)) {
+        if (next.Contains(x, y)) {
             mSelectedBackgroundPage++;
             return;
         }
@@ -1856,13 +1856,13 @@ void ZombatarWidget::MouseDownBackground(int x, int y) {
             int theX = 160 + 198 + (i % 6) * 73;
             int theY = 162 + i / 6 * 79;
             Sexy::Rect rect = {theX, theY, 73, 79};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedBackground = i + 18 * mSelectedBackgroundPage;
                 return;
             }
         }
         Sexy::Rect prev = {160 + 209, 436, addonZombatarImages.zombatar_next_button->mWidth, addonZombatarImages.zombatar_next_button->mHeight};
-        if (TRect_Contains(&prev, x, y)) {
+        if (prev.Contains(x, y)) {
             mSelectedBackgroundPage--;
             return;
         }
@@ -1871,18 +1871,18 @@ void ZombatarWidget::MouseDownBackground(int x, int y) {
             int theX = 160 + 198 + (i % 6) * 73;
             int theY = 162 + i / 6 * 79;
             Sexy::Rect rect = {theX, theY, 73, 79};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedBackground = i + 18 * mSelectedBackgroundPage;
                 return;
             }
         }
         Sexy::Rect next = {160 + 588, 436, addonZombatarImages.zombatar_next_button->mWidth, addonZombatarImages.zombatar_next_button->mHeight};
-        if (TRect_Contains(&next, x, y)) {
+        if (next.Contains(x, y)) {
             mSelectedBackgroundPage++;
             return;
         }
         Sexy::Rect prev = {160 + 209, 436, addonZombatarImages.zombatar_next_button->mWidth, addonZombatarImages.zombatar_next_button->mHeight};
-        if (TRect_Contains(&prev, x, y)) {
+        if (prev.Contains(x, y)) {
             mSelectedBackgroundPage--;
             return;
         }
@@ -1894,7 +1894,7 @@ void ZombatarWidget::MouseDownBackground(int x, int y) {
             int theX = 160 + 285 + (i % 9) * 30;
             int theY = 432 + i / 9 * 30;
             Sexy::Rect rect = {theX, theY, 30, 30};
-            if (TRect_Contains(&rect, x, y)) {
+            if (rect.Contains(x, y)) {
                 mSelectedBackgroundColor = i;
                 return;
             }
@@ -1915,7 +1915,7 @@ void ZombatarWidget::MouseDown(int x, int y) {
     }
     for (char i = 0; i < ZombatarWidget::MAX_TAB_NUM; ++i) {
         Sexy::Rect rect = {160 + 67, 152 + i * 43, 125, 47};
-        if (TRect_Contains(&rect, x, y)) {
+        if (rect.Contains(x, y)) {
             mSelectedTab = i;
             mSelectedFHairPage = 0;
             mSelectedBackgroundPage = 0;

@@ -1347,10 +1347,6 @@ void Board::SpeedUpUpdate() {
     mChallenge->Update();
 }
 
-bool TRect_Contains(Rect *rect, int x, int y) {
-    return rect->mX < x && rect->mY < y && rect->mX + rect->mWidth > x && rect->mY + rect->mHeight > y;
-}
-
 
 size_t Board::getClientEventSize(EventType type) {
     switch (type) {
@@ -3361,13 +3357,13 @@ void Board::MouseMove(int x, int y) {
 bool Board::MouseHitTest(int x, int y, HitResult *theHitResult, bool thePlayerIndex) {
     GameMode mGameMode = mApp->mGameMode;
     if (mGameMode == GameMode::GAMEMODE_MP_VS) {
-        if (TRect_Contains(&mTouchVSShovelRect, x, y)) {
+        if (mTouchVSShovelRect.Contains(x, y)) {
             theHitResult->mObjectType = GameObjectType::OBJECT_TYPE_SHOVEL;
             return true;
         }
     } else {
         Rect shovelButtonRect = GetShovelButtonRect();
-        if (mShowShovel && TRect_Contains(&shovelButtonRect, x, y)) {
+        if (mShowShovel && shovelButtonRect.Contains(x, y)) {
             theHitResult->mObjectType = GameObjectType::OBJECT_TYPE_SHOVEL;
             return true;
         }
@@ -3375,7 +3371,7 @@ bool Board::MouseHitTest(int x, int y, HitResult *theHitResult, bool thePlayerIn
 
     if (mApp->IsCoopMode()) {
         Rect butterButtonRect = GetButterButtonRect();
-        if (mShowButter && TRect_Contains(&butterButtonRect, x, y)) {
+        if (mShowButter && butterButtonRect.Contains(x, y)) {
             theHitResult->mObjectType = GameObjectType::OBJECT_TYPE_BUTTER;
             return true;
         }
@@ -3386,7 +3382,7 @@ bool Board::MouseHitTest(int x, int y, HitResult *theHitResult, bool thePlayerIn
         for (int i = GameObjectType::OBJECT_TYPE_WATERING_CAN; i <= GameObjectType::OBJECT_TYPE_TREE_OF_WISDOM_GARDEN; i++) {
             if (CanUseGameObject((GameObjectType)i)) {
                 rect = GetZenButtonRect((GameObjectType)i);
-                if (TRect_Contains(&rect, x, y)) {
+                if (rect.Contains(x, y)) {
                     theHitResult->mObjectType = (GameObjectType)i;
                     return true;
                 }
@@ -3502,9 +3498,9 @@ void Board::MouseDown(int x, int y, int theClickCount) {
     }
 
     bool inRangeOf1PSeedBank = (mGamepadControls[0]->mPlayerIndex2 == 1 && mSeedBank[1]->ContainsPoint(x, y))
-        || (mGamepadControls[0]->mPlayerIndex2 == 0 && (mSeedBank[0]->ContainsPoint(x, y) || TRect_Contains(&mTouchVSShovelRect, x, y)));
+        || (mGamepadControls[0]->mPlayerIndex2 == 0 && (mSeedBank[0]->ContainsPoint(x, y) || mTouchVSShovelRect.Contains(x, y)));
     bool inRangeOf2PSeedBank = (mGamepadControls[1]->mPlayerIndex2 == 1 && mSeedBank[1]->ContainsPoint(x, y))
-        || (mGamepadControls[1]->mPlayerIndex2 == 0 && (mSeedBank[0]->ContainsPoint(x, y) || TRect_Contains(&mTouchVSShovelRect, x, y)));
+        || (mGamepadControls[1]->mPlayerIndex2 == 0 && (mSeedBank[0]->ContainsPoint(x, y) || mTouchVSShovelRect.Contains(x, y)));
 
 
     // 如果是客户端
@@ -3760,7 +3756,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
     }
 
     if (mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE) { // 拉老虎机用
-        if (TRect_Contains(&slotMachineRect, x, y)) {
+        if (slotMachineRect.Contains(x, y)) {
             mGamepadControls[0]->OnKeyDown(KeyCode::KEYCODE_X_BUTTON, 1112);
             return;
         }
@@ -3969,7 +3965,7 @@ void Board::__MouseDrag(int x, int y) {
 
     if (mTouchState == TouchState::TOUCHSTATE_SHOVEL_RECT) {
         if (mGameMode == GameMode::GAMEMODE_MP_VS) {
-            if (TRect_Contains(&mTouchVSShovelRect, mTouchLastX, mTouchLastY) && !TRect_Contains(&mTouchVSShovelRect, x, y)) {
+            if (mTouchVSShovelRect.Contains(mTouchLastX, mTouchLastY) && !mTouchVSShovelRect.Contains(x, y)) {
                 mTouchState = TouchState::TOUCHSTATE_BOARD_MOVED_FROM_SHOVEL_RECT;
                 if (!requestDrawShovelInCursor)
                     mApp->PlayFoley(FoleyType::FOLEY_SHOVEL);
@@ -4468,7 +4464,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
     }
 
     if (mGameMode == GameMode::GAMEMODE_CHALLENGE_SLOT_MACHINE) { // 拉老虎机用
-        if (TRect_Contains(&slotMachineRect, x, y)) {
+        if (slotMachineRect.Contains(x, y)) {
             mGamepadControls[0]->OnKeyDown(KeyCode::KEYCODE_X_BUTTON, 1112);
             return;
         }
@@ -4636,7 +4632,7 @@ void Board::MouseDragSecond(int x, int y) {
 
     if (gTouchStateSecond == TouchState::TOUCHSTATE_SHOVEL_RECT) {
         if (aGameMode == GameMode::GAMEMODE_MP_VS) {
-            if (TRect_Contains(&mTouchVSShovelRect, gTouchLastXSecond, gTouchLastYSecond) && !TRect_Contains(&mTouchVSShovelRect, x, y)) {
+            if (mTouchVSShovelRect.Contains(gTouchLastXSecond, gTouchLastYSecond) && !mTouchVSShovelRect.Contains(x, y)) {
                 gTouchStateSecond = TouchState::TOUCHSTATE_BOARD_MOVED_FROM_SHOVEL_RECT;
                 if (!requestDrawShovelInCursor)
                     mApp->PlayFoley(FoleyType::FOLEY_SHOVEL);

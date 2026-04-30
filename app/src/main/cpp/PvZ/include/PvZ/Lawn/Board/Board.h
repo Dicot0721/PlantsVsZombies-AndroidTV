@@ -643,7 +643,6 @@ bool LawnSaveGame(Board *theBoard, const pvzstl::string &theFilePath);
 bool LawnLoadGame(Board *theBoard, SaveGameContext *theFilePath);
 const char *GetNameByAchievementId(AchievementType theAchievementId);
 Sexy::Image *GetIconByAchievementId(AchievementType theAchievementId);
-bool TRect_Contains(Sexy::Rect *rect, int x, int y);
 /***************************************************************************************************************/
 inline int theBuildLadderX;
 inline int theBuildPlantX;
