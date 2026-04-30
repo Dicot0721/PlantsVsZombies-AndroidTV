@@ -72,9 +72,4 @@ inline void vformat(homura::Storage<pvzstl::string> &result, const char *fmt, st
 
 } // namespace Sexy
 
-template <typename T, size_t N>
-constexpr size_t Length(const T (&)[N]) {
-    return N;
-}
-
 #endif // PVZ_SEXYAPPFRAMEWORK_MISC_COMMON_H

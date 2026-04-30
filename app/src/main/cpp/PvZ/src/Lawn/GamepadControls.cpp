@@ -831,10 +831,6 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                     mBoard->SpawnZombieWave();
                 } else if (Challenge::IsMPZombieTypeAddInRow(aZombieType)) {
                     mBoard->AddZombieInRow(aZombieType, aGridY, Zombie::ZOMBIE_WAVE_VS, true);
-                    if (aZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL) {
-                        //                        aSeedPacket->SetPacketType(SeedType::SEED_ZOMBIE_SUPER_FAN_IMP, SeedType::SEED_NONE);
-                        return;
-                    }
                 } else {
                     if (mBoard->mPlantRow[aGridY] == PlantRowType::PLANTROW_POOL) { // 如果是水路则放置在出生点
                         mBoard->AddZombieInRow(aZombieType, aGridY, Zombie::ZOMBIE_WAVE_VS, true);

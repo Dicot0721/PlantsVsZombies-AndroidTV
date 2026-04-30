@@ -409,6 +409,7 @@ inline void *Zombie_ZombieInitializeAddr;
 inline void *Zombie_DieWithLootAddr;
 inline void *Zombie_DrawReanimAddr;
 inline void *Zombie_DropHeadAddr;
+inline void *Zombie_DropHelmAddr;
 inline void *Zombie_IsImmobiliziedAddr;
 inline void *Zombie_GetDancerFrameAddr;
 inline void *Zombie_RiseFromGraveAddr;
@@ -423,6 +424,7 @@ inline void *Zombie_DetachShieldAddr;
 inline void *Zombie_AddAttachedParticleAddr;
 inline void *Zombie_CanBeFrozenAddr;
 inline void *Zombie_StopEatingAddr;
+inline void *Zombie_BobsledCrashAddr;
 inline void *Zombie_DropArmAddr;
 inline void *Zombie_PlayZombieReanimAddr;
 inline void *Zombie_SetupReanimLayersAddr;
@@ -1331,6 +1333,7 @@ extern Image *&IMAGE_REANIM_ZOMBIE_PAPER_LEFTARM_UPPER2;
 extern Image *&IMAGE_REANIM_ZOMBIE_POLEVAULTER_OUTERARM_UPPER2;
 extern Image *&IMAGE_REANIM_ZOMBIE_BALLOON_OUTERARM_UPPER2;
 extern Image *&IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONE;
+extern Image *&IMAGE_REANIM_ZOMBIE_IMP_ARM2;
 extern Image *&IMAGE_REANIM_ZOMBIE_DIGGER_OUTERARM_UPPER2;
 extern Image *&IMAGE_REANIM_ZOMBIE_BOBSLED_OUTERARM_UPPER2;
 extern Image *&IMAGE_REANIM_ZOMBIE_JACKBOX_OUTERARM_LOWER2;
@@ -1425,6 +1428,7 @@ extern Image *&IMAGE_CRATER_ROOF_LEFT;
 extern Image *&IMAGE_CRATER_ROOF_CENTER;
 extern Image *&IMAGE_ESRB_RATING;
 extern Image *&IMAGE_ZOMBIEFOOTBALLHEAD;
+extern Image *&IMAGE_ZOMBIEIMPHEAD;
 
 extern MemoryImage *&IMAGE_BLANK;
 
@@ -1432,7 +1436,7 @@ extern SexyAppBase *&gSexyAppBase;
 } // namespace Sexy
 
 extern EffectSystem *&gEffectSystem;
-extern FoleyParams *gLawnFoleyParamArray;
+extern FoleyParams (&gLawnFoleyParamArray)[ParticleEffect::NUM_PARTICLES];
 extern FoleyParams *&gFoleyParamArray;
 extern int &gFoleyParamArraySize;
 extern LawnApp *&gLawnApp;

@@ -404,6 +404,7 @@ bool LoadGameMain() {
     Zombie_DieWithLootAddr = libGameMain.GetSymbol("_ZN6Zombie11DieWithLootEv");
     Zombie_DrawReanimAddr = libGameMain.GetSymbol("_ZN6Zombie10DrawReanimEPN4Sexy8GraphicsER18ZombieDrawPositioni");
     Zombie_DropHeadAddr = libGameMain.GetSymbol("_ZN6Zombie8DropHeadEj");
+    Zombie_DropHelmAddr = libGameMain.GetSymbol("_ZN6Zombie8DropHelmEj");
     Zombie_BossSpawnAttackAddr = libGameMain.GetSymbol("_ZN6Zombie15BossSpawnAttackEv");
     Zombie_DrawBungeeCordAddr = libGameMain.GetSymbol("_ZN6Zombie14DrawBungeeCordEPN4Sexy8GraphicsEii");
     // Zombie_IsTangleKelpTargetAddr = libGameMain.GetSymbol("_ZN6Zombie18IsTanglekelpTargetEv");
@@ -423,6 +424,7 @@ bool LoadGameMain() {
     Zombie_AddAttachedParticleAddr = libGameMain.GetSymbol("_ZN6Zombie19AddAttachedParticleEii14ParticleEffect");
     Zombie_CanBeFrozenAddr = libGameMain.GetSymbol("_ZN6Zombie11CanBeFrozenEv");
     Zombie_StopEatingAddr = libGameMain.GetSymbol("_ZN6Zombie10StopEatingEv");
+    Zombie_BobsledCrashAddr = libGameMain.GetSymbol("_ZN6Zombie12BobsledCrashEv");
     Zombie_DropArmAddr = libGameMain.GetSymbol("_ZN6Zombie7DropArmEj");
     Zombie_PlayZombieReanimAddr = libGameMain.GetSymbol("_ZN6Zombie16PlayZombieReanimEPKc14ReanimLoopTypeif");
     Zombie_SetupReanimLayersAddr = libGameMain.GetSymbol("_ZN6Zombie17SetupReanimLayersEP11Reanimation10ZombieType");
@@ -1354,6 +1356,7 @@ Sexy::Image *&Sexy::IMAGE_REANIM_ZOMBIE_PAPER_LEFTARM_UPPER2 = *libGameMain.GetS
 Sexy::Image *&Sexy::IMAGE_REANIM_ZOMBIE_POLEVAULTER_OUTERARM_UPPER2 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy47IMAGE_REANIM_ZOMBIE_POLEVAULTER_OUTERARM_UPPER2E");
 Sexy::Image *&Sexy::IMAGE_REANIM_ZOMBIE_BALLOON_OUTERARM_UPPER2 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy43IMAGE_REANIM_ZOMBIE_BALLOON_OUTERARM_UPPER2E");
 Sexy::Image *&Sexy::IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONE = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy33IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONEE");
+Sexy::Image *&Sexy::IMAGE_REANIM_ZOMBIE_IMP_ARM2 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy28IMAGE_REANIM_ZOMBIE_IMP_ARM2E");
 Sexy::Image *&Sexy::IMAGE_REANIM_ZOMBIE_BOBSLED_OUTERARM_UPPER2 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy43IMAGE_REANIM_ZOMBIE_BOBSLED_OUTERARM_UPPER2E");
 Sexy::Image *&Sexy::IMAGE_REANIM_ZOMBIE_JACKBOX_OUTERARM_LOWER2 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy43IMAGE_REANIM_ZOMBIE_JACKBOX_OUTERARM_LOWER2E");
 Sexy::Image *&Sexy::IMAGE_REANIM_ZOMBIE_SNORKLE_OUTERARM_UPPER2 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy43IMAGE_REANIM_ZOMBIE_SNORKLE_OUTERARM_UPPER2E");
@@ -1446,6 +1449,7 @@ Sexy::Image *&Sexy::IMAGE_CRATER_ROOF_LEFT = *libGameMain.GetSymbol<Sexy::Image 
 Sexy::Image *&Sexy::IMAGE_CRATER_ROOF_CENTER = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy24IMAGE_CRATER_ROOF_CENTERE");
 Sexy::Image *&Sexy::IMAGE_ESRB_RATING = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy17IMAGE_ESRB_RATINGE");
 Sexy::Image *&Sexy::IMAGE_ZOMBIEFOOTBALLHEAD = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy24IMAGE_ZOMBIEFOOTBALLHEADE");
+Sexy::Image *&Sexy::IMAGE_ZOMBIEIMPHEAD = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy19IMAGE_ZOMBIEIMPHEADE");
 
 Sexy::MemoryImage *&Sexy::IMAGE_BLANK = *libGameMain.GetSymbol<Sexy::MemoryImage *>("_ZN4Sexy11IMAGE_BLANKE");
 
@@ -1462,7 +1466,7 @@ int (&VSResultsMenu::msPlayerRecords)[2][5] = *libGameMain.GetSymbol<int[2][5]>(
 DISABLE_WARNING_BEGIN("-Wextra-qualification") // warning: extra qualification on member 'xxx'
 
 EffectSystem *& ::gEffectSystem = *libGameMain.GetSymbol<EffectSystem *>("gEffectSystem");
-FoleyParams * ::gLawnFoleyParamArray = libGameMain.GetSymbol<FoleyParams>("gLawnFoleyParamArray");
+FoleyParams (&::gLawnFoleyParamArray)[ParticleEffect::NUM_PARTICLES] = *libGameMain.GetSymbol<FoleyParams[ParticleEffect::NUM_PARTICLES]>("gLawnFoleyParamArray");
 FoleyParams *& ::gFoleyParamArray = *libGameMain.GetSymbol<FoleyParams *>("gFoleyParamArray");
 int & ::gFoleyParamArraySize = *libGameMain.GetSymbol<int>("gFoleyParamArraySize");
 LawnApp *& ::gLawnApp = *libGameMain.GetSymbol<LawnApp *>("gLawnApp");

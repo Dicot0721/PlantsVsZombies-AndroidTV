@@ -176,6 +176,8 @@ void LawnApp::LoadAddonImages() {
     addonImages.burial_mound_dirt->mNumRows = 3;
     addonImages.burial_mound_dirt->mNumCols = 5;
 
+    addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_HELMET2 = GetImageByFileName("reanim/Zombie_Berserker2");
+    addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_HELMET3 = GetImageByFileName("reanim/Zombie_Berserker3");
     addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_LEFTARM_HAND = GetImageByFileName("reanim/Zombie_Berserker4");
     //    addonImages.IMAGE_ZOMBIEJACKSONHEAD = GetImageByFileName("addonFiles/particles/ZombieJacksonHead");
     //    addonImages.IMAGE_ZOMBIEBACKUPDANCERHEAD2 = GetImageByFileName("addonFiles/particles/ZombieBackupDancerHead2");
@@ -877,7 +879,7 @@ void LawnApp::LoadingThreadProc() {
     for (int i = 0; i < EXTENDED_NUM_FOLEY - NUM_FOLEY; ++i) {
         sMergedLawnFoleyParamArray[NUM_FOLEY + i] = gExtendedLawnFoleyParamArray[i];
     }
-    TodFoleyInitialize(sMergedLawnFoleyParamArray, gFoleyParamArraySize + int(Length(gExtendedLawnFoleyParamArray)));
+    TodFoleyInitialize(sMergedLawnFoleyParamArray, gFoleyParamArraySize + int(std::size(gExtendedLawnFoleyParamArray)));
 
     // //试图修复偶现的地图错位现象。不知道是否有效
     // LawnApp_Load(lawnApp,"DelayLoad_Background1");

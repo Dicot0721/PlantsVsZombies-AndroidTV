@@ -67,8 +67,8 @@ void ReanimatorCache::ReanimatorCacheInitialize() {
     for (int i = 0; i < ZombieType::NUM_ZOMBIE_TYPES; i++)
         mZombieImages[i] = nullptr;
 
-    for (int i = 0; i < ZombieType::EXTENDED_NUM_ZOMBIE_TYPES - NUM_CACHED_ZOMBIE_TYPES; i++)
-        gNewZombieImages[i] = nullptr;
+    for (int i = 0; i < EXTENDED_NUM_ZOMBIE_TYPES - NUM_CACHED_ZOMBIE_TYPES; i++)
+        gExtendedZombieImages[i] = nullptr;
 }
 
 void ReanimatorCache::ReanimatorCacheDispose() {
@@ -83,8 +83,8 @@ void ReanimatorCache::ReanimatorCacheDispose() {
     for (int i = 0; i < ZombieType::NUM_ZOMBIE_TYPES; i++)
         delete mZombieImages[i];
 
-    for (int i = 0; i < ZombieType::EXTENDED_NUM_ZOMBIE_TYPES - NUM_CACHED_ZOMBIE_TYPES; i++)
-        delete gNewZombieImages[i];
+    for (int i = 0; i < EXTENDED_NUM_ZOMBIE_TYPES - NUM_CACHED_ZOMBIE_TYPES; i++)
+        delete gExtendedZombieImages[i];
 }
 
 void ReanimatorCache::DrawCachedPlant(Graphics *g, float thePosX, float thePosY, SeedType theSeedType, DrawVariation theDrawVariation) {
@@ -120,23 +120,21 @@ void ReanimatorCache::DrawCachedPlant(Graphics *g, float thePosX, float thePosY,
 }
 
 void ReanimatorCache::DrawCachedZombie(Graphics *g, float thePosX, float thePosY, ZombieType theZombieType) {
-    //    if (theZombieType == ZOMBIE_INVALID || theZombieType > NUM_CACHED_ZOMBIE_TYPES)
-    //        return;
-
-    //    if (mZombieImages[theZombieType])
-    //        TodDrawImageScaledF(g, mZombieImages[theZombieType], thePosX, thePosY, g->mScaleX, g->mScaleY);
-
-    if (theZombieType == ZOMBIE_INVALID || theZombieType >= EXTENDED_NUM_ZOMBIE_TYPES)
+    if (theZombieType == ZOMBIE_INVALID)
         return;
 
     if (theZombieType < NUM_CACHED_ZOMBIE_TYPES) {
         if (mZombieImages[theZombieType] == nullptr)
             mZombieImages[theZombieType] = MakeCachedZombieFrame(theZombieType);
         TodDrawImageScaledF(g, mZombieImages[theZombieType], thePosX, thePosY, g->mScaleX, g->mScaleY);
-    } else {
-        if (gNewZombieImages[theZombieType - NUM_CACHED_ZOMBIE_TYPES - 1] == nullptr)
-            gNewZombieImages[theZombieType - NUM_CACHED_ZOMBIE_TYPES - 1] = MakeCachedZombieFrame(theZombieType);
-        TodDrawImageScaledF(g, gNewZombieImages[theZombieType - NUM_CACHED_ZOMBIE_TYPES - 1], thePosX, thePosY, g->mScaleX, g->mScaleY);
+        return;
+    }
+
+    if (theZombieType >= NUM_CACHED_ZOMBIE_TYPES && theZombieType < EXTENDED_NUM_ZOMBIE_TYPES) {
+        int aExtendedIndex = theZombieType - NUM_CACHED_ZOMBIE_TYPES;
+        if (gExtendedZombieImages[aExtendedIndex] == nullptr)
+            gExtendedZombieImages[aExtendedIndex] = MakeCachedZombieFrame(theZombieType);
+        TodDrawImageScaledF(g, gExtendedZombieImages[aExtendedIndex], thePosX, thePosY, g->mScaleX, g->mScaleY);
     }
 }
 
@@ -174,7 +172,8 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
 
     float aPosX = 40.0f, aPosY = 40.0f;
 
-    if (theZombieType > ZombieType::NUM_CACHED_ZOMBIE_TYPES) {
+    if (theZombieType >= ZombieType::NUM_CACHED_ZOMBIE_TYPES && theZombieType < EXTENDED_NUM_ZOMBIE_TYPES) {
+        int aExtendedIndex = theZombieType - NUM_CACHED_ZOMBIE_TYPES;
         if (theZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL) {
             Reanimation aReanim;
             aReanim.ReanimationInitializeType(aPosX, aPosY, aZombieDef.mReanimationType);
@@ -182,16 +181,15 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
             aReanim.mAnimTime = 0.5f;
             aReanim.Update();
             aReanim.Draw(&aMemoryGraphics);
-            gNewZombieImages[theZombieType - NUM_CACHED_ZOMBIE_TYPES - 1] = aMemoryImage;
-            // } else if (theZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP) {
-            //     Reanimation aReanim;
-            //     aReanim.ReanimationInitializeType(aPosX, aPosY, aZombieDef.mReanimationType);
-            //     aReanim.PlayReanim("anim_idle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 24.0f);
-            //     aReanim.mAnimTime = 0.5f;
-            //     aReanim.Update();
-            //     aReanim.Draw(&aMemoryGraphics);
-            //     gNewZombieImages[theZombieType - NUM_CACHED_ZOMBIE_TYPES - 1] = aMemoryImage;
-            // }
+            gExtendedZombieImages[aExtendedIndex] = aMemoryImage;
+        } else if (theZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP) {
+            Reanimation aReanim;
+            aReanim.ReanimationInitializeType(aPosX, aPosY, aZombieDef.mReanimationType);
+            aReanim.PlayReanim("anim_idle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 24.0f);
+            aReanim.mAnimTime = 0.5f;
+            aReanim.Update();
+            aReanim.Draw(&aMemoryGraphics);
+            gExtendedZombieImages[aExtendedIndex] = aMemoryImage;
         }
         return aMemoryImage;
     }

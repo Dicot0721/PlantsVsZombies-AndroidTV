@@ -48,6 +48,7 @@ inline constexpr int POGO_BOUNCE_TIME = 80;
 inline constexpr int DOLPHIN_JUMP_TIME = 120;
 inline constexpr int JackInTheBoxZombieRadius = 115;
 inline constexpr int JackInTheBoxPlantRadius = 90;
+inline constexpr int SuperFanImpZombieRadius = 35;
 inline constexpr int BOBSLED_CRASH_TIME = 150;
 inline constexpr int ZOMBIE_BACKUP_DANCER_RISE_HEIGHT = -200;
 inline constexpr int BOSS_FLASH_HEALTH_FRACTION = 10;

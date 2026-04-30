@@ -5815,6 +5815,16 @@ void Board::KillAllPlantsInRadius(int theX, int theY, int theRadius) {
     }
 }
 
+void Board::KillAllPlantsInGrid(int theGridX, int theGridY) {
+    Plant *aPlant = nullptr;
+    while (IteratePlants(aPlant)) {
+        if (aPlant->mPlantCol == theGridX && aPlant->mRow == theGridY) {
+            mPlantsEaten++;
+            aPlant->Die();
+        }
+    }
+}
+
 void Board::RemoveCutsceneZombies() {
     Zombie *aZombie = nullptr;
     while (IterateZombies(aZombie)) {

@@ -81,8 +81,8 @@ ZombieDefinition gZombieDefs[NUM_ZOMBIE_TYPES] = {
 };
 
 ZombieDefinition gExtendedZombieDefs[] = {
-    {ZOMBIE_GIGA_FOOTBALL, REANIM_GIGA_FOOTBALL, 7, 16, 5, 2000, "FOOTBALL_ZOMBIE"},
-    //    {ZOMBIE_SUPER_FAN_IMP, REANIM_SUPER_FAN_IMP, 10, 48, 1, 0, "IMP"},
+    {ZOMBIE_GIGA_FOOTBALL, REANIM_GIGA_FOOTBALL, 7, 16, 5, 2000, "GIGA_FOOTBALL_ZOMBIE"},
+    {ZOMBIE_SUPER_FAN_IMP, REANIM_SUPER_FAN_IMP, 10, 48, 1, 0, "SUPER_FAN_IMP"},
 };
 
 ZombieDefinition &GetZombieDefinition(ZombieType theZombieType) {
@@ -90,8 +90,8 @@ ZombieDefinition &GetZombieDefinition(ZombieType theZombieType) {
         return gZombieTrashBinDef;
     }
 
-    if (theZombieType > NUM_CACHED_ZOMBIE_TYPES) {
-        return gExtendedZombieDefs[theZombieType - NUM_CACHED_ZOMBIE_TYPES - 1];
+    if (theZombieType >= NUM_CACHED_ZOMBIE_TYPES) {
+        return gExtendedZombieDefs[theZombieType - NUM_CACHED_ZOMBIE_TYPES];
     }
 
     return gZombieDefs[theZombieType];
@@ -110,10 +110,6 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
         mHelmHealth *= theRatio;
         mShieldHealth *= theRatio;
         mFlyingHealth *= theRatio;
-        mBodyMaxHealth = mBodyHealth;
-        mHelmMaxHealth = mHelmHealth;
-        mShieldMaxHealth = mShieldHealth;
-        mFlyingMaxHealth = mFlyingHealth;
     }
 
     if (IsZombatarZombie(theType) && theFromWave != -3) {
@@ -198,20 +194,23 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
         case ZombieType::ZOMBIE_GIGA_FOOTBALL:
             mZombieRect = Rect(50, 0, 57, 115);
             ReanimShowPrefix("anim_hair", RENDER_GROUP_HIDDEN);
-            mBodyHealth = 1100;
+            mHelmType = HelmType::HELMTYPE_GIGA_FOOTBALL;
+            mHelmHealth = 900;
             mAnimTicksPerFrame = 6;
             mVariant = false;
             if (IsOnBoard()) {
-                mZombiePhase = ZombiePhase::PHASE_FOOTBALL_CHARGING;
+                mZombiePhase = ZombiePhase::PHASE_FOOTBALL_PRE_CHARGE;
                 StartWalkAnim(0);
-                mApp->PlaySample(addonSounds.whistle);
             }
             break;
-            // case ZombieType::ZOMBIE_SUPER_FAN_IMP:
-            //     if (!IsOnBoard()) {
-            //         PlayZombieReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 12.0f);
-            //     }
-            //     break;
+
+        case ZombieType::ZOMBIE_SUPER_FAN_IMP:
+            if (!IsOnBoard()) {
+                PlayZombieReanim("anim_walk", ReanimLoopType::REANIM_LOOP, 0, 12.0f);
+            } else {
+                mTargetCol = RandRangeInt(0, 2);
+            }
+            break;
 
         case ZombieType::ZOMBIE_TRASHCAN:
             if (VSSetupAddonWidget::msBalancePatchMode) {
@@ -247,9 +246,9 @@ void Zombie::CheckIfPreyCaught() {
         || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING_WITHOUT_DOLPHIN || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_INTO_POOL
         || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_RIDING || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_IN_JUMP || mZombiePhase == ZombiePhase::PHASE_SNORKEL_INTO_POOL
         || mZombiePhase == ZombiePhase::PHASE_SNORKEL_WALKING || mZombiePhase == ZombiePhase::PHASE_LADDER_PLACING || mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING
-        || mZombiePhase == ZombiePhase::PHASE_FOOTBALL_TACKLE || mZombiePhase == ZombiePhase::PHASE_IMP_POPPING || mZombieHeight == ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED
-        || mZombieHeight == ZombieHeight::HEIGHT_UP_LADDER || mZombieHeight == ZombieHeight::HEIGHT_IN_TO_POOL || mZombieHeight == ZombieHeight::HEIGHT_OUT_OF_POOL || IsTangleKelpTarget()
-        || mZombieHeight == ZombieHeight::HEIGHT_FALLING || !mHasHead || IsFlying())
+        || mZombiePhase == ZombiePhase::PHASE_FOOTBALL_TACKLING || mZombiePhase == ZombiePhase::PHASE_FOOTBALL_KICKING || mZombiePhase == ZombiePhase::PHASE_IMP_POPPING
+        || mZombieHeight == ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED || mZombieHeight == ZombieHeight::HEIGHT_UP_LADDER || mZombieHeight == ZombieHeight::HEIGHT_IN_TO_POOL
+        || mZombieHeight == ZombieHeight::HEIGHT_OUT_OF_POOL || IsTangleKelpTarget() || mZombieHeight == ZombieHeight::HEIGHT_FALLING || !mHasHead || IsFlying())
         return;
 
     int aTicksBetweenEats = TICKS_BETWEEN_EATS;
@@ -378,9 +377,9 @@ void Zombie::UpdateActions() {
     if (mZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL) {
         UpdateGigaFootball();
     }
-    // if (mZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP) {
-    //     UpdateZombieImp();
-    // }
+    if (mZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP) {
+        UpdateSuperFanImp();
+    }
 }
 
 void Zombie::UpdatePlaying() {
@@ -568,7 +567,7 @@ void Zombie::UpdateYeti() {
 }
 
 void Zombie::UpdateZombieImp() {
-    if (mZombiePhase == ZombiePhase::PHASE_IMP_GETTING_THROWN || mZombiePhase == ZombiePhase::PHASE_IMP_GETTING_TACKLE) {
+    if (mZombiePhase == ZombiePhase::PHASE_IMP_GETTING_THROWN) {
         mVelZ -= THOWN_ZOMBIE_GRAVITY;
         mAltitude += mVelZ;
         mPosX -= mVelX;
@@ -593,47 +592,95 @@ void Zombie::UpdateZombieImp() {
         mZombiePhase = PHASE_IMP_RUNNING;
         PickRandomSpeed();
     }
+}
 
-    //    if (mZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP) {
-    //        UpdateImpGettingTackle();
-    //
-    //        Zombie *aZombie = FindZombieGigaFootball();
-    //        if (aZombie) {
-    //            DoSpecial();
-    //        }
-    //
-    //        Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW);
-    //
-    //        if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_NORMAL) {
-    //            if ((aPlant && mX < 240) || mX < 40) {
-    //                mPhaseCounter = 110;
-    //                mZombiePhase = ZombiePhase::PHASE_IMP_POPPING;
-    //            }
-    //        }
-    //
-    //        if (mZombiePhase == ZombiePhase::PHASE_IMP_POPPING) {
-    //            if (mPhaseCounter == 80) {
-    //                PlayZombieReanim("anim_thrown", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 28.0f);
-    //            }
-    //
-    //            if (mPhaseCounter <= 0) {
-    //                mApp->PlayFoley(FoleyType::FOLEY_EXPLOSION);
-    //
-    //                int aPosX = mX + mWidth / 2;
-    //                int aPosY = mY + mHeight / 2;
-    //                if (mMindControlled) {
-    //                    mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, SuperFanImpZombieRadius, 1, true, 127);
-    //                } else {
-    //                    mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, SuperFanImpZombieRadius, 1, true, 255);
-    //                    mBoard->KillAllPlantsInRadius(aPosX, aPosY, SuperFanImpPlantRadius);
-    //                }
-    //
-    //                mApp->AddTodParticle(aPosX, aPosY, Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_TOP, 0, 0), ParticleEffect::PARTICLE_JACKEXPLODE);
-    //                mBoard->ShakeBoard(4, -6);
-    //                ApplyBurn();
-    //            }
-    //        }
-    //}
+void Zombie::UpdateSuperFanImp() {
+    if (mZombiePhase == ZombiePhase::PHASE_IMP_LANDING) {
+        Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+        if (aBodyReanim->mLoopCount > 0) {
+            mZombiePhase = ZombiePhase::PHASE_IMP_POPPING;
+            PlayZombieReanim("anim_explode", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 0.0f);
+        }
+        return;
+    }
+
+    UpdateZombieImp();
+
+    if (Zombie *aZombie = FindZombieGigaFootball()) {
+        mRelatedZombieID = mBoard->ZombieGetID(aZombie);
+    }
+
+    if (Zombie *aZombie = mBoard->ZombieTryToGet(mRelatedZombieID)) {
+        bool doTackle = false;
+        if (aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING) {
+            doTackle = true;
+        } else if (aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_WALKING) {
+            aZombie->StopEating();
+            aZombie->mZombiePhase = PHASE_FOOTBALL_KICKING;
+            aZombie->PlayZombieReanim("anim_kick", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 20.0f);
+        } else if (aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_KICKING) {
+            Reanimation *aBodyReanim = mApp->ReanimationTryToGet(aZombie->mBodyReanimID);
+            if (aBodyReanim->ShouldTriggerTimedEvent(0.35f)) {
+                mApp->PlayFoley(FoleyType::FOLEY_THUMP);
+                doTackle = true;
+            }
+        }
+
+        if (doTackle) {
+            mPosX = mPosX - 66.0f;
+            mPosY = GetPosYBasedOnRow(mRow);
+            SetRow(mRow);
+            mVariant = false;
+            mAltitude = 44.0f;
+            mRenderOrder = mRenderOrder + 1;
+            mApp->PlayFoley(FoleyType::FOLEY_SWING);
+
+            mZombiePhase = ZombiePhase::PHASE_IMP_GETTING_THROWN;
+            int aTargetCol = mBoard->GridToPixelX(RandRangeInt(0, 2), mRow) - 25;
+            mVelX = 3.0f / mScaleZombie;
+            float aKickingDistance = mPosX - aTargetCol;
+            if (aKickingDistance < 20.0f) {
+                aKickingDistance = 20.0f;
+            }
+            int aFlightFrames = int(aKickingDistance / mVelX + 0.5f);
+            if (aFlightFrames < 1) {
+                aFlightFrames = 1;
+            }
+            float aFlightFramesF = float(aFlightFrames);
+            mVelZ = (-mAltitude + THOWN_ZOMBIE_GRAVITY * aFlightFramesF * (aFlightFramesF + 1.0f) * 0.5f) / aFlightFramesF;
+            PlayZombieReanim("anim_thrown", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 18.0f);
+            UpdateReanim();
+            mApp->PlayFoley(FoleyType::FOLEY_IMP);
+            mRelatedZombieID = ZombieID::ZOMBIEID_NULL;
+        }
+    }
+
+    int aPosX = mX + mWidth / 2;
+    int aPosY = mY + mHeight / 2;
+    if (mZombiePhase == ZombiePhase::PHASE_IMP_RUNNING) {
+        int aTargetX = mBoard->GridToPixelX(mTargetCol, mRow) + RandRangeInt(-20, 60);
+        if (aPosX <= aTargetX) {
+            mZombiePhase = ZombiePhase::PHASE_IMP_POPPING;
+            PlayZombieReanim("anim_explode", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 0.0f);
+        }
+    } else if (mZombiePhase == ZombiePhase::PHASE_IMP_POPPING) {
+        Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (aBodyReanim->ShouldTriggerTimedEvent(0.20f)) {
+            mApp->PlayFoley(FoleyType::FOLEY_EXPLOSION);
+            int aGridX = mBoard->PixelToGridXKeepOnBoard(aPosX, aPosY);
+            int aGridY = mBoard->PixelToGridYKeepOnBoard(aPosX, aPosY);
+            if (mMindControlled) {
+                mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, SuperFanImpZombieRadius, 1, true, 127);
+            } else {
+                mBoard->KillAllZombiesInRadius_Custom(mRow, aPosX, aPosY, SuperFanImpZombieRadius, 1, true, 255);
+                mBoard->KillAllPlantsInGrid(aGridX, aGridY);
+            }
+            mBoard->ShakeBoard(4, -6);
+        }
+        if (aBodyReanim->mLoopCount > 0) {
+            DieNoLoot();
+        }
+    }
 }
 
 void Zombie::UpdateGigaFootball() {
@@ -645,22 +692,21 @@ void Zombie::UpdateGigaFootball() {
         if (aBodyReanim->mLoopCount > 0) {
             mZombiePhase = ZombiePhase::PHASE_FOOTBALL_CHARGING;
             StartWalkAnim(0);
+            mApp->PlaySample(addonSounds.whistle);
         }
-    }
-
-    if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING) {
+    } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING) {
         if (mButteredCounter > 0 || mIceTrapCounter > 0) {
             mZombiePhase = ZombiePhase::PHASE_FOOTBALL_WALKING;
             mPhaseCounter = RandRangeInt(1000, 1500) / 2;
         }
 
         if (FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW) || FindZombieTarget()) {
-            mZombiePhase = ZombiePhase::PHASE_FOOTBALL_TACKLE;
-            PlayZombieReanim("anim_tackle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 0.0f);
+            mZombiePhase = ZombiePhase::PHASE_FOOTBALL_TACKLING;
+            PlayZombieReanim("anim_tackle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 24.0f);
         }
-    } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_TACKLE) {
+    } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_TACKLING) {
         Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
-        if (aBodyReanim->ShouldTriggerTimedEvent(0.20f)) {
+        if (aBodyReanim->ShouldTriggerTimedEvent(0.15f)) {
             int aMindCtrlIndex = mMindControlled ? -1 : 1;
             Zombie *aZombie = FindZombieTarget();
             Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW);
@@ -696,39 +742,24 @@ void Zombie::UpdateGigaFootball() {
         if (aBodyReanim->mLoopCount > 0) {
             mZombiePhase = ZombiePhase::PHASE_FOOTBALL_WALKING;
             mPhaseCounter = RandRangeInt(1000, 1500);
-            StartWalkAnim(20);
+            StartWalkAnim(0);
         }
     } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_WALKING) {
         if (mIsEating)
             mPhaseCounter++;
 
-        if (mPhaseCounter == 0) {
+        if (mPhaseCounter <= 0) {
             mZombiePhase = ZombiePhase::PHASE_FOOTBALL_PRE_CHARGE;
-            PlayZombieReanim("anim_prepare", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 0.0f);
+            StartWalkAnim(0);
         }
-    }
-}
-
-void Zombie::UpdateImpGettingTackle() {
-    if (mZombiePhase != ZombiePhase::PHASE_IMP_GETTING_TACKLE)
-        return;
-
-    if (!mHasHead || IsDeadOrDying())
-        return;
-
-    if (mX < 40) {
-        mZombiePhase = ZombiePhase::PHASE_IMP_LANDING;
-        mZombieHeight = ZombieHeight::HEIGHT_FALLING;
-    }
-
-    Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW);
-    if (aPlant && aPlant->mSeedType == SeedType::SEED_TALLNUT) {
-        mApp->PlayFoley(FoleyType::FOLEY_BONK);
-        mApp->AddTodParticle(aPlant->mX + 60, aPlant->mY - 20, mRenderOrder + 1, ParticleEffect::PARTICLE_TALL_NUT_BLOCK);
-
-        mZombiePhase = ZombiePhase::PHASE_IMP_LANDING;
-        mZombieHeight = ZombieHeight::HEIGHT_FALLING;
-        mPosX = aPlant->mX;
+    } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_KICKING) {
+        Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (aBodyReanim->mLoopCount > 0) {
+            mZombiePhase = ZombiePhase::PHASE_FOOTBALL_WALKING;
+            mPhaseCounter = RandRangeInt(1000, 1500);
+            StopEating();
+            StartWalkAnim(0);
+        }
     }
 }
 
@@ -1462,9 +1493,9 @@ void Zombie::UpdateZombieRiseFromGrave() {
                 mZombiePhase = PHASE_SQUASH_PRE_LAUNCH;
                 break;
             case ZOMBIE_IMP:
-            // case ZOMBIE_SUPER_FAN_IMP:
-            //     mZombiePhase = PHASE_IMP_PRE_RUN;
-            //     break;
+            case ZOMBIE_SUPER_FAN_IMP:
+                mZombiePhase = PHASE_IMP_PRE_RUN;
+                break;
             default:
                 mZombiePhase = PHASE_ZOMBIE_NORMAL;
                 break;
@@ -2789,7 +2820,7 @@ void Zombie::SetupReanimForLostHead() {
 }
 
 void Zombie::DropHead(unsigned int theDamageFlags) {
-    if (mZombieType > ZombieType::NUM_CACHED_ZOMBIE_TYPES) {
+    if (mZombieType >= ZombieType::NUM_CACHED_ZOMBIE_TYPES) {
         if (!CanLoseBodyParts() || !mHasHead)
             return;
 
@@ -2831,14 +2862,13 @@ void Zombie::DropHead(unsigned int theDamageFlags) {
         if (aParticle) {
             if (mZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL) {
                 aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEFOOTBALLHEAD);
+            } else if (mZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP) {
+                aParticle->OverrideImage(nullptr, IMAGE_ZOMBIEIMPHEAD);
             }
             //            if (mZombieType == ZombieType::ZOMBIE_JACKSON) {
             //                aParticle->OverrideImage(nullptr, addonImages.IMAGE_ZOMBIEJACKSONHEAD);
             //            } else if (mZombieType == ZombieType::ZOMBIE_BACKUP_DANCER2) {
             //                aParticle->OverrideImage(nullptr, addonImages.IMAGE_ZOMBIEBACKUPDANCERHEAD2);
-            //            } else if (mZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP) {
-            //                aParticle->OverrideImage(nullptr, *IMAGE_ZOMBIEIMPHEAD);
-            //            }
         }
     }
 
@@ -2866,6 +2896,52 @@ void Zombie::DropHead(unsigned int theDamageFlags) {
             mBossFireBallReanimID = ReanimationID::REANIMATIONID_NULL;
         }
     }
+}
+
+void Zombie::DropHelm(unsigned int theDamageFlags) {
+    if (mHelmType == HelmType::HELMTYPE_NONE)
+        return;
+
+    ZombieDrawPosition aDrawPos{};
+    GetDrawPos(aDrawPos);
+    float aPosX = mPosX + aDrawPos.mImageOffsetX + aDrawPos.mHeadX + 14.0f;
+    float aPosY = mPosY + aDrawPos.mImageOffsetY + aDrawPos.mHeadY + aDrawPos.mBodyY + 18.0f;
+    ParticleEffect aEffect = ParticleEffect::PARTICLE_NONE;
+    if (mHelmType == HelmType::HELMTYPE_TRAFFIC_CONE) {
+        GetTrackPosition("anim_cone", aPosX, aPosY);
+        ReanimShowPrefix("anim_cone", RENDER_GROUP_HIDDEN);
+        ReanimShowPrefix("anim_hair", RENDER_GROUP_NORMAL);
+        aEffect = ParticleEffect::PARTICLE_ZOMBIE_TRAFFIC_CONE;
+    } else if (mHelmType == HelmType::HELMTYPE_PAIL) {
+        GetTrackPosition("anim_bucket", aPosX, aPosY);
+        ReanimShowPrefix("anim_bucket", RENDER_GROUP_HIDDEN);
+        ReanimShowPrefix("anim_hair", RENDER_GROUP_NORMAL);
+        aEffect = ParticleEffect::PARTICLE_ZOMBIE_PAIL;
+    } else if (mHelmType == HelmType::HELMTYPE_FOOTBALL) {
+        GetTrackPosition("zombie_football_helmet", aPosX, aPosY);
+        ReanimShowPrefix("zombie_football_helmet", RENDER_GROUP_HIDDEN);
+        ReanimShowPrefix("anim_hair", RENDER_GROUP_NORMAL);
+        aEffect = ParticleEffect::PARTICLE_ZOMBIE_HELMET;
+    } else if (mHelmType == HelmType::HELMTYPE_DIGGER) {
+        GetTrackPosition("Zombie_digger_hardhat", aPosX, aPosY);
+        ReanimShowTrack("Zombie_digger_hardhat", RENDER_GROUP_HIDDEN);
+        aEffect = ParticleEffect::PARTICLE_ZOMBIE_HEADLIGHT;
+    } else if (mHelmType == HelmType::HELMTYPE_BOBSLED && !TestBit(theDamageFlags, (int)DamageFlags::DAMAGE_DOESNT_LEAVE_BODY)) {
+        BobsledCrash();
+    }
+    //    else if (mHelmType == HelmType::HELMTYPE_GIGA_FOOTBALL) {
+    //        GetTrackPosition("zombie_football_helmet", aPosX, aPosY);
+    //        ReanimShowPrefix("zombie_football_helmet", RENDER_GROUP_HIDDEN);
+    //        ReanimShowPrefix("anim_hair", RENDER_GROUP_NORMAL);
+    //        aEffect = ParticleEffect::PARTICLE_ZOMBIE_GIGA_HELMET;
+    //    }
+
+    if (!TestBit(theDamageFlags, (int)DamageFlags::DAMAGE_DOESNT_LEAVE_BODY) && aEffect != ParticleEffect::PARTICLE_NONE) {
+        TodParticleSystem *aParticle = mApp->AddTodParticle(aPosX, aPosY, mRenderOrder + 1, aEffect);
+        OverrideParticleScale(aParticle);
+    }
+
+    mHelmType = HelmType::HELMTYPE_NONE;
 }
 
 void Zombie::SetupReanimForLostArm(unsigned int theDamageFlags) {
@@ -2903,10 +2979,10 @@ void Zombie::SetupReanimForLostArm(unsigned int theDamageFlags) {
                 GetTrackPosition("Zombie_football_leftarm_hand", aPosX, aPosY);
                 aBodyReanim->SetImageOverride("Zombie_football_leftarm_upper", IMAGE_REANIM_ZOMBIE_FOOTBALL_LEFTARM_UPPER2);
                 break;
-                // case ZombieType::ZOMBIE_SUPER_FAN_IMP:
-                //     GetTrackPosition("Zombie_outerarm_lower", aPosX, aPosY);
-                //     aBodyReanim->SetImageOverride("Zombie_imp_outerarm_upper", IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONE);
-                //     break;
+            case ZombieType::ZOMBIE_SUPER_FAN_IMP:
+                GetTrackPosition("Zombie_outerarm_lower", aPosX, aPosY);
+                aBodyReanim->SetImageOverride("Zombie_imp_outerarm_upper", IMAGE_REANIM_ZOMBIE_IMP_ARM1_BONE);
+                break;
                 //            case ZombieType::ZOMBIE_JACKSON:
                 //                GetTrackPosition("Zombie_disco_outerarm_lower", aPosX, aPosY);
                 //                aBodyReanim->SetImageOverride("Zombie_disco_outerarm_upper", addonImages.IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_UPPER2);
@@ -2935,9 +3011,9 @@ void Zombie::SetupReanimForLostArm(unsigned int theDamageFlags) {
                 case ZombieType::ZOMBIE_GIGA_FOOTBALL:
                     aParticle->OverrideImage(nullptr, addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_LEFTARM_HAND);
                     break;
-                    // case ZombieType::ZOMBIE_SUPER_FAN_IMP:
-                    //     aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_IMP_ARM2);
-                    //     break;
+                case ZombieType::ZOMBIE_SUPER_FAN_IMP:
+                    aParticle->OverrideImage(nullptr, IMAGE_REANIM_ZOMBIE_IMP_ARM2);
+                    break;
                     //                case ZombieType::ZOMBIE_JACKSON:
                     //                    ReanimShowTrack("Zombie_disco_outerarm_lower", RENDER_GROUP_HIDDEN);
                     //                    ReanimShowTrack("Zombie_disco_outerhand_point", RENDER_GROUP_HIDDEN);
@@ -2957,7 +3033,7 @@ void Zombie::SetupReanimForLostArm(unsigned int theDamageFlags) {
 }
 
 void Zombie::DropArm(unsigned int theDamageFlags) {
-    if (mZombieType > ZombieType::NUM_CACHED_ZOMBIE_TYPES) {
+    if (mZombieType >= ZombieType::NUM_CACHED_ZOMBIE_TYPES) {
         if (!CanLoseBodyParts()) {
             return;
         }
@@ -3162,20 +3238,16 @@ Zombie *Zombie::FindZombieTarget() {
 }
 
 Zombie *Zombie::FindZombieGigaFootball() {
-    Rect aAttackRect = GetZombieAttackRect();
+    Rect aZombieImpRect = GetZombieRect();
 
     Zombie *aZombie = nullptr;
     while (mBoard->IterateZombies(aZombie)) {
         if (mMindControlled == aZombie->mMindControlled && mZombiePhase != ZombiePhase::PHASE_IMP_GETTING_THROWN && mZombiePhase != ZombiePhase::PHASE_RISING_FROM_GRAVE
-            && aZombie->mZombiePhase != ZombiePhase::PHASE_RISING_FROM_GRAVE && aZombie->mZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL
-            && aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING && !aZombie->IsDeadOrDying() && aZombie->mRow == mRow) {
-            float aTacklingDistance = mPosX - 360.0f;
-            if (aTacklingDistance > 40.0f) {
-                Rect aZombieRect = aZombie->GetZombieRect();
-                int aOverlap = GetRectOverlap(aAttackRect, aZombieRect);
-                if (aOverlap > 0) {
-                    return aZombie;
-                }
+            && aZombie->mZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL && !aZombie->IsDeadOrDying() && aZombie->mRow == mRow) {
+            Rect aZombieFootballRect = aZombie->GetZombieAttackRect();
+            int aOverlap = GetRectOverlap(aZombieImpRect, aZombieFootballRect);
+            if (aOverlap > -20) {
+                return aZombie;
             }
         }
     }
@@ -3231,7 +3303,60 @@ void Zombie::TakeDamage_Origin(int theDamage, unsigned int theDamageFlags) {
 }
 
 int Zombie::TakeHelmDamage(int theDamage, unsigned int theDamageFlags) {
-    return old_Zombie_TakeHelmDamage(this, theDamage, theDamageFlags);
+    if (!TestBit(theDamageFlags, (int)DamageFlags::DAMAGE_DOESNT_CAUSE_FLASH)) {
+        mJustGotShotCounter = 25;
+    }
+
+    int aDamageIndexBeforeDamage = GetHelmDamageIndex();
+    int aDamageActual = std::min(mHelmHealth, theDamage);
+    int aDamageRemaining = theDamage - aDamageActual;
+    mHelmHealth -= aDamageActual;
+    if (TestBit(theDamageFlags, (int)DamageFlags::DAMAGE_FREEZE)) {
+        ApplyChill(false);
+    }
+    if (mHelmHealth == 0) {
+        DropHelm(theDamageFlags);
+        return aDamageRemaining;
+    }
+
+    int aDamageIndexAfterDamage = GetHelmDamageIndex();
+    if (aDamageIndexBeforeDamage != aDamageIndexAfterDamage) {
+        Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (mHelmType == HelmType::HELMTYPE_TRAFFIC_CONE && aDamageIndexAfterDamage == 1 && aBodyReanim) {
+            aBodyReanim->SetImageOverride("anim_cone", IMAGE_REANIM_ZOMBIE_CONE2);
+        } else if (mHelmType == HelmType::HELMTYPE_TRAFFIC_CONE && aDamageIndexAfterDamage == 2 && aBodyReanim) {
+            aBodyReanim->SetImageOverride("anim_cone", IMAGE_REANIM_ZOMBIE_CONE3);
+        } else if (mHelmType == HelmType::HELMTYPE_PAIL && aDamageIndexAfterDamage == 1) {
+            aBodyReanim->SetImageOverride("anim_bucket", IMAGE_REANIM_ZOMBIE_BUCKET2);
+        } else if (mHelmType == HelmType::HELMTYPE_PAIL && aDamageIndexAfterDamage == 2) {
+            aBodyReanim->SetImageOverride("anim_bucket", IMAGE_REANIM_ZOMBIE_BUCKET3);
+        } else if (mHelmType == HelmType::HELMTYPE_DIGGER && aDamageIndexAfterDamage == 1) {
+            aBodyReanim->SetImageOverride("Zombie_digger_hardhat", IMAGE_REANIM_ZOMBIE_DIGGER_HARDHAT2);
+        } else if (mHelmType == HelmType::HELMTYPE_DIGGER && aDamageIndexAfterDamage == 2) {
+            aBodyReanim->SetImageOverride("Zombie_digger_hardhat", IMAGE_REANIM_ZOMBIE_DIGGER_HARDHAT3);
+        } else if (mHelmType == HelmType::HELMTYPE_FOOTBALL && aDamageIndexAfterDamage == 1) {
+            aBodyReanim->SetImageOverride("zombie_football_helmet", IMAGE_REANIM_ZOMBIE_FOOTBALL_HELMET2);
+        } else if (mHelmType == HelmType::HELMTYPE_FOOTBALL && aDamageIndexAfterDamage == 2) {
+            aBodyReanim->SetImageOverride("zombie_football_helmet", IMAGE_REANIM_ZOMBIE_FOOTBALL_HELMET3);
+        } else if (mHelmType == HelmType::HELMTYPE_WALLNUT && aDamageIndexAfterDamage == 1) {
+            Reanimation *aHeadReanim = mApp->ReanimationGet(mSpecialHeadReanimID);
+            aHeadReanim->SetImageOverride("anim_face", IMAGE_REANIM_WALLNUT_CRACKED1);
+        } else if (mHelmType == HelmType::HELMTYPE_WALLNUT && aDamageIndexAfterDamage == 2) {
+            Reanimation *aHeadReanim = mApp->ReanimationGet(mSpecialHeadReanimID);
+            aHeadReanim->SetImageOverride("anim_face", IMAGE_REANIM_WALLNUT_CRACKED2);
+        } else if (mHelmType == HelmType::HELMTYPE_TALLNUT && aDamageIndexAfterDamage == 1) {
+            Reanimation *aHeadReanim = mApp->ReanimationGet(mSpecialHeadReanimID);
+            aHeadReanim->SetImageOverride("anim_idle", IMAGE_REANIM_TALLNUT_CRACKED1);
+        } else if (mHelmType == HelmType::HELMTYPE_TALLNUT && aDamageIndexAfterDamage == 2) {
+            Reanimation *aHeadReanim = mApp->ReanimationGet(mSpecialHeadReanimID);
+            aHeadReanim->SetImageOverride("anim_idle", IMAGE_REANIM_TALLNUT_CRACKED2);
+        } else if (mHelmType == HelmType::HELMTYPE_GIGA_FOOTBALL && aDamageIndexAfterDamage == 1) {
+            aBodyReanim->SetImageOverride("zombie_football_helmet", addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_HELMET2);
+        } else if (mHelmType == HelmType::HELMTYPE_GIGA_FOOTBALL && aDamageIndexAfterDamage == 2) {
+            aBodyReanim->SetImageOverride("zombie_football_helmet", addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_HELMET3);
+        }
+    }
+    return aDamageRemaining;
 }
 
 void Zombie::PlayZombieReanim(const char *theTrackName, ReanimLoopType theLoopType, int theBlendTime, float theAnimRate) {
@@ -3255,9 +3380,11 @@ void Zombie::StartWalkAnim(int theBlendTime) {
     } else if (mZombiePhase == ZombiePhase::PHASE_POGO_BOUNCING) {
         PlayZombieReanim("anim_pogo", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 40.0f);
     } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING) {
-        PlayZombieReanim("anim_walk", ReanimLoopType::REANIM_LOOP, theBlendTime, 40.0f);
+        PlayZombieReanim("anim_charge", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
     } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_WALKING) {
-        PlayZombieReanim("anim_walk2", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
+        PlayZombieReanim("anim_walk", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
+    } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_PRE_CHARGE) {
+        PlayZombieReanim("anim_prepare", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 0.0f);
     } else {
         int aWalkAnimVariant = Rand(2);
         if (mZombieType == ZombieType::ZOMBIE_PEA_HEAD) {
@@ -3484,7 +3611,7 @@ void Zombie::PickRandomSpeed() {
     } else if (mZombiePhase == ZombiePhase::PHASE_NEWSPAPER_MAD || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING || mZombiePhase == ZombiePhase::PHASE_DOLPHIN_WALKING_WITHOUT_DOLPHIN) {
         mVelX = RandRangeFloat(0.89f, 0.91f);
     } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING) {
-        mVelX = 1.0f;
+        mVelX = 1.5f;
     } else {
         mVelX = RandRangeFloat(0.23f, 0.37f); // 普僵
         if (mVelX < 0.3f) {
@@ -4126,48 +4253,6 @@ void Zombie::DoSpecial() {
     }
 
     switch (mZombieType) {
-        case ZombieType::ZOMBIE_GIGA_FOOTBALL: {
-            mZombiePhase = ZombiePhase::PHASE_FOOTBALL_WALKING;
-            mPhaseCounter = 10;
-            // Zombie *aZombieImp = mBoard->AddZombie(ZombieType::ZOMBIE_SUPER_FAN_IMP, mFromWave, false);
-            // if (aZombieImp == nullptr)
-            //     return;
-            // aZombieImp->mPosX = mPosX - 50.0f;
-            // aZombieImp->mPosY = GetPosYBasedOnRow(mRow);
-            // aZombieImp->SetRow(mRow);
-            // aZombieImp->mVariant = false;
-            // aZombieImp->mAltitude = 44.0f;
-            // aZombieImp->mRenderOrder = mRenderOrder + 1;
-            // aZombieImp->mScaleZombie = mScaleZombie;
-            // aZombieImp->mBodyHealth *= mScaleZombie * mScaleZombie;
-            // aZombieImp->mBodyMaxHealth *= mScaleZombie * mScaleZombie;
-            // aZombieImp->mChilledCounter = mChilledCounter;
-            // aZombieImp->DoSpecial();
-            break;
-        }
-        // case ZombieType::ZOMBIE_SUPER_FAN_IMP: {
-        //     float aTacklingDistance = mPosX - 360.0f;
-        //     mApp->PlayFoley(FoleyType::FOLEY_SWING);
-        //
-        //     float aMinDistancce = 40.0f;
-        //     if (mBoard->StageHasRoof()) {
-        //         aTacklingDistance -= 180.0f;
-        //         aMinDistancce = -140.0f;
-        //     }
-        //     if (aTacklingDistance < aMinDistancce) {
-        //         aTacklingDistance = aMinDistancce;
-        //     } else if (aTacklingDistance > 140.0f) {
-        //         aTacklingDistance -= RandRangeFloat(0.0f, 100.0f);
-        //     }
-        //
-        //     mZombiePhase = ZombiePhase::PHASE_IMP_GETTING_TACKLE;
-        //     mVelX = 3.0f / mScaleZombie;
-        //     mVelZ = 0.5f * (aTacklingDistance / mVelX) * 0.05f;
-        //     PlayZombieReanim("anim_thrown", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 18.0f);
-        //     UpdateReanim();
-        //     mApp->PlayFoley(FoleyType::FOLEY_IMP);
-        //     break;
-        // }
         case ZombieType::ZOMBIE_JACK_IN_THE_BOX: {
             mApp->PlayFoley(FoleyType::FOLEY_EXPLOSION);
 
