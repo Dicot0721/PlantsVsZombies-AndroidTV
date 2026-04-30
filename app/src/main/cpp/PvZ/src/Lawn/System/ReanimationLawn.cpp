@@ -66,19 +66,25 @@ void ReanimatorCache::ReanimatorCacheInitialize() {
         mLawnMowers[i] = nullptr;
     for (int i = 0; i < ZombieType::NUM_ZOMBIE_TYPES; i++)
         mZombieImages[i] = nullptr;
+
+    for (int i = 0; i < ZombieType::EXTENDED_NUM_ZOMBIE_TYPES - NUM_CACHED_ZOMBIE_TYPES; i++)
+        gNewZombieImages[i] = nullptr;
 }
 
 void ReanimatorCache::ReanimatorCacheDispose() {
-    for (auto *mPlantImage : mPlantImages)
-        delete mPlantImage;
+    for (int i = 0; i < SeedType::NUM_SEED_TYPES; i++)
+        delete mPlantImages[i];
     while (mImageVariationList.mSize > 0) {
         ReanimCacheImageVariation aImageVariation = mImageVariationList.RemoveHead();
         delete aImageVariation.mImage;
     }
-    for (auto *mLawnMower : mLawnMowers)
-        delete mLawnMower;
-    for (auto *mZombieImage : mZombieImages)
-        delete mZombieImage;
+    for (int i = 0; i < LawnMowerType::NUM_MOWER_TYPES; i++)
+        delete mLawnMowers[i];
+    for (int i = 0; i < ZombieType::NUM_ZOMBIE_TYPES; i++)
+        delete mZombieImages[i];
+
+    for (int i = 0; i < ZombieType::EXTENDED_NUM_ZOMBIE_TYPES - NUM_CACHED_ZOMBIE_TYPES; i++)
+        delete gNewZombieImages[i];
 }
 
 void ReanimatorCache::DrawCachedPlant(Graphics *g, float thePosX, float thePosY, SeedType theSeedType, DrawVariation theDrawVariation) {
@@ -114,11 +120,24 @@ void ReanimatorCache::DrawCachedPlant(Graphics *g, float thePosX, float thePosY,
 }
 
 void ReanimatorCache::DrawCachedZombie(Graphics *g, float thePosX, float thePosY, ZombieType theZombieType) {
-    if (theZombieType == ZOMBIE_INVALID || theZombieType > NUM_CACHED_ZOMBIE_TYPES)
+    //    if (theZombieType == ZOMBIE_INVALID || theZombieType > NUM_CACHED_ZOMBIE_TYPES)
+    //        return;
+
+    //    if (mZombieImages[theZombieType])
+    //        TodDrawImageScaledF(g, mZombieImages[theZombieType], thePosX, thePosY, g->mScaleX, g->mScaleY);
+
+    if (theZombieType == ZOMBIE_INVALID || theZombieType >= EXTENDED_NUM_ZOMBIE_TYPES)
         return;
 
-    if (mZombieImages[theZombieType])
+    if (theZombieType < NUM_CACHED_ZOMBIE_TYPES) {
+        if (mZombieImages[theZombieType] == nullptr)
+            mZombieImages[theZombieType] = MakeCachedZombieFrame(theZombieType);
         TodDrawImageScaledF(g, mZombieImages[theZombieType], thePosX, thePosY, g->mScaleX, g->mScaleY);
+    } else {
+        if (gNewZombieImages[theZombieType - NUM_CACHED_ZOMBIE_TYPES - 1] == nullptr)
+            gNewZombieImages[theZombieType - NUM_CACHED_ZOMBIE_TYPES - 1] = MakeCachedZombieFrame(theZombieType);
+        TodDrawImageScaledF(g, gNewZombieImages[theZombieType - NUM_CACHED_ZOMBIE_TYPES - 1], thePosX, thePosY, g->mScaleX, g->mScaleY);
+    }
 }
 
 MemoryImage *ReanimatorCache::MakeBlankMemoryImage(int theWidth, int theHeight) {
@@ -154,6 +173,28 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
     ZombieDefinition &aZombieDef = GetZombieDefinition(aUseZombieType);
 
     float aPosX = 40.0f, aPosY = 40.0f;
+
+    if (theZombieType > ZombieType::NUM_CACHED_ZOMBIE_TYPES) {
+        if (theZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL) {
+            Reanimation aReanim;
+            aReanim.ReanimationInitializeType(aPosX, aPosY, aZombieDef.mReanimationType);
+            aReanim.PlayReanim("anim_idle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 24.0f);
+            aReanim.mAnimTime = 0.5f;
+            aReanim.Update();
+            aReanim.Draw(&aMemoryGraphics);
+            gNewZombieImages[theZombieType - NUM_CACHED_ZOMBIE_TYPES - 1] = aMemoryImage;
+            // } else if (theZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP) {
+            //     Reanimation aReanim;
+            //     aReanim.ReanimationInitializeType(aPosX, aPosY, aZombieDef.mReanimationType);
+            //     aReanim.PlayReanim("anim_idle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 24.0f);
+            //     aReanim.mAnimTime = 0.5f;
+            //     aReanim.Update();
+            //     aReanim.Draw(&aMemoryGraphics);
+            //     gNewZombieImages[theZombieType - NUM_CACHED_ZOMBIE_TYPES - 1] = aMemoryImage;
+            // }
+        }
+        return aMemoryImage;
+    }
 
     if (theZombieType == ZombieType::ZOMBIE_PEA_HEAD || theZombieType == ZombieType::ZOMBIE_GATLING_HEAD || theZombieType == ZombieType::ZOMBIE_SQUASH_HEAD) { // 为植物僵尸增加SeedPacket图标
         Reanimation aReanim;

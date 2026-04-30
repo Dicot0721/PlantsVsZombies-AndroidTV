@@ -590,6 +590,10 @@ ZombieType Challenge::IZombieSeedTypeToZombieType(SeedType theSeedType) {
             return ZOMBIE_SQUASH_HEAD; // 窝瓜僵尸
         case SEED_ZOMBIE_TALLNUT_HEAD:
             return ZOMBIE_TALLNUT_HEAD; // 高坚果僵尸
+        case SEED_ZOMBIE_GIGA_FOOTBALL:
+            return ZOMBIE_GIGA_FOOTBALL;
+        case SEED_ZOMBIE_SUPER_FAN_IMP:
+            return ZOMBIE_SUPER_FAN_IMP;
         default:
             return ZOMBIE_INVALID;
     }
@@ -799,7 +803,8 @@ bool Challenge::IsMPZombieTypeAddInRow(ZombieType theZombieType) {
     return theZombieType == ZombieType::ZOMBIE_DANCER || theZombieType == ZombieType::ZOMBIE_ZAMBONI || theZombieType == ZombieType::ZOMBIE_JACK_IN_THE_BOX
         || theZombieType == ZombieType::ZOMBIE_DIGGER || theZombieType == ZombieType::ZOMBIE_CATAPULT || theZombieType == ZombieType::ZOMBIE_GARGANTUAR
         || theZombieType == ZombieType::ZOMBIE_DUCKY_TUBE || theZombieType == ZombieType::ZOMBIE_SNORKEL || theZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER
-        || theZombieType == ZombieType::ZOMBIE_BALLOON || theZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || theZombieType == ZombieType::ZOMBIE_BOBSLED;
+        || theZombieType == ZombieType::ZOMBIE_BALLOON || theZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || theZombieType == ZombieType::ZOMBIE_BOBSLED
+        || theZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL;
 }
 
 bool Challenge::IsMPZombieTypeCanGoInPool(ZombieType theZombieType) {

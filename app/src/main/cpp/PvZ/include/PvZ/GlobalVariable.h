@@ -178,12 +178,13 @@ struct AddonImages {
     Sexy::Image *burial_mound;
     Sexy::Image *burial_mound_dirt;
 
-    //    Sexy::Image *IMAGE_ZOMBIEJACKSONHEAD;
-    //    Sexy::Image *IMAGE_ZOMBIEBACKUPDANCERHEAD2;
-    //    Sexy::Image *IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_UPPER2;
-    //    Sexy::Image *IMAGE_REANIM_ZOMBIE_BACKUP_OUTERARM_UPPER2;
-    //    Sexy::Image *IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_HAND;
-    //    Sexy::Image *IMAGE_REANIM_ZOMBIE_DANCER_INNERARM_HAND;
+    Sexy::Image *IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_LEFTARM_HAND;
+    Sexy::Image *IMAGE_ZOMBIEJACKSONHEAD;
+    Sexy::Image *IMAGE_ZOMBIEBACKUPDANCERHEAD2;
+    Sexy::Image *IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_UPPER2;
+    Sexy::Image *IMAGE_REANIM_ZOMBIE_BACKUP_OUTERARM_UPPER2;
+    Sexy::Image *IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_HAND;
+    Sexy::Image *IMAGE_REANIM_ZOMBIE_DANCER_INNERARM_HAND;
 } inline addonImages; // 此处是新增贴图的列表；
 
 struct AddonSounds {

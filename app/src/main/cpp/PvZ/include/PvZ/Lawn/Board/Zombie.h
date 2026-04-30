@@ -330,6 +330,9 @@ public:
     void ZombieCatapultFire(Plant *plant) {
         reinterpret_cast<void (*)(Zombie *, Plant *)>(Zombie_ZombieCatapultFireAddr)(this, plant);
     }
+    bool SetupDrawZombieWon(Sexy::Graphics *g) {
+        return reinterpret_cast<bool (*)(Zombie *, Sexy::Graphics *)>(Zombie_SetupDrawZombieWonAddr)(this, g);
+    }
 
 
     Zombie() {
@@ -342,6 +345,7 @@ public:
     void ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Zombie *theParentZombie, int theFromWave, bool theIsVisible);
     void CheckIfPreyCaught();
     void Draw(Sexy::Graphics *g);
+    void DrawShadow(Sexy::Graphics *g);
     void DieWithLoot();
     void DieNoLoot();
     void DieNoLoot_Origin();
@@ -353,6 +357,8 @@ public:
     void UpdateZombieFlyer();
     void UpdateYeti();
     void UpdateZombieImp();
+    void UpdateGigaFootball();
+    void UpdateImpGettingTackle();
     void UpdateZombieJackInTheBox();
     void UpdateZombiePolevaulter();
     void UpdateZombieGargantuar();
@@ -388,6 +394,7 @@ public:
     Plant *FindPlantTarget(ZombieAttackType theAttackType);
     bool CanTargetPlant(Plant *thePlant, ZombieAttackType theAttackType);
     Zombie *FindZombieTarget();
+    Zombie *FindZombieGigaFootball();
     void TakeDamage(int theDamage, unsigned int theDamageFlags);
     void TakeDamage_Origin(int theDamage, unsigned int theDamageFlags);
     int TakeHelmDamage(int theDamage, unsigned int theDamageFlags);
@@ -474,6 +481,7 @@ public:
 };
 extern ZombieDefinition gZombieDefs[NUM_ZOMBIE_TYPES];
 inline ZombieDefinition gZombieTrashBinDef = {ZombieType::ZOMBIE_TRASHCAN, ReanimationType::REANIM_ZOMBIE, 1, 99, 1, 4000, "TRASHCAN_ZOMBIE"};
+extern ZombieDefinition gExtendedZombieDefs[];
 
 ZombieDefinition &GetZombieDefinition(ZombieType theZombieType);
 /***************************************************************************************************************/
@@ -490,7 +498,6 @@ inline int zombieSetScale;
 inline void (*old_Zombie_UpdateActions)(Zombie *);
 
 inline void (*old_Zombie_Draw)(Zombie *zombie, Sexy::Graphics *graphics);
-
 inline void (*old_Zombie_DrawBossPart)(Zombie *a1, Sexy::Graphics *graphics, int theBossPart);
 
 inline void (*old_Zombie_RiseFromGrave)(Zombie *zombie, int gridX, int gridY);

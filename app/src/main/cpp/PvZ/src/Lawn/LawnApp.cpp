@@ -176,6 +176,7 @@ void LawnApp::LoadAddonImages() {
     addonImages.burial_mound_dirt->mNumRows = 3;
     addonImages.burial_mound_dirt->mNumCols = 5;
 
+    addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_LEFTARM_HAND = GetImageByFileName("reanim/Zombie_Berserker4");
     //    addonImages.IMAGE_ZOMBIEJACKSONHEAD = GetImageByFileName("addonFiles/particles/ZombieJacksonHead");
     //    addonImages.IMAGE_ZOMBIEBACKUPDANCERHEAD2 = GetImageByFileName("addonFiles/particles/ZombieBackupDancerHead2");
     //    addonImages.IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_UPPER2 = GetImageByFileName("addonFiles/reanim/NewZombies/Zombie_jackson_outerarm_upper_bone");

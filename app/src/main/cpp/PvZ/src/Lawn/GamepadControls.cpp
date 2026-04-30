@@ -401,8 +401,10 @@ void GamepadControls::UpdatePreviewReanim() {
                 zombieReanim->PlayReanim("anim_armraise", ReanimLoopType::REANIM_LOOP, 0, 12.0);
             } else if (aZombieType == ZombieType::ZOMBIE_ZAMBONI) {
                 zombieReanim->PlayReanim("anim_drive", ReanimLoopType::REANIM_LOOP, 0, 12.0);
-            } else if (aZombieType == ZombieType::ZOMBIE_IMP) {
+            } else if (aZombieType == ZombieType::ZOMBIE_IMP || aZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP) {
                 zombieReanim->PlayReanim("anim_walk", ReanimLoopType::REANIM_LOOP, 0, 12.0);
+            } else if (aZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL) {
+                zombieReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 0, 12.0);
             } else {
                 if (aZombieType == ZombieType::ZOMBIE_FLAG) {
                     Reanimation *zombieReanimAttachment = anApp->AddReanimation(0, 0, 0, ReanimationType::REANIM_ZOMBIE_FLAGPOLE);
@@ -829,6 +831,10 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                     mBoard->SpawnZombieWave();
                 } else if (Challenge::IsMPZombieTypeAddInRow(aZombieType)) {
                     mBoard->AddZombieInRow(aZombieType, aGridY, Zombie::ZOMBIE_WAVE_VS, true);
+                    if (aZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL) {
+                        //                        aSeedPacket->SetPacketType(SeedType::SEED_ZOMBIE_SUPER_FAN_IMP, SeedType::SEED_NONE);
+                        return;
+                    }
                 } else {
                     if (mBoard->mPlantRow[aGridY] == PlantRowType::PLANTROW_POOL) { // 如果是水路则放置在出生点
                         mBoard->AddZombieInRow(aZombieType, aGridY, Zombie::ZOMBIE_WAVE_VS, true);

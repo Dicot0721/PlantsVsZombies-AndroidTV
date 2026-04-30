@@ -383,6 +383,8 @@ bool LoadGameMain() {
     Zombie_StopZombieSoundAddr = libGameMain.GetSymbol("_ZN6Zombie15StopZombieSoundEv");
     Zombie_ApplyBurnAddr = libGameMain.GetSymbol("_ZN6Zombie9ApplyBurnEv");
     Zombie_DrawAddr = libGameMain.GetSymbol("_ZN6Zombie4DrawEPN4Sexy8GraphicsE");
+    Zombie_DrawShadowAddr = libGameMain.GetSymbol("_ZN6Zombie10DrawShadowEPN4Sexy8GraphicsE");
+    Zombie_SetupDrawZombieWonAddr = libGameMain.GetSymbol("_ZN6Zombie18SetupDrawZombieWonEPN4Sexy8GraphicsE");
     Zombie_UpdateYetiAddr = libGameMain.GetSymbol("_ZN6Zombie10UpdateYetiEv");
     Zombie_UpdateZombieFlyerAddr = libGameMain.GetSymbol("_ZN6Zombie17UpdateZombieFlyerEv");
     Zombie_UpdateZombieImpAddr = libGameMain.GetSymbol("_ZN6Zombie15UpdateZombieImpEv");
@@ -1292,6 +1294,9 @@ int &Sexy::SOUND_MENU_R_ST = *libGameMain.GetSymbol<int>("_ZN4Sexy15SOUND_MENU_R
 int &Sexy::SOUND_THROW = *libGameMain.GetSymbol<int>("_ZN4Sexy11SOUND_THROWE");
 
 Sexy::Image *&Sexy::IMAGE_PLANTSHADOW2 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy18IMAGE_PLANTSHADOW2E");
+Sexy::Image *&Sexy::IMAGE_WHITEWATER_SHADOW = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy23IMAGE_WHITEWATER_SHADOWE");
+Sexy::Image *&Sexy::IMAGE_ZOMBIESHADOW = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy18IMAGE_ZOMBIESHADOWE");
+Sexy::Image *&Sexy::IMAGE_ZOMBIESHADOW2 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy19IMAGE_ZOMBIESHADOW2E");
 Sexy::Image *&Sexy::IMAGE_CURSOR_P1_TEXT = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy20IMAGE_CURSOR_P1_TEXTE");
 Sexy::Image *&Sexy::IMAGE_CURSOR_P2_TEXT = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy20IMAGE_CURSOR_P2_TEXTE");
 Sexy::Image *&Sexy::IMAGE_POOL = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy10IMAGE_POOLE");
@@ -1439,6 +1444,7 @@ Sexy::Image *&Sexy::IMAGE_CRATER_WATER_DAY = *libGameMain.GetSymbol<Sexy::Image 
 Sexy::Image *&Sexy::IMAGE_CRATER_ROOF_LEFT = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy22IMAGE_CRATER_ROOF_LEFTE");
 Sexy::Image *&Sexy::IMAGE_CRATER_ROOF_CENTER = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy24IMAGE_CRATER_ROOF_CENTERE");
 Sexy::Image *&Sexy::IMAGE_ESRB_RATING = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy17IMAGE_ESRB_RATINGE");
+Sexy::Image *&Sexy::IMAGE_ZOMBIEFOOTBALLHEAD = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy24IMAGE_ZOMBIEFOOTBALLHEADE");
 
 Sexy::MemoryImage *&Sexy::IMAGE_BLANK = *libGameMain.GetSymbol<Sexy::MemoryImage *>("_ZN4Sexy11IMAGE_BLANKE");
 

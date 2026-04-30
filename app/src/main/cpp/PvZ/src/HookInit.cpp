@@ -402,6 +402,7 @@ void InitHookFunction() {
     homura::HookFunction(Zombie_DetachShieldAddr, &Zombie::DetachShield, &old_Zombie_DetachShield);
     homura::HookFunction(Zombie_CheckForBoardEdgeAddr, &Zombie::CheckForBoardEdge, nullptr);
     homura::HookFunction(Zombie_DrawAddr, &Zombie::Draw, &old_Zombie_Draw);
+    homura::HookFunction(Zombie_DrawShadowAddr, &Zombie::DrawShadow, nullptr);
     homura::HookFunction(Zombie_DrawBossPartAddr, &Zombie::DrawBossPart, &old_Zombie_DrawBossPart);
     homura::HookFunction(ZombieTypeCanGoInPoolAddr, &Zombie::ZombieTypeCanGoInPool, nullptr);
     homura::HookFunction(Zombie_BossSpawnAttackAddr, &Zombie::BossSpawnAttack, nullptr);
@@ -565,8 +566,8 @@ void InitHookFunction() {
     homura::HookFunction(Reanimation_DrawTrackAddr, &Reanimation::DrawTrack, &old_Reanimation_DrawTrack);
 
 
-    //    homura::HookFunction(ReanimatorCache_ReanimatorCacheInitializeAddr, &ReanimatorCache::ReanimatorCacheInitialize, nullptr);
-    //    homura::HookFunction(ReanimatorCache_ReanimatorCacheDisposeAddr, &ReanimatorCache::ReanimatorCacheDispose, nullptr);
+    homura::HookFunction(ReanimatorCache_ReanimatorCacheInitializeAddr, &ReanimatorCache::ReanimatorCacheInitialize, nullptr);
+    homura::HookFunction(ReanimatorCache_ReanimatorCacheDisposeAddr, &ReanimatorCache::ReanimatorCacheDispose, nullptr);
     homura::HookFunction(ReanimatorCache_DrawCachedPlantAddr, &ReanimatorCache::DrawCachedPlant, &old_ReanimatorCache_DrawCachedPlant);
     homura::HookFunction(ReanimatorCache_UpdateReanimationForVariationAddr, &ReanimatorCache::UpdateReanimationForVariation, &old_ReanimatorCache_UpdateReanimationForVariation);
     homura::HookFunction(ReanimatorCache_LoadCachedImagesAddr, &ReanimatorCache::LoadCachedImages, &old_ReanimatorCache_LoadCachedImages);

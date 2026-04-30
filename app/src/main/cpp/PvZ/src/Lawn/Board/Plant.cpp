@@ -1301,6 +1301,7 @@ static int GetVSCostDefault(SeedType theSeedType) {
         case SeedType::SEED_INSTANT_COFFEE:
         case SeedType::SEED_ZOMBIE_NORMAL:
         case SeedType::SEED_ZOMBIE_IMP:
+        case SeedType::SEED_ZOMBIE_SUPER_FAN_IMP:
             return 25;
         case SeedType::SEED_ZOMBIE_GRAVESTONE:
         case SeedType::SEED_ZOMBIE_TRASHCAN:
@@ -1332,6 +1333,7 @@ static int GetVSCostDefault(SeedType theSeedType) {
         case SeedType::SEED_SNOWPEA:
         case SeedType::SEED_REPEATER:
         case SeedType::SEED_ZOMBIE_FOOTBALL:
+        case SeedType::SEED_ZOMBIE_GIGA_FOOTBALL:
         case SeedType::SEED_ZOMBIE_DANCER:
         case SeedType::SEED_ZOMBIE_DIGGER:
         case SeedType::SEED_ZOMBIE_LADDER:
@@ -1372,6 +1374,7 @@ static int GetVSRefreshTimeDefault(SeedType theSeedType) {
             case SeedType::SEED_ZOMBIE_LADDER:
             case SeedType::SEED_ZOMBIE_BOBSLED:
             case SeedType::SEED_ZOMBIE_IMP:
+            case SeedType::SEED_ZOMBIE_SUPER_FAN_IMP:
             case SeedType::SEED_ZOMBIE_BALLOON:
             case SeedType::SEED_ZOMBIE_WALLNUT_HEAD:
             case SeedType::SEED_ZOMBIE_JALAPENO_HEAD:
@@ -1386,6 +1389,7 @@ static int GetVSRefreshTimeDefault(SeedType theSeedType) {
                 return 1500;
             case SeedType::SEED_ZOMBONI:
             case SeedType::SEED_ZOMBIE_POGO:
+            case SeedType::SEED_ZOMBIE_GIGA_FOOTBALL:
             case SeedType::SEED_ZOMBIE_CATAPULT:
             case SeedType::SEED_ZOMBIE_GARGANTUAR:
                 return 6000;

@@ -90,6 +90,19 @@ void SeedPacket::Update() {
             mSlotMachineCountDown = 1;
         }
     }
+
+    if (mApp->IsVSMode()) {
+        for (int i = 0; i < SEEDBANK_MAX; ++i) {
+            SeedPacket *aSeedPacket = &mSeedBank->mSeedPackets[i];
+            if (aSeedPacket->mPacketType == SeedType::SEED_ZOMBIE_SUPER_FAN_IMP) {
+                if (!mBoard->GetLiveZombieByType(ZombieType::ZOMBIE_GIGA_FOOTBALL)) {
+                    aSeedPacket->SetPacketType(SeedType::SEED_ZOMBIE_GIGA_FOOTBALL, SeedType::SEED_NONE);
+                    aSeedPacket->Deactivate();
+                    aSeedPacket->WasPlanted(1);
+                }
+            }
+        }
+    }
 }
 
 void SeedPacket::UpdateSelected() {
@@ -198,6 +211,11 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
                 mRefreshing = false;
                 mActive = true;
                 break;
+            // case SEED_ZOMBIE_SUPER_FAN_IMP:
+            //     mRefreshTime = 0;
+            //     mRefreshing = true;
+            //     mActive = false;
+            //     break;
             default:
                 break;
         }
@@ -487,6 +505,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
             theDrawScale = 0.3;
             break;
         case SeedType::SEED_ZOMBIE_FOOTBALL:
+        case SeedType::SEED_ZOMBIE_GIGA_FOOTBALL:
             offsetY = -9.0;
             offsetX = -7.0;
             theDrawScale = 0.33;
@@ -497,6 +516,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
             theDrawScale = 0.35;
             break;
         case SeedType::SEED_ZOMBIE_IMP:
+        case SeedType::SEED_ZOMBIE_SUPER_FAN_IMP:
             offsetY = -17.0;
             offsetX = -12.0;
             theDrawScale = 0.4;

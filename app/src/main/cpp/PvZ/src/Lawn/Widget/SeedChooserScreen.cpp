@@ -1041,6 +1041,10 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
                         aLabel = "[TALLNUT_HEAD_ZOMBIE_DESCRIPTION_HEADER]";
                         aToolTip->mX = aSeedX + 2 * (SEED_PACKET_WIDTH + 6);
                         break;
+                    case SeedType::SEED_ZOMBIE_GIGA_FOOTBALL:
+                        aTitle = "[GIGA_FOOTBALL_ZOMBIE]";
+                        aLabel = "[GIGA_FOOTBALL_ZOMBIE_DESCRIPTION_HEADER]";
+                        break;
                     case SeedType::SEED_ZOMBIE_MOUND: // 召唤墓碑
                         aTitle = "[ZOMBIE_MOUND]";
                         aLabel = "[ZOMBIE_MOUND_DESCRIPTION]";

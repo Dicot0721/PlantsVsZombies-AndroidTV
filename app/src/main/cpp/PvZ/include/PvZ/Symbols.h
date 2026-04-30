@@ -383,6 +383,8 @@ inline void *Zombie_DieNoLootAddr;
 inline void *Zombie_StopZombieSoundAddr;
 inline void *Zombie_ApplyBurnAddr;
 inline void *Zombie_DrawAddr;
+inline void *Zombie_DrawShadowAddr;
+inline void *Zombie_SetupDrawZombieWonAddr;
 inline void *Zombie_UpdateYetiAddr;
 inline void *Zombie_UpdateZombieFlyerAddr;
 inline void *Zombie_UpdateZombieImpAddr;
@@ -1277,7 +1279,10 @@ extern Image *&IMAGE_POOL_BASE_NIGHT;
 extern Image *&IMAGE_POOL_SHADING;
 extern Image *&IMAGE_POOL_SHADING_NIGHT;
 extern Image *&IMAGE_BUNGEECORD;
+extern Image *&IMAGE_WHITEWATER_SHADOW;
 extern Image *&IMAGE_PLANTSHADOW2;
+extern Image *&IMAGE_ZOMBIESHADOW;
+extern Image *&IMAGE_ZOMBIESHADOW2;
 extern Image *&IMAGE_SCARY_POT;
 extern Image *&IMAGE_SLOTMACHINE_OVERLAY;
 extern Image *&IMAGE_SEEDBANK_COOP;
@@ -1417,6 +1422,7 @@ extern Image *&IMAGE_CRATER_WATER_DAY;
 extern Image *&IMAGE_CRATER_ROOF_LEFT;
 extern Image *&IMAGE_CRATER_ROOF_CENTER;
 extern Image *&IMAGE_ESRB_RATING;
+extern Image *&IMAGE_ZOMBIEFOOTBALLHEAD;
 
 extern MemoryImage *&IMAGE_BLANK;
 
