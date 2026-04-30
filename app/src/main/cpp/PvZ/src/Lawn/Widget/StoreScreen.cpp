@@ -26,6 +26,10 @@
 
 using namespace Sexy;
 
+namespace {
+enum class StoreScreenTouchState { Prev, Next, Back, None };
+}
+
 void StoreScreen::AddedToManager(WidgetManager *theWidgetManager) {
     old_StoreScreen_AddedToManager(this, theWidgetManager);
 }
@@ -67,14 +71,33 @@ void StoreScreen::DrawItem(Sexy::Graphics *g, int a3, StoreItem theStoreItem) {
     old_StoreScreen_DrawItem(this, g, a3, theStoreItem);
 }
 
+bool StoreScreen::IsPageShown(StorePages thePage) {
+    if constexpr (/* mApp->IsTrialStageLocked() */ false) {
+        return thePage == STORE_PAGE_SLOT_UPGRADES;
+    }
+    // 一周目完成后，所有页全解锁
+    bool hasFinishedAdventure = mApp->HasFinishedAdventure();
+    switch (thePage) {
+        case STORE_PAGE_PLANT_UPGRADES: // 到达或已通过冒险模式 5-2 关卡时，显示紫卡页
+            return hasFinishedAdventure || mApp->mPlayerInfo->mLevel >= 42;
+        case STORE_PAGE_ZEN1: // 到达或已通过冒险模式 5-5 关卡时，显示花园工具页
+            return hasFinishedAdventure || mApp->mPlayerInfo->mLevel >= 45;
+        case STORE_PAGE_ZEN2: // 冒险模式未完成时，不显示智慧树工具页
+            return hasFinishedAdventure;
+        case STORE_PAGE_HOUSE: // TV 原版不显示房子页
+            return hasFinishedAdventure && showHouse;
+        default:
+            return true;
+    }
+}
+
 void StoreScreen::ButtonDepress(int theId) {
     // if (!showHouse) return old_StoreScreen_ButtonDepress(storeScreen, buttonId);
-    StorePages newPageIndex;
     switch (theId) {
         case StoreScreen::StoreScreen_Back:
             mResult = 1000;
             break;
-        case StoreScreen::StoreScreen_Prev:
+        case StoreScreen::StoreScreen_Prev: {
             mHatchTimer = 50;
             unk304 = 1;
             mApp->PlaySample(Sexy::SOUND_HATCHBACK_CLOSE);
@@ -82,19 +105,15 @@ void StoreScreen::ButtonDepress(int theId) {
             mApp->CrazyDaveStopTalking();
             EnableButtons(false);
             do {
-                newPageIndex = (StorePages)(mPage - 1);
-                if (newPageIndex < StorePages::STORE_PAGE_SLOT_UPGRADES) {
-                    newPageIndex = StorePages::NUM_STORE_PAGES;
-                    mPage = StorePages::NUM_STORE_PAGES;
-                } else if (newPageIndex == StorePages::STORE_PAGE_HOUSE) {
-                    newPageIndex = StorePages::STORE_PAGE_ZEN2;
-                    mPage = StorePages::STORE_PAGE_ZEN2;
-                } else {
-                    mPage = newPageIndex;
+                mPage = StorePages(mPage - 1);
+                if (mPage == NUM_STORE_PAGES) {
+                    mPage = StorePages(mPage - 1);
+                } else if (mPage < STORE_PAGE_SLOT_UPGRADES) {
+                    mPage = STORE_PAGE_HOUSE;
                 }
-            } while (!IsPageShown(newPageIndex));
-            break;
-        case StoreScreen::StoreScreen_Next:
+            } while (!IsPageShown(mPage));
+        } break;
+        case StoreScreen::StoreScreen_Next: {
             mHatchTimer = 50;
             unk304 = 2;
             mApp->PlaySample(Sexy::SOUND_HATCHBACK_CLOSE);
@@ -102,17 +121,15 @@ void StoreScreen::ButtonDepress(int theId) {
             mApp->CrazyDaveStopTalking();
             EnableButtons(false);
             do {
-                newPageIndex = (StorePages)(mPage + 1);
-                if (newPageIndex == 4) {
-                    newPageIndex = StorePages::NUM_STORE_PAGES;
-                    mPage = StorePages::NUM_STORE_PAGES;
-                } else if (newPageIndex > 4) {
-                    newPageIndex = StorePages::STORE_PAGE_SLOT_UPGRADES;
-                    mPage = StorePages::STORE_PAGE_SLOT_UPGRADES;
-                } else {
-                    mPage = newPageIndex;
+                mPage = StorePages(mPage + 1);
+                if (mPage == NUM_STORE_PAGES) {
+                    mPage = StorePages(mPage + 1);
+                } else if (mPage > STORE_PAGE_HOUSE) {
+                    mPage = STORE_PAGE_SLOT_UPGRADES;
                 }
-            } while (!IsPageShown(newPageIndex));
+            } while (!IsPageShown(mPage));
+        } break;
+        default:
             break;
     }
 }
@@ -132,25 +149,22 @@ void StoreScreen::PurchaseItem(StoreItem theStoreItem) {
 }
 
 void StoreScreen::Draw(Sexy::Graphics *g) {
-    // 绘制商店页数字符串
     old_StoreScreen_Draw(this, g);
 
+    // 绘制商店页数字符串
     int aNumPages = 0;
-    if (mApp->HasFinishedAdventure() && showHouse) {
-        aNumPages = StorePages::NUM_STORE_PAGES;
-    } else {
-        for (StorePages aPage = STORE_PAGE_SLOT_UPGRADES; aPage < STORE_PAGE_HOUSE; aPage = (StorePages)(aPage + 1)) {
-            if (IsPageShown(aPage)) {
-                aNumPages++;
-            }
+    for (StorePages aPage = STORE_PAGE_SLOT_UPGRADES; aPage <= STORE_PAGE_HOUSE; aPage = StorePages(aPage + 1)) {
+        if (aPage == NUM_STORE_PAGES) {
+            continue;
+        }
+        if (IsPageShown(aPage)) {
+            ++aNumPages;
         }
     }
-
     if (aNumPages <= 1) {
         return;
     }
-
-    int aPage = mPage == 5 ? 5 : mPage + 1;
+    int aPage = (mPage < NUM_STORE_PAGES) ? mPage + 1 : mPage;
     pvzstl::string aPageString = StrFormat("%d/%d", aPage, aNumPages);
     TodDrawString(g, aPageString, 410, 512, Sexy::FONT_BRIANNETOD16, Color(200, 200, 200, 255), DrawStringJustification::DS_ALIGN_CENTER);
 }
@@ -182,20 +196,17 @@ void StoreScreen::MouseDown(int x, int y, int theClickCount) {
     Sexy::Rect mNextButtonRect = {mShakeX + 573, mShakeY + 373, mNextButtonWidth, mNextButtonHeight};
     Sexy::Rect mBackButtonRect = {mShakeX + 305, mShakeY + 510, mBackButtonWidth, mBackButtonHeight};
 
-    if (TRect_Contains(&mBackButtonRect, x, y)) {
+    if (mBackButtonRect.Contains(x, y)) {
         gStoreScreenTouchState = StoreScreenTouchState::Back;
         return;
     }
 
-    bool isPageShown = IsPageShown(StorePages::STORE_PAGE_PLANT_UPGRADES);
-    if (isPageShown) {
-
-        if (TRect_Contains(&mPrevButtonRect, x, y)) {
+    if (IsPageShown(StorePages::STORE_PAGE_PLANT_UPGRADES)) {
+        if (mPrevButtonRect.Contains(x, y)) {
             gStoreScreenTouchState = StoreScreenTouchState::Prev;
             return;
         }
-
-        if (TRect_Contains(&mNextButtonRect, x, y)) {
+        if (mNextButtonRect.Contains(x, y)) {
             gStoreScreenTouchState = StoreScreenTouchState::Next;
             return;
         }
@@ -203,36 +214,28 @@ void StoreScreen::MouseDown(int x, int y, int theClickCount) {
 
     // StoreScreen_PurchaseItem(storeScreen, a::STORE_ITEM_BLUEPRINT_CHANGE);
 
-    for (int i = 0; i < 8; i++) {
-        StoreItem storeItemType = GetStoreItemType(i);
-        if (storeItemType != StoreItem::STORE_ITEM_INVALID) {
-            int theX = 0;
-            int theY = 0;
-            int theCount = 0;
-            Sexy::Image *theImage = nullptr;
-            GetStoreItemInfo(i, storeItemType, theImage, theX, theY, theCount);
-            int theImageWidth = 80;
-            int theImageHeight = 80;
-            if (theImage != nullptr) {
-                theImageWidth = theImage->GetWidth();
-                theImageHeight = theImage->GetHeight();
+    for (int aItemPos = 0; aItemPos < MAX_PAGE_SPOTS; ++aItemPos) {
+        StoreItem aItemType = GetStoreItemType(aItemPos);
+        if (aItemType == StoreItem::STORE_ITEM_INVALID) {
+            continue;
+        }
+        Sexy::Image *aImage = nullptr;
+        int aItemX = 0, aItemY = 0;
+        int aCount = 0;
+        GetStoreItemInfo(aItemPos, aItemType, aImage, aItemX, aItemY, aCount);
+        int aWidth = 80;
+        int aHeight = 80;
+        if (aImage != nullptr) {
+            aWidth = aImage->GetWidth();
+            aHeight = aImage->GetHeight();
+        }
+        if (Rect{aItemX - aWidth / 2, aItemY - aHeight, aWidth, aHeight}.Contains(x, y)) {
+            if (mSelectedStoreItemType != aItemType) {
+                SetSelectedSlot(aItemPos);
+            } else if (!IsItemSoldOut(aItemType) && !IsItemUnavailable(aItemType) && !IsComingSoon(aItemType)) {
+                PurchaseItem(aItemType);
             }
-
-            // LOGD("i:%d storeItemType:%d theX:%d theY:%d x:%d y:%d theImageWidth:%d theImageHeight:%d", i, storeItemType, theX, theY, x, y, theImageWidth,
-            // theImageHeight);
-            // int theImageWidth = 80;
-            // int theImageHeight = 80;
-            Sexy::Rect itemRect = {theX - theImageWidth / 2, theY - theImageHeight, theImageWidth, theImageHeight};
-            if (TRect_Contains(&itemRect, x, y)) {
-                if (mSelectedStoreItemType != storeItemType) {
-                    SetSelectedSlot(i);
-                } else {
-                    if (IsItemSoldOut(storeItemType) || IsItemUnavailable(storeItemType) || IsComingSoon(storeItemType)) {
-                        return;
-                    }
-                    PurchaseItem(storeItemType);
-                }
-            }
+            break;
         }
     }
 }

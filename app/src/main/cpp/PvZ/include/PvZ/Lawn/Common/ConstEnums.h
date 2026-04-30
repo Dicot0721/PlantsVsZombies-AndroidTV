@@ -1223,8 +1223,8 @@ enum StorePages {
     STORE_PAGE_PLANT_UPGRADES = 1,
     STORE_PAGE_ZEN1 = 2,
     STORE_PAGE_ZEN2 = 3,
-    STORE_PAGE_HOUSE = 4,
-    NUM_STORE_PAGES = 5,
+    NUM_STORE_PAGES = 4,
+    STORE_PAGE_HOUSE = 5,
 };
 enum TodCurves {
     CURVE_CONSTANT,           // 常函数曲线

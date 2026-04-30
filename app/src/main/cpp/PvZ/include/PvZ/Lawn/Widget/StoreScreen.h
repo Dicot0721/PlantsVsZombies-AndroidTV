@@ -27,7 +27,8 @@
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/DataArray.h"
 
-enum class StoreScreenTouchState { Prev, Next, Back, None };
+inline constexpr int MAX_PAGE_SPOTS = 8;
+inline constexpr int MAX_PURCHASES = 80;
 
 class StoreScreen : public Sexy::Dialog {
 private:
@@ -80,9 +81,6 @@ public:
     void EnableButtons(bool theEnable) {
         reinterpret_cast<void (*)(StoreScreen *, bool)>(StoreScreen_EnableButtonsAddr)(this, theEnable);
     }
-    bool IsPageShown(StorePages thePage) {
-        return reinterpret_cast<bool (*)(StoreScreen *, StorePages)>(StoreScreen_IsPageShownAddr)(this, thePage);
-    }
     void AdvanceCrazyDaveDialog() {
         reinterpret_cast<void (*)(StoreScreen *)>(StoreScreen_AdvanceCrazyDaveDialogAddr)(this);
     }
@@ -112,6 +110,7 @@ public:
     void Update();
     void SetupPage();
     void DrawItem(Sexy::Graphics *g, int a3, StoreItem theStoreItem);
+    bool IsPageShown(StorePages thePage);
     void ButtonDepress(int theId);
     void PurchaseItem(StoreItem theStoreItem);
     void Draw(Sexy::Graphics *g);

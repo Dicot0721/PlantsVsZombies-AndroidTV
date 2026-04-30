@@ -319,6 +319,7 @@ void InitHookFunction() {
 
     homura::HookFunction(StoreScreen_UpdateAddr, &StoreScreen::Update, &old_StoreScreen_Update);
     homura::HookFunction(StoreScreen_SetupPageAddr, &StoreScreen::SetupPage, &old_StoreScreen_SetupPage);
+    homura::HookFunction(StoreScreen_IsPageShownAddr, &StoreScreen::IsPageShown, nullptr);
     homura::HookFunction(StoreScreen_ButtonDepressAddr, &StoreScreen::ButtonDepress, &old_StoreScreen_ButtonDepress);
     homura::HookFunction(StoreScreen_AddedToManagerAddr, &StoreScreen::AddedToManager, &old_StoreScreen_AddedToManager);
     homura::HookFunction(StoreScreen_RemovedFromManagerAddr, &StoreScreen::RemovedFromManager, &old_StoreScreen_RemovedFromManager);
