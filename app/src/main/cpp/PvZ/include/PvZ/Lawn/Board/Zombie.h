@@ -271,6 +271,9 @@ public:
     void BobsledBurn() {
         reinterpret_cast<void (*)(Zombie *)>(Zombie_BobsledBurnAddr)(this);
     }
+    void BobsledCrash() {
+        reinterpret_cast<void (*)(Zombie *)>(Zombie_BobsledCrashAddr)(this);
+    }
     bool HasYuckyFaceImage() {
         return reinterpret_cast<bool (*)(Zombie *)>(Zombie_HasYuckyFaceImageAddr)(this);
     }
@@ -358,6 +361,7 @@ public:
     void UpdateZombieFlyer();
     void UpdateYeti();
     void UpdateZombieImp();
+    void UpdateSuperFanImp();
     void UpdateGigaFootball();
     void UpdateImpGettingTackle();
     void UpdateZombieJackInTheBox();
@@ -389,6 +393,7 @@ public:
     bool CanLoseBodyParts();
     void SetupReanimForLostHead();
     void DropHead(unsigned int theDamageFlags);
+    void DropHelm(unsigned int theDamageFlags);
     void SetupReanimForLostArm(unsigned int theDamageFlags);
     void DropArm(unsigned int theDamageFlags);
     Sexy::Rect GetZombieAttackRect();
