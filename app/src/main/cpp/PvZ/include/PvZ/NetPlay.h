@@ -371,23 +371,32 @@ inline bool gTcpConnected = false;
 namespace netplay {
 
 namespace details {
-    void PutEventData(const std::byte *src, std::size_t n);
+    void PutEventData(const std::byte *data, std::size_t n);
 } // namespace details
 
 template <typename T>
     requires(!std::is_const_v<std::remove_reference_t<T>> &&    //
              !std::is_volatile_v<std::remove_reference_t<T>> && //
              std::derived_from<std::remove_reference_t<T>, BaseEvent>)
-ssize_t PutEvent(T &&event) {
+void PutEvent(T &&event) {
     static_assert(std::is_trivially_copyable_v<std::remove_reference_t<T>>, "Event must be trivially copyable");
-    static_assert(std::in_range<decltype(event.BaseEvent::size)>(sizeof(T)), "BaseEvent::size too small");
+    static_assert(std::in_range<decltype(BaseEvent::size)>(sizeof(T)), "'BaseEvent::size' is too small");
     event.BaseEvent::size = sizeof(T);
     details::PutEventData(reinterpret_cast<std::byte *>(&event), sizeof(T));
-    return sizeof(T);
 }
 
 bool FlushSendBuffer(int socket);
 void ClearSendBuffer() noexcept;
+
+std::size_t ParseEventSize(const std::byte *data);
+
+/**
+ * @param [out] dest 事件写入缓冲区 (要求已对齐)
+ * @param [in] src 事件读取缓冲区
+ *
+ * @return dest 强制转换为 BaseEvent * 的结果
+ */
+BaseEvent *GetEvent(std::byte *dest, const std::byte *src);
 
 } // namespace netplay
 

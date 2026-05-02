@@ -658,23 +658,11 @@ void ChallengeScreen::KeyDown_Origin(Sexy::KeyCode theKey) {
     old_ChallengeScreen_KeyDown(this, theKey);
 }
 
-size_t ChallengeScreen::getClientEventSize(EventType type) {
-    switch (type) {
-        // --- 触摸相关事件 ---
-        case EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE:
-            return sizeof(U16_Event);
-        default:
-            return sizeof(BaseEvent);
-    }
-}
-
-
-void ChallengeScreen::processClientEvent(void *buf, ssize_t bufSize) {
-    BaseEvent *event = (BaseEvent *)buf;
+void ChallengeScreen::processClientEvent(const BaseEvent *event) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE: {
-            U16_Event *eventButtonDepress = (U16_Event *)event;
+            auto *eventButtonDepress = static_cast<const U16_Event *>(event);
             gChallengeScreenRequestState = eventButtonDepress->data;
         } break;
 
@@ -683,34 +671,20 @@ void ChallengeScreen::processClientEvent(void *buf, ssize_t bufSize) {
     }
 }
 
-size_t ChallengeScreen::getServerEventSize(EventType type) {
-    switch (type) {
-        // --- 触摸相关事件 ---
-        case EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS:
-            return sizeof(U16_Event);
-        case EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE:
-            return sizeof(U16_Event);
-        default:
-            return sizeof(BaseEvent);
-    }
-}
-
-void ChallengeScreen::processServerEvent(void *buf, ssize_t bufSize) {
-    BaseEvent *event = (BaseEvent *)buf;
+void ChallengeScreen::processServerEvent(const BaseEvent *event) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS: {
-            auto *eventBtnDepress = reinterpret_cast<U16_Event *>(event);
+            auto *eventBtnDepress = static_cast<const U16_Event *>(event);
             int theId = eventBtnDepress->data;
             mSelectedMode = GameMode(theId);
             KeyDown_Origin(Sexy::KEYCODE_RETURN);
         } break;
         case EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE: {
-            U16_Event *event1 = (U16_Event *)event;
+            auto *event1 = static_cast<const U16_Event *>(event);
             int theId = event1->data;
             mSelectedMode = GameMode(theId);
         } break;
-
         default:
             break;
     }

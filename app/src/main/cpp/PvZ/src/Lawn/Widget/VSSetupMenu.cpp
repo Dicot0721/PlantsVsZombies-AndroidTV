@@ -438,41 +438,23 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
     }
 }
 
-size_t VSSetupMenu::getClientEventSize(EventType type) {
-    switch (type) {
-        case EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS:
-        case EVENT_CLIENT_SEEDCHOOSER_BUTTON_DEPRESS:
-        case EVENT_CLIENT_VSSETUP_ADDON_CHECKBOX_CHECKED:
-            return sizeof(U8_Event);
-        case EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED:
-            return sizeof(U8x3_Event);
-        case EVENT_VSSETUPMENU_MOVE_CONTROLLER:
-            return sizeof(U16_Event);
-        case EVENT_VSSETUPMENU_SET_CONTROLLER:
-            return sizeof(U8_Event);
-        default:
-            return sizeof(BaseEvent);
-    }
-}
-
-void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
-    BaseEvent *event = (BaseEvent *)buf;
+void VSSetupMenu::processClientEvent(const BaseEvent *event) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS: {
-            auto *eventBtnDepress = reinterpret_cast<U8_Event *>(event);
+            auto *eventBtnDepress = static_cast<const U8_Event *>(event);
             gVSSetupRequestState = eventBtnDepress->data;
         } break;
         case EVENT_CLIENT_VSSETUP_ADDON_CHECKBOX_CHECKED: {
-            auto *eventCheckbox = reinterpret_cast<U8_Event *>(event);
+            auto *eventCheckbox = static_cast<const U8_Event *>(event);
             gVSSetupRequestState = eventCheckbox->data;
         } break;
         case EVENT_CLIENT_SEEDCHOOSER_BUTTON_DEPRESS: {
-            auto *eventBtnDepress = reinterpret_cast<U8_Event *>(event);
+            auto *eventBtnDepress = static_cast<const U8_Event *>(event);
             mApp->mZombieChooserScreen->ButtonDepress_Origin(eventBtnDepress->data);
         } break;
         case EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED: {
-            auto *event1 = reinterpret_cast<U8x3_Event *>(event);
+            auto *event1 = static_cast<const U8x3_Event *>(event);
             auto seedType = SeedType(event1->data[0]);
             bool isZombieChooser = event1->data[1] != 0;
             bool moveOnly = event1->data[2] != 0;
@@ -531,7 +513,7 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             seedChooser->ClickedSeedInChooser_Orgin(chosenSeed, ownerPlayerIndex);
         } break;
             //        case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND: {
-            //            U8_Event *event1 = (U8_Event *)event;
+            //             auto *event1 = static_cast<const U8_Event *>(event);
             //            int tmp = VSBackGround;
             //            VSBackGround = event1->data;
             //            gTcpConnected = false;
@@ -540,13 +522,13 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
             //            VSBackGround = tmp;
             //        } break;
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
-            U16_Event *event1 = (U16_Event *)event;
+            auto *event1 = static_cast<const U16_Event *>(event);
             Sexy::Widget *theController2Widget = FindWidget(8);
             theController2Widget->Move(event1->data, theController2Widget->mY);
             is2PControllerMoving = true;
         } break;
         case EVENT_VSSETUPMENU_SET_CONTROLLER: {
-            U8_Event *event1 = (U8_Event *)event;
+            auto *event1 = static_cast<const U8_Event *>(event);
             VSSide aSide = event1->data == 2 ? VS_SIDE_NONE : VSSide(event1->data);
             if (mSides[1] == aSide) {
                 GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
@@ -563,38 +545,11 @@ void VSSetupMenu::processClientEvent(void *buf, ssize_t bufSize) {
     }
 }
 
-size_t VSSetupMenu::getServerEventSize(EventType type) {
-    switch (type) {
-        case EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS:
-        case EVENT_VSSETUPMENU_ENTER_STATE:
-        case EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND:
-        case EVENT_SERVER_SEEDCHOOSER_BUTTON_DEPRESS:
-            return sizeof(U8_Event);
-        case EVENT_SERVER_VSSETUP_ADDON_CHECKBOX_CHECKED:
-            return sizeof(U8U8_Event);
-        case EVENT_SERVER_SEEDCHOOSER_SELECT_SEED:
-            return sizeof(U8x3_Event);
-        case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT:
-            return sizeof(B1x8_Event);
-        case EVENT_VSSETUPMENU_RANDOM_PICK:
-            return sizeof(U16x12_Event);
-        case EVENT_VSSETUPMENU_MOVE_CONTROLLER:
-            return sizeof(U16_Event);
-        case EVENT_VSSETUPMENU_SET_CONTROLLER:
-            return sizeof(U8_Event);
-        case EVENT_SERVER_ENCOUNTER_PICK:
-            return sizeof(U16_Event);
-        default:
-            return sizeof(BaseEvent);
-    }
-}
-
-void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
-    BaseEvent *event = (BaseEvent *)buf;
+void VSSetupMenu::processServerEvent(const BaseEvent *event) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS: {
-            auto *eventBtnDepress = reinterpret_cast<U8_Event *>(event);
+            auto *eventBtnDepress = static_cast<const U8_Event *>(event);
             int theId = eventBtnDepress->data;
             LOG_DEBUG("theId={}", theId);
             if (theId == VSSetupMenu_Random_Battle && mState == VS_SETUP_STATE_SELECT_BATTLE) { // 随机战场
@@ -603,16 +558,16 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             ButtonDepress_Origin(theId);
         } break;
         case EVENT_SERVER_SEEDCHOOSER_BUTTON_DEPRESS: {
-            auto *eventBtnDepress = reinterpret_cast<U8_Event *>(event);
+            auto *eventBtnDepress = static_cast<const U8_Event *>(event);
             mApp->mZombieChooserScreen->ButtonDepress_Origin(eventBtnDepress->data);
         } break;
         case EVENT_VSSETUPMENU_ENTER_STATE: {
-            [[maybe_unused]] int aState = static_cast<U8_Event *>(event)->data;
+            [[maybe_unused]] int aState = static_cast<const U8_Event *>(event)->data;
             LOG_DEBUG("theState={}", aState);
             // GoToState(aState);
         } break;
         case EVENT_SERVER_SEEDCHOOSER_SELECT_SEED: {
-            auto *event1 = reinterpret_cast<U8x3_Event *>(event);
+            auto *event1 = static_cast<const U8x3_Event *>(event);
             auto seedType = SeedType(event1->data[0]);
             bool isZombieChooser = event1->data[1] != 0;
             bool moveOnly = event1->data[2] != 0;
@@ -666,7 +621,7 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             seedChooser->ClickedSeedInChooser_Orgin(chosenSeed, ownerPlayerIndex);
         } break;
         case EVENT_VSSETUPMENU_RANDOM_PICK: {
-            auto *eventRandPick = reinterpret_cast<U16x12_Event *>(event);
+            auto *eventRandPick = static_cast<const U16x12_Event *>(event);
             ButtonDepress_Origin(VSSetupMenu::VSSetupMenu_Random_Battle);
 
             for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(false) - 1; ++i) {
@@ -675,13 +630,13 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
-            U16_Event *event1 = (U16_Event *)event;
+            auto *event1 = static_cast<const U16_Event *>(event);
             Sexy::Widget *theController1Widget = FindWidget(7);
             theController1Widget->Move(event1->data, theController1Widget->mY);
             is1PControllerMoving = true;
         } break;
         case EVENT_VSSETUPMENU_SET_CONTROLLER: {
-            U8_Event *event1 = (U8_Event *)event;
+            auto *event1 = static_cast<const U8_Event *>(event);
             VSSide aSide = event1->data == 2 ? VS_SIDE_NONE : VSSide(event1->data);
             if (mSides[0] == aSide) {
                 GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
@@ -694,14 +649,14 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT: {
-            auto *eventButtonInit = reinterpret_cast<B1x8_Event *>(event);
+            auto *eventButtonInit = static_cast<const B1x8_Event *>(event);
             mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets, eventButtonInit->data1, false);
             mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds, eventButtonInit->data2, false);
             mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_BanMode, eventButtonInit->data3, false);
             mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_BalancePatch, eventButtonInit->data4, false);
         } break;
         case EVENT_SERVER_VSSETUP_ADDON_CHECKBOX_CHECKED: {
-            auto *eventCheckbox = reinterpret_cast<U8U8_Event *>(event);
+            auto *eventCheckbox = static_cast<const U8U8_Event *>(event);
             int id = eventCheckbox->data1;
             bool checked = eventCheckbox->data2 != 0;
             mAddonWidget->SetAddonMode(id, checked, false);
@@ -710,7 +665,7 @@ void VSSetupMenu::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_ENCOUNTER_PICK: {
-            auto *eventEncounterPick = reinterpret_cast<U16_Event *>(event);
+            auto *eventEncounterPick = static_cast<const U16_Event *>(event);
             gOpeningEncounter->mType = EncounterType(eventEncounterPick->data);
             gOpeningEncounter->OpeningEncounterInitialize(gOpeningEncounter->mType);
         } break;

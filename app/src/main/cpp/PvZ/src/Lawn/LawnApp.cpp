@@ -38,7 +38,11 @@
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
+
 #include <unistd.h>
+
+#include <limits>
+#include <ranges>
 
 using namespace Sexy;
 
@@ -330,28 +334,27 @@ int LawnApp::GamepadToPlayerIndex(unsigned int thePlayerIndex) {
 }
 
 
-void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
-
-    clientRecvBuffer.insert(clientRecvBuffer.end(), (char *)buf, (char *)buf + bufSize);
+void LawnApp::HandleTcpClientMessage(const std::byte *buf, size_t bufSize) {
+    clientRecvBuffer.append_range(std::views::counted(buf, bufSize));
     size_t offset = 0;
 
-    while (clientRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
-        BaseEvent *base = (BaseEvent *)&clientRecvBuffer[offset];
-        if (base->type == EVENT_CLIENT_PING) {
-            size_t eventSize = sizeof(U16_Event);
-            if (clientRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-            auto *eventPing = reinterpret_cast<U16_Event *>(base);
+    while (clientRecvBuffer.size() >= offset + sizeof(BaseEvent)) {
+        const auto *clientRecvPtr = clientRecvBuffer.data() + offset;
+        if (clientRecvBuffer.size() < offset + netplay::ParseEventSize(clientRecvPtr)) {
+            break;
+        }
+        alignas(std::max_align_t) std::byte alignedBuf[std::numeric_limits<decltype(BaseEvent::size)>::max()];
+        static_assert(std::size(alignedBuf) <= UINT8_MAX, "'eventBuf' is too big, please use dynamically allocating");
+
+        BaseEvent *event = netplay::GetEvent(alignedBuf, clientRecvPtr);
+        LOG_DEBUG("event.type = {}", int(event->type));
+
+        if (event->type == EVENT_CLIENT_PING) {
+            auto *eventPing = static_cast<const U16_Event *>(event);
             U16_Event eventPong = {{EVENT_SERVER_PONG}, eventPing->data};
             netplay::PutEvent(eventPong);
-
-            offset += eventSize;
-        } else if (base->type == EVENT_SERVER_PONG) {
-            size_t eventSize = sizeof(U16_Event);
-            if (clientRecvBuffer.size() - offset < eventSize)
-                break;
-
-            auto *eventPong = reinterpret_cast<U16_Event *>(base);
+        } else if (event->type == EVENT_SERVER_PONG) {
+            auto *eventPong = static_cast<const U16_Event *>(event);
             if (gNetPingAwaitingPong && eventPong->data == gNetPingLatestSentTick) {
                 const uint16_t rttTicks = static_cast<uint16_t>(gNetPingNowTick - eventPong->data);
                 if (rttTicks <= static_cast<uint16_t>(kNetPingTimeoutTicks)) {
@@ -361,203 +364,114 @@ void LawnApp::HandleTcpClientMessage(void *buf, ssize_t bufSize) {
                     gNetPingAwaitingPong = false;
                 }
             }
-
-            offset += eventSize;
-        } else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type < NUM_EVENT_BOARD) {
-            size_t eventSize = Board::getClientEventSize(base->type);
-            if (clientRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-            if (!mBoard) {
-                offset += eventSize;
-                break;
+        } else if (event->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && event->type < NUM_EVENT_BOARD) {
+            if (mBoard != nullptr) {
+                mBoard->processClientEvent(event);
             }
-            mBoard->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
-            offset += eventSize;
-        }
-
-
-        else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE && base->type < NUM_EVENT_CHALLENGESCREEN) {
-            size_t eventSize = ChallengeScreen::getClientEventSize(base->type);
-            if (clientRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-            if (!mChallengeScreen) {
-                offset += eventSize;
-                break;
+        } else if (event->type >= EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE && event->type < NUM_EVENT_CHALLENGESCREEN) {
+            if (mChallengeScreen != nullptr) {
+                mChallengeScreen->processClientEvent(event);
             }
-            mChallengeScreen->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
-            offset += eventSize;
-        }
-
-
-        else if (base->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && base->type < NUM_EVENT_VSSETUPMENU) {
-            size_t eventSize = VSSetupMenu::getClientEventSize(base->type);
-            if (clientRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-            if (!mVSSetupMenu) {
-                offset += eventSize;
-                break;
+        } else if (event->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && event->type < NUM_EVENT_VSSETUPMENU) {
+            if (mVSSetupMenu != nullptr) {
+                mVSSetupMenu->processClientEvent(event);
             }
-            mVSSetupMenu->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
-            offset += eventSize;
-        }
-
-
-        else if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type < NUM_EVENT_VSRESULT) {
-            size_t eventSize = VSResultsMenu::getClientEventSize(base->type);
-            if (clientRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-            if (!mVSResultsMenu) {
-                offset += eventSize;
-                break;
+        } else if (event->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && event->type < NUM_EVENT_VSRESULT) {
+            if (mVSResultsMenu != nullptr) {
+                mVSResultsMenu->processClientEvent(event);
             }
-            mVSResultsMenu->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
-            offset += eventSize;
-        } else if (base->type >= EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK && base->type < NUM_EVENT_WAITFORSECONDPALYER) {
-            size_t eventSize = WaitForSecondPlayerDialog::getClientEventSize(base->type);
-            if (clientRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-            if (!GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER)) {
-                offset += eventSize;
-                break;
+        } else if (event->type >= EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK && event->type < NUM_EVENT_WAITFORSECONDPALYER) {
+            if (auto *dialog = GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER)) {
+                static_cast<WaitForSecondPlayerDialog *>(dialog)->processClientEvent(event);
             }
-            ((WaitForSecondPlayerDialog *)GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER))->processClientEvent((char *)&clientRecvBuffer[offset], eventSize);
-            offset += eventSize;
         } else {
-            offset += 1;
+            assert(false && "Unknown-type event");
+            std::unreachable();
         }
+        offset += event->size;
     }
-
-    if (offset != 0) {
+    if (offset > 0) {
         clientRecvBuffer.erase(clientRecvBuffer.begin(), clientRecvBuffer.begin() + offset);
     }
 }
 
-void LawnApp::HandleTcpServerMessage(void *buf, ssize_t bufSize) {
-    serverRecvBuffer.insert(serverRecvBuffer.end(), (char *)buf, (char *)buf + bufSize);
+void LawnApp::HandleTcpServerMessage(const std::byte *buf, size_t bufSize) {
+    serverRecvBuffer.append_range(std::views::counted(buf, bufSize));
     size_t offset = 0;
 
-    while (serverRecvBuffer.size() - offset >= sizeof(BaseEvent)) {
-        BaseEvent *base = (BaseEvent *)&serverRecvBuffer[offset];
-        LOG_DEBUG("base.type ={}", (int)base->type);
-        if (base->type == EVENT_CLIENT_PING) {
-            size_t eventSize = sizeof(U16_Event);
-            if (serverRecvBuffer.size() - offset < eventSize)
-                break;
+    while (serverRecvBuffer.size() >= offset + sizeof(BaseEvent)) {
+        const auto *serverRecvPtr = serverRecvBuffer.data() + offset;
+        if (serverRecvBuffer.size() < offset + netplay::ParseEventSize(serverRecvPtr)) {
+            break;
+        }
+        alignas(std::max_align_t) std::byte alignedBuf[std::numeric_limits<decltype(BaseEvent::size)>::max()];
+        static_assert(std::size(alignedBuf) <= UINT8_MAX, "'alignedBuf' is too big, please use dynamically allocating");
 
-            U16_Event eventPong = {{EVENT_SERVER_PONG}, reinterpret_cast<U16_Event *>(base)->data};
+        BaseEvent *event = netplay::GetEvent(alignedBuf, serverRecvPtr);
+        LOG_DEBUG("event.type = {}", int(event->type));
+
+        if (event->type == EVENT_CLIENT_PING) {
+            size_t eventSize = sizeof(U16_Event);
+            U16_Event eventPong = {{EVENT_SERVER_PONG}, static_cast<const U16_Event *>(event)->data};
             netplay::PutEvent(eventPong);
-            offset += eventSize;
-        } else if (base->type == EVENT_SERVER_PONG) {
-            size_t eventSize = sizeof(U16_Event);
-            if (serverRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-                       //            U8_Event *eventPong = static_cast<U8_Event *>(base);
-
-            {
-                auto *eventPong = reinterpret_cast<U16_Event *>(base);
-
-                if (gNetPingAwaitingPong && eventPong->data == gNetPingLatestSentTick) {
-                    const uint16_t rttTicks = static_cast<uint16_t>(gNetPingNowTick - eventPong->data);
-                    if (rttTicks <= static_cast<uint16_t>(kNetPingTimeoutTicks)) {
-                        gNetDelayNow = static_cast<int>(rttTicks);
-                        gNetPingHasValidDelay = true;
-                        gNetPingLastPongTick = gNetPingNowTick;
-                        gNetPingAwaitingPong = false;
-                    }
+        } else if (event->type == EVENT_SERVER_PONG) {
+            auto *eventPong = static_cast<const U16_Event *>(event);
+            if (gNetPingAwaitingPong && eventPong->data == gNetPingLatestSentTick) {
+                const uint16_t rttTicks = static_cast<uint16_t>(gNetPingNowTick - eventPong->data);
+                if (rttTicks <= static_cast<uint16_t>(kNetPingTimeoutTicks)) {
+                    gNetDelayNow = static_cast<int>(rttTicks);
+                    gNetPingHasValidDelay = true;
+                    gNetPingLastPongTick = gNetPingNowTick;
+                    gNetPingAwaitingPong = false;
                 }
             }
-
-            offset += eventSize;
-        } else if (base->type >= EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE && base->type < NUM_EVENT_CHALLENGESCREEN) {
-            size_t eventSize = ChallengeScreen::getServerEventSize(base->type);
-            if (serverRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-            if (!mChallengeScreen) {
-                offset += eventSize;
-                break;
+        } else if (event->type >= EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE && event->type < NUM_EVENT_CHALLENGESCREEN) {
+            if (mChallengeScreen != nullptr) {
+                mChallengeScreen->processServerEvent(event);
             }
-            mChallengeScreen->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
-            offset += eventSize;
-        }
-
-        else if (base->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && base->type < NUM_EVENT_BOARD) {
-            size_t eventSize = Board::getServerEventSize(base->type);
-
-
-            if (serverRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-
-            if (!mBoard) {
-                offset += eventSize;
-                break;
+        } else if (event->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && event->type < NUM_EVENT_BOARD) {
+            if (mBoard != nullptr) {
+                mBoard->processServerEvent(event);
             }
-            mBoard->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
-            offset += eventSize;
-        } else if (base->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && base->type < NUM_EVENT_VSSETUPMENU) {
-            size_t eventSize = VSSetupMenu::getServerEventSize(base->type);
-            if (serverRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-
-            if (!mVSSetupMenu) {
-                offset += eventSize;
-                break;
+        } else if (event->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && event->type < NUM_EVENT_VSSETUPMENU) {
+            if (mVSSetupMenu != nullptr) {
+                mVSSetupMenu->processServerEvent(event);
             }
-            mVSSetupMenu->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
-            offset += eventSize;
-        } else if (base->type >= EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK && base->type < NUM_EVENT_WAITFORSECONDPALYER) {
-            size_t eventSize = WaitForSecondPlayerDialog::getServerEventSize(base->type);
-            if (serverRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-            if (!GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER)) {
-                offset += eventSize;
-                break;
+        } else if (event->type >= EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK && event->type < NUM_EVENT_WAITFORSECONDPALYER) {
+            if (auto *dialog = GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER)) {
+                static_cast<WaitForSecondPlayerDialog *>(dialog)->processServerEvent(event);
             }
-            ((WaitForSecondPlayerDialog *)GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER))->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
-            offset += eventSize;
-        } else
-
-
-            if (base->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && base->type < NUM_EVENT_VSRESULT) {
-            size_t eventSize = VSResultsMenu::getServerEventSize(base->type);
-            if (serverRecvBuffer.size() - offset < eventSize)
-                break; // 不完整
-
-            if (!mVSResultsMenu) {
-                offset += eventSize;
-                break;
+        } else if (event->type >= EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS && event->type < NUM_EVENT_VSRESULT) {
+            if (mVSResultsMenu != nullptr) {
+                mVSResultsMenu->processServerEvent(event);
             }
-            mVSResultsMenu->processServerEvent((char *)&serverRecvBuffer[offset], eventSize);
-            offset += eventSize;
         } else {
-            offset += 1;
+            assert(false && "Unknown-type event");
+            std::unreachable();
         }
+        offset += event->size;
     }
-
-    if (offset != 0) {
+    if (offset > 0) {
         serverRecvBuffer.erase(serverRecvBuffer.begin(), serverRecvBuffer.begin() + offset);
     }
 }
 
 
 void LawnApp::UpdateFrames() {
-
     if (gTcpClientSocket >= 0 || gTcpConnected) {
         ++gNetPingNowTick;
         TickNetDelayAwaitingPong();
         SendPeriodicNetPing();
     }
 
-    if (gTcpClientSocket >= 0) {
+    std::byte buf[1024];
 
+    if (gTcpClientSocket >= 0) {
         netplay::FlushSendBuffer(gTcpClientSocket);
 
-        char buf[1024];
         while (true) {
-            ssize_t n = recv(gTcpClientSocket, buf, sizeof(buf), MSG_DONTWAIT);
+            ssize_t n = recv(gTcpClientSocket, buf, std::size(buf), MSG_DONTWAIT);
             if (n > 0) {
-                // buf[n] = '\0'; // 确保字符串结束
-                // LOG_DEBUG("[TCP] 收到来自Client的数据: {}", buf);
-
                 HandleTcpClientMessage(buf, n);
             } else if (n == 0) {
                 // 对端关闭连接（收到FIN）
@@ -607,17 +521,12 @@ void LawnApp::UpdateFrames() {
     }
 
     if (gTcpConnected) {
-
         netplay::FlushSendBuffer(gTcpServerSocket);
 
-        char buf[1024];
         while (true) {
-            ssize_t n = recv(gTcpServerSocket, buf, sizeof(buf), MSG_DONTWAIT);
+            ssize_t n = recv(gTcpServerSocket, buf, std::size(buf), MSG_DONTWAIT);
             if (n > 0) {
-                // buf[n] = '\0'; // 确保字符串结束
-                // LOG_DEBUG("[TCP] 收到来自Server的数据: {}", buf);
                 HandleTcpServerMessage(buf, n);
-
             } else if (n == 0) {
                 // 对端关闭连接（收到FIN）
                 LOG_DEBUG("[TCP] 对方关闭连接");

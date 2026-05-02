@@ -29,8 +29,8 @@
 
 static std::vector<std::byte> sendBuffer;
 
-void netplay::details::PutEventData(const std::byte *src, std::size_t n) {
-    sendBuffer.append_range(std::views::counted(src, n));
+void netplay::details::PutEventData(const std::byte *data, std::size_t n) {
+    sendBuffer.append_range(std::views::counted(data, n));
 }
 
 bool netplay::FlushSendBuffer(int socket) {
@@ -55,4 +55,15 @@ bool netplay::FlushSendBuffer(int socket) {
 
 void netplay::ClearSendBuffer() noexcept {
     sendBuffer.clear();
+}
+
+std::size_t netplay::ParseEventSize(const std::byte *data) {
+    decltype(BaseEvent::size) sz;
+    std::memcpy(&sz, data + offsetof(BaseEvent, size), sizeof(sz));
+    return sz;
+}
+
+BaseEvent *netplay::GetEvent(std::byte *dest, const std::byte *src) {
+    std::memcpy(dest, src, ParseEventSize(src));
+    return reinterpret_cast<BaseEvent *>(dest);
 }

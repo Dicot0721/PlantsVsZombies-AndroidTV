@@ -35,51 +35,29 @@ void VSResultsMenu::_constructor() {
     gNetDelayNow = 0; // 清除旧的延时数据
 }
 
-size_t VSResultsMenu::getClientEventSize(EventType type) {
-    switch (type) {
-        case EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS:
-            return sizeof(U8_Event);
-        default:
-            return sizeof(BaseEvent);
-    }
-}
-
-void VSResultsMenu::processClientEvent(void *buf, ssize_t bufSize) {
-    BaseEvent *event = (BaseEvent *)buf;
+void VSResultsMenu::processClientEvent(const BaseEvent *event) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS: {
-            U8_Event *event1 = (U8_Event *)event;
+            auto *event1 = static_cast<const U8_Event *>(event);
             int anId = event1->data;
             gVSResultRequestState = anId;
         } break;
-
         default:
             break;
     }
 }
 
 
-size_t VSResultsMenu::getServerEventSize(EventType type) {
-    switch (type) {
-        case EVENT_SERVER_VSRESULT_BUTTON_DEPRESS:
-            return sizeof(U8_Event);
-        default:
-            return sizeof(BaseEvent);
-    }
-}
-
-void VSResultsMenu::processServerEvent(void *buf, ssize_t bufSize) {
-    BaseEvent *event = (BaseEvent *)buf;
+void VSResultsMenu::processServerEvent(const BaseEvent *event) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_SERVER_VSRESULT_BUTTON_DEPRESS: {
-            U8_Event *event1 = (U8_Event *)event;
+            auto *event1 = static_cast<const U8_Event *>(event);
             int anId = event1->data;
             mResultsButtonId = anId;
             OnExit();
         } break;
-
         default:
             break;
     }

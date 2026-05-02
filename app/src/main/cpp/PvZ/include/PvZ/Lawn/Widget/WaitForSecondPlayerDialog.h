@@ -193,9 +193,6 @@ public:
         _destructor();
     }
 
-    static size_t getServerEventSize(EventType type);
-    static size_t getClientEventSize(EventType type);
-
     void Update();
     void Draw(Sexy::Graphics *g);
     void Resize(int theX, int theY, int theWidth, int theHeight);
@@ -215,8 +212,8 @@ public:
     void MouseDown(int x, int y, int theClickCount);
     void ButtonDepress_Thunk(this Sexy::ButtonListener &self, int theId);
 
-    void processServerEvent(void *buf, ssize_t bufSize);
-    void processClientEvent(void *buf, ssize_t bufSize);
+    void processServerEvent(const BaseEvent *event);
+    void processClientEvent(const BaseEvent *event);
 
 protected:
     friend void InitHookFunction();

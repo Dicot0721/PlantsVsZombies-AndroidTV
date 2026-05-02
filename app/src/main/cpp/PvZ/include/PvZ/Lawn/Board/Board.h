@@ -620,10 +620,8 @@ public:
     void ButtonDepress(int theId);
     void KeyDown(Sexy::KeyCode theKey);
 
-    static size_t getClientEventSize(EventType type);
-    static size_t getServerEventSize(EventType type);
-    void processClientEvent(void *buf, ssize_t bufSize);
-    void processServerEvent(void *buf, ssize_t bufSize);
+    void processClientEvent(const BaseEvent *event);
+    void processServerEvent(const BaseEvent *event);
     void PauseFromSecondPlayer(bool thePause);
 
 protected:

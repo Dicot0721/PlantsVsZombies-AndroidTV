@@ -1174,21 +1174,11 @@ void WaitForSecondPlayerDialog::Update() {
 }
 
 
-size_t WaitForSecondPlayerDialog::getClientEventSize(EventType type) {
-    switch (type) {
-        case EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME:
-            return sizeof(CHARx32_Event);
-        default:
-            return sizeof(BaseEvent);
-    }
-}
-
-void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
-    BaseEvent *event = (BaseEvent *)buf;
+void WaitForSecondPlayerDialog::processClientEvent(const BaseEvent *event) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_CLIENT_WAITFORSECONDPALYER_PLAYER_NAME: {
-            CHARx32_Event *nameEvent = (CHARx32_Event *)event;
+            auto *nameEvent = static_cast<const CHARx32_Event *>(event);
             strncpy(gSecondPlayerName, nameEvent->chars, sizeof(gSecondPlayerName) - 1);
 
             CHARx32_Event nameEventReply{};
@@ -1201,26 +1191,11 @@ void WaitForSecondPlayerDialog::processClientEvent(void *buf, ssize_t bufSize) {
     }
 }
 
-size_t WaitForSecondPlayerDialog::getServerEventSize(EventType type) {
-    switch (type) {
-        case EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME:
-            return sizeof(CHARx32_Event);
-        case EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK:
-            return sizeof(U16_Event);
-
-        case EVENT_WAITFORSECONDPALYER_START_GAME:
-            return sizeof(BaseEvent);
-        default:
-            return sizeof(BaseEvent);
-    }
-}
-
-void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
-    BaseEvent *event = (BaseEvent *)buf;
+void WaitForSecondPlayerDialog::processServerEvent(const BaseEvent *event) {
     LOG_DEBUG("TYPE:{}", (int)event->type);
     switch (event->type) {
         case EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK: {
-            U16_Event *event1 = (U16_Event *)event;
+            auto *event1 = static_cast<const U16_Event *>(event);
             if (event1->data != NETPLAY_VERSION) {
                 LOG_ERROR("Room Version Mismatch!");
                 // 弹出提示并断开连接
@@ -1236,7 +1211,7 @@ void WaitForSecondPlayerDialog::processServerEvent(void *buf, ssize_t bufSize) {
             }
         } break;
         case EVENT_SERVER_WAITFORSECONDPALYER_PLAYER_NAME: {
-            CHARx32_Event *nameEvent = (CHARx32_Event *)event;
+            auto *nameEvent = static_cast<const CHARx32_Event *>(event);
             strncpy(gSecondPlayerName, nameEvent->chars, sizeof(gSecondPlayerName) - 1);
         } break;
         case EVENT_WAITFORSECONDPALYER_START_GAME:

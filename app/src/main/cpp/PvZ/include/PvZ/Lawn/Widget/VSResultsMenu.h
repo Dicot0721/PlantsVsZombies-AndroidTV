@@ -53,12 +53,8 @@ public:
     void Draw(Sexy::Graphics *g);
     void DrawInfoBox(Sexy::Graphics *a2, int a3);
 
-    static size_t getClientEventSize(EventType type);
-    void processClientEvent(void *buf, ssize_t bufSize);
-    static size_t getServerEventSize(EventType type);
-    void processServerEvent(void *buf, ssize_t bufSize);
-    void HandleTcpServerMessage(void *buf, ssize_t bufSize);
-    void HandleTcpClientMessage(void *buf, ssize_t bufSize);
+    void processClientEvent(const BaseEvent *event);
+    void processServerEvent(const BaseEvent *event);
 
     VSResultsMenu() {
         _constructor();

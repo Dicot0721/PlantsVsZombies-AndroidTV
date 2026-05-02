@@ -142,9 +142,6 @@ public:
         _destructor();
     }
 
-    static size_t getServerEventSize(EventType type);
-    static size_t getClientEventSize(EventType type);
-
     void Draw(Sexy::Graphics *g);
     void DrawOverlay(Sexy::Graphics *g);
     void Update();
@@ -160,8 +157,8 @@ public:
     void ButtonDepress_Origin(int theId);
     void KeyDown(Sexy::KeyCode theKey);
 
-    void processClientEvent(void *buf, ssize_t bufSize);
-    void processServerEvent(void *buf, ssize_t bufSize);
+    void processClientEvent(const BaseEvent *event);
+    void processServerEvent(const BaseEvent *event);
 
 protected:
     friend void InitHookFunction();

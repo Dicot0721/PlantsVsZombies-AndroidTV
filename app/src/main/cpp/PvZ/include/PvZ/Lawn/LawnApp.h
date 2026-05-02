@@ -363,8 +363,8 @@ public:
     void ClearSecondPlayer();
     bool Is3DAccelerated();
     void Set3DAccelerated(bool isAccelerated);
-    void HandleTcpClientMessage(void *buf, ssize_t bufSize);
-    void HandleTcpServerMessage(void *buf, ssize_t bufSize);
+    void HandleTcpClientMessage(const std::byte *buf, size_t bufSize);
+    void HandleTcpServerMessage(const std::byte *buf, size_t bufSize);
     void UpdateFrames();
     void ShowSeedChooserScreen();
     void ShowZombieChooserScreen();
@@ -394,8 +394,8 @@ inline uint16_t gNetPingNowTick = 0;
 inline uint16_t gNetPingLatestSentTick = 0;
 inline uint16_t gNetPingLastPongTick = 0;
 
-inline std::vector<char> clientRecvBuffer;
-inline std::vector<char> serverRecvBuffer;
+inline std::vector<std::byte> clientRecvBuffer;
+inline std::vector<std::byte> serverRecvBuffer;
 
 inline void (*old_LawnApp_ClearSecondPlayer)(LawnApp *lawnApp);
 
