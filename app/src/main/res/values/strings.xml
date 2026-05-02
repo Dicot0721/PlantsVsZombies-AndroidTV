@@ -38,6 +38,13 @@
     <string name="addon_keyboard_longpress_info">ⓘConfigure the number of clicks per second when long-pressing the D-pad button.</string>
     <string name="addon_keyboard_set">Custom Gamepad Overlay</string>
     <string name="addon_keyboard_set_info">ⓘConfigure the position, size, opacity and visibility of gamepad overlay.</string>
+    <string name="gamepad_overlay_help">Please drag the buttons to the positions you want.</string>
+    <string name="gamepad_overlay_reset_title">Long-press here to reset overlay</string>
+    <string name="gamepad_overlay_reset_hint">Please long press</string>
+    <string name="gamepad_overlay_reset_message">Reset overlay successfully</string>
+    <string name="gamepad_overlay_always_visible">Always Visible</string>
+    <string name="gamepad_overlay_size">Size</string>
+    <string name="gamepad_overlay_opacity">Opacity</string>
     <string name="addon_userdata_name">Save Data</string>
     <string name="addon_userdata_info">You can manage save data here.</string>
     <string name="addon_userdata_importfromexternal">Long press to load completed save data</string>

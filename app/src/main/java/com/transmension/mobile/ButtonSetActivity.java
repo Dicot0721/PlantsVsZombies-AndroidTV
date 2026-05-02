@@ -103,16 +103,16 @@ public class ButtonSetActivity extends Activity {
 
         TextView helpText = new TextView(this);
         helpText.setGravity(Gravity.CENTER);
-        helpText.setText("请拖动各个按钮至您想要的位置。");
+        helpText.setText(getString(R.string.gamepad_overlay_help));
         helpText.setTextSize(20f);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.gravity = Gravity.CENTER;
 
         Button resetButton = new Button(this);
-        resetButton.setText("长按此处，让键盘恢复默认设置");
+        resetButton.setText(getString(R.string.gamepad_overlay_reset_title));
         resetButton.setTextSize(17f);
-        resetButton.setOnClickListener(view -> Toast.makeText(ButtonSetActivity.this, "请长按", Toast.LENGTH_SHORT).show());
+        resetButton.setOnClickListener(view -> Toast.makeText(ButtonSetActivity.this, getString(R.string.gamepad_overlay_reset_hint), Toast.LENGTH_SHORT).show());
         resetButton.setOnLongClickListener(view -> {
             sharedPreferences.edit()
                     .remove("enterSize").remove("enterX").remove("enterY").remove("enterTran").remove("enterKeep")
@@ -126,7 +126,7 @@ public class ButtonSetActivity extends Activity {
                     .remove("keyCodePause")
                     .remove("isVisibilityLockPosition")
                     .apply();
-            Toast.makeText(ButtonSetActivity.this, "成功恢复默认设置，请重新打开本设置界面查看", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ButtonSetActivity.this, getString(R.string.gamepad_overlay_reset_message), Toast.LENGTH_SHORT).show();
             new Handler().postDelayed(ButtonSetActivity.this::finish, 1000);
             return true;
         });
@@ -143,7 +143,7 @@ public class ButtonSetActivity extends Activity {
         textView1.setTextAppearance(this, android.R.style.TextAppearance_Medium);
         textView1.setTextColor(getResources().getColor(android.R.color.white));
         textView1.setGravity(Gravity.CENTER);
-        textView1.setText("大小");
+        textView1.setText(getString(R.string.gamepad_overlay_size));
         TableRow.LayoutParams params1 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
         textView1.setLayoutParams(params1);
         seekBarSize = new SeekBar(this);
@@ -212,7 +212,7 @@ public class ButtonSetActivity extends Activity {
         InputFilter[] filters = new InputFilter[1];
         filters[0] = new InputFilter.LengthFilter(3);
         editSize = new EditText(this);
-        editSize.setHint("大小(0~250)");
+        editSize.setHint("0~250");
         editSize.setGravity(Gravity.CENTER);
         editSize.setInputType(InputType.TYPE_CLASS_NUMBER);
         editSize.setFilters(filters);
@@ -248,7 +248,7 @@ public class ButtonSetActivity extends Activity {
         textView2.setTextAppearance(this, android.R.style.TextAppearance_Medium);
         textView2.setTextColor(getResources().getColor(android.R.color.white));
         textView2.setGravity(Gravity.CENTER);
-        textView2.setText("透明度");
+        textView2.setText(getString(R.string.gamepad_overlay_opacity));
         TableRow.LayoutParams params2 = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
         textView2.setLayoutParams(params2);
         seekBarTran = new SeekBar(this);
@@ -307,7 +307,7 @@ public class ButtonSetActivity extends Activity {
         params2 = new TableRow.LayoutParams(0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics()), 1f);
         seekBarTran.setLayoutParams(params2);
         editTran = new EditText(this);
-        editTran.setHint("透明度(0~100)");
+        editTran.setHint("0~100");
         editTran.setGravity(Gravity.CENTER);
         editTran.setInputType(InputType.TYPE_CLASS_NUMBER);
         editTran.setFilters(filters);
@@ -339,7 +339,7 @@ public class ButtonSetActivity extends Activity {
         linearLayout.addView(resetButton);
         linearLayout.addView(tableLayout);
         checkKeep = new CheckBox(this);
-        checkKeep.setText("始终显示此按钮(点击隐藏按钮后不隐藏)");
+        checkKeep.setText(getString(R.string.gamepad_overlay_always_visible));
         checkKeep.setTextSize(18);
         checkKeep.setLayoutParams(layoutParams);
         checkKeep.setVisibility(View.INVISIBLE);

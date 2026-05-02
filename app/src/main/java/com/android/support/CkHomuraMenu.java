@@ -474,7 +474,7 @@ public class CkHomuraMenu {
         button.setBackgroundColor(BTN_COLOR);
         button.setOnClickListener((buttonView) -> {
             String s = GetCurrentFormation();
-            Toast.makeText(getContext, "已将阵型拷贝至剪切板", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext, getContext.getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show();
             ((ClipboardManager) getContext.getSystemService(Context.CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("c", s));
 
         });
@@ -793,7 +793,7 @@ public class CkHomuraMenu {
             layoutName.addView(editText); // displays the user input bar
             alertName.setView(layoutName);
 
-            alertName.setPositiveButton("OK", (dialog, whichButton) -> {
+            alertName.setPositiveButton(getContext.getString(android.R.string.ok), (dialog, whichButton) -> {
                 int num1;
                 try {
                     num1 = Integer.parseInt(TextUtils.isEmpty(editText.getText().toString()) ? "0" : editText.getText().toString());
@@ -812,7 +812,7 @@ public class CkHomuraMenu {
                 editText.setFocusable(false);
             });
 
-            alertName.setNegativeButton("Cancel", (dialog, whichButton) -> {
+            alertName.setNegativeButton(getContext.getString(android.R.string.cancel), (dialog, whichButton) -> {
                 // dialog.cancel(); // closes dialog
                 InputMethodManager imm = (InputMethodManager) getContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
@@ -864,14 +864,14 @@ public class CkHomuraMenu {
             layoutName.addView(editText); // displays the user input bar
             alertName.setView(layoutName);
 
-            alertName.setPositiveButton("OK", (dialog, whichButton) -> {
+            alertName.setPositiveButton(getContext.getString(android.R.string.ok), (dialog, whichButton) -> {
                 String str = editText.getText().toString();
                 button.setText(Html.fromHtml(featName + ": <font color='" + NumberTxtColor + "'>" + str + "</font>"));
                 Preferences.changeFeatureString(featName, featNum, str);
                 editText.setFocusable(false);
             });
 
-            alertName.setNegativeButton("Cancel", (dialog, whichButton) -> {
+            alertName.setNegativeButton(getContext.getString(android.R.string.cancel), (dialog, whichButton) -> {
                 //dialog.cancel(); // closes dialog
                 InputMethodManager imm = (InputMethodManager) getContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);

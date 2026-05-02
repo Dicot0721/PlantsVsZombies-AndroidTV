@@ -38,6 +38,13 @@
     <string name="addon_keyboard_longpress_info">ⓘ决定长按方向按钮时每秒触发多少次。</string>
     <string name="addon_keyboard_set">自定义键盘按钮</string>
     <string name="addon_keyboard_set_info">ⓘ调节游戏键盘按钮的位置、大小、透明度、可见性。</string>
+    <string name="gamepad_overlay_help">请拖动各个按钮至您想要的位置。</string>
+    <string name="gamepad_overlay_reset_title">长按此处，让键盘恢复默认设置</string>
+    <string name="gamepad_overlay_reset_hint">请长按</string>
+    <string name="gamepad_overlay_reset_message">成功恢复默认设置，请重新打开本设置界面查看</string>
+    <string name="gamepad_overlay_size">大小</string>
+    <string name="gamepad_overlay_opacity">不透明度</string>
+    <string name="gamepad_overlay_always_visible">始终显示此按钮（点击隐藏按钮后不隐藏）</string>
     <string name="addon_userdata_name">存档相关</string>
     <string name="addon_userdata_info">您可以在此处管理存档。</string>
     <string name="addon_userdata_importfromexternal">长按此处导入全通关存档</string>
