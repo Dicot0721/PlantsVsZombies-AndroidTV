@@ -339,12 +339,12 @@ void LawnApp::HandleTcpClientMessage(const std::byte *buf, size_t bufSize) {
     size_t offset = 0;
 
     while (clientRecvBuffer.size() >= offset + sizeof(BaseEvent)) {
-        const auto *clientRecvPtr = clientRecvBuffer.data() + offset;
+        const auto *clientRecvPtr = &clientRecvBuffer[offset];
         if (clientRecvBuffer.size() < offset + netplay::ParseEventSize(clientRecvPtr)) {
             break;
         }
         alignas(std::max_align_t) std::byte alignedBuf[std::numeric_limits<decltype(BaseEvent::size)>::max()];
-        static_assert(std::size(alignedBuf) <= UINT8_MAX, "'eventBuf' is too big, please use dynamically allocating");
+        static_assert(std::size(alignedBuf) <= UINT8_MAX, "'alignedBuf' is too big, please use dynamically allocating");
 
         BaseEvent *event = netplay::GetEvent(alignedBuf, clientRecvPtr);
         LOG_DEBUG("event.type = {}", int(event->type));
@@ -400,7 +400,7 @@ void LawnApp::HandleTcpServerMessage(const std::byte *buf, size_t bufSize) {
     size_t offset = 0;
 
     while (serverRecvBuffer.size() >= offset + sizeof(BaseEvent)) {
-        const auto *serverRecvPtr = serverRecvBuffer.data() + offset;
+        const auto *serverRecvPtr = &serverRecvBuffer[offset];
         if (serverRecvBuffer.size() < offset + netplay::ParseEventSize(serverRecvPtr)) {
             break;
         }
@@ -411,7 +411,6 @@ void LawnApp::HandleTcpServerMessage(const std::byte *buf, size_t bufSize) {
         LOG_DEBUG("event.type = {}", int(event->type));
 
         if (event->type == EVENT_CLIENT_PING) {
-            size_t eventSize = sizeof(U16_Event);
             U16_Event eventPong = {{EVENT_SERVER_PONG}, static_cast<const U16_Event *>(event)->data};
             netplay::PutEvent(eventPong);
         } else if (event->type == EVENT_SERVER_PONG) {
