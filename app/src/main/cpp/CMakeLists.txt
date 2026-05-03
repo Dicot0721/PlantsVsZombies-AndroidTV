@@ -4,10 +4,17 @@ project(PvZTV)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if ((NOT CMAKE_BUILD_TYPE STREQUAL "Debug") AND (NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo"))
-    set(CMAKE_C_VISIBILITY_PRESET hidden)
-    set(CMAKE_CXX_VISIBILITY_PRESET hidden) # 隐藏非 inline 符号
-    set(CMAKE_VISIBILITY_INLINES_HIDDEN ON) # 隐藏 inline 符号
+if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+    if (NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        set(CMAKE_C_VISIBILITY_PRESET hidden)
+        set(CMAKE_CXX_VISIBILITY_PRESET hidden) # 隐藏非 inline 符号
+        set(CMAKE_VISIBILITY_INLINES_HIDDEN ON) # 隐藏 inline 符号
+        string(APPEND CMAKE_C_FLAGS " -flto")
+        string(APPEND CMAKE_CXX_FLAGS " -flto") # 启用链接时优化
+    else ()
+        string(APPEND CMAKE_C_FLAGS " -flto=thin")
+        string(APPEND CMAKE_CXX_FLAGS " -flto=thin")
+    endif ()
 endif ()
 
 add_subdirectory(ThirdParty)
