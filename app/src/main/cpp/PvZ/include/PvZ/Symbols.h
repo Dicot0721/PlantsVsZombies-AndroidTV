@@ -1436,7 +1436,7 @@ extern SexyAppBase *&gSexyAppBase;
 } // namespace Sexy
 
 extern EffectSystem *&gEffectSystem;
-extern FoleyParams (&gLawnFoleyParamArray)[ParticleEffect::NUM_PARTICLES];
+extern FoleyParams (&gLawnFoleyParamArray)[FoleyType::NUM_FOLEY];
 extern FoleyParams *&gFoleyParamArray;
 extern int &gFoleyParamArraySize;
 extern LawnApp *&gLawnApp;

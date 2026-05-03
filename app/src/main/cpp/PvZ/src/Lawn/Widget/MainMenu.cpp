@@ -58,18 +58,16 @@ void MainMenu::_constructor(LawnApp *theApp) {
 }
 
 FoleyType MainMenu::GetFoleyTypeByScene(int theScene) {
-    FoleyType theType = FoleyType::FOLEY_MENU_CENTRE;
     switch (theScene) {
         case 0:
-            theType = FoleyType::FOLEY_MENU_LEFT;
-            break;
+            return FoleyType::FOLEY_MENU_LEFT;
         case 1:
-            theType = FoleyType::FOLEY_MENU_CENTRE;
-            break;
+            return FoleyType::FOLEY_MENU_CENTRE;
         case 2:
-            theType = FoleyType::FOLEY_MENU_RIGHT;
+            return FoleyType::FOLEY_MENU_RIGHT;
+        default:
+            return FoleyType::FOLEY_MENU_CENTRE;
     }
-    return theType;
 }
 
 void MainMenu::Update() {

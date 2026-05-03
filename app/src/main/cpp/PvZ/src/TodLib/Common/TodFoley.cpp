@@ -20,13 +20,7 @@
 #include "PvZ/TodLib/Common/TodFoley.h"
 #include "PvZ/GlobalVariable.h"
 
-FoleyParams gExtendedLawnFoleyParamArray[EXTENDED_NUM_FOLEY - NUM_FOLEY] = {
-    {FoleyType::FOLEY_MENU_LEFT, 0.0f, {&Sexy::SOUND_MENU_L_ST}, 0U},
-    {FoleyType::FOLEY_MENU_CENTRE, 0.0f, {&Sexy::SOUND_MENU_C_ST}, 0U},
-    {FoleyType::FOLEY_MENU_RIGHT, 0.0f, {&Sexy::SOUND_MENU_R_ST}, 0U},
-    {FoleyType::FOLEY_ALLSTAR_TACKLE, 10.0f, {&addonSounds.allstardbl}, 0U},
-    {FoleyType::FOLEY_THRILLER, 0.0f, {&addonSounds.thriller}, 6U},
-};
+#include <mutex>
 
 void TodFoleyInitialize(FoleyParams *theFoleyParamArray, int theFoleyParamArraySize) {
     gFoleyParamArray = theFoleyParamArray;
@@ -34,8 +28,24 @@ void TodFoleyInitialize(FoleyParams *theFoleyParamArray, int theFoleyParamArrayS
 }
 
 FoleyParams *LookupFoley(FoleyType theFoleyType) {
-    if (theFoleyType > FoleyType::NUM_FOLEY) {
-        return &gExtendedLawnFoleyParamArray[theFoleyType - (FoleyType::NUM_FOLEY + 1)];
-    }
-    return old_LookupFoley(theFoleyType);
+    return &gFoleyParamArray[theFoleyType];
+}
+
+auto GetNewLawnFoleyParamArray() -> FoleyParams (&)[FoleyType::EXTENDED_NUM_FOLEY] {
+    static constinit FoleyParams newLawnFoleyParamArray[FoleyType::EXTENDED_NUM_FOLEY] = {};
+
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        std::ranges::copy(gLawnFoleyParamArray, newLawnFoleyParamArray);
+        static const FoleyParams extendedLawnFoleyParamArray[FoleyType::EXTENDED_NUM_FOLEY - FoleyType::NUM_FOLEY] = {
+            {FoleyType::FOLEY_MENU_LEFT, 0.0f, {&Sexy::SOUND_MENU_L_ST}, 0U},
+            {FoleyType::FOLEY_MENU_CENTRE, 0.0f, {&Sexy::SOUND_MENU_C_ST}, 0U},
+            {FoleyType::FOLEY_MENU_RIGHT, 0.0f, {&Sexy::SOUND_MENU_R_ST}, 0U},
+            {FoleyType::FOLEY_ALLSTAR_TACKLE, 10.0f, {&addonSounds.allstardbl}, 0U},
+            {FoleyType::FOLEY_THRILLER, 0.0f, {&addonSounds.thriller}, 6U},
+        };
+        std::ranges::copy(extendedLawnFoleyParamArray, newLawnFoleyParamArray + FoleyType::NUM_FOLEY);
+    });
+
+    return newLawnFoleyParamArray;
 }

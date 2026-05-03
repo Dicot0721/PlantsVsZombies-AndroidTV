@@ -1466,7 +1466,7 @@ int (&VSResultsMenu::msPlayerRecords)[2][5] = *libGameMain.GetSymbol<int[2][5]>(
 DISABLE_WARNING_BEGIN("-Wextra-qualification") // warning: extra qualification on member 'xxx'
 
 EffectSystem *& ::gEffectSystem = *libGameMain.GetSymbol<EffectSystem *>("gEffectSystem");
-FoleyParams (&::gLawnFoleyParamArray)[ParticleEffect::NUM_PARTICLES] = *libGameMain.GetSymbol<FoleyParams[ParticleEffect::NUM_PARTICLES]>("gLawnFoleyParamArray");
+FoleyParams (&::gLawnFoleyParamArray)[FoleyType::NUM_FOLEY] = *libGameMain.GetSymbol<FoleyParams[FoleyType::NUM_FOLEY]>("gLawnFoleyParamArray");
 FoleyParams *& ::gFoleyParamArray = *libGameMain.GetSymbol<FoleyParams *>("gFoleyParamArray");
 int & ::gFoleyParamArraySize = *libGameMain.GetSymbol<int>("gFoleyParamArraySize");
 LawnApp *& ::gLawnApp = *libGameMain.GetSymbol<LawnApp *>("gLawnApp");

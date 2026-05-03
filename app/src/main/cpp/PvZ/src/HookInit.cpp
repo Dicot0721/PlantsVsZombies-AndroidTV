@@ -523,7 +523,7 @@ void InitHookFunction() {
 
     homura::HookFunction(BaseGamepadControls_GetGamepadVelocityAddr, &BaseGamepadControls::GetGamepadVelocity, nullptr);
 
-    homura::HookFunction(LookupFoleyAddr, &LookupFoley, &old_LookupFoley);
+    homura::HookFunction(LookupFoleyAddr, &LookupFoley, nullptr);
 
     // MSHookFunction(TodDrawStringWrappedHelperAddr, (void *) TodDrawStringWrappedHelper, (void **) &old_TodDrawStringWrappedHelper);
     homura::HookFunction(MessageWidget_ClearLabelAddr, &CustomMessageWidget::ClearLabel, &old_MessageWidget_ClearLabel);

@@ -780,14 +780,7 @@ void LawnApp::LoadingThreadProc() {
     TodStringListLoad("addonFiles/properties/AddonStrings.txt"); // 加载自定义字符串
 
     // 加载新增 Foley
-    static FoleyParams sMergedLawnFoleyParamArray[EXTENDED_NUM_FOLEY];
-    for (int i = 0; i < NUM_FOLEY; ++i) {
-        sMergedLawnFoleyParamArray[i] = gLawnFoleyParamArray[i];
-    }
-    for (int i = 0; i < EXTENDED_NUM_FOLEY - NUM_FOLEY; ++i) {
-        sMergedLawnFoleyParamArray[NUM_FOLEY + i] = gExtendedLawnFoleyParamArray[i];
-    }
-    TodFoleyInitialize(sMergedLawnFoleyParamArray, gFoleyParamArraySize + int(std::size(gExtendedLawnFoleyParamArray)));
+    TodFoleyInitialize(GetNewLawnFoleyParamArray(), std::size(GetNewLawnFoleyParamArray()));
 
     // //试图修复偶现的地图错位现象。不知道是否有效
     // LawnApp_Load(lawnApp,"DelayLoad_Background1");
