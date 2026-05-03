@@ -5,25 +5,25 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-    if (NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    if (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        string(APPEND CMAKE_C_FLAGS " -flto=thin")
+        string(APPEND CMAKE_CXX_FLAGS " -flto=thin") # 启用链接时优化
+    else ()
         set(CMAKE_C_VISIBILITY_PRESET hidden)
         set(CMAKE_CXX_VISIBILITY_PRESET hidden) # 隐藏非 inline 符号
         set(CMAKE_VISIBILITY_INLINES_HIDDEN ON) # 隐藏 inline 符号
         string(APPEND CMAKE_C_FLAGS " -flto")
-        string(APPEND CMAKE_CXX_FLAGS " -flto") # 启用链接时优化
-    else ()
-        string(APPEND CMAKE_C_FLAGS " -flto=thin")
-        string(APPEND CMAKE_CXX_FLAGS " -flto=thin")
+        string(APPEND CMAKE_CXX_FLAGS " -flto")
     endif ()
 endif ()
-
-add_subdirectory(ThirdParty)
 
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
     "Homura/src/*.cpp"
     "PvZ/src/*.cpp"
 )
 add_library(Homura SHARED Main.cpp ${SRC_FILES})
+
+target_include_directories(Homura PRIVATE Homura/include PvZ/include)
 
 target_compile_options(Homura PRIVATE
     -Wall
@@ -33,12 +33,12 @@ target_compile_options(Homura PRIVATE
     -Werror=unused-result
 )
 
-target_include_directories(Homura PRIVATE Homura/include PvZ/include)
-
 target_compile_definitions(Homura PRIVATE PVZ_VERSION=${PVZ_VERSION})
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(Homura PRIVATE PVZ_DEBUG=1)
 endif ()
+
+add_subdirectory(ThirdParty)
 
 find_library(android-lib android)
 find_library(EGL-lib EGL)
