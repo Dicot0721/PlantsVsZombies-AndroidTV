@@ -862,11 +862,13 @@ void GridItem::DrawBurialMound(Sexy::Graphics *g) {
         aSrcRect = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip, aCelWidth, aVisibleHeight - aExtraTopClip);
         aSrcRectDirt = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + (aCelHeight - aVisibleHeightDirt), aCelWidth, aVisibleHeightDirt);
         int startYOffset = -200;
-        int endYOffset = aGridCelOffsetY + aRowHeightOffset;
+        int endYOffset = aCelHeight + aGridCelOffsetY - aRowYOffset;
         int currentYOffset = TodAnimateCurve(0, 1000, aHeightPosition, startYOffset, endYOffset, TodCurves::CURVE_EASE_IN_OUT);
         y = mBoard->GridToPixelY(mGridX, mGridY) + currentYOffset;
     }
 
     g->DrawImage(addonImages.burial_mound, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
-    g->DrawImage(addonImages.burial_mound_dirt, x, y - aVisibleHeightDirt, aSrcRectDirt);
+    if (!mBoard->StageHasRoof()) {
+        g->DrawImage(addonImages.burial_mound_dirt, x, y - aVisibleHeightDirt, aSrcRectDirt);
+    }
 }
