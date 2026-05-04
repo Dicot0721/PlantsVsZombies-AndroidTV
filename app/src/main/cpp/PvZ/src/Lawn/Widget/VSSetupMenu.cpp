@@ -428,14 +428,6 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
             *it = SEED_TALLNUT;
         }
     }
-
-    if (gTcpClientSocket >= 0) {
-        U16x12_Event event{};
-        event.type = EventType::EVENT_VSSETUPMENU_RANDOM_PICK;
-        std::ranges::copy(thePlantSeeds, event.data);
-        std::ranges::copy(theZombieSeeds, event.data + 6);
-        netplay::PutEvent(event);
-    }
 }
 
 void VSSetupMenu::processClientEvent(const BaseEvent *event) {
@@ -624,9 +616,13 @@ void VSSetupMenu::processServerEvent(const BaseEvent *event) {
             auto *eventRandPick = static_cast<const U16x12_Event *>(event);
             ButtonDepress_Origin(VSSetupMenu::VSSetupMenu_Random_Battle);
 
-            for (int i = 0; i < 6; ++i) {
+            for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(false); ++i) {
                 mApp->mBoard->mSeedBank[0]->mSeedPackets[i + 1].SetPacketType(SeedType(eventRandPick->data[i]), SeedType::SEED_NONE);
                 mApp->mBoard->mSeedBank[1]->mSeedPackets[i + 1].SetPacketType(SeedType(eventRandPick->data[i + 6]), SeedType::SEED_NONE);
+            }
+            if (Challenge::msVSShuffleMode) {
+                mApp->mBoard->mSeedBank[0]->mSeedPackets[6].SetPacketType(SEED_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
+                mApp->mBoard->mSeedBank[1]->mSeedPackets[6].SetPacketType(SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
             }
         } break;
         case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
@@ -875,6 +871,14 @@ void VSSetupMenu::ButtonDepress_Origin(int theId) {
 
                 mSetupMode = VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE;
                 CloseVSSetup(false);
+
+                if (gTcpClientSocket >= 0) {
+                    U16x12_Event event{};
+                    event.type = EventType::EVENT_VSSETUPMENU_RANDOM_PICK;
+                    std::ranges::copy(aPlantSeeds, event.data);
+                    std::ranges::copy(aZombieSeeds, event.data + 6);
+                    netplay::PutEvent(event);
+                }
             } break;
 
             default:
