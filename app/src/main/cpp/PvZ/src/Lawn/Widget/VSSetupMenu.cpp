@@ -624,7 +624,7 @@ void VSSetupMenu::processServerEvent(const BaseEvent *event) {
             auto *eventRandPick = static_cast<const U16x12_Event *>(event);
             ButtonDepress_Origin(VSSetupMenu::VSSetupMenu_Random_Battle);
 
-            for (int i = 0; i < mApp->mBoard->GetNumSeedsInBank(false) - 1; ++i) {
+            for (int i = 0; i < 6; ++i) {
                 mApp->mBoard->mSeedBank[0]->mSeedPackets[i + 1].SetPacketType(SeedType(eventRandPick->data[i]), SeedType::SEED_NONE);
                 mApp->mBoard->mSeedBank[1]->mSeedPackets[i + 1].SetPacketType(SeedType(eventRandPick->data[i + 6]), SeedType::SEED_NONE);
             }
