@@ -150,6 +150,35 @@ R CallVirtualFunc(T *thiz, std::convertible_to<Args> auto &&...args) {
     return vtable[I](thiz, std::forward<decltype(args)>(args)...);
 }
 
+
+template <auto MEM_FUNC_PTR>
+    requires std::is_member_function_pointer_v<decltype(MEM_FUNC_PTR)>
+class MemFuncPtrWrapper {
+protected:
+    template <typename R, typename T, typename... Args>
+    struct Helper {
+        using FuncPtrType = R (*)(T *, Args...);
+
+        Helper(R (T::*)(Args...)); // just declare
+
+        static consteval FuncPtrType Get() noexcept {
+            return [](T *obj, Args... args) -> R { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        }
+    };
+
+    using SelfHelper = decltype(Helper{MEM_FUNC_PTR});
+
+public:
+    using FuncPtrType = SelfHelper::FuncPtrType;
+
+    static consteval FuncPtrType Get() noexcept {
+        return SelfHelper::Get();
+    }
+
+    MemFuncPtrWrapper() = delete;
+    ~MemFuncPtrWrapper() = delete;
+};
+
 } // namespace homura
 
 #endif // HOMURA_MEMBERUTILS_H
