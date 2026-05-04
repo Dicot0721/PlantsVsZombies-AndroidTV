@@ -666,8 +666,10 @@ void VSSetupMenu::processServerEvent(const BaseEvent *event) {
         } break;
         case EVENT_SERVER_ENCOUNTER_PICK: {
             auto *eventEncounterPick = static_cast<const U16_Event *>(event);
-            gOpeningEncounter->mType = EncounterType(eventEncounterPick->data);
-            gOpeningEncounter->OpeningEncounterInitialize(gOpeningEncounter->mType);
+            if (gOpeningEncounter) {
+                gOpeningEncounter->mType = EncounterType(eventEncounterPick->data);
+                gOpeningEncounter->OpeningEncounterInitialize(gOpeningEncounter->mType);
+            }
         } break;
         default:
             break;
@@ -736,7 +738,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         gGamepad1ToPlayerIndex = mSides[0];
 
         if (Challenge::msVSShuffleMode) {
-            if (Rand(10) == 0 && !gTcpConnected) {
+            if (gOpeningEncounter && Rand(10) == 0 && !gTcpConnected) {
                 gOpeningEncounter->mType = EncounterType(Rand(NUM_ENCOUNTER));
                 gOpeningEncounter->OpeningEncounterInitialize(gOpeningEncounter->mType);
                 if (gTcpClientSocket >= 0) {

@@ -124,6 +124,7 @@ void Board::_constructor(LawnApp *theApp) {
 
 void Board::_destructor() {
     delete gOpeningEncounter;
+    gOpeningEncounter = nullptr;
 
     old_Board__destructor(this);
 }
@@ -1919,18 +1920,42 @@ void Board::processServerEvent(const BaseEvent *event) {
                 aZombie->ApplySyncedIceTrap(aIceTrapCounter);
             }
         } break;
-        case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROW: {
-            auto *eventImpThrow = static_cast<const U16U16U16UNI32UNI32_Event *>(event);
-            uint16_t serverGargantuarID = eventImpThrow->data1;
-            uint16_t serverImpID = eventImpThrow->data2;
+        case EVENT_SERVER_BOARD_ZOMBIE_IMP_THROWN: {
+            auto *eventImpThrown = static_cast<const U16U16U16UNI32UNI32_Event *>(event);
+            uint16_t serverGargantuarID = eventImpThrown->data1;
+            uint16_t serverImpID = eventImpThrown->data2;
             uint16_t clientGargantuarID;
             uint16_t clientImpID;
             if (homura::FindInMap(serverZombieIDMap, serverImpID, clientImpID) && homura::FindInMap(serverZombieIDMap, serverGargantuarID, clientGargantuarID)) {
                 Zombie *aGargantuar = mZombies.DataArrayGet(clientGargantuarID);
                 Zombie *aZombieImp = mZombies.DataArrayGet(clientImpID);
-                float aOffsetDistance = eventImpThrow->data4.f32;
+                float aOffsetDistance = eventImpThrown->data4.f32;
                 if (aGargantuar && aZombieImp)
-                    aZombieImp->ThrowZombieImp(aGargantuar, aOffsetDistance);
+                    aZombieImp->ZombieImpThrown(aGargantuar, aOffsetDistance);
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_IMP_KICKED: {
+            auto *eventImpKicked = static_cast<const U16UNI32_Event *>(event);
+            uint16_t serverImpID = eventImpKicked->data1;
+            uint16_t clientImpID;
+            if (homura::FindInMap(serverZombieIDMap, serverImpID, clientImpID)) {
+                Zombie *aZombieImp = mZombies.DataArrayGet(clientImpID);
+                float atheKickingDistance = eventImpKicked->data2.f32;
+                if (aZombieImp) {
+                    aZombieImp->ZombieImpKicked(atheKickingDistance);
+                }
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_IMP_POP: {
+            auto *eventImpPop = static_cast<const U16_Event *>(event);
+            uint16_t serverImpID = eventImpPop->data;
+            uint16_t clientImpID;
+            if (homura::FindInMap(serverZombieIDMap, serverImpID, clientImpID)) {
+                Zombie *aZombieImp = mZombies.DataArrayGet(clientImpID);
+                if (aZombieImp) {
+                    aZombieImp->mZombiePhase = ZombiePhase::PHASE_IMP_POPPING;
+                    aZombieImp->PlayZombieReanim("anim_explode", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 0.0f);
+                }
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_POST_VAULT: {
@@ -2053,6 +2078,17 @@ void Board::processServerEvent(const BaseEvent *event) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
                 aZombie->mZombiePhase = ZombiePhase(serverZombiePhase);
                 aZombie->mPhaseCounter = serverPhaseCounter;
+                if (aZombie->mZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL) {
+                    if (aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_TACKLING) {
+                        aZombie->PlayZombieReanim("anim_tackle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 24.0f);
+                    } else if (aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_KICKING) {
+                        aZombie->StopEating();
+                        aZombie->PlayZombieReanim("anim_kick", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 20.0f);
+                    } else if (aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_WALKING || aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING
+                               || aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_PRE_CHARGE) {
+                        aZombie->StartWalkAnim(0);
+                    }
+                }
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL: {
