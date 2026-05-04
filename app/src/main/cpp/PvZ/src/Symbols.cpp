@@ -397,6 +397,7 @@ bool LoadGameMain() {
     Zombie_UpdateZombieJalapenoHeadAddr = libGameMain.GetSymbol("_ZN6Zombie24UpdateZombieJalapenoHeadEv");
     Zombie_UpdateZombieSquashHeadAddr = libGameMain.GetSymbol("_ZN6Zombie22UpdateZombieSquashHeadEv");
     Zombie_UpdateZombieDancerAddr = libGameMain.GetSymbol("_ZN6Zombie18UpdateZombieDancerEv");
+    Zombie_UpdateZombieBobsledAddr = libGameMain.GetSymbol("_ZN6Zombie19UpdateZombieBobsledEv");
     Zombie_UpdateZombieRiseFromGraveAddr = libGameMain.GetSymbol("_ZN6Zombie25UpdateZombieRiseFromGraveEv");
     Zombie_GetZombieRectAddr = libGameMain.GetSymbol("_ZN6Zombie13GetZombieRectEv");
     Zombie_DrawBossPartAddr = libGameMain.GetSymbol("_ZN6Zombie12DrawBossPartEPN4Sexy8GraphicsE8BossPart");
@@ -424,7 +425,6 @@ bool LoadGameMain() {
     Zombie_AddAttachedParticleAddr = libGameMain.GetSymbol("_ZN6Zombie19AddAttachedParticleEii14ParticleEffect");
     Zombie_CanBeFrozenAddr = libGameMain.GetSymbol("_ZN6Zombie11CanBeFrozenEv");
     Zombie_StopEatingAddr = libGameMain.GetSymbol("_ZN6Zombie10StopEatingEv");
-    Zombie_BobsledCrashAddr = libGameMain.GetSymbol("_ZN6Zombie12BobsledCrashEv");
     Zombie_DropArmAddr = libGameMain.GetSymbol("_ZN6Zombie7DropArmEj");
     Zombie_PlayZombieReanimAddr = libGameMain.GetSymbol("_ZN6Zombie16PlayZombieReanimEPKc14ReanimLoopTypeif");
     Zombie_SetupReanimLayersAddr = libGameMain.GetSymbol("_ZN6Zombie17SetupReanimLayersEP11Reanimation10ZombieType");

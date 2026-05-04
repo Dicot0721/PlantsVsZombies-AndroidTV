@@ -1775,14 +1775,12 @@ void Board::processServerEvent(const BaseEvent *event) {
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_BOBSELD_ADD: {
             auto *eventZombieBobseldAdd = static_cast<const U8x2U16x4UNI32x8_Event *>(event);
-
-            int theRow = eventZombieBobseldAdd->data1[0];
-            int theFromWave = eventZombieBobseldAdd->data1[1];
-            Zombie *aZombie = AddZombieInRow_Origin(ZOMBIE_BOBSLED, theRow, theFromWave, true);
+            uint8_t aRow = eventZombieBobseldAdd->data1[0];
+            auto aFromWave = int8_t(eventZombieBobseldAdd->data1[1]);
+            Zombie *aZombie = AddZombieInRow_Origin(ZOMBIE_BOBSLED, aRow, aFromWave, true);
             serverZombieIDMap[eventZombieBobseldAdd->data2[0]] = uint16_t(mZombies.DataArrayGetID(aZombie));
             aZombie->ApplySyncedSpeed(eventZombieBobseldAdd->data3[0].f32, short(aZombie->mAnimTicksPerFrame));
             aZombie->mPosX = eventZombieBobseldAdd->data4[0].f32;
-
             for (int i = 0; i < 3; ++i) {
                 Zombie *aFollowerZombie = mZombies.DataArrayGet(aZombie->mFollowerZombieID[i]);
                 serverZombieIDMap[eventZombieBobseldAdd->data2[i + 1]] = uint16_t(aZombie->mFollowerZombieID[i]);
@@ -1907,6 +1905,28 @@ void Board::processServerEvent(const BaseEvent *event) {
                     aZombie->mZombieAttackRect.mHeight = 115;
                     //                    aZombie->mZombieHeight = HEIGHT_ZOMBIE_NORMAL;
                     aZombie->StartWalkAnim(0);
+                }
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_BOBSLED_PICK_SPEED: {
+            auto *eventBobsledPickSpeed = static_cast<const U8x2U16x4UNI32x8_Event *>(event);
+            uint16_t serverLeaderID = eventBobsledPickSpeed->data2[0];
+            uint16_t clientLeaderID;
+            if (homura::FindInMap(serverZombieIDMap, serverLeaderID, clientLeaderID)) {
+                Zombie *leaderZombie = mZombies.DataArrayGet(clientLeaderID);
+                if (leaderZombie) {
+                    for (int i = 0; i < NUM_BOBSLED_FOLLOWERS; i++) {
+                        Zombie *aZombie = ZombieGet(leaderZombie->mFollowerZombieID[i]);
+                        if (aZombie == nullptr) {
+                            continue;
+                        }
+                        aZombie->mRelatedZombieID = ZombieID::ZOMBIEID_NULL;
+                        leaderZombie->mFollowerZombieID[i] = ZombieID::ZOMBIEID_NULL;
+                        aZombie->ApplySyncedSpeed(eventBobsledPickSpeed->data3[i + 1].f32, short(aZombie->mAnimTicksPerFrame));
+                        aZombie->mPosX = eventBobsledPickSpeed->data4[i + 1].f32;
+                    }
+                    leaderZombie->ApplySyncedSpeed(eventBobsledPickSpeed->data3[0].f32, short(leaderZombie->mAnimTicksPerFrame));
+                    leaderZombie->mPosX = eventBobsledPickSpeed->data4[0].f32;
                 }
             }
         } break;

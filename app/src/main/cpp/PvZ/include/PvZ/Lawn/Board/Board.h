@@ -384,6 +384,9 @@ public:
     Zombie *ZombieTryToGet(ZombieID theZombieID) {
         return reinterpret_cast<Zombie *(*)(Board *, ZombieID)>(Board_ZombieTryToGetAddr)(this, theZombieID);
     }
+    Zombie *ZombieGet(ZombieID theZombieID) {
+        return mZombies.DataArrayGet((uint32_t)theZombieID);
+    }
     void MouseDownWithPlant(int x, int y, int theClickCount) {
         reinterpret_cast<void (*)(Board *, int, int, int)>(Board_MouseDownWithPlantAddr)(this, x, y, theClickCount);
     }

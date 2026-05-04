@@ -272,9 +272,6 @@ public:
     void BobsledBurn() {
         reinterpret_cast<void (*)(Zombie *)>(Zombie_BobsledBurnAddr)(this);
     }
-    void BobsledCrash() {
-        reinterpret_cast<void (*)(Zombie *)>(Zombie_BobsledCrashAddr)(this);
-    }
     bool HasYuckyFaceImage() {
         return reinterpret_cast<bool (*)(Zombie *)>(Zombie_HasYuckyFaceImageAddr)(this);
     }
@@ -422,6 +419,7 @@ public:
     void UpdateZombiePogo();
     bool IsFlying();
     int GetBobsledPosition();
+    void BobsledCrash();
     bool IsBobsledTeamWithSled();
     bool IsDeadOrDying();
     bool CanBeChilled();
@@ -461,6 +459,7 @@ public:
     void SummonBackupDancers_Origin();
     bool NeedsMoreBackupDancers();
     void UpdateYuckyFace();
+    void UpdateZombieBobsled();
     void UpdateZombiePool();
     void DoSpecial();
     void UpdateZombieCatapult();

@@ -2307,8 +2307,107 @@ int Zombie::GetBobsledPosition() {
     return old_Zombie_GetBobsledPosition(this);
 }
 
+void Zombie::BobsledCrash() {
+    mAltitude = 0.0f;
+    mZombieRect = Rect(36, 0, 42, 115);
+    mZombiePhase = ZombiePhase::PHASE_BOBSLED_CRASHING;
+    mPhaseCounter = BOBSLED_CRASH_TIME;
+    StartWalkAnim(0);
+
+    Reanimation *aLeaderReanim = mApp->ReanimationGet(mBodyReanimID);
+    for (int i = 0; i < NUM_BOBSLED_FOLLOWERS; i++) {
+        Zombie *aFollowerZombie = mBoard->ZombieGet(mFollowerZombieID[i]);
+        if (aFollowerZombie == nullptr) {
+            continue;
+        }
+
+        aFollowerZombie->mZombiePhase = ZombiePhase::PHASE_BOBSLED_CRASHING;
+        aFollowerZombie->mPhaseCounter = BOBSLED_CRASH_TIME;
+        aFollowerZombie->mPosY = GetPosYBasedOnRow(mRow);
+        aFollowerZombie->mAltitude = 0.0f;
+        aFollowerZombie->StartWalkAnim(0);
+
+        Reanimation *aFollowerReanim = mApp->ReanimationGet(aFollowerZombie->mBodyReanimID);
+        if (aFollowerReanim) {
+            aFollowerZombie->mVelX = mVelX;
+            aFollowerReanim->mAnimTime = RandRangeFloat(0.0f, 1.0f);
+            if (aLeaderReanim) {
+                aFollowerReanim->mAnimRate = aLeaderReanim->mAnimRate;
+            }
+        }
+    }
+}
+
 bool Zombie::IsBobsledTeamWithSled() {
     return GetBobsledPosition() != -1;
+}
+
+void Zombie::UpdateZombieBobsled() {
+    if (mZombiePhase == ZombiePhase::PHASE_BOBSLED_CRASHING) {
+        if (mPhaseCounter == 0) {
+            mZombiePhase = ZombiePhase::PHASE_ZOMBIE_NORMAL;
+            if (GetBobsledPosition() == 0) {
+                if (mApp->IsVSMode() && gTcpConnected)
+                    return;
+
+                if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
+                    U8x2U16x4UNI32x8_Event event{};
+                    event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_BOBSLED_PICK_SPEED;
+                    event.data2[0] = mBoard->ZombieGetID(this);
+                    event.data3[0].f32 = mVelX;
+                    event.data4[0].f32 = mPosX;
+                    for (int i = 0; i < NUM_BOBSLED_FOLLOWERS; i++) {
+                        event.data2[i + 1] = mFollowerZombieID[i + 1];
+                        Zombie *aZombie = mBoard->ZombieTryToGet(mFollowerZombieID[i]);
+                        if (aZombie) {
+                            event.data3[i + 1].f32 = aZombie->mVelX;
+                            event.data4[i + 1].f32 = aZombie->mPosX;
+                        }
+                    }
+                    netplay::PutEvent(event);
+                }
+
+                for (int i = 0; i < NUM_BOBSLED_FOLLOWERS; i++) {
+                    Zombie *aZombie = mBoard->ZombieGet(mFollowerZombieID[i]);
+                    if (aZombie == nullptr) {
+                        continue;
+                    }
+                    aZombie->mRelatedZombieID = ZombieID::ZOMBIEID_NULL;
+                    mFollowerZombieID[i] = ZombieID::ZOMBIEID_NULL;
+                    aZombie->PickRandomSpeed();
+                }
+                PickRandomSpeed();
+            }
+        }
+        return;
+    }
+
+    if (mZombiePhase == ZombiePhase::PHASE_BOBSLED_SLIDING) {
+        if (mPhaseCounter == 0) {
+            mZombiePhase = ZombiePhase::PHASE_BOBSLED_BOARDING;
+            PlayZombieReanim("anim_jump", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 20.0f);
+        }
+    } else {
+        if (mZombiePhase != ZombiePhase::PHASE_BOBSLED_BOARDING) {
+            return;
+        }
+
+        Reanimation *aBodyReanim = mApp->ReanimationGet(mBodyReanimID);
+        int aCounter = int(aBodyReanim->mAnimTime * 50.0f);
+        int aPosition = GetBobsledPosition();
+        if (aPosition == 1 || aPosition == 3) {
+            mAltitude = TodAnimateCurveFloat(0, 50, aCounter, 8.0f, 18.0f, TodCurves::CURVE_LINEAR);
+        } else {
+            mAltitude = TodAnimateCurveFloat(0, 50, aCounter, -9.0f, 18.0f, TodCurves::CURVE_LINEAR);
+        }
+    }
+
+    if (mBoard->mIceTimer[mRow] < 500) {
+        mBoard->mIceTimer[mRow] = 500;
+    }
+    if (mPosX + 10.0f < mBoard->mIceMinX[mRow] && GetBobsledPosition() == 0) {
+        TakeDamage(6, 8U);
+    }
 }
 
 bool Zombie::IsDeadOrDying() {
