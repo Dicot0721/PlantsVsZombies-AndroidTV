@@ -268,6 +268,7 @@ bool LoadGameMain() {
     LawnApp_IsScaryPotterLevelAddr = libGameMain.GetSymbol("_ZN7LawnApp18IsScaryPotterLevelEv");
     LawnApp_IsWhackAZombieLevelAddr = libGameMain.GetSymbol("_ZN7LawnApp19IsWhackAZombieLevelEv");
     LawnApp_DoUserDialogAddr = libGameMain.GetSymbol("_ZN7LawnApp12DoUserDialogEv");
+    LawnApp_DoRenameUserDialogAddr = libGameMain.GetSymbol("_ZN7LawnApp18DoRenameUserDialogERKSs");
     LawnApp_DoConfirmRestartDialogAddr = libGameMain.GetSymbol("_ZN7LawnApp22DoConfirmRestartDialogEv");
     LawnApp_GamepadToPlayerIndexAddr = libGameMain.GetSymbol("_ZN7LawnApp20GamepadToPlayerIndexEj");
     LawnApp_DoNewOptionsAddr = libGameMain.GetSymbol("_ZN7LawnApp12DoNewOptionsEbj");

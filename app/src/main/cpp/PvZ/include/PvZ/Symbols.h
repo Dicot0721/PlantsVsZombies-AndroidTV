@@ -280,6 +280,8 @@ inline void *LawnApp_PlaySampleAddr;
 inline void *LawnApp_DoCheatDialogAddr;
 inline void *LawnApp_DoCheatCodeDialogAddr;
 inline void *LawnApp_DoUserDialogAddr;
+inline void *LawnApp_DoRenameUserDialogAddr;
+inline void *UserDialog_GetSelNameAddr;
 inline void *LawnApp_DoConfirmRestartDialogAddr;
 inline void *LawnApp_OnSessionTaskFailedAddr;
 inline void *LawnApp_ClearSecondPlayerAddr;

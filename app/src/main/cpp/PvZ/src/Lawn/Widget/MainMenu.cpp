@@ -36,6 +36,7 @@
 #include <cstddef>
 
 #include <algorithm>
+#include <cstring>
 
 using namespace Sexy;
 
@@ -79,6 +80,15 @@ void MainMenu::Update() {
     if (!isPatched) {
         patchlist::autoPickupSeedPacketDisable.Modify();
         isPatched = true;
+    }
+
+    // 首次启动游戏时指导玩家重命名
+    if (!mApp->mPlayerInfo->mRenamed && mApp->mPlayerInfo->mName) {
+        mApp->DoNewOptions(false, 0);
+        mApp->DoUserDialog();
+        mApp->DoRenameUserDialog(mApp->mPlayerInfo->mName);
+        mApp->mPlayerInfo->mRenamed = true;
+        mApp->mPlayerInfo->SaveDetails();
     }
 
     // 白噪音播放和淡入淡出

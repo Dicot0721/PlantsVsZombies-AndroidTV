@@ -82,7 +82,8 @@ public:
     bool mVSBalancePatchMode;
     bool mUnused606[2]; // 606 - 607
     Mode3RecentServerStorage serverStorage;
-    bool mUnused674[71];
+    bool mRenamed;
+    bool mUnused675[70];
     bool mIsHapticFeedbackClosed;
     bool mZombatarEnabled;
     unsigned char mZombatarHat;

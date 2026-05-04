@@ -180,6 +180,9 @@ public:
     void DoUserDialog() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_DoUserDialogAddr)(this);
     }
+    void DoRenameUserDialog(const pvzstl::string &theName) {
+        reinterpret_cast<void (*)(LawnApp *, const pvzstl::string &)>(LawnApp_DoRenameUserDialogAddr)(this, theName);
+    }
     Sexy::Dialog *DoConfirmRestartDialog() {
         return reinterpret_cast<Sexy::Dialog *(*)(LawnApp *)>(LawnApp_DoConfirmRestartDialogAddr)(this);
     }
