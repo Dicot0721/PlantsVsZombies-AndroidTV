@@ -508,6 +508,7 @@ bool LoadGameMain() {
     Zombie_ZombieCatapultFireAddr = libGameMain.GetSymbol("_ZN6Zombie18ZombieCatapultFireEP5Plant");
     Zombie_BungeeLandingAddr = libGameMain.GetSymbol("_ZN6Zombie13BungeeLandingEv");
     Zombie_UpdateLadderAddr = libGameMain.GetSymbol("_ZN6Zombie12UpdateLadderEv");
+    Zombie_GetDrawPosAddr = libGameMain.GetSymbol("_ZN6Zombie10GetDrawPosER18ZombieDrawPosition");
 
 
     SeedChooserScreen_UpdateAddr = libGameMain.GetSymbol("_ZN17SeedChooserScreen6UpdateEv");

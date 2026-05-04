@@ -449,6 +449,7 @@ void InitHookFunction() {
     homura::HookFunction(Zombie_UpdateZombieCatapultAddr, &Zombie::UpdateZombieCatapult, nullptr);
     homura::HookFunction(Zombie_BungeeLandingAddr, &Zombie::BungeeLanding, nullptr);
     homura::HookFunction(Zombie_UpdateLadderAddr, &Zombie::UpdateLadder, nullptr);
+    homura::HookFunction(Zombie_GetDrawPosAddr, &Zombie::GetDrawPos, nullptr);
 
 
     homura::HookFunction(Sexy_Dialog_AddedToManagerWidgetManagerAddr, &Sexy::Dialog::AddedToManager, &old_Sexy_Dialog_AddedToManager);

@@ -2410,9 +2410,9 @@ bool Zombie::EffectedByDamage(unsigned int theDamageRangeFlags) {
         return true;
     }
 
-    if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
-        if (IsFlying() && !mHasObject) { // 对战气球低空飞行时会受到攻击
-            return true;
+    if (mApp->IsVSMode()) {
+        if (IsFlying()) {
+            return !mHasObject; // 对战气球低空飞行时会受到攻击
         }
     }
 
@@ -2644,6 +2644,7 @@ void Zombie::GetDrawPos(ZombieDrawPosition &theDrawPos) {
 
     switch (mZombieType) {
         case ZombieType::ZOMBIE_FOOTBALL:
+        case ZombieType::ZOMBIE_GIGA_FOOTBALL:
             theDrawPos.mImageOffsetY -= 16.0f;
             break;
         case ZombieType::ZOMBIE_YETI:
