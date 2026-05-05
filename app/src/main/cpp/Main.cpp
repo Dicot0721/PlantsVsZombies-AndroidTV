@@ -62,6 +62,77 @@
     ApplyPatches();
 }
 
+static bool IsOnlineModeActive() {
+    return gTcpConnecting || gTcpConnected || gTcpClientSocket >= 0 || gTcpServerSocket >= 0 || gTcpListenSocket >= 0;
+}
+
+void ResetOnlineCheatStatesIfNeeded() {
+    if (!IsOnlineModeActive()) {
+        return;
+    }
+
+    infiniteSun = false;
+    seedPacketFastCoolDown = false;
+    abilityFastCoolDown = false;
+    mushroomsNoSleep = false;
+    requestPause = false;
+    noFog = false;
+    BanDropCoin = false;
+    speedUpMode = 0;
+    hypnoAllZombies = false;
+    freezeAllZombies = false;
+    startAllMowers = false;
+
+    showPlantHealth = false;
+    showNutGarlicSpikeHealth = false;
+    showZombieBodyHealth = false;
+    showHelmAndShieldHealth = false;
+    showGargantuarHealth = false;
+    drawDebugText = false;
+    drawDebugRects = false;
+
+    doCheatCodeDialog = false;
+    doCheatDialog = false;
+    FreePlantAt = false;
+    transparentVase = false;
+    zombieBloated = false;
+    ZombieCanNotWon = false;
+    boardEdgeAdjust = 0;
+    zombieSetScale = 0;
+    maidCheats = 0;
+
+    ColdPeaCanPassFireWood = false;
+    projectilePierce = false;
+    bulletSpinnerChosenNum = 0;
+    randomBullet = false;
+    isOnlyPeaUseable = false;
+    isOnlyTouchFireWood = false;
+    banCobCannon = false;
+    banStar = false;
+
+    passNowLevel = false;
+    daveNoPickSeeds = false;
+    endlessLastStand = false;
+    targetWavesToJump = 0;
+    requestJumpSurvivalStage = false;
+    stopSpawning = false;
+    banMower = false;
+
+    PumpkinWithLadder = false;
+    plantBuild = false;
+    zombieBuild = false;
+    ladderBuild = false;
+    recoverAllMowers = false;
+    ClearAllPlant = false;
+    clearAllMowers = false;
+    graveBuild = false;
+    clearAllZombies = false;
+    clearAllGraves = false;
+    layChoseFormation = false;
+    layPastedFormation = false;
+    setSeedPacket = false;
+}
+
 // jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 // return JNI_VERSION_1_6;
 // }
@@ -161,7 +232,15 @@ extern "C" JNIEXPORT void JNICALL Java_com_transmension_mobile_EnhanceActivity_n
     useNewCobCannon = true;
 }
 
+extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivity_nativeIsOnlineMode(JNIEnv *env, jclass clazz) {
+    return IsOnlineModeActive();
+}
+
 extern "C" JNIEXPORT void JNICALL Java_com_android_support_Preferences_Changes(JNIEnv *env, jclass clazz, jobject con, jint featNum, jstring featName, jint value, jboolean boolean, jstring str) {
+    if (IsOnlineModeActive()) {
+        ResetOnlineCheatStatesIfNeeded();
+        return;
+    }
     switch (featNum) {
         case 1:
             infiniteSun = boolean; // 无限阳光

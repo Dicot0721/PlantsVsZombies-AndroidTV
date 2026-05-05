@@ -46,6 +46,8 @@
 
 using namespace Sexy;
 
+extern void ResetOnlineCheatStatesIfNeeded();
+
 namespace {
 constexpr int kNetPingIntervalTicks = 100; // ~1s
 constexpr int kNetPingTimeoutTicks = 1200; // ~12s
@@ -460,6 +462,8 @@ void LawnApp::HandleTcpServerMessage(const std::byte *buf, size_t bufSize) {
 
 
 void LawnApp::UpdateFrames() {
+    ResetOnlineCheatStatesIfNeeded();
+
     if (gTcpClientSocket >= 0 || gTcpConnected) {
         ++gNetPingNowTick;
         TickNetDelayAwaitingPong();
