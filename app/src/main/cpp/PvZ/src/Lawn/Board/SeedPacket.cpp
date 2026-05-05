@@ -266,7 +266,7 @@ void DrawSeedType(Sexy::Graphics *g, float x, float y, SeedType theSeedType, See
                 aCelCol = 1;
             }
         }
-        TodDrawImageCelScaledF(g, IMAGE_TOMBSTONES, x + theOffsetX, y + theOffsetY, aCelCol, 0, g->mScaleX, g->mScaleY);
+        TodDrawImageCelScaledF(g, addonImages.seed_mounds, x + theOffsetX, y + theOffsetY - 5, aCelCol, 0, g->mScaleX, g->mScaleY);
     } else {
         if (theSeedType == SeedType::SEED_IMITATER && theImitaterType != SeedType::SEED_NONE) {
             // 卡槽内的模仿者SeedPacket卡且为冷却状态，此时需要交换theImitaterType和theSeedType。
@@ -334,7 +334,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
             float heightOffset = g->mScaleX > 1.2 ? -1.5f : 0.0f;
             TodDrawImageScaledF(g, Sexy::IMAGE_ZOMBIE_SEEDPACKET, x, y + heightOffset, g->mScaleX, g->mScaleY);
             if (theSeedType == SeedType::SEED_ZOMBIE_MOUND) {
-                TodDrawImageCelScaledF(g, Sexy::IMAGE_SEEDS, x, y, 1, 0, g->mScaleX, g->mScaleY);
+                TodDrawImageScaledF(g, addonImages.seedpacket_Zombie_Upgrade, x, y + heightOffset, g->mScaleX, g->mScaleY);
             }
         } else {
             TodDrawImageCelScaledF(g, Sexy::IMAGE_SEEDS, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);
@@ -580,7 +580,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
             if (Challenge::IsMPSeedType(theSeedType)) {
                 TodDrawImageScaledF(&aPlantG, Sexy::IMAGE_ZOMBIE_SEEDPACKET, x, y, g->mScaleX, g->mScaleY);
                 if (theSeedType == SeedType::SEED_ZOMBIE_MOUND) {
-                    TodDrawImageCelScaledF(&aPlantG, Sexy::IMAGE_SEEDS, x, y, 1, 0, g->mScaleX, g->mScaleY);
+                    TodDrawImageScaledF(&aPlantG, addonImages.seedpacket_Zombie_Upgrade, x, y, g->mScaleX, g->mScaleY);
                 }
             } else {
                 TodDrawImageCelScaledF(&aPlantG, Sexy::IMAGE_SEEDS, x, y, celToDraw, 0, g->mScaleX, g->mScaleY);

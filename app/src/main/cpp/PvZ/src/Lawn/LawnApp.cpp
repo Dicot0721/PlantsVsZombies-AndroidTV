@@ -179,6 +179,9 @@ void LawnApp::LoadAddonImages() {
     addonImages.burial_mound_dirt = GetImageByFileName("addonFiles/images/burial_mound_dirt");
     addonImages.burial_mound_dirt->mNumRows = 3;
     addonImages.burial_mound_dirt->mNumCols = 5;
+    addonImages.seed_mounds = GetImageByFileName("addonFiles/images/seed_mounds");
+    addonImages.seed_mounds->mNumCols = 5;
+    addonImages.seedpacket_Zombie_Upgrade = GetImageByFileName("addonFiles/images/seedpacket_Zombie_Upgrade");
 
     addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_HELMET2 = GetImageByFileName("reanim/Zombie_berserker_helmet2");
     addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_HELMET3 = GetImageByFileName("reanim/Zombie_berserker_helmet3");

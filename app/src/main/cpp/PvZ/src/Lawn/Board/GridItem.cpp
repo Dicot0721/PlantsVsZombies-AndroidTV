@@ -33,6 +33,8 @@
 #include "PvZ/TodLib/Effect/Reanimator.h"
 #include "PvZ/TodLib/Effect/TodParticle.h"
 
+#include <algorithm>
+#include <cstdio>
 #include <numbers>
 
 using namespace Sexy;
@@ -115,15 +117,7 @@ void GridItem::GridItemDie() {
 void GridItem::DrawGridItem(Graphics *g) {
     if (mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
         DrawBurialMound(g);
-        //        // 召唤墓碑暂无受损动画，故用显血来表示
-        //        int x = mBoard->GridToPixelX(mGridX, mGridY);
-        //        int y = mBoard->GridToPixelY(mGridX, mGridY);
-        //        Graphics aHealthG = Graphics(*g);
-        //        pvzstl::string str = StrFormat("%d/%d", mVSGraveStoneHealth, 350);
-        //        aHealthG.SetFont(Sexy::FONT_DWARVENTODCRAFT18);
-        //        aHealthG.SetColor(Color::White);
-        //        aHealthG.DrawString(str, x, y + 34);
-        //        aHealthG.SetFont(nullptr);
+        return;
     }
 
     old_GridItem_DrawGridItem(this, g);
@@ -710,135 +704,98 @@ Rect GridItem::GetItemRect() {
 }
 
 void GridItem::TakeDamgae(int theDamage, unsigned int theDamageFlags) {
-    //    if (!mApp->IsVSMode())
-    //        return;
-    //
-    //    if (mGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
-    //        if (mDead || mVSTargetZombieHealth <= 0)
-    //            return;
-    //
-    //        mVSTargetZombieHealth -= theDamage;
-    //
-    //        if (mVSTargetZombieHealth > 0) {
-    //            Reanimation* reanim = mApp->ReanimationGet(mGridItemReanimID);
-    //            if (reanim) {
-    //                reanim->PlayReanim("anim_hit", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, mDead ? 1 : 0, 24.0f);
-    //            }
-    //            return;
-    //        }
-    //
-    //        mVSTargetZombieHealth = 0;
-    //
-    //        if (mBoard->GetMPTargetCount() > 3) {
-    //            Reanimation* reanim = mApp->ReanimationGet(mGridItemReanimID);
-    //            if (reanim) {
-    //                reanim->AssignRenderGroupToTrack("target", -1);
-    //                reanim->PlayReanim("anim_death2", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, mDead ? 1 : 0, 12.0f);
-    //            }
-    //            mTargetJustGotShotCounter = 300;
-    //            return;
-    //        }
-    //
-    //        GridItemDie();
-    //        return;
-    //    }
-    //
-    //    if (mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
-    //        if (mDead || mVSGraveStoneHealth <= 0)
-    //            return;
-    //
-    //        mVSGraveStoneHealth -= theDamage;
-    //
-    //        if (mVSGraveStoneHealth <= 0) {
-    //            GridItemDie();
-    //            return;
-    //        }
-    //
-    //        mGraveJustGotShotCounter = std::max(mGraveJustGotShotCounter, 25);
-    //
-    //        float maxHealth = mIsSpecialGrave ? 1000.0f : 350.0f;
-    //
-    //        // 计算当前和上一帧的健康比例（0~6段）
-    //        float currentRatio = static_cast<float>(mVSGraveStoneHealth) / maxHealth;
-    //        float previousRatio = static_cast<float>(mVSGraveStoneHealth) / maxHealth;
-    //
-    //        int prevBreakStage = static_cast<int>(6.0f - (currentRatio * 6.0f));
-    //        int newBreakStage = static_cast<int>(6.0f - (previousRatio * 6.0f));
-    //
-    //        // 限制阶段在0~6之间
-    //        prevBreakStage = std::clamp(prevBreakStage, 0, 6);
-    //        newBreakStage = std::clamp(newBreakStage, 0, 6);
-    //
-    //        // 若阶段变化，播放破碎动画
-    //        if (newBreakStage != prevBreakStage) {
-    //            Reanimation* reanim = mApp->ReanimationTryToGet(mGridItemReanimID);
-    //            if (reanim) {
-    //                pvzstl::string animName = StrFormat("anim_break0%d", newBreakStage);
-    ////                snprintf(animName, sizeof(animName), "anim_break%d", newBreakStage);
-    //                reanim->PlayReanim(animName.c_str(), ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 4, 10.0f);
-    //            }
-    //        }
-    //    }
+    if (!mApp->IsVSMode()) {
+        return;
+    }
 
-    old_GridItem_TakeDamage(this, theDamage, theDamageFlags);
-
-    if (mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
-        if (mDead || mVSGraveStoneHealth <= 0)
-            return;
-
-        mVSGraveStoneHealth -= theDamage;
-
-        if (mVSGraveStoneHealth <= 0) {
-            GridItemDie();
+    if (mGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
+        if (mDead || mVSTargetZombieHealth <= 0) {
             return;
         }
 
-        mGraveJustGotShotCounter = std::max(mGraveJustGotShotCounter, 25);
+        mVSTargetZombieHealth -= theDamage;
+        if (mVSTargetZombieHealth > 0) {
+            Reanimation *aReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+            if (aReanim) {
+                aReanim->PlayReanim("anim_hit", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 24.0f);
+            }
+            return;
+        }
+
+        mVSTargetZombieHealth = 0;
+        if (mBoard->GetMPTargetCount() > 3) {
+            Reanimation *aReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+            if (aReanim) {
+                aReanim->AssignRenderGroupToTrack("target", RENDER_GROUP_HIDDEN);
+                aReanim->PlayReanim("anim_death2", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 12.0f);
+            }
+            mTargetJustGotShotCounter = 300;
+            return;
+        }
+
+        GridItemDie();
+        return;
+    }
+
+    if (mGridItemType != GridItemType::GRIDITEM_GRAVESTONE && mGridItemType != GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
+        return;
+    }
+    if (mDead || mVSGraveStoneHealth <= 0) {
+        return;
+    }
+
+    int oldHealth = mVSGraveStoneHealth;
+    int newHealth = oldHealth - theDamage;
+    mVSGraveStoneHealth = newHealth;
+    if (newHealth <= 0) {
+        GridItemDie();
+        return;
+    }
+
+    mGraveJustGotShotCounter = std::max(mGraveJustGotShotCounter, 25);
+
+    float maxHealth = 350.0f;
+    if (mIsSpecialGrave) {
+        maxHealth += 70.0f * (mMoundLevel + 1);
+    }
+    int oldBreakStage = int(6.0f - std::clamp((oldHealth / maxHealth) * 6.0f, 0.0f, 6.0f));
+    int newBreakStage = int(6.0f - std::clamp((newHealth / maxHealth) * 6.0f, 0.0f, 6.0f));
+    if (newBreakStage != oldBreakStage) {
+        Reanimation *aReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+        if (aReanim) {
+            char animName[16];
+            if (mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) {
+                int moundLevel = std::clamp(mMoundLevel, 0, 4);
+                int stageInGroup = std::clamp(newBreakStage, 1, 5);
+                int breakIndex = moundLevel * 5 + stageInGroup;
+                std::snprintf(animName, sizeof(animName), "anim_break%d", breakIndex);
+            } else {
+                std::snprintf(animName, sizeof(animName), "anim_break%d", newBreakStage);
+            }
+            aReanim->PlayReanim(animName, ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 4, 10.0f);
+        }
     }
 }
 void GridItem::DrawBurialMound(Sexy::Graphics *g) {
     if (mGridItemCounter <= 0)
         return;
 
-    constexpr int BURIAL_MOUND_ROW_Y_OFFSET[3] = {18, 10, 0};
-    constexpr int BURIAL_MOUND_ROW_HEIGHT_OFFSET[3] = {6, 0, 0};
-
     int aHeightPosition = TodAnimateCurve(0, 100, mGridItemCounter, 1000, 0, TodCurves::CURVE_EASE_IN_OUT);
+    int aGridCelLook = mBoard->mGridCelLook[mGridX][mGridY];
     int aGridCelOffsetX = mBoard->mGridCelOffset[mGridX][mGridY][0];
     int aGridCelOffsetY = mBoard->mGridCelOffset[mGridX][mGridY][1];
     int aCelWidth = addonImages.burial_mound->GetCelWidth();
     int aCelHeight = addonImages.burial_mound->GetCelHeight();
-
     int aGraveCol = 0;
-    switch (mMoundLevel) {
-        case 0:
-            aGraveCol = 2;
-            break;
-        case 1:
-            aGraveCol = 0;
-            break;
-        case 2:
-            aGraveCol = 3;
-            break;
-        case 3:
-            aGraveCol = 4;
-            break;
-        case 4:
-            aGraveCol = 1;
-            break;
-        default:
-            break;
-    }
-
-    int aGraveRow = 2;
-    if (mVSGraveStoneHealth > 350 / 3 * 2) {
-        aGraveRow = 0;
-    } else if (mVSGraveStoneHealth > 350 / 3) {
+    int aGraveRow;
+    if (mGridY == 0) {
         aGraveRow = 1;
+    } else if (mGridItemState == GridItemState::GRIDITEM_STATE_GRAVESTONE_SPECIAL) {
+        aGraveRow = 0;
+    } else {
+        aGraveRow = 2 + aGridCelLook % 2;
     }
 
-    int aRowYOffset = BURIAL_MOUND_ROW_Y_OFFSET[aGraveRow];
-    int aRowHeightOffset = BURIAL_MOUND_ROW_HEIGHT_OFFSET[aGraveRow];
     int aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT);
     int aExtraBottomClip = TodAnimateCurve(0, 50, aHeightPosition, 0, 14, TodCurves::CURVE_EASE_IN_OUT);
     int aVisibleHeightDirt = TodAnimateCurve(500, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT);
@@ -849,26 +806,44 @@ void GridItem::DrawBurialMound(Sexy::Graphics *g) {
         aExtraTopClip = TodAnimateCurveFloat(400, 0, aPlant->mStateCountdown, 10.0f, 40.0f, TodCurves::CURVE_LINEAR);
     }
 
-    Rect aSrcRect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip + aRowYOffset, aCelWidth, aVisibleHeight - aExtraBottomClip - aExtraTopClip + aRowHeightOffset);
-    Rect aSrcRectDirt(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aRowYOffset, aCelWidth, aVisibleHeightDirt + aRowHeightOffset);
-
+    Rect aSrcRect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip, aCelWidth, aVisibleHeight - aExtraBottomClip - aExtraTopClip);
+    Rect aSrcRectDirt(aCelWidth * aGraveCol, aCelHeight * aGraveRow, aCelWidth, aVisibleHeightDirt);
     int x = mBoard->GridToPixelX(mGridX, mGridY) + aGridCelOffsetX - 4;
-    int y = mBoard->GridToPixelY(mGridX, mGridY) + aCelHeight + aGridCelOffsetY - aRowYOffset;
+    int y = mBoard->GridToPixelY(mGridX, mGridY) + aCelHeight + aGridCelOffsetY - 9;
 
     if (mBoard->StageHasRoof()) {
-        aHeightPosition = TodAnimateCurve(0, 100, mGridItemCounter, 0, 1000, TodCurves::CURVE_EASE_IN_OUT);
-        aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, 0, aCelHeight, TodCurves::CURVE_EASE_IN_OUT);
-        aExtraBottomClip = 0;
-        aSrcRect = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip, aCelWidth, aVisibleHeight - aExtraTopClip);
-        aSrcRectDirt = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + (aCelHeight - aVisibleHeightDirt), aCelWidth, aVisibleHeightDirt);
-        int startYOffset = -200;
-        int endYOffset = aCelHeight + aGridCelOffsetY - aRowYOffset;
+        aHeightPosition = TodAnimateCurve(
+            0, 100, mGridItemCounter, 0, 1000, TodCurves::CURVE_EASE_IN_OUT); // 修改动画曲线：将“从土里长出来”的进度（1000->0对应从下到上）改为“从天上坠落”的进度（0->1000对应从上到下）
+        aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, 0, aCelHeight, TodCurves::CURVE_EASE_IN_OUT);                   // 调整泥土显示逻辑：泥土应随着墓碑下落而逐渐显示（从下往上）
+        aExtraBottomClip = 0;                                                                                                      // 移除底部裁剪（因为是从上往下落，不需要模拟从土里长出的底部裁剪）
+        aSrcRect = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip, aCelWidth, aVisibleHeight - aExtraTopClip); // 修改源矩形：由于是坠落动画，应从顶部开始显示逐渐增加的高度
+        aSrcRectDirt = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + (aCelHeight - aVisibleHeightDirt), aCelWidth, aVisibleHeightDirt); // 修改泥土源矩形：泥土应从底部开始向上显示
+        int startYOffset = -200;                                                                                                               // 起始位置在屏幕上方200像素
+        int endYOffset = aCelHeight + aGridCelOffsetY - 9;                                                                                     // 最终位置
         int currentYOffset = TodAnimateCurve(0, 1000, aHeightPosition, startYOffset, endYOffset, TodCurves::CURVE_EASE_IN_OUT);
         y = mBoard->GridToPixelY(mGridX, mGridY) + currentYOffset;
     }
 
-    g->DrawImage(addonImages.burial_mound, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
-    if (!mBoard->StageHasRoof()) {
-        g->DrawImage(addonImages.burial_mound_dirt, x, y - aVisibleHeightDirt, aSrcRectDirt);
+    Reanimation *aReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
+    if (aReanim) {
+        g->SetClipRect(x, y - aVisibleHeight + aExtraTopClip, 86, aVisibleHeight - aExtraBottomClip - aExtraTopClip);
+        aReanim->SetPosition(x, y - aVisibleHeight + aExtraTopClip);
+        aReanim->DrawRenderGroup(g, 0);
+        g->ClearClipRect();
+
+        bool isPlantRowPool = mBoard->mPlantRow[mGridY] == PlantRowType::PLANTROW_POOL;
+        Image *bottomImage = isPlantRowPool ? addonImages.zombie_duckytube_inwater : IMAGE_VS_STONE_DIRT; // 泳池绘制鸭子救生圈，草坪绘制泥土
+        int offsetX = 0, offsetY = 0;
+        if (isPlantRowPool) {
+            offsetX = -20;
+            offsetY = 40;
+        }
+
+        Rect aRectDirt(0, 0, bottomImage->mWidth, TodAnimateCurve(500, 1000, aHeightPosition, bottomImage->mHeight, 0, TodCurves::CURVE_EASE_IN_OUT));
+        if (!mBoard->StageHasRoof()) { // 屋顶不绘制墓碑底部贴图
+            g->DrawImage(bottomImage, x + offsetX, y - aVisibleHeightDirt + offsetY, aRectDirt);
+        }
+        aReanim->DrawRenderGroup(g, 1);
+        g->mClipRect = Rect(g->mClipRect.mX, g->mClipRect.mY, g->mClipRect.mWidth, g->mClipRect.mHeight);
     }
 }

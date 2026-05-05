@@ -709,15 +709,31 @@ void GamepadControls::DrawPreview(Sexy::Graphics *g) {
 
     if (mGamepadState == 7 && mSelectedSeedType == SeedType::SEED_ZOMBIE_MOUND) {
         g->SetColorizeImages(true);
-        Color aColor = Color(255, 255, 255, 125);
-        g->SetColor(aColor);
-
-        Image *aImage = Sexy::IMAGE_TOMBSTONES;
-        int aCelWidth = aImage->GetCelWidth();
-        int aCelCol = 2;
         int aGridX = mBoard->PixelToGridXKeepOnBoard(int(mCursorPositionX), int(mCursorPositionY));
         int aGridY = mBoard->PixelToGridYKeepOnBoard(int(mCursorPositionX), int(mCursorPositionY));
+        GridItem *aGraveStone = mBoard->GetGraveStoneAt(aGridX, aGridY);
         GridItem *aMound = mBoard->GetMoundAt(aGridX, aGridY);
+
+        bool canPreviewPlant = false;
+        if (aGraveStone) {
+            canPreviewPlant = true;
+        } else if (aMound && aMound->mMoundLevel < 4) {
+            canPreviewPlant = true;
+        }
+        canPreviewPlant = canPreviewPlant && (mBoard->CanPlantAt(aGridX, aGridY, mSelectedSeedType) == PlantingReason::PLANTING_OK);
+        if (canPreviewPlant) {
+            SeedBank *aSeedBank = GetSeedBank();
+            SeedPacket *aSeedPacket = &aSeedBank->mSeedPackets[mSelectedSeedIndex];
+            int aCost = mBoard->GetCurrentPlantCost(aSeedPacket->mPacketType, SeedType::SEED_NONE);
+            canPreviewPlant = mBoard->CanTakeDeathMoney(aCost);
+        }
+
+        Color aColor = canPreviewPlant ? Color(255, 255, 255, 125) : Color(96, 96, 96, 125);
+        g->SetColor(aColor);
+
+        Image *aImage = addonImages.seed_mounds;
+        int aCelWidth = aImage->GetCelWidth();
+        int aCelCol = 2;
         if (aMound) {
             if (aMound->mMoundLevel == 0) {
                 aCelCol = 0;
@@ -791,11 +807,10 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
                 }
 
                 if (aTargetLevel >= 0 && mBoard->TakeDeathMoney(aCost)) {
-                    mBoard->AddAMound(aGridX, aGridY, aTargetLevel);
-
-                    GridItem *aUpgradeMound = mBoard->GetMoundAt(aGridX, aGridY);
+                    GridItem *aUpgradeMound = mBoard->AddAMound(aGridX, aGridY, aTargetLevel);
                     if (aUpgradeMound) {
-                        aUpgradeMound->mVSGraveStoneHealth = 350 + 70 * aTargetLevel;
+                        aUpgradeMound->mIsSpecialGrave = true;
+                        aUpgradeMound->mVSGraveStoneHealth = 350 + 70 * (aTargetLevel + 1);
                     }
 
                     if (aTargetGridItem) {

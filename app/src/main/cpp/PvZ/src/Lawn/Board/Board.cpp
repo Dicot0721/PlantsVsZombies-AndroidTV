@@ -1556,6 +1556,8 @@ void Board::processServerEvent(const BaseEvent *event) {
             serverGridItemIDMap[eventAddMound->data2[0]] = uint16_t(mGridItems.DataArrayGetID(mound));
             mound->mLaunchCounter = eventAddMound->data2[1];
             mound->mSummonCounter = eventAddMound->data2[2];
+            mound->mIsSpecialGrave = true;
+            mound->mVSGraveStoneHealth = 350 + 70 * (moundLevel + 1);
         } break;
         case EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION: {
             auto *event1 = static_cast<const U16U16U16UNI32UNI32_Event *>(event);
@@ -5851,6 +5853,35 @@ GridItem *Board::AddAMound(int theGridX, int theGridY, int theMoundLevel) {
     aMound->mGridItemCounter = -Rand(50);
     aMound->mSummonCounter = RandRangeInt(300, 1500);
     aMound->mRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, theGridY, 3);
+
+    if (mApp->IsVSMode()) {
+        aMound->unkBool = true;
+        int aX = GridToPixelX(theGridX, theGridY);
+        int aY = GridToPixelY(theGridX, theGridY);
+        int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, theGridY, 0);
+        Reanimation *aReanim = mApp->AddReanimation((float)aX, (float)aY, aRenderOrder, ReanimationType::REANIM_VS_MOUNDS);
+        if (aReanim) {
+            aReanim->mIsAttachment = true;
+            aReanim->SetTruncateDisappearingFrames(nullptr, false);
+            char animIdleName[16];
+            int moundLevel = std::clamp(aMound->mMoundLevel, 0, 4);
+            if (moundLevel == 0) {
+                std::snprintf(animIdleName, sizeof(animIdleName), "anim_idle");
+            } else {
+                std::snprintf(animIdleName, sizeof(animIdleName), "anim_idle%d", moundLevel + 1);
+            }
+            aReanim->PlayReanim(animIdleName, ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 12.0f);
+            aReanim->IgnoreClipRectForPrefix("chunk", true);
+            aReanim->IgnoreClipRectForPrefix("Layer", true);
+            aReanim->IgnoreClipRectForPrefix("bit", true);
+            aReanim->AssignRenderGroupToPrefix("chunk", true);
+            aReanim->AssignRenderGroupToPrefix("Layer", true);
+            aReanim->AssignRenderGroupToPrefix("bit", true);
+            aReanim->AssignRenderGroupToTrack("Stone dirt", RENDER_GROUP_HIDDEN);
+            aMound->mGridItemReanimID = mApp->ReanimationGetID(aReanim);
+            aMound->AddGraveStoneParticles();
+        }
+    }
 
     if (gTcpClientSocket >= 0 && mApp->mGameScene == SCENE_PLAYING) {
         U8x3U16x3_Event event{};

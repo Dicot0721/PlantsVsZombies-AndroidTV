@@ -173,6 +173,8 @@ struct AddonImages {
     Sexy::Image *zombie_duckytube_inwater;
     Sexy::Image *burial_mound;
     Sexy::Image *burial_mound_dirt;
+    Sexy::Image *seed_mounds;
+    Sexy::Image *seedpacket_Zombie_Upgrade;
 
     Sexy::Image *IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_HELMET2;
     Sexy::Image *IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_HELMET3;
