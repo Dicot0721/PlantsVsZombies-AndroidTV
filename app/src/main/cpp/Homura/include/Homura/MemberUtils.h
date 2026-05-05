@@ -143,9 +143,9 @@ template <typename T, std::size_t... DIMS>
  * homura::CallVirtualFunc&lt;Board, 78, void, int, int, int&gt(aBoard, aX, aY, aClickCount);
  * @endcode
  */
-template <typename T, std::size_t I, typename R, typename... Args>
-R CallVirtualFunc(T *thiz, std::convertible_to<Args> auto &&...args) {
-    using FuncPtr = R (*)(T *, Args...);
+template <typename T, std::size_t I, typename Ret, typename... Args>
+Ret CallVirtualFunc(T *thiz, std::convertible_to<Args> auto &&...args) {
+    using FuncPtr = Ret (*)(T *, Args...);
     FuncPtr *vtable = *reinterpret_cast<FuncPtr **>(thiz);
     return vtable[I](thiz, std::forward<decltype(args)>(args)...);
 }
@@ -155,55 +155,45 @@ template <auto MEM_FUNC_PTR>
     requires std::is_member_function_pointer_v<decltype(MEM_FUNC_PTR)>
 class MemFuncPtrWrapper {
 protected:
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...)) -> T;
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...) const) -> const T;
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...) volatile) -> volatile T &; // Volatile-qualified return type is deprecated
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...) const volatile) -> const volatile T &;
-
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...) &) -> T &;
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...) const &) -> const T &;
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...) volatile &) -> volatile T &;
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...) const volatile &) -> const volatile T &;
-
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...) &&) -> T &&;
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...) const &&) -> const T &&;
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...) volatile &&) -> volatile T &&;
-    template <typename T, typename R, typename... Args>
-    static auto GetObjType(R (T::*)(Args...) const volatile &&) -> const volatile T &&;
-
-    template <typename T, typename R, typename... Args>
+    template <typename T, typename Ret, typename... Args>
     class Helper {
-    public:
+    protected:
+        static auto GetObjType(Ret (T::*)(Args...)) -> T;
+        static auto GetObjType(Ret (T::*)(Args...) const) -> const T;
+        static auto GetObjType(Ret (T::*)(Args...) volatile) -> volatile T &; // Volatile-qualified return type is deprecated
+        static auto GetObjType(Ret (T::*)(Args...) const volatile) -> const volatile T &;
+
+        static auto GetObjType(Ret (T::*)(Args...) &) -> T &;
+        static auto GetObjType(Ret (T::*)(Args...) const &) -> const T &;
+        static auto GetObjType(Ret (T::*)(Args...) volatile &) -> volatile T &;
+        static auto GetObjType(Ret (T::*)(Args...) const volatile &) -> const volatile T &;
+
+        static auto GetObjType(Ret (T::*)(Args...) &&) -> T &&;
+        static auto GetObjType(Ret (T::*)(Args...) const &&) -> const T &&;
+        static auto GetObjType(Ret (T::*)(Args...) volatile &&) -> volatile T &&;
+        static auto GetObjType(Ret (T::*)(Args...) const volatile &&) -> const volatile T &&;
+
         using ObjType = decltype(GetObjType(MEM_FUNC_PTR));
-        using FuncPtrType = R (*)(std::remove_reference_t<ObjType> *, Args...);
 
-        Helper(R (T::*)(Args...));
-        Helper(R (T::*)(Args...) const);
-        Helper(R (T::*)(Args...) volatile);
-        Helper(R (T::*)(Args...) const volatile);
+    public:
+        using FuncPtrType = Ret (*)(std::remove_reference_t<ObjType> *, Args...);
 
-        Helper(R (T::*)(Args...) &);
-        Helper(R (T::*)(Args...) const &);
-        Helper(R (T::*)(Args...) volatile &);
-        Helper(R (T::*)(Args...) const volatile &);
+        Helper(Ret (T::*)(Args...));
+        Helper(Ret (T::*)(Args...) const);
+        Helper(Ret (T::*)(Args...) volatile);
+        Helper(Ret (T::*)(Args...) const volatile);
 
-        Helper(R (T::*)(Args...) &&);
-        Helper(R (T::*)(Args...) const &&);
-        Helper(R (T::*)(Args...) volatile &&);
-        Helper(R (T::*)(Args...) const volatile &&);
+        Helper(Ret (T::*)(Args...) &);
+        Helper(Ret (T::*)(Args...) const &);
+        Helper(Ret (T::*)(Args...) volatile &);
+        Helper(Ret (T::*)(Args...) const volatile &);
 
-        static R Call(std::remove_reference_t<ObjType> *obj, Args... args) {
+        Helper(Ret (T::*)(Args...) &&);
+        Helper(Ret (T::*)(Args...) const &&);
+        Helper(Ret (T::*)(Args...) volatile &&);
+        Helper(Ret (T::*)(Args...) const volatile &&);
+
+        static Ret Call(std::remove_reference_t<ObjType> *obj, Args... args) {
             return (std::forward<ObjType>(*obj).*MEM_FUNC_PTR)(std::forward<Args>(args)...);
         }
     };
