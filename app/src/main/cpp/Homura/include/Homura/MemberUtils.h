@@ -155,24 +155,66 @@ template <auto MEM_FUNC_PTR>
     requires std::is_member_function_pointer_v<decltype(MEM_FUNC_PTR)>
 class MemFuncPtrWrapper {
 protected:
-    template <typename R, typename T, typename... Args>
-    struct Helper {
-        using FuncPtrType = R (*)(T *, Args...);
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...)) -> T;
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...) const) -> const T;
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...) volatile) -> volatile T &; // Volatile-qualified return type is deprecated
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...) const volatile) -> const volatile T &;
 
-        Helper(R (T::*)(Args...)); // just declare
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...) &) -> T &;
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...) const &) -> const T &;
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...) volatile &) -> volatile T &;
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...) const volatile &) -> const volatile T &;
 
-        static consteval FuncPtrType Get() noexcept {
-            return [](T *obj, Args... args) -> R { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...) &&) -> T &&;
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...) const &&) -> const T &&;
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...) volatile &&) -> volatile T &&;
+    template <typename T, typename R, typename... Args>
+    static auto GetObjType(R (T::*)(Args...) const volatile &&) -> const volatile T &&;
+
+    template <typename T, typename R, typename... Args>
+    class Helper {
+    public:
+        using ObjType = decltype(GetObjType(MEM_FUNC_PTR));
+        using FuncPtrType = R (*)(std::remove_reference_t<ObjType> *, Args...);
+
+        Helper(R (T::*)(Args...));
+        Helper(R (T::*)(Args...) const);
+        Helper(R (T::*)(Args...) volatile);
+        Helper(R (T::*)(Args...) const volatile);
+
+        Helper(R (T::*)(Args...) &);
+        Helper(R (T::*)(Args...) const &);
+        Helper(R (T::*)(Args...) volatile &);
+        Helper(R (T::*)(Args...) const volatile &);
+
+        Helper(R (T::*)(Args...) &&);
+        Helper(R (T::*)(Args...) const &&);
+        Helper(R (T::*)(Args...) volatile &&);
+        Helper(R (T::*)(Args...) const volatile &&);
+
+        static R Call(std::remove_reference_t<ObjType> *obj, Args... args) {
+            return (std::forward<ObjType>(*obj).*MEM_FUNC_PTR)(std::forward<Args>(args)...);
         }
     };
 
     using SelfHelper = decltype(Helper{MEM_FUNC_PTR});
 
 public:
-    using FuncPtrType = SelfHelper::FuncPtrType;
+    using FuncPtrType = typename SelfHelper::FuncPtrType;
 
-    static consteval FuncPtrType Get() noexcept {
-        return SelfHelper::Get();
+    [[nodiscard]] static consteval FuncPtrType Get() noexcept {
+        return &SelfHelper::Call;
     }
 
     MemFuncPtrWrapper() = delete;
