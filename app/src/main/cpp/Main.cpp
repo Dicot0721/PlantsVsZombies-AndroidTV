@@ -103,7 +103,7 @@ void ResetOnlineCheatStatesIfNeeded() {
 
     ColdPeaCanPassFireWood = false;
     projectilePierce = false;
-    bulletSpinnerChosenNum = 0;
+    bulletSpinnerChosenNum = -1;
     randomBullet = false;
     isOnlyPeaUseable = false;
     isOnlyTouchFireWood = false;
@@ -113,7 +113,7 @@ void ResetOnlineCheatStatesIfNeeded() {
     passNowLevel = false;
     daveNoPickSeeds = false;
     endlessLastStand = false;
-    targetWavesToJump = 0;
+    targetWavesToJump = 1;
     requestJumpSurvivalStage = false;
     stopSpawning = false;
     banMower = false;
