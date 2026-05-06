@@ -2185,6 +2185,38 @@ bool Plant::FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
     return result;
 }
 
+void Plant::UpdateGraveBuster() {
+    if (mState == PlantState::STATE_GRAVEBUSTER_LANDING) {
+        Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
+        if (aBodyReanim && aBodyReanim->mLoopCount > 0) {
+            PlayBodyReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 10, 12.0f);
+            mStateCountdown = 400;
+            mState = PlantState::STATE_GRAVEBUSTER_EATING;
+            AddAttachedParticle(mX + 40, mY + 40, mRenderOrder + 4, ParticleEffect::PARTICLE_GRAVE_BUSTER);
+        }
+    } else if (mState == PlantState::STATE_GRAVEBUSTER_EATING && mStateCountdown == 0) {
+        GridItem *aGraveStone = mBoard->GetGraveStoneAt(mPlantCol, mRow);
+        if (aGraveStone) {
+            aGraveStone->GridItemDie();
+            mBoard->mGravesCleared++;
+        } else {
+            GridItem *aMound = mBoard->GetMoundAt(mPlantCol, mRow);
+            if (aMound) {
+                aMound->TakeDamgae(350, 0U);
+                if (aMound->mVSGraveStoneHealth <= 0) {
+                    mBoard->mGravesCleared++;
+                }
+            }
+        }
+
+        mApp->AddTodParticle(mX + 40, mY + 80, mRenderOrder + 4, ParticleEffect::PARTICLE_GRAVE_BUSTER_DIE);
+        Die();
+        if (!mApp->IsVSMode()) {
+            mBoard->DropLootPiece(mX + 40, mY, 12);
+        }
+    }
+}
+
 void Plant::UpdateChomper() {
     Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
     if (mState == PlantState::STATE_READY) {

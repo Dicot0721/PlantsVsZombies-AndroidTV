@@ -503,12 +503,13 @@ PlantingReason Board::CanPlantAt(int theGridX, int theGridY, SeedType theSeedTyp
 
     // 墓碑吞噬者只能种植在墓碑上
     bool aHasGrave = GetGraveStoneAt(theGridX, theGridY);
+    bool aHasMound = GetMoundAt(theGridX, theGridY);
     if (theSeedType == SeedType::SEED_GRAVEBUSTER) {
         if (aPlantOnLawn.mNormalPlant) {
             return PlantingReason::PLANTING_NOT_HERE;
         }
 
-        return aHasGrave ? PlantingReason::PLANTING_OK : PlantingReason::PLANTING_ONLY_ON_GRAVES;
+        return (aHasGrave || aHasMound) ? PlantingReason::PLANTING_OK : PlantingReason::PLANTING_ONLY_ON_GRAVES;
     }
     if (theSeedType == SeedType::SEED_INSTANT_COFFEE) {
         if (aPlantOnLawn.mFlyingPlant) {

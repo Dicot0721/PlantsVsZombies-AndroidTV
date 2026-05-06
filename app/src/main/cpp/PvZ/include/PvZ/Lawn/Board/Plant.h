@@ -304,6 +304,7 @@ public:
     void SyncAnimationToClient();
     void SyncPingPongAnimationToClient();
     void UpdateChomper();
+    void UpdateGraveBuster();
     void UpdateMagnetShroom();
     void UpdateSquash();
 };

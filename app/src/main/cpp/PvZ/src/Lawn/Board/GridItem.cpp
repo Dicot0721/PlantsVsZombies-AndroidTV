@@ -597,10 +597,12 @@ void GridItem::DrawGraveStone(Graphics *g) {
     int aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT);       // 墓碑主体在当前帧应显示的高度
     int aExtraBottomClip = TodAnimateCurve(0, 50, aHeightPosition, 0, 14, TodCurves::CURVE_EASE_IN_OUT);               // 为模拟墓碑从地面“长出”的效果，从底部额外裁剪的高度
     int aVisibleHeightDirt = TodAnimateCurve(500, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT); // 墓碑下方泥土部分应显示的高度
-    int aExtraTopClip = 0; // 当墓碑被“咬咬碑”（GraveBuster）啃食时，从顶部额外裁剪的高度，以表现被吃掉的效果
-    Plant *aPlant = mBoard->GetTopPlantAt(mGridX, mGridY, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
-    if (aPlant && aPlant->mState == PlantState::STATE_GRAVEBUSTER_EATING) {
-        aExtraTopClip = TodAnimateCurveFloat(400, 0, aPlant->mStateCountdown, 10.0f, 40.0f, TodCurves::CURVE_LINEAR);
+    int aExtraTopClip = 0;         // 当墓碑被“咬咬碑”（GraveBuster）啃食时，从顶部额外裁剪的高度，以表现被吃掉的效果
+    if (!mBoard->StageHasRoof()) { // 屋顶墓碑被咬咬碑啃食时高度不下降
+        Plant *aPlant = mBoard->GetTopPlantAt(mGridX, mGridY, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
+        if (aPlant && aPlant->mState == PlantState::STATE_GRAVEBUSTER_EATING) {
+            aExtraTopClip = TodAnimateCurveFloat(400, 0, aPlant->mStateCountdown, 10.0f, 40.0f, TodCurves::CURVE_LINEAR);
+        }
     }
 
     Rect aSrcRect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip, aCelWidth, aVisibleHeight - aExtraBottomClip - aExtraTopClip);
@@ -800,11 +802,10 @@ void GridItem::DrawBurialMound(Sexy::Graphics *g) {
     int aExtraBottomClip = TodAnimateCurve(0, 50, aHeightPosition, 0, 14, TodCurves::CURVE_EASE_IN_OUT);
     int aVisibleHeightDirt = TodAnimateCurve(500, 1000, aHeightPosition, aCelHeight, 0, TodCurves::CURVE_EASE_IN_OUT);
     int aExtraTopClip = 0;
-
-    Plant *aPlant = mBoard->GetTopPlantAt(mGridX, mGridY, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
-    if (aPlant && aPlant->mState == PlantState::STATE_GRAVEBUSTER_EATING) {
-        aExtraTopClip = TodAnimateCurveFloat(400, 0, aPlant->mStateCountdown, 10.0f, 40.0f, TodCurves::CURVE_LINEAR);
-    }
+    //    Plant *aPlant = mBoard->GetTopPlantAt(mGridX, mGridY, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
+    //    if (aPlant && aPlant->mState == PlantState::STATE_GRAVEBUSTER_EATING) {
+    //        aExtraTopClip = TodAnimateCurveFloat(400, 0, aPlant->mStateCountdown, 10.0f, 40.0f, TodCurves::CURVE_LINEAR);
+    //    }
 
     Rect aSrcRect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip, aCelWidth, aVisibleHeight - aExtraBottomClip - aExtraTopClip);
     Rect aSrcRectDirt(aCelWidth * aGraveCol, aCelHeight * aGraveRow, aCelWidth, aVisibleHeightDirt);
@@ -812,14 +813,13 @@ void GridItem::DrawBurialMound(Sexy::Graphics *g) {
     int y = mBoard->GridToPixelY(mGridX, mGridY) + aCelHeight + aGridCelOffsetY - 9;
 
     if (mBoard->StageHasRoof()) {
-        aHeightPosition = TodAnimateCurve(
-            0, 100, mGridItemCounter, 0, 1000, TodCurves::CURVE_EASE_IN_OUT); // 修改动画曲线：将“从土里长出来”的进度（1000->0对应从下到上）改为“从天上坠落”的进度（0->1000对应从上到下）
-        aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, 0, aCelHeight, TodCurves::CURVE_EASE_IN_OUT);                   // 调整泥土显示逻辑：泥土应随着墓碑下落而逐渐显示（从下往上）
-        aExtraBottomClip = 0;                                                                                                      // 移除底部裁剪（因为是从上往下落，不需要模拟从土里长出的底部裁剪）
-        aSrcRect = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip, aCelWidth, aVisibleHeight - aExtraTopClip); // 修改源矩形：由于是坠落动画，应从顶部开始显示逐渐增加的高度
-        aSrcRectDirt = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + (aCelHeight - aVisibleHeightDirt), aCelWidth, aVisibleHeightDirt); // 修改泥土源矩形：泥土应从底部开始向上显示
-        int startYOffset = -200;                                                                                                               // 起始位置在屏幕上方200像素
-        int endYOffset = aCelHeight + aGridCelOffsetY - 9;                                                                                     // 最终位置
+        aHeightPosition = TodAnimateCurve(0, 100, mGridItemCounter, 0, 1000, TodCurves::CURVE_EASE_IN_OUT);
+        aVisibleHeight = TodAnimateCurve(0, 1000, aHeightPosition, 0, aCelHeight, TodCurves::CURVE_EASE_IN_OUT);
+        aExtraBottomClip = 0;
+        aSrcRect = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + aExtraTopClip, aCelWidth, aVisibleHeight - aExtraTopClip);
+        aSrcRectDirt = Rect(aCelWidth * aGraveCol, aCelHeight * aGraveRow + (aCelHeight - aVisibleHeightDirt), aCelWidth, aVisibleHeightDirt);
+        int startYOffset = -200;
+        int endYOffset = aCelHeight + aGridCelOffsetY - 9;
         int currentYOffset = TodAnimateCurve(0, 1000, aHeightPosition, startYOffset, endYOffset, TodCurves::CURVE_EASE_IN_OUT);
         y = mBoard->GridToPixelY(mGridX, mGridY) + currentYOffset;
     }

@@ -352,6 +352,7 @@ void InitHookFunction() {
     homura::HookFunction(Plant_IceZombiesAddr, homura::MemFuncPtrWrapper<&Plant::IceZombies>::Get(), nullptr);
     homura::HookFunction(Plant_FindTargetAndFireAddr, homura::MemFuncPtrWrapper<&Plant::FindTargetAndFire>::Get(), &old_Plant_FindTargetAndFire);
     homura::HookFunction(Plant_UpdateChomperAddr, homura::MemFuncPtrWrapper<&Plant::UpdateChomper>::Get(), nullptr);
+    homura::HookFunction(Plant_UpdateGraveBusterAddr, homura::MemFuncPtrWrapper<&Plant::UpdateGraveBuster>::Get(), nullptr);
     homura::HookFunction(Plant_UpdateMagnetShroomAddr, homura::MemFuncPtrWrapper<&Plant::UpdateMagnetShroom>::Get(), nullptr);
     homura::HookFunction(Plant_UpdateSquashAddr, homura::MemFuncPtrWrapper<&Plant::UpdateSquash>::Get(), &old_Plant_UpdateSquash);
 

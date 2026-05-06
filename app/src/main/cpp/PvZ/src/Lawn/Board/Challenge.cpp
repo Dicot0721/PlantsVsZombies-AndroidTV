@@ -389,7 +389,7 @@ PlantingReason Challenge::CanPlantAt(int theGridX, int theGridY, SeedType theSee
             return (theGridX > 5 || theSeedType == SeedType::SEED_ZOMBIE_BUNGEE) ? PLANTING_OK : PLANTING_NOT_PASSED_LINE_VS;
         }
         if (theSeedType == SeedType::SEED_GRAVEBUSTER) {
-            if (mBoard->GetGridItemAt(GridItemType::GRIDITEM_GRAVESTONE, theGridX, theGridY) == nullptr)
+            if (mBoard->GetGridItemAt(GridItemType::GRIDITEM_GRAVESTONE, theGridX, theGridY) == nullptr && mBoard->GetGridItemAt(GridItemType::GRIDITEM_MP_BURIAL_MOUND, theGridX, theGridY) == nullptr)
                 return PlantingReason::PLANTING_ONLY_ON_GRAVES;
         } else {
             if (theGridX <= 5)

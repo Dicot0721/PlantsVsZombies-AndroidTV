@@ -169,6 +169,7 @@ bool LoadGameMain() {
     Board_PickZombieTypeAddr = libGameMain.GetSymbol("_ZN5Board14PickZombieTypeEiiP12ZombiePicker");
     Board_HasLevelAwardDroppedAddr = libGameMain.GetSymbol("_ZN5Board20HasLevelAwardDroppedEv");
     Board_CanDropLootAddr = libGameMain.GetSymbol("_ZN5Board11CanDropLootEv");
+    Board_DropLootPieceAddr = libGameMain.GetSymbol("_ZN5Board13DropLootPieceEiii");
     Board_SpawnZombiesFromGravesAddr = libGameMain.GetSymbol("_ZN5Board22SpawnZombiesFromGravesEv");
     Board_ClearAdviceAddr = libGameMain.GetSymbol("_ZN5Board11ClearAdviceE10AdviceType");
     Board_NextWaveComingAddr = libGameMain.GetSymbol("_ZN5Board14NextWaveComingEv");
@@ -698,6 +699,7 @@ bool LoadGameMain() {
     Plant_IceZombiesAddr = libGameMain.GetSymbol("_ZN5Plant10IceZombiesEv");
     Plant_BlowAwayFliersAddr = libGameMain.GetSymbol("_ZN5Plant14BlowAwayFliersEii");
     Plant_UpdateChomperAddr = libGameMain.GetSymbol("_ZN5Plant13UpdateChomperEv");
+    Plant_UpdateGraveBusterAddr = libGameMain.GetSymbol("_ZN5Plant17UpdateGraveBusterEv");
     Plant_UpdateSquashAddr = libGameMain.GetSymbol("_ZN5Plant12UpdateSquashEv");
     Plant_IsUpgradableToAddr = libGameMain.GetSymbol("_ZN5Plant14IsUpgradableToE8SeedType");
     Plant_MagnetShroomAttactItemAddr = libGameMain.GetSymbol("_ZN5Plant22MagnetShroomAttactItemEP6Zombie");

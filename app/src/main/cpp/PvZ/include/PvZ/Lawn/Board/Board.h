@@ -414,6 +414,9 @@ public:
     bool CanDropLoot() {
         return reinterpret_cast<bool (*)(Board *)>(Board_CanDropLootAddr)(this);
     }
+    void DropLootPiece(int thePosX, int thePosY, int theDropFactor) {
+        reinterpret_cast<void (*)(Board *, int, int, int)>(Board_DropLootPieceAddr)(this, thePosX, thePosY, theDropFactor);
+    }
     void ClearAdvice(AdviceType theHelpIndex) {
         reinterpret_cast<void (*)(Board *)>(Board_ClearAdviceAddr)(this);
     }
