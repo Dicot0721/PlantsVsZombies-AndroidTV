@@ -164,6 +164,7 @@ protected:
     friend void InitHookFunction();
     void _constructor();
     void _destructor();
+    void SnapControllerWidgetToSide(Sexy::Widget *theWidget, VSSide theSide);
 
     void PickRandomZombies(std::vector<SeedType> &theZombieSeeds);
     void PickRandomPlants(std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> const &theZombieSeeds);
