@@ -112,9 +112,6 @@ void Board::_constructor(LawnApp *theApp) {
     mAdvice->~CustomMessageWidget();
     mAdvice = new CustomMessageWidget(mApp);
 
-    if (Challenge::msVSShuffleMode) {
-        gOpeningEncounter = new OpeningEncounter();
-    }
     if (theApp->IsVSMode()) {
         serverPlantIDMap.clear();
         serverZombieIDMap.clear();
@@ -124,9 +121,6 @@ void Board::_constructor(LawnApp *theApp) {
 }
 
 void Board::_destructor() {
-    delete gOpeningEncounter;
-    gOpeningEncounter = nullptr;
-
     old_Board__destructor(this);
 }
 
@@ -6088,6 +6082,9 @@ void Board::DrawLevel(Graphics *g) {
             }
             if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_LITTER_TROUBLE) {
                 aLevelStr = "[LITTLE_TROUBLE]";
+            }
+            if (gOpeningEncounter->mType == EncounterType::ENCOUNTER_FREE_SHUFFLE) {
+                aLevelStr = "[FREE_SHUFFLE]";
             }
             int aPosX = 593;
             int aPosY = 595;

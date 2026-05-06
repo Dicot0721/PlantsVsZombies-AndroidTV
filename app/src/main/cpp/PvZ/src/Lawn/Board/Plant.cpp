@@ -24,6 +24,7 @@
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/Board/CutScene.h"
 #include "PvZ/Lawn/Board/GridItem.h"
+#include "PvZ/Lawn/Board/OpeningEncounter.h"
 #include "PvZ/Lawn/Board/SeedBank.h"
 #include "PvZ/Lawn/GamepadControls.h"
 #include "PvZ/Lawn/LawnApp.h"
@@ -1522,6 +1523,7 @@ static int GetVSRefreshTimeShuffle(SeedType theSeedType) {
     switch (theSeedType) {
         case SeedType::SEED_SNOWPEA:  // 7.5 -> 15
         case SeedType::SEED_REPEATER: // 7.5 -> 15
+            return 1500;
         default:
             break;
     }
@@ -1531,12 +1533,20 @@ static int GetVSRefreshTimeShuffle(SeedType theSeedType) {
 int Plant::GetCost(SeedType theSeedType, SeedType theImitaterType) {
     if (gLawnApp->IsVSMode()) {
         if (theSeedType == SEED_BEGHOULED_BUTTON_SHUFFLE) {
-            if (gFreeForFristShuffle[0])
+            if (gOpeningEncounter && gOpeningEncounter->mType == EncounterType::ENCOUNTER_FREE_SHUFFLE) {
                 return 0;
+            }
+            if (gFreeForFristShuffle[0]) {
+                return 0;
+            }
             return 25;
         } else if (theSeedType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE) {
-            if (gFreeForFristShuffle[1])
+            if (gOpeningEncounter && gOpeningEncounter->mType == EncounterType::ENCOUNTER_FREE_SHUFFLE) {
                 return 0;
+            }
+            if (gFreeForFristShuffle[1]) {
+                return 0;
+            }
             return 25;
         }
 

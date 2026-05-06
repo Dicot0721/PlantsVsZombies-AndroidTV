@@ -81,6 +81,29 @@ void Challenge::_constructor() {
     }
 
     old_Challenge_Challenge(this);
+
+    if (Challenge::msVSShuffleMode) {
+        if (!gOpeningEncounter) {
+            gOpeningEncounter = new OpeningEncounter();
+        }
+    }
+}
+
+void Challenge::_destructor() {
+    delete gOpeningEncounter;
+    gOpeningEncounter = nullptr;
+
+    old_Challenge_Delete(this);
+
+    if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON && heavyWeaponAccel) {
+        Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
+        JNIEnv *env = bridgeApp->getJNIEnv();
+        jobject activity = bridgeApp->mNativeApp->getActivity();
+        jclass cls = env->GetObjectClass(activity);
+        jmethodID methodID = env->GetMethodID(cls, "stopOrientationListener", "()V");
+        env->CallVoidMethod(activity, methodID);
+        env->DeleteLocalRef(cls);
+    }
 }
 
 void Challenge::Update() {
@@ -657,20 +680,6 @@ void Challenge::HeavyWeaponPacketClicked(SeedPacket *theSeedPacket) {
     }
 
     old_Challenge_HeavyWeaponPacketClicked(this, theSeedPacket);
-}
-
-void Challenge::_destructor() {
-    old_Challenge_Delete(this);
-
-    if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON && heavyWeaponAccel) {
-        Native::BridgeApp *bridgeApp = Native::BridgeApp::getSingleton();
-        JNIEnv *env = bridgeApp->getJNIEnv();
-        jobject activity = bridgeApp->mNativeApp->getActivity();
-        jclass cls = env->GetObjectClass(activity);
-        jmethodID methodID = env->GetMethodID(cls, "stopOrientationListener", "()V");
-        env->CallVoidMethod(activity, methodID);
-        env->DeleteLocalRef(cls);
-    }
 }
 
 void Challenge::ScaryPotterOpenPot(GridItem *theScaryPot) {
