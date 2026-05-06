@@ -1287,6 +1287,8 @@ extern Image *&IMAGE_POOL_BASE;
 extern Image *&IMAGE_POOL_BASE_NIGHT;
 extern Image *&IMAGE_POOL_SHADING;
 extern Image *&IMAGE_POOL_SHADING_NIGHT;
+extern Image *&IMAGE_FOG;
+extern Image *&IMAGE_FOG_SOFTWARE;
 extern Image *&IMAGE_BUNGEECORD;
 extern Image *&IMAGE_WHITEWATER_SHADOW;
 extern Image *&IMAGE_PLANTSHADOW2;

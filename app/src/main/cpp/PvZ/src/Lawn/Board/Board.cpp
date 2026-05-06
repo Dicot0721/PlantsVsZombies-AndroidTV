@@ -59,6 +59,7 @@
 
 #include <unistd.h>
 
+#include <numbers>
 #include <unordered_map>
 
 using namespace Sexy;
@@ -1215,7 +1216,70 @@ void Board::DrawFog(Sexy::Graphics *g) {
         return;
     }
 
-    old_Board_DrawFog(this, g);
+    if (!mApp->IsVSMode()) {
+        old_Board_DrawFog(this, g);
+        return;
+    }
+
+    // 对战模式只在中间三列绘制
+    Image *aImageFog = mApp->Is3DAccelerated() ? Sexy::IMAGE_FOG : Sexy::IMAGE_FOG_SOFTWARE;
+    bool aVsCenterFogOnly = mApp->IsVSMode();
+    for (int x = 0; x < MAX_GRID_SIZE_X; x++) {
+        if (aVsCenterFogOnly && (x < 3 || x > 5)) {
+            continue;
+        }
+
+        for (int y = 0; y < MAX_GRID_SIZE_Y + 1; y++) {
+            int aSampleX = x;
+            int aFadeAmount = mGridCelFog[aSampleX][y];
+            if (aVsCenterFogOnly) {
+                int aCenterSampleX = MAX_GRID_SIZE_X / 2;
+                int aLeftSampleX = aCenterSampleX - 1;
+                int aRightSampleX = aCenterSampleX + 1;
+                aFadeAmount = mGridCelFog[aCenterSampleX][y];
+                if (aLeftSampleX >= 0 && mGridCelFog[aLeftSampleX][y] > aFadeAmount) {
+                    aFadeAmount = mGridCelFog[aLeftSampleX][y];
+                }
+                if (aRightSampleX < MAX_GRID_SIZE_X && mGridCelFog[aRightSampleX][y] > aFadeAmount) {
+                    aFadeAmount = mGridCelFog[aRightSampleX][y];
+                }
+                aSampleX = aCenterSampleX;
+                if (aFadeAmount == 0) {
+                    aFadeAmount = 255;
+                }
+            }
+            if (aFadeAmount == 0) {
+                continue;
+            }
+
+            int aCelLook = mGridCelLook[aSampleX][y % MAX_GRID_SIZE_Y];
+            int aCelCol = aCelLook % 8;
+            float aPosX = x * 80 + mFogOffset - 15;
+            float aPosY = y * 85 + 20;
+            auto aTime = static_cast<float>(mMainCounter * std::numbers::pi * 2.0);
+            auto aPhaseX = static_cast<float>(6.0 * std::numbers::pi * x / MAX_GRID_SIZE_X);
+            auto aPhaseY = static_cast<float>(6.0 * std::numbers::pi * y / (MAX_GRID_SIZE_Y + 1));
+            float aMotion = 13 + 4 * sin(aTime / 900 + aPhaseY) + 8 * sin(aTime / 500 + aPhaseX);
+
+            int aColorVariant = 255 - aCelLook * 1.5 - aMotion * 1.5;
+            int aLightnessVariant = 255 - aCelLook - aMotion;
+            if (!mApp->Is3DAccelerated()) {
+                aPosX += 10;
+                aPosY += 3;
+                aCelCol = aCelLook % Sexy::IMAGE_FOG_SOFTWARE->mNumCols;
+                aColorVariant = 255;
+                aLightnessVariant = 255;
+            }
+
+            g->SetColorizeImages(true);
+            g->SetColor(Color(aColorVariant, aColorVariant, aLightnessVariant, aFadeAmount));
+            g->DrawImageCel(aImageFog, aPosX, aPosY, aCelCol, 0);
+            if (x == MAX_GRID_SIZE_X - 1) {
+                g->DrawImageCel(aImageFog, aPosX + 80, aPosY, aCelCol, 0);
+            }
+            g->SetColorizeImages(false);
+        }
+    }
 }
 
 Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromWave, bool theIsRustle) {
