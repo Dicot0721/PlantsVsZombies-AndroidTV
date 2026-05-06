@@ -4574,20 +4574,20 @@ void Zombie::BungeeLanding() {
 
     Plant *aPlant = mBoard->FindUmbrellaPlant(mTargetCol, mRow);
     if (aPlant) {
-        if (mApp->IsVSMode()) {
-            if (gTcpConnected) {
-                // Client waits for host-authoritative umbrella result; freeze descent to avoid falling out of map during high latency.
-                if (mAltitude < 0.0f) {
-                    mAltitude = 0.0f;
-                }
-                return;
-            }
-
-            if (gTcpClientSocket >= 0) {
-                U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_HIT_UMBRELLA}, uint16_t(mBoard->mZombies.DataArrayGetID(this)), uint16_t(mBoard->mPlants.DataArrayGetID(aPlant))};
-                netplay::PutEvent(event);
-            }
-        }
+        //        if (mApp->IsVSMode()) {
+        //            if (gTcpConnected) {
+        //                // Client waits for host-authoritative umbrella result; freeze descent to avoid falling out of map during high latency.
+        //                if (mAltitude < 0.0f) {
+        //                    mAltitude = 0.0f;
+        //                }
+        //                return;
+        //            }
+        //
+        //            if (gTcpClientSocket >= 0) {
+        //                U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_HIT_UMBRELLA}, uint16_t(mBoard->mZombies.DataArrayGetID(this)),
+        //                uint16_t(mBoard->mPlants.DataArrayGetID(aPlant))}; netplay::PutEvent(event);
+        //            }
+        //        }
 
         mApp->PlaySample(SOUND_BOING);
         mApp->PlayFoley(FoleyType::FOLEY_UMBRELLA);
