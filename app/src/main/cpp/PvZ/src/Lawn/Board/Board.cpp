@@ -1305,6 +1305,9 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
                 event.data2 = uint16_t(mZombies.DataArrayGetID(aZombie));
                 event.data3[0].f32 = aZombie->mVelX;
                 event.data3[1].f32 = aZombie->mPosX;
+                if (theZombieType == ZombieType::ZOMBIE_NORMAL && !aZombie->mInPool) {
+                    event.data3[0].u8x4.u8_1 = aZombie->mBloated;
+                }
                 netplay::PutEvent(event);
             }
         }
@@ -1774,6 +1777,9 @@ void Board::processServerEvent(const BaseEvent *event) {
             float aVelX = eventZombieAdd->data3[0].f32;
             aZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
             aZombie->mPosX = eventZombieAdd->data3[1].f32;
+            if (aZombie->mZombieType == ZombieType::ZOMBIE_NORMAL && !aZombie->mInPool) {
+                aZombie->mBloated = eventZombieAdd->data3[0].u8x4.u8_1;
+            }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_BOBSELD_ADD: {
             auto *eventZombieBobseldAdd = static_cast<const U8x2U16x4UNI32x8_Event *>(event);
