@@ -348,6 +348,7 @@ static bool Mode3ConnectToTarget(WaitForSecondPlayerDialog *dialog, std::string_
     if (ret == 0) {
         dialog->mServerConnecting = false;
         dialog->mServerConnected = true;
+        ResetOnlineCheatStates();
         dialog->mServerStatusText = TodStringTranslate("[STATUS_CONNECTED]");
         dialog->ServerResetP2PState(false);
         dialog->ServerOpenP2PListener();
@@ -1996,6 +1997,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             if (err == 0) {
                 mServerConnecting = false;
                 mServerConnected = true;
+                ResetOnlineCheatStates();
                 mServerStatusText = TodStringTranslate("[STATUS_CONNECTED]");
                 ServerResetP2PState(false);
                 ServerOpenP2PListener();

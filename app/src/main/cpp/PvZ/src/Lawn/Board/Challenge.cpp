@@ -401,8 +401,6 @@ PlantingReason Challenge::CanPlantAt(int theGridX, int theGridY, SeedType theSee
 }
 
 void Challenge::InitLevel() {
-    ResetOnlineCheatStatesIfNeeded();
-
     old_Challenge_InitLevel(this);
 
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN) {

@@ -66,7 +66,7 @@ static bool IsOnlineModeActive() {
     return gTcpConnecting || gTcpConnected || gTcpClientSocket >= 0 || gTcpServerSocket >= 0 || gTcpListenSocket >= 0;
 }
 
-void ResetOnlineCheatStatesIfNeeded() {
+void ResetOnlineCheatStates() {
     if (!IsOnlineModeActive()) {
         return;
     }
@@ -238,7 +238,7 @@ extern "C" JNIEXPORT jboolean JNICALL Java_com_transmension_mobile_EnhanceActivi
 
 extern "C" JNIEXPORT void JNICALL Java_com_android_support_Preferences_Changes(JNIEnv *env, jclass clazz, jobject con, jint featNum, jstring featName, jint value, jboolean boolean, jstring str) {
     if (IsOnlineModeActive()) {
-        ResetOnlineCheatStatesIfNeeded();
+        ResetOnlineCheatStates();
         return;
     }
     switch (featNum) {
