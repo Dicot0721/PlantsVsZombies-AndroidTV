@@ -67,10 +67,6 @@ static bool IsOnlineModeActive() {
 }
 
 void ResetOnlineCheatStates() {
-    if (!IsOnlineModeActive()) {
-        return;
-    }
-
     infiniteSun = false;
     seedPacketFastCoolDown = false;
     abilityFastCoolDown = false;
