@@ -111,7 +111,7 @@ public:
     double mSoundVolume;           // 450 ~ 451
     int unkMems6[5];               // 452 ~ 456
     bool mHelpTextSeen[6];         // 1828 ~ 1833
-    int unk5;                      // 459
+    int mWinStreak;                // 459
     bool unkBool1;                 // 1840
     bool unkBool2;                 // 1841
     bool mPassedShopSeedTutorial;  // 1842
@@ -141,7 +141,7 @@ public:
     void SetFlag(int theFlag, bool theHasFlag) {
         reinterpret_cast<void (*)(LawnPlayerInfo *, int, bool)>(LawnPlayerInfo_SetFlagAddr)(this, theFlag, theHasFlag);
     }
-
+    void GetName() {}
     void AddCoins(int theAmount);
 };
 

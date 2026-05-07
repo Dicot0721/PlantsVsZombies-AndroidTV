@@ -23,10 +23,16 @@
 #include "PvZ/NetPlay.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/TodLib/Common/TodCommon.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 
 #include <unistd.h>
 
 using namespace Sexy;
+
+class ImageWidgetLike : public Sexy::Widget {
+public:
+    Sexy::Image *mImage;
+};
 
 
 void VSResultsMenu::_constructor() {
@@ -133,19 +139,99 @@ void VSResultsMenu::Draw(Graphics *g) {
 
 
 void VSResultsMenu::DrawInfoBox(Sexy::Graphics *a2, int a3) {
-    // Sexy::Image* tmp = Sexy::IMAGE_NO_GAMERPIC;
-    // if (addonImages.gamerpic == nullptr && addonImages.zombatar_portrait != nullptr) {
-    // int width = tmp->mWidth;
-    // int height = tmp->mHeight;
-    // addonImages.gamerpic = (Sexy::Image*) operator new(sizeof(Sexy::Image));
-    // Sexy_MemoryImage_MemoryImage(addonImages.gamerpic);
-    // Sexy_MemoryImage_Create(addonImages.gamerpic,width,height);
-    // Sexy::Graphics graphics;
-    // Sexy_Graphics_Graphics2(&graphics,addonImages.gamerpic);
-    // TodDrawImageScaledF(&graphics,addonImages.zombatar_portrait,0,0,width / addonImages.zombatar_portrait->mWidth,height / addonImages.zombatar_portrait->mHeight);
-    // Sexy_Graphics_Delete2(&graphics);
-    // Sexy::IMAGE_NO_GAMERPIC = addonImages.gamerpic;
-    // }
-    old_VSResultsMenu_DrawInfoBox(this, a2, a3);
-    // Sexy::IMAGE_NO_GAMERPIC = tmp;
+    Sexy::Widget *slotWidget = FindWidget(a3 + 2);
+    if (slotWidget == nullptr) {
+        return;
+    }
+
+    auto *infoWidget = reinterpret_cast<ImageWidgetLike *>(slotWidget);
+    a2->PushState();
+    a2->Translate(slotWidget->mX, slotWidget->mY);
+
+    int sideInSlot = mSides[a3];
+    if (sideInSlot < 0 || sideInSlot > 1) {
+        a2->PopState();
+        return;
+    }
+    int this76Side = unk2[sideInSlot];
+    int *playerRecord = GetPlayerRecord((unsigned int)this76Side);
+    DefaultProfileMgr *profileMgr = gLawnApp->mProfileMgr;
+    PlayerInfo *profileObj = gLawnApp->mPlayerInfo;
+    if (profileMgr != nullptr) {
+        profileObj = profileMgr->GetProfile(profileObj->mName, this76Side);
+    }
+    if (playerRecord == nullptr || profileObj == nullptr) {
+        a2->PopState();
+        return;
+    }
+    bool isZombieSlot = (sideInSlot != 0);
+
+    infoWidget->mImage = isZombieSlot ? Sexy::IMAGE_VS_INFO_BOX_ZOMBIES : Sexy::IMAGE_VS_INFO_BOX_PLANTS;
+    a2->DrawImage(Sexy::IMAGE_NO_GAMERPIC, 31, 52);
+    a2->DrawImage(isZombieSlot ? Sexy::IMAGE_VS_INFO_BOX_ZOMBIES_OVERLAY : Sexy::IMAGE_VS_INFO_BOX_PLANTS_OVERLAY, 0, 0);
+    pvzstl::string playerFmt = TodStringTranslate("[PLAYER_FMT]");
+    pvzstl::string playerLabel = StrFormat(playerFmt.c_str(), a3 + 1);
+    if ((gTcpConnected || gTcpClientSocket >= 0) && gSecondPlayerName[0] != '\0') {
+        const char *localPlayerName = gLawnApp->mPlayerInfo->mName;
+        const int localPlayerIndex = gTcpConnected ? 1 : 0;
+        playerLabel = (this76Side == localPlayerIndex) ? localPlayerName : gSecondPlayerName;
+    }
+
+    a2->SetColor(Sexy::Color::White);
+    a2->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
+    a2->DrawString(playerLabel, 42, 44);
+    int winStreak = playerRecord[3];
+    profileObj->mWinStreak = winStreak;
+    if (winStreak > 1) {
+        pvzstl::string streakFmt = TodStringTranslate("[WIN_STREAK_FMT]");
+        a2->DrawString(StrFormat(streakFmt.c_str(), winStreak), 263, 78);
+    }
+    float trophyX = unk3[0];
+    float trophyY = unk3[1];
+    if (mSmokeCounter > 49) {
+        trophyY = (float)TodAnimateCurve(50, 60, mSmokeCounter, 82, 74, TodCurves::CURVE_EASE_IN_OUT);
+    } else {
+        trophyY = (float)TodAnimateCurve(0, 50, mSmokeCounter, -60 - slotWidget->mY - Sexy::IMAGE_MP_TROPHY_BASE->mHeight - Sexy::IMAGE_MP_PLANT_TROPHY->mHeight, 82, TodCurves::CURVE_LINEAR);
+    }
+
+    int winnerSide = playerRecord[0];
+    if (winnerSide != -1) {
+        if (TodParticleSystem *smoke = gLawnApp->ParticleTryToGet(mSmokeParticleID)) {
+            smoke->Draw(a2);
+        }
+
+        Sexy::Image *topTrophy = (winnerSide != 0) ? Sexy::IMAGE_MP_ZOMBIE_TROPHY : Sexy::IMAGE_MP_PLANT_TROPHY;
+        a2->DrawImage(Sexy::IMAGE_MP_TROPHY_BASE, (int)(trophyX - Sexy::IMAGE_MP_TROPHY_BASE->mWidth / 2.0f), (int)trophyY);
+        a2->DrawImage(topTrophy, (int)(trophyX + 2.0f - topTrophy->mWidth / 2.0f), (int)(trophyY - 46.0f));
+
+        if (TodParticleSystem *sparkle = gLawnApp->ParticleTryToGet(mSparkleParticleID)) {
+            sparkle->SystemMove(trophyX, trophyY);
+            sparkle->Draw(a2);
+        }
+    }
+    float plantTrophyX = (winnerSide == -1) ? 117.0f : 192.0f;
+    int plantWins = playerRecord[1];
+    if (plantWins > 0) {
+        float step = 196.0f / (float)plantWins;
+        if (step > 52.0f) {
+            step = 52.0f;
+        }
+        for (int i = 0; i < plantWins; i++) {
+            a2->DrawImage(Sexy::IMAGE_MP_PLANT_TROPHY, (int)plantTrophyX, 82, 40, 40);
+            plantTrophyX += step;
+        }
+    }
+    float zombieTrophyX = (winnerSide == -1) ? 117.0f : 192.0f;
+    int zombieWins = playerRecord[2];
+    if (zombieWins > 0) {
+        float step = 196.0f / (float)zombieWins;
+        if (step > 52.0f) {
+            step = 52.0f;
+        }
+        for (int i = 0; i < zombieWins; i++) {
+            a2->DrawImage(Sexy::IMAGE_MP_ZOMBIE_TROPHY, (int)zombieTrophyX, 124, 40, 40);
+            zombieTrophyX += step;
+        }
+    }
+    a2->PopState();
 }

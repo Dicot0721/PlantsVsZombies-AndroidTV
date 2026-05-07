@@ -777,6 +777,7 @@ bool LoadGameMain() {
     VSResultsMenu_DrawInfoBoxAddr = libGameMain.GetSymbol("_ZN13VSResultsMenu11DrawInfoBoxEPN4Sexy8GraphicsEi");
     VSResultsMenu_ButtonDepressAddr = libGameMain.GetSymbol("_ZN13VSResultsMenu13ButtonDepressEi");
     VSResultsMenu_InitFromBoardAddr = libGameMain.GetSymbol("_ZN13VSResultsMenu13InitFromBoardEP5Board");
+    VSResultsMenu_GetPlayerRecordAddr = libGameMain.GetSymbol("_ZN13VSResultsMenu15GetPlayerRecordEj");
 
 
     WaitForSecondPlayerDialog_WaitForSecondPlayerDialogAddr = libGameMain.GetSymbol("_ZN25WaitForSecondPlayerDialogC2EP7LawnApp");
@@ -1096,6 +1097,7 @@ bool LoadGameMain() {
     TodParticleSystem_Delete2Addr = libGameMain.GetSymbol("_ZN17TodParticleSystemD2Ev");
     TodParticleSystem_ParticleSystemDieAddr = libGameMain.GetSymbol("_ZN17TodParticleSystem17ParticleSystemDieEv");
     TodParticleSystem_UpdateAddr = libGameMain.GetSymbol("_ZN17TodParticleSystem6UpdateEv");
+    TodParticleSystem_SystemMoveAddr = libGameMain.GetSymbol("_ZN17TodParticleSystem10SystemMoveEff");
 
 
     DrawCheckboxTextAddr = libGameMain.GetSymbol("_Z16DrawCheckboxTextPN4Sexy8GraphicsERKSsPNS_6WidgetEPKc");
@@ -1192,6 +1194,7 @@ bool LoadGameMain() {
     Sexy_DefaultProfileMgr_GetAnyProfileAddr = libGameMain.GetSymbol("_ZN4Sexy17DefaultProfileMgr13GetAnyProfileEv");
     Sexy_DefaultProfileMgr_AddProfileAddr = libGameMain.GetSymbol("_ZN4Sexy17DefaultProfileMgr10AddProfileERKSs");
     Sexy_DefaultProfileMgr_GetProfileAddr = libGameMain.GetSymbol("_ZN4Sexy17DefaultProfileMgr10GetProfileERKSs");
+    Sexy_DefaultProfileMgr_GetProfile2Addr = libGameMain.GetSymbol("_ZN4Sexy17DefaultProfileMgr10GetProfileERKSsi");
     Sexy_DefaultProfileMgr_LoadAddr = libGameMain.GetSymbol("_ZN4Sexy17DefaultProfileMgr4LoadEv");
     Sexy_DefaultProfileMgr_SaveAddr = libGameMain.GetSymbol("_ZN4Sexy17DefaultProfileMgr4SaveEv");
     TodDrawImageCelScaledFAddr = libGameMain.GetSymbol("_Z22TodDrawImageCelScaledFPN4Sexy8GraphicsEPNS_5ImageEffiiff");
@@ -1349,6 +1352,13 @@ Sexy::Image *&Sexy::IMAGE_STORE_MAINMENUBUTTON = *libGameMain.GetSymbol<Sexy::Im
 Sexy::Image *&Sexy::IMAGE_CHALLENGE_NAME_BACK = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy25IMAGE_CHALLENGE_NAME_BACKE");
 Sexy::Image *&Sexy::IMAGE_WALLNUT_BOWLINGSTRIPE = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy27IMAGE_WALLNUT_BOWLINGSTRIPEE");
 Sexy::Image *&Sexy::IMAGE_NO_GAMERPIC = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy17IMAGE_NO_GAMERPICE");
+Sexy::Image *&Sexy::IMAGE_VS_INFO_BOX_ZOMBIES = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy25IMAGE_VS_INFO_BOX_ZOMBIESE");
+Sexy::Image *&Sexy::IMAGE_VS_INFO_BOX_PLANTS_OVERLAY = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy32IMAGE_VS_INFO_BOX_PLANTS_OVERLAYE");
+Sexy::Image *&Sexy::IMAGE_VS_INFO_BOX_PLANTS = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy24IMAGE_VS_INFO_BOX_PLANTSE");
+Sexy::Image *&Sexy::IMAGE_VS_INFO_BOX_ZOMBIES_OVERLAY = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy33IMAGE_VS_INFO_BOX_ZOMBIES_OVERLAYE");
+Sexy::Image *&Sexy::IMAGE_MP_TROPHY_BASE = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy20IMAGE_MP_TROPHY_BASEE");
+Sexy::Image *&Sexy::IMAGE_MP_ZOMBIE_TROPHY = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy22IMAGE_MP_ZOMBIE_TROPHYE");
+Sexy::Image *&Sexy::IMAGE_MP_PLANT_TROPHY = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy21IMAGE_MP_PLANT_TROPHYE");
 Sexy::Image *&Sexy::IMAGE_ZEN_NEXTGARDEN = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy20IMAGE_ZEN_NEXTGARDENE");
 Sexy::Image *&Sexy::IMAGE_MP_TOMBSTONE = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy18IMAGE_MP_TOMBSTONEE");
 Sexy::Image *&Sexy::IMAGE_STORE_BLUEPRINT_CLOWN = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy29IMAGE_STORE_BLUEPRINT_TRAILERE");

@@ -778,6 +778,7 @@ inline void *VSResultsMenu_DrawOverlayAddr;
 inline void *VSResultsMenu_DrawInfoBoxAddr;
 inline void *VSResultsMenu_ButtonDepressAddr;
 inline void *VSResultsMenu_InitFromBoardAddr;
+inline void *VSResultsMenu_GetPlayerRecordAddr;
 
 
 inline void *WaitForSecondPlayerDialog_WaitForSecondPlayerDialogAddr;
@@ -1095,6 +1096,7 @@ inline void *TodParticleSystem_OverrideImageAddr;
 inline void *TodParticleSystem_Delete2Addr;
 inline void *TodParticleSystem_ParticleSystemDieAddr;
 inline void *TodParticleSystem_UpdateAddr;
+inline void *TodParticleSystem_SystemMoveAddr;
 
 
 inline void *DrawCheckboxTextAddr;
@@ -1218,6 +1220,7 @@ inline void *PoolEffect_PoolEffectDrawAddr;
 inline void *Sexy_DefaultProfileMgr_GetAnyProfileAddr;
 inline void *Sexy_DefaultProfileMgr_AddProfileAddr;
 inline void *Sexy_DefaultProfileMgr_GetProfileAddr;
+inline void *Sexy_DefaultProfileMgr_GetProfile2Addr;
 inline void *Sexy_DefaultProfileMgr_LoadAddr;
 inline void *Sexy_DefaultProfileMgr_SaveAddr;
 inline void *TodDrawImageCelScaledFAddr;
@@ -1329,6 +1332,13 @@ extern Image *&IMAGE_CHALLENGE_NAME_BACK;
 extern Image *&IMAGE_ZEN_NEXTGARDEN;
 extern Image *&IMAGE_WALLNUT_BOWLINGSTRIPE;
 extern Image *&IMAGE_NO_GAMERPIC;
+extern Image *&IMAGE_VS_INFO_BOX_ZOMBIES;
+extern Image *&IMAGE_VS_INFO_BOX_PLANTS_OVERLAY;
+extern Image *&IMAGE_VS_INFO_BOX_PLANTS;
+extern Image *&IMAGE_VS_INFO_BOX_ZOMBIES_OVERLAY;
+extern Image *&IMAGE_MP_TROPHY_BASE;
+extern Image *&IMAGE_MP_ZOMBIE_TROPHY;
+extern Image *&IMAGE_MP_PLANT_TROPHY;
 extern Image *&IMAGE_MP_TOMBSTONE;
 extern Image *&IMAGE_STORE_BLUEPRINT_CLOWN;
 extern Image *&IMAGE_SUNFLOWER_TROPHY;

@@ -91,6 +91,9 @@ public:
     void Update() {
         reinterpret_cast<void (*)(TodParticleSystem *)>(TodParticleSystem_UpdateAddr)(this);
     }
+    void SystemMove(float x, float y) {
+        reinterpret_cast<void (*)(TodParticleSystem *, float, float)>(TodParticleSystem_SystemMoveAddr)(this, x, y);
+    }
 
 protected:
     void _destructor() {

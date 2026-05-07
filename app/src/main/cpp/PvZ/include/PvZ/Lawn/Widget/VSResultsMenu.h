@@ -41,7 +41,7 @@ public:
     int mResultsButtonId;                // 75
     int unk2[2];                         // 76 ~ 77
     int mSides[2];                       // 78 ~ 79
-    int unk3[2];                         // 80 ~ 81
+    float unk3[2];                       // 80 ~ 81
     ParticleSystemID mSparkleParticleID; // 82
     ParticleSystemID mSmokeParticleID;   // 83
     int mUpdateCounter;                  // 84
@@ -63,6 +63,9 @@ public:
 
     void InitFromBoard(class Board *board) {
         reinterpret_cast<void (*)(VSResultsMenu *, Board *)>(VSResultsMenu_InitFromBoardAddr)(this, board);
+    }
+    int *GetPlayerRecord(unsigned int playerIndex) {
+        return reinterpret_cast<int *(*)(VSResultsMenu *, unsigned int)>(VSResultsMenu_GetPlayerRecordAddr)(this, playerIndex);
     }
 
 protected:
