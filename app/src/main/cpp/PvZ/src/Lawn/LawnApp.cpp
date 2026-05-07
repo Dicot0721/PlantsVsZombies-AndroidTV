@@ -491,7 +491,7 @@ void LawnApp::UpdateFrames() {
                         close(gTcpListenSocket);
                         gTcpListenSocket = -1;
                     }
-                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
+                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[CONNECTION_CLOSED]", "[RECREATE_ROOM]", "[DIALOG_BUTTON_OK]", "", 3);
                 }
                 break;
             } else {
@@ -515,7 +515,7 @@ void LawnApp::UpdateFrames() {
                     serverRecvBuffer.clear();
                     netplay::ClearSendBuffer();
                     ResetNetDelayState();
-                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新创建房间", "[DIALOG_BUTTON_OK]", "", 3);
+                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[CONNECTION_ERROR]", "[RECREATE_ROOM]", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 }
             }
@@ -540,7 +540,7 @@ void LawnApp::UpdateFrames() {
                 serverRecvBuffer.clear();
                 netplay::ClearSendBuffer();
                 ResetNetDelayState();
-                LawnMessageBox(Dialogs::DIALOG_MESSAGE, "对方关闭连接", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
+                LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[CONNECTION_CLOSED]", "[REENTER_ROOM]", "[DIALOG_BUTTON_OK]", "", 3);
                 break;
             } else {
                 if (errno == EAGAIN || errno == EWOULDBLOCK) {
@@ -559,7 +559,7 @@ void LawnApp::UpdateFrames() {
                     serverRecvBuffer.clear();
                     netplay::ClearSendBuffer();
                     ResetNetDelayState();
-                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "连接出错了", "请重新加入房间", "[DIALOG_BUTTON_OK]", "", 3);
+                    LawnMessageBox(Dialogs::DIALOG_MESSAGE, "[CONNECTION_ERROR]", "[REENTER_ROOM]", "[DIALOG_BUTTON_OK]", "", 3);
                     break;
                 }
             }
