@@ -156,7 +156,7 @@ template <auto MEM_FUNC_PTR>
 class MemFuncPtrWrapper {
 protected:
     template <typename>
-    static constexpr auto call = [] static { static_assert(false); };
+    static constexpr auto call = [] static { static_assert(false, "Unsupported type"); }; // usually variadic functions
 
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...)> = [](T *obj, Args... args) static -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
@@ -177,60 +177,60 @@ protected:
     static constexpr auto call<Ret (T::*)(Args...) const volatile &> = [](const volatile T *obj, Args... args) static -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
 
     template <typename T, typename Ret, typename... Args>
-    static constexpr auto call<Ret (T::*)(Args...) &&> = [](T *obj, Args... args) static -> Ret { return (std::move(*obj) * MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+    static constexpr auto call<Ret (T::*)(Args...) &&> = [](T *obj, Args... args) static -> Ret { return (std::move(*obj).*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
-    static constexpr auto call<Ret (T::*)(Args...) const &&> = [](const T *obj, Args... args) static -> Ret { return (std::move(*obj) * MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+    static constexpr auto call<Ret (T::*)(Args...) const &&> = [](const T *obj, Args... args) static -> Ret { return (std::move(*obj).*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
-    static constexpr auto call<Ret (T::*)(Args...) volatile &&> = [](volatile T *obj, Args... args) static -> Ret { return (std::move(*obj) * MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+    static constexpr auto call<Ret (T::*)(Args...) volatile &&> = [](volatile T *obj, Args... args) static -> Ret { return (std::move(*obj).*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) const volatile &&> = [](const volatile T *obj, Args... args) static -> Ret { return (std::move(*obj).*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
 
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) noexcept> =
-        [](T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> &&...))) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> &&...)) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) const noexcept> =
-        [](const T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> &&...))) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](const T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> &&...)) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) volatile noexcept> =
-        [](volatile T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> &&...))) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](volatile T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> &&...)) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) const volatile noexcept> =
-        [](const volatile T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> &&...))) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](const volatile T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> &&...)) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
 
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) & noexcept> =
-        [](T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> &&...))) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> &&...)) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) const & noexcept> =
-        [](const T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> &&...))) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](const T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> &&...)) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) volatile & noexcept> =
-        [](volatile T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> &&...))) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](volatile T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> &&...)) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) const volatile & noexcept> =
-        [](const volatile T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> &&...))) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](const volatile T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> &&...)) -> Ret { return (obj->*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
 
     // clang-format off
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) && noexcept> =
-        [](T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> && ...))) -> Ret { return (std::move(*obj) * MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> && ...)) -> Ret { return (std::move(*obj).*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) const && noexcept> =
-        [](const T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> && ...))) -> Ret { return (std::move(*obj) * MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](const T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> && ...)) -> Ret { return (std::move(*obj).*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) volatile && noexcept> =
-        [](volatile T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> && ...))) -> Ret { return (std::move(*obj) * MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](volatile T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> && ...)) -> Ret { return (std::move(*obj).*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     template <typename T, typename Ret, typename... Args>
     static constexpr auto call<Ret (T::*)(Args...) const volatile && noexcept> =
-        [](const volatile T *obj, Args... args) static noexcept(noexcept((std::is_nothrow_move_constructible_v<Args> && ...))) -> Ret { return (std::move(*obj).*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
+        [](const volatile T *obj, Args... args) static noexcept((std::is_nothrow_move_constructible_v<Args> && ...)) -> Ret { return (std::move(*obj).*MEM_FUNC_PTR)(std::forward<Args>(args)...); };
     // clang-format on
 
 public:
     MemFuncPtrWrapper() = delete;
     ~MemFuncPtrWrapper() = delete;
 
-    [[nodiscard]] static consteval auto Get() noexcept {
+    [[nodiscard]] static consteval auto *Get() noexcept {
         return &call<decltype(MEM_FUNC_PTR)>.operator();
     }
 };
