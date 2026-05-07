@@ -795,11 +795,6 @@ void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int the
                 return;
             }
 
-            if (aChosenSeed.mRefreshing) {
-                mApp->PlaySample(Sexy::SOUND_BUZZER);
-                return;
-            }
-
             if (mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
                 return;
             }
