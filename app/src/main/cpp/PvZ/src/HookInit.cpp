@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2023-2026  PvZ TV Touch Team
  *
  * This file is part of PlantsVsZombies-AndroidTV.
@@ -91,7 +91,7 @@ void InitHookFunction() {
     homura::HookFunction(LawnApp_TryHelpTextScreenAddr, homura::MemFuncPtrWrapper<&LawnApp::TryHelpTextScreen>::Get(), nullptr);
     homura::HookFunction(LawnApp_GetSeedsAvailableAddr, homura::MemFuncPtrWrapper<&LawnApp::GetSeedsAvailable>::Get(), &old_LawnApp_GetSeedsAvailable);
     homura::HookFunction(LawnApp_ClearSecondPlayerAddr, homura::MemFuncPtrWrapper<&LawnApp::ClearSecondPlayer>::Get(), &old_LawnApp_ClearSecondPlayer);
-    // homura::HookFunction(LawnApp_HasSeedTypeAddr, &LawnApp_HasSeedType, &old_LawnApp_HasSeedType);
+    homura::HookFunction(LawnApp_HasSeedTypeAddr, homura::MemFuncPtrWrapper<&LawnApp::HasSeedType>::Get(), &old_LawnApp_HasSeedType);
     homura::HookFunction(LawnApp_UpdateFramesAddr, homura::MemFuncPtrWrapper<&LawnApp::UpdateFrames>::Get(), &old_LawnApp_UpdateFrames);
     homura::HookFunction(LawnApp_ShowSeedChooserScreenAddr, homura::MemFuncPtrWrapper<&LawnApp::ShowSeedChooserScreen>::Get(), nullptr);
     homura::HookFunction(LawnApp_KillSeedChooserScreenAddr, homura::MemFuncPtrWrapper<&LawnApp::KillSeedChooserScreen>::Get(), nullptr);

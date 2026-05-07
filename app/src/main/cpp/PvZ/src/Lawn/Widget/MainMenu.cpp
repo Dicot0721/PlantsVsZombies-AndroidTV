@@ -56,6 +56,8 @@ int gFoleyVolumeCounter;
 
 void MainMenu::_constructor(LawnApp *theApp) {
     old_MainMenu_MainMenu(this, theApp);
+
+    mVSModeLocked = false; // 直接解锁对战模式
 }
 
 FoleyType MainMenu::GetFoleyTypeByScene(int theScene) {

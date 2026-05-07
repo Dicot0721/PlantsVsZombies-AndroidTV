@@ -281,9 +281,6 @@ public:
     int PlayerToGamepadIndex(int thePlayerIndex) {
         return reinterpret_cast<int (*)(LawnApp *, int)>(LawnApp_PlayerToGamepadIndexAddr)(this, thePlayerIndex);
     }
-    bool HasSeedType(SeedType theSeedType, int thePlayerIndex) {
-        return reinterpret_cast<int (*)(LawnApp *, SeedType, int)>(LawnApp_HasSeedTypeAddr)(this, theSeedType, thePlayerIndex);
-    }
     void SafeDeleteWidget(Sexy::Widget *widget) { // vTable + 4 * 47
         reinterpret_cast<void (*)(LawnApp *, Sexy::Widget *)>(LawnApp_SafeDeleteWidgetAddr)(this, widget);
     }
@@ -354,6 +351,7 @@ public:
     void Load(const char *theGroupName);
     void DoConvertImitaterImages();
     int GetSeedsAvailable(bool theIsZombieChooser);
+    bool HasSeedType(SeedType theSeedType, int thePlayerIndex);
     bool GrantAchievement(AchievementType theAchievementId);
     void SetFoleyVolume(FoleyType theFoleyType, double theVolume);
     void ShowLeaderboards();

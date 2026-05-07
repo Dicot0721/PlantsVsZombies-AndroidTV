@@ -820,6 +820,15 @@ int LawnApp::GetSeedsAvailable(bool theIsZombieChooser) {
     return old_LawnApp_GetSeedsAvailable(this, theIsZombieChooser);
 }
 
+bool LawnApp::HasSeedType(SeedType theSeedType, int thePlayerIndex) {
+    if (IsVSMode()) {
+        if (theSeedType < NUM_ZOMBIE_SEED_IN_CHOOSER_VISIBLE) {
+            return true;
+        }
+    }
+    return old_LawnApp_HasSeedType(this, theSeedType, thePlayerIndex);
+}
+
 void LawnApp::HardwareInit() {
     old_LawnApp_HardwareInit(this);
     // if (useXboxMusic) {
