@@ -1590,6 +1590,8 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_PUMPKINSHELL:
                 case SeedType::SEED_ZOMBIE_TRASHCAN:
                 case SeedType::SEED_ZOMBIE_SCREEN_DOOR:
+                // 新增不减cd
+                case SeedType::SEED_ZOMBIE_YETI:
                     return aRefreshTime;
                 // 平衡调整后cd减幅下降
                 case SeedType::SEED_POTATOMINE:
@@ -1598,7 +1600,6 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_JALAPENO:
                 case SeedType::SEED_DOOMSHROOM:
                 case SeedType::SEED_ICESHROOM:
-                    // Todo:雪人
                     if (Challenge::msVSShuffleMode || VSSetupAddonWidget::msBalancePatchMode)
                         return aRefreshTime / 2;
                 default:
