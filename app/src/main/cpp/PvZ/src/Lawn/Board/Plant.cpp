@@ -1334,12 +1334,13 @@ static int GetVSCostDefault(SeedType theSeedType) {
         case SeedType::SEED_SNOWPEA:
         case SeedType::SEED_REPEATER:
         case SeedType::SEED_ZOMBIE_FOOTBALL:
-        case SeedType::SEED_ZOMBIE_GIGA_FOOTBALL:
         case SeedType::SEED_ZOMBIE_DANCER:
         case SeedType::SEED_ZOMBIE_DIGGER:
         case SeedType::SEED_ZOMBIE_LADDER:
         case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD:
         case SeedType::SEED_ZOMBIE_TALLNUT_HEAD:
+        case SeedType::SEED_ZOMBIE_GIGA_FOOTBALL:
+        case SeedType::SEED_ZOMBIE_JACKSON:
             return 150;
         case SeedType::SEED_STARFRUIT:
         case SeedType::SEED_ZOMBONI:
@@ -1381,6 +1382,7 @@ static int GetVSRefreshTimeDefault(SeedType theSeedType) {
             case SeedType::SEED_ZOMBIE_GATLINGPEA_HEAD:
             case SeedType::SEED_ZOMBIE_TALLNUT_HEAD:
             case SeedType::SEED_ZOMBIE_GIGA_FOOTBALL:
+            case SeedType::SEED_ZOMBIE_JACKSON:
                 return 3000;
             case SeedType::SEED_ZOMBIE_NEWSPAPER:
             case SeedType::SEED_ZOMBIE_SCREEN_DOOR:
@@ -1596,6 +1598,7 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_JALAPENO:
                 case SeedType::SEED_DOOMSHROOM:
                 case SeedType::SEED_ICESHROOM:
+                    // Todo:雪人
                     if (Challenge::msVSShuffleMode || VSSetupAddonWidget::msBalancePatchMode)
                         return aRefreshTime / 2;
                 default:

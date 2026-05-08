@@ -82,9 +82,17 @@ void Challenge::_constructor() {
 
     old_Challenge_Challenge(this);
 
-    if (Challenge::msVSShuffleMode) {
-        if (!gOpeningEncounter) {
-            gOpeningEncounter = new OpeningEncounter();
+    if (mApp->IsVSMode()) {
+        Zombie::msDeadFollowers.clear();
+        if (mBoard->mDanceMode) {
+            mBoard->mDanceMode = false;
+            mApp->mDanceMode = false;
+        }
+
+        if (Challenge::msVSShuffleMode) {
+            if (!gOpeningEncounter) {
+                gOpeningEncounter = new OpeningEncounter();
+            }
         }
     }
 }
@@ -617,6 +625,8 @@ ZombieType Challenge::IZombieSeedTypeToZombieType(SeedType theSeedType) {
             return ZOMBIE_GIGA_FOOTBALL;
         case SEED_ZOMBIE_SUPER_FAN_IMP:
             return ZOMBIE_SUPER_FAN_IMP;
+        case SEED_ZOMBIE_JACKSON:
+            return ZOMBIE_JACKSON;
         default:
             return ZOMBIE_INVALID;
     }
@@ -813,7 +823,7 @@ bool Challenge::IsMPZombieTypeAddInRow(ZombieType theZombieType) {
         || theZombieType == ZombieType::ZOMBIE_DIGGER || theZombieType == ZombieType::ZOMBIE_CATAPULT || theZombieType == ZombieType::ZOMBIE_GARGANTUAR
         || theZombieType == ZombieType::ZOMBIE_DUCKY_TUBE || theZombieType == ZombieType::ZOMBIE_SNORKEL || theZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER
         || theZombieType == ZombieType::ZOMBIE_BALLOON || theZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || theZombieType == ZombieType::ZOMBIE_BOBSLED
-        || theZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL;
+        || theZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL || theZombieType == ZombieType::ZOMBIE_JACKSON;
 }
 
 bool Challenge::IsMPZombieTypeCanGoInPool(ZombieType theZombieType) {

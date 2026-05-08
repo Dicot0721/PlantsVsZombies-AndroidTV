@@ -1304,9 +1304,9 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
     //            event.data1[1] = int8_t(theFromWave);
     //
     //            for (int i = 0; i < 4; ++i) {
-    //                event.data2[i] = mZombies.DataArrayGetID(bobsledZombies[i]);
+    //                event.data3[i] = mZombies.DataArrayGetID(bobsledZombies[i]);
     //                event.data3[i].f32 = bobsledZombies[i]->mVelX;
-    //                event.data4[i].f32 = bobsledZombies[i]->mPosX;
+    //                event.data5[i].f32 = bobsledZombies[i]->mPosX;
     //            }
     //            netplay::PutEvent(event);
     //        }
@@ -1477,8 +1477,8 @@ void Board::processServerEvent(const BaseEvent *event) {
                 clientSeedBank->mSeedPackets[event1->data1].mLastSelectedTime = 0.0f; // 动画效果专用
             }
             clientGamepadControls->mGamepadState = event1->data2;
-            //            clientGamepadControls->mCursorPositionX = event1->data4;
-            //            clientGamepadControls->mCursorPositionY = event1->data4;
+            //            clientGamepadControls->mCursorPositionX = event1->data5;
+            //            clientGamepadControls->mCursorPositionY = event1->data5;
         } break;
         case EVENT_BOARD_TOUCH_DRAG_REPLY: {
             //  auto *event1 = static_cast<const U16U16_Event *>(event);
@@ -1947,6 +1947,39 @@ void Board::processServerEvent(const BaseEvent *event) {
                         serverZombieIDMap[uint16_t(eventSummonBackupDancers->data3[i])] = uint16_t(aZombie->mFollowerZombieID[i]);
                         float aVelX = eventSummonBackupDancers->data4[i].f32;
                         backupZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
+                    }
+                }
+            }
+        } break;
+        case EVENT_SERVER_BOARD_ZOMBIE_RAISE_DEAD: {
+            auto *eventRaiseDead = static_cast<const U16UNI32U8x16U16x15UNI32x15_Event *>(event);
+            uint16_t serverZombieID = eventRaiseDead->data1;
+            uint16_t clientZombieID;
+            if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
+                Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
+                aZombie->mPosX = eventRaiseDead->data2.f32;
+
+                int count = std::min<int>(15, eventRaiseDead->data3[0]);
+                for (int i = 0; i < count; ++i) {
+                    int aRow, aPosX;
+                    if (i < 5) {
+                        aRow = i;
+                        aPosX = aZombie->mPosX + 100;
+                    } else if (i < 10) {
+                        aRow = i - 5;
+                        aPosX = aZombie->mPosX + 200;
+                    } else {
+                        aRow = i - 10;
+                        aPosX = aZombie->mPosX + 300;
+                    }
+
+                    ZombieID revivedClientID = aZombie->RaiseDeadZombie(ZombieType(eventRaiseDead->data3[i + 1]), aRow, aPosX);
+                    if (revivedClientID != ZombieID::ZOMBIEID_NULL) {
+                        serverZombieIDMap[eventRaiseDead->data4[i]] = uint16_t(revivedClientID);
+                        Zombie *revivedZombie = ZombieTryToGet(revivedClientID);
+                        if (revivedZombie) {
+                            revivedZombie->ApplySyncedSpeed(eventRaiseDead->data5[i].f32, short(revivedZombie->mAnimTicksPerFrame));
+                        }
                     }
                 }
             }
@@ -3259,6 +3292,16 @@ Zombie *Board::GetLiveZombieByType(ZombieType theZombieType) {
     }
 
     return nullptr;
+}
+
+bool Board::HasAliveJackson() {
+    Zombie *aZombie = nullptr;
+    while (IterateZombies(aZombie)) {
+        if (aZombie->mZombieType == ZombieType::ZOMBIE_JACKSON && !aZombie->mDead && aZombie->mHasHead && aZombie->IsOnBoard() && !aZombie->IsDeadOrDying()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void Board::UpdateLevelEndSequence() {

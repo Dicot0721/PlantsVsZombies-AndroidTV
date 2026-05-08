@@ -567,6 +567,7 @@ public:
     int GetLiveGargantuarCount();
     int GetLiveZombiesCount();
     Zombie *GetLiveZombieByType(ZombieType theZombieType);
+    bool HasAliveJackson();
     void FixReanimErrorAfterLoad();
     void DoPlantingAchievementCheck(SeedType theSeedType);
     bool GrantAchievement(AchievementType theAchievementId, bool theIsShow);

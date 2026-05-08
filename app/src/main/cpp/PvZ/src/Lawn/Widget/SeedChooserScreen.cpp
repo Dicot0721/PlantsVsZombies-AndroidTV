@@ -1036,10 +1036,6 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
                         aLabel = "[TALLNUT_HEAD_ZOMBIE_DESCRIPTION_HEADER]";
                         aToolTip->mX = aSeedX + 2 * (SEED_PACKET_WIDTH + 6);
                         break;
-                    case SeedType::SEED_ZOMBIE_GIGA_FOOTBALL:
-                        aTitle = "[GIGA_FOOTBALL_ZOMBIE]";
-                        aLabel = "[GIGA_FOOTBALL_ZOMBIE_DESCRIPTION_HEADER]";
-                        break;
                     case SeedType::SEED_ZOMBIE_MOUND: // 召唤墓碑
                         aTitle = "[ZOMBIE_MOUND]";
                         aLabel = "[ZOMBIE_MOUND_DESCRIPTION]";
@@ -1318,7 +1314,7 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
                 return;
             }
 
-            // data2: bit0 = isZombieChooser, bit7 = moveOnly(sync cursor without picking)
+            // data3: bit0 = isZombieChooser, bit7 = moveOnly(sync cursor without picking)
             if (gTcpConnected) {
                 U8x3_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED}, {uint8_t(hoverSeedType), uint8_t(mIsZombieChooser), 1}};
                 netplay::PutEvent(event);

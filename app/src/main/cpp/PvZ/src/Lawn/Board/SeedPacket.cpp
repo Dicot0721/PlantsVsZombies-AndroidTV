@@ -457,6 +457,7 @@ void DrawSeedPacket(Sexy::Graphics *g,
         case SeedType::SEED_ZOMBIE_TRAFFIC_CONE:
         case SeedType::SEED_ZOMBIE_PAIL:
         case SeedType::SEED_ZOMBIE_DANCER:
+        case SeedType::SEED_ZOMBIE_JACKSON:
             offsetY = -7.0;
             offsetX = -3.0;
             theDrawScale = 0.35;

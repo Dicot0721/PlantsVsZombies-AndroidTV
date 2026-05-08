@@ -29,7 +29,7 @@
 #include <string>
 #include <utility>
 
-inline constexpr uint32_t NETPLAY_VERSION = 3163;
+inline constexpr uint32_t NETPLAY_VERSION = 3164;
 
 enum EventType : uint8_t {
     EVENT_NULL,
@@ -131,6 +131,7 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT, // 修改器放置僵尸会在执行AddZombieInRow后额外设置僵尸的位置，本事件就是追加同步僵尸位置
     EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE,
     EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS,
+    EVENT_SERVER_BOARD_ZOMBIE_RAISE_DEAD,
     EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED,
     EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP,
     EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_IN_VAULT,   // 撑杆僵尸开始跳跃
@@ -324,6 +325,14 @@ struct U16x5UNI32x5_Event : BaseEvent {
     Union32Bit data2;
     uint16_t data3[4];
     Union32Bit data4[4];
+};
+
+struct U16UNI32U8x16U16x15UNI32x15_Event : BaseEvent {
+    uint16_t data1;
+    Union32Bit data2;
+    uint8_t data3[16];
+    uint16_t data4[15];
+    Union32Bit data5[15];
 };
 
 struct CHARx32_Event : BaseEvent {

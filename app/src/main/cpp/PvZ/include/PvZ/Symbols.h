@@ -485,6 +485,7 @@ inline void *Zombie_CanTargetPlantAddr;
 inline void *Zombie_HasYuckyFaceImageAddr;
 inline void *Zombie_ShowYuckyFaceAddr;
 inline void *Zombie_UpdateYuckyFaceAddr;
+inline void *Zombie_OverrideParticleColorAddr;
 inline void *Zombie_OverrideParticleScaleAddr;
 inline void *Zombie_PoolSplashAddr;
 inline void *Zombie_BungeeDropZombieAddr;

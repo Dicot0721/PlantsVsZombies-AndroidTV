@@ -182,7 +182,7 @@ Sexy::MemoryImage *ReanimatorCache::MakeCachedZombieFrame(ZombieType theZombieTy
             aReanim.Update();
             aReanim.Draw(&aMemoryGraphics);
             gExtendedZombieImages[aExtendedIndex] = aMemoryImage;
-        } else if (theZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP) {
+        } else if (theZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP || theZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP || theZombieType == ZombieType::ZOMBIE_JACKSON) {
             Reanimation aReanim;
             aReanim.ReanimationInitializeType(aPosX, aPosY, aZombieDef.mReanimationType);
             aReanim.PlayReanim("anim_idle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 24.0f);

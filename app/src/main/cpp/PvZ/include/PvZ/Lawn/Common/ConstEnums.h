@@ -1120,7 +1120,7 @@ enum ReanimationType {
     REANIM_GIGA_FOOTBALL,
     REANIM_SUPER_FAN_IMP,
     REANIM_JACKSON,
-    REANIM_BACKUP_DANCER2,
+    REANIM_BACKUP_JACKSON,
     EXTENDED_NUM_REANIMS,
 };
 enum ReanimLoopType {
@@ -1284,6 +1284,7 @@ enum SeedType { // 直接从WP复制过来的，怀疑其中有错误，因为TV
     SEED_ZOMBIE_MOUND,
     SEED_ZOMBIE_GIGA_FOOTBALL,
     SEED_ZOMBIE_SUPER_FAN_IMP,
+    SEED_ZOMBIE_JACKSON,
     // extended end
     NUM_ZOMBIE_SEED_IN_CHOOSER,
     // extended begin
@@ -1575,6 +1576,8 @@ enum ZombieType {
     // extended begin
     ZOMBIE_GIGA_FOOTBALL = 36,
     ZOMBIE_SUPER_FAN_IMP,
+    ZOMBIE_JACKSON,
+    ZOMBIE_BACKUP_JACKSON,
     EXTENDED_NUM_ZOMBIE_TYPES,
     // extended end
 };

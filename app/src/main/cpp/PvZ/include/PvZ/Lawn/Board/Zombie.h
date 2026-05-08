@@ -59,7 +59,8 @@ inline constexpr float KICKED_ZOMBIE_GRAVITY = 0.05f * 0.8f;
 inline constexpr float CHILLED_SPEED_FACTOR = 0.4f;
 inline constexpr float CLIP_HEIGHT_LIMIT = -100.0f;
 inline constexpr float CLIP_HEIGHT_OFF = -200.0f;
-inline constexpr Sexy::Color ZOMBIE_MINDCONTROLLED_COLOR{128, 0, 192, 255};
+inline constexpr Sexy::Color ZOMBIE_MINDCONTROLLED_COLOR = Sexy::Color(128, 0, 192, 255);
+inline constexpr Sexy::Color ZOMBIE_REVIVED_COLOR = Sexy::Color(135, 206, 250, 180);
 
 enum ZombieAttackType {
     ATTACKTYPE_CHEW,
@@ -109,6 +110,8 @@ public:
         ZOMBIE_WAVE_VS = -5,
     };
 
+    static std::vector<ZombieType> msDeadFollowers;
+
     ZombieType mZombieType;                           // 13
     ZombiePhase mZombiePhase;                         // 14
     float mPosX;                                      // 15
@@ -131,6 +134,8 @@ public:
     int mPhaseCounter;                                // 30
     int mFromWave;                                    // 31
     bool mDroppedLoot;                                // 128
+    bool mRevived;                                    // 新增成员，用于复生僵尸着色
+    bool mIsDeadFollowers;                            // 新增成员，用于计入复生池
     int mZombieFade;                                  // 33
     bool mFlatTires;                                  // 136
     int mUseLadderCol;                                // 35
@@ -278,6 +283,9 @@ public:
     void ShowYuckyFace(bool theShow) {
         reinterpret_cast<void (*)(Zombie *, bool)>(Zombie_ShowYuckyFaceAddr)(this, theShow);
     }
+    void OverrideParticleColor(TodParticleSystem *theParticle) {
+        reinterpret_cast<void (*)(Zombie *, TodParticleSystem *)>(Zombie_OverrideParticleColorAddr)(this, theParticle);
+    }
     void OverrideParticleScale(TodParticleSystem *theParticle) {
         reinterpret_cast<void (*)(Zombie *, TodParticleSystem *)>(Zombie_OverrideParticleScaleAddr)(this, theParticle);
     }
@@ -361,6 +369,12 @@ public:
     void UpdateZombieImp();
     void UpdateSuperFanImp();
     void UpdateGigaFootball();
+    void UpdateZombieBackupDancer();
+    void UpdateZombieJackson();
+    bool CanRevived();
+    ZombieID RaiseDeadZombie(ZombieType theZombieType, int theRow, int thePosX);
+    void RaiseDeadZombies();
+    void JacksonDie();
     void UpdateZombieJackInTheBox();
     void UpdateZombiePolevaulter();
     void UpdateZombieGargantuar();

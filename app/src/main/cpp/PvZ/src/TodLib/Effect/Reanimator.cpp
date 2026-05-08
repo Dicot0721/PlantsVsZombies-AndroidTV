@@ -105,8 +105,8 @@ static ReanimationParams gExtendedReanimationParamArray[] = {
     {ReanimationType::REANIM_VS_MOUNDS, "addonFiles/compiled/reanim/VSmounds.reanim", 0},
     {ReanimationType::REANIM_GIGA_FOOTBALL, "addonFiles/compiled/reanim/Zombie_giga_football.reanim", 0},
     {ReanimationType::REANIM_SUPER_FAN_IMP, "addonFiles/compiled/reanim/Zombie_super_fan_imp.reanim", 0},
-    //    {ReanimationType::REANIM_JACKSON, "addonFiles/compiled/reanim/Zombie_jackson.reanim", 0},
-    //    {ReanimationType::REANIM_BACKUP_DANCER2, "addonFiles/compiled/reanim/Zombie_backup2.reanim", 0},
+    {ReanimationType::REANIM_JACKSON, "addonFiles/compiled/reanim/Zombie_jackson.reanim", 0},
+    {ReanimationType::REANIM_BACKUP_JACKSON, "addonFiles/compiled/reanim/Zombie_backup.reanim", 0},
 };
 
 void ReanimatorLoadDefinitions(ReanimationParams *theReanimationParamArray, int theReanimationParamArraySize) {

@@ -484,6 +484,7 @@ bool LoadGameMain() {
     Zombie_HasYuckyFaceImageAddr = libGameMain.GetSymbol("_ZN6Zombie17HasYuckyFaceImageEv");
     Zombie_ShowYuckyFaceAddr = libGameMain.GetSymbol("_ZN6Zombie13ShowYuckyFaceEb");
     Zombie_UpdateYuckyFaceAddr = libGameMain.GetSymbol("_ZN6Zombie15UpdateYuckyFaceEv");
+    Zombie_OverrideParticleColorAddr = libGameMain.GetSymbol("_ZN6Zombie21OverrideParticleColorEP17TodParticleSystem");
     Zombie_OverrideParticleScaleAddr = libGameMain.GetSymbol("_ZN6Zombie21OverrideParticleScaleEP17TodParticleSystem");
     Zombie_PoolSplashAddr = libGameMain.GetSymbol("_ZN6Zombie10PoolSplashEb");
     Zombie_BungeeDropZombieAddr = libGameMain.GetSymbol("_ZN6Zombie16BungeeDropZombieEPS_ii");
