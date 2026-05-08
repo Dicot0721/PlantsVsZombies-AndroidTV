@@ -285,6 +285,9 @@ bool SeedChooserScreen::SeedNotAllowedToPick(SeedType theSeedType) {
             if (mBoard->StageIsNight() || mBanningPhase)
                 return true;
         }
+        if (mBanningPhase && (theSeedType == SeedType::SEED_LILYPAD || theSeedType == SeedType::SEED_FLOWERPOT)) {
+            return true;
+        }
         if (mBoard->StageHasPool()) {
             if (theSeedType == SeedType::SEED_LILYPAD || theSeedType == SeedType::SEED_TANGLEKELP || theSeedType == SeedType::SEED_SEASHROOM) {
                 return false;
@@ -1052,7 +1055,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
         } else {
             if (mBanningPhase) {
                 if (mChosenSeeds[aSeedType].mSeedState == ChosenSeedState::SEED_IN_CHOOSER) {
-                    if (aToolTipSeed == SEED_INSTANT_COFFEE) {
+                    if (aToolTipSeed == SeedType::SEED_INSTANT_COFFEE || aToolTipSeed == SeedType::SEED_LILYPAD || aToolTipSeed == SeedType::SEED_FLOWERPOT) {
                         aToolTip->SetWarningText("在此阶段不允许");
                     }
                 }
