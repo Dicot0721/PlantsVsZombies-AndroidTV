@@ -41,10 +41,25 @@ namespace details {
  * @param [in] newFunc 用于替换的新函数.
  * @param [out] oldFuncAddr 一个函数指针的地址, 用于保留旧函数. (可传入 nullptr 字面量, 代表不保留)
  */
-template <typename T>
-    requires std::is_function_v<T>
-void HookFunction(void *symbol, T *newFunc, std::add_pointer_t<T *> oldFuncAddr) {
+template <typename R, typename... Args>
+void HookFunction(void *symbol, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
     details::HookFunctionImpl(symbol, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
+}
+
+/**
+ * @brief 替换非静态成员函数.
+ *
+ * @tparam R 目标函数的返回值类型.
+ * @tparam T 目标函数所属类的类型.
+ * @tparam Args 目标函数的参数类型.
+ *
+ * @param [in] symbol 通过 dlsym 函数获取的函数符号地址.
+ * @param [in] newFunc 用于替换的新函数.
+ * @param [out] oldFuncAddr 一个函数指针的地址, 用于保留旧函数. (可传入 nullptr 字面量, 代表不保留)
+ */
+template <typename R, typename T, typename... Args>
+void HookFunction(void *symbol, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
+    details::HookFunctionImpl(symbol, reinterpret_cast<void *&>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
 /**
@@ -62,10 +77,27 @@ void HookFunction(void *symbol, T *newFunc, std::add_pointer_t<T *> oldFuncAddr)
  *
  * @return 是否成功替换.
  */
-template <typename T>
-    requires std::is_function_v<T>
-bool HookVirtualFunc(void *vTableSymbol, std::size_t index, T *newFunc, std::add_pointer_t<T *> oldFuncAddr) {
+template <typename R, typename... Args>
+bool HookVirtualFunc(void *vTableSymbol, std::size_t index, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
     return details::HookVirtualFuncImpl(vTableSymbol, index, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
+}
+
+/**
+ * @brief 替换虚函数.
+ *
+ * @tparam R 目标函数的返回值类型.
+ * @tparam Args 目标函数的参数类型.
+ *
+ * @param [in] vTableSymbol 通过 dlsym 函数获取的虚函数表符号地址.
+ * @param [in] index 目标函数在虚函数表中的索引.
+ * @param [in] newFunc 用于替换的新函数.
+ * @param [out] oldFuncAddr 一个函数指针的地址, 用于保留旧函数. (可传入 nullptr 字面量, 代表不保留)
+ *
+ * @return 是否成功替换.
+ */
+template <typename R, typename T, typename... Args>
+bool HookVirtualFunc(void *vTableSymbol, std::size_t index, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
+    return details::HookVirtualFuncImpl(vTableSymbol, index, reinterpret_cast<void *&>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
 /**
@@ -81,9 +113,8 @@ bool HookVirtualFunc(void *vTableSymbol, std::size_t index, T *newFunc, std::add
  *
  * @return 是否成功替换.
  */
-template <typename T>
-    requires std::is_function_v<T>
-bool HookPltFunction(std::string_view libName, std::uintptr_t offset, T *newFunc, std::add_pointer_t<T *> oldFuncAddr) {
+template <typename R, typename... Args>
+bool HookPltFunction(std::string_view libName, std::uintptr_t offset, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
     return details::HookPltFunctionImpl(libName, offset, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
