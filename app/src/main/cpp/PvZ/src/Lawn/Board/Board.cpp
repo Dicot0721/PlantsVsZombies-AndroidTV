@@ -1354,19 +1354,19 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
                 }
                 netplay::PutEvent(event);
             } else {
-                U8x4U16UNI32x2_Event event{};
+                U8x5U16UNI32x2_Event event{};
                 event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD;
                 event.data1[0] = uint8_t(theZombieType);
                 event.data1[1] = uint8_t(theRow);
                 event.data1[2] = int8_t(theFromWave);
                 event.data1[3] = uint8_t(theIsRustle);
+                if (theZombieType == ZombieType::ZOMBIE_NORMAL && !aZombie->mInPool) {
+                    event.data1[4] = aZombie->mBloated;
+                }
 
                 event.data2 = uint16_t(mZombies.DataArrayGetID(aZombie));
                 event.data3[0].f32 = aZombie->mVelX;
                 event.data3[1].f32 = aZombie->mPosX;
-                if (theZombieType == ZombieType::ZOMBIE_NORMAL && !aZombie->mInPool) {
-                    event.data3[0].u8x4.u8_1 = aZombie->mBloated;
-                }
                 netplay::PutEvent(event);
             }
         }
@@ -1824,7 +1824,7 @@ void Board::processServerEvent(const BaseEvent *event) {
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_ADD: {
-            auto *eventZombieAdd = static_cast<const U8x4U16UNI32x2_Event *>(event);
+            auto *eventZombieAdd = static_cast<const U8x5U16UNI32x2_Event *>(event);
             auto aZombieType = ZombieType(eventZombieAdd->data1[0]);
             uint8_t aRow = eventZombieAdd->data1[1];
             auto aFromWave = int8_t(eventZombieAdd->data1[2]);
@@ -1837,7 +1837,7 @@ void Board::processServerEvent(const BaseEvent *event) {
             aZombie->ApplySyncedSpeed(aVelX, short(aZombie->mAnimTicksPerFrame));
             aZombie->mPosX = eventZombieAdd->data3[1].f32;
             if (aZombie->mZombieType == ZombieType::ZOMBIE_NORMAL && !aZombie->mInPool) {
-                aZombie->mBloated = eventZombieAdd->data3[0].u8x4.u8_1;
+                aZombie->mBloated = eventZombieAdd->data1[4];
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_BOBSELD_ADD: {

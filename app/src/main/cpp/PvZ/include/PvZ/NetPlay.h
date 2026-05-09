@@ -29,7 +29,7 @@
 #include <string>
 #include <utility>
 
-inline constexpr uint32_t NETPLAY_VERSION = 3164;
+inline constexpr uint32_t NETPLAY_VERSION = 3165;
 
 enum EventType : uint8_t {
     EVENT_NULL,
@@ -314,8 +314,8 @@ struct U16U16U16UNI32UNI32_Event : BaseEvent {
     Union32Bit data5;
 };
 
-struct U8x4U16UNI32x2_Event : BaseEvent {
-    uint8_t data1[4];
+struct U8x5U16UNI32x2_Event : BaseEvent {
+    uint8_t data1[5];
     uint16_t data2;
     Union32Bit data3[2];
 };
