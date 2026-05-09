@@ -1961,16 +1961,17 @@ void Board::processServerEvent(const BaseEvent *event) {
 
                 int count = std::min<int>(15, eventRaiseDead->data3[0]);
                 for (int i = 0; i < count; ++i) {
-                    int aRow, aPosX;
+                    int aRow;
+                    int aPosX = int(aZombie->mPosX);
                     if (i < 5) {
                         aRow = i;
-                        aPosX = aZombie->mPosX + 100;
+                        aPosX += 100;
                     } else if (i < 10) {
                         aRow = i - 5;
-                        aPosX = aZombie->mPosX + 200;
+                        aPosX += 200;
                     } else {
                         aRow = i - 10;
-                        aPosX = aZombie->mPosX + 300;
+                        aPosX += 300;
                     }
 
                     ZombieID revivedClientID = aZombie->RaiseDeadZombie(ZombieType(eventRaiseDead->data3[i + 1]), aRow, aPosX);

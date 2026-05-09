@@ -228,6 +228,7 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
                 mVelX = 0.5f;
                 mPhaseCounter = 300 + Rand(12);
                 PlayZombieReanim("anim_moonwalk", ReanimLoopType::REANIM_LOOP, 0, 24.0f);
+                mSummonCounter = 1800;
             }
             mBodyHealth = 500;
             mVariant = false;
@@ -979,7 +980,6 @@ void Zombie::UpdateZombieJackson() {
             mBoard->SetDanceMode(true);
             mZombiePhase = ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_HOLD;
             mPhaseCounter = 200;
-            mSummonCounter = 1500;
         }
     } else if (mZombiePhase == ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_WITH_LIGHT) {
         Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
@@ -1043,9 +1043,9 @@ bool Zombie::CanRevived() {
         return false;
 
     return mZombieType != ZombieType::ZOMBIE_DANCER && mZombieType != ZombieType::ZOMBIE_SNORKEL && mZombieType != ZombieType::ZOMBIE_ZAMBONI && mZombieType != ZombieType::ZOMBIE_BOBSLED
-        && mZombieType != ZombieType::ZOMBIE_DOLPHIN_RIDER && mZombieType != ZombieType::ZOMBIE_DIGGER && mZombieType != ZombieType::ZOMBIE_POGO && mZombieType != ZombieType::ZOMBIE_BUNGEE
-        && mZombieType != ZombieType::ZOMBIE_CATAPULT && mZombieType != ZombieType::ZOMBIE_GARGANTUAR && mZombieType != ZombieType::ZOMBIE_BOSS && mZombieType != ZombieType::ZOMBIE_REDEYE_GARGANTUAR
-        && mZombieType != ZombieType::ZOMBIE_JACKSON;
+        && mZombieType != ZombieType::ZOMBIE_DOLPHIN_RIDER && mZombieType != ZombieType::ZOMBIE_BALLOON && mZombieType != ZombieType::ZOMBIE_DIGGER && mZombieType != ZombieType::ZOMBIE_POGO
+        && mZombieType != ZombieType::ZOMBIE_BUNGEE && mZombieType != ZombieType::ZOMBIE_CATAPULT && mZombieType != ZombieType::ZOMBIE_GARGANTUAR && mZombieType != ZombieType::ZOMBIE_BOSS
+        && mZombieType != ZombieType::ZOMBIE_REDEYE_GARGANTUAR && mZombieType != ZombieType::ZOMBIE_JACKSON;
 }
 
 ZombieID Zombie::RaiseDeadZombie(ZombieType theZombieType, int theRow, int thePosX) {
@@ -1068,7 +1068,6 @@ ZombieID Zombie::RaiseDeadZombie(ZombieType theZombieType, int theRow, int thePo
     }
     aZombie->mHasArm = false;
     aZombie->SetupLostArmReanim();
-    aZombie->PickRandomSpeed();
     return mBoard->ZombieGetID(aZombie);
 }
 
@@ -1082,16 +1081,17 @@ void Zombie::RaiseDeadZombies() {
 
     for (int i = 0; i < msDeadFollowers.size(); i++) {
         if (!msDeadFollowers.empty()) {
-            int aRow, aPosX;
+            int aRow;
+            int aPosX = int(mPosX);
             if (i < 5) {
                 aRow = i;
-                aPosX = mPosX + 100;
+                aPosX += 100;
             } else if (i < 10) {
                 aRow = i - 5;
-                aPosX = mPosX + 200;
+                aPosX += 200;
             } else {
                 aRow = i - 10;
-                aPosX = mPosX + 300;
+                aPosX += 300;
             }
 
             ZombieID revivedID = RaiseDeadZombie(msDeadFollowers[i], aRow, aPosX);
@@ -1123,10 +1123,10 @@ void Zombie::JacksonDie() {
 
     if (!mBoard->GetAliveJacksonZombie()) {
         mBoard->SetDanceMode(false);
-        mApp->mSoundSystem->StopFoley(FoleyType::FOLEY_THRILLER);
         msDeadFollowers.clear();
     }
     mApp->mSoundSystem->StopFoley(FoleyType::FOLEY_DANCER);
+    mApp->mSoundSystem->StopFoley(FoleyType::FOLEY_THRILLER);
 }
 
 void Zombie::SquishAllInSquare(int theX, int theY, ZombieAttackType theAttackType) {
@@ -1890,6 +1890,9 @@ void Zombie::UpdateZombieRiseFromGrave() {
             case ZOMBIE_SUPER_FAN_IMP:
                 mZombiePhase = PHASE_IMP_PRE_RUN;
                 break;
+            case ZOMBIE_GIGA_FOOTBALL:
+                mZombiePhase = PHASE_FOOTBALL_PRE_CHARGE;
+                break;
             default:
                 mZombiePhase = PHASE_ZOMBIE_NORMAL;
                 break;
@@ -2364,6 +2367,7 @@ void Zombie::EatPlant(Plant *thePlant) {
 
     if (mZombieType == ZombieType::ZOMBIE_JACKSON && mSummonCounter == 0) {
         if (!msDeadFollowers.empty() && mHasHead && mPosX < 700.0f) {
+            StopEating();
             mZombiePhase = ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_WITH_LIGHT;
             PlayZombieReanim("anim_point", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
         }
@@ -2879,19 +2883,21 @@ void Zombie::DieNoLoot() {
         mApp->RemoveReanimation(mBossFireBallReanimID);
     }
 
-    if (mZombieType == ZombieType::ZOMBIE_JACKSON) {
-        JacksonDie();
-    }
-
-    if (mBoard && mBoard->GetAliveJacksonZombie() && CanRevived() && !mIsDeadFollowers) {
-        mIsDeadFollowers = true;
-        if (msDeadFollowers.size() >= 15) {
-            msDeadFollowers.erase(msDeadFollowers.begin());
-        }
-        msDeadFollowers.push_back(mZombieType);
-    }
-
     DieNoLoot_Origin();
+
+    if (mApp->IsVSMode()) {
+        if (mBoard && mBoard->GetAliveJacksonZombie() && CanRevived() && !mIsDeadFollowers) {
+            mIsDeadFollowers = true;
+            if (msDeadFollowers.size() >= 15) {
+                msDeadFollowers.erase(msDeadFollowers.begin());
+            }
+            msDeadFollowers.push_back(mZombieType);
+        }
+
+        if (mZombieType == ZombieType::ZOMBIE_JACKSON) {
+            JacksonDie();
+        }
+    }
 }
 
 void Zombie::DieNoLoot_Origin() {
@@ -2932,6 +2938,7 @@ void Zombie::StopZombieSound() {
         }
 
         if (aStopSound) {
+            mApp->mSoundSystem->StopFoley(FoleyType::FOLEY_DANCER);
             mApp->mSoundSystem->StopFoley(FoleyType::FOLEY_THRILLER);
         }
     }
