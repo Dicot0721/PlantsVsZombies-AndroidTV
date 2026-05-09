@@ -27,7 +27,15 @@
 #include <cerrno>
 #include <cstring>
 
-void homura::details::HookFunctionImpl(void *symbol, void *newFunc, void **oldFuncAddr) {
+void homura::details::CheckVirtualFunc(const CppMemFuncPtr &ptr) {
+#ifdef __arm__
+    assert((ptr.adj & 1) == 0);
+#else
+#warning "'CheckVirtualFunc' is unimpletement for non-ARM-32 architecture"
+#endif
+}
+
+void homura::details::HookFuncImpl(void *symbol, void *newFunc, void **oldFuncAddr) {
     assert((symbol != nullptr) && (newFunc != nullptr));
     MSHookFunction(symbol, newFunc, oldFuncAddr);
 }
@@ -50,7 +58,7 @@ bool homura::details::HookVirtualFuncImpl(void *vTableSymbol, std::size_t index,
     return true;
 }
 
-bool homura::details::HookPltFunctionImpl(std::string_view libName, std::uintptr_t offset, void *newFunc, void **oldFuncAddr) {
+bool homura::details::HookPltFuncImpl(std::string_view libName, std::uintptr_t offset, void *newFunc, void **oldFuncAddr) {
     assert(offset > 0);
     assert(newFunc != nullptr);
 

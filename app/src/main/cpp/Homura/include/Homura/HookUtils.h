@@ -20,15 +20,25 @@
 #ifndef HOMURA_HOOKUTILS_H
 #define HOMURA_HOOKUTILS_H
 
+#include <cstddef>
+#include <cstdint>
+
 #include <string_view>
 #include <type_traits>
 
 namespace homura {
 
 namespace details {
-    void HookFunctionImpl(void *symbol, void *newFunc, void **oldFuncAddr);
+    // https://itanium-cxx-abi.github.io/cxx-abi/abi.html#member-function-pointers
+    struct CppMemFuncPtr {
+        void *ptr;
+        std::ptrdiff_t adj;
+    };
+    void CheckVirtualFunc(const CppMemFuncPtr &ptr);
+
+    void HookFuncImpl(void *symbol, void *newFunc, void **oldFuncAddr);
     bool HookVirtualFuncImpl(void *vTableSymbol, std::size_t index, void *newFunc, void **oldFuncAddr);
-    bool HookPltFunctionImpl(std::string_view libName, std::uintptr_t offset, void *newFunc, void **oldFuncAddr);
+    bool HookPltFuncImpl(std::string_view libName, std::uintptr_t offset, void *newFunc, void **oldFuncAddr);
 } // namespace details
 
 /**
@@ -42,8 +52,8 @@ namespace details {
  * @param [out] oldFuncAddr 一个函数指针的地址, 用于保留旧函数. (可传入 nullptr 字面量, 代表不保留)
  */
 template <typename R, typename... Args>
-void HookFunction(void *symbol, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
-    details::HookFunctionImpl(symbol, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
+void HookFunc(void *symbol, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
+    details::HookFuncImpl(symbol, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
 /**
@@ -58,8 +68,11 @@ void HookFunction(void *symbol, R (*newFunc)(Args...), std::add_pointer_t<declty
  * @param [out] oldFuncAddr 一个函数指针的地址, 用于保留旧函数. (可传入 nullptr 字面量, 代表不保留)
  */
 template <typename R, typename T, typename... Args>
-void HookFunction(void *symbol, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
-    details::HookFunctionImpl(symbol, reinterpret_cast<void *&>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
+void HookFunc(void *symbol, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
+#ifdef PVZ_DEBUG
+    details::CheckVirtualFunc(reinterpret_cast<details::CppMemFuncPtr &>(newFunc));
+#endif
+    details::HookFuncImpl(symbol, reinterpret_cast<void *&>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
 /**
@@ -97,6 +110,9 @@ bool HookVirtualFunc(void *vTableSymbol, std::size_t index, R (*newFunc)(Args...
  */
 template <typename R, typename T, typename... Args>
 bool HookVirtualFunc(void *vTableSymbol, std::size_t index, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
+#ifdef PVZ_DEBUG
+    details::CheckVirtualFunc(reinterpret_cast<details::CppMemFuncPtr &>(newFunc));
+#endif
     return details::HookVirtualFuncImpl(vTableSymbol, index, reinterpret_cast<void *&>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
@@ -114,8 +130,8 @@ bool HookVirtualFunc(void *vTableSymbol, std::size_t index, R (T::*newFunc)(Args
  * @return 是否成功替换.
  */
 template <typename R, typename... Args>
-bool HookPltFunction(std::string_view libName, std::uintptr_t offset, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
-    return details::HookPltFunctionImpl(libName, offset, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
+bool HookPltFunc(std::string_view libName, std::uintptr_t offset, R (*newFunc)(Args...), std::add_pointer_t<decltype(newFunc)> oldFuncAddr) {
+    return details::HookPltFuncImpl(libName, offset, reinterpret_cast<void *>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
 
 } // namespace homura
