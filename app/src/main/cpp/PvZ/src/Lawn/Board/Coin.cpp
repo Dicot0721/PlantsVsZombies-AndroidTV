@@ -78,7 +78,8 @@ void Coin::Update() {
         return;
     }
 
-    if (enableManualCollect) {
+    // 联机模式强制自动采集
+    if (enableManualCollect && !IsOnlineModeActive()) {
         // 如果开了手动拾取，则重置Coin的存在时间计数器为0，从而不会触发自动拾取。
         GameMode aGameMode = mApp->mGameMode;
         // 在重型武器中、花园中依然自动收集；在关卡结束后依然自动收集。

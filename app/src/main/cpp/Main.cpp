@@ -62,7 +62,7 @@
     ApplyPatches();
 }
 
-static bool IsOnlineModeActive() {
+bool IsOnlineModeActive() {
     return gTcpConnecting || gTcpConnected || gTcpClientSocket >= 0 || gTcpServerSocket >= 0 || gTcpListenSocket >= 0;
 }
 
