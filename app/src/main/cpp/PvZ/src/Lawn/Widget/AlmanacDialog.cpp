@@ -309,7 +309,7 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     for (SeedType aSeedType = SeedType::SEED_PEASHOOTER; aSeedType < NUM_ALMANAC_SEEDS; aSeedType = (SeedType)(aSeedType + 1)) {
         int aPosX, aPosY;
         GetSeedPosition(aSeedType, aPosX, aPosY);
-        if (mApp->HasSeedType(aSeedType, 0)) {
+        if (mApp->HasSeedType(aSeedType, false)) {
             if (aSeedType == SeedType::SEED_IMITATER) {
                 g->SetColorizeImages(true);
                 if (mSelectedSeed == SeedType::SEED_IMITATER) {

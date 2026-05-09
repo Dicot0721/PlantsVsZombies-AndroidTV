@@ -823,13 +823,13 @@ int LawnApp::GetSeedsAvailable(bool theIsZombieChooser) {
     return old_LawnApp_GetSeedsAvailable(this, theIsZombieChooser);
 }
 
-bool LawnApp::HasSeedType(SeedType theSeedType, int thePlayerIndex) {
+bool LawnApp::HasSeedType(SeedType theSeedType, bool theIsZombie) {
     if (IsVSMode()) {
         if (theSeedType < NUM_ZOMBIE_SEED_IN_CHOOSER_VISIBLE) {
             return true;
         }
     }
-    return old_LawnApp_HasSeedType(this, theSeedType, thePlayerIndex);
+    return old_LawnApp_HasSeedType(this, theSeedType, theIsZombie);
 }
 
 void LawnApp::HardwareInit() {

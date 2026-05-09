@@ -393,7 +393,7 @@ void VSSetupMenu::PickRandomZombies(std::vector<SeedType> &theZombieSeeds) {
             do {
                 aSeedType = msRandomPools[poolIdx][Sexy::Rand(validCount)];
             } while (std::ranges::contains(theZombieSeeds, aSeedType)); // 重复则重选
-        } while (!mApp->HasSeedType(aSeedType, 1)); // 未获得则重选
+        } while (!mApp->HasSeedType(aSeedType, true)); // 未获得则重选
         theZombieSeeds.push_back(aSeedType);
     }
 }
@@ -439,12 +439,12 @@ void VSSetupMenu::PickRandomPlants(std::vector<SeedType> &thePlantSeeds, const s
             do {
                 aSeedType = msRandomPools[poolIdx][Sexy::Rand(validCount)];
             } while (std::ranges::contains(thePlantSeeds, aSeedType)); // 重复则重选
-        } while (!mApp->HasSeedType(aSeedType, 0)); // 未获得则重选
+        } while (!mApp->HasSeedType(aSeedType, false)); // 未获得则重选
         thePlantSeeds.push_back(aSeedType);
     }
 
     // 原代码疑点: 前面已检查过 HasSeedType()
-    if (std::ranges::contains(theZombieSeeds, SEED_ZOMBIE_POGO) /* && mApp->HasSeedType(SEED_WALLNUT, 0) */) {
+    if (std::ranges::contains(theZombieSeeds, SEED_ZOMBIE_POGO) /* && mApp->HasSeedType(SEED_WALLNUT, false) */) {
         auto it = std::ranges::find(thePlantSeeds, SEED_WALLNUT);
         if (it != thePlantSeeds.end()) {
             *it = SEED_TALLNUT;

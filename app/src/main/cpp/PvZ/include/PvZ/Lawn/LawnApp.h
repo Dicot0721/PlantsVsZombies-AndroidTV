@@ -351,7 +351,7 @@ public:
     void Load(const char *theGroupName);
     void DoConvertImitaterImages();
     int GetSeedsAvailable(bool theIsZombieChooser);
-    bool HasSeedType(SeedType theSeedType, int thePlayerIndex);
+    bool HasSeedType(SeedType theSeedType, bool theIsZombie);
     bool GrantAchievement(AchievementType theAchievementId);
     void SetFoleyVolume(FoleyType theFoleyType, double theVolume);
     void ShowLeaderboards();
@@ -432,7 +432,7 @@ inline int (*old_LawnApp_GetNumPreloadingTasks)(LawnApp *lawnApp);
 
 inline bool (*old_LawnApp_IsNight)(LawnApp *lawnApp);
 
-inline bool (*old_LawnApp_HasSeedType)(LawnApp *lawnApp, SeedType theSeedType, int playerIndex);
+inline bool (*old_LawnApp_HasSeedType)(LawnApp *lawnApp, SeedType theSeedType, bool theIsZombie);
 
 inline void (*old_LawnApp_DoNewOptions)(LawnApp *lawnApp, bool a2, unsigned int a3);
 
