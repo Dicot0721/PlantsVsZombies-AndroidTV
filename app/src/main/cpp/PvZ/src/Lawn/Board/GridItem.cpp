@@ -678,13 +678,15 @@ void GridItem::AddGraveStoneParticles() {
         if (aParticle) {
             aReanim->AttachParticleToTrack("Stone", aParticle, 30.0f, 60.0f);
         }
-        TodParticleSystem *aParticle2 = mApp->AddTodParticle(0.0f, 0.0f, 0, ParticleEffect::PARTICLE_ZOMBIE_SEAWEED);
-        if (aParticle2) {
-            aReanim->AttachParticleToTrack("eye glow left", aParticle2, 5.0f, 5.0f);
-        }
-        TodParticleSystem *aParticle3 = mApp->AddTodParticle(0.0f, 0.0f, 0, ParticleEffect::PARTICLE_ZOMBIE_SEAWEED);
-        if (aParticle3) {
-            aReanim->AttachParticleToTrack("eye glow right", aParticle3, 77.0f, 20.0f);
+        if (mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
+            TodParticleSystem *aParticle2 = mApp->AddTodParticle(0.0f, 0.0f, 0, ParticleEffect::PARTICLE_ZOMBIE_SEAWEED);
+            if (aParticle2) {
+                aReanim->AttachParticleToTrack("eye glow left", aParticle2, 5.0f, 5.0f);
+            }
+            TodParticleSystem *aParticle3 = mApp->AddTodParticle(0.0f, 0.0f, 0, ParticleEffect::PARTICLE_ZOMBIE_SEAWEED);
+            if (aParticle3) {
+                aReanim->AttachParticleToTrack("eye glow right", aParticle3, 77.0f, 20.0f);
+            }
         }
     } else {
         mApp->AddTodParticle(aXPos, aYPos, mRenderOrder + 1, ParticleEffect::PARTICLE_GRAVE_STONE_RISE);
