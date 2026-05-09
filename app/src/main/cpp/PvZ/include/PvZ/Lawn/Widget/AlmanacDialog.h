@@ -98,12 +98,21 @@ public:
     void GetSeedPosition(SeedType theSeedType, int &x, int &y) {
         reinterpret_cast<void (*)(AlmanacDialog *, SeedType, int &, int &)>(AlmanacDialog_GetSeedPositionAddr)(this, theSeedType, x, y);
     }
+    ZombieType GetZombieType(int theIndex) {
+        return reinterpret_cast<ZombieType (*)(AlmanacDialog *, int)>(AlmanacDialog_GetZombieTypeAddr)(this, theIndex);
+    }
+    void GetZombiePosition(ZombieType theZombieType, int &x, int &y) {
+        reinterpret_cast<void (*)(AlmanacDialog *, ZombieType, int &, int &)>(AlmanacDialog_GetZombiePositionAddr)(this, theZombieType, x, y);
+    }
 
     void SetPage(AlmanacPage thePage);
     void RemovedFromManager(Sexy::WidgetManager *theWidgetManager);
     void ButtonDepress(int theId);
     void DrawPlants_Unmodified(Sexy::Graphics *g);
     void DrawPlants(Sexy::Graphics *g);
+    void DrawZombies(Sexy::Graphics *g);
+    bool ZombieIsShown(ZombieType theZombieType);
+    bool ZombieHasSilhouette(ZombieType theZombieType);
     void SetupLayoutPlants(Sexy::Graphics *g);
 
     void MouseDown(int x, int y, int theClickCount);
@@ -129,6 +138,8 @@ inline void (*old_AlmanacDialog_RemovedFromManager)(AlmanacDialog *almanacDialog
 inline void (*old_AlmanacDialog_Delete2)(AlmanacDialog *almanacDialog);
 
 inline void (*old_AlmanacDialog_DrawPlants)(AlmanacDialog *almanacDialog, Sexy::Graphics *graphics);
+
+inline void (*old_AlmanacDialog_DrawZombies)(AlmanacDialog *, Sexy::Graphics *);
 
 inline void (*old_AlmanacDialog_SetupLayoutPlants)(AlmanacDialog *almanacDialog, Sexy::Graphics *graphics);
 

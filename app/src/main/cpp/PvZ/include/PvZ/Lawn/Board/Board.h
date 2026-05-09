@@ -567,7 +567,7 @@ public:
     int GetLiveGargantuarCount();
     int GetLiveZombiesCount();
     Zombie *GetLiveZombieByType(ZombieType theZombieType);
-    bool HasAliveJackson();
+    bool GetAliveJacksonZombie();
     void FixReanimErrorAfterLoad();
     void DoPlantingAchievementCheck(SeedType theSeedType);
     bool GrantAchievement(AchievementType theAchievementId, bool theIsShow);
@@ -613,6 +613,7 @@ public:
     GridItem *AddACrater(int theGridX, int theGridY);
     GridItem *AddACrater_Origin(int theGridX, int theGridY);
     ZombieType PickGraveRisingZombieTypeMP(int theMoundLevel);
+    static bool IsZombieTypeSpawnedOnly(ZombieType theZombieType);
 
     void MouseMove(int x, int y);
     void MouseDown(int x, int y, int theClickCount);

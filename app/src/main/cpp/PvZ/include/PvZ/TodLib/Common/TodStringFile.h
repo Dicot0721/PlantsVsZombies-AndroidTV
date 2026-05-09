@@ -24,6 +24,20 @@
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
 
+enum TodStringFormatFlag {
+    TOD_FORMAT_IGNORE_NEWLINES,
+    TOD_FORMAT_HIDE_UNTIL_MAGNETSHROOM,
+};
+
+class TodStringListFormat {
+public:
+    const char *mFormatName;
+    Sexy::Font **mNewFont;
+    Sexy::Color mNewColor;
+    int mLineSpacingOffset;
+    unsigned int mFormatFlags;
+};
+
 inline void TodDrawStringWrapped(
     Sexy::Graphics *g, const pvzstl::string &theText, const Sexy::Rect &theRect, Sexy::Font *theFont, const Sexy::Color &theColor, DrawStringJustification theJustification, bool drawString) {
     reinterpret_cast<void (*)(Sexy::Graphics *, const pvzstl::string &, const Sexy::Rect &, Sexy::Font *, const Sexy::Color &, DrawStringJustification, bool)>(TodDrawStringWrappedAddr)(

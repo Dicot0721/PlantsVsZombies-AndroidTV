@@ -1121,7 +1121,7 @@ void Zombie::JacksonDie() {
     if (!IsOnBoard())
         return;
 
-    if (!mBoard->HasAliveJackson()) {
+    if (!mBoard->GetAliveJacksonZombie()) {
         mBoard->SetDanceMode(false);
         mApp->mSoundSystem->StopFoley(FoleyType::FOLEY_THRILLER);
         msDeadFollowers.clear();
@@ -1929,7 +1929,7 @@ void Zombie::UpdateDamageStates(unsigned int theDamageFlags) {
             DieNoLoot();
         }
 
-        if (mBoard->HasAliveJackson() && CanRevived()) {
+        if (mBoard->GetAliveJacksonZombie() && CanRevived()) {
             mIsDeadFollowers = true;
             if (msDeadFollowers.size() >= 15) {
                 msDeadFollowers.erase(msDeadFollowers.begin());
@@ -2883,7 +2883,7 @@ void Zombie::DieNoLoot() {
         JacksonDie();
     }
 
-    if (mBoard->HasAliveJackson() && CanRevived() && !mIsDeadFollowers) {
+    if (mBoard && mBoard->GetAliveJacksonZombie() && CanRevived() && !mIsDeadFollowers) {
         mIsDeadFollowers = true;
         if (msDeadFollowers.size() >= 15) {
             msDeadFollowers.erase(msDeadFollowers.begin());

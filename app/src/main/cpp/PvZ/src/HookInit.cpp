@@ -270,6 +270,7 @@ void InitHookFunction() {
     homura::HookFunc(AlmanacDialog_ButtonDepressAddr, &AlmanacDialog::ButtonDepress, nullptr);
     homura::HookFunc(AlmanacDialog_Delete2Addr, &AlmanacDialog::_destructor, &old_AlmanacDialog_Delete2);
     homura::HookFunc(AlmanacDialog_DrawPlantsAddr, &AlmanacDialog::DrawPlants, &old_AlmanacDialog_DrawPlants);
+    homura::HookFunc(AlmanacDialog_DrawZombiesAddr, &AlmanacDialog::DrawZombies, &old_AlmanacDialog_DrawZombies);
     homura::HookFunc(AlmanacDialog_SetupLayoutPlantsAddr, &AlmanacDialog::SetupLayoutPlants, &old_AlmanacDialog_SetupLayoutPlants);
 
 
@@ -572,13 +573,13 @@ void InitHookFunction() {
     homura::HookFunc(Reanimation_DrawTrackAddr, &Reanimation::DrawTrack, &old_Reanimation_DrawTrack);
 
 
-    homura::HookFunc(ReanimatorCache_ReanimatorCacheInitializeAddr, &ReanimatorCache::ReanimatorCacheInitialize, nullptr);
+    //    homura::HookFunc(ReanimatorCache_ReanimatorCacheInitializeAddr, &ReanimatorCache::ReanimatorCacheInitialize, nullptr);
     homura::HookFunc(ReanimatorCache_ReanimatorCacheDisposeAddr, &ReanimatorCache::ReanimatorCacheDispose, nullptr);
     homura::HookFunc(ReanimatorCache_DrawCachedPlantAddr, &ReanimatorCache::DrawCachedPlant, &old_ReanimatorCache_DrawCachedPlant);
     homura::HookFunc(ReanimatorCache_UpdateReanimationForVariationAddr, &ReanimatorCache::UpdateReanimationForVariation, &old_ReanimatorCache_UpdateReanimationForVariation);
     homura::HookFunc(ReanimatorCache_LoadCachedImagesAddr, &ReanimatorCache::LoadCachedImages, &old_ReanimatorCache_LoadCachedImages);
     homura::HookFunc(ReanimatorCache_MakeCachedZombieFrameAddr, &ReanimatorCache::MakeCachedZombieFrame, nullptr);
-    homura::HookFunc(ReanimatorCache_DrawCachedZombieAddr, &ReanimatorCache::DrawCachedZombie, nullptr);
+    //    homura::HookFunc(ReanimatorCache_DrawCachedZombieAddr, &ReanimatorCache::DrawCachedZombie, nullptr);
 
 
     homura::HookFunc(HelpBarWidget_HelpBarWidgetAddr, &HelpBarWidget::_constructor, &old_HelpBarWidget_HelpBarWidget);

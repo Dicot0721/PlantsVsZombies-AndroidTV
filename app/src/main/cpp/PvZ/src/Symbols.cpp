@@ -19,6 +19,7 @@
 
 #include "PvZ/Symbols.h"
 #include "Homura/DynamicLibUtils.h"
+#include "Homura/Logger.h"
 #include "Homura/PragmaUtils.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Challenge.h"
@@ -306,6 +307,7 @@ bool LoadGameMain() {
     LawnApp_IsPuzzleModeAddr = libGameMain.GetSymbol("_ZN7LawnApp12IsPuzzleModeEv");
     LawnApp_ParticleGetIDAddr = libGameMain.GetSymbol("_ZN7LawnApp13ParticleGetIDEP17TodParticleSystem");
     LawnApp_HasFinishedAdventureAddr = libGameMain.GetSymbol("_ZN7LawnApp20HasFinishedAdventureEv");
+    LawnApp_CanSpawnYetisAddr = libGameMain.GetSymbol("_ZN7LawnApp13CanSpawnYetisEv");
     LawnApp_IsFinalBossLevelAddr = libGameMain.GetSymbol("_ZN7LawnApp16IsFinalBossLevelEv");
     LawnApp_IsArtChallengeAddr = libGameMain.GetSymbol("_ZN7LawnApp14IsArtChallengeEv");
     LawnApp_ShowChallengeScreenAddr = libGameMain.GetSymbol("_ZN7LawnApp19ShowChallengeScreenE13ChallengePage");
@@ -807,7 +809,17 @@ bool LoadGameMain() {
     AlmanacDialog_ButtonDepressAddr = libGameMain.GetSymbol("_ZN13AlmanacDialog13ButtonDepressEi");
     AlmanacDialog_Delete2Addr = libGameMain.GetSymbol("_ZN13AlmanacDialogD2Ev");
     AlmanacDialog_DrawPlantsAddr = libGameMain.GetSymbol("_ZN13AlmanacDialog10DrawPlantsEPN4Sexy8GraphicsE");
+    AlmanacDialog_DrawZombiesAddr = libGameMain.GetSymbol("_ZN13AlmanacDialog11DrawZombiesEPN4Sexy8GraphicsE");
     AlmanacDialog_GetSeedPositionAddr = libGameMain.GetSymbol("_ZN13AlmanacDialog15GetSeedPositionE8SeedTypeRiS1_");
+    AlmanacDialog_GetZombieTypeAddr = libGameMain.GetSymbol("_ZN13AlmanacDialog13GetZombieTypeEi");
+    AlmanacDialog_GetZombiePositionAddr = libGameMain.GetSymbol("_ZN13AlmanacDialog17GetZombiePositionE10ZombieTypeRiS1_");
+    AlmanacDialog_ZombieIsShownAddr = libGameMain.GetSymbol("_ZN13AlmanacDialog12ZombieIsShownE10ZombieType");
+    AlmanacDialog_ZombieHasSilhouetteAddr = libGameMain.GetSymbol("_ZN13AlmanacDialog18ZombieHasSilhouetteE10ZombieType");
+    if (AlmanacDialog_ZombieIsShownAddr == nullptr || AlmanacDialog_ZombieHasSilhouetteAddr == nullptr) {
+        LOG_ERROR("Almanac symbols missing: ZombieIsShown=0x{:X}, ZombieHasSilhouette=0x{:X}",
+                  reinterpret_cast<std::uintptr_t>(AlmanacDialog_ZombieIsShownAddr),
+                  reinterpret_cast<std::uintptr_t>(AlmanacDialog_ZombieHasSilhouetteAddr));
+    }
     AlmanacDialog_UpdateAddr = libGameMain.GetSymbol("_ZN13AlmanacDialog6UpdateEv");
     AlmanacDialog_SetupLayoutPlantsAddr = libGameMain.GetSymbol("_ZN13AlmanacDialog17SetupLayoutPlantsEPN4Sexy8GraphicsE");
 
@@ -1180,6 +1192,7 @@ bool LoadGameMain() {
     AwardScreen_StartButtonPressedAddr = libGameMain.GetSymbol("_ZN11AwardScreen18StartButtonPressedEv");
     Sexy_DefaultPlayerInfo_SaveDetailsAddr = libGameMain.GetSymbol("_ZN4Sexy17DefaultPlayerInfo11SaveDetailsEv");
     Sexy_DefaultPlayerInfo_GetIdAddr = libGameMain.GetSymbol("_ZN4Sexy17DefaultPlayerInfo5GetIdEv");
+    LawnPlayerInfo_GetLevelAddr = libGameMain.GetSymbol("_ZN14LawnPlayerInfo8GetLevelEv");
     LawnPlayerInfo_GetFlagAddr = libGameMain.GetSymbol("_ZN14LawnPlayerInfo7GetFlagE11PlayerFlags");
     LawnPlayerInfo_SetFlagAddr = libGameMain.GetSymbol("_ZN14LawnPlayerInfo7SetFlagE11PlayerFlagsb");
     LawnPlayerInfo_AddCoinsAddr = libGameMain.GetSymbol("_ZN14LawnPlayerInfo8AddCoinsEi");
@@ -1415,6 +1428,7 @@ Sexy::Image *&Sexy::IMAGE_BRAIN = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sex
 Sexy::Image *&Sexy::IMAGE_MP_TARGET = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy15IMAGE_MP_TARGETE");
 Sexy::Image *&Sexy::IMAGE_SEEDPACKETFLASH = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy21IMAGE_SEEDPACKETFLASHE");
 Sexy::Image *&Sexy::IMAGE_ALMANAC_GROUNDDAY = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy23IMAGE_ALMANAC_GROUNDDAYE");
+Sexy::Image *&Sexy::IMAGE_ALMANAC_GROUNDICE = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy23IMAGE_ALMANAC_GROUNDICEE");
 Sexy::Image *&Sexy::IMAGE_ALMANAC_GROUNDNIGHTPOOL = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy29IMAGE_ALMANAC_GROUNDNIGHTPOOLE");
 Sexy::Image *&Sexy::IMAGE_ALMANAC_GROUNDPOOL = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy24IMAGE_ALMANAC_GROUNDPOOLE");
 Sexy::Image *&Sexy::IMAGE_ALMANAC_GROUNDNIGHT = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy25IMAGE_ALMANAC_GROUNDNIGHTE");
@@ -1422,6 +1436,11 @@ Sexy::Image *&Sexy::IMAGE_ALMANAC_GROUNDROOF = *libGameMain.GetSymbol<Sexy::Imag
 Sexy::Image *&Sexy::IMAGE_ALMANAC_PLANTBACK = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy23IMAGE_ALMANAC_PLANTBACKE");
 Sexy::Image *&Sexy::IMAGE_ALMANAC_IMITATER = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy22IMAGE_ALMANAC_IMITATERE");
 Sexy::Image *&Sexy::IMAGE_ALMANAC_PLANTCARD = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy23IMAGE_ALMANAC_PLANTCARDE");
+Sexy::Image *&Sexy::IMAGE_ALMANAC_ZOMBIEBACK = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy24IMAGE_ALMANAC_ZOMBIEBACKE");
+Sexy::Image *&Sexy::IMAGE_ALMANAC_ZOMBIEWINDOW = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy26IMAGE_ALMANAC_ZOMBIEWINDOWE");
+Sexy::Image *&Sexy::IMAGE_ALMANAC_ZOMBIEWINDOW2 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy27IMAGE_ALMANAC_ZOMBIEWINDOW2E");
+Sexy::Image *&Sexy::IMAGE_ALMANAC_ZOMBIEBLANK = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy25IMAGE_ALMANAC_ZOMBIEBLANKE");
+Sexy::Image *&Sexy::IMAGE_ALMANAC_ZOMBIECARD = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy24IMAGE_ALMANAC_ZOMBIECARDE");
 Sexy::Image *&Sexy::IMAGE_REANIM_ZOMBIE_SCREENDOOR2 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy31IMAGE_REANIM_ZOMBIE_SCREENDOOR2E");
 Sexy::Image *&Sexy::IMAGE_REANIM_ZOMBIE_SCREENDOOR3 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy31IMAGE_REANIM_ZOMBIE_SCREENDOOR3E");
 Sexy::Image *&Sexy::IMAGE_REANIM_ZOMBIE_PAPER_PAPER2 = *libGameMain.GetSymbol<Sexy::Image *>("_ZN4Sexy32IMAGE_REANIM_ZOMBIE_PAPER_PAPER2E");
@@ -1487,6 +1506,8 @@ FoleyParams (&::gLawnFoleyParamArray)[FoleyType::NUM_FOLEY] = *libGameMain.GetSy
 FoleyParams *& ::gFoleyParamArray = *libGameMain.GetSymbol<FoleyParams *>("gFoleyParamArray");
 int & ::gFoleyParamArraySize = *libGameMain.GetSymbol<int>("gFoleyParamArraySize");
 LawnApp *& ::gLawnApp = *libGameMain.GetSymbol<LawnApp *>("gLawnApp");
+bool (&::gZombieDefeated)[NUM_ZOMBIE_TYPES] = *libGameMain.GetSymbol<bool[NUM_ZOMBIE_TYPES]>("gZombieDefeated");
+TodStringListFormat (&::gLawnStringFormats)[14] = *libGameMain.GetSymbol<TodStringListFormat[14]>("gLawnStringFormats");
 ReanimationParams (&::gLawnReanimationArray)[ReanimationType::NUM_REANIMS] = *libGameMain.GetSymbol<ReanimationParams[ReanimationType::NUM_REANIMS]>("gLawnReanimationArray");
 ReanimatorDefinition *& ::gReanimatorDefArray = *libGameMain.GetSymbol<ReanimatorDefinition *>("gReanimatorDefArray");
 char *& ::ReanimTrackId_anim_head1 = *libGameMain.GetSymbol<char *>("ReanimTrackId_anim_head1");

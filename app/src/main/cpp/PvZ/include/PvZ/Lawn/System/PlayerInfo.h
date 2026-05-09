@@ -135,6 +135,9 @@ public:
 
 class LawnPlayerInfo : public DefaultPlayerInfo {
 public:
+    int GetLevel() {
+        return reinterpret_cast<int (*)(LawnPlayerInfo *)>(LawnPlayerInfo_GetLevelAddr)(this);
+    }
     int GetFlag(int theFlag) {
         return reinterpret_cast<int (*)(LawnPlayerInfo *, int)>(LawnPlayerInfo_GetFlagAddr)(this, theFlag);
     }

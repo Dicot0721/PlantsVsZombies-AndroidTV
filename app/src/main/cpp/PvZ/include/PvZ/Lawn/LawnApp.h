@@ -215,6 +215,9 @@ public:
     bool HasFinishedAdventure() {
         return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_HasFinishedAdventureAddr)(this);
     }
+    bool CanSpawnYetis() {
+        return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_CanSpawnYetisAddr)(this);
+    }
     void KillVSResultsScreen() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillVSResultsScreenAddr)(this);
     }

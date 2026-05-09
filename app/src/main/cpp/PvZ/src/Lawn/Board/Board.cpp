@@ -3294,7 +3294,7 @@ Zombie *Board::GetLiveZombieByType(ZombieType theZombieType) {
     return nullptr;
 }
 
-bool Board::HasAliveJackson() {
+bool Board::GetAliveJacksonZombie() {
     Zombie *aZombie = nullptr;
     while (IterateZombies(aZombie)) {
         if (aZombie->mZombieType == ZombieType::ZOMBIE_JACKSON && !aZombie->mDead && aZombie->mHasHead && aZombie->IsOnBoard() && !aZombie->IsDeadOrDying()) {
@@ -6270,4 +6270,8 @@ ZombieType Board::PickGraveRisingZombieTypeMP(int theMoundLevel) {
     }
 
     return ZombieType(TodPickFromWeightedArray(aZombieWeightArray, aCount));
+}
+
+bool Board::IsZombieTypeSpawnedOnly(ZombieType theZombieType) {
+    return (theZombieType == ZombieType::ZOMBIE_BACKUP_DANCER || theZombieType == ZombieType::ZOMBIE_BOBSLED || theZombieType == ZombieType::ZOMBIE_IMP);
 }

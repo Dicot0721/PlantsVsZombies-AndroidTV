@@ -22,7 +22,6 @@
 
 #include "../Misc/Common.h"
 #include "../Misc/Rect.h"
-#include "../Misc/SexyMatrix.h"
 #include "../Misc/TriVertex.h"
 #include "PvZ/Symbols.h"
 
@@ -32,6 +31,7 @@
 namespace Sexy {
 
 class Font;
+class SexyMatrix3;
 class Transform;
 class SexyVertex2D;
 

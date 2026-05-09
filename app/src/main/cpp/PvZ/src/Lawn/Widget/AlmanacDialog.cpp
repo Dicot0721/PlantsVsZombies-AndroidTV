@@ -24,7 +24,9 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/PoolEffect.h"
+#include "PvZ/Lawn/System/ReanimationLawn.h"
 #include "PvZ/Lawn/Widget/GameButton.h"
+#include "PvZ/SexyAppFramework/Graphics/Font.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
@@ -360,6 +362,263 @@ void AlmanacDialog::DrawPlants(Sexy::Graphics *g) {
     *(float *)unk2 = -v22;
     g->mTransY = v23;
     TodDrawStringWrappedHelper(g, mDescriptionString, mDescriptionRect, Sexy::FONT_BRIANNETOD16, Color(143, 67, 27, 255), DrawStringJustification::DS_ALIGN_LEFT, true, true);
+    g->PopState();
+}
+
+bool AlmanacDialog::ZombieHasSilhouette(ZombieType theZombieType) {
+    // 除雪人僵尸以外的其他僵尸，或者雪人僵尸已经可以刷出（已经到达或完成冒险模式二周目 4-10 关卡），则不会显示为剪影
+    if (theZombieType != ZombieType::ZOMBIE_YETI || mApp->CanSpawnYetis())
+        return false;
+
+    // 排除上述情况后，若已完成雪人僵尸出现的关卡（冒险模式一周目 4-10 关卡），则雪人僵尸显示为剪影
+    return mApp->HasFinishedAdventure() || mApp->mPlayerInfo->GetLevel() > GetZombieDefinition(ZombieType::ZOMBIE_YETI).mStartingLevel;
+}
+
+bool AlmanacDialog::ZombieIsShown(ZombieType theZombieType) {
+    if (theZombieType < ZombieType::ZOMBIE_NORMAL || theZombieType > ZombieType::ZOMBIE_BOSS) {
+        return false;
+    }
+
+    // 试玩模式下，仅展示潜水僵尸及其之前出现的僵尸
+    if (mApp->IsTrialStageLocked() && theZombieType > ZombieType::ZOMBIE_SNORKEL)
+        return false;
+
+    // 对于雪人僵尸，要求其可以在刷怪中出现（已经到达或完成冒险模式二周目 4-10 关卡），
+    // 或已得知其存在但未解锁其形象（已经完成冒险模式一周目 4-10 关卡，但未到达二周目 4-10 关卡）
+    if (theZombieType == ZombieType::ZOMBIE_YETI)
+        return mApp->CanSpawnYetis() || ZombieHasSilhouette(ZombieType::ZOMBIE_YETI);
+
+    // 对于冒险模式中出现的僵尸
+    if (theZombieType <= ZombieType::ZOMBIE_BOSS) {
+        // 冒险模式一周目完成后，图鉴展示所有僵尸
+        if (mApp->HasFinishedAdventure())
+            return true;
+
+        int aLevel = mApp->mPlayerInfo->GetLevel();
+        int aStart = GetZombieDefinition(theZombieType).mStartingLevel;
+        // 要求已经达到僵尸首次出现的关卡
+        // 对于不能通过自然刷怪出现的僵尸（小鬼僵尸、雪橇僵尸小队、伴舞僵尸），额外要求已通过其首次出现的关卡或已击败过该僵尸
+        return aStart <= aLevel && (aStart != aLevel || !Board::IsZombieTypeSpawnedOnly(theZombieType) || gZombieDefeated[theZombieType]);
+    }
+
+    return false;
+}
+
+void AlmanacDialog::DrawZombies(Graphics *g) {
+    g->DrawImage(Sexy::IMAGE_ALMANAC_ZOMBIEBACK, LawnApp::FULLSCREEN_RECT, -60);
+    int aHeaderOffsetY = Sexy::FONT_DWARVENTODCRAFT24->GetHeight() / 2;
+    TodDrawString(g, "[SUBURBAN_ALMANAC_ZOMBIES]", BOARD_WIDTH / 2, aHeaderOffsetY + 42, Sexy::FONT_DWARVENTODCRAFT24, Color(0, 196, 0), DS_ALIGN_CENTER);
+
+    ZombieType aSelectedZombie = mSelectedZombie;
+    for (int i = 0; i < NUM_ALMANAC_ZOMBIES; ++i) {
+        ZombieType aZombieType = GetZombieType(i);
+        int aPosX, aPosY;
+        GetZombiePosition(aZombieType, aPosX, aPosY);
+        if (aZombieType == ZombieType::ZOMBIE_INVALID) {
+            continue;
+        }
+
+        if (!ZombieIsShown(aZombieType)) {
+            g->DrawImage(Sexy::IMAGE_ALMANAC_ZOMBIEBLANK, aPosX, aPosY);
+            continue;
+        }
+
+        if (aSelectedZombie == aZombieType) {
+            g->mTransX -= 4.0f;
+            g->mTransY -= 4.0f;
+            g->SetScale(1.1, 1.1, (float)aPosX, (float)aPosY);
+        }
+
+        g->DrawImage(Sexy::IMAGE_ALMANAC_ZOMBIEWINDOW, aPosX, aPosY);
+        g->PushState();
+        g->SetClipRect(aPosX + 2, aPosY + 2, 72, 72);
+
+        float transX = g->mTransX;
+        float transY = g->mTransY;
+        g->mScaleX = 0.5f;
+        g->mScaleY = 0.5f;
+        g->mTransX = transX + (float)(aPosX + 1);
+        g->mTransY = transY + (float)(aPosY - 6);
+
+        ZombieType aDrawZombie = aZombieType;
+        switch (aZombieType) {
+            case ZombieType::ZOMBIE_POLEVAULTER:
+                aDrawZombie = ZombieType::ZOMBIE_CACHED_POLEVAULTER_WITH_POLE;
+                g->mTransX += 2.0f;
+                g->mTransY -= 3.0f;
+                break;
+            case ZombieType::ZOMBIE_FLAG:
+                g->mTransX += 2.0f;
+                g->mTransY += 10.0f;
+                break;
+            case ZombieType::ZOMBIE_TRAFFIC_CONE:
+                g->mTransY += 12.0f;
+                break;
+            case ZombieType::ZOMBIE_PAIL:
+                g->mTransY += 9.0f;
+                break;
+            case ZombieType::ZOMBIE_FOOTBALL:
+                g->mTransX -= 15.0f;
+                g->mTransY -= 1.0f;
+                break;
+            case ZombieType::ZOMBIE_ZAMBONI:
+                g->mTransX -= 54.0f;
+                g->mTransY += 3.0f;
+                break;
+            case ZombieType::ZOMBIE_DOLPHIN_RIDER:
+                g->mTransX -= 2.0f;
+                g->mTransY -= 10.0f;
+                break;
+            case ZombieType::ZOMBIE_POGO:
+                g->mTransY -= 3.0f;
+                break;
+            case ZombieType::ZOMBIE_DANCER:
+                g->mTransY += 15.0f;
+                break;
+            case ZombieType::ZOMBIE_BACKUP_DANCER:
+                g->mTransX -= 5.0f;
+                g->mTransY += 17.0f;
+                break;
+            case ZombieType::ZOMBIE_GARGANTUAR:
+                g->mTransX += 15.0f;
+                g->mTransY += 17.0f;
+                break;
+            case ZombieType::ZOMBIE_IMP:
+                g->mTransX -= 8.0f;
+                g->mTransY -= 7.0f;
+                break;
+            case ZombieType::ZOMBIE_BUNGEE:
+                g->mTransX -= 4.0f;
+                g->mTransY += 3.0f;
+                break;
+            case ZombieType::ZOMBIE_SNORKEL:
+                g->mTransX -= 10.0f;
+                break;
+            case ZombieType::ZOMBIE_YETI:
+                g->mTransY += 4.0f;
+                break;
+            case ZombieType::ZOMBIE_CATAPULT:
+                g->mTransX -= 24.0f;
+                g->mTransY -= 1.0f;
+                break;
+            case ZombieType::ZOMBIE_BOBSLED:
+                g->mTransY -= 8.0f;
+                break;
+            case ZombieType::ZOMBIE_LADDER:
+                g->mTransY -= 3.0f;
+                break;
+            default:
+                break;
+        }
+
+        if (ZombieHasSilhouette(aZombieType)) {
+            g->SetColor(Color(0, 0, 0, 64));
+            g->SetColorizeImages(true);
+        }
+
+        if (aSelectedZombie != aZombieType) {
+            mApp->mReanimatorCache->DrawCachedZombie(g, 0.0f, 0.0f, aDrawZombie);
+            g->PopState();
+            g->DrawImage(Sexy::IMAGE_ALMANAC_ZOMBIEWINDOW2, aPosX, aPosY);
+            continue;
+        } else {
+            g->mTransX -= 4.0f;
+            g->mTransY -= 4.0f;
+            mApp->mReanimatorCache->DrawCachedZombie(g, 0.0f, 0.0f, aDrawZombie);
+            g->PopState();
+            g->SetDrawMode(Graphics::DRAWMODE_ADDITIVE);
+            g->SetColor(Color(255, 255, 255, 100));
+            g->SetColorizeImages(true);
+            g->DrawImage(Sexy::IMAGE_ALMANAC_ZOMBIEWINDOW, aPosX, aPosY);
+            g->SetDrawMode(Graphics::DRAWMODE_NORMAL);
+            g->SetColorizeImages(false);
+
+            g->DrawImage(Sexy::IMAGE_ALMANAC_ZOMBIEWINDOW2, aPosX, aPosY);
+
+            g->SetDrawMode(Graphics::DRAWMODE_ADDITIVE);
+            g->SetColor(Color(255, 255, 255, 48));
+            g->SetColorizeImages(true);
+            g->DrawImage(Sexy::IMAGE_ALMANAC_ZOMBIEWINDOW2, aPosX, aPosY);
+            g->SetDrawMode(Graphics::DRAWMODE_NORMAL);
+            g->SetColorizeImages(false);
+
+            g->mTransX += 4.0f;
+            g->mTransY += 4.0f;
+            g->SetScale(1.0, 1.0, 0.0, 0.0);
+        }
+    }
+
+    Image *aGround = Sexy::IMAGE_ALMANAC_GROUNDICE;
+    if (mZombie == nullptr || (mZombie->mZombieType != ZombieType::ZOMBIE_ZAMBONI && mZombie->mZombieType != ZombieType::ZOMBIE_BOBSLED)) {
+        aGround = Sexy::IMAGE_ALMANAC_GROUNDDAY;
+    }
+    g->DrawImage(aGround, 518, 110);
+
+    if (mZombie && !ZombieHasSilhouette(mZombie->mZombieType)) {
+        g->PushState();
+        g->mTransX += (float)mZombie->mX;
+        g->mTransY += (float)mZombie->mY;
+        g->SetClipRect(-42, -51, 197, 187);
+        bool drawShadow = false;
+        switch (mZombie->mZombieType) {
+            case ZombieType::ZOMBIE_ZAMBONI:
+                g->mTransX -= 30.0f;
+                g->mTransY += 5.0f;
+                break;
+            case ZombieType::ZOMBIE_GARGANTUAR:
+                g->mTransY += 30.0f;
+                break;
+            case ZombieType::ZOMBIE_FOOTBALL:
+                g->mTransX -= 10.0f;
+                drawShadow = true;
+                break;
+            case ZombieType::ZOMBIE_BALLOON:
+                g->mTransY -= 20.0f;
+                drawShadow = true;
+                break;
+            case ZombieType::ZOMBIE_BUNGEE:
+                g->mTransX += 15.0f;
+                break;
+            case ZombieType::ZOMBIE_CATAPULT:
+                g->mTransX -= 10.0f;
+                break;
+            case ZombieType::ZOMBIE_BOSS:
+                g->mTransX -= 540.0f;
+                g->mTransY -= 175.0f;
+                break;
+            default:
+                if (mZombie->mZombieType != ZombieType::ZOMBIE_DANCER && mZombie->mZombieType != ZombieType::ZOMBIE_BACKUP_DANCER) {
+                    drawShadow = true;
+                }
+                break;
+        }
+        if (drawShadow) {
+            mZombie->DrawShadow(g);
+        }
+        mZombie->Draw(g);
+        g->PopState();
+    }
+
+    g->DrawImage(Sexy::IMAGE_ALMANAC_ZOMBIECARD, 455, 78);
+    TodDrawString(g, mNameString, 613, 112, Sexy::FONT_DWARVENTODCRAFT18, Color(213, 159, 43, 255), DrawStringJustification::DS_ALIGN_CENTER);
+    for (TodStringListFormat &aFormat : gLawnStringFormats) {
+        if (TestBit(aFormat.mFormatFlags, TodStringFormatFlag::TOD_FORMAT_HIDE_UNTIL_MAGNETSHROOM)) {
+            if (mApp->HasSeedType(SeedType::SEED_MAGNETSHROOM, false)) {
+                aFormat.mNewColor.mAlpha = 255;
+                aFormat.mLineSpacingOffset = 0;
+            } else {
+                aFormat.mNewColor.mAlpha = 0;
+                aFormat.mLineSpacingOffset = -17;
+            }
+        }
+    }
+
+    g->PushState();
+    g->ClipRect(mDescriptionRect.mX, mDescriptionRect.mY, mDescriptionRect.mWidth, mDescriptionRect.mHeight);
+    float scrollY = mScrollTextView->mValue * 0.01f * unk2[1];
+    g->mTransY -= scrollY;
+    *(float *)unk2 = -scrollY;
+    unk2[1] = TodDrawStringWrappedHelper(g, mDescriptionString, mDescriptionRect, Sexy::FONT_BRIANNETOD16, Color(40, 50, 90), mJustification, true, true);
     g->PopState();
 }
 

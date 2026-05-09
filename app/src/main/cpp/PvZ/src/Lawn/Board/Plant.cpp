@@ -569,7 +569,11 @@ void Plant::DrawSeedType(Sexy::Graphics *g, SeedType theSeedType, SeedType theIm
     if (Challenge::IsZombieSeedType(theSeedType2)) {
         ZombieType theZombieType = Challenge::IZombieSeedTypeToZombieType(theSeedType2);
         if (theZombieType != ZombieType::ZOMBIE_INVALID) {
-            lawnApp->mReanimatorCache->DrawCachedZombie(g, thePosX, thePosY, theZombieType);
+            if (theZombieType < ZombieType::NUM_CACHED_ZOMBIE_TYPES) {
+                lawnApp->mReanimatorCache->DrawCachedZombie(g, thePosX, thePosY, theZombieType);
+            } else {
+                lawnApp->mReanimatorCache->DrawCachedExtendedZombie(g, thePosX, thePosY, theZombieType);
+            }
         }
         return;
     } else {
