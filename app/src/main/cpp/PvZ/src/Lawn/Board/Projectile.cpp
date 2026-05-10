@@ -311,7 +311,8 @@ void Projectile::PlayImpactSound(Zombie *theZombie) {
         if (theZombie->mHelmType == HELMTYPE_PAIL) {
             mApp->PlayFoley(FoleyType::FOLEY_SHIELD_HIT);
             aPlaySplatSound = false;
-        } else if (theZombie->mHelmType == HELMTYPE_TRAFFIC_CONE || theZombie->mHelmType == HELMTYPE_DIGGER || theZombie->mHelmType == HELMTYPE_FOOTBALL) {
+        } else if (theZombie->mHelmType == HELMTYPE_TRAFFIC_CONE || theZombie->mHelmType == HELMTYPE_DIGGER || theZombie->mHelmType == HELMTYPE_FOOTBALL
+                   || theZombie->mHelmType == HELMTYPE_GIGA_FOOTBALL) {
             mApp->PlayFoley(FoleyType::FOLEY_PLASTIC_HIT);
         }
     }

@@ -3817,8 +3817,6 @@ Zombie *Zombie::FindZombieGigaFootball() {
 }
 
 void Zombie::TakeDamage(int theDamage, unsigned int theDamageFlags) {
-
-
     if (mApp->IsVSMode() && gTcpConnected)
         return;
 
