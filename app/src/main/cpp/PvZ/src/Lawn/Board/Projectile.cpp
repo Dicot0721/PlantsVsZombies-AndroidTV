@@ -730,6 +730,9 @@ void Projectile::Draw(Graphics *g) {
 }
 
 void Projectile::DrawShadow(Graphics *g) {
+    if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON)
+        return;
+
     int aCelCol = 0;
     float aScale = 1.0f;
     float aStretch = 1.0f;
