@@ -870,8 +870,10 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
             int aGridX = mBoard->PixelToGridXKeepOnBoard((int)mCursorPositionX, (int)mCursorPositionY);
             int aGridY = mBoard->PixelToGridYKeepOnBoard((int)mCursorPositionX, (int)mCursorPositionY);
 
-            if (!mBoard->CanTakeSunMoney(aCost, 0) || !aSeedPacket->CanPickUp() || mBoard->CanPlantAt(aGridX, aGridY, aPacketType) || mBoard->HasLevelAwardDropped())
+            if (!mBoard->CanTakeSunMoney(aCost, 0) || !aSeedPacket->CanPickUp() || mBoard->CanPlantAt(aGridX, aGridY, aPacketType) || mBoard->HasLevelAwardDropped()) {
+                old_GamepadControls_OnButtonDown(this, theButton, thePlayerIndex, unk);
                 return;
+            }
 
             if (aPacketType < SeedType::NUM_SEED_TYPES) {
                 old_GamepadControls_OnButtonDown(this, theButton, thePlayerIndex, unk);
