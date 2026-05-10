@@ -600,6 +600,11 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
             mRightButton->mDisabled = !canCreateIdle;
         } break;
     }
+
+    if (mUIMode == UIMode::MODE3_SERVER && mServerJoined) {
+        mLawnYesButton->SetLabel("[ASK_START]");
+        mLawnYesButton->mDisabled = (!mServerConnected || mServerConnecting || mServerGameStarting);
+    }
 }
 
 void WaitForSecondPlayerDialog::ShowTextInput(const char *titleKey, const char *hintKey) {
@@ -684,6 +689,8 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mServerHostProbeDone = false;
     mServerGuestProbeDone = false;
     mServerHostHasGuest = false;
+    mServerClientWantStart = false;
+    mServerAskedWantStart = false;
     mServerHostedRoomId = 0;
     mServerJoinedRoomId = 0;
     mServerLastQueryTick = 0;
@@ -906,7 +913,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
                 TodDrawString(g, TodStringTranslate("[CUSTOM_SERVER_LIST]"), 400, kMode3ServerRecentTitleY, g->GetFont(), oldColor, DS_ALIGN_CENTER);
                 for (int i = 0; i < kMode3ServerRecentCount; ++i) {
                     char recentAddr[kMode3ServerTargetMaxLen]{};
-                    const bool hasRecent = (mApp && mApp->mPlayerInfo) ? Mode3LoadRecentServer(mApp->mPlayerInfo, i, recentAddr) : false;
+                    const bool hasRecent = (mApp && mApp->mPlayerInfo) && Mode3LoadRecentServer(mApp->mPlayerInfo, i, recentAddr);
                     pvzstl::string iCustomServerName = StrFormat(iFmt.c_str(), i + 1, (hasRecent ? recentAddr : TodStringTranslate("[CUSTOM_SERVER_EMPTY]").c_str()));
 
                     const int rowY = kMode3ServerRecentItemStartY + i * kMode3ServerTargetLineH;
@@ -946,6 +953,9 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
                               DS_ALIGN_CENTER);
 
                 //                DrawServerP2PStatus(g, 170, 290);
+                if (mServerClientWantStart) {
+                    TodDrawString(g, "[CLIENT_WANT_START]", 400, 350, g->GetFont(), Sexy::Color(0, 128, 255, 255), DS_ALIGN_CENTER);
+                }
             } else if (mServerJoined) {
                 const char *roomName = mServerJoinedRoomName[0] != '\0' ? mServerJoinedRoomName : "Unknown";
 
@@ -965,6 +975,9 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
                               DS_ALIGN_CENTER);
 
                 //                DrawServerP2PStatus(g, 170, 290);
+                if (mServerAskedWantStart) {
+                    TodDrawString(g, "[ASKED_WANT_START]", 400, 350, g->GetFont(), Sexy::Color(0, 128, 255, 255), DS_ALIGN_CENTER);
+                }
             } else {
                 //                DrawServerP2PStatus(g, 170, 240);
                 DrawServerRoomList(g);
@@ -1830,6 +1843,10 @@ void WaitForSecondPlayerDialog::ButtonDepress_Thunk(this ButtonListener &self, i
                         aDialog->ServerSendStart();
                         return;
                     }
+                    if (aDialog->mServerJoined) {
+                        aDialog->ServerSendAskStart();
+                        return;
+                    }
                     if (aDialog->mServerConnecting) {
                         aDialog->ServerDisconnect("user stop connect");
                         aDialog->RefreshButtons();
@@ -2046,6 +2063,8 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     mServerHosting = true;
                     mServerJoined = false;
                     mServerHostHasGuest = false;
+                    mServerClientWantStart = false;
+                    mServerAskedWantStart = false;
                     mServerHostedRoomId = id;
                     mServerJoinedRoomId = 0;
                     mServerJoinedRoomName[0] = '\0';
@@ -2152,6 +2171,8 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     mServerHostedRoomId = 0;
                     mServerJoinedRoomId = rid;
                     mServerHostHasGuest = false;
+                    mServerClientWantStart = false;
+                    mServerAskedWantStart = false;
                     mServerHostedRoomName[0] = '\0';
                     if (hostNameValid) {
                         int copyLen = hostNameLen;
@@ -2179,6 +2200,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     int rid = homura::ReadBEI32(payload);
                     if (mServerHosting && rid == mServerHostedRoomId) {
                         mServerHostHasGuest = true;
+                        mServerClientWantStart = false;
                         if (len >= 5) {
                             int guestNameLen = payload[4] & 0xFF;
                             if (5 + guestNameLen <= len) {
@@ -2199,6 +2221,7 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     int rid = homura::ReadBEI32(payload);
                     if (mServerHosting && rid == mServerHostedRoomId) {
                         mServerHostHasGuest = false;
+                        mServerClientWantStart = false;
                         gSecondPlayerName[0] = '\0';
                         mServerStatusText = TodStringTranslate("[STATUS_GUEST_LEFT]");
                     }
@@ -2214,6 +2237,13 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                         mServerHostProbeDone = hostReady;
                         mServerGuestProbeDone = guestReady;
                     }
+                }
+                break;
+            }
+            case 0x8D: { // CLIENT_WANT_START
+                if (mServerHosting && mServerHostHasGuest) {
+                    mServerClientWantStart = true;
+                    mApp->PlaySample(Sexy::SOUND_POTATO_MINE);
                 }
                 break;
             }
@@ -2281,6 +2311,8 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                 mServerHostProbeDone = false;
                 mServerGuestProbeDone = false;
                 mServerHostHasGuest = false;
+                mServerClientWantStart = false;
+                mServerAskedWantStart = false;
                 mServerHostedRoomId = 0;
                 mServerJoinedRoomId = 0;
                 mServerHostedRoomName[0] = '\0';
@@ -3242,7 +3274,9 @@ void WaitForSecondPlayerDialog::ServerSendKickGuest() {
     if (!ServerSendU8(0x0C)) {
         mServerStatusText = "kick guest failed";
         ServerDisconnect("kick send fail");
+        return;
     }
+    mServerClientWantStart = false;
 }
 
 void WaitForSecondPlayerDialog::ServerSendStart() {
@@ -3260,6 +3294,18 @@ void WaitForSecondPlayerDialog::ServerSendStart() {
         mServerStatusText = TodStringTranslate("[STATUS_SEND_START_FAIL]");
         ServerDisconnect("start send fail");
     }
+}
+
+void WaitForSecondPlayerDialog::ServerSendAskStart() {
+    if (!mServerJoined || !mServerConnected || mServerConnecting) {
+        return;
+    }
+    if (!ServerSendU8(0x0D)) {
+        mServerStatusText = "ask start failed";
+        ServerDisconnect("ask start send fail");
+        return;
+    }
+    mServerAskedWantStart = true;
 }
 
 
@@ -3298,6 +3344,8 @@ void WaitForSecondPlayerDialog::ServerDisconnect([[maybe_unused]] const char *wh
     mServerHostProbeDone = false;
     mServerGuestProbeDone = false;
     mServerHostHasGuest = false;
+    mServerClientWantStart = false;
+    mServerAskedWantStart = false;
     mServerHostedRoomId = 0;
     mServerJoinedRoomId = 0;
     mServerHostedRoomName[0] = '\0';

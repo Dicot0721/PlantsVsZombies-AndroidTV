@@ -101,6 +101,8 @@ public:
     bool mServerHostProbeDone;
     bool mServerGuestProbeDone;
     bool mServerHostHasGuest; // server pushed guest joined/left
+    bool mServerClientWantStart; // host side: guest asked to start
+    bool mServerAskedWantStart;  // guest side: ask-start sent
     int mServerHostedRoomId;  // created room id
     int mServerJoinedRoomId;  // joined room id (optional)
     int mServerLastQueryTick; // frame tick for auto query
@@ -159,6 +161,7 @@ public:
     void ServerSendLeaveRoom();
     void ServerSendKickGuest();
     void ServerSendStart(); // host start (optional)
+    void ServerSendAskStart(); // guest ask host to start
     bool ServerSendNatPort();
     bool ServerSendP2PProbe();
     bool ServerOpenP2PListener();
