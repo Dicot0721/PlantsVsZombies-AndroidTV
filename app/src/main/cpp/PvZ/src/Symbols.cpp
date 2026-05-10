@@ -1053,6 +1053,7 @@ bool LoadGameMain() {
     Sexy_SexyAppBase_CopyImage2Addr = libGameMain.GetSymbol("_ZN4Sexy11SexyAppBase9CopyImageEPNS_5ImageERKNS_5TRectIiEE");
     Sexy_SexyAppBase_GetDialogAddr = libGameMain.GetSymbol("_ZN4Sexy11SexyAppBase9GetDialogEi");
     Sexy_SexyAppBase_EraseFileAddr = libGameMain.GetSymbol("_ZN4Sexy11SexyAppBase9EraseFileERKSs");
+    Sexy_SexyAppBase_AddDialog2Addr = libGameMain.GetSymbol("_ZN4Sexy11SexyAppBase9AddDialogEiPNS_6DialogE");
     Sexy_SexyAppBase_AddDialogAddr = libGameMain.GetSymbol("_ZN4Sexy11SexyAppBase9AddDialogEPNS_6DialogE");
     Sexy_SexyAppBase_DoParseCmdLineAddr = libGameMain.GetSymbol("_ZN4Sexy11SexyAppBase14DoParseCmdLineEv");
     Sexy_SexyAppBase_LoadResourceManifestAddr = libGameMain.GetSymbol("_ZN4Sexy11SexyAppBase20LoadResourceManifestEv");

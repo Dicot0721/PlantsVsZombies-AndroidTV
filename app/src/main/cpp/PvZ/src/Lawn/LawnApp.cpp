@@ -252,8 +252,8 @@ void LawnApp::DoConfirmBackToMain(bool theIsSave) {
         return;
     }
     auto *aBackDialog = new ConfirmBackToMainDialog(theIsSave);
-    (*(void (**)(LawnApp *, int, Sexy::Widget *))(*(uint32_t *)this + 416))(this, Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN, aBackDialog);
-    (*(void (**)(uint32_t, Sexy::Widget *))(**((uint32_t **)this + 165) + 48))(*((uint32_t *)this + 165), aBackDialog);
+    AddDialog(Dialogs::DIALOG_CONFIRM_BACK_TO_MAIN, aBackDialog);
+    mWidgetManager->SetFocus(aBackDialog);
 }
 
 
@@ -321,7 +321,7 @@ void LawnApp::OnSessionTaskFailed() {
 }
 
 int LawnApp::GamepadToPlayerIndex(unsigned int thePlayerIndex) {
-    // 实现双人结盟中1P选卡选满后自动切换为2P选卡
+    // 实现双人结盟中1P选卡选满后自动切换为2P选卡DoConfirmBackToMain
     if (IsCoopMode()) {
         return !m1PChoosingSeeds;
     }

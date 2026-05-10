@@ -1050,6 +1050,7 @@ inline void *Sexy_SexyAppBase_CopyImage2Addr;
 inline void *Sexy_SexyAppBase_GetDialogAddr;
 inline void *Sexy_SexyAppBase_EraseFileAddr;
 inline void *Sexy_SexyAppBase_AddDialogAddr;
+inline void *Sexy_SexyAppBase_AddDialog2Addr;
 inline void *Sexy_SexyAppBase_DoParseCmdLineAddr;
 inline void *Sexy_SexyAppBase_LoadResourceManifestAddr;
 inline void *Sexy_SexyAppBase_GetIntegerAddr;

@@ -82,6 +82,9 @@ public:
     Image *CopyImage(Image *theImage, const Rect &theRect) {
         return reinterpret_cast<Image *(*)(SexyAppBase *, Image *, const Rect &)>(Sexy_SexyAppBase_CopyImage2Addr)(this, theImage, theRect);
     }
+    void AddDialog(Dialogs id, Dialog *theDialog) { // vTable + 4 * 104
+        reinterpret_cast<void (*)(SexyAppBase *, Dialogs, Dialog *)>(Sexy_SexyAppBase_AddDialog2Addr)(this, id, theDialog);
+    }
     void AddDialog(Dialog *theDialog) {
         reinterpret_cast<void (*)(SexyAppBase *, Dialog *)>(Sexy_SexyAppBase_AddDialogAddr)(this, theDialog);
     }

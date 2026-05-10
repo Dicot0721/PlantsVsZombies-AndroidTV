@@ -2860,7 +2860,7 @@ bool Board::IsLevelDataLoaded() {
 bool Board::NeedSaveGame() {
     // 可以让结盟关卡存档
     if (mApp->IsCoopMode()) {
-        return true;
+        return mApp->mGameScene == SCENE_PLAYING;
     }
     return old_Board_NeedSaveGame(this);
 }
