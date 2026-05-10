@@ -46,38 +46,18 @@ void CutScene::Update() {
         return;
     if (mApp->mGameMode == GameMode::GAMEMODE_ADVENTURE_TWO_PLAYER || mApp->IsCoopMode()) {
         if (mApp->mSecondPlayerGamepadIndex == -1 && !mApp->GetDialog(Dialogs::DIALOG_CONTINUE) && !mApp->GetDialog(Dialogs::DIALOG_WAIT_FOR_SECOND_PLAYER)) {
+            mApp->SetSecondPlayer(1);
+            // 未来做结盟联机时，可恢复显示WaitForSecondPlayerDialog
 
-            auto *aDialog = new WaitForSecondPlayerDialog(mApp);
-            mApp->AddDialog(aDialog);
-            mApp->mWidgetManager->SetFocus(aDialog);
-
-            int buttonId = aDialog->WaitForResult(true);
-            if (buttonId == 1001) {
-                mBoard->unknownBool = true;
-            } else {
-
-                SeedBank *seedBank2 = mApp->mBoard->mSeedBank[1];
-                if (seedBank2) {
-                    SeedBank *seedBank = (SeedBank *)operator new(sizeof(SeedBank));
-                    seedBank->mNumPackets = seedBank2->mNumPackets;
-                    for (int i = 0; i < seedBank2->mNumPackets; ++i) {
-                        seedBank->mSeedPackets[i] = seedBank2->mSeedPackets[i];
-                    }
-
-                    for (int i = 0; i < 7; ++i) {
-                        seedBank->mShopSeedPackets[i] = seedBank2->mShopSeedPackets[i];
-                    }
-
-                    // seedBank2->~SeedBank();
-                    // mApp->mBoard->mSeedBank[1] = nullptr;
-                    mApp->SetSecondPlayer(1);
-                    mApp->mBoard->mGamepadControls[1]->mPlayerIndex2 = 1;
-                    for (int i = 0; i < seedBank->mNumPackets; ++i) {
-                        seedBank->mSeedPackets[i].mSeedBank = seedBank;
-                    }
-                    // mApp->mBoard->mSeedBank[1] = seedBank;
-                }
-            }
+            //            auto *aDialog = new WaitForSecondPlayerDialog(mApp);
+            //            mApp->AddDialog(aDialog);
+            //            mApp->mWidgetManager->SetFocus(aDialog);
+            //
+            //            int buttonId = aDialog->WaitForResult(true);
+            //            if (buttonId == 1001) {
+            //                mBoard->unknownBool = true;
+            //            } else {
+            //            }
             return;
         }
     }

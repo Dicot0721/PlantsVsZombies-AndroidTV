@@ -621,12 +621,6 @@ void WaitForSecondPlayerDialog::ShowTextInput(const char *titleKey, const char *
 void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     old_WaitForSecondPlayerDialog_WaitForSecondPlayerDialog(this, theApp);
 
-    // 结盟模式先不显示此对话框，后续再做结盟联机
-    if (mApp->IsCoopMode()) {
-        mApp->SetSecondPlayer(1);
-        LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Enter);
-        return;
-    }
 
     // 解决此Dialog显示时背景僵尸全部聚集、且草丛大块空缺的问题
     if (theApp->mBoard != nullptr) {
