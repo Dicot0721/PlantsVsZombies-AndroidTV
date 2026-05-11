@@ -200,11 +200,8 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
             Sexy::IMAGE_CURSOR_P1_TEXT = IMAGE_BLANK;
             old_GamepadControls_Draw(this, g);
             const bool isHostSide = (mPlayerIndex2 == 0);
-            TodDrawString(g, isHostSide ? hostName : guestName, mCursorPositionX - 5,
-                          mCursorPositionY - 60,
-                          Sexy::FONT_DWARVENTODCRAFT18,
-                          Color(255, 242, 14, 255),
-                          DrawStringJustification::DS_ALIGN_CENTER);
+            TodDrawString(
+                g, isHostSide ? hostName : guestName, mCursorPositionX - 5, mCursorPositionY - 60, Sexy::FONT_DWARVENTODCRAFT18, Color(255, 242, 14, 255), DrawStringJustification::DS_ALIGN_CENTER);
             Sexy::IMAGE_CURSOR_P1_TEXT = tmp1;
             return;
         }
@@ -213,11 +210,8 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
             Sexy::IMAGE_CURSOR_P2_TEXT = IMAGE_BLANK;
             old_GamepadControls_Draw(this, g);
             const bool isHostSide = (mPlayerIndex2 == 0);
-            TodDrawString(g, isHostSide ? hostName : guestName, mCursorPositionX - 5,
-                          mCursorPositionY - 60,
-                          Sexy::FONT_DWARVENTODCRAFT18,
-                          Color(68, 207, 255, 255),
-                          DrawStringJustification::DS_ALIGN_CENTER);
+            TodDrawString(
+                g, isHostSide ? hostName : guestName, mCursorPositionX - 5, mCursorPositionY - 60, Sexy::FONT_DWARVENTODCRAFT18, Color(68, 207, 255, 255), DrawStringJustification::DS_ALIGN_CENTER);
             Sexy::IMAGE_CURSOR_P2_TEXT = tmp;
             return;
         }
