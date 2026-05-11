@@ -389,19 +389,6 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
                 pvzstl::string delayText = gIsServerModeSpectator ? StrFormat("[%s] %dms", TodStringTranslate("[SPECTATE]").c_str(), gNetDelayNow * 10) : StrFormat(fmt.c_str(), gNetDelayNow * 10);
                 TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), delayText.c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             }
-
-
-            if (gNetDelayNow == 0) {
-                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[SPECTATE]").c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
-            } else {
-                TodDrawString(g,
-                              StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat("%s %dms", TodStringTranslate("[SPECTATE]").c_str(), gNetDelayNow * 10).c_str()),
-                              400,
-                              -20,
-                              Sexy::FONT_DWARVENTODCRAFT18,
-                              aColor,
-                              DS_ALIGN_CENTER);
-            }
         } else if (gTcpConnected) {
             if (gNetDelayNow == 0) {
                 TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);

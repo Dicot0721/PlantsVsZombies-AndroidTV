@@ -109,10 +109,10 @@ public:
     bool mServerHostForceRelay;
     bool mServerClientWantStart; // host side: guest asked to start
     bool mServerAskedWantStart;  // guest side: ask-start sent
-    int mServerHostedRoomId;  // created room id
-    int mServerJoinedRoomId;  // joined room id (optional)
-    int mServerLastQueryTick; // frame tick for auto query
-    int mServerLastRecvTick;  // for debug/timeout if needed
+    int mServerHostedRoomId;     // created room id
+    int mServerJoinedRoomId;     // joined room id (optional)
+    int mServerLastQueryTick;    // frame tick for auto query
+    int mServerLastRecvTick;     // for debug/timeout if needed
     char mServerHostedRoomName[128];
     char mServerJoinedRoomName[128];
     char mServerSpectatorNames[6][32];
@@ -168,7 +168,7 @@ public:
     void ServerSendExitRoom();
     void ServerSendLeaveRoom();
     void ServerSendKickGuest();
-    void ServerSendStart(); // host start (optional)
+    void ServerSendStart();    // host start (optional)
     void ServerSendAskStart(); // guest ask host to start
     void ServerSendSetSpectate(bool allow);
     bool ServerSendNatPort();
