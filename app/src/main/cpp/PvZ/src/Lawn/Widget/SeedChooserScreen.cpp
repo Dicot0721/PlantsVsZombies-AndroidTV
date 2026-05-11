@@ -573,10 +573,16 @@ void SeedChooserScreen::ClickedSeedInBank(ChosenSeed *theChosenSeed, unsigned in
 }
 
 void SeedChooserScreen::OnKeyDown(KeyCode theKey, unsigned int thePlayerIndex) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     old_SeedChooserScreen_OnKeyDown(this, theKey, thePlayerIndex);
 }
 
 void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int thePlayerIndex) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     // 修复结盟2P无法选择模仿者
     if (mApp->IsCoopMode() && theButton == GamepadButton::GAMEPAD_BUTTON_A) {
         if (mChooseState == SeedChooserState::CHOOSE_VIEW_LAWN) {
@@ -900,6 +906,9 @@ void SeedChooserScreen::ButtonPress(int theId) {
 }
 
 void SeedChooserScreen::ButtonDepress(int theId) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     if (mApp->IsVSMode() && !IsLocalChooserInputAllowed(this)) {
         return;
     }
@@ -1118,6 +1127,9 @@ void SeedChooserScreen::MouseMove(int x, int y) {
 }
 
 void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     NormalizeLocalPoint(this, x, y);
     if (x < 0 || x >= mWidth || y < 0 || y >= mHeight) {
         return;
@@ -1253,6 +1265,9 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
 }
 
 void SeedChooserScreen::MouseDrag(int x, int y) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     if (mApp->IsVSMode() && !IsLocalChooserInputAllowed(this)) {
         return;
     }
@@ -1332,6 +1347,13 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
 }
 
 void SeedChooserScreen::MouseUp(int x, int y) {
+    if (gIsServerModeSpectator) {
+        if (gSeedChooserTouchOwner == this) {
+            gSeedChooserTouchState = SeedChooserTouchState::SEEDCHOOSER_TOUCHSTATE_NONE;
+            gSeedChooserTouchOwner = nullptr;
+        }
+        return;
+    }
     if (mApp->IsVSMode() && !IsLocalChooserInputAllowed(this)) {
         if (gSeedChooserTouchOwner == this) {
             gSeedChooserTouchState = SeedChooserTouchState::SEEDCHOOSER_TOUCHSTATE_NONE;
@@ -1710,7 +1732,15 @@ void SeedChooserScreen::Draw(Graphics *g) {
             // 联机光标上绘制双方玩家昵称
             char *firstPlayerName = mBoard->mApp->mPlayerInfo->mName;
             if (gTcpConnected || gTcpClientSocket >= 0) {
-                if (gSecondPlayerName[0] != '\0') {
+                if (gIsServerModeSpectator || gServerHostName[0] != '\0') {
+                    const char *hostName = (gServerHostName[0] != '\0') ? gServerHostName : "Host";
+                    const char *guestName = (gSecondPlayerName[0] != '\0') ? gSecondPlayerName : "Guest";
+                    const bool isHostSide = (aPlayerIndex == 0);
+                    const char *name = isHostSide ? hostName : guestName;
+                    Color color = isHostSide ? Color(255, 242, 14, 255) : Color(68, 207, 255, 255);
+                    g->DrawImageF(aArrowImage, float(aCursorX + 25 - aArrowImage->mWidth / 2), float(aCursorY - 8) + aBounce);
+                    TodDrawString(g, name, aCursorX + 25 - aArrowImage->mWidth / 2, aCursorY - 10, Sexy::FONT_DWARVENTODCRAFT18, color, DrawStringJustification::DS_ALIGN_CENTER);
+                } else if (gSecondPlayerName[0] != '\0') {
                     char *name = mPlayerIndex ? (gTcpConnected ? gSecondPlayerName : firstPlayerName) : (gTcpClientSocket >= 0 ? gSecondPlayerName : firstPlayerName);
                     Color color = mPlayerIndex ? Color(68, 207, 255, 255) : Color(255, 242, 14, 255);
                     if (mBanningPhase) {

@@ -193,13 +193,14 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
     }
     // 联机光标上绘制双方玩家昵称
     if (gTcpConnected || gTcpClientSocket >= 0) {
+        const char *hostName = (gServerHostName[0] != '\0') ? gServerHostName : mBoard->mApp->mPlayerInfo->mName;
+        const char *guestName = (gSecondPlayerName[0] != '\0') ? gSecondPlayerName : "Guest";
         if (mPlayerIndex1 == 0 && gSecondPlayerName[0] != '\0') {
             Image *tmp1 = Sexy::IMAGE_CURSOR_P1_TEXT;
             Sexy::IMAGE_CURSOR_P1_TEXT = IMAGE_BLANK;
             old_GamepadControls_Draw(this, g);
-            TodDrawString(g,
-                          gTcpConnected ? gSecondPlayerName : mBoard->mApp->mPlayerInfo->mName,
-                          mCursorPositionX - 5,
+            const bool isHostSide = (mPlayerIndex2 == 0);
+            TodDrawString(g, isHostSide ? hostName : guestName, mCursorPositionX - 5,
                           mCursorPositionY - 60,
                           Sexy::FONT_DWARVENTODCRAFT18,
                           Color(255, 242, 14, 255),
@@ -211,9 +212,8 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
             Image *tmp = Sexy::IMAGE_CURSOR_P2_TEXT;
             Sexy::IMAGE_CURSOR_P2_TEXT = IMAGE_BLANK;
             old_GamepadControls_Draw(this, g);
-            TodDrawString(g,
-                          gTcpClientSocket >= 0 ? gSecondPlayerName : mBoard->mApp->mPlayerInfo->mName,
-                          mCursorPositionX - 5,
+            const bool isHostSide = (mPlayerIndex2 == 0);
+            TodDrawString(g, isHostSide ? hostName : guestName, mCursorPositionX - 5,
                           mCursorPositionY - 60,
                           Sexy::FONT_DWARVENTODCRAFT18,
                           Color(68, 207, 255, 255),

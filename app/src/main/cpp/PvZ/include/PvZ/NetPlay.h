@@ -29,7 +29,7 @@
 #include <string>
 #include <utility>
 
-inline constexpr uint32_t NETPLAY_VERSION = 3165;
+inline constexpr uint32_t NETPLAY_VERSION = 3166;
 
 enum EventType : uint8_t {
     EVENT_NULL,
@@ -55,7 +55,8 @@ enum EventType : uint8_t {
     EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND,
     EVENT_VSSETUPMENU_ENTER_STATE,
     EVENT_VSSETUPMENU_RANDOM_PICK,
-    EVENT_VSSETUPMENU_MOVE_CONTROLLER,
+    EVENT_SERVER_VSSETUPMENU_MOVE_CONTROLLER,
+    EVENT_CLIENT_VSSETUPMENU_MOVE_CONTROLLER,
     EVENT_CLIENT_VSSETUPMENU_REQUEST_SIDE,
     EVENT_SERVER_VSSETUPMENU_SET_SIDE,
     EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT,
@@ -359,6 +360,7 @@ inline sockaddr_in gBroadcastAddr;
 inline std::string gIfname;
 
 inline char gSecondPlayerName[32];
+inline char gServerHostName[32];
 
 // 客户端需要
 inline constexpr int MAX_SERVERS = 3;

@@ -50,6 +50,8 @@ struct ServerRoomItem {
     bool gaming;
     bool hostProbeDone;
     bool guestProbeDone;
+    bool spectateAllowed;
+    bool forceRelay;
 };
 
 class WaitForSecondPlayerDialog : public LawnDialog {
@@ -97,10 +99,14 @@ public:
     bool mServerConnecting; // non-blocking connect in progress
     bool mServerHosting;    // created a room
     bool mServerJoined;     // joined a room as guest
+    bool mServerSpectating; // joined as spectator
     bool mServerCreatePending;
     bool mServerHostProbeDone;
     bool mServerGuestProbeDone;
     bool mServerHostHasGuest; // server pushed guest joined/left
+    bool mServerHostSpectateAllowed;
+    bool mServerJoinedSpectateAllowed;
+    bool mServerHostForceRelay;
     bool mServerClientWantStart; // host side: guest asked to start
     bool mServerAskedWantStart;  // guest side: ask-start sent
     int mServerHostedRoomId;  // created room id
@@ -109,6 +115,8 @@ public:
     int mServerLastRecvTick;  // for debug/timeout if needed
     char mServerHostedRoomName[128];
     char mServerJoinedRoomName[128];
+    char mServerSpectatorNames[6][32];
+    int mServerSpectatorCount;
 
     char mServerIp[INET_ADDRSTRLEN];
     int mServerPort;
@@ -162,6 +170,7 @@ public:
     void ServerSendKickGuest();
     void ServerSendStart(); // host start (optional)
     void ServerSendAskStart(); // guest ask host to start
+    void ServerSendSetSpectate(bool allow);
     bool ServerSendNatPort();
     bool ServerSendP2PProbe();
     bool ServerOpenP2PListener();

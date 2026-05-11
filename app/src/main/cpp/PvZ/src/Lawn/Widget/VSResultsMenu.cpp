@@ -19,6 +19,7 @@
 
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
 #include "Homura/Logger.h"
+#include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/NetPlay.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
@@ -89,6 +90,31 @@ void VSResultsMenu::OnExit() {
 void VSResultsMenu::ButtonDepress(int theId) {
     if (mIsFading)
         return;
+
+    if (gIsServerModeSpectator && (gTcpConnected || gTcpServerSocket >= 0 || gTcpClientSocket >= 0)) {
+        if (gTcpServerSocket >= 0) {
+            shutdown(gTcpServerSocket, SHUT_RDWR);
+            close(gTcpServerSocket);
+            gTcpServerSocket = -1;
+        }
+        if (gTcpClientSocket >= 0) {
+            shutdown(gTcpClientSocket, SHUT_RDWR);
+            close(gTcpClientSocket);
+            gTcpClientSocket = -1;
+        }
+        gTcpConnected = false;
+        gTcpConnecting = false;
+        gIsServerModeNetplay = false;
+        gServerModeTransport = ServerModeTransport::NONE;
+        gIsServerModeSpectator = false;
+        gSecondPlayerName[0] = '\0';
+        gServerHostName[0] = '\0';
+        netplay::ClearSendBuffer();
+
+        mResultsButtonId = theId;
+        OnExit();
+        return;
+    }
 
     if (theId == VSResultsMenu::VSResultsMenu_Quit_VS) {
         mResultsButtonId = theId;
@@ -172,9 +198,9 @@ void VSResultsMenu::DrawInfoBox(Sexy::Graphics *a2, int a3) {
     pvzstl::string playerFmt = TodStringTranslate("[PLAYER_FMT]");
     pvzstl::string playerLabel = StrFormat(playerFmt.c_str(), a3 + 1);
     if ((gTcpConnected || gTcpClientSocket >= 0) && gSecondPlayerName[0] != '\0') {
-        const char *localPlayerName = gLawnApp->mPlayerInfo->mName;
-        const int localPlayerIndex = gTcpConnected ? 1 : 0;
-        playerLabel = (this76Side == localPlayerIndex) ? localPlayerName : gSecondPlayerName;
+        const char *hostName = (gServerHostName[0] != '\0') ? gServerHostName : gLawnApp->mPlayerInfo->mName;
+        const char *guestName = gSecondPlayerName;
+        playerLabel = (this76Side == 0) ? hostName : guestName;
     }
 
     a2->SetColor(Sexy::Color::White);

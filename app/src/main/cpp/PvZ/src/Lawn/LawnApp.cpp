@@ -260,6 +260,7 @@ void LawnApp::DoConfirmBackToMain(bool theIsSave) {
 void LawnApp::ClearSecondPlayer() {
     gIsServerModeNetplay = false;
     gServerModeTransport = ServerModeTransport::NONE;
+    gIsServerModeSpectator = false;
     if (gTcpConnected) {
         close(gTcpServerSocket);
         gTcpServerSocket = -1;
@@ -433,11 +434,25 @@ void LawnApp::HandleTcpServerMessage(const std::byte *buf, size_t bufSize) {
             }
         } else if (event->type >= EVENT_CLIENT_BOARD_TOUCH_DOWN && event->type < NUM_EVENT_BOARD) {
             if (mBoard != nullptr) {
-                mBoard->processServerEvent(event);
+                const bool spectatorClientTouch = gIsServerModeSpectator
+                    && (event->type == EVENT_CLIENT_BOARD_TOUCH_DOWN || event->type == EVENT_CLIENT_BOARD_TOUCH_DRAG || event->type == EVENT_CLIENT_BOARD_TOUCH_UP
+                        || event->type == EVENT_CLIENT_BOARD_PAUSE || event->type == EVENT_CLIENT_BOARD_CONCEDE);
+                if (spectatorClientTouch) {
+                    // Spectator consumes selected client->host events locally.
+                    mBoard->processClientEvent(event);
+                } else {
+                    mBoard->processServerEvent(event);
+                }
             }
         } else if (event->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && event->type < NUM_EVENT_VSSETUPMENU) {
             if (mVSSetupMenu != nullptr) {
-                mVSSetupMenu->processServerEvent(event);
+                const bool spectatorClientVsSetupEvent = gIsServerModeSpectator && (event->type == EVENT_CLIENT_VSSETUPMENU_MOVE_CONTROLLER || event->type == EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED);
+                if (spectatorClientVsSetupEvent) {
+                    // Spectator consumes selected client->host VS setup/seedchooser events locally.
+                    mVSSetupMenu->processClientEvent(event);
+                } else {
+                    mVSSetupMenu->processServerEvent(event);
+                }
             }
         } else if (event->type >= EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK && event->type < NUM_EVENT_WAITFORSECONDPALYER) {
             if (auto *dialog = GetDialog(DIALOG_WAIT_FOR_SECOND_PLAYER)) {

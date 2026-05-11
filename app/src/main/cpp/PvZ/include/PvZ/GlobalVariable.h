@@ -108,6 +108,7 @@ enum class ServerModeTransport {
 
 inline bool gIsServerModeNetplay = false;
 inline ServerModeTransport gServerModeTransport = ServerModeTransport::NONE;
+inline bool gIsServerModeSpectator = false;
 
 struct AddonImages {
     Sexy::Image *pole_night;

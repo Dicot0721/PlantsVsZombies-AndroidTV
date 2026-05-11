@@ -246,6 +246,9 @@ void VSSetupMenu::AddedToManager(Sexy::WidgetManager *theWidgetManager) {
 }
 
 void VSSetupMenu::MouseDown(int x, int y, int theCount) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     if (mState == VS_SETUP_STATE_SIDES) {
         Sexy::Widget *theController1Widget = FindWidget(7);
         Sexy::Widget *theController2Widget = FindWidget(8);
@@ -269,13 +272,16 @@ void VSSetupMenu::MouseDown(int x, int y, int theCount) {
 }
 
 void VSSetupMenu::MouseDrag(int x, int y) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     if (touchingOnWhichController == 1) {
         if (gTcpConnected)
             return;
         Sexy::Widget *theController1Widget = FindWidget(7);
         theController1Widget->Move(theController1Widget->mX + x - touchDownX, theController1Widget->mY);
         if (gTcpClientSocket >= 0) {
-            U16_Event event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController1Widget->mX)};
+            U16_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController1Widget->mX)};
             netplay::PutEvent(event);
         }
     } else if (touchingOnWhichController == 2) {
@@ -284,7 +290,7 @@ void VSSetupMenu::MouseDrag(int x, int y) {
         Sexy::Widget *theController2Widget = FindWidget(8);
         theController2Widget->Move(theController2Widget->mX + x - touchDownX, theController2Widget->mY);
         if (gTcpServerSocket >= 0) {
-            U16_Event event = {{EventType::EVENT_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController2Widget->mX)};
+            U16_Event event = {{EventType::EVENT_CLIENT_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController2Widget->mX)};
             netplay::PutEvent(event);
         }
     }
@@ -292,6 +298,9 @@ void VSSetupMenu::MouseDrag(int x, int y) {
 }
 
 void VSSetupMenu::MouseUp(int x, int y, int theCount) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
 
     if (touchingOnWhichController == 1) {
         if (gTcpConnected)
@@ -535,11 +544,13 @@ void VSSetupMenu::processClientEvent(const BaseEvent *event) {
             //            gTcpConnected = true;
             //            VSBackGround = tmp;
             //        } break;
-        case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
+        case EVENT_CLIENT_VSSETUPMENU_MOVE_CONTROLLER: {
             auto *event1 = static_cast<const U16_Event *>(event);
             Sexy::Widget *theController2Widget = FindWidget(8);
-            theController2Widget->Move(event1->data, theController2Widget->mY);
-            is2PControllerMoving = true;
+            if (theController2Widget != nullptr) {
+                theController2Widget->Move(event1->data, theController2Widget->mY);
+                is2PControllerMoving = true;
+            }
         } break;
         case EVENT_CLIENT_VSSETUPMENU_REQUEST_SIDE: {
             auto *event1 = static_cast<const U8_Event *>(event);
@@ -667,11 +678,13 @@ void VSSetupMenu::processServerEvent(const BaseEvent *event) {
                 mApp->mBoard->mSeedBank[1]->mSeedPackets[6].SetPacketType(SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
             }
         } break;
-        case EVENT_VSSETUPMENU_MOVE_CONTROLLER: {
+        case EVENT_SERVER_VSSETUPMENU_MOVE_CONTROLLER: {
             auto *event1 = static_cast<const U16_Event *>(event);
             Sexy::Widget *theController1Widget = FindWidget(7);
-            theController1Widget->Move(event1->data, theController1Widget->mY);
-            is1PControllerMoving = true;
+            if (theController1Widget != nullptr) {
+                theController1Widget->Move(event1->data, theController1Widget->mY);
+                is1PControllerMoving = true;
+            }
         } break;
         case EVENT_SERVER_VSSETUPMENU_SET_SIDE: {
             auto *event1 = static_cast<const U8U8_Event *>(event);

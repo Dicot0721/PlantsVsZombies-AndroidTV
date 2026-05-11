@@ -1416,6 +1416,13 @@ void Board::processClientEvent(const BaseEvent *event) {
     switch (event->type) {
         case EVENT_CLIENT_BOARD_TOUCH_DOWN: {
             auto *event1 = static_cast<const I16I16_Event *>(event);
+            if (gIsServerModeSpectator) {
+                GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
+                SeedBank *clientSeedBank = clientGamepadControls ? clientGamepadControls->GetSeedBank() : nullptr;
+                bool inClientSeedBank = clientSeedBank != nullptr && clientSeedBank->ContainsPoint(event1->data1, event1->data2);
+                ClientMouseDownLocal(event1->data1, event1->data2, inClientSeedBank);
+                break;
+            }
             MouseDownSecond(event1->data1, event1->data2, 0);
             GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
             U8U8I16I16_Event eventReply = {{EventType::EVENT_BOARD_TOUCH_DOWN_REPLY},
@@ -1427,6 +1434,10 @@ void Board::processClientEvent(const BaseEvent *event) {
         } break;
         case EVENT_CLIENT_BOARD_TOUCH_DRAG: {
             auto *event1 = static_cast<const I16I16_Event *>(event);
+            if (gIsServerModeSpectator) {
+                ClientMouseDragLocal(event1->data1, event1->data2);
+                break;
+            }
             MouseDragSecond(event1->data1, event1->data2);
             //            GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
             //            I16I16_Event eventReply = {{EventType::EVENT_BOARD_TOUCH_DRAG_REPLY}, int16_t(clientGamepadControls->mCursorPositionX), int16_t(clientGamepadControls->mCursorPositionY)};
@@ -1434,6 +1445,10 @@ void Board::processClientEvent(const BaseEvent *event) {
         } break;
         case EVENT_CLIENT_BOARD_TOUCH_UP: {
             auto *event1 = static_cast<const I16I16_Event *>(event);
+            if (gIsServerModeSpectator) {
+                ClientMouseUpLocal(event1->data1, event1->data2);
+                break;
+            }
             MouseUpSecond(event1->data1, event1->data2, 0);
             GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
             CursorObject *clientCursorObject = mGamepadControls[1]->mPlayerIndex2 == 1 ? mCursorObject[1] : mCursorObject[0];
@@ -2994,10 +3009,12 @@ void Board::Draw(Sexy::Graphics *g) {
 
         if (gTcpConnected) {
             if (gNetDelayNow == 0) {
-                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+                const char *status = gIsServerModeSpectator ? TodStringTranslate("[SPECTATE]").c_str() : TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str();
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), status), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
-                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+                pvzstl::string delayText = gIsServerModeSpectator ? StrFormat("%s %dms", TodStringTranslate("[SPECTATE]").c_str(), gNetDelayNow * 10) : StrFormat(fmt.c_str(), gNetDelayNow * 10);
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), delayText.c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             }
         } else if (gTcpClientSocket >= 0) {
             if (gNetDelayNow == 0) {
@@ -3045,6 +3062,12 @@ void Board::PauseFromSecondPlayer(bool thePause) {
 
 void Board::Pause(bool thePause) {
     LOG_DEBUG("Pause={}, remoteSync={}", thePause, gPauseSyncFromRemote);
+
+    // Spectator is read-only: block any local pause/resume attempts.
+    if (gIsServerModeSpectator && !gPauseSyncFromRemote) {
+        LOG_DEBUG("Pause blocked for spectator");
+        return;
+    }
 
     if (mPaused == thePause)
         return;
@@ -3479,6 +3502,9 @@ void Board::ClientMouseUpLocal(int x, int y) {
 
 // 触控落下手指在此处理
 void Board::MouseDown(int x, int y, int theClickCount) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
 
     if (mApp->mGameMode != GAMEMODE_MP_VS || (!gTcpConnected && gTcpClientSocket == -1)) {
         __MouseDown(x, y, theClickCount);
@@ -3881,6 +3907,9 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
 }
 
 void Board::MouseDrag(int x, int y) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     // Drag函数仅仅负责移动光标即可
 
     if (mApp->mGameMode != GAMEMODE_MP_VS) {
@@ -4080,6 +4109,9 @@ void Board::__MouseDrag(int x, int y) {
 }
 
 void Board::MouseUp(int x, int y, int theClickCount) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     if (mApp->mGameMode != GAMEMODE_MP_VS) {
         __MouseUp(x, y, theClickCount);
         return;
@@ -4935,8 +4967,9 @@ void Board::UpdateButtons() {
     }
 
     if (mApp->IsVSMode()) {
-        gBoardMenuButton->mBtnNoDraw = false;
-        gBoardMenuButton->mDisabled = false;
+        const bool spectatorReadOnly = gIsServerModeSpectator;
+        gBoardMenuButton->mBtnNoDraw = spectatorReadOnly;
+        gBoardMenuButton->mDisabled = spectatorReadOnly;
     } else {
         if (mApp->mGameScene == GameScenes::SCENE_PLAYING) {
             gBoardMenuButton->mBtnNoDraw = false;
@@ -4955,6 +4988,11 @@ void Board::UpdateButtons() {
 
 
 void Board::ButtonDepress(int theId) {
+    if (gIsServerModeSpectator && theId == 1000) {
+        // Spectator cannot open pause/options menu.
+        return;
+    }
+
     if (theId == 1000) {
         LawnApp *lawnApp = gLawnApp;
         if (lawnApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_ZEN_GARDEN || lawnApp->mGameMode == GameMode::GAMEMODE_TREE_OF_WISDOM) {

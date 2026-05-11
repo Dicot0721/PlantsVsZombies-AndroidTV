@@ -18,6 +18,7 @@
  */
 
 #include "PvZ/Lawn/Widget/NewOptionsDialog.h"
+#include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/Music.h"
@@ -27,6 +28,10 @@
 void NewOptionsDialog::ButtonDepress(int buttonId) {
 
     if (buttonId == 5 && (gTcpConnected || gTcpClientSocket >= 0)) {
+        if (gIsServerModeSpectator) {
+            mApp->PlaySample(Sexy::SOUND_BUZZER);
+            return;
+        }
         mApp->PlaySample(Sexy::SOUND_GRAVEBUTTON);
 
         this->Sexy::Dialog::ButtonDepress(buttonId);

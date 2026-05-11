@@ -39,6 +39,20 @@ const char *GetServerModeTransportSuffix() {
     }
     return gServerModeTransport == ServerModeTransport::P2P ? " [P2P]" : gServerModeTransport == ServerModeTransport::RELAY ? " [Relay]" : "";
 }
+
+bool IsValidVsMode(int mode) {
+    switch (mode) {
+        case GAMEMODE_MP_VS_DAY:
+        case GAMEMODE_MP_VS_NIGHT:
+        case GAMEMODE_MP_VS_POOL_DAY:
+        case GAMEMODE_MP_VS_POOL_NIGHT:
+        case GAMEMODE_MP_VS_ROOF:
+        case GAMEMODE_MP_VS_SHUFFLE_MODE:
+            return true;
+        default:
+            return false;
+    }
+}
 } // namespace
 
 ChallengeDefinition gChallengeDefs[200] = {
@@ -365,7 +379,30 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
 
         Color aColor = Color(0, 205, 0, 255);
 
-        if (gTcpConnected) {
+        if (gIsServerModeSpectator) {
+
+            if (gNetDelayNow == 0) {
+                const char *status = gIsServerModeSpectator ? TodStringTranslate("[SPECTATE]").c_str() : TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str();
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), status), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+            } else {
+                pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
+                pvzstl::string delayText = gIsServerModeSpectator ? StrFormat("[%s] %dms", TodStringTranslate("[SPECTATE]").c_str(), gNetDelayNow * 10) : StrFormat(fmt.c_str(), gNetDelayNow * 10);
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), delayText.c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+            }
+
+
+            if (gNetDelayNow == 0) {
+                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[SPECTATE]").c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+            } else {
+                TodDrawString(g,
+                              StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat("%s %dms", TodStringTranslate("[SPECTATE]").c_str(), gNetDelayNow * 10).c_str()),
+                              400,
+                              -20,
+                              Sexy::FONT_DWARVENTODCRAFT18,
+                              aColor,
+                              DS_ALIGN_CENTER);
+            }
+        } else if (gTcpConnected) {
             if (gNetDelayNow == 0) {
                 TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             } else {
@@ -533,6 +570,9 @@ constexpr int mPageBottom = 555;
 } // namespace
 
 void ChallengeScreen::MouseDown(int x, int y, int theClickCount) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     if (y > mPageBottom || y < mPageTop) {
         gTouchOutSide = true;
     }
@@ -555,6 +595,9 @@ void ChallengeScreen::MouseDown(int x, int y, int theClickCount) {
 }
 
 void ChallengeScreen::MouseDrag(int x, int y) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     if (gTouchOutSide)
         return;
     int triggerHeight = gChallengeItemHeight / 2; // 调节此处以修改小游戏列表的滚动速度。滚动太快就会有BUG，好烦。
@@ -577,25 +620,49 @@ void ChallengeScreen::MouseDrag(int x, int y) {
 }
 
 void ChallengeScreen::MouseUp(int x, int y) {
+    if (gIsServerModeSpectator) {
+        gTouchOutSide = false;
+        gChallengeItemMoved = false;
+        return;
+    }
     if (!gTouchOutSide && !gChallengeItemMoved) {
+        if (gChallengeItemHeight <= 0) {
+            LOG_WARN("[ChallengeScreen] invalid item height={}", gChallengeItemHeight);
+            gTouchOutSide = false;
+            gChallengeItemMoved = false;
+            return;
+        }
         int gameIndex = mScreenTopChallengeIndex + (y - mPageTop) / gChallengeItemHeight;
-        if (mSelectedMode == mUnk1[gameIndex]) {
+        if (gameIndex < 0 || gameIndex >= mTotalGameInPage) {
+            LOG_WARN("[ChallengeScreen] drop MouseUp out-of-range gameIndex={} top={} y={} total={}", gameIndex, mScreenTopChallengeIndex, y, mTotalGameInPage);
+            gTouchOutSide = false;
+            gChallengeItemMoved = false;
+            return;
+        }
+        int nextMode = mUnk1[gameIndex];
+        if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS && !IsValidVsMode(nextMode)) {
+            LOG_WARN("[ChallengeScreen] drop MouseUp invalid VS mode={} gameIndex={}", nextMode, gameIndex);
+            gTouchOutSide = false;
+            gChallengeItemMoved = false;
+            return;
+        }
+        if (mSelectedMode == nextMode) {
             KeyDown(Sexy::KEYCODE_RETURN);
         } else {
             mApp->PlaySample(Sexy::SOUND_BUTTONCLICK);
             if (gTcpConnected) {
                 // 房客
-                U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mUnk1[gameIndex])};
+                U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE}, uint16_t(nextMode)};
                 netplay::PutEvent(event);
-                gChallengeScreenRequestState = mUnk1[gameIndex];
+                gChallengeScreenRequestState = nextMode;
             } else if (gTcpClientSocket >= 0) {
                 // 房主
-                mSelectedMode = mUnk1[gameIndex];
+                mSelectedMode = GameMode(nextMode);
                 U16_Event event = {{EventType::EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mSelectedMode)};
                 netplay::PutEvent(event);
             } else {
                 // 单机
-                mSelectedMode = mUnk1[gameIndex];
+                mSelectedMode = GameMode(nextMode);
             }
         }
     }
@@ -663,6 +730,10 @@ void ChallengeScreen::processClientEvent(const BaseEvent *event) {
     switch (event->type) {
         case EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE: {
             auto *eventButtonDepress = static_cast<const U16_Event *>(event);
+            if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS && !IsValidVsMode(eventButtonDepress->data)) {
+                LOG_WARN("[ChallengeScreen] ignore invalid client VS request mode={}", eventButtonDepress->data);
+                break;
+            }
             gChallengeScreenRequestState = eventButtonDepress->data;
         } break;
 
@@ -677,12 +748,20 @@ void ChallengeScreen::processServerEvent(const BaseEvent *event) {
         case EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS: {
             auto *eventBtnDepress = static_cast<const U16_Event *>(event);
             int theId = eventBtnDepress->data;
+            if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS && !IsValidVsMode(theId)) {
+                LOG_WARN("[ChallengeScreen] ignore invalid VS button depress mode={}", theId);
+                break;
+            }
             mSelectedMode = GameMode(theId);
             KeyDown_Origin(Sexy::KEYCODE_RETURN);
         } break;
         case EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE: {
             auto *event1 = static_cast<const U16_Event *>(event);
             int theId = event1->data;
+            if (mPageIndex == ChallengePage::CHALLENGE_PAGE_VS && !IsValidVsMode(theId)) {
+                LOG_WARN("[ChallengeScreen] ignore invalid VS select mode={}", theId);
+                break;
+            }
             mSelectedMode = GameMode(theId);
         } break;
         default:
