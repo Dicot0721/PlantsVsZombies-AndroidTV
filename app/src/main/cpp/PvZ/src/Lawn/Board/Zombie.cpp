@@ -985,7 +985,7 @@ void Zombie::UpdateZombieJackson() {
         Reanimation *aBodyReanim = mApp->ReanimationTryToGet(mBodyReanimID);
         if (aBodyReanim->mLoopCount > 0) {
             mApp->PlayFoley(FoleyType::FOLEY_THRILLER);
-            mBoard->DisplayAdviceAgain("[RAISE_DEAD]", MessageStyle::MESSAGE_STYLE_HUGE_WAVE, AdviceType::ADVICE_HUGE_WAVE);
+            mBoard->DisplayAdviceAgain("[THRILLER_NIGHT]", MessageStyle::MESSAGE_STYLE_HUGE_WAVE, AdviceType::ADVICE_HUGE_WAVE);
 
             RaiseDeadZombies();
             mZombiePhase = ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_HOLD;

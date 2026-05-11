@@ -186,12 +186,12 @@ void LawnApp::LoadAddonImages() {
     addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_HELMET2 = GetImageByFileName("reanim/Zombie_berserker_helmet2");
     addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_HELMET3 = GetImageByFileName("reanim/Zombie_berserker_helmet3");
     addonImages.IMAGE_REANIM_ZOMBIE_GIGA_FOOTBALL_LEFTARM_HAND = GetImageByFileName("reanim/Zombie_berserker_leftarm_hand");
-    addonImages.IMAGE_ZOMBIEJACKSONHEAD = GetImageByFileName("addonFiles/particles/ZombieJacksonHead");
-    addonImages.IMAGE_ZOMBIEBACKUPDANCERHEAD = GetImageByFileName("addonFiles/particles/ZombieBackupDancerHead");
+    addonImages.IMAGE_ZOMBIEJACKSONHEAD = GetImageByFileName("particles/ZombieDancerHead");
+    addonImages.IMAGE_ZOMBIEBACKUPDANCERHEAD = GetImageByFileName("particles/ZombieBackupDancerHead");
     addonImages.IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_UPPER2 = GetImageByFileName("addonFiles/reanim/ExtendedZombies/Zombie_jackson_outerarm_upper_bone");
     addonImages.IMAGE_REANIM_ZOMBIE_BACKUP_OUTERARM_UPPER2 = GetImageByFileName("addonFiles/reanim/ExtendedZombies/Zombie_backup_outerarm_upper_bone2");
-    addonImages.IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_HAND = GetImageByFileName("addonFiles/reanim/ExtendedZombies/Zombie_jackson_outerhand");
-    addonImages.IMAGE_REANIM_ZOMBIE_DANCER_INNERARM_HAND = GetImageByFileName("addonFiles/reanim/ExtendedZombies/Zombie_backup_innerhand2");
+    addonImages.IMAGE_REANIM_ZOMBIE_JACKSON_OUTERARM_HAND = GetImageByFileName("reanim/zombie_jackson_outerarm_hand");
+    addonImages.IMAGE_REANIM_ZOMBIE_DANCER_INNERARM_HAND = GetImageByFileName("reanim/zombie_dancer_innerarm_hand");
 
     //    int xClip = 130;
     //    int yClip = 130;
