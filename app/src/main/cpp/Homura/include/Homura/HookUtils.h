@@ -29,12 +29,8 @@
 namespace homura {
 
 namespace details {
-    // https://itanium-cxx-abi.github.io/cxx-abi/abi.html#member-function-pointers
-    struct CppMemFuncPtr {
-        void *ptr;
-        std::ptrdiff_t adj;
-    };
-    void CheckVirtualFunc(const CppMemFuncPtr &ptr);
+    struct CppMemFuncPtr;
+    void CheckVirtualFunc(const CppMemFuncPtr *ptr);
 
     void HookFuncImpl(void *symbol, void *newFunc, void **oldFuncAddr);
     bool HookVirtualFuncImpl(void *vTableSymbol, std::size_t index, void *newFunc, void **oldFuncAddr);
@@ -70,7 +66,7 @@ void HookFunc(void *symbol, R (*newFunc)(Args...), std::add_pointer_t<decltype(n
 template <typename R, typename T, typename... Args>
 void HookFunc(void *symbol, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
 #ifdef PVZ_DEBUG
-    details::CheckVirtualFunc(reinterpret_cast<details::CppMemFuncPtr &>(newFunc));
+    details::CheckVirtualFunc(reinterpret_cast<details::CppMemFuncPtr *>(&newFunc));
 #endif
     details::HookFuncImpl(symbol, reinterpret_cast<void *&>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }
@@ -78,7 +74,6 @@ void HookFunc(void *symbol, R (T::*newFunc)(Args...), std::type_identity_t<R (**
 /**
  * @brief 替换虚函数.
  *
- * @todo Remove this.
  *
  * @tparam R 目标函数的返回值类型.
  * @tparam Args 目标函数的参数类型.
@@ -111,7 +106,7 @@ bool HookVirtualFunc(void *vTableSymbol, std::size_t index, R (*newFunc)(Args...
 template <typename R, typename T, typename... Args>
 bool HookVirtualFunc(void *vTableSymbol, std::size_t index, R (T::*newFunc)(Args...), std::type_identity_t<R (**)(T *, Args...)> oldFuncAddr) {
 #ifdef PVZ_DEBUG
-    details::CheckVirtualFunc(reinterpret_cast<details::CppMemFuncPtr &>(newFunc));
+    details::CheckVirtualFunc(reinterpret_cast<details::CppMemFuncPtr *>(&newFunc));
 #endif
     return details::HookVirtualFuncImpl(vTableSymbol, index, reinterpret_cast<void *&>(newFunc), reinterpret_cast<void **>(oldFuncAddr));
 }

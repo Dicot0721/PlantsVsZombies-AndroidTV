@@ -27,9 +27,19 @@
 #include <cerrno>
 #include <cstring>
 
-void homura::details::CheckVirtualFunc(const CppMemFuncPtr &ptr) {
+#include <stdexcept>
+
+// https://itanium-cxx-abi.github.io/cxx-abi/abi.html#member-function-pointers
+struct homura::details::CppMemFuncPtr {
+    void *ptr;
+    std::ptrdiff_t adj;
+};
+
+void homura::details::CheckVirtualFunc(const CppMemFuncPtr *ptr) {
 #ifdef __arm__
-    assert((ptr.adj & 1) == 0);
+    if (ptr->adj & 1) {
+        throw std::logic_error{"Cannot use a virtual function to hook"};
+    }
 #else
 #warning "'CheckVirtualFunc' is unimpletement for non-ARM-32 architecture"
 #endif
