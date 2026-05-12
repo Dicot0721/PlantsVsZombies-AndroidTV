@@ -70,13 +70,19 @@ public:
     template <typename... Args>
         requires std::is_constructible_v<T, Args &&...>
     T &Construct(Args &&...args) {
-        return *std::construct_at(this->operator->(), std::forward<Args>(args)...);
+        return *std::construct_at(operator->(), std::forward<Args>(args)...);
     }
 
     template <typename U, typename... Args>
         requires std::is_constructible_v<T, std::initializer_list<U> &, Args &&...>
     T &Construct(std::initializer_list<U> ilist, Args &&...args) {
-        return *std::construct_at(this->operator->(), ilist, std::forward<Args>(args)...);
+        return *std::construct_at(operator->(), ilist, std::forward<Args>(args)...);
+    }
+
+    void Destruct()
+        requires std::is_destructible_v<T>
+    {
+        std::destroy_at(operator->());
     }
 
 protected:
@@ -89,13 +95,13 @@ protected:
  * 对象使用 placement new 创建, 但不需要使用显式析构函数调用销毁.
  */
 template <std::destructible T>
-class DestructStorage : public Storage<T> {
+class AutoDestructStorage : public Storage<T> {
 public:
-    constexpr DestructStorage() noexcept
+    constexpr AutoDestructStorage() noexcept
         : Storage<T>{} {};
 
-    ~DestructStorage() {
-        std::destroy_at(this->operator->());
+    ~AutoDestructStorage() {
+        this->Destruct();
     }
 };
 

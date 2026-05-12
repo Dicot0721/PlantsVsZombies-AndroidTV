@@ -62,7 +62,7 @@ inline void vformat(homura::Storage<pvzstl::string> &result, const char *fmt, st
 }
 
 [[gnu::format(printf, 1, 2)]] inline pvzstl::string StrFormat(const char *fmt, ...) {
-    homura::DestructStorage<pvzstl::string> result;
+    homura::AutoDestructStorage<pvzstl::string> result;
     std::va_list args;
     va_start(args, fmt);
     vformat(result, fmt, args);
