@@ -382,26 +382,26 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
         if (gIsServerModeSpectator) {
 
             if (gNetDelayNow == 0) {
-                const char *status = gIsServerModeSpectator ? TodStringTranslate("[SPECTATE]").c_str() : TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str();
-                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), status), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+                pvzstl::string status = TodStringTranslate(gIsServerModeSpectator ? "[SPECTATE]" : "[VS_STATUS_IN_ROOM]");
+                TodDrawString(g, GetServerModeTransportSuffix() + std::move(status), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
                 pvzstl::string delayText = gIsServerModeSpectator ? StrFormat("[%s] %dms", TodStringTranslate("[SPECTATE]").c_str(), gNetDelayNow * 10) : StrFormat(fmt.c_str(), gNetDelayNow * 10);
-                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), delayText.c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, GetServerModeTransportSuffix() + std::move(delayText), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             }
         } else if (gTcpConnected) {
             if (gNetDelayNow == 0) {
-                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_IN_ROOM]").c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, GetServerModeTransportSuffix() + TodStringTranslate("[VS_STATUS_IN_ROOM]"), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
-                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, GetServerModeTransportSuffix() + StrFormat(fmt.c_str(), gNetDelayNow * 10), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             }
         } else if (gTcpClientSocket >= 0) {
             if (gNetDelayNow == 0) {
-                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), TodStringTranslate("[VS_STATUS_HOST]").c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, GetServerModeTransportSuffix() + TodStringTranslate("[VS_STATUS_HOST]"), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_HOST_MS_FMT]");
-                TodDrawString(g, StrFormat("%s%s", GetServerModeTransportSuffix(), StrFormat(fmt.c_str(), gNetDelayNow * 10).c_str()), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
+                TodDrawString(g, GetServerModeTransportSuffix() + StrFormat(fmt.c_str(), gNetDelayNow * 10), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             }
         }
 
