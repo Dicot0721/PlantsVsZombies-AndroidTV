@@ -51,6 +51,12 @@ void GridItem::GridItemDie() {
         if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_DIE}, uint16_t(mBoard->mGridItems.DataArrayGetID(this))};
             netplay::PutEvent(event);
+            // 靶子和墓碑战损
+            if (mGridItemType == GridItemType::GRIDITEM_MP_TARGET_ZOMBIE) {
+                netplay::MetricsRecordTargetLoss();
+            } else if (mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
+                netplay::MetricsRecordGraveLoss();
+            }
         }
     }
 

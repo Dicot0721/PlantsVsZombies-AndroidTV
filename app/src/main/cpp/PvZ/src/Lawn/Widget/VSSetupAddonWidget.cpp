@@ -50,30 +50,30 @@ VSSetupAddonWidget::VSSetupAddonWidget(VSSetupMenu *theVSSetupMenu) {
     mBackButton->Resize(800, 520, 160, 50);
     mBoard->AddWidget(mBackButton);
 
-    mExtraPacketsMode = mApp->mPlayerInfo->mVSExtraPacketsMode;
-    mExtraSeedsMode = mApp->mPlayerInfo->mVSExtraSeedsMode;
+    mExtraPacketMode = mApp->mPlayerInfo->mVSExtraPacketMode;
+    mExtendedSeedsMode = mApp->mPlayerInfo->mVSExtendedSeedsMode;
     mBanMode = mApp->mPlayerInfo->mVSBanMode;
     mBalancePatchMode = mApp->mPlayerInfo->mVSBalancePatchMode;
     msBalancePatchMode = mBalancePatchMode;
 
-    mExtraPacketsCheckbox = MakeNewCheckbox(VSSetupAddonWidget_ExtraPackets, this, theVSSetupMenu, mExtraPacketsMode);
-    mExtraSeedsCheckbox = MakeNewCheckbox(VSSetupAddonWidget_ExtraSeeds, this, theVSSetupMenu, mExtraSeedsMode);
+    mExtraPacketCheckbox = MakeNewCheckbox(VSSetupAddonWidget_ExtraPacket, this, theVSSetupMenu, mExtraPacketMode);
+    mExtendedSeedsCheckbox = MakeNewCheckbox(VSSetupAddonWidget_ExtendedSeeds, this, theVSSetupMenu, mExtendedSeedsMode);
     mBanModeCheckbox = MakeNewCheckbox(VSSetupAddonWidget_BanMode, this, theVSSetupMenu, mBanMode);
     mBalancePatchCheckbox = MakeNewCheckbox(VSSetupAddonWidget_BalancePatch, this, theVSSetupMenu, mBalancePatchMode);
 
-    mBoard->AddWidget(mExtraPacketsCheckbox);
-    mBoard->AddWidget(mExtraSeedsCheckbox);
+    mBoard->AddWidget(mExtraPacketCheckbox);
+    mBoard->AddWidget(mExtendedSeedsCheckbox);
     mBoard->AddWidget(mBanModeCheckbox);
     mBoard->AddWidget(mBalancePatchCheckbox);
 
-    mExtraPacketsCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTRA_PACKETS_Y, 175, 50);
-    mExtraSeedsCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTRA_SEEDS_Y, 175, 50);
+    mExtraPacketCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTRA_PACKET_Y, 175, 50);
+    mExtendedSeedsCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_EXTENDED_SEEDS_Y, 175, 50);
     mBanModeCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BAN_MODE_Y, 175, 50);
     mBalancePatchCheckbox->Resize(VS_ADDON_BUTTON_X, VS_BUTTON_BALANCE_PATCH_Y, 175, 50);
 
     if (Challenge::msVSShuffleMode) {
-        SetDisable(mExtraPacketsCheckbox);
-        SetDisable(mExtraSeedsCheckbox);
+        SetDisable(mExtraPacketCheckbox);
+        SetDisable(mExtendedSeedsCheckbox);
         SetDisable(mBanModeCheckbox);
         SetDisable(mBalancePatchCheckbox);
         mBanMode = false;
@@ -85,11 +85,11 @@ VSSetupAddonWidget::~VSSetupAddonWidget() {
         if (mBackButton) {
             mBoard->RemoveWidget(mBackButton);
         }
-        if (mExtraPacketsCheckbox) {
-            mBoard->RemoveWidget(mExtraPacketsCheckbox);
+        if (mExtraPacketCheckbox) {
+            mBoard->RemoveWidget(mExtraPacketCheckbox);
         }
-        if (mExtraSeedsCheckbox) {
-            mBoard->RemoveWidget(mExtraSeedsCheckbox);
+        if (mExtendedSeedsCheckbox) {
+            mBoard->RemoveWidget(mExtendedSeedsCheckbox);
         }
         if (mBanModeCheckbox) {
             mBoard->RemoveWidget(mBanModeCheckbox);
@@ -100,8 +100,8 @@ VSSetupAddonWidget::~VSSetupAddonWidget() {
     }
 
     delete mBackButton;
-    delete mExtraPacketsCheckbox;
-    delete mExtraSeedsCheckbox;
+    delete mExtraPacketCheckbox;
+    delete mExtendedSeedsCheckbox;
     delete mBanModeCheckbox;
     delete mBalancePatchCheckbox;
 }
@@ -120,7 +120,7 @@ void VSSetupAddonWidget::ButtonDepress(this VSSetupAddonWidget &self, int theId)
 }
 
 void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
-    if (theId < VSSetupAddonWidget_ExtraPackets || theId > VSSetupAddonWidget_BalancePatch) {
+    if (theId < VSSetupAddonWidget_ExtraPacket || theId > VSSetupAddonWidget_BalancePatch) {
         return;
     }
     // guest 不能直接改选项，只能发起请求，随后回滚到当前状态
@@ -147,10 +147,10 @@ void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
 
 bool VSSetupAddonWidget::GetAddonMode(int theId) const {
     switch (theId) {
-        case VSSetupAddonWidget_ExtraPackets:
-            return mExtraPacketsMode;
-        case VSSetupAddonWidget_ExtraSeeds:
-            return mExtraSeedsMode;
+        case VSSetupAddonWidget_ExtraPacket:
+            return mExtraPacketMode;
+        case VSSetupAddonWidget_ExtendedSeeds:
+            return mExtendedSeedsMode;
         case VSSetupAddonWidget_BanMode:
             return mBanMode;
         case VSSetupAddonWidget_BalancePatch:
@@ -162,18 +162,18 @@ bool VSSetupAddonWidget::GetAddonMode(int theId) const {
 
 void VSSetupAddonWidget::SetAddonMode(int theId, bool checked, bool saveDetails) {
     switch (theId) {
-        case VSSetupAddonWidget_ExtraPackets:
-            mExtraPacketsMode = checked;
-            mExtraPacketsCheckbox->SetChecked(mExtraPacketsMode, false);
+        case VSSetupAddonWidget_ExtraPacket:
+            mExtraPacketMode = checked;
+            mExtraPacketCheckbox->SetChecked(mExtraPacketMode, false);
             if (saveDetails) {
-                mApp->mPlayerInfo->mVSExtraPacketsMode = mExtraPacketsMode;
+                mApp->mPlayerInfo->mVSExtraPacketMode = mExtraPacketMode;
             }
             break;
-        case VSSetupAddonWidget_ExtraSeeds:
-            mExtraSeedsMode = checked;
-            mExtraSeedsCheckbox->SetChecked(mExtraSeedsMode, false);
+        case VSSetupAddonWidget_ExtendedSeeds:
+            mExtendedSeedsMode = checked;
+            mExtendedSeedsCheckbox->SetChecked(mExtendedSeedsMode, false);
             if (saveDetails) {
-                mApp->mPlayerInfo->mVSExtraSeedsMode = mExtraSeedsMode;
+                mApp->mPlayerInfo->mVSExtendedSeedsMode = mExtendedSeedsMode;
             }
             break;
         case VSSetupAddonWidget_BanMode:
@@ -205,13 +205,13 @@ void VSSetupAddonWidget::Draw(Graphics *g) {
         return;
 
     g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
-    if (mExtraPacketsCheckbox->mVisible) {
-        g->SetColor(mExtraPacketsMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
-        g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SLOTS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_PACKETS_Y + 25);
+    if (mExtraPacketCheckbox->mVisible) {
+        g->SetColor(mExtraPacketMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
+        g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SLOTS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_PACKET_Y + 25);
     }
-    if (mExtraSeedsCheckbox->mVisible) {
-        g->SetColor(mExtraSeedsMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
-        g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SEEDS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTRA_SEEDS_Y + 25);
+    if (mExtendedSeedsCheckbox->mVisible) {
+        g->SetColor(mExtendedSeedsMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));
+        g->DrawString(TodStringTranslate("[VS_UI_EXTRA_SEEDS]"), VS_ADDON_BUTTON_X + 40, VS_BUTTON_EXTENDED_SEEDS_Y + 25);
     }
     if (mBanModeCheckbox->mVisible) {
         g->SetColor(mBanMode ? Color(255, 255, 153) : Color(0, 205, 0, 255));

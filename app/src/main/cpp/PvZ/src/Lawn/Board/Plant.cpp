@@ -1250,6 +1250,10 @@ void Plant::Die() {
         if (gTcpClientSocket >= 0) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_DIE}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
             netplay::PutEvent(event);
+            // 向日葵战损
+            if (mSeedType == SEED_SUNFLOWER) {
+                netplay::MetricsRecordSunflowerLoss();
+            }
         }
     }
 

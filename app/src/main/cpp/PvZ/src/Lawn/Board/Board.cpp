@@ -708,6 +708,8 @@ Plant *Board::AddPlant(int theGridX, int theGridY, SeedType theSeedType, SeedTyp
 
             //            aPlant->SyncPingPongAnimationToClient();
             aPlant->SyncAnimationToClient();
+            // 植物放置数量
+            netplay::MetricsRecordPlantUsed(int(theSeedType));
         }
     }
 
@@ -1369,6 +1371,8 @@ Zombie *Board::AddZombieInRow(ZombieType theZombieType, int theRow, int theFromW
                 event.data3[1].f32 = aZombie->mPosX;
                 netplay::PutEvent(event);
             }
+            // 僵尸放置数量
+            netplay::MetricsRecordZombieUsed(int(theZombieType));
         }
         return aZombie;
     }
@@ -1462,12 +1466,20 @@ void Board::processClientEvent(const BaseEvent *event) {
         case EVENT_CLIENT_BOARD_CONCEDE: {
             mApp->KillNewOptionsDialog();
             mApp->KillDialog(DIALOG_CONFIRM_IN_GAME_RESTART);
+            bool plantWin = true;
             if (mGamepadControls[1]->mPlayerIndex2 == 1) {
                 mApp->SetBoardResult(7);
                 mApp->mGameScene = SCENE_ZOMBIES_WON;
+                plantWin = false;
             } else {
                 mApp->SetBoardResult(8);
                 mApp->mGameScene = SCENE_PLANTS_WON;
+                plantWin = true;
+            }
+            if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
+                netplay::MetricsSetVsBackground(int(gVSBackground));
+                netplay::MetricsSetShuffleMode(Challenge::msVSShuffleMode);
+                netplay::MetricsSendSettlement(plantWin, mMainCounter);
             }
 
             mApp->ShowVSResultsScreen();
@@ -2248,8 +2260,8 @@ void Board::processServerEvent(const BaseEvent *event) {
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_WIN: {
-            auto *zombieWinEvent = static_cast<const U16U16_Event *>(event);
-            uint16_t serverZombieID = zombieWinEvent->data2;
+            auto *zombieWinEvent = static_cast<const U16_Event *>(event);
+            uint16_t serverZombieID = zombieWinEvent->data;
             uint16_t clientZombieID;
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
@@ -5294,8 +5306,8 @@ int Board::GetNumSeedsInBank(bool isZombieBank) {
     if (mApp->IsVSMode()) {
         VSSetupMenu *setupMenu = mApp->mVSSetupMenu;
         if (setupMenu) {
-            bool isExtraPackets = setupMenu->mAddonWidget->mExtraPacketsMode;
-            return isExtraPackets ? 7 : 6;
+            bool isExtraPacket = setupMenu->mAddonWidget->mExtraPacketMode;
+            return isExtraPacket ? 7 : 6;
         }
     }
 
@@ -6230,11 +6242,19 @@ void Board::PlantsWon(GridItem *theGridItem) {
     //    if (mApp->IsVSMode() && gTcpConnected)
     //        return;
     //
-    if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
-        U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_WIN}, uint16_t(mMainCounter)};
-        netplay::PutEvent(event);
-    }
+    //    if (gTcpClientSocket >= 0) {
+    //        U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_WIN},uint16_t(mGridItems.DataArrayGetID(theGridItem))};
+    //        netplay::PutEvent(event);
+    //    }
 
+    if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
+        // 所选对战场地
+        netplay::MetricsSetVsBackground(int(gVSBackground));
+        // 对战游戏模式
+        netplay::MetricsSetShuffleMode(Challenge::msVSShuffleMode);
+        // 植物胜利的对局时间
+        netplay::MetricsSendSettlement(true, mMainCounter);
+    }
     PlantsWon_Origin(theGridItem);
 }
 

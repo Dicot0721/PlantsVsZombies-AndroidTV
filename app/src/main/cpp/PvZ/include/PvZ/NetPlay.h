@@ -27,9 +27,11 @@
 
 #include <concepts>
 #include <string>
+#include <unordered_map>
 #include <utility>
+#include <vector>
 
-inline constexpr uint32_t NETPLAY_VERSION = 3167;
+inline constexpr uint32_t NETPLAY_VERSION = 3168;
 
 enum EventType : uint8_t {
     EVENT_NULL,
@@ -384,8 +386,30 @@ inline int gUdpScanSocket = -1;
 inline int gTcpServerSocket = -1;
 inline bool gTcpConnecting = false; // 正在尝试连接
 inline bool gTcpConnected = false;
+inline std::string gMetricsServerIp;
+inline int gMetricsServerPort = 0;
+inline int gMetricsRoomId = 0;
+inline int gMetricsVsBackground = -1;
+inline int gMetricsBattleType = -1; // 9 quick, 10 custom, 11 random
+inline bool gMetricsShuffleMode = false;
+inline bool gMetricsExtraPacket = false;
+inline bool gMetricsExtendedSeeds = false;
+inline bool gMetricsBanMode = false;
+inline bool gMetricsBalancePatch = false;
+inline int gMetricsMowerLoss = 0;
+inline int gMetricsTargetLoss = 0;
+inline int gMetricsGraveLoss = 0;
+inline int gMetricsSunflowerLoss = 0;
+inline std::unordered_map<int, int> gMetricsPlantUseCount;
+inline std::unordered_map<int, int> gMetricsZombieUseCount;
 
 namespace netplay {
+struct SettleEvent {
+    int seq;
+    char side;      // 'P' or 'Z'
+    char eventType; // 'K' (PICK) or 'B' (BAN)
+    int seedType;
+};
 
 namespace details {
     void PutEventData(const std::byte *data, std::size_t n);
@@ -414,6 +438,22 @@ std::size_t ParseEventSize(const std::byte *data);
  * @return dest 强制转换为 BaseEvent * 的结果
  */
 BaseEvent *GetEvent(std::byte *dest, const std::byte *src);
+
+void MetricsSetEndpoint(const std::string &ip, int roomPort);
+void MetricsSetRoomId(int roomId);
+void MetricsResetSettlementEvents();
+void MetricsRecordSeedEvent(bool zombieSide, bool banEvent, int seedType);
+void MetricsSetBattleType(int battleType);
+void MetricsSetShuffleMode(bool shuffleMode);
+void MetricsSetAddonFlags(bool extraPacket, bool extendedSeeds, bool banMode, bool balancePatch);
+void MetricsSetVsBackground(int background);
+void MetricsRecordPlantUsed(int seedType);
+void MetricsRecordZombieUsed(int zombieType);
+void MetricsRecordMowerLoss();
+void MetricsRecordTargetLoss();
+void MetricsRecordGraveLoss();
+void MetricsRecordSunflowerLoss();
+bool MetricsSendSettlement(bool plantWin, int mainCounter);
 
 } // namespace netplay
 

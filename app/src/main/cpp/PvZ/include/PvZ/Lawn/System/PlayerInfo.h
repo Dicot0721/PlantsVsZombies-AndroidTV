@@ -76,8 +76,8 @@ public:
     int mPurchases[36];                                         // 111 ~ 146 ，本应该是mPurchases[80]，111 ~ 190，但仅用到了前36个。
     bool mAchievements[AchievementType::NUM_ACHIEVEMENT_TYPES]; // 147 ~ 149, 从mPurchases[80]分出来的
     unsigned short mVSRoomPort;                                 // 150 ~
-    bool mVSExtraPacketsMode;
-    bool mVSExtraSeedsMode;
+    bool mVSExtraPacketMode;
+    bool mVSExtendedSeedsMode;
     bool mVSBanMode;
     bool mVSBalancePatchMode;
     bool mUnused606[2]; // 606 - 607

@@ -70,7 +70,7 @@ bool IsLocalChooserInputAllowed(SeedChooserScreen *screen) {
     return controlledSide == chooserSide;
 }
 
-bool IsExtraSeedsModeEnabled(SeedChooserScreen *screen) {
+bool IsExtendedSeedsModeEnabled(SeedChooserScreen *screen) {
     if (screen == nullptr || screen->mApp == nullptr || !screen->mApp->IsVSMode()) {
         return false;
     }
@@ -80,7 +80,7 @@ bool IsExtraSeedsModeEnabled(SeedChooserScreen *screen) {
         return false;
     }
 
-    return vsSetup->mAddonWidget->mExtraSeedsMode;
+    return vsSetup->mAddonWidget->mExtendedSeedsMode;
 }
 
 inline void NormalizeLocalPoint(SeedChooserScreen *screen, int &x, int &y) {
@@ -194,9 +194,9 @@ void SeedChooserScreen::_constructor(bool theIsZombieChooser) {
         }
 
         mBanningPhase = mApp->mVSSetupMenu->mAddonWidget->mBanMode;
-        mShowExtraSeeds = mApp->mVSSetupMenu->mAddonWidget->mExtraSeedsMode;
-        mHas7Packets = mApp->mVSSetupMenu->mAddonWidget->mExtraPacketsMode;
-        if (mIsZombieChooser && mShowExtraSeeds) {
+        mShowExtendedSeeds = mApp->mVSSetupMenu->mAddonWidget->mExtendedSeedsMode;
+        mHas7Packets = mApp->mVSSetupMenu->mAddonWidget->mExtraPacketMode;
+        if (mIsZombieChooser && mShowExtendedSeeds) {
             mPageButton = MakeNewButton(SeedChooserScreen::SeedChooserScreen_Page, this, this, "", nullptr, Sexy::IMAGE_ZEN_NEXTGARDEN, Sexy::IMAGE_ZEN_NEXTGARDEN, Sexy::IMAGE_ZEN_NEXTGARDEN);
             mPageButton->Resize(225, 525, 60, 60);
             AddWidget(mPageButton);
@@ -308,7 +308,7 @@ bool SeedChooserScreen::SeedNotAllowedToPick(SeedType theSeedType) {
                 return true;
             }
         }
-        if (mShowExtraSeeds && theSeedType == SeedType::SEED_BLOVER) {
+        if (mShowExtendedSeeds && theSeedType == SeedType::SEED_BLOVER) {
             return false;
         }
     }
@@ -472,6 +472,8 @@ void SeedChooserScreen::ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, in
                     }
                 }
 
+                // 记录禁卡
+                netplay::MetricsRecordSeedEvent(mIsZombieChooser, true, int(aSeedBanned));
                 mApp->PlayFoley(FoleyType::FOLEY_FLOOP);
                 OnPlayerPickedSeed(aGamepadIndex);
             }
@@ -521,6 +523,8 @@ void SeedChooserScreen::ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, in
 
     mSeedsInFlight++;
     mSeedsInBank++;
+    // 记录选卡
+    netplay::MetricsRecordSeedEvent(mIsZombieChooser, mBanningPhase, int(theChosenSeed.mSeedType));
 
     if (mApp->IsCoopMode() && thePlayerIndex == 1) {
         mSeedsIn2PBank++;
@@ -976,7 +980,7 @@ void SeedChooserScreen::GetSeedPositionInChooser(int theIndex, int &x, int &y) {
     }
     int aRow = theIndex / NumColumns();
     int aCol = theIndex % NumColumns();
-    if (mIsZombieChooser && aRow == 3 && !IsExtraSeedsModeEnabled(this)) {
+    if (mIsZombieChooser && aRow == 3 && !IsExtendedSeedsModeEnabled(this)) {
         x = 53 * aCol + 48;
     } else {
         x = 53 * aCol + 22;
@@ -1408,7 +1412,7 @@ void SeedChooserScreen::MouseUp(int x, int y) {
 
 int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, SeedDir theMoveDirection) {
     if (mIsZombieChooser) {
-        if (!mShowExtraSeeds) {
+        if (!mShowExtendedSeeds) {
             // 右下角边缘
             if ((theNumSeed == 14 && theMoveDirection == SeedDir::SEED_DIR_DOWN) || //
                 (theNumSeed == 18 && theMoveDirection == SeedDir::SEED_DIR_RIGHT)) {
@@ -1440,7 +1444,7 @@ int SeedChooserScreen::GetNextSeedInDir(int theNumSeed, SeedDir theMoveDirection
             }
             break;
         case SeedDir::SEED_DIR_DOWN: {
-            int aMaxRow = mIsZombieChooser ? (mShowExtraSeeds ? 4 : 3) // 拓展僵尸选卡适配键盘选取
+            int aMaxRow = mIsZombieChooser ? (mShowExtendedSeeds ? 4 : 3) // 拓展僵尸选卡适配键盘选取
                                            : (Has7Rows() ? 5 : 4);
             if (mPageIndex == 1) {
                 aMaxRow = 1;
@@ -1519,7 +1523,7 @@ void SeedChooserScreen::Draw(Graphics *g) {
         else
             aNumSeeds = 48;
     } else {
-        if (mShowExtraSeeds) {
+        if (mShowExtendedSeeds) {
             if (mPageIndex == 0) {
                 aNumSeeds = 25;
             } else if (mPageIndex == 1) {

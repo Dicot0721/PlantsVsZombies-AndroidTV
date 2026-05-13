@@ -132,15 +132,15 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
-                case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets: {
+                case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPacket: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
-                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraPacketsMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraPacketMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
-                case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds: {
+                case VSSetupAddonWidget::VSSetupAddonWidget_ExtendedSeeds: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
-                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraSeedsMode) ? "[VS_OPT_ENABLE_EXTRA_SEEDS]" : "[VS_OPT_DISABLE_EXTRA_SEEDS]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtendedSeedsMode) ? "[VS_OPT_ENABLE_EXTRA_SEEDS]" : "[VS_OPT_DISABLE_EXTRA_SEEDS]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
@@ -191,15 +191,15 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
-                case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets: {
+                case VSSetupAddonWidget::VSSetupAddonWidget_ExtraPacket: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
-                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraPacketsMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraPacketMode) ? "[VS_OPT_ENABLE_EXTRA_SLOTS]" : "[VS_OPT_DISABLE_EXTRA_SLOTS]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
-                case VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds: {
+                case VSSetupAddonWidget::VSSetupAddonWidget_ExtendedSeeds: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_GET_FMT]");
-                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtraSeedsMode) ? "[VS_OPT_ENABLE_EXTRA_SEEDS]" : "[VS_OPT_DISABLE_EXTRA_SEEDS]");
+                    pvzstl::string opt = TodStringTranslate((!mAddonWidget->mExtendedSeedsMode) ? "[VS_OPT_ENABLE_EXTRA_SEEDS]" : "[VS_OPT_DISABLE_EXTRA_SEEDS]");
                     TodDrawString(g, StrFormat(fmt.c_str(), opt.c_str()), 140, 620, Sexy::FONT_HOUSEOFTERROR28, Color(255, 255, 153), DrawStringJustification::DS_ALIGN_LEFT);
                     break;
                 }
@@ -716,8 +716,8 @@ void VSSetupMenu::processServerEvent(const BaseEvent *event) {
         } break;
         case EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT: {
             auto *eventButtonInit = static_cast<const B1x8_Event *>(event);
-            mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_ExtraPackets, eventButtonInit->data1, false);
-            mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_ExtraSeeds, eventButtonInit->data2, false);
+            mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_ExtraPacket, eventButtonInit->data1, false);
+            mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_ExtendedSeeds, eventButtonInit->data2, false);
             mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_BanMode, eventButtonInit->data3, false);
             mAddonWidget->SetAddonMode(VSSetupAddonWidget::VSSetupAddonWidget_BalancePatch, eventButtonInit->data4, false);
         } break;
@@ -769,8 +769,8 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         if (gTcpClientSocket >= 0 && !Challenge::msVSShuffleMode) {
             B1x8_Event event = {
                 {EventType::EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT},
-                mAddonWidget->mExtraPacketsMode,
-                mAddonWidget->mExtraSeedsMode,
+                mAddonWidget->mExtraPacketMode,
+                mAddonWidget->mExtendedSeedsMode,
                 mAddonWidget->mBanMode,
                 mAddonWidget->mBalancePatchMode,
             };
@@ -851,6 +851,11 @@ void VSSetupMenu::ButtonDepress(int theId) {
 }
 
 void VSSetupMenu::ButtonDepress_Origin(int theId) {
+    // 拓展功能开启情况
+    if (mAddonWidget) {
+        netplay::MetricsSetAddonFlags(mAddonWidget->mExtraPacketMode, mAddonWidget->mExtendedSeedsMode, mAddonWidget->mBanMode, mAddonWidget->mBalancePatchMode);
+    }
+
     int aNumPackets = mApp->mBoard->GetNumSeedsInBank(false);
 
     SeedBank *aPlantBank = mApp->mBoard->mSeedBank[0];
@@ -863,6 +868,8 @@ void VSSetupMenu::ButtonDepress_Origin(int theId) {
     if (mState == VSSetupState::VS_SETUP_STATE_SELECT_BATTLE) {
         switch (theId) {
             case VSSetupMenu_Quick_Play: {
+                // 所选战场
+                netplay::MetricsSetBattleType(VSSetupMenu_Quick_Play);
                 for (int aPlayerIndex = 0; aPlayerIndex < 2; ++aPlayerIndex) {
                     for (int aPacketIndex = 0; aPacketIndex < 6; ++aPacketIndex) {
                         SeedType aSeedType = msQuickPlayDecks[aPlayerIndex][aPacketIndex];
@@ -875,13 +882,14 @@ void VSSetupMenu::ButtonDepress_Origin(int theId) {
                 mSetupMode = VSSetupMode::VS_SETUP_MODE_QUICK_PLAY;
                 CloseVSSetup(false);
 
-                if (mAddonWidget->mExtraPacketsMode) { // 额外卡槽
+                if (mAddonWidget->mExtraPacketMode) { // 额外卡槽
                     aPlantBank->mSeedPackets[6].SetPacketType(SeedType::SEED_TORCHWOOD, SeedType::SEED_NONE);
                     aZombieBank->mSeedPackets[6].SetPacketType(SeedType::SEED_ZOMBIE_PAIL, SeedType::SEED_NONE);
                 }
             } break;
 
             case VSSetupMenu_Custom_Battle: {
+                netplay::MetricsSetBattleType(VSSetupMenu_Custom_Battle);
                 mApp->ShowSeedChooserScreen();
                 mApp->ShowZombieChooserScreen();
 
@@ -897,8 +905,8 @@ void VSSetupMenu::ButtonDepress_Origin(int theId) {
                 GoToState(VSSetupState::VS_SETUP_STATE_CUSTOM_BATTLE);
 
                 if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
-                    mAddonWidget->SetDisable(mAddonWidget->mExtraPacketsCheckbox);
-                    mAddonWidget->SetDisable(mAddonWidget->mExtraSeedsCheckbox);
+                    mAddonWidget->SetDisable(mAddonWidget->mExtraPacketCheckbox);
+                    mAddonWidget->SetDisable(mAddonWidget->mExtendedSeedsCheckbox);
                     mAddonWidget->SetDisable(mAddonWidget->mBanModeCheckbox);
                     mAddonWidget->SetDisable(mAddonWidget->mBalancePatchCheckbox);
                     mAddonWidget->SetDisable(mAddonWidget->mBackButton);
@@ -908,6 +916,7 @@ void VSSetupMenu::ButtonDepress_Origin(int theId) {
             } break;
 
             case VSSetupMenu_Random_Battle: {
+                netplay::MetricsSetBattleType(VSSetupMenu_Random_Battle);
                 std::vector<SeedType> aZombieSeeds;
                 PickRandomZombies(aZombieSeeds);
 

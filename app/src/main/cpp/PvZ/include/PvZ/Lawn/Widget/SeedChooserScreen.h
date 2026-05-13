@@ -134,7 +134,7 @@ public:
     int mSeedsInBanned = 0;
     BannedSeed mBannedSeed[NUM_ZOMBIE_SEED_TYPES]{};
     bool mBanningPhase = false;
-    bool mShowExtraSeeds = false;
+    bool mShowExtendedSeeds = false;
     bool mHas7Packets = false;
 
     SeedChooserScreen(bool theIsZombieChooser) {

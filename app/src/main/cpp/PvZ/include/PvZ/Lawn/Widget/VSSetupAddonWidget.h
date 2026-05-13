@@ -27,8 +27,8 @@
 #include "PvZ/SexyAppFramework/Widget/Widget.h"
 
 inline int VS_ADDON_BUTTON_X = 800;
-inline int VS_BUTTON_EXTRA_PACKETS_Y = 200;
-inline int VS_BUTTON_EXTRA_SEEDS_Y = 240;
+inline int VS_BUTTON_EXTRA_PACKET_Y = 200;
+inline int VS_BUTTON_EXTENDED_SEEDS_Y = 240;
 inline int VS_BUTTON_BAN_MODE_Y = 280;
 inline int VS_BUTTON_BALANCE_PATCH_Y = 320;
 
@@ -40,8 +40,8 @@ class Widget;
 class VSSetupAddonWidget final : public Sexy::CheckboxListener {
 public:
     enum {
-        VSSetupAddonWidget_ExtraPackets = 12,
-        VSSetupAddonWidget_ExtraSeeds,
+        VSSetupAddonWidget_ExtraPacket = 12,
+        VSSetupAddonWidget_ExtendedSeeds,
         VSSetupAddonWidget_BanMode,
         VSSetupAddonWidget_BalancePatch,
         VSSetupAddonWidget_Back,
@@ -53,12 +53,12 @@ public:
     Board *mBoard = mApp->mBoard;
     Sexy::ButtonListener *mButtonListener;
     NewLawnButton *mBackButton = nullptr;
-    Sexy::Checkbox *mExtraPacketsCheckbox = nullptr;
-    Sexy::Checkbox *mExtraSeedsCheckbox = nullptr;
+    Sexy::Checkbox *mExtraPacketCheckbox = nullptr;
+    Sexy::Checkbox *mExtendedSeedsCheckbox = nullptr;
     Sexy::Checkbox *mBanModeCheckbox = nullptr;
     Sexy::Checkbox *mBalancePatchCheckbox = nullptr;
-    bool mExtraPacketsMode = false;
-    bool mExtraSeedsMode = false;
+    bool mExtraPacketMode = false;
+    bool mExtendedSeedsMode = false;
     bool mBanMode = false;
     bool mBalancePatchMode = false;
     bool mDrawString = true;

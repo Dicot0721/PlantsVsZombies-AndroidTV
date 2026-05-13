@@ -322,6 +322,7 @@ static bool Mode3ConnectToTarget(WaitForSecondPlayerDialog *dialog, std::string_
 
     dialog->mServerIp[ip.copy(dialog->mServerIp, INET_ADDRSTRLEN - 1)] = '\0';
     dialog->mServerPort = port;
+    netplay::MetricsSetEndpoint(dialog->mServerIp, dialog->mServerPort);
     LOG_DEBUG("target: {}:{}", &dialog->mServerIp[0], dialog->mServerPort);
 
     dialog->mServerSock = socket(AF_INET, SOCK_STREAM, 0);
@@ -2147,6 +2148,8 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     mServerClientWantStart = false;
                     mServerAskedWantStart = false;
                     mServerHostedRoomId = id;
+                    netplay::MetricsSetRoomId(id);
+                    netplay::MetricsResetSettlementEvents();
                     mServerJoinedRoomId = 0;
                     mServerJoinedRoomName[0] = '\0';
                     mServerRoomCount = 0;
@@ -2264,6 +2267,8 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                     mServerHosting = false;
                     mServerHostedRoomId = 0;
                     mServerJoinedRoomId = rid;
+                    netplay::MetricsSetRoomId(rid);
+                    netplay::MetricsResetSettlementEvents();
                     mServerHostHasGuest = false;
                     mServerHostSpectateAllowed = false;
                     mServerJoinedSpectateAllowed = false;
@@ -3553,6 +3558,7 @@ void WaitForSecondPlayerDialog::ServerDisconnect([[maybe_unused]] const char *wh
     mServerAskedWantStart = false;
     mServerHostedRoomId = 0;
     mServerJoinedRoomId = 0;
+    netplay::MetricsResetSettlementEvents();
     mServerHostedRoomName[0] = '\0';
     mServerJoinedRoomName[0] = '\0';
     mServerSpectatorCount = 0;

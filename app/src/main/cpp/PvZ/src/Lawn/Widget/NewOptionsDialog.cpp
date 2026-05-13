@@ -20,6 +20,7 @@
 #include "PvZ/Lawn/Widget/NewOptionsDialog.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/Board/Board.h"
+#include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/Lawn/System/Music.h"
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
@@ -63,13 +64,19 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                     // 主机端点击投降
                     BaseEvent event = {EventType::EVENT_SERVER_BOARD_CONCEDE};
                     netplay::PutEvent(event);
+                    bool plantWin = true;
                     if (mApp->mBoard->mGamepadControls[0]->mPlayerIndex2 == 1) {
                         mApp->SetBoardResult(7);
                         mApp->mGameScene = SCENE_ZOMBIES_WON;
+                        plantWin = false;
                     } else {
                         mApp->SetBoardResult(8);
                         mApp->mGameScene = SCENE_PLANTS_WON;
+                        plantWin = true;
                     }
+                    netplay::MetricsSetVsBackground(int(gVSBackground));
+                    netplay::MetricsSetShuffleMode(Challenge::msVSShuffleMode);
+                    netplay::MetricsSendSettlement(plantWin, mApp->mBoard->mMainCounter);
                 }
 
 
