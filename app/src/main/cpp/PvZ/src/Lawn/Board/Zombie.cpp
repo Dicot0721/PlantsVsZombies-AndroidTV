@@ -2297,12 +2297,18 @@ void Zombie::CheckForBoardEdge() {
         if (mApp->IsIZombieLevel()) {
             DieNoLoot();
         } else {
-            mBoard->ZombiesWon(this);
-
             if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
-                U16U16_Event zombieWinEvent = {{EVENT_SERVER_BOARD_ZOMBIE_WIN}, uint16_t(mBoard->mMainCounter), uint16_t(mBoard->mZombies.DataArrayGetID(this))};
+                U16_Event zombieWinEvent = {{EVENT_SERVER_BOARD_ZOMBIE_WIN}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};
                 netplay::PutEvent(zombieWinEvent);
+                // 所选对战场地
+                netplay::MetricsSetVsBackground(int(gVSBackground));
+                // 对战游戏模式
+                netplay::MetricsSetShuffleMode(Challenge::msVSShuffleMode);
+                // 僵尸胜利的对局时间
+                netplay::MetricsSendSettlement(false, mBoard->mMainCounter);
             }
+
+            mBoard->ZombiesWon(this);
         }
     }
     if (mX <= boardEdge + 70 && !mHasHead) {
