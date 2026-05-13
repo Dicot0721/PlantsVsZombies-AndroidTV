@@ -2300,7 +2300,7 @@ void Zombie::CheckForBoardEdge() {
             mBoard->ZombiesWon(this);
 
             if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
-                U16_Event zombieWinEvent = {{EVENT_SERVER_BOARD_ZOMBIE_WIN}, uint16_t(mBoard->mZombies.DataArrayGetID(this))};
+                U16U16_Event zombieWinEvent = {{EVENT_SERVER_BOARD_ZOMBIE_WIN}, uint16_t(mBoard->mMainCounter), uint16_t(mBoard->mZombies.DataArrayGetID(this))};
                 netplay::PutEvent(zombieWinEvent);
             }
         }

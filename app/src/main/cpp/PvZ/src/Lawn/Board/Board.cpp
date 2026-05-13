@@ -2248,8 +2248,8 @@ void Board::processServerEvent(const BaseEvent *event) {
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_WIN: {
-            auto *zombieWinEvent = static_cast<const U16_Event *>(event);
-            uint16_t serverZombieID = zombieWinEvent->data;
+            auto *zombieWinEvent = static_cast<const U16U16_Event *>(event);
+            uint16_t serverZombieID = zombieWinEvent->data2;
             uint16_t clientZombieID;
             if (homura::FindInMap(serverZombieIDMap, serverZombieID, clientZombieID)) {
                 Zombie *aZombie = mZombies.DataArrayGet(clientZombieID);
@@ -6230,10 +6230,10 @@ void Board::PlantsWon(GridItem *theGridItem) {
     //    if (mApp->IsVSMode() && gTcpConnected)
     //        return;
     //
-    //    if (gTcpClientSocket >= 0) {
-    //        U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_WIN},uint16_t(mGridItems.DataArrayGetID(theGridItem))};
-    //        netplay::PutEvent(event);
-    //    }
+    if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
+        U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_WIN}, uint16_t(mMainCounter)};
+        netplay::PutEvent(event);
+    }
 
     PlantsWon_Origin(theGridItem);
 }

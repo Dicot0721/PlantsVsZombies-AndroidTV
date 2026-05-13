@@ -379,12 +379,14 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
     if (mApp->IsVSMode()) {
         if (gTcpConnected) {
             // 客户端始终上报点击事件：即使选卡失败，也用于同步光标位置。
-            U8x3_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED}, {uint8_t(selectedSeedType), uint8_t(mIsZombieChooser), 0}};
+            U8x3_Event event = {{mBanningPhase ? EventType::EVENT_CLIENT_SEEDCHOOSER_BAN_SEED : EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED},
+                                {uint8_t(selectedSeedType), uint8_t(mIsZombieChooser), 0}};
             netplay::PutEvent(event);
             return;
         } else if (gTcpClientSocket >= 0) {
             // 主机也广播该点击，远端可据此同步光标，再由主机权威决定是否入槽。
-            U8x3_Event event = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, {uint8_t(selectedSeedType), uint8_t(mIsZombieChooser), 0}};
+            U8x3_Event event = {{mBanningPhase ? EventType::EVENT_SERVER_SEEDCHOOSER_BAN_SEED : EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED},
+                                {uint8_t(selectedSeedType), uint8_t(mIsZombieChooser), 0}};
             netplay::PutEvent(event);
         }
 
@@ -1332,7 +1334,7 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
                 return;
             }
 
-            // data3: bit0 = isZombieChooser, bit7 = moveOnly(sync cursor without picking)
+            // data3 flags: bit0 = moveOnly(sync cursor without picking)
             if (gTcpConnected) {
                 U8x3_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED}, {uint8_t(hoverSeedType), uint8_t(mIsZombieChooser), 1}};
                 netplay::PutEvent(event);

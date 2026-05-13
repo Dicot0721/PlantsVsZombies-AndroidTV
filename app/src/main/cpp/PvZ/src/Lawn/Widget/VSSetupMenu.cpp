@@ -476,7 +476,8 @@ void VSSetupMenu::processClientEvent(const BaseEvent *event) {
             auto *eventBtnDepress = static_cast<const U8_Event *>(event);
             mApp->mZombieChooserScreen->ButtonDepress_Origin(eventBtnDepress->data);
         } break;
-        case EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED: {
+        case EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED:
+        case EVENT_CLIENT_SEEDCHOOSER_BAN_SEED: {
             auto *event1 = static_cast<const U8x3_Event *>(event);
             auto seedType = SeedType(event1->data[0]);
             bool isZombieChooser = event1->data[1] != 0;
@@ -516,7 +517,8 @@ void VSSetupMenu::processClientEvent(const BaseEvent *event) {
                 seedChooser->mSeedIndex2 = cursorSeedIndex;
 
             if (gTcpClientSocket >= 0) {
-                U8x3_Event syncEvent = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, {event1->data[0], event1->data[1], event1->data[2]}};
+                EventType syncType = event->type == EVENT_CLIENT_SEEDCHOOSER_BAN_SEED ? EventType::EVENT_SERVER_SEEDCHOOSER_BAN_SEED : EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED;
+                U8x3_Event syncEvent = {{syncType}, {event1->data[0], event1->data[1], event1->data[2]}};
                 netplay::PutEvent(syncEvent);
             }
 
@@ -611,7 +613,8 @@ void VSSetupMenu::processServerEvent(const BaseEvent *event) {
             LOG_DEBUG("theState={}", aState);
             // GoToState(aState);
         } break;
-        case EVENT_SERVER_SEEDCHOOSER_SELECT_SEED: {
+        case EVENT_SERVER_SEEDCHOOSER_SELECT_SEED:
+        case EVENT_SERVER_SEEDCHOOSER_BAN_SEED: {
             auto *event1 = static_cast<const U8x3_Event *>(event);
             auto seedType = SeedType(event1->data[0]);
             bool isZombieChooser = event1->data[1] != 0;
