@@ -581,14 +581,14 @@ void SeedChooserScreen::OnKeyDown(KeyCode theKey, unsigned int thePlayerIndex) {
     old_SeedChooserScreen_OnKeyDown(this, theKey, thePlayerIndex);
 }
 
-void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int thePlayerIndex) {
+void SeedChooserScreen::GameButtonDown(GamepadButton theButton, int thePlayerIndex, unsigned int theModifierFlag) {
     if (gIsServerModeSpectator) {
         return;
     }
     // 修复结盟2P无法选择模仿者
     if (mApp->IsCoopMode() && theButton == GamepadButton::GAMEPAD_BUTTON_A) {
         if (mChooseState == SeedChooserState::CHOOSE_VIEW_LAWN) {
-            old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
+            old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex, theModifierFlag);
             return;
         }
 
@@ -602,7 +602,7 @@ void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int the
             if (mChosenSeeds[SEED_IMITATER].mSeedState != ChosenSeedState::SEED_IN_BANK) {
                 // 先将已选种子数改为0，然后执行旧函数，这样模仿者选取界面就被打开了。
                 mSeedsInBank = 0;
-                old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
+                old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex, theModifierFlag);
                 // 然后再恢复已选种子数即可。
                 mSeedsInBank = aSeedsInBank;
                 return;
@@ -638,7 +638,7 @@ void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int the
                 }
             }
         }
-        old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
+        old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex, theModifierFlag);
         return;
     }
 
@@ -770,7 +770,7 @@ void SeedChooserScreen::GameButtonDown(GamepadButton theButton, unsigned int the
                 if (mChosenSeeds[SEED_IMITATER].mSeedState != ChosenSeedState::SEED_IN_BANK) {
                     int savedSeedsInBank = mSeedsInBank;
                     mSeedsInBank = 0;
-                    old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex);
+                    old_SeedChooserScreen_GameButtonDown(this, theButton, thePlayerIndex, theModifierFlag);
                     mSeedsInBank = savedSeedsInBank;
                     return;
                 }
@@ -1173,7 +1173,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
             mApp->PlaySample(Sexy::SOUND_TAP);
             gSeedChooserTouchState = SeedChooserTouchState::ViewLawnButton;
             gSeedChooserTouchOwner = this;
-            // GameButtonDown(seedChooserScreen, 8, 0);
+            // GameButtonDown(seedChooserScreen, 8, 0, 0);
             return;
         }
     }
@@ -1185,7 +1185,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
             mApp->PlaySample(Sexy::SOUND_TAP);
             gSeedChooserTouchState = SeedChooserTouchState::StoreButton;
             gSeedChooserTouchOwner = this;
-            // GameButtonDown(seedChooserScreen, 8, 0);
+            // GameButtonDown(seedChooserScreen, 8, 0, 0);
             return;
         }
     }
@@ -1209,7 +1209,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
             gSeedChooserTouchState = SeedChooserTouchState::AlmanacButton;
             gSeedChooserTouchOwner = this;
 
-            // GameButtonDown(seedChooserScreen, 9, 0);
+            // GameButtonDown(seedChooserScreen, 9, 0, 0);
             return;
         }
     }
@@ -1229,7 +1229,7 @@ void SeedChooserScreen::MouseDown(int x, int y, int theClickCount) {
                 mCursorPositionY2 = mImitaterPositionY;
                 mSeedIndex2 = SeedType::SEED_IMITATER;
             }
-            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, !m1PChoosingSeeds);
+            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, !m1PChoosingSeeds, 0);
             return;
         }
     }
@@ -1383,11 +1383,11 @@ void SeedChooserScreen::MouseUp(int x, int y) {
             break;
         case SeedChooserTouchState::SeedChooser:
             if (mApp->IsVSMode()) {
-                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, mPlayerIndex);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, mPlayerIndex, 0);
             } else if (!mIsZombieChooser && m1PChoosingSeeds && mApp->IsCoopMode()) {
-                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
             } else {
-                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
+                GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
             }
             break;
         case SeedChooserTouchState::StoreButton:

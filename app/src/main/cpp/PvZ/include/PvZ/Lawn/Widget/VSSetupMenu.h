@@ -122,8 +122,8 @@ public:
     // 大小336个整数, 以下是新增成员
     VSSetupAddonWidget *mAddonWidget;
 
-    void GameButtonDown(Sexy::GamepadButton theButton, unsigned int thePlayerIndex, int a4) {
-        reinterpret_cast<void (*)(VSSetupMenu *, Sexy::GamepadButton, unsigned int, int)>(VSSetupMenu_GameButtonDownAddr)(this, theButton, thePlayerIndex, a4);
+    void GameButtonDown(Sexy::GamepadButton theButton, int thePlayerIndex, unsigned int theModifierFlag) {
+        reinterpret_cast<void (*)(VSSetupMenu *, Sexy::GamepadButton, int, unsigned int)>(VSSetupMenu_GameButtonDownAddr)(this, theButton, thePlayerIndex, theModifierFlag);
     }
     void SetSecondPlayerIndex(int thePlayerIndex) {
         reinterpret_cast<void (*)(VSSetupMenu *, int)>(VSSetupMenu_SetSecondPlayerIndexAddr)(this, thePlayerIndex);

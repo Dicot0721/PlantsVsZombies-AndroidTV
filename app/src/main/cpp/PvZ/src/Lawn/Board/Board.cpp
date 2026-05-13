@@ -3573,7 +3573,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
 
     SeedChooserScreen *mSeedChooserScreen = mApp->mSeedChooserScreen;
     if (mGameScene == GameScenes::SCENE_LEVEL_INTRO && mSeedChooserScreen != nullptr && mSeedChooserScreen->mChooseState == SeedChooserState::CHOOSE_VIEW_LAWN) {
-        mSeedChooserScreen->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0);
+        mSeedChooserScreen->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
         return;
     }
     if (mGameScene == GameScenes::SCENE_LEVEL_INTRO) {
@@ -4262,7 +4262,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
 
     SeedChooserScreen *mSeedChooserScreen = mApp->mSeedChooserScreen;
     if (mGameScene == GameScenes::SCENE_LEVEL_INTRO && mSeedChooserScreen != nullptr && mSeedChooserScreen->mChooseState == SeedChooserState::CHOOSE_VIEW_LAWN) {
-        mSeedChooserScreen->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0);
+        mSeedChooserScreen->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
         return;
     }
     if (mGameScene == GameScenes::SCENE_LEVEL_INTRO) {
@@ -4952,7 +4952,7 @@ void Board::UpdateButtons() {
         gButtonCodeP2 = Sexy::GamepadButton::GAMEPAD_BUTTON_NONE;
     }
     if (gButtonDownSeedChooser) {
-        aSeedChooser->GameButtonDown(gButtonCode, gGamePlayerIndex);
+        aSeedChooser->GameButtonDown(gButtonCode, gGamePlayerIndex, 0);
         gButtonDownSeedChooser = false;
         gButtonCode = Sexy::GamepadButton::GAMEPAD_BUTTON_NONE;
         gGamePlayerIndex = -1;

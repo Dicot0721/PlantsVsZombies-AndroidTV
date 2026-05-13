@@ -1295,8 +1295,8 @@ void WaitForSecondPlayerDialog::processServerEvent(const BaseEvent *event) {
             strncpy(gSecondPlayerName, nameEvent->chars, sizeof(gSecondPlayerName) - 1);
         } break;
         case EVENT_WAITFORSECONDPALYER_START_GAME:
-            //            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
-            //            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
+            //            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
+            //            GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
             LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Enter); // 直接关闭自身
             break;
         default:
@@ -1891,8 +1891,8 @@ void WaitForSecondPlayerDialog::ButtonDepress_Thunk(this ButtonListener &self, i
             switch (aUIMode) {
                 case UIMode::MODE1_INIT:
                     // 本地游戏：按两下A
-                    //                    aDialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
-                    //                    aDialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1);
+                    //                    aDialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
+                    //                    aDialog->GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
                     aDialog->LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Enter);
                     break;
                 case UIMode::MODE2_WIFI:
