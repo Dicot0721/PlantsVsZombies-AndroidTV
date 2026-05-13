@@ -277,7 +277,7 @@ ChallengeDefinition &GetChallengeDefinition(int theChallengeMode) {
 }
 
 void ChallengeScreen::Draw(Sexy::Graphics *g) {
-    g->DrawImage(Sexy::IMAGE_CHALLENGE_BACKGROUND, LawnApp::FULLSCREEN_RECT, -60);
+    g->DrawImage(Sexy::IMAGE_CHALLENGE_BACKGROUND, LawnApp::FULLSCREEN_RECT.mX, -60);
 
     pvzstl::string aTitleString = mPageIndex == CHALLENGE_PAGE_SURVIVAL ? "[PICK_AREA]"
         : mPageIndex == CHALLENGE_PAGE_PUZZLE                           ? "[SCARY_POTTER]"

@@ -43,8 +43,15 @@ public:
     }
     // virtual void DrawString(Graphics* g, int theX, int theY, const pvzstl::string& theString, const Color& theColor, const Rect& theClipRect);
 
+    inline int StringWidth(const pvzstl::string &text) {
+        return reinterpret_cast<int (*)(Font *, const pvzstl::string &)>(Sexy_Font_StringWidthAddr)(this, text);
+    }
+
     int GetHeight() {
         return mHeight;
+    }
+    int GetAscent() {
+        return mAscent;
     }
 };
 

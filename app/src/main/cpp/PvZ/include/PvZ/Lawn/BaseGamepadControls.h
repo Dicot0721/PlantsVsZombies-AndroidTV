@@ -31,8 +31,8 @@ public:
     homura::Storage<GameObject> mGameObject; // 1 ~ 13
     Board *mBoard;                           // 14
     int unknown_always_1;                    // 15
-    float mUnkFirstHighlightRelated;         // 16
-    int mShovelRelated1;                     // 17
+    float mCursorHighlightAnimPhase;         // 16
+    int mGamepadFrameCounter;                // 17
     float mGamepadAccLeftX;
     float mGamepadAccLeftY;
     float mGridCenterPositionX;    // 20
@@ -52,10 +52,16 @@ public:
     int mPlayerIndex1;             // 37，P1/P2
     int mPlayerIndex2;             // 38，与mPlayerIndex完全相等，没有区别
     float mCursorPositionYJitter;  // 39
-    float mUpdateAdd0Dot016;       // 40
+    float mCursorJitterAnimPhase;  // 40
     int unkMems[2];                // 41 ~ 42
     // 大小43个整数
 
+    void Update(float dt) {
+        reinterpret_cast<void (*)(BaseGamepadControls *, float)>(BaseGamepadControls_UpdateAddr)(this, dt);
+    }
+    void GotoState(int state) {
+        reinterpret_cast<void (*)(BaseGamepadControls *, int)>(BaseGamepadControls_GotoStateAddr)(this, state);
+    }
     void GetGamepadVelocity(float *horizontal, float *vertical);
 
 protected:

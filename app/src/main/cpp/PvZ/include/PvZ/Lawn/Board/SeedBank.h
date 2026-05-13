@@ -25,9 +25,24 @@
 
 #include "SeedPacket.h"
 
-struct ShopSeedPacket {
-    int unknown[21];
-}; // 大小21个整数
+class SeedBank;
+
+struct ShopSeedPacket : GameObject {
+    int mStoreItemType;         // 13 (offset 52)
+    int mPacketOffsetX;         // 14 (offset 56)
+    SeedBank *mSeedBank;        // 15 (offset 60)
+    float mSelectAnimCounter;   // 16 (offset 64)
+    float mSelectArrowAnimTime; // 17 (offset 68)
+    float mSelectScale;         // 18 (offset 72)
+    SeedType mSeedType;         // 19 (offset 76)
+    bool mPlayerIndex;
+    bool mIsSelected;
+    bool mShowBothPlayerCursors;
+
+    void Update() {
+        reinterpret_cast<void (*)(ShopSeedPacket *)>(ShopSeedPacket_UpdateAddr)(this);
+    }
+}; // size: 21 ints
 
 
 class HitResult;
@@ -41,7 +56,7 @@ public:
     SeedPacket mSeedPackets[10];        // 18 ~ 307
     ShopSeedPacket mShopSeedPackets[7]; // 308 ~ 354
     int unknownMembers[100];            // 355 ~ 454
-    // 大小455个整数
+    // size: 455 ints
 
     int GetNumSeedsOnConveyorBelt() {
         return reinterpret_cast<int (*)(SeedBank *)>(SeedBank_GetNumSeedsOnConveyorBeltAddr)(this);

@@ -43,6 +43,7 @@ bool LoadGameMain() {
     Board_RemovedFromManagerAddr = libGameMain.GetSymbol("_ZN5Board18RemovedFromManagerEPN4Sexy13WidgetManagerE");
     Board_FadeOutLevelAddr = libGameMain.GetSymbol("_ZN5Board12FadeOutLevelEv");
     Board_MouseHitTestAddr = libGameMain.GetSymbol("_ZN5Board12MouseHitTestEiiP9HitResulti");
+    Board_MouseHitTestPlantAddr = libGameMain.GetSymbol("_ZN5Board17MouseHitTestPlantEiiP9HitResult");
     Board_CanUseGameObjectAddr = libGameMain.GetSymbol("_ZN5Board16CanUseGameObjectE14GameObjectType");
     Board_DrawAddr = libGameMain.GetSymbol("_ZN5Board4DrawEPN4Sexy8GraphicsE");
     Board_DrawZenButtonsAddr = libGameMain.GetSymbol("_ZN5Board14DrawZenButtonsEPN4Sexy8GraphicsE");
@@ -375,6 +376,7 @@ bool LoadGameMain() {
     GamepadControls_DrawAddr = libGameMain.GetSymbol("_ZN15GamepadControls4DrawEPN4Sexy8GraphicsE");
     GamepadControls_GamepadControlsAddr = libGameMain.GetSymbol("_ZN15GamepadControlsC2EP5Boardii");
     GamepadControls_UpdateAddr = libGameMain.GetSymbol("_ZN15GamepadControls6UpdateEf");
+    GamepadControls_UpdateStatesAddr = libGameMain.GetSymbol("_ZN15GamepadControls12UpdateStatesEf");
     GamepadControls_OnButtonDownAddr = libGameMain.GetSymbol("_ZN15GamepadControls12OnButtonDownEiij");
     GamepadControls_OnButtonUpAddr = libGameMain.GetSymbol("_ZN15GamepadControls10OnButtonUpEiij");
     GamepadControls_InvalidatePreviewReanimAddr = libGameMain.GetSymbol("_ZN15GamepadControls23InvalidatePreviewReanimEv");
@@ -1163,6 +1165,7 @@ bool LoadGameMain() {
     ToolTipWidget_SetWarningTextAddr = libGameMain.GetSymbol("_ZN13ToolTipWidget14SetWarningTextERKSs");
     ToolTipWidget_SetTitleAddr = libGameMain.GetSymbol("_ZN13ToolTipWidget8SetTitleERKSs");
     ToolTipWidget_SetLabelAddr = libGameMain.GetSymbol("_ZN13ToolTipWidget8SetLabelERKSs");
+    ToolTipWidget_GetLinesAddr = libGameMain.GetSymbol("_ZN13ToolTipWidget8GetLinesERSt6vectorISsSaISsEE");
     ToolTipWidget_DrawAddr = libGameMain.GetSymbol("_ZN13ToolTipWidget4DrawEPN4Sexy8GraphicsE");
 
     TodDrawImageCelCenterScaledFAddr = libGameMain.GetSymbol("_Z28TodDrawImageCelCenterScaledFPN4Sexy8GraphicsEPNS_5ImageEffiff");
@@ -1176,7 +1179,11 @@ bool LoadGameMain() {
     TodStringListFindAddr = libGameMain.GetSymbol("_Z17TodStringListFindRKSs");
     TodStringTranslateAddr = libGameMain.GetSymbol("_Z18TodStringTranslatePKc");
     GetRectOverlapAddr = libGameMain.GetSymbol("_Z14GetRectOverlapRKN4Sexy5TRectIiEES3_");
+    BaseGamepadControls_UpdateAddr = libGameMain.GetSymbol("_ZN19BaseGamepadControls6UpdateEf");
+    BaseGamepadControls_UpdateStatesAddr = libGameMain.GetSymbol("_ZN19BaseGamepadControls12UpdateStatesEf");
+    BaseGamepadControls_GotoStateAddr = libGameMain.GetSymbol("_ZN19BaseGamepadControls9GotoStateENS_13MovementStateE");
     BaseGamepadControls_GetGamepadVelocityAddr = libGameMain.GetSymbol("_ZN19BaseGamepadControls18GetGamepadVelocityERfS0_");
+    Sexy_Gamepad_IsButtonDownAddr = libGameMain.GetSymbol("_ZN4Sexy7Gamepad12IsButtonDownEi");
     LookupFoleyAddr = libGameMain.GetSymbol("_Z11LookupFoley9FoleyType");
     TodDrawStringWrappedHelperAddr = libGameMain.GetSymbol("_Z26TodDrawStringWrappedHelperPN4Sexy8GraphicsERKSsRKNS_5TRectIiEEPNS_4FontENS_5ColorE23DrawStringJustificationbb");
 
@@ -1250,6 +1257,7 @@ bool LoadGameMain() {
     TodFoley_PlayFoleyAddr = libGameMain.GetSymbol("_ZN8TodFoley9PlayFoleyE9FoleyType");
 
     Sexy_Font_CharWidthKernAddr = libGameMain.GetSymbol("_ZN4Sexy4Font13CharWidthKernEii");
+    Sexy_Font_StringWidthAddr = libGameMain.GetSymbol("_ZN4Sexy4Font11StringWidthERKSs");
 
     vTableForCursorObjectAddr = libGameMain.GetSymbol("_ZTV12CursorObject");
     vTableForBoardAddr = libGameMain.GetSymbol("_ZTV5Board");
@@ -1497,7 +1505,7 @@ int &Challenge::gVSWinMode = *libGameMain.GetSymbol<int>("_ZN9Challenge10gVSWinM
 int &Challenge::gVSResourseDropMode = *libGameMain.GetSymbol<int>("_ZN9Challenge19gVSResourseDropModeE");
 int &Challenge::gVSResourceDropCount = *libGameMain.GetSymbol<int>("_ZN9Challenge20gVSResourceDropCountE");
 
-int &LawnApp::FULLSCREEN_RECT = *libGameMain.GetSymbol<int>("_ZN7LawnApp15FULLSCREEN_RECTE");
+Sexy::Rect &LawnApp::FULLSCREEN_RECT = *libGameMain.GetSymbol<Sexy::Rect>("_ZN7LawnApp15FULLSCREEN_RECTE");
 int (&VSResultsMenu::msPlayerRecords)[2][5] = *libGameMain.GetSymbol<int[2][5]>("_ZN13VSResultsMenu15msPlayerRecordsE");
 
 DISABLE_WARNING_BEGIN("-Wextra-qualification") // warning: extra qualification on member 'xxx'

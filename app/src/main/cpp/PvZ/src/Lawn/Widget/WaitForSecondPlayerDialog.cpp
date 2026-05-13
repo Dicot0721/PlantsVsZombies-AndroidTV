@@ -2279,7 +2279,11 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
                         mServerJoinedRoomName[copyLen] = '\0';
                     }
                     if (mServerJoined) {
-                        std::strncpy(gSecondPlayerName, mServerJoinedRoomName, sizeof(gSecondPlayerName) - 1);
+                        // Guest join: JOIN_RESULT carries host name.
+                        std::strncpy(gServerHostName, mServerJoinedRoomName, sizeof(gServerHostName) - 1);
+                        gServerHostName[sizeof(gServerHostName) - 1] = '\0';
+                        const char *localName = (mApp && mApp->mPlayerInfo && mApp->mPlayerInfo->mName) ? mApp->mPlayerInfo->mName : "";
+                        std::strncpy(gSecondPlayerName, localName, sizeof(gSecondPlayerName) - 1);
                         gSecondPlayerName[sizeof(gSecondPlayerName) - 1] = '\0';
                         mServerStatusText = TodStringTranslate("[STATUS_JOINED_ROOM]");
                     } else {

@@ -31,11 +31,358 @@
 #include "PvZ/Lawn/Widget/VSSetupAddonWidget.h"
 #include "PvZ/NetPlay.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
+#include "PvZ/SexyAppFramework/Misc/Gamepad.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Effect/Attachment.h"
 #include "PvZ/TodLib/Effect/Reanimator.h"
+#include <cmath>
+#include <cstdint>
 
 using namespace Sexy;
+
+namespace {
+bool WidgetManagerIsEscDown(Sexy::WidgetManager *widgetManager) {
+    // Mirror original std::map<int,bool> key lookup for VK_ESCAPE (27).
+    int *manager = reinterpret_cast<int *>(widgetManager);
+    int *node = reinterpret_cast<int *>(manager[68]);
+    int *candidate = manager + 67;
+    while (node != nullptr) {
+        int key = node[4];
+        if (key <= 26) {
+            node = reinterpret_cast<int *>(node[3]);
+        } else {
+            candidate = node;
+        }
+        if (key > 26) {
+            node = reinterpret_cast<int *>(node[2]);
+        }
+    }
+    if (candidate == manager + 67 || candidate[4] > 27) {
+        return false;
+    }
+    return *(reinterpret_cast<unsigned char *>(candidate) + 20) != 0;
+}
+
+bool GamepadButtonDown(LawnApp *app, int playerIndex, int button) {
+    if (playerIndex < 0) {
+        return false;
+    }
+    auto *gamepad = reinterpret_cast<Sexy::Gamepad *>(static_cast<std::uintptr_t>(app->unkMem6[playerIndex + 135]));
+    if (gamepad == nullptr) {
+        return false;
+    }
+    return gamepad->IsButtonDown(button);
+}
+
+void GamepadControls_UpdateOriginal(GamepadControls *gamepadControls, float dt) {
+    if (gamepadControls->mPlayerIndex2 == -1) {
+        return;
+    }
+
+    LawnApp *app = gamepadControls->mGameObject->mApp;
+    if (app->HasGamepad() || (app->mGamePad1IsOn && app->mGamePad2IsOn)) {
+        if (gamepadControls->mGamepadState == 10) {
+            gamepadControls->GotoState(1);
+            gamepadControls->mIsShowingDigIndicator = false;
+        }
+        if (!GamepadButtonDown(app, gamepadControls->mPlayerIndex2, Sexy::GamepadButton::GAMEPAD_BUTTON_B) && gamepadControls->mGamepadState == 8) {
+            gamepadControls->GotoState(1);
+        }
+        if (!GamepadButtonDown(app, gamepadControls->mPlayerIndex2, Sexy::GamepadButton::GAMEPAD_BUTTON_X) && gamepadControls->mGamepadState == 3) {
+            gamepadControls->GotoState(4);
+        }
+    } else {
+        bool escDown = WidgetManagerIsEscDown(app->mWidgetManager);
+        if (escDown && gamepadControls->mGamepadState == 10 && gamepadControls->mGamepadFrameCounter - gamepadControls->mDigIndicatorStartCounter > 20) {
+            gamepadControls->GotoState(8);
+            gamepadControls->mIsShowingDigIndicator = true;
+        }
+        if (!escDown && gamepadControls->mGamepadState == 8) {
+            gamepadControls->GotoState(1);
+        }
+    }
+
+    gamepadControls->unknown_always_1 = gamepadControls->mIsCobCannonSelected ? 0 : 1;
+
+    Reanimation *cobCannonReanim = app->ReanimationTryToGet(gamepadControls->mCobCannonReanimID);
+    if (cobCannonReanim == nullptr && gamepadControls->mPlayerIndex2 != -1) {
+        cobCannonReanim = app->AddReanimation(0.0f, 0.0f, 0, static_cast<ReanimationType>(158));
+        if (cobCannonReanim != nullptr) {
+            cobCannonReanim->PlayReanim("anim_idle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 12.0f);
+            gamepadControls->mCobCannonReanimID = app->ReanimationGetID(cobCannonReanim);
+            cobCannonReanim->mIsAttachment = true;
+        }
+    }
+    if (cobCannonReanim != nullptr && gamepadControls->mPlayerIndex2 != -1) {
+        Reanimation *cobCannonReanimById = app->ReanimationTryToGet(gamepadControls->mCobCannonReanimID);
+        if (cobCannonReanimById != nullptr) {
+            if (GamepadButtonDown(gamepadControls->mBoard->mApp, gamepadControls->mPlayerIndex2, Sexy::GamepadButton::GAMEPAD_BUTTON_A)) {
+                cobCannonReanimById->PlayReanim("anim_depressed", ReanimLoopType::REANIM_LOOP, 0, 12.0f);
+            } else if (!cobCannonReanimById->IsAnimPlaying("anim_bounce")) {
+                cobCannonReanimById->PlayReanim("anim_bounce", ReanimLoopType::REANIM_LOOP, 0, 12.0f);
+            }
+            cobCannonReanimById->Update();
+        }
+    }
+
+    Reanimation *previewReanim1 = app->ReanimationTryToGet(gamepadControls->mPreviewReanimID1);
+    if (previewReanim1 != nullptr) {
+        int gridY = gamepadControls->mBoard->PixelToGridYKeepOnBoard(gamepadControls->mCursorPositionX, gamepadControls->mCursorPositionY);
+        previewReanim1->mRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PLANT, gridY, 100);
+    }
+
+    gamepadControls->BaseGamepadControls::Update(dt);
+
+    if (gamepadControls->mIsCobCannonSelected) {
+        gamepadControls->mBoard->mCobCannonMouseX = gamepadControls->mCursorPositionX;
+        gamepadControls->mBoard->mCobCannonMouseY = gamepadControls->mCursorPositionY;
+    }
+
+    int gridX = gamepadControls->mBoard->PixelToGridXKeepOnBoard(gamepadControls->mCursorPositionX, gamepadControls->mCursorPositionY);
+    int gridY = gamepadControls->mBoard->PixelToGridYKeepOnBoard(gamepadControls->mCursorPositionX, gamepadControls->mCursorPositionY);
+    SeedBank *seedBank = gamepadControls->GetSeedBank();
+    SeedPacket *selectedSeedPacket = &seedBank->mSeedPackets[gamepadControls->mSelectedSeedIndex];
+    SeedType selectedSeedTypeForPlant = selectedSeedPacket->mPacketType;
+    if (selectedSeedPacket->mPacketType == SeedType::SEED_IMITATER) {
+        gamepadControls->mCanPickUp = (gamepadControls->mBoard->CanPlantAt(gridX, gridY, selectedSeedPacket->mImitaterType) == PlantingReason::PLANTING_OK) && selectedSeedPacket->CanPickUp();
+        selectedSeedTypeForPlant = selectedSeedPacket->mImitaterType;
+    } else {
+        gamepadControls->mCanPickUp = (gamepadControls->mBoard->CanPlantAt(gridX, gridY, selectedSeedPacket->mPacketType) == PlantingReason::PLANTING_OK) && selectedSeedPacket->CanPickUp();
+        selectedSeedTypeForPlant = selectedSeedPacket->mPacketType;
+    }
+
+    if (gamepadControls->mIsZombie) {
+        gamepadControls->mCanPickUp = (gamepadControls->mBoard->CanPlantAt(gridX, gridY, selectedSeedPacket->mPacketType) == PlantingReason::PLANTING_OK) && selectedSeedPacket->CanPickUp();
+    }
+
+    if (gamepadControls->mIsInShopSeedBank) {
+        selectedSeedTypeForPlant = seedBank->mShopSeedPackets[gamepadControls->mSelectedShopSeedIndex].mSeedType;
+        gamepadControls->mCanPickUp = gamepadControls->mBoard->CanPlantAt(gridX, gridY, selectedSeedTypeForPlant) == PlantingReason::PLANTING_OK;
+    }
+
+    if ((gamepadControls->mGamepadFrameCounter & 25) == 0) {
+        HitResult hitResult = {};
+        gamepadControls->mBoard->MouseHitTest(gamepadControls->mCursorPositionX, gamepadControls->mCursorPositionY, &hitResult, gamepadControls->mPlayerIndex2);
+        if (hitResult.mObjectType == GameObjectType::OBJECT_TYPE_COIN) {
+            Coin *coin = reinterpret_cast<Coin *>(hitResult.mObject);
+            GameMode gameMode = gamepadControls->mGameObject->mApp->mGameMode;
+            if (gameMode == GameMode::GAMEMODE_MP_VS_DEBUG || gameMode == GameMode::GAMEMODE_MP_VS) {
+                if (gamepadControls->mIsZombie) {
+                    if (coin->mType == CoinType::COIN_VS_ZOMBIE_BRAIN || coin->mType == CoinType::COIN_VS_ZOMBIE_TROPHY) {
+                        coin->MouseDown(gamepadControls->mCursorPositionX, gamepadControls->mCursorPositionY, 1);
+                    }
+                } else if (coin->IsSun() || coin->mType == CoinType::COIN_VS_PLANT_TROPHY) {
+                    coin->MouseDown(gamepadControls->mCursorPositionX, gamepadControls->mCursorPositionY, 1);
+                }
+            } else if (gameMode != GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON && gamepadControls->mGamepadState != 8 && coin->mType == CoinType::COIN_USABLE_SEED_PACKET) {
+                gamepadControls->mBoard->RefreshSeedPacketFromCursor(gamepadControls->mPlayerIndex1);
+                coin->GamepadCursorOver(gamepadControls->mPlayerIndex1);
+            }
+        }
+
+        gamepadControls->mSelectedUpgradableType = 0;
+        HitResult plantHitResult = {};
+        if (gamepadControls->mBoard->MouseHitTestPlant(gamepadControls->mCursorPositionX, gamepadControls->mCursorPositionY, &plantHitResult)
+            && plantHitResult.mObjectType == GameObjectType::OBJECT_TYPE_PLANT && plantHitResult.mObject != nullptr) {
+            Plant *hitPlant = reinterpret_cast<Plant *>(plantHitResult.mObject);
+            SeedType hitPlantSeedType = hitPlant->mSeedType;
+            if (selectedSeedTypeForPlant == SeedType::SEED_FLOWERPOT) {
+                if (hitPlantSeedType == SeedType::SEED_PUMPKINSHELL) {
+                    Plant *topPlant = gamepadControls->mBoard->GetTopPlantAt(hitPlant->mPlantCol, hitPlant->mRow, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
+                    if (topPlant != nullptr) {
+                        hitPlant = topPlant;
+                    }
+                }
+            } else {
+                bool checkTopPlant = false;
+                if (hitPlantSeedType == SeedType::SEED_FLOWERPOT) {
+                    checkTopPlant = true;
+                } else if (selectedSeedTypeForPlant != SeedType::SEED_PUMPKINSHELL) {
+                    if (hitPlantSeedType == SeedType::SEED_PUMPKINSHELL) {
+                        checkTopPlant = true;
+                    } else if (selectedSeedTypeForPlant != SeedType::SEED_LILYPAD && hitPlantSeedType == SeedType::SEED_LILYPAD) {
+                        checkTopPlant = true;
+                    }
+                }
+                if (checkTopPlant) {
+                    Plant *topPlant = gamepadControls->mBoard->GetTopPlantAt(hitPlant->mPlantCol, hitPlant->mRow, PlantPriority::TOPPLANT_ONLY_NORMAL_POSITION);
+                    if (selectedSeedTypeForPlant != SeedType::SEED_LILYPAD && topPlant != nullptr) {
+                        hitPlant = topPlant;
+                    }
+                }
+            }
+
+            if (hitPlant->IsUpgradableTo(gamepadControls->mSelectedSeedType)) {
+                gamepadControls->mSelectedUpgradableType = 1;
+            } else if (hitPlant->IsPartOfUpgradableTo(gamepadControls->mSelectedSeedType)) {
+                gamepadControls->mSelectedUpgradableType = 2;
+            } else if (selectedSeedTypeForPlant != SeedType::SEED_PUMPKINSHELL
+                       || gamepadControls->mBoard->GetTopPlantAt(hitPlant->mPlantCol, hitPlant->mRow, PlantPriority::TOPPLANT_ONLY_PUMPKIN) != nullptr
+                       || gamepadControls->mBoard->CanPlantAt(gridX, gridY, SeedType::SEED_PUMPKINSHELL) != PlantingReason::PLANTING_OK) {
+                if (hitPlant->mSeedType != SeedType::SEED_LILYPAD || selectedSeedPacket->mPacketType == SeedType::SEED_LILYPAD) {
+                    gamepadControls->mSelectedUpgradableType = 4;
+                }
+            } else {
+                gamepadControls->mSelectedUpgradableType = 3;
+            }
+        }
+    }
+
+    if (gamepadControls->mGameObject->mApp->mGameMode != GameMode::GAMEMODE_CHALLENGE_HEAVY_WEAPON && gamepadControls->mGamepadState != 8) {
+        Coin *coin = nullptr;
+        while (gamepadControls->mBoard->IterateCoins(coin)) {
+            if (gamepadControls->mGameObject->mApp->mGameMode == GameMode::GAMEMODE_MP_VS) {
+                if (gamepadControls->mIsZombie) {
+                    if (coin->mType != CoinType::COIN_VS_ZOMBIE_BRAIN && coin->mType != CoinType::COIN_VS_ZOMBIE_TROPHY) {
+                        continue;
+                    }
+                } else if (!coin->IsSun() && coin->mType != CoinType::COIN_VS_PLANT_TROPHY) {
+                    continue;
+                }
+            }
+            if (coin == nullptr || coin->mIsBeingCollected || coin->mCoinMotion == CoinMotion::COIN_MOTION_FROM_NEAR_CURSOR || coin->mType == CoinType::COIN_USABLE_SEED_PACKET) {
+                continue;
+            }
+            float dx = gamepadControls->mCursorPositionX - coin->mPosX;
+            float dy = gamepadControls->mCursorPositionY - coin->mPosY;
+            if (dx * dx + dy * dy >= 40000.0f) {
+                continue;
+            }
+            coin->GamepadCursorOver(gamepadControls->mPlayerIndex1);
+        }
+    }
+
+    CursorPreview *cursorPreview = gamepadControls->mBoard->mCursorPreview[gamepadControls->mPlayerIndex1];
+    CursorObject *cursorObject = gamepadControls->mBoard->mCursorObject[gamepadControls->mPlayerIndex1];
+    if (cursorObject->mCursorType == CursorType::CURSOR_TYPE_PLANT_FROM_USABLE_COIN) {
+        cursorPreview->mVisible = true;
+        gamepadControls->mCanPickUp = true;
+    } else if (cursorObject->mCursorType == CursorType::CURSOR_TYPE_HAMMER) {
+        cursorPreview->mVisible = true;
+        cursorObject->mX = static_cast<int>(gamepadControls->mCursorPositionX - 20.0f);
+        cursorObject->mY = static_cast<int>(gamepadControls->mCursorPositionY - 32.0f);
+    } else {
+        cursorPreview->mVisible = true;
+        cursorObject->mCursorType = CursorType::CURSOR_TYPE_PLANT_FROM_BANK;
+        if (gamepadControls->mIsInShopSeedBank) {
+            cursorObject->mSelectedIndex = gamepadControls->mSelectedShopSeedIndex;
+            if (gamepadControls->mGamepadState == 1 || app->IsChallengeWithoutSeedBank()) {
+                cursorObject->mType = SeedType::SEED_NONE;
+                gamepadControls->mSelectedSeedType = SeedType::SEED_NONE;
+            } else {
+                int shopSeedIndex = gamepadControls->mSelectedShopSeedIndex;
+                if (shopSeedIndex == 4 || shopSeedIndex == 5) {
+                    SeedType shopSeedType = seedBank->mShopSeedPackets[shopSeedIndex].mSeedType;
+                    cursorObject->mType = shopSeedType;
+                    gamepadControls->mSelectedSeedType = shopSeedType;
+                } else {
+                    cursorObject->mType = SeedType::SEED_NONE;
+                    gamepadControls->mSelectedSeedType = SeedType::SEED_NONE;
+                }
+            }
+        } else {
+            cursorObject->mSelectedIndex = gamepadControls->mSelectedSeedIndex;
+            if (!app->IsChallengeWithoutSeedBank()) {
+                cursorObject->mType = selectedSeedPacket->mPacketType;
+                gamepadControls->mSelectedSeedType = selectedSeedPacket->mPacketType;
+                if (selectedSeedPacket->mPacketType == SeedType::SEED_IMITATER) {
+                    cursorObject->mImitaterType = selectedSeedPacket->mImitaterType;
+                    gamepadControls->mSelectedSeedType = selectedSeedPacket->mImitaterType;
+                }
+            } else {
+                cursorObject->mType = SeedType::SEED_NONE;
+                gamepadControls->mSelectedSeedType = SeedType::SEED_NONE;
+            }
+        }
+    }
+
+    if (gamepadControls->mBoard->HasConveyorBeltSeedBank(0) && selectedSeedPacket->mOffsetY >= 466) {
+        gamepadControls->mCanPickUp = false;
+    }
+
+    float rise = gamepadControls->mCursorLabelLiftOffset + dt * 80.0f;
+    if (rise > 30.0f) {
+        rise = 30.0f;
+    } else if (rise < 0.0f) {
+        rise = 0.0f;
+    }
+    gamepadControls->mCursorLabelLiftOffset = rise;
+
+    float yJitter;
+    if (GamepadButtonDown(gamepadControls->mGameObject->mApp, gamepadControls->mPlayerIndex2, Sexy::GamepadButton::GAMEPAD_BUTTON_A) || gamepadControls->mButterZombie != nullptr) {
+        yJitter = 3.0f;
+    } else {
+        gamepadControls->mCursorJitterAnimPhase += 0.016f;
+        yJitter = sinf(gamepadControls->mCursorJitterAnimPhase * 3.0f);
+    }
+
+    gamepadControls->mCursorPositionYJitter = yJitter;
+    cursorPreview->mVisible = true;
+    gamepadControls->UpdateStates(dt);
+
+    float velocityLeftX = gamepadControls->mGamepadVelocityLeftX;
+    float velocityLeftY = gamepadControls->mGamepadVelocityLeftY;
+    float newCursorY = gamepadControls->mCursorPositionY + dt * velocityLeftY;
+    float newCursorX = gamepadControls->mCursorPositionX + dt * velocityLeftX;
+    float newVelocityLeftX = velocityLeftX + gamepadControls->mGamepadAccLeftX * 3.0f;
+    float newVelocityLeftY = velocityLeftY + gamepadControls->mGamepadAccLeftY * 3.0f;
+    if (newCursorX > 770.0f) {
+        newCursorX = 770.0f;
+    } else if (newCursorX < 40.0f) {
+        newCursorX = 40.0f;
+    }
+    if (newCursorY > 580.0f) {
+        newCursorY = 580.0f;
+    } else if (newCursorY < 80.0f) {
+        newCursorY = 80.0f;
+    }
+    gamepadControls->mCursorPositionX = newCursorX;
+    gamepadControls->mCursorPositionY = newCursorY;
+    gamepadControls->mGamepadAccLeftX = newVelocityLeftX * 0.25f;
+    gamepadControls->mGamepadAccLeftY = newVelocityLeftY * 0.25f;
+
+    if (gamepadControls->mBoard->mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST) {
+        int twistMaxX = gamepadControls->mBoard->GridToPixelX(6, 3) + 40;
+        if (gamepadControls->mCursorPositionX > 40.0f && gamepadControls->mCursorPositionX > static_cast<float>(twistMaxX)) {
+            gamepadControls->mCursorPositionX = static_cast<float>(twistMaxX);
+        }
+        int twistMaxY = gamepadControls->mBoard->GridToPixelY(6, 3) + 50;
+        if (gamepadControls->mCursorPositionY > 80.0f && gamepadControls->mCursorPositionY > static_cast<float>(twistMaxY)) {
+            gamepadControls->mCursorPositionY = static_cast<float>(twistMaxY);
+        }
+    }
+
+    float canPickupAnim = gamepadControls->mCanPickUp ? (gamepadControls->mUpdateAdd_a2_Or_Minus_2xa2 + dt) : (gamepadControls->mUpdateAdd_a2_Or_Minus_2xa2 - dt * 2.0f);
+    if (canPickupAnim > 1.0f) {
+        canPickupAnim = 1.0f;
+    } else if (canPickupAnim < 0.0f) {
+        canPickupAnim = 0.0f;
+    }
+    gamepadControls->mUpdateAdd_a2_Or_Minus_2xa2 = canPickupAnim;
+
+    if (previewReanim1 != nullptr) {
+        int pixelX = gamepadControls->mBoard->GridToPixelX(gridX, gridY);
+        int pixelY = gamepadControls->mBoard->GridToPixelY(gridX, gridY);
+        previewReanim1->SetPosition(static_cast<float>(pixelX - 30), static_cast<float>(pixelY - 45));
+    }
+
+    GameMode gameMode = gamepadControls->mGameObject->mApp->mGameMode;
+    if (gameMode != GameMode::GAMEMODE_CHALLENGE_BEGHOULED_TWIST && gameMode != GameMode::GAMEMODE_CHALLENGE_BEGHOULED) {
+        gamepadControls->UpdatePreviewReanim();
+    }
+
+    if (gamepadControls->mIsCobCannonSelected) {
+        uint32_t cobPlantId = static_cast<uint32_t>(gamepadControls->mCobCannonPlantIndexInList);
+        if (cobPlantId == 0 || gamepadControls->mBoard->mPlants.DataArrayTryToGet(cobPlantId) == nullptr) {
+            gamepadControls->mIsCobCannonSelected = false;
+            gamepadControls->mBoard->ClearCursor(gamepadControls->mPlayerIndex1);
+            gamepadControls->mBoard->mCobCannonCursorDelayCounter = 0;
+            gamepadControls->mCobCannonAnimCounter = 0;
+            gamepadControls->mCobCannonPlantIndexInList = 0;
+        }
+    }
+}
+} // namespace
 
 // GamepadControls::GamepadControls(Board *theBoard, int thePlayerIndex1, int thePlayerIndex2) {
 // _constructor(theBoard, thePlayerIndex1, thePlayerIndex2);
@@ -261,7 +608,7 @@ void GamepadControls::Update(float a2) {
     }
 
 
-    old_GamepadControls_Update(this, a2);
+    GamepadControls_UpdateOriginal(this, a2);
 
     // Reanimation *mCursorReanim = ReanimationTryToGet(gamepadControls->mGameObject->anApp, gamepadControls->mCursorReanimID);
     // LOGD("%d",mCursorReanim);

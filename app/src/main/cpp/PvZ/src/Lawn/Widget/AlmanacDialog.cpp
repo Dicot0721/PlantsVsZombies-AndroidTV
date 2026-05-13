@@ -405,7 +405,7 @@ bool AlmanacDialog::ZombieIsShown(ZombieType theZombieType) {
 }
 
 void AlmanacDialog::DrawZombies(Graphics *g) {
-    g->DrawImage(Sexy::IMAGE_ALMANAC_ZOMBIEBACK, LawnApp::FULLSCREEN_RECT, -60);
+    g->DrawImage(Sexy::IMAGE_ALMANAC_ZOMBIEBACK, LawnApp::FULLSCREEN_RECT.mX, -60);
     int aHeaderOffsetY = Sexy::FONT_DWARVENTODCRAFT24->GetHeight() / 2;
     TodDrawString(g, "[SUBURBAN_ALMANAC_ZOMBIES]", BOARD_WIDTH / 2, aHeaderOffsetY + 42, Sexy::FONT_DWARVENTODCRAFT24, Color(0, 196, 0), DS_ALIGN_CENTER);
 

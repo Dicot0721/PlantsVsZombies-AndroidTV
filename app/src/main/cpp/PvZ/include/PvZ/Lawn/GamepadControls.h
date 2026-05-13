@@ -29,7 +29,7 @@ class Zombie;
 
 class GamepadControls : public BaseGamepadControls {
 public:
-    float mRangeFrom0to30UpdateFresh;  // 43
+    float mCursorLabelLiftOffset;      // 43
     int *mSelectorParticle;            // 44
     int mSelectedSeedIndex;            // 45
     SeedType mSelectedSeedType;        // 46
@@ -40,18 +40,20 @@ public:
     bool mIsCobCannonSelected;         // 200
     float mUpdateAdd_a2_Or_Minus_2xa2; // 51
     ReanimationID mPreviewReanimID1;   // 52
-    ReanimationID mCursorReanimID;     // 53
+    ReanimationID mCobCannonReanimID;  // 53
     ReanimationID mPreviewReanimID3;   // 54
-    int mUnkCobCannonRelated;          // 55
+    int mCobCannonAnimCounter;         // 55
     ReanimationID mPreviewReanimID4;   // 56
     SeedType mPreviewingSeedType;      // 57
     Sexy::Image *mPreviewImage;        // 58
     Zombie *mButterZombie;             // 59
-    int mShovelRelated2;               // 60
+    int mDigIndicatorStartCounter;     // 60
     bool mIsShowingDigIndicator;       // 244
     bool mIsInShopSeedBank;            // 245
     int mSelectedShopSeedIndex;        // 62
-    int unk4[3];                       // 63 ~ 65
+    int unknown252;                    // 63 (offset 252)
+    int unknown256;                    // 64 (offset 256)
+    int unknown260;                    // 65 (offset 260)
     // 大小66个整数
 
     SeedBank *GetSeedBank() {
@@ -78,6 +80,9 @@ public:
     void InvalidatePreviewReanim();
     void Draw(Sexy::Graphics *g);
     void Update(float a2);
+    void UpdateStates(float dt) {
+        reinterpret_cast<void (*)(GamepadControls *, float)>(GamepadControls_UpdateStatesAddr)(this, dt);
+    }
     void DrawPreview(Sexy::Graphics *g);
     void UpdatePreviewReanim();
     void OnButtonDown(Sexy::GamepadButton theButton, int thePlayerIndex, unsigned int unk);

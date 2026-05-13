@@ -52,7 +52,7 @@ class HelpBarWidget;
 
 class LawnApp : public Sexy::GamepadApp {
 public:
-    static int &FULLSCREEN_RECT;
+    static Sexy::Rect &FULLSCREEN_RECT;
 
     Board *mBoard;                           // 552
     TitleScreen *mTitleScreen;               // 553

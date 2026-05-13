@@ -486,6 +486,9 @@ public:
     Plant *FindUmbrellaPlant(int theGridX, int theGridY) {
         return reinterpret_cast<Plant *(*)(Board *, int, int)>(Board_FindUmbrellaPlantAddr)(this, theGridX, theGridY);
     }
+    bool MouseHitTestPlant(int x, int y, HitResult *theHitResult) {
+        return reinterpret_cast<bool (*)(Board *, int, int, HitResult *)>(Board_MouseHitTestPlantAddr)(this, x, y, theHitResult);
+    }
 
     Board(LawnApp *theApp) = delete;
     ~Board() = delete;

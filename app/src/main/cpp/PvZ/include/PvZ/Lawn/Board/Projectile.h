@@ -67,7 +67,7 @@ public:
     int mCobTargetRow;              // 37
     ZombieID mTargetZombieID;       // 38
     int mLastPortalX;               // 39
-    // 大小39个整数
+    // 大小40个整数
 
     void Die() {
         reinterpret_cast<void (*)(Projectile *)>(Projectile_DieAddr)(this);

@@ -20,6 +20,7 @@
 #ifndef PVZ_LAWN_BOARD_TOOL_TIP_WIDGET_H
 #define PVZ_LAWN_BOARD_TOOL_TIP_WIDGET_H
 
+#include "PvZ/SexyAppFramework/Graphics/Color.h"
 #include "PvZ/SexyAppFramework/Misc/Common.h"
 #include "PvZ/Symbols.h"
 
@@ -29,22 +30,22 @@ class Graphics;
 
 class ToolTipWidget {
 public:
-    pvzstl::string mTitle;       // 0
-    pvzstl::string mLabel;       // 1
-    pvzstl::string mWarningText; // 2
-    int mX;                      // 3
-    int mY;                      // 4
-    int mWidth;                  // 5
-    int mHeight;                 // 6
-    bool mVisible;               // 28
-    bool mCenter;                // 29
-    /*
-     * 取自 Decompile, 未在 IDA 找到用法, 故暂注释
-    int mMinLeft;                // 8
-    int mMaxBottom;              // 9
-    int mGetsLinesWidth;         // 10
-    int mWarningFlashCounter;    // 11
-     */
+    pvzstl::string mTitle;        // 0
+    pvzstl::string mLabel;        // 1
+    pvzstl::string mWarningText;  // 2
+    int mX;                       // 3
+    int mY;                       // 4
+    int mWidth;                   // 5
+    int mHeight;                  // 6
+    bool mVisible;                // 28
+    bool mCenter;                 // 29
+    int mMinLeft;                 // 8
+    int mMaxBottom;               // 9
+    int mGetsLinesWidth;          // 10
+    int mWarningFlashCounter;     // 11
+    Sexy::Font *mWarningTextFont; // 12
+    Sexy::Font *mTitleFont;       // 13
+    Sexy::Color mTitleTextColor;  // 14 ~ 17
 
     ToolTipWidget() = delete;
     ~ToolTipWidget() = delete;
@@ -58,6 +59,9 @@ public:
     void SetLabel(const pvzstl::string &theLabel) {
         reinterpret_cast<void (*)(ToolTipWidget *, const pvzstl::string &)>(ToolTipWidget_SetLabelAddr)(this, theLabel);
     }
+    void GetLines(std::vector<pvzstl::string> &lines) {
+        reinterpret_cast<void (*)(ToolTipWidget *, std::vector<pvzstl::string> &)>(ToolTipWidget_GetLinesAddr)(this, lines);
+    }
 
     void Draw(Sexy::Graphics *g);
 
@@ -65,7 +69,7 @@ protected:
     void _constructor() {
         reinterpret_cast<void (*)(ToolTipWidget *)>(ToolTipWidget__constructorAddr)(this);
     }
-};
+}; // size = 18
 
 
 inline void (*old_ToolTipWidget_Draw)(ToolTipWidget *, Sexy::Graphics *);

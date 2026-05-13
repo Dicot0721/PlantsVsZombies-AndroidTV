@@ -53,6 +53,7 @@ inline void *Board_PixelToGridYAddr;
 inline void *Board_PixelToGridXKeepOnBoardAddr;
 inline void *Board_PixelToGridYKeepOnBoardAddr;
 inline void *Board_MouseHitTestAddr;
+inline void *Board_MouseHitTestPlantAddr;
 inline void *Board_ToolHitTestAddr;
 inline void *Board_RefreshSeedPacketFromCursorAddr;
 inline void *Board_CanUseGameObjectAddr;
@@ -379,6 +380,7 @@ inline void *GamepadControls_GetSeedBankAddr;
 inline void *GamepadControls_DrawAddr;
 inline void *GamepadControls_GamepadControlsAddr;
 inline void *GamepadControls_UpdateAddr;
+inline void *GamepadControls_UpdateStatesAddr;
 inline void *GamepadControls_InvalidatePreviewReanimAddr;
 inline void *GamepadControls_DrawPreviewAddr;
 inline void *GamepadControls_UpdatePreviewReanimAddr;
@@ -1159,6 +1161,7 @@ inline void *ToolTipWidget__constructorAddr;
 inline void *ToolTipWidget_SetWarningTextAddr;
 inline void *ToolTipWidget_SetTitleAddr;
 inline void *ToolTipWidget_SetLabelAddr;
+inline void *ToolTipWidget_GetLinesAddr;
 inline void *ToolTipWidget_DrawAddr;
 
 
@@ -1198,7 +1201,11 @@ inline void *Sexy_vformatAddr;
 inline void *TodStringListFindAddr;
 inline void *TodStringTranslateAddr;
 inline void *GetRectOverlapAddr;
+inline void *BaseGamepadControls_UpdateAddr;
+inline void *BaseGamepadControls_UpdateStatesAddr;
+inline void *BaseGamepadControls_GotoStateAddr;
 inline void *BaseGamepadControls_GetGamepadVelocityAddr;
+inline void *Sexy_Gamepad_IsButtonDownAddr;
 inline void *TypingCheck_SetPhraseAddr;
 inline void *TypingCheck_AddCharAddr;
 inline void *TypingCheck_CreateByStringAddr;
@@ -1253,6 +1260,7 @@ inline void *EffectSystem_EffectSystemInitializeAddr;
 inline void *TodFoley_PlayFoleyAddr;
 
 inline void *Sexy_Font_CharWidthKernAddr;
+inline void *Sexy_Font_StringWidthAddr;
 
 inline void *Native_BridgeApp_getJNIEnvAddr;
 inline void *Native_NativeApp_getActivityAddr;
