@@ -385,6 +385,9 @@ void InitHookFunction() {
     homura::HookFunc(SeedPacket_SlotMachineStartAddr, &SeedPacket::SlotMachineStart, nullptr);
 
 
+    homura::HookFunc(ToolTipWidget_DrawAddr, &ToolTipWidget::Draw, &old_ToolTipWidget_Draw);
+
+
     homura::HookFunc(Zombie_UpdateAddr, &Zombie::Update, nullptr);
     homura::HookFunc(Zombie_UpdateActionsAddr, &Zombie::UpdateActions, &old_Zombie_UpdateActions);
     homura::HookFunc(Zombie_UpdatePlayingAddr, &Zombie::UpdatePlaying, nullptr);

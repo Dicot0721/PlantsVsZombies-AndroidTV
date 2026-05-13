@@ -1063,6 +1063,12 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
                 aToolTip->SetTitle(aTitle);
                 aToolTip->SetLabel(aLabel);
             }
+
+            // 已选的卡不再展示描述文本
+            // 禁用阶段不再展示已禁卡的描述文本
+            if (mChosenSeeds[aZombieSeedType].mSeedState == ChosenSeedState::SEED_IN_BANK || (mBanningPhase && mBannedSeed[aSeedType].mSeedState == BannedSeedState::SEED_BANNED)) {
+                aToolTip->mVisible = false;
+            }
         } else {
             if (mBanningPhase) {
                 if (mChosenSeeds[aSeedType].mSeedState == ChosenSeedState::SEED_IN_CHOOSER) {
@@ -1070,6 +1076,10 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
                         aToolTip->SetWarningText("在此阶段不允许");
                     }
                 }
+            }
+
+            if (mChosenSeeds[aSeedType].mSeedState == ChosenSeedState::SEED_IN_BANK || (mBanningPhase && mBannedSeed[aSeedType].mSeedState == BannedSeedState::SEED_BANNED)) {
+                aToolTip->mVisible = false;
             }
         }
     }

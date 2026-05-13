@@ -20,7 +20,7 @@
 #ifndef PVZ_LAWN_BOARD_TOOL_TIP_WIDGET_H
 #define PVZ_LAWN_BOARD_TOOL_TIP_WIDGET_H
 
-#include "PvZ/STL/pvzstl_string.h"
+#include "PvZ/SexyAppFramework/Misc/Common.h"
 #include "PvZ/Symbols.h"
 
 namespace Sexy {
@@ -58,14 +58,16 @@ public:
     void SetLabel(const pvzstl::string &theLabel) {
         reinterpret_cast<void (*)(ToolTipWidget *, const pvzstl::string &)>(ToolTipWidget_SetLabelAddr)(this, theLabel);
     }
-    void Draw(Sexy::Graphics *g) {
-        reinterpret_cast<void (*)(ToolTipWidget *, Sexy::Graphics *)>(ToolTipWidget_DrawAddr)(this, g);
-    }
+
+    void Draw(Sexy::Graphics *g);
 
 protected:
     void _constructor() {
         reinterpret_cast<void (*)(ToolTipWidget *)>(ToolTipWidget__constructorAddr)(this);
     }
 };
+
+
+inline void (*old_ToolTipWidget_Draw)(ToolTipWidget *, Sexy::Graphics *);
 
 #endif // PVZ_LAWN_BOARD_TOOL_TIP_WIDGET_H
