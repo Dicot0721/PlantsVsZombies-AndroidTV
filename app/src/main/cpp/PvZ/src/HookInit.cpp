@@ -103,6 +103,8 @@ void InitHookFunction() {
     homura::HookFunc(LawnApp_PreNewGameAddr, &LawnApp::PreNewGame, &old_LawnApp_PreNewGame);
     homura::HookFunc(LawnApp_NewGameAddr, &LawnApp::NewGame, nullptr);
     homura::HookFunc(LawnApp_HasBeatenChallengeAddr, &LawnApp::HasBeatenChallenge, nullptr);
+    homura::HookFunc(LawnApp_ShowVSResultsScreenAddr, &LawnApp::ShowVSResultsScreen, nullptr);
+    homura::HookFunc(LawnApp_KillVSResultsScreenAddr, &LawnApp::KillVSResultsScreen, nullptr);
 
 
     homura::HookFunc(Board_DrawAddr, &Board::Draw, &old_Board_Draw);
@@ -356,7 +358,7 @@ void InitHookFunction() {
     homura::HookFunc(Plant_UpdateMagnetShroomAddr, &Plant::UpdateMagnetShroom, nullptr);
     homura::HookFunc(Plant_UpdateSquashAddr, &Plant::UpdateSquash, &old_Plant_UpdateSquash);
 
-    // homura::HookFunc(Plant_CobCannonFireAddr, Plant_CobCannonFire, &old_Plant_CobCannonFire);
+    homura::HookFunc(Plant_CobCannonFireAddr, &Plant::CobCannonFire, nullptr);
     // homura::HookFunc(Plant_UpdateReanimAddr, Plant_UpdateReanim, &old_Plant_UpdateReanim);
 
 

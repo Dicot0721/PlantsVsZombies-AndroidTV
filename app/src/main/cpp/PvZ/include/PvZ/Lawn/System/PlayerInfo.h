@@ -80,7 +80,8 @@ public:
     bool mVSExtendedSeedsMode;
     bool mVSBanMode;
     bool mVSBalancePatchMode;
-    bool mUnused606[2]; // 606 - 607
+    bool mVSResultsSendPlayerName;
+    bool mUnused607; //  607
     Mode3RecentServerStorage serverStorage;
     bool mRenamed;
     bool mUnused675[70];

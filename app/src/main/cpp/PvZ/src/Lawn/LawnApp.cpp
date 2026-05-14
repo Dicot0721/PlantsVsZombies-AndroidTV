@@ -1169,6 +1169,33 @@ void LawnApp::ShowVSSetupScreen() {
     mWidgetManager->SetFocus(mVSSetupMenu);
 }
 
+void LawnApp::ShowVSResultsScreen() {
+    mVSResultsMenu = new VSResultsMenu();
+    mVSResultsMenu->Resize(0, 0, mWidth, mHeight);
+    mWidgetManager->AddWidget(mVSResultsMenu);
+    mWidgetManager->BringToFront(mVSResultsMenu);
+    mWidgetManager->SetFocus(mVSResultsMenu);
+    if (gIsServerModeNetplay) {
+        mVSResultsMenu->mCheckboxController = new VSResultsCheckboxController();
+        mVSResultsMenu->mCheckboxController->InitCheckboxWidget(mVSResultsMenu);
+    }
+}
+
+void LawnApp::KillVSResultsScreen() {
+    if (mVSResultsMenu) {
+        if (mVSResultsMenu->mCheckboxController != nullptr) {
+            mVSResultsMenu->mCheckboxController->DestroyCheckboxWidget();
+            delete mVSResultsMenu->mCheckboxController;
+            mVSResultsMenu->mCheckboxController = nullptr;
+        }
+        if (!mVSResultsMenu->mIsFading) {
+            mWidgetManager->RemoveWidget(mVSResultsMenu);
+            SafeDeleteWidget(mVSResultsMenu);
+        }
+        mVSResultsMenu = nullptr;
+    }
+}
+
 void LawnApp::PreNewGame(GameMode theGameMode, bool theLookForSavedGame) {
     old_LawnApp_PreNewGame(this, theGameMode, theLookForSavedGame);
 }

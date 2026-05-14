@@ -294,6 +294,7 @@ public:
     void UpdateProductionPlant();
     void UpdateShooting();
     void UpdateShooter();
+    void CobCannonFire(int x, int y);
     void Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem);
     void Fire_Origin(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem);
     void PlayIdleAnim(float theRate);
@@ -367,6 +368,7 @@ inline bool (*old_Plant_FindTargetAndFire)(Plant *, int, PlantWeapon);
 
 inline void (*old_Plant_UpdateSquash)(Plant *);
 
-// inline void (*old_Plant_CobCannonFire)(Plant* plant, int x, int y);
+inline int (*old_Plant_CobCannonFire)(Plant *plant, int x, int y);
+int Plant_CobCannonFire(Plant *plant, int x, int y);
 
 #endif // PVZ_LAWN_BOARD_PLANT_H

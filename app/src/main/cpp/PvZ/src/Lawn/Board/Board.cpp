@@ -3892,7 +3892,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                     mTouchState = TouchState::TOUCHSTATE_NONE;
                     return;
                 }
-                GamepadControls_pickUpCobCannon((int)mGamepadControls[0], (int)plant);
+                mGamepadControls[0]->pickUpCobCannon(plant);
             } else {
                 if (mGameState_2P == 7) {
                     mGamepadControls[1]->mGamepadState = 1;
@@ -3908,7 +3908,7 @@ void Board::__MouseDown(int x, int y, int theClickCount) {
                     mTouchState = TouchState::TOUCHSTATE_NONE;
                     return;
                 }
-                GamepadControls_pickUpCobCannon((int)mGamepadControls[1], (int)plant);
+                mGamepadControls[1]->pickUpCobCannon(plant);
             }
             mTouchState = TouchState::TOUCHSTATE_VALID_COBCONON;
             return;
@@ -4587,7 +4587,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
                 mGamepadControls[1]->mIsInShopSeedBank = true;
                 mGamepadControls[1]->mPlayerIndex2 = 1;
                 gPlayerIndexSecond = TouchPlayerIndex::TOUCHPLAYER_PLAYER2;
-                GamepadControls_pickUpCobCannon((int)mGamepadControls[1], (int)plant);
+                mGamepadControls[1]->pickUpCobCannon(plant);
                 gTouchStateSecond = TouchState::TOUCHSTATE_VALID_COBCONON_SECOND;
                 return;
             } else if (gPlayerIndexSecond == TouchPlayerIndex::TOUCHPLAYER_PLAYER1) {
@@ -4600,7 +4600,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
                     SeedBank *seedBank = mGamepadControls[0]->GetSeedBank();
                     seedBank->mSeedPackets[newSeedPacketIndex].mLastSelectedTime = 0.0f; // 动画效果专用
                 }
-                GamepadControls_pickUpCobCannon((int)mGamepadControls[0], (int)plant);
+                mGamepadControls[0]->pickUpCobCannon(plant);
             } else {
                 if (mGameState_2P == 7) {
                     mGamepadControls[1]->mGamepadState = 1;
@@ -4611,7 +4611,7 @@ void Board::MouseDownSecond(int x, int y, int theClickCount) {
                     SeedBank *seedBank_2P = mGamepadControls[1]->GetSeedBank();
                     seedBank_2P->mSeedPackets[newSeedPacketIndex_2P].mLastSelectedTime = 0.0f; // 动画效果专用
                 }
-                GamepadControls_pickUpCobCannon((int)mGamepadControls[1], (int)plant);
+                mGamepadControls[1]->pickUpCobCannon(plant);
             }
             gTouchStateSecond = TouchState::TOUCHSTATE_VALID_COBCONON;
             return;

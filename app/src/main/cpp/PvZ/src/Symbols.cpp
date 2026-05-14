@@ -1507,7 +1507,6 @@ int &Challenge::gVSResourceDropCount = *libGameMain.GetSymbol<int>("_ZN9Challeng
 
 Sexy::Rect &LawnApp::FULLSCREEN_RECT = *libGameMain.GetSymbol<Sexy::Rect>("_ZN7LawnApp15FULLSCREEN_RECTE");
 int (&VSResultsMenu::msPlayerRecords)[2][5] = *libGameMain.GetSymbol<int[2][5]>("_ZN13VSResultsMenu15msPlayerRecordsE");
-
 DISABLE_WARNING_BEGIN("-Wextra-qualification") // warning: extra qualification on member 'xxx'
 
 EffectSystem *& ::gEffectSystem = *libGameMain.GetSymbol<EffectSystem *>("gEffectSystem");

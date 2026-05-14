@@ -746,10 +746,21 @@ void Plant::DoSpecial_Origin() {
     }
 }
 
-// void Plant_CobCannonFire(Plant *plant, int x, int y) {
-// LOGD("fire:%d %d",x,y);
-// old_Plant_CobCannonFire(plant,x,y);
-// }
+void Plant::CobCannonFire(int x, int y) {
+    mState = PlantState::STATE_COBCANNON_FIRING;
+    mShootingCounter = 206;
+    PlayBodyReanim("anim_shooting", REANIM_PLAY_ONCE_AND_HOLD, 20, 12.0f);
+    mTargetY = y;
+    mTargetX = x - 47;
+
+    Reanimation *bodyReanim = mApp->ReanimationGet(mBodyReanimID);
+    if (bodyReanim != nullptr) {
+        ReanimatorTrackInstance *trackInstance = bodyReanim->GetTrackInstanceByName("CobCannon_cob");
+        if (trackInstance != nullptr) {
+            trackInstance->mTrackColor = Sexy::Color::White;
+        }
+    }
+}
 
 void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem) {
     if (mApp->IsVSMode()) {

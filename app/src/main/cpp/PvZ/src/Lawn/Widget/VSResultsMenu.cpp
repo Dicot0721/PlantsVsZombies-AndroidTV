@@ -40,6 +40,8 @@ void VSResultsMenu::_constructor() {
     old_VSResultsMenu_Constructor(this);
     gVSResultRequestState = -1;
     gNetDelayNow = 0; // 清除旧的延时数据
+
+    mCheckboxController = nullptr;
 }
 
 void VSResultsMenu::processClientEvent(const BaseEvent *event) {
@@ -141,6 +143,9 @@ void VSResultsMenu::ButtonDepress(int theId) {
 
 void VSResultsMenu::Draw(Graphics *g) {
     old_VSResultsMenu_Draw(this, g);
+    if (gIsServerModeNetplay && gServerModeTransport == ServerModeTransport::RELAY && mCheckboxController != nullptr) {
+        mCheckboxController->DrawCheckboxLabel(g);
+    }
 
     if (gTcpConnected) {
         switch (gVSResultRequestState) {

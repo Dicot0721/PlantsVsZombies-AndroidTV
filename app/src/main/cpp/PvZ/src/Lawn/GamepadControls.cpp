@@ -401,62 +401,26 @@ void GamepadControls::_constructor(Board *theBoard, int thePlayerIndex1, int the
     }
 }
 
-void GamepadControls_pickUpCobCannon(int gamePad, int cobCannon) {
-    // 用于拿起指定的加农炮
-    int v8;        // r6
-    int v9;        // r1
-    int *v10;      // r0
-    int v11;       // r3
-    int v12;       // r3
-    int v13;       // r7
-    int v14;       // r6
-    int v15;       // r1
-    int v16;       // s14
-    int v17;       // s15
-    uint32_t *v18; // r3
-    int v19;       // r3
+void GamepadControls::pickUpCobCannon(Plant *cobCannon) {
+    Plant *otherSelectedCob = nullptr;
+    GamepadControls *otherGamepadControls = (mPlayerIndex1 != 0) ? mBoard->mGamepadControls[0] : mBoard->mGamepadControls[1];
 
-    v8 = 0;
-    v9 = *((uint32_t *)gamePad + 37);
-    v10 = (int *)*((uint32_t *)gamePad + 14);
-    if (v9)
-        v11 = 140;
-    else
-        v11 = 141;
-    v12 = *((uint32_t *)v10 + v11);
-    if (*(uint32_t *)(v12 + 152) != -1) {
-        if (*(uint8_t *)(v12 + 200)) {
-            v19 = *(uint32_t *)(v12 + 196);
-            if (v19) {
-                if ((unsigned int)(unsigned int)v19 < *((uint32_t *)v10 + 79)) {
-                    if (v19 == *(uint32_t *)(*((uint32_t *)v10 + 77) + 352 * (unsigned int)v19 + 348))
-                        v8 = *((uint32_t *)v10 + 77) + 352 * (unsigned int)v19;
-                    else
-                        v8 = 0;
-                }
-            } else {
-                v8 = 0;
-            }
-        } else {
-            v8 = *(uint8_t *)(v12 + 200);
+    if (otherGamepadControls != nullptr && otherGamepadControls->mPlayerIndex2 != -1 && otherGamepadControls->mIsCobCannonSelected) {
+        const uint32_t otherCobPlantId = static_cast<uint32_t>(otherGamepadControls->mCobCannonPlantIndexInList);
+        if (otherCobPlantId != 0) {
+            otherSelectedCob = mBoard->mPlants.DataArrayTryToGet(otherCobPlantId);
         }
     }
-    v13 = cobCannon;
-    if (cobCannon != v8 && *(uint32_t *)(cobCannon + 76) == 37 && *((uint32_t *)gamePad + 24) != 8) {
-        v14 = *((uint8_t *)gamePad + 200);
-        if (!*((uint8_t *)gamePad + 200)) {
-            Board *aBoard = reinterpret_cast<Board *>(v10); // 显式类型转换
-            aBoard->ClearCursor(v9);
-            v15 = *(uint32_t *)(v13 + 348);
-            v16 = (int)*((float *)gamePad + 27);
-            v17 = (int)*((float *)gamePad + 28);
-            v18 = (uint32_t *)(*((uint32_t *)gamePad + 14) + 22528);
-            v18[29] = 30;
-            v18[30] = v16;
-            v18[31] = v17;
-            *((uint32_t *)gamePad + 49) = v15;
-            *((uint32_t *)gamePad + 55) = v14;
-            *((uint8_t *)gamePad + 200) = 1;
+
+    if (cobCannon != otherSelectedCob && cobCannon->mState == PlantState::STATE_COBCANNON_READY && mGamepadState != 8) {
+        if (!mIsCobCannonSelected) {
+            mBoard->ClearCursor(mPlayerIndex1);
+            mBoard->mCobCannonCursorDelayCounter = 30;
+            mBoard->mCobCannonMouseX = static_cast<int>(mCursorPositionX);
+            mBoard->mCobCannonMouseY = static_cast<int>(mCursorPositionY);
+            mCobCannonPlantIndexInList = static_cast<int>(mBoard->mPlants.DataArrayGetID(cobCannon));
+            mCobCannonAnimCounter = 0;
+            mIsCobCannonSelected = true;
         }
     }
 }

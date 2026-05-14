@@ -26,6 +26,7 @@
 #include "PvZ/SexyAppFramework/Misc/KeyCodes.h"
 
 class Zombie;
+class Plant;
 
 class GamepadControls : public BaseGamepadControls {
 public:
@@ -86,6 +87,7 @@ public:
     void DrawPreview(Sexy::Graphics *g);
     void UpdatePreviewReanim();
     void OnButtonDown(Sexy::GamepadButton theButton, int thePlayerIndex, unsigned int unk);
+    void pickUpCobCannon(Plant *cobCannon);
 
 protected:
     GamepadControls() = default;
@@ -127,7 +129,5 @@ inline void (*old_GamepadControls_OnButtonDown)(GamepadControls *, Sexy::Gamepad
 inline void (*old_ZenGardenControls_Update)(ZenGardenControls *a1, float a2);
 
 // FilterEffect GetFilterEffectTypeBySeedType(SeedType mSeedType);
-
-void GamepadControls_pickUpCobCannon(int, int);
 
 #endif // PVZ_LAWN_GAMEPAD_CONTROLS_H

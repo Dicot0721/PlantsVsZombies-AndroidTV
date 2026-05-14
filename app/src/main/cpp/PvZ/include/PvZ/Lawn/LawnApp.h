@@ -218,9 +218,6 @@ public:
     bool CanSpawnYetis() {
         return reinterpret_cast<bool (*)(LawnApp *)>(LawnApp_CanSpawnYetisAddr)(this);
     }
-    void KillVSResultsScreen() {
-        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_KillVSResultsScreenAddr)(this);
-    }
     void HideHelpBarWidget() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_HideHelpBarWidgetAddr)(this);
     }
@@ -265,9 +262,6 @@ public:
     }
     void SetBoardResult(int result) {
         reinterpret_cast<void (*)(LawnApp *, int)>(LawnApp_SetBoardResultAddr)(this, result);
-    }
-    void ShowVSResultsScreen() {
-        reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ShowVSResultsScreenAddr)(this);
     }
     void ShowGameSelector() {
         reinterpret_cast<void (*)(LawnApp *)>(LawnApp_ShowGameSelectorAddr)(this);
@@ -379,6 +373,8 @@ public:
     void PreNewGame(GameMode theGameMode, bool theLookForSavedGame);
     void NewGame();
     bool HasBeatenChallenge(GameMode theGameMode);
+    void ShowVSResultsScreen();
+    void KillVSResultsScreen();
 
 protected:
     friend void InitHookFunction();

@@ -21,8 +21,14 @@
 #define PVZ_LAWN_WIDGET_VS_RESULTS_MENU_H
 
 #include "PvZ/Lawn/Common/ConstEnums.h"
+#include "PvZ/Lawn/Common/LawnCommon.h"
+#include "PvZ/Lawn/LawnApp.h"
 #include "PvZ/NetPlay.h"
+#include "PvZ/SexyAppFramework/Widget/Checkbox.h"
+#include "PvZ/SexyAppFramework/Widget/CheckboxListener.h"
 #include "PvZ/SexyAppFramework/Widget/MenuWidget.h"
+#include "PvZ/SexyAppFramework/Widget/WidgetManager.h"
+#include "PvZ/TodLib/Common/TodStringFile.h"
 
 #include <cstddef>
 
@@ -45,7 +51,7 @@ public:
     ParticleSystemID mSparkleParticleID; // 82
     ParticleSystemID mSmokeParticleID;   // 83
     int mUpdateCounter;                  // 84
-
+    class VSResultsCheckboxController *mCheckboxController;
 
     void Update();
     void OnExit();
@@ -72,10 +78,68 @@ protected:
     friend void InitHookFunction();
 
     void _constructor();
-}; // 85个整数
+};
+
+class VSResultsCheckboxController final : public Sexy::CheckboxListener {
+public:
+    enum {
+        VSResultsMenu_Send_Player_Name = 100,
+    };
+
+    Sexy::Checkbox *mSendPlayerNameCheckbox;
+
+    VSResultsCheckboxController()
+        : Sexy::CheckboxListener()
+        , mSendPlayerNameCheckbox(nullptr)
+        , mParentMenu(nullptr) {}
+
+    void CheckboxChecked(int theId, bool checked) override {
+        if (theId == VSResultsMenu_Send_Player_Name) {
+            gLawnApp->mPlayerInfo->mVSResultsSendPlayerName = checked;
+        }
+    }
+
+    void InitCheckboxWidget(VSResultsMenu *parentMenu) {
+        mParentMenu = parentMenu;
+        if (mParentMenu == nullptr || mParentMenu->mWidgetManager == nullptr) {
+            return;
+        }
+        if (mSendPlayerNameCheckbox != nullptr) {
+            return;
+        }
+        mSendPlayerNameCheckbox = MakeNewCheckbox(VSResultsMenu_Send_Player_Name, this, mParentMenu, false);
+        mSendPlayerNameCheckbox->Resize(640, 500, 175, 50);
+        mSendPlayerNameCheckbox->SetChecked(gLawnApp->mPlayerInfo->mVSResultsSendPlayerName, false);
+        mParentMenu->AddWidget(mSendPlayerNameCheckbox);
+    }
+
+    void DrawCheckboxLabel(Sexy::Graphics *g) const {
+        if (mSendPlayerNameCheckbox == nullptr || g == nullptr) {
+            return;
+        }
+        const Sexy::Color color = (mParentMenu != nullptr && mParentMenu->mFocusedChildWidget == mSendPlayerNameCheckbox) ? Sexy::Color(0, 255, 0) : Sexy::Color(107, 110, 145);
+        g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
+        g->SetColor(color);
+        g->DrawString(TodStringTranslate("[SEND_PLAYER_NAME]"), mSendPlayerNameCheckbox->mX + 40, mSendPlayerNameCheckbox->mY + 26);
+    }
+
+    void DestroyCheckboxWidget() {
+        if (mSendPlayerNameCheckbox == nullptr) {
+            return;
+        }
+        if (mParentMenu != nullptr && mParentMenu->mWidgetManager != nullptr) {
+            mParentMenu->RemoveWidget(mSendPlayerNameCheckbox);
+        }
+        delete mSendPlayerNameCheckbox;
+        mSendPlayerNameCheckbox = nullptr;
+        mParentMenu = nullptr;
+    }
+
+private:
+    VSResultsMenu *mParentMenu;
+};
 
 inline int gVSResultRequestState = -1;
-
 
 inline void (*old_VSResultsMenu_Update)(VSResultsMenu *a);
 

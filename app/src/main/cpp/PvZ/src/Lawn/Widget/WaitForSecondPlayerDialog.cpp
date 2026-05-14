@@ -3310,13 +3310,15 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
 
         pvzstl::string probeTag = TodStringTranslate(r.hostProbeDone ? "[P2P_READY]" : "[P2P_NOT_READY]");
         tag = tag.empty() ? probeTag : tag + " " + probeTag;
-        if (versionMismatch) {
-            tag = TodStringTranslate("[SERVER_ROOM_VERSION_ERROR]");
-        }
 
         if (!r.gaming && r.spectateAllowed) {
             tag = TodStringTranslate("[SPECTATE]");
         }
+
+        if (versionMismatch) {
+            tag = TodStringTranslate("[SERVER_ROOM_VERSION_ERROR]");
+        }
+
         pvzstl::string roomTitle = StrFormat(TodStringTranslate("[SERVER_ROOM_JOINED]").c_str(), r.name);
         pvzstl::string line = tag.empty() ? roomTitle : StrFormat("%s [%s]", roomTitle.c_str(), tag.c_str());
         TodDrawString(g, line, 400, yPos, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
