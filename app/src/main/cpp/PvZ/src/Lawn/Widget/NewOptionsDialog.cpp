@@ -50,7 +50,8 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                     // 客户端点击投降
                     BaseEvent event = {EventType::EVENT_CLIENT_BOARD_CONCEDE};
                     netplay::PutEvent(event);
-                    if (!mApp->mBoard->mGamepadControls[1]->mIsZombie) {
+                    GamepadControls *clientGamepadControls = mApp->mBoard->mGamepadControls[1]->mPlayerIndex2 == 1 ? mApp->mBoard->mGamepadControls[1] : mApp->mBoard->mGamepadControls[0];
+                    if (!clientGamepadControls->mIsZombie) {
                         mApp->SetBoardResult(7);
                         mApp->mGameScene = SCENE_ZOMBIES_WON;
                     } else {
@@ -63,7 +64,8 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                     // 主机端点击投降
                     BaseEvent event = {EventType::EVENT_SERVER_BOARD_CONCEDE};
                     netplay::PutEvent(event);
-                    if (!mApp->mBoard->mGamepadControls[0]->mIsZombie) {
+                    GamepadControls *serverGamepadControls = mApp->mBoard->mGamepadControls[0]->mPlayerIndex2 == 0 ? mApp->mBoard->mGamepadControls[0] : mApp->mBoard->mGamepadControls[1];
+                    if (!serverGamepadControls->mIsZombie) {
                         mApp->SetBoardResult(7);
                         mApp->mGameScene = SCENE_ZOMBIES_WON;
                     } else {
@@ -75,7 +77,6 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                     netplay::MetricsSetShuffleMode(Challenge::msVSShuffleMode);
                     netplay::MetricsSendSettlement(plantWin, mApp->mBoard->mMainCounter);
                 }
-
 
                 mApp->ShowVSResultsScreen();
                 mApp->mVSResultsMenu->InitFromBoard(mApp->mBoard);
