@@ -96,6 +96,7 @@ public:
     void CheckboxChecked(int theId, bool checked) override {
         if (theId == VSResultsMenu_Send_Player_Name) {
             gLawnApp->mPlayerInfo->mVSResultsSendPlayerName = checked;
+            gLawnApp->mPlayerInfo->SaveDetails();
         }
     }
 

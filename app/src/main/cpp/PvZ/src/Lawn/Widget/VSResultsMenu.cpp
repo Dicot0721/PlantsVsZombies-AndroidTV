@@ -143,6 +143,7 @@ void VSResultsMenu::ButtonDepress(int theId) {
 
 void VSResultsMenu::Draw(Graphics *g) {
     old_VSResultsMenu_Draw(this, g);
+
     if (gIsServerModeNetplay && gServerModeTransport == ServerModeTransport::RELAY && mCheckboxController != nullptr) {
         mCheckboxController->DrawCheckboxLabel(g);
     }
