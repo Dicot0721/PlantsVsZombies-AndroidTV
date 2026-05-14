@@ -27,7 +27,6 @@
 #include "PvZ/NetPlay.h"
 
 void NewOptionsDialog::ButtonDepress(int buttonId) {
-
     if (buttonId == 5 && (gTcpConnected || gTcpClientSocket >= 0)) {
         if (gIsServerModeSpectator) {
             mApp->PlaySample(Sexy::SOUND_BUZZER);
@@ -51,7 +50,7 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                     // 客户端点击投降
                     BaseEvent event = {EventType::EVENT_CLIENT_BOARD_CONCEDE};
                     netplay::PutEvent(event);
-                    if (mApp->mBoard->mGamepadControls[1]->mPlayerIndex2 == 1) {
+                    if (!mApp->mBoard->mGamepadControls[1]->mIsZombie) {
                         mApp->SetBoardResult(7);
                         mApp->mGameScene = SCENE_ZOMBIES_WON;
                     } else {
@@ -64,16 +63,14 @@ void NewOptionsDialog::ButtonDepress(int buttonId) {
                     // 主机端点击投降
                     BaseEvent event = {EventType::EVENT_SERVER_BOARD_CONCEDE};
                     netplay::PutEvent(event);
-                    bool plantWin = true;
-                    if (mApp->mBoard->mGamepadControls[0]->mPlayerIndex2 == 1) {
+                    if (!mApp->mBoard->mGamepadControls[0]->mIsZombie) {
                         mApp->SetBoardResult(7);
                         mApp->mGameScene = SCENE_ZOMBIES_WON;
-                        plantWin = false;
                     } else {
                         mApp->SetBoardResult(8);
                         mApp->mGameScene = SCENE_PLANTS_WON;
-                        plantWin = true;
                     }
+                    const bool plantWin = (mApp->mGameScene == SCENE_PLANTS_WON);
                     netplay::MetricsSetVsBackground(int(gVSBackground));
                     netplay::MetricsSetShuffleMode(Challenge::msVSShuffleMode);
                     netplay::MetricsSendSettlement(plantWin, mApp->mBoard->mMainCounter);

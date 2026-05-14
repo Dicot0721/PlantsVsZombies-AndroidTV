@@ -1466,17 +1466,15 @@ void Board::processClientEvent(const BaseEvent *event) {
         case EVENT_CLIENT_BOARD_CONCEDE: {
             mApp->KillNewOptionsDialog();
             mApp->KillDialog(DIALOG_CONFIRM_IN_GAME_RESTART);
-            bool plantWin = true;
-            if (mGamepadControls[1]->mPlayerIndex2 == 1) {
+            if (!mGamepadControls[1]->mIsZombie) {
                 mApp->SetBoardResult(7);
                 mApp->mGameScene = SCENE_ZOMBIES_WON;
-                plantWin = false;
             } else {
                 mApp->SetBoardResult(8);
                 mApp->mGameScene = SCENE_PLANTS_WON;
-                plantWin = true;
             }
             if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
+                const bool plantWin = (mApp->mGameScene == SCENE_PLANTS_WON);
                 netplay::MetricsSetVsBackground(int(gVSBackground));
                 netplay::MetricsSetShuffleMode(Challenge::msVSShuffleMode);
                 netplay::MetricsSendSettlement(plantWin, mMainCounter);
