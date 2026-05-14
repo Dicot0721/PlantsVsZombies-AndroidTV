@@ -347,9 +347,9 @@ static bool Mode3ConnectToTarget(WaitForSecondPlayerDialog *dialog, std::string_
     int err = errno;
     LOG_DEBUG("[MODE3] connect ret={} errno={}", ret, err);
     if (ret == 0) {
+        gIsConnectedToServer = true;
         dialog->mServerConnecting = false;
         dialog->mServerConnected = true;
-        ResetOnlineCheatStates();
         dialog->mServerStatusText = TodStringTranslate("[STATUS_CONNECTED]");
         dialog->ServerResetP2PState(false);
         dialog->ServerOpenP2PListener();
@@ -2084,9 +2084,9 @@ void WaitForSecondPlayerDialog::ServerUpdateIO() {
             socklen_t elen = sizeof(err);
             getsockopt(mServerSock, SOL_SOCKET, SO_ERROR, &err, &elen);
             if (err == 0) {
+                gIsConnectedToServer = true;
                 mServerConnecting = false;
                 mServerConnected = true;
-                ResetOnlineCheatStates();
                 mServerStatusText = TodStringTranslate("[STATUS_CONNECTED]");
                 ServerResetP2PState(false);
                 ServerOpenP2PListener();

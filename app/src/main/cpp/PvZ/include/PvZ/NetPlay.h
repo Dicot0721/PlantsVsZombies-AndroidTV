@@ -403,6 +403,17 @@ inline int gMetricsSunflowerLoss = 0;
 inline std::unordered_map<int, int> gMetricsPlantUseCount;
 inline std::unordered_map<int, int> gMetricsZombieUseCount;
 
+// TODO: 完善服务器连接判断
+inline bool gIsConnectedToServer = false;
+
+inline bool IsOnlineModeActive() noexcept {
+    return gTcpConnecting || gTcpConnected || gTcpClientSocket >= 0 || gTcpServerSocket >= 0 || gTcpListenSocket >= 0;
+}
+
+inline bool IsOnlineModeActiveAndConnectedToServer() noexcept {
+    return IsOnlineModeActive() && gIsConnectedToServer;
+}
+
 namespace netplay {
 struct SettleEvent {
     int seq;

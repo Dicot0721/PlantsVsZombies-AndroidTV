@@ -562,7 +562,7 @@ void SeedChooserScreen::ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, in
 }
 
 void SeedChooserScreen::CrazyDavePickSeeds() {
-    if (daveNoPickSeeds) {
+    if (daveNoPickSeeds && !IsOnlineModeActiveAndConnectedToServer()) {
         return;
     }
 

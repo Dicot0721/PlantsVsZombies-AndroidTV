@@ -68,10 +68,10 @@ void Projectile::ProjectileInitialize(int theX, int theY, int theRenderOrder, in
             old_Projectile_ProjectileInitialize(this, theX, theY, theRenderOrder, theRow, theProjectileType);
             return;
         }
-        if (bulletSpinnerChosenNum != -1) {
+        if (bulletSpinnerChosenNum != -1 && !IsOnlineModeActiveAndConnectedToServer()) {
             theProjectileType = ProjectileType(bulletSpinnerChosenNum);
         }
-        if (randomBullet) {
+        if (randomBullet && !IsOnlineModeActiveAndConnectedToServer()) {
             int aNumProjectile = PROJECTILE_ZOMBIE_PEA - 1 - banCobCannon;
             theProjectileType = ProjectileType(RandRangeInt(PROJECTILE_SNOWPEA, aNumProjectile));
             if (banCobCannon && theProjectileType == ProjectileType::PROJECTILE_COBBIG) {
@@ -182,7 +182,7 @@ Rect Projectile::GetProjectileRect() {
 }
 
 void Projectile::ConvertToFireball(int theGridX) {
-    if (isOnlyTouchFireWood) {
+    if (isOnlyTouchFireWood && !IsOnlineModeActiveAndConnectedToServer()) {
         if (bulletSpinnerChosenNum != -1) {
             mProjectileType = (ProjectileType)bulletSpinnerChosenNum;
             return;
@@ -215,7 +215,7 @@ void Projectile::ConvertToFireball(int theGridX) {
 }
 
 void Projectile::ConvertToPea(int theGridX) {
-    if (ColdPeaCanPassFireWood) {
+    if (ColdPeaCanPassFireWood && !IsOnlineModeActiveAndConnectedToServer()) {
         if (mHitTorchwoodGridX != theGridX) {
             AttachmentDie(mAttachmentID);
             mHitTorchwoodGridX = theGridX;
@@ -229,7 +229,7 @@ void Projectile::ConvertToPea(int theGridX) {
 }
 
 void Projectile::Update() {
-    if (requestPause) {
+    if (requestPause && !IsOnlineModeActiveAndConnectedToServer()) {
         // 如果开了高级暂停
         return;
     }
@@ -336,7 +336,7 @@ void Projectile::DoImpact(Zombie *theZombie) {
     }
 
 
-    if (!projectilePierce) {
+    if (!projectilePierce || IsOnlineModeActiveAndConnectedToServer()) {
         old_Projectile_DoImpact(this, theZombie);
         return;
     }

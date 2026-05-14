@@ -23,7 +23,7 @@
 #include "PvZ/Lawn/LawnApp.h"
 
 void LawnMower::Update() {
-    if (!requestPause) {
+    if (!requestPause || IsOnlineModeActiveAndConnectedToServer()) {
         old_LawnMower_Update(this);
     }
 }

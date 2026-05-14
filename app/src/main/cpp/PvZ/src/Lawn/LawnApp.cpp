@@ -587,13 +587,15 @@ void LawnApp::UpdateFrames() {
 void LawnApp::UpdateApp() {
 
     if (doCheatDialog) {
-        if (!isMainMenu)
+        if (!isMainMenu && !IsOnlineModeActiveAndConnectedToServer()) {
             DoCheatDialog();
+        }
         doCheatDialog = false;
     }
     if (doCheatCodeDialog) {
-        if (!isMainMenu)
+        if (!isMainMenu && !IsOnlineModeActiveAndConnectedToServer()) {
             DoCheatCodeDialog();
+        }
         doCheatCodeDialog = false;
     }
     if (doKeyboardTwoPlayerDialog && mTitleScreen == nullptr) {

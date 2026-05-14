@@ -333,7 +333,7 @@ void Board::ShovelDown() {
 }
 
 void Board::UpdateGame() {
-    if (requestPause) {
+    if (requestPause && !IsOnlineModeActiveAndConnectedToServer()) {
         UpdateGameObjects();
         return;
     }
@@ -370,7 +370,7 @@ void Board::UpdateGameObjects() {
 
 void Board::DrawDebugText(Sexy::Graphics *g) {
     // 出僵DEBUG功能
-    if (drawDebugText) {
+    if (drawDebugText && !IsOnlineModeActiveAndConnectedToServer()) {
         DebugTextMode tmp = mDebugTextMode;
         mDebugTextMode = DebugTextMode::DEBUG_TEXT_ZOMBIE_SPAWN;
         old_Board_DrawDebugText(this, g);
@@ -383,7 +383,7 @@ void Board::DrawDebugText(Sexy::Graphics *g) {
 
 void Board::DrawDebugObjectRects(Sexy::Graphics *g) {
     // 碰撞体积绘制
-    if (drawDebugRects) {
+    if (drawDebugRects && !IsOnlineModeActiveAndConnectedToServer()) {
         DebugTextMode tmp = mDebugTextMode;
         mDebugTextMode = DebugTextMode::DEBUG_TEXT_COLLISION;
         old_Board_DrawDebugObjectRects(this, g);
@@ -421,7 +421,7 @@ void Board::DrawFadeOut(Sexy::Graphics *g) {
 
 int Board::GetCurrentPlantCost(SeedType theSeedType, SeedType theImitaterType) {
     // 无限阳光
-    if (infiniteSun)
+    if (infiniteSun && !IsOnlineModeActiveAndConnectedToServer())
         return 0;
 
     if (theSeedType == SeedType::SEED_ZOMBIE_MOUND) {
@@ -439,7 +439,7 @@ int Board::GetCurrentPlantCost(SeedType theSeedType, SeedType theImitaterType) {
 
 void Board::AddSunMoney(int theAmount, int thePlayerIndex) {
     // 无限阳光
-    if (infiniteSun) {
+    if (infiniteSun && !IsOnlineModeActiveAndConnectedToServer()) {
         if (thePlayerIndex == 0) {
             mSunMoney1 = 9990;
         } else {
@@ -452,7 +452,7 @@ void Board::AddSunMoney(int theAmount, int thePlayerIndex) {
 
 void Board::AddDeathMoney(int theAmount) {
     // 无限阳光
-    if (infiniteSun) {
+    if (infiniteSun && !IsOnlineModeActiveAndConnectedToServer()) {
         mDeathMoney = 9990;
     } else {
         old_Board_AddDeathMoney(this, theAmount);
@@ -468,7 +468,7 @@ bool Board::IsIceAt(int theGridX, int theGridY) {
 
 PlantingReason Board::CanPlantAt(int theGridX, int theGridY, SeedType theSeedType) {
     // 自由种植！
-    if (FreePlantAt) {
+    if (FreePlantAt && !IsOnlineModeActiveAndConnectedToServer()) {
         return PlantingReason::PLANTING_OK;
     }
 
@@ -657,7 +657,7 @@ PlantingReason Board::CanPlantAt(int theGridX, int theGridY, SeedType theSeedTyp
 
 bool Board::PlantingRequirementsMet(SeedType theSeedType) {
     // 紫卡直接种植！
-    if (FreePlantAt) {
+    if (FreePlantAt && !IsOnlineModeActiveAndConnectedToServer()) {
         return true;
     }
     return old_Board_PlantingRequirementsMet(this, theSeedType);
@@ -668,7 +668,7 @@ void Board::ZombiesWon(Zombie *theZombie) {
         old_BoardZombiesWon(this, theZombie);
         return;
     }
-    if (ZombieCanNotWon) {
+    if (ZombieCanNotWon && !IsOnlineModeActiveAndConnectedToServer()) {
         theZombie->ApplyBurn();
         theZombie->DieNoLoot();
         return;
@@ -733,7 +733,7 @@ Plant *Board::AddPlant_Origin(int theGridX, int theGridY, SeedType theSeedType, 
     if (theSeedType == SeedType::SEED_CABBAGEPULT || theSeedType == SeedType::SEED_KERNELPULT || theSeedType == SeedType::SEED_MELONPULT || theSeedType == SeedType::SEED_WINTERMELON) {
         mCatapultPlantsUsed = true;
     }
-    if (theSeedType == SeedType::SEED_PUMPKINSHELL && PumpkinWithLadder && GetLadderAt(theGridX, theGridY) == nullptr) {
+    if (theSeedType == SeedType::SEED_PUMPKINSHELL && PumpkinWithLadder && !IsOnlineModeActiveAndConnectedToServer() && GetLadderAt(theGridX, theGridY) == nullptr) {
         AddALadder(theGridX, theGridY);
     }
 
@@ -795,7 +795,7 @@ Coin *Board::AddCoin(int theX, int theY, CoinType theCoinType, CoinMotion theCoi
 }
 
 void Board::UpdateSunSpawning() {
-    if (requestPause) {
+    if (requestPause && !IsOnlineModeActiveAndConnectedToServer()) {
         // 如果开了高级暂停
         return;
     }
@@ -858,7 +858,7 @@ void Board::UpdateSunSpawning() {
 }
 
 void Board::UpdateZombieSpawning() {
-    if (requestPause) {
+    if (requestPause && !IsOnlineModeActiveAndConnectedToServer()) {
         // 如果开了高级暂停
         return;
     }
@@ -955,7 +955,7 @@ void Board::UpdateZombieSpawning() {
 }
 
 void Board::UpdateIce() {
-    if (requestPause) {
+    if (requestPause && !IsOnlineModeActiveAndConnectedToServer()) {
         // 如果开了高级暂停
         return;
     }
@@ -1192,7 +1192,7 @@ bool Board::StageHas6Rows() {
 
 
 void Board::UpdateFwoosh() {
-    if (requestPause) {
+    if (requestPause && !IsOnlineModeActiveAndConnectedToServer()) {
         return;
     }
 
@@ -1200,7 +1200,7 @@ void Board::UpdateFwoosh() {
 }
 
 void Board::UpdateFog() {
-    if (requestPause) {
+    if (requestPause && !IsOnlineModeActiveAndConnectedToServer()) {
         return;
     }
 
@@ -1208,7 +1208,7 @@ void Board::UpdateFog() {
 }
 
 void Board::DrawFog(Sexy::Graphics *g) {
-    if (noFog) {
+    if (noFog && !IsOnlineModeActiveAndConnectedToServer()) {
         return;
     }
 
@@ -1399,7 +1399,7 @@ Zombie *Board::AddZombie_Origin(ZombieType theZombieType, int theFromWave, bool 
 // void (*old_Board_UpdateCoverLayer)(Board *this);
 //
 // void Board_UpdateCoverLayer(Board *this) {
-// if (requestPause) {
+// if (requestPause && !IsOnlineModeActiveAndConnectedToServer()) {
 // return;
 // }
 // old_Board_UpdateCoverLayer(this);
@@ -2408,43 +2408,45 @@ void Board::Update() {
     }
 
     if (!mPaused && mTimeStopCounter <= 0) {
-        switch (speedUpMode) {
-            case 1:
-                if (speedUpCounter++ % 5 == 0) {
+        if (speedUpMode > 0 && !IsOnlineModeActiveAndConnectedToServer()) {
+            switch (speedUpMode) {
+                case 1:
+                    if (speedUpCounter++ % 5 == 0) {
+                        SpeedUpUpdate();
+                    }
+                    break;
+                case 2:
+                    if (speedUpCounter++ % 2 == 0) {
+                        SpeedUpUpdate();
+                    }
+                    break;
+                case 3:
                     SpeedUpUpdate();
-                }
-                break;
-            case 2:
-                if (speedUpCounter++ % 2 == 0) {
+                    break;
+                case 4:
                     SpeedUpUpdate();
-                }
-                break;
-            case 3:
-                SpeedUpUpdate();
-                break;
-            case 4:
-                SpeedUpUpdate();
-                if (speedUpCounter++ % 2 == 0) {
-                    SpeedUpUpdate();
-                }
-                break;
-            case 5:
-                for (int i = 0; i < 2; ++i) {
-                    SpeedUpUpdate();
-                }
-                break;
-            case 6:
-                for (int i = 0; i < 4; ++i) {
-                    SpeedUpUpdate();
-                }
-                break;
-            case 7:
-                for (int i = 0; i < 9; ++i) {
-                    SpeedUpUpdate();
-                }
-                break;
-            default:
-                break;
+                    if (speedUpCounter++ % 2 == 0) {
+                        SpeedUpUpdate();
+                    }
+                    break;
+                case 5:
+                    for (int i = 0; i < 2; ++i) {
+                        SpeedUpUpdate();
+                    }
+                    break;
+                case 6:
+                    for (int i = 0; i < 4; ++i) {
+                        SpeedUpUpdate();
+                    }
+                    break;
+                case 7:
+                    for (int i = 0; i < 9; ++i) {
+                        SpeedUpUpdate();
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         // 为夜晚泳池场景补全泳池反射闪光特效
@@ -2455,95 +2457,103 @@ void Board::Update() {
     }
 
     if (ClearAllPlant) {
-        RemoveAllPlants();
+        if (!IsOnlineModeActiveAndConnectedToServer()) {
+            RemoveAllPlants();
+        }
         ClearAllPlant = false;
     }
 
     if (clearAllZombies) {
-        RemoveAllZombies();
+        if (!IsOnlineModeActiveAndConnectedToServer()) {
+            RemoveAllZombies();
+        }
         clearAllZombies = false;
     }
 
     if (clearAllGraves) {
-        GridItem *aGridItem = nullptr;
-        while (IterateGridItems(aGridItem)) {
-            if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
-                aGridItem->GridItemDie();
+        if (!IsOnlineModeActiveAndConnectedToServer()) {
+            for (GridItem *aGridItem = nullptr; IterateGridItems(aGridItem);) {
+                if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
+                    aGridItem->GridItemDie();
+                }
             }
         }
         clearAllGraves = false;
     }
 
     if (clearAllMowers) {
-        if (mApp->mGameScene == GameScenes::SCENE_PLAYING) {
+        if (mApp->mGameScene == GameScenes::SCENE_PLAYING && !IsOnlineModeActiveAndConnectedToServer()) {
             RemoveAllMowers();
         }
         clearAllMowers = false;
     }
 
     if (recoverAllMowers) {
-        if (mApp->mGameScene == GameScenes::SCENE_PLAYING) {
+        if (mApp->mGameScene == GameScenes::SCENE_PLAYING && !IsOnlineModeActiveAndConnectedToServer()) {
             // Board_RemoveAllMowers(this);
             ResetLawnMowers();
         }
         recoverAllMowers = false;
     }
 
-    if (passNowLevel) {
-        mLevelComplete = true;
-        mApp->mBoardResult = mApp->mGameMode == GameMode::GAMEMODE_MP_VS ? BoardResult::BOARDRESULT_VS_PLANT_WON : BoardResult::BOARDRESULT_WON;
-        passNowLevel = false;
-    }
     // 魅惑所有僵尸
     if (hypnoAllZombies) {
-        Zombie *aZombie = nullptr;
-        while (IterateZombies(aZombie)) {
-            if (aZombie->mZombieType != ZombieType::ZOMBIE_BOSS) {
-                aZombie->mMindControlled = true;
+        if (!IsOnlineModeActiveAndConnectedToServer()) {
+            Zombie *aZombie = nullptr;
+            while (IterateZombies(aZombie)) {
+                if (aZombie->mZombieType != ZombieType::ZOMBIE_BOSS) {
+                    aZombie->mMindControlled = true;
+                }
             }
         }
         hypnoAllZombies = false;
     }
 
     if (freezeAllZombies) {
-        for (Zombie *aZombie = nullptr; IterateZombies(aZombie); aZombie->HitIceTrap()) {}
+        if (!IsOnlineModeActiveAndConnectedToServer()) {
+            for (Zombie *aZombie = nullptr; IterateZombies(aZombie); aZombie->HitIceTrap()) {}
+        }
         freezeAllZombies = false;
     }
 
     if (startAllMowers) {
-        if (mApp->mGameScene == GameScenes::SCENE_PLAYING)
+        if (mApp->mGameScene == GameScenes::SCENE_PLAYING && !IsOnlineModeActiveAndConnectedToServer())
             for (LawnMower *alawnMower = nullptr; IterateLawnMowers(alawnMower); alawnMower->StartMower()) {}
         startAllMowers = false;
     }
 
     // 修改卡槽
     if (setSeedPacket && choiceSeedType != SeedType::SEED_NONE) {
-        if (targetSeedBank == 1) {
-            if (choiceSeedType < SeedType::NUM_SEED_TYPES && !mGamepadControls[0]->mIsZombie) {
-                mSeedBank[0]->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
-                mSeedBank[0]->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
-            } else if (choiceSeedType > SeedType::SEED_ZOMBIE_GRAVESTONE && mGamepadControls[0]->mIsZombie) // IZ模式里用不了墓碑
-                mSeedBank[0]->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
-        } else if (targetSeedBank == 2 && mSeedBank[1] != nullptr) {
-            if (choiceSeedType < SeedType::NUM_SEED_TYPES && !mGamepadControls[1]->mIsZombie) {
-                mSeedBank[1]->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
-                mSeedBank[1]->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
-            } else if (Challenge::IsZombieSeedType(choiceSeedType) && mGamepadControls[1]->mIsZombie)
-                mSeedBank[1]->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
+        if (!IsOnlineModeActiveAndConnectedToServer()) {
+            if (targetSeedBank == 1) {
+                if (choiceSeedType < SeedType::NUM_SEED_TYPES && !mGamepadControls[0]->mIsZombie) {
+                    mSeedBank[0]->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
+                    mSeedBank[0]->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
+                } else if (choiceSeedType > SeedType::SEED_ZOMBIE_GRAVESTONE && mGamepadControls[0]->mIsZombie) // IZ模式里用不了墓碑
+                    mSeedBank[0]->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
+            } else if (targetSeedBank == 2 && mSeedBank[1] != nullptr) {
+                if (choiceSeedType < SeedType::NUM_SEED_TYPES && !mGamepadControls[1]->mIsZombie) {
+                    mSeedBank[1]->mSeedPackets[choiceSeedPacketIndex].mPacketType = isImitaterSeed ? SeedType::SEED_IMITATER : choiceSeedType;
+                    mSeedBank[1]->mSeedPackets[choiceSeedPacketIndex].mImitaterType = isImitaterSeed ? choiceSeedType : SeedType::SEED_NONE;
+                } else if (Challenge::IsZombieSeedType(choiceSeedType) && mGamepadControls[1]->mIsZombie)
+                    mSeedBank[1]->mSeedPackets[choiceSeedPacketIndex].mPacketType = choiceSeedType;
+            }
         }
         setSeedPacket = false;
     }
 
     if (passNowLevel) {
-        mLevelComplete = true;
-        mApp->mBoardResult = mApp->mGameMode == GameMode::GAMEMODE_MP_VS ? BoardResult::BOARDRESULT_VS_PLANT_WON : BoardResult::BOARDRESULT_WON;
+        if (!IsOnlineModeActiveAndConnectedToServer()) {
+            mLevelComplete = true;
+            mApp->mBoardResult = mApp->mGameMode == GameMode::GAMEMODE_MP_VS ? BoardResult::BOARDRESULT_VS_PLANT_WON : BoardResult::BOARDRESULT_WON;
+        }
         passNowLevel = false;
     }
 
     // 布置选择阵型
     if (layChoseFormation) // 用按钮触发, 防止进入游戏时自动布阵
     {
-        if (formationId >= 0) {
+        if (formationId >= 0 && !IsOnlineModeActiveAndConnectedToServer()) {
             formation::ApplyFormation(this, formation::GetBuiltinFormationStr(formationId));
         }
         layChoseFormation = false;
@@ -2551,148 +2561,155 @@ void Board::Update() {
 
     // 布置粘贴阵型
     if (layPastedFormation) {
-        if (!customFormation.empty()) {
+        if (!customFormation.empty() && !IsOnlineModeActiveAndConnectedToServer()) {
             formation::ApplyFormation(this, customFormation);
         }
         layPastedFormation = false;
     }
 
     if (ladderBuild) {
-        if (theBuildLadderX < 9 && theBuildLadderY < (StageHas6Rows() ? 6 : 5) && GetLadderAt(theBuildLadderX, theBuildLadderY) == nullptr)
-            // 防止选“所有行”或“所有列”的时候放置到场外
+        // 防止选“所有行”或“所有列”的时候放置到场外
+        if (!IsOnlineModeActiveAndConnectedToServer() && theBuildLadderX < 9 && theBuildLadderY < (StageHas6Rows() ? 6 : 5) && GetLadderAt(theBuildLadderX, theBuildLadderY) == nullptr) {
             AddALadder(theBuildLadderX, theBuildLadderY);
+        }
         ladderBuild = false;
     }
 
 
     // 植物放置
     if (plantBuild && theBuildPlantType != SeedType::SEED_NONE) {
-        int colsCount = (theBuildPlantType == SeedType::SEED_COBCANNON) ? 8 : 9; // 玉米加农炮不种在九列
-        int width = (theBuildPlantType == SeedType::SEED_COBCANNON) ? 2 : 1;     // 玉米加农炮宽度两列
-        int rowsCount = StageHas6Rows() ? 6 : 5;
-        bool isIZMode = mApp->IsIZombieLevel();
-        // 全场
-        if (theBuildPlantX == 9 && theBuildPlantY == 6) {
-            for (int x = 0; x < colsCount; x += width) {
-                for (int y = 0; y < rowsCount; y++) {
-                    Plant *theBuiltPlant = AddPlant(x, y, theBuildPlantType, (isImitaterPlant ? SeedType::SEED_IMITATER : SeedType::SEED_NONE), 0, true);
+        if (!IsOnlineModeActiveAndConnectedToServer()) {
+            int colsCount = (theBuildPlantType == SeedType::SEED_COBCANNON) ? 8 : 9; // 玉米加农炮不种在九列
+            int width = (theBuildPlantType == SeedType::SEED_COBCANNON) ? 2 : 1;     // 玉米加农炮宽度两列
+            int rowsCount = StageHas6Rows() ? 6 : 5;
+            bool isIZMode = mApp->IsIZombieLevel();
+            // 全场
+            if (theBuildPlantX == 9 && theBuildPlantY == 6) {
+                for (int x = 0; x < colsCount; x += width) {
+                    for (int y = 0; y < rowsCount; y++) {
+                        Plant *theBuiltPlant = AddPlant(x, y, theBuildPlantType, (isImitaterPlant ? SeedType::SEED_IMITATER : SeedType::SEED_NONE), 0, true);
+                        if (isImitaterPlant)
+                            theBuiltPlant->SetImitaterFilterEffect();
+                        if (isIZMode)
+                            mChallenge->IZombieSetupPlant(theBuiltPlant);
+                    }
+                }
+            }
+            // 单行
+            else if (theBuildPlantX == 9 && theBuildPlantY < 6) {
+                for (int x = 0; x < colsCount; x += width) {
+                    Plant *theBuiltPlant = AddPlant(x, theBuildPlantY, theBuildPlantType, (isImitaterPlant ? SeedType::SEED_IMITATER : SeedType::SEED_NONE), 0, true);
                     if (isImitaterPlant)
                         theBuiltPlant->SetImitaterFilterEffect();
                     if (isIZMode)
                         mChallenge->IZombieSetupPlant(theBuiltPlant);
                 }
             }
-        }
-        // 单行
-        else if (theBuildPlantX == 9 && theBuildPlantY < 6) {
-            for (int x = 0; x < colsCount; x += width) {
-                Plant *theBuiltPlant = AddPlant(x, theBuildPlantY, theBuildPlantType, (isImitaterPlant ? SeedType::SEED_IMITATER : SeedType::SEED_NONE), 0, true);
+            // 单列
+            else if (theBuildPlantX < 9 && theBuildPlantY == 6) {
+                for (int y = 0; y < rowsCount; y++) {
+                    Plant *theBuiltPlant = AddPlant(theBuildPlantX, y, theBuildPlantType, (isImitaterPlant ? SeedType::SEED_IMITATER : SeedType::SEED_NONE), 0, true);
+                    if (isImitaterPlant)
+                        theBuiltPlant->SetImitaterFilterEffect();
+                    if (isIZMode)
+                        mChallenge->IZombieSetupPlant(theBuiltPlant);
+                }
+            }
+            // 单格
+            else if (theBuildPlantX < colsCount && theBuildPlantY < rowsCount) {
+                Plant *theBuiltPlant = AddPlant(theBuildPlantX, theBuildPlantY, theBuildPlantType, (isImitaterPlant ? SeedType::SEED_IMITATER : SeedType::SEED_NONE), 0, true);
                 if (isImitaterPlant)
                     theBuiltPlant->SetImitaterFilterEffect();
                 if (isIZMode)
                     mChallenge->IZombieSetupPlant(theBuiltPlant);
             }
-        }
-        // 单列
-        else if (theBuildPlantX < 9 && theBuildPlantY == 6) {
-            for (int y = 0; y < rowsCount; y++) {
-                Plant *theBuiltPlant = AddPlant(theBuildPlantX, y, theBuildPlantType, (isImitaterPlant ? SeedType::SEED_IMITATER : SeedType::SEED_NONE), 0, true);
-                if (isImitaterPlant)
-                    theBuiltPlant->SetImitaterFilterEffect();
-                if (isIZMode)
-                    mChallenge->IZombieSetupPlant(theBuiltPlant);
-            }
-        }
-        // 单格
-        else if (theBuildPlantX < colsCount && theBuildPlantY < rowsCount) {
-            Plant *theBuiltPlant = AddPlant(theBuildPlantX, theBuildPlantY, theBuildPlantType, (isImitaterPlant ? SeedType::SEED_IMITATER : SeedType::SEED_NONE), 0, true);
-            if (isImitaterPlant)
-                theBuiltPlant->SetImitaterFilterEffect();
-            if (isIZMode)
-                mChallenge->IZombieSetupPlant(theBuiltPlant);
         }
         plantBuild = false;
     }
 
     // 僵尸放置
     if (zombieBuild && theBuildZombieType != ZombieType::ZOMBIE_INVALID) {
-        if (theBuildZombieType == ZombieType::ZOMBIE_BOSS)
-            AddZombieInRow(theBuildZombieType, 0, 0, true);
-        else {
-            int colsCount = 9;
-            int rowsCount = StageHas6Rows() ? 6 : 5;
-            // 僵尸出生线
-            if (BuildZombieX == 10 && BuildZombieY == 6)
-                for (int y = 0; y < rowsCount; ++y)
-                    AddZombieInRow(theBuildZombieType, y, mCurrentWave, true);
-            // 僵尸出生点
-            else if (BuildZombieX == 10 && BuildZombieY < 6)
-                AddZombieInRow(theBuildZombieType, BuildZombieY, mCurrentWave, true);
-            // 全场
-            else if (BuildZombieX == 9 && BuildZombieY == 6)
-                for (int x = 0; x < colsCount; ++x)
+        if (!IsOnlineModeActiveAndConnectedToServer()) {
+            if (theBuildZombieType == ZombieType::ZOMBIE_BOSS)
+                AddZombieInRow(theBuildZombieType, 0, 0, true);
+            else {
+                int colsCount = 9;
+                int rowsCount = StageHas6Rows() ? 6 : 5;
+                // 僵尸出生线
+                if (BuildZombieX == 10 && BuildZombieY == 6)
                     for (int y = 0; y < rowsCount; ++y)
-                        mChallenge->IZombiePlaceZombie(theBuildZombieType, x, y);
-            // 单行
-            else if (BuildZombieX == 9 && BuildZombieY < 6)
-                for (int x = 0; x < colsCount; ++x)
-                    mChallenge->IZombiePlaceZombie(theBuildZombieType, x, BuildZombieY);
-            // 单列
-            else if (BuildZombieX < 9 && BuildZombieY == 6)
-                for (int y = 0; y < rowsCount; ++y)
-                    mChallenge->IZombiePlaceZombie(theBuildZombieType, BuildZombieX, y);
-            // 单格
-            else if (BuildZombieX < colsCount && BuildZombieY < rowsCount)
-                mChallenge->IZombiePlaceZombie(theBuildZombieType, BuildZombieX, BuildZombieY);
+                        AddZombieInRow(theBuildZombieType, y, mCurrentWave, true);
+                // 僵尸出生点
+                else if (BuildZombieX == 10 && BuildZombieY < 6)
+                    AddZombieInRow(theBuildZombieType, BuildZombieY, mCurrentWave, true);
+                // 全场
+                else if (BuildZombieX == 9 && BuildZombieY == 6)
+                    for (int x = 0; x < colsCount; ++x)
+                        for (int y = 0; y < rowsCount; ++y)
+                            mChallenge->IZombiePlaceZombie(theBuildZombieType, x, y);
+                // 单行
+                else if (BuildZombieX == 9 && BuildZombieY < 6)
+                    for (int x = 0; x < colsCount; ++x)
+                        mChallenge->IZombiePlaceZombie(theBuildZombieType, x, BuildZombieY);
+                // 单列
+                else if (BuildZombieX < 9 && BuildZombieY == 6)
+                    for (int y = 0; y < rowsCount; ++y)
+                        mChallenge->IZombiePlaceZombie(theBuildZombieType, BuildZombieX, y);
+                // 单格
+                else if (BuildZombieX < colsCount && BuildZombieY < rowsCount)
+                    mChallenge->IZombiePlaceZombie(theBuildZombieType, BuildZombieX, BuildZombieY);
+            }
         }
         zombieBuild = false;
     }
 
     // 放置墓碑
     if (graveBuild) {
-        int colsCount = 9;
-        int rowsCount = StageHas6Rows() ? 6 : 5;
-        // 全场
-        if (BuildZombieX == 9 && BuildZombieY == 6) {
-            GridItem *aGridItem = nullptr;
-            while (IterateGridItems(aGridItem)) {
-                if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
-                    aGridItem->GridItemDie();
+        if (!IsOnlineModeActiveAndConnectedToServer()) {
+            int colsCount = 9;
+            int rowsCount = StageHas6Rows() ? 6 : 5;
+            // 全场
+            if (BuildZombieX == 9 && BuildZombieY == 6) {
+                GridItem *aGridItem = nullptr;
+                while (IterateGridItems(aGridItem)) {
+                    if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE) {
+                        aGridItem->GridItemDie();
+                    }
+                }
+                for (int x = 0; x < colsCount; ++x) {
+                    for (int y = 0; y < rowsCount; ++y) {
+                        mChallenge->GraveDangerSpawnGraveAt(x, y);
+                    }
                 }
             }
-            for (int x = 0; x < colsCount; ++x) {
+            // 单行
+            else if (BuildZombieX == 9 && BuildZombieY < 6) {
+                GridItem *aGridItem = nullptr;
+                while (IterateGridItems(aGridItem)) {
+                    if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE && aGridItem->mGridY == BuildZombieY) {
+                        aGridItem->GridItemDie();
+                    }
+                }
+                for (int x = 0; x < colsCount; ++x) {
+                    mChallenge->GraveDangerSpawnGraveAt(x, BuildZombieY);
+                }
+            }
+            // 单列
+            else if (BuildZombieX < 9 && BuildZombieY == 6) {
+                GridItem *aGridItem = nullptr;
+                while (IterateGridItems(aGridItem)) {
+                    if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE && aGridItem->mGridX == BuildZombieX) {
+                        aGridItem->GridItemDie();
+                    }
+                }
                 for (int y = 0; y < rowsCount; ++y) {
-                    mChallenge->GraveDangerSpawnGraveAt(x, y);
+                    mChallenge->GraveDangerSpawnGraveAt(BuildZombieX, y);
                 }
             }
-        }
-        // 单行
-        else if (BuildZombieX == 9 && BuildZombieY < 6) {
-            GridItem *aGridItem = nullptr;
-            while (IterateGridItems(aGridItem)) {
-                if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE && aGridItem->mGridY == BuildZombieY) {
-                    aGridItem->GridItemDie();
-                }
+            // 单格
+            else if (BuildZombieX < 9 && BuildZombieY < 6) {
+                mChallenge->GraveDangerSpawnGraveAt(BuildZombieX, BuildZombieY);
             }
-            for (int x = 0; x < colsCount; ++x) {
-                mChallenge->GraveDangerSpawnGraveAt(x, BuildZombieY);
-            }
-        }
-        // 单列
-        else if (BuildZombieX < 9 && BuildZombieY == 6) {
-            GridItem *aGridItem = nullptr;
-            while (IterateGridItems(aGridItem)) {
-                if (aGridItem->mGridItemType == GridItemType::GRIDITEM_GRAVESTONE && aGridItem->mGridX == BuildZombieX) {
-                    aGridItem->GridItemDie();
-                }
-            }
-            for (int y = 0; y < rowsCount; ++y) {
-                mChallenge->GraveDangerSpawnGraveAt(BuildZombieX, y);
-            }
-        }
-        // 单格
-        else if (BuildZombieX < 9 && BuildZombieY < 6) {
-            mChallenge->GraveDangerSpawnGraveAt(BuildZombieX, BuildZombieY);
         }
         graveBuild = false;
     }
@@ -3112,7 +3129,7 @@ void Board::AddSecondPlayer(int a2) {
 
 bool Board::IsLastStandFinalStage() {
     // 无尽坚不可摧
-    if (endlessLastStand)
+    if (endlessLastStand && !IsOnlineModeActiveAndConnectedToServer())
         return false;
 
     return mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_LAST_STAND && mChallenge->mSurvivalStage == 4;
@@ -3186,7 +3203,7 @@ void Board::DoPlantingEffects(int theGridX, int theGridY, Plant *thePlant) {
 
 
 void Board::InitLawnMowers() {
-    if (banMower)
+    if (banMower && !IsOnlineModeActiveAndConnectedToServer())
         return;
 
     if (mApp->mGameMode == GameMode::GAMEMODE_CHALLENGE_BUTTERED_POPCORN)
@@ -3341,14 +3358,14 @@ bool Board::GetAliveJacksonZombie() {
 
 void Board::UpdateLevelEndSequence() {
     // 修复无尽最后一波僵尸出现后高级暂停无法暂停下一关的到来
-    if (requestPause)
+    if (requestPause && !IsOnlineModeActiveAndConnectedToServer())
         return;
 
     old_Board_UpdateLevelEndSequence(this);
 }
 
 void Board::UpdateGridItems() {
-    if (requestPause)
+    if (requestPause && !IsOnlineModeActiveAndConnectedToServer())
         return;
 
     old_Board_UpdateGridItems(this);

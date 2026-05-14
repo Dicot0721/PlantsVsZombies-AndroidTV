@@ -108,7 +108,7 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
     mRevived = false;
     mIsDeadFollowers = false;
 
-    if (zombieSetScale != 0 && mZombieType != ZombieType::ZOMBIE_BOSS) {
+    if (zombieSetScale != 0 && mZombieType != ZombieType::ZOMBIE_BOSS && !IsOnlineModeActiveAndConnectedToServer()) {
         mScaleZombie = 0.2 * zombieSetScale;
         UpdateAnimSpeed();
         float theRatio = mScaleZombie * mScaleZombie;
@@ -322,12 +322,12 @@ bool Zombie::IsOnBoard() {
 }
 
 void Zombie::Update() {
-    if (zombieBloated) {
+    if (zombieBloated && !IsOnlineModeActiveAndConnectedToServer()) {
         // 如果开启了“普僵必噎死”
         mBloated = mZombieType == ZombieType::ZOMBIE_NORMAL && !mInPool;
     }
 
-    if (requestPause) {
+    if (requestPause && !IsOnlineModeActiveAndConnectedToServer()) {
         // 如果开了高级暂停
         return;
     }
@@ -1947,19 +1947,21 @@ void Zombie::Draw(Sexy::Graphics *g) {
     old_Zombie_Draw(this, g);
     int drawHeightOffset = 0;
     if (showZombieBodyHealth || (showGargantuarHealth && (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR))) { // 如果玩家开了"僵尸显血"
-        g->SetColor(gColorWhite);
-        g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
-        if (mZombieType == ZombieType::ZOMBIE_BOSS) {
-            // 如果是僵王,将血量绘制到僵王头顶。从而修复图鉴中僵王血量绘制位置不正确。
-            // 此处仅在图鉴中生效,实战中僵王绘制不走Zombie_Draw()，走Zombie_DrawBossPart()
-            g->mTransX = 780.0f;
-            g->mTransY = 240.0f;
+        if (!IsOnlineModeActiveAndConnectedToServer()) {
+            g->SetColor(gColorWhite);
+            g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
+            if (mZombieType == ZombieType::ZOMBIE_BOSS) {
+                // 如果是僵王,将血量绘制到僵王头顶。从而修复图鉴中僵王血量绘制位置不正确。
+                // 此处仅在图鉴中生效,实战中僵王绘制不走Zombie_Draw()，走Zombie_DrawBossPart()
+                g->mTransX = 780.0f;
+                g->mTransY = 240.0f;
+            }
+            g->DrawString(StrFormat("%d/%d", mBodyHealth, mBodyMaxHealth), 0, drawHeightOffset);
+            g->SetFont(nullptr);
+            drawHeightOffset += 20;
         }
-        g->DrawString(StrFormat("%d/%d", mBodyHealth, mBodyMaxHealth), 0, drawHeightOffset);
-        g->SetFont(nullptr);
-        drawHeightOffset += 20;
     }
-    if (showHelmAndShieldHealth) {
+    if (showHelmAndShieldHealth && !IsOnlineModeActiveAndConnectedToServer()) {
         if (mHelmHealth > 0) { // 如果有头盔，绘制头盔血量
             g->SetColor(gColorYellow);
             g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
@@ -2108,7 +2110,7 @@ void Zombie::DrawBossPart(Sexy::Graphics *g, int theBossPart) {
     if (theBossPart == 3) {
         // 每次绘制Boss都会调用四次本函数，且theBossPart从0到3依次增加，代表绘制Boss的不同Part。
         // 我们只在theBossPart==3时(绘制最后一个部分时)绘制一次血量，免去每次都绘制。
-        if (showZombieBodyHealth) { // 如果玩家开了"僵尸显血"
+        if (showZombieBodyHealth && !IsOnlineModeActiveAndConnectedToServer()) { // 如果玩家开了"僵尸显血"
             pvzstl::string str = StrFormat("%d/%d", mBodyHealth, mBodyMaxHealth);
             g->SetColor(gColorWhite);
             g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
@@ -2129,15 +2131,17 @@ int Zombie::GetDancerFrame() {
         return 0;
 
     // 女仆秘籍
-    switch (maidCheats) {
-        case 1:
-            return 11; // 保持前进 (DancerDancingLeft)
-        case 2:
-            return 18; // 跳舞 (DancerRaiseLeft1)
-        case 3:
-            return 12; // 召唤舞伴 (DancerWalkToRaise)
-        default:
-            break;
+    if (maidCheats > 0 && !IsOnlineModeActiveAndConnectedToServer()) {
+        switch (maidCheats) {
+            case 1:
+                return 11; // 保持前进 (DancerDancingLeft)
+            case 2:
+                return 18; // 跳舞 (DancerRaiseLeft1)
+            case 3:
+                return 12; // 召唤舞伴 (DancerWalkToRaise)
+            default:
+                break;
+        }
     }
 
     int aFrameLength = 20;
@@ -2292,7 +2296,9 @@ void Zombie::CheckForBoardEdge() {
         // 如果是除上述僵尸外的僵尸
         boardEdge = -50;
     }
-    boardEdge -= boardEdgeAdjust; // 支持任意调整进家线
+    if (boardEdgeAdjust > 0 && !IsOnlineModeActiveAndConnectedToServer()) {
+        boardEdge -= boardEdgeAdjust; // 支持任意调整进家线
+    }
     if (mX <= boardEdge && mHasHead) {
         if (mApp->IsIZombieLevel()) {
             DieNoLoot();
