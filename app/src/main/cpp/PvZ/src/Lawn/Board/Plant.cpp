@@ -1102,10 +1102,10 @@ Zombie *Plant::FindTargetZombie(int theRow, PlantWeapon thePlantWeapon) {
 
     Zombie *aZombie = nullptr;
     while (mBoard->IterateZombies(aZombie)) {
-
-        if ((mSeedType == SEED_SPIKEWEED || mSeedType == SEED_SPIKEROCK) && aZombie->IsFlying()) {
-            continue; // 专门判定地刺无法攻击气球僵尸，以解决对战时地刺打气球的BUG
+        if ((mSeedType == SeedType::SEED_POTATOMINE || IsSpiky()) && aZombie->IsFlying()) {
+            continue; // 专门判定土豆雷、地刺无法攻击气球僵尸，以解决对战时地刺打气球的BUG
         }
+
         int aRowDeviation = aZombie->mRow - theRow;
         if (aZombie->mZombieType == ZombieType::ZOMBIE_BOSS) {
             aRowDeviation = 0;
