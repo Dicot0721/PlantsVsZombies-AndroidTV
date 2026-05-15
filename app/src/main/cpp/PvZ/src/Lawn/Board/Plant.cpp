@@ -1404,6 +1404,7 @@ static int GetVSRefreshTimeDefault(SeedType theSeedType) {
             case SeedType::SEED_ZOMBIE_BUNGEE:
             case SeedType::SEED_ZOMBIE_LADDER:
             case SeedType::SEED_ZOMBIE_BOBSLED:
+            case SeedType::SEED_ZOMBIE_YETI:
             case SeedType::SEED_ZOMBIE_IMP:
             case SeedType::SEED_ZOMBIE_BALLOON:
             case SeedType::SEED_ZOMBIE_WALLNUT_HEAD:
@@ -1415,7 +1416,6 @@ static int GetVSRefreshTimeDefault(SeedType theSeedType) {
                 return 3000;
             case SeedType::SEED_ZOMBIE_NEWSPAPER:
             case SeedType::SEED_ZOMBIE_SCREEN_DOOR:
-            case SeedType::SEED_ZOMBIE_YETI:
             case SeedType::SEED_ZOMBIE_SQUASH_HEAD:
             case SeedType::SEED_ZOMBIE_MOUND:
                 return 1500;
@@ -1456,7 +1456,7 @@ static int GetVSCostBalanced(SeedType theSeedType) {
         case SeedType::SEED_ICESHROOM: // 75 -> 25
             aCost = 25;
             break;
-        case SeedType::SEED_GRAVEBUSTER:         // 75 -> 50
+            //        case SeedType::SEED_GRAVEBUSTER:         // 75 -> 50
         case SeedType::SEED_HYPNOSHROOM:         // 75 -> 50
         case SeedType::SEED_BLOVER:              // 100 -> 50
         case SeedType::SEED_PUMPKINSHELL:        // 125 -> 50
@@ -1510,12 +1510,14 @@ static int GetVSCostBalanced(SeedType theSeedType) {
 static int GetVSCostShuffle(SeedType theSeedType) {
     int aCost = GetVSCostDefault(theSeedType);
     switch (theSeedType) {
-        case SeedType::SEED_ICESHROOM:   // 75 -> 50
-        case SeedType::SEED_GRAVEBUSTER: // 75 -> 50
+        case SeedType::SEED_ICESHROOM: // 75 -> 50
+                                       //        case SeedType::SEED_GRAVEBUSTER: // 75 -> 50
             return 50;
         case SeedType::SEED_TORCHWOOD:  // 125 -> 175
         case SeedType::SEED_DOOMSHROOM: // 125 -> 175
             return 150;
+        case SeedType::SEED_ZOMBIE_CATAPULT: // 200 -> 175
+            return 175;
         case SeedType::SEED_MELONPULT: // 300 -> 225
             return 225;
         case SeedType::SEED_ZOMBIE_FLAG: // 300 -> 250
@@ -1619,8 +1621,8 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_PUMPKINSHELL:
                 case SeedType::SEED_ZOMBIE_TRASHCAN:
                 case SeedType::SEED_ZOMBIE_SCREEN_DOOR:
-                // 新增不减cd
-                case SeedType::SEED_ZOMBIE_YETI:
+                    // 新增不减cd
+                    //                case SeedType::SEED_ZOMBIE_YETI:
                     return aRefreshTime;
                 // 平衡调整后cd减幅下降
                 case SeedType::SEED_POTATOMINE:
@@ -2245,7 +2247,7 @@ void Plant::UpdateGraveBuster() {
         } else {
             GridItem *aMound = mBoard->GetMoundAt(mPlantCol, mRow);
             if (aMound) {
-                aMound->TakeDamgae(350, 0U);
+                aMound->TakeDamgae(420, 0U);
                 if (aMound->mVSGraveStoneHealth <= 0) {
                     mBoard->mGravesCleared++;
                 }

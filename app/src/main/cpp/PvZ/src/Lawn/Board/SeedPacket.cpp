@@ -192,6 +192,15 @@ void SeedPacket::SetPacketType(SeedType theSeedType, SeedType theImitaterType) {
                     mActive = true;
                 }
                 break;
+            case SEED_PUMPKINSHELL:
+                if (aIsBalancePatch) {
+                    mRefreshTime = 2000; // 35 -> 20
+                }
+            case SEED_ZOMBIE_TRAFFIC_CONE:
+                if (aIsBalancePatch) {
+                    mRefreshTime = 4000; // 20 -> 40
+                }
+                break;
             case SEED_BEGHOULED_BUTTON_SHUFFLE:
             case SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE:
                 mRefreshTime = 0;
