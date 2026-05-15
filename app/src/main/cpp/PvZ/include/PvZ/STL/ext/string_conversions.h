@@ -36,7 +36,7 @@ namespace pvzstl {
 // Helper for the to_string / to_wstring functions.
 template <typename String, std::size_t N, typename CharT = typename String::value_type>
 [[nodiscard]] String _to_xstring(int (*convf)(CharT *, std::size_t, const CharT *, std::va_list), const CharT *fmt, ...) {
-    CharT buf[sizeof(CharT) * N];
+    CharT buf[N];
     std::va_list args;
     va_start(args, fmt);
     const int len = convf(buf, N, fmt, args);
