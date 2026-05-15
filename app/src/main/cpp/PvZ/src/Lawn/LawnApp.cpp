@@ -816,10 +816,10 @@ void LawnApp::LoadingThreadProc() {
         mCompletedLoadingThreadTasks += 136;
     }
     // 新增动画预加载
-    for (ReanimationType aReanimType = REANIM_ZOMBATAR_HEAD; aReanimType < EXTENDED_NUM_REANIMS; aReanimType = ReanimationType(aReanimType + 1)) {
-        ReanimatorEnsureDefinitionLoaded(aReanimType, true);
-        mCompletedLoadingThreadTasks += 136;
-    }
+    //    for (ReanimationType aReanimType = REANIM_ZOMBATAR_HEAD; aReanimType < EXTENDED_NUM_REANIMS; aReanimType = ReanimationType(aReanimType + 1)) {
+    //        ReanimatorEnsureDefinitionLoaded(aReanimType, true);
+    //        mCompletedLoadingThreadTasks += 136;
+    //    }
 }
 
 bool LawnApp::IsChallengeWithoutSeedBank() {

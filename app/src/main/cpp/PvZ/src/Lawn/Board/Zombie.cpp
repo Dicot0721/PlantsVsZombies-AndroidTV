@@ -565,12 +565,6 @@ void Zombie::UpdateZombieFlyer() {
                     mAltitude--;
                 }
             }
-
-            if (mAltitude > aMaxAltitude / 2) {
-                mHasObject = true;
-            } else {
-                mHasObject = false;
-            }
         }
     }
 }

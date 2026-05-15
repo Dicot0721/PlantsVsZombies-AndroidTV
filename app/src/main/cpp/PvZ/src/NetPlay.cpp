@@ -240,9 +240,18 @@ bool netplay::MetricsSendSettlement(bool plantWin, int mainCounter) {
         const char *localName = (gLawnApp && gLawnApp->mPlayerInfo && gLawnApp->mPlayerInfo->mName) ? gLawnApp->mPlayerInfo->mName : "";
         const char *hostName = (gServerHostName[0] != '\0') ? gServerHostName : localName;
         const char *guestName = (gSecondPlayerName[0] != '\0') ? gSecondPlayerName : localName;
-        const bool isHostView = (gTcpClientSocket >= 0);
-        const char *plantName = isHostView ? hostName : guestName;
-        const char *zombieName = isHostView ? guestName : hostName;
+        const int hostSide = gGamepad1ToPlayerIndex; // mSides[0]: host selected side
+        const bool hostIsPlant = (hostSide == 0);
+        const bool hostIsZombie = (hostSide == 1);
+        const char *plantName = hostName;
+        const char *zombieName = guestName;
+        if (hostIsPlant) {
+            plantName = hostName;
+            zombieName = guestName;
+        } else if (hostIsZombie) {
+            plantName = guestName;
+            zombieName = hostName;
+        }
         oss << "&plant_name=" << UrlEncode(plantName);
         oss << "&zombie_name=" << UrlEncode(zombieName);
     }
