@@ -464,7 +464,7 @@ void SeedChooserScreen::ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, in
                 mBannedSeed[aSeedBanned].mSeedState = BannedSeedState::SEED_BANNED; // 将被选卡设为禁用状态
 
                 mSeedsInBanned++; // 已禁用卡片数量 + 1
-                if (!mIsZombieChooser) {
+                if (mIsZombieChooser) {
                     // 如果已禁用数量与需禁用数量一致，结束禁用阶段
                     if (mSeedsInBanned == mNumBanPackets) {
                         mApp->mSeedChooserScreen->mBanningPhase = false;
@@ -550,7 +550,7 @@ void SeedChooserScreen::ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, in
         OnPlayerPickedSeed(aGamepadIndex);
 
         // 当植物完成第三次选卡，开启第二轮禁用
-        if (!mIsZombieChooser && mSeedsInBanned > 0 && mSeedsIn1PBank == 4) {
+        if (mIsZombieChooser && mSeedsInBanned > 0 && mSeedsIn1PBank == 4) {
             // 需禁用数量增加1，额外卡槽模式则为2
             mApp->mSeedChooserScreen->mNumBanPackets += mHas7Packets ? 2 : 1;
             mApp->mZombieChooserScreen->mNumBanPackets += mHas7Packets ? 2 : 1;

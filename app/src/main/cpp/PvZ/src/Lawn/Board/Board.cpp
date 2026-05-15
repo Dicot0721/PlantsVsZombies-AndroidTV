@@ -1421,14 +1421,14 @@ void Board::processClientEvent(const BaseEvent *event) {
         case EVENT_CLIENT_BOARD_TOUCH_DOWN: {
             auto *event1 = static_cast<const I16I16_Event *>(event);
             if (gIsServerModeSpectator) {
-                GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
+                GamepadControls *clientGamepadControls = mGamepadControls[(mGamepadControls[1]->mPlayerIndex2 == 1) ? 1 : 0];
                 SeedBank *clientSeedBank = clientGamepadControls ? clientGamepadControls->GetSeedBank() : nullptr;
                 bool inClientSeedBank = clientSeedBank != nullptr && clientSeedBank->ContainsPoint(event1->data1, event1->data2);
                 ClientMouseDownLocal(event1->data1, event1->data2, inClientSeedBank);
                 break;
             }
             MouseDownSecond(event1->data1, event1->data2, 0);
-            GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
+            GamepadControls *clientGamepadControls = mGamepadControls[(mGamepadControls[1]->mPlayerIndex2 == 1) ? 1 : 0];
             U8U8I16I16_Event eventReply = {{EventType::EVENT_BOARD_TOUCH_DOWN_REPLY},
                                            uint8_t(clientGamepadControls->mSelectedSeedIndex),
                                            uint8_t(clientGamepadControls->mGamepadState),
@@ -1454,7 +1454,7 @@ void Board::processClientEvent(const BaseEvent *event) {
                 break;
             }
             MouseUpSecond(event1->data1, event1->data2, 0);
-            GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
+            GamepadControls *clientGamepadControls = mGamepadControls[(mGamepadControls[1]->mPlayerIndex2 == 1) ? 1 : 0];
             CursorObject *clientCursorObject = mGamepadControls[1]->mPlayerIndex2 == 1 ? mCursorObject[1] : mCursorObject[0];
             U8U8_Event eventReply = {{EventType::EVENT_BOARD_TOUCH_UP_REPLY}, uint8_t(clientGamepadControls->mGamepadState), uint8_t(clientCursorObject->mCursorType)};
             netplay::PutEvent(eventReply);
@@ -1466,7 +1466,7 @@ void Board::processClientEvent(const BaseEvent *event) {
         case EVENT_CLIENT_BOARD_CONCEDE: {
             mApp->KillNewOptionsDialog();
             mApp->KillDialog(DIALOG_CONFIRM_IN_GAME_RESTART);
-            GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
+            GamepadControls *clientGamepadControls = mGamepadControls[(mGamepadControls[1]->mPlayerIndex2 == 1) ? 1 : 0];
             if (!clientGamepadControls->mIsZombie) {
                 mApp->SetBoardResult(7);
                 mApp->mGameScene = SCENE_ZOMBIES_WON;
@@ -1496,7 +1496,7 @@ void Board::processServerEvent(const BaseEvent *event) {
     switch (event->type) {
         case EVENT_BOARD_TOUCH_DOWN_REPLY: {
             auto *event1 = static_cast<const U8U8I16I16_Event *>(event);
-            GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
+            GamepadControls *clientGamepadControls = mGamepadControls[(mGamepadControls[1]->mPlayerIndex2 == 1) ? 1 : 0];
             SeedBank *clientSeedBank = mGamepadControls[1]->mPlayerIndex2 == 1 ? mSeedBank[1] : mSeedBank[0];
             if (clientGamepadControls->mSelectedSeedIndex != event1->data1) {
                 clientGamepadControls->mSelectedSeedIndex = event1->data1;
@@ -1514,7 +1514,7 @@ void Board::processServerEvent(const BaseEvent *event) {
         } break;
         case EVENT_BOARD_TOUCH_UP_REPLY: {
             auto *event1 = static_cast<const U8U8_Event *>(event);
-            GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
+            GamepadControls *clientGamepadControls = mGamepadControls[(mGamepadControls[1]->mPlayerIndex2 == 1) ? 1 : 0];
             CursorObject *clientCursorObject = mGamepadControls[1]->mPlayerIndex2 == 1 ? mCursorObject[1] : mCursorObject[0];
             clientGamepadControls->mGamepadState = event1->data1;
             clientCursorObject->mCursorType = (CursorType)event1->data2;
@@ -1550,12 +1550,12 @@ void Board::processServerEvent(const BaseEvent *event) {
             serverGamepadControls->mGamepadState = 1;
         } break;
         case EVENT_CLIENT_BOARD_TOUCH_CLEAR_CURSOR: {
-            GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
+            GamepadControls *clientGamepadControls = mGamepadControls[(mGamepadControls[1]->mPlayerIndex2 == 1) ? 1 : 0];
             ClearCursor(mGamepadControls[0]->mPlayerIndex2 == 0 ? 1 : 0);
             clientGamepadControls->mGamepadState = 1;
         } break;
         case EVENT_CLIENT_BOARD_GAMEPAD_SET_STATE: {
-            GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
+            GamepadControls *clientGamepadControls = mGamepadControls[(mGamepadControls[1]->mPlayerIndex2 == 1) ? 1 : 0];
             auto *event1 = static_cast<const U8_Event *>(event);
             clientGamepadControls->mGamepadState = event1->data;
         } break;
@@ -1987,20 +1987,19 @@ void Board::processServerEvent(const BaseEvent *event) {
 
                 int count = std::min<int>(15, eventRaiseDead->data3[0]);
                 for (int i = 0; i < count; ++i) {
-                    int aRow;
-                    int aPosX = int(aZombie->mPosX);
+                    int aRow, aCol;
                     if (i < 5) {
                         aRow = i;
-                        aPosX += 100;
+                        aCol = aZombie->mMindControlled ? 4 : 6;
                     } else if (i < 10) {
                         aRow = i - 5;
-                        aPosX += 200;
+                        aCol = aZombie->mMindControlled ? 3 : 7;
                     } else {
                         aRow = i - 10;
-                        aPosX += 300;
+                        aCol = aZombie->mMindControlled ? 2 : 8;
                     }
 
-                    ZombieID revivedClientID = aZombie->RaiseDeadZombie(ZombieType(eventRaiseDead->data3[i + 1]), aRow, aPosX);
+                    ZombieID revivedClientID = aZombie->RaiseDeadZombie(ZombieType(eventRaiseDead->data3[i + 1]), aRow, aCol);
                     if (revivedClientID != ZombieID::ZOMBIEID_NULL) {
                         serverZombieIDMap[eventRaiseDead->data4[i]] = uint16_t(revivedClientID);
                         Zombie *revivedZombie = ZombieTryToGet(revivedClientID);
@@ -2082,13 +2081,14 @@ void Board::processServerEvent(const BaseEvent *event) {
             }
         } break;
         case EVENT_SERVER_BOARD_ZOMBIE_IMP_KICKED: {
-            auto *eventImpKicked = static_cast<const U16UNI32_Event *>(event);
+            auto *eventImpKicked = static_cast<const U16UNI32UNI32_Event *>(event);
             uint16_t serverImpID = eventImpKicked->data1;
             uint16_t clientImpID;
             if (homura::FindInMap(serverZombieIDMap, serverImpID, clientImpID)) {
                 Zombie *aZombieImp = mZombies.DataArrayGet(clientImpID);
                 float atheKickingDistance = eventImpKicked->data2.f32;
                 if (aZombieImp) {
+                    aZombieImp->mPosX = eventImpKicked->data3.f32;
                     aZombieImp->ZombieImpKicked(atheKickingDistance);
                 }
             }
@@ -2234,6 +2234,10 @@ void Board::processServerEvent(const BaseEvent *event) {
                     } else if (aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_WALKING || aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING
                                || aZombie->mZombiePhase == ZombiePhase::PHASE_FOOTBALL_PRE_CHARGE) {
                         aZombie->StartWalkAnim(0);
+                    }
+                } else if (aZombie->mZombieType == ZombieType::ZOMBIE_JACKSON) {
+                    if (aZombie->mZombiePhase == ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_WITH_LIGHT) {
+                        aZombie->PlayZombieReanim("anim_point", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
                     }
                 }
             }
@@ -3492,7 +3496,7 @@ void Board::ClientMouseDownLocal(int x, int y, bool isInBank) {
     gClientMouseInBank = isInBank;
     gClientMouseInBoard = !isInBank;
     if (gClientMouseInBoard) {
-        GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
+        GamepadControls *clientGamepadControls = mGamepadControls[(mGamepadControls[1]->mPlayerIndex2 == 1) ? 1 : 0];
         clientGamepadControls->mCursorPositionX = x;
         clientGamepadControls->mCursorPositionY = y;
     }
@@ -3500,7 +3504,7 @@ void Board::ClientMouseDownLocal(int x, int y, bool isInBank) {
 
 void Board::ClientMouseDragLocal(int x, int y) {
 
-    GamepadControls *clientGamepadControls = mGamepadControls[1]->mPlayerIndex2 == 1 ? mGamepadControls[1] : mGamepadControls[0];
+    GamepadControls *clientGamepadControls = mGamepadControls[(mGamepadControls[1]->mPlayerIndex2 == 1) ? 1 : 0];
     SeedBank *seedBank = clientGamepadControls->GetSeedBank();
     bool isInBank = seedBank->ContainsPoint(x, y);
 

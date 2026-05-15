@@ -372,7 +372,7 @@ public:
     void UpdateZombieBackupDancer();
     void UpdateZombieJackson();
     bool CanRevived();
-    ZombieID RaiseDeadZombie(ZombieType theZombieType, int theRow, int thePosX);
+    ZombieID RaiseDeadZombie(ZombieType theZombieType, int theRow, int theCol);
     void RaiseDeadZombies();
     void JacksonDie();
     void UpdateZombieJackInTheBox();

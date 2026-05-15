@@ -302,9 +302,13 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         return;
     }
 
+    bool handledControllerMouseUp = false;
     if (touchingOnWhichController == 1) {
-        if (gTcpConnected)
+        if (gTcpConnected) {
+            touchingOnWhichController = 0;
             return;
+        }
+        handledControllerMouseUp = true;
         Sexy::Widget *aControllerWidgetP1 = FindWidget(7);
         VSSide aSideP1 = aControllerWidgetP1->mX > 400 ? VS_SIDE_ZOMBIE : aControllerWidgetP1->mX > 250 ? VS_SIDE_NONE : VS_SIDE_PLANT;
         VSSide resolvedSideP1 = aSideP1;
@@ -322,8 +326,11 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         }
         is1PControllerMoving = false;
     } else if (touchingOnWhichController == 2) {
-        if (gTcpClientSocket >= 0)
+        if (gTcpClientSocket >= 0) {
+            touchingOnWhichController = 0;
             return;
+        }
+        handledControllerMouseUp = true;
         Sexy::Widget *aControllerWidgetP2 = FindWidget(8);
         VSSide aSideP2 = aControllerWidgetP2->mX > 400 ? VS_SIDE_ZOMBIE : aControllerWidgetP2->mX > 250 ? VS_SIDE_NONE : VS_SIDE_PLANT;
 
@@ -340,7 +347,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         }
     }
     touchingOnWhichController = 0;
-    if (mSides[0] != VS_SIDE_NONE && mSides[1] != VS_SIDE_NONE && mSides[0] != mSides[1]) {
+    if (handledControllerMouseUp && mState == VS_SETUP_STATE_SIDES && mSides[0] != VS_SIDE_NONE && mSides[1] != VS_SIDE_NONE && mSides[0] != mSides[1]) {
         GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 0, 0);
         GameButtonDown(Sexy::GamepadButton::GAMEPAD_BUTTON_A, 1, 0);
     }
@@ -821,8 +828,9 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
 
     old_VSSetupMenu_OnStateEnter(this, theState);
 
-    if (mState == VS_SETUP_STATE_CUSTOM_BATTLE) {
-        mSeedPickTurn = msNextFirstPick; // 选卡先手方
+    // 禁选模式僵尸先手禁用（即从植物方开始）
+    if (mState == VS_SETUP_STATE_CUSTOM_BATTLE && mAddonWidget->mBanMode) {
+        mSeedPickTurn = VSSide::VS_SIDE_PLANT;
     }
 }
 
