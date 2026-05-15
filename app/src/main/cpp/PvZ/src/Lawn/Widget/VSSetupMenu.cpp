@@ -952,6 +952,20 @@ void VSSetupMenu::ButtonDepress_Origin(int theId) {
                 if (Challenge::msVSShuffleMode) {
                     gFreeForFristShuffle[0] = gFreeForFristShuffle[1] = true;
                     aPlantBank->mNumPackets = aZombieBank->mNumPackets = 7;
+                    PickMPRandomSeeds(mApp, aPlantSeeds, aZombieSeeds, true);
+                    if (!aZombieSeeds.empty()) {
+                        for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {
+                            SeedType aSeedType = aZombieSeeds[aPacketIndex - 1];
+                            mApp->mBoard->mSeedBank[1]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
+                        }
+                    }
+                    PickMPRandomSeeds(mApp, aPlantSeeds, aZombieSeeds, false);
+                    if (!aPlantSeeds.empty()) {
+                        for (int aPacketIndex = 1; aPacketIndex <= aPlantSeeds.size(); ++aPacketIndex) {
+                            SeedType aSeedType = aPlantSeeds[aPacketIndex - 1];
+                            mApp->mBoard->mSeedBank[0]->mSeedPackets[aPacketIndex].SetPacketType(aSeedType, SeedType::SEED_NONE);
+                        }
+                    }
                     aPlantBank->mSeedPackets[6].SetPacketType(SEED_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
                     aZombieBank->mSeedPackets[6].SetPacketType(SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE, SeedType::SEED_NONE);
                 }

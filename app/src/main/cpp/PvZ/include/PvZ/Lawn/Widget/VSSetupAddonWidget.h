@@ -96,5 +96,6 @@ bool NeedSeedTorchwood(LawnApp *theApp, const std::vector<SeedType> &thePlantSee
 bool NeedSeedZombieImp(LawnApp *theApp);
 bool NeedSeedZombieScreenDoor(LawnApp *theApp);
 bool NeedSeedZombieYeti(LawnApp *theApp);
+bool NeedSeedZombieGigaFootball(LawnApp *theApp, const std::vector<SeedType> &theZombieSeeds = {}, bool theIsShuffle = false);
 
 #endif // PVZ_LAWN_WIDGET_VSSETUPADDONWIDGET_H
