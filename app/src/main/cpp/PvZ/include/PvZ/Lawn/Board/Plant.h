@@ -263,7 +263,7 @@ public:
     void DoSpecial();
     void DoSpecial_Origin();
     Zombie *FindTargetZombie(int theRow, PlantWeapon thePlantWeapon);
-    GridItem *FindTargetGridItem(PlantWeapon thePlantWeapon);
+    GridItem *FindTargetGridItem(int theRow, PlantWeapon thePlantWeapon);
     void Die();
     void Die_Origin();
     static Sexy::Image *GetImage(SeedType theSeedType);

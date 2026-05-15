@@ -19,6 +19,8 @@
 
 #include "PvZ/NetPlay.h"
 #include "Homura/Logger.h"
+#include "PvZ/GlobalVariable.h"
+#include "PvZ/Lawn/LawnApp.h"
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -28,6 +30,7 @@
 #include <chrono>
 #include <cstring>
 #include <sstream>
+#include <string_view>
 
 #include <ranges>
 #include <vector>
@@ -46,6 +49,23 @@ static std::string ToBase36(long long value) {
         value /= 36;
     }
     std::reverse(out.begin(), out.end());
+    return out;
+}
+
+static std::string UrlEncode(std::string_view s) {
+    static constexpr char kHex[] = "0123456789ABCDEF";
+    std::string out;
+    out.reserve(s.size() * 3);
+    for (unsigned char c : s) {
+        const bool keep = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' || c == '~';
+        if (keep) {
+            out.push_back(static_cast<char>(c));
+        } else {
+            out.push_back('%');
+            out.push_back(kHex[(c >> 4) & 0x0F]);
+            out.push_back(kHex[c & 0x0F]);
+        }
+    }
     return out;
 }
 
@@ -215,6 +235,17 @@ bool netplay::MetricsSendSettlement(bool plantWin, int mainCounter) {
     appendUsage(oss, gMetricsPlantUseCount);
     oss << "&zombie_use=";
     appendUsage(oss, gMetricsZombieUseCount);
+    const bool sendNames = (gLawnApp != nullptr && gLawnApp->mPlayerInfo != nullptr && gLawnApp->mPlayerInfo->mVSResultsSendPlayerName);
+    if (sendNames) {
+        const char *localName = (gLawnApp && gLawnApp->mPlayerInfo && gLawnApp->mPlayerInfo->mName) ? gLawnApp->mPlayerInfo->mName : "";
+        const char *hostName = (gServerHostName[0] != '\0') ? gServerHostName : localName;
+        const char *guestName = (gSecondPlayerName[0] != '\0') ? gSecondPlayerName : localName;
+        const bool isHostView = (gTcpClientSocket >= 0);
+        const char *plantName = isHostView ? hostName : guestName;
+        const char *zombieName = isHostView ? guestName : hostName;
+        oss << "&plant_name=" << UrlEncode(plantName);
+        oss << "&zombie_name=" << UrlEncode(zombieName);
+    }
     oss << '\n';
 
     const std::string payload = oss.str();

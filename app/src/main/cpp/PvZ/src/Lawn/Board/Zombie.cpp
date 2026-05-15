@@ -2816,7 +2816,7 @@ bool Zombie::EffectedByDamage(unsigned int theDamageRangeFlags) {
 
     if (mApp->IsVSMode()) {
         if (IsFlying()) {
-            return !mHasObject; // 对战气球低空飞行时会受到攻击
+            return mAltitude < 50.0f / 2; // 对战气球低空飞行时会受到攻击
         }
     }
 

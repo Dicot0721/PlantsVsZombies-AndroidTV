@@ -1102,6 +1102,10 @@ Zombie *Plant::FindTargetZombie(int theRow, PlantWeapon thePlantWeapon) {
 
     Zombie *aZombie = nullptr;
     while (mBoard->IterateZombies(aZombie)) {
+
+        if ((mSeedType == SEED_SPIKEWEED || mSeedType == SEED_SPIKEROCK) && aZombie->IsFlying()) {
+            continue; // 专门判定地刺无法攻击气球僵尸，以解决对战时地刺打气球的BUG
+        }
         int aRowDeviation = aZombie->mRow - theRow;
         if (aZombie->mZombieType == ZombieType::ZOMBIE_BOSS) {
             aRowDeviation = 0;
@@ -1201,9 +1205,15 @@ Zombie *Plant::FindTargetZombie(int theRow, PlantWeapon thePlantWeapon) {
     return aBestZombie;
 }
 
-GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
+GridItem *Plant::FindTargetGridItem(int theRow, PlantWeapon thePlantWeapon) {
     // 对战模式专用，植物索敌僵尸墓碑和靶子僵尸。
     // 原版函数BUG：植物还会索敌梯子和毁灭菇弹坑，故重写以修复BUG。
+
+    if (mSeedType == SEED_SPLITPEA && thePlantWeapon == WEAPON_SECONDARY) {
+        // 如果是裂荚射手朝后的头，就直接不开火
+        return nullptr;
+    }
+
     int aLastGridX = 0;
     GridItem *aBestGridItem = nullptr;
 
@@ -1222,13 +1232,7 @@ GridItem *Plant::FindTargetGridItem(PlantWeapon thePlantWeapon) {
 
             if (mSeedType == SeedType::SEED_THREEPEATER ? abs(aGridY - aRow) > 1 : aGridY != aRow) {
                 // 如果是三线射手，则索敌三行; 反之，索敌一行
-                // 注释掉此行，就会发现投手能够命中三格内的靶子了，但会导致很多其他BUG。尚不清楚原因。
                 continue;
-            }
-
-            if (mSeedType == SEED_SPLITPEA && thePlantWeapon == WEAPON_SECONDARY) {
-                // 如果是裂荚射手朝后的头，就直接不开火
-                return nullptr;
             }
 
             if (aBestGridItem == nullptr || aGridX < aLastGridX) {
@@ -1955,7 +1959,7 @@ void Plant::UpdateShooting() {
             }
 
             Zombie *aZombie = FindTargetZombie(mRow, aPlantWeapon);
-            GridItem *aGridItem = FindTargetGridItem(aPlantWeapon);
+            GridItem *aGridItem = FindTargetGridItem(mRow, aPlantWeapon);
             Fire(aZombie, mRow, aPlantWeapon, aGridItem);
         } else {
             Fire(nullptr, mRow, PlantWeapon::WEAPON_PRIMARY, nullptr);

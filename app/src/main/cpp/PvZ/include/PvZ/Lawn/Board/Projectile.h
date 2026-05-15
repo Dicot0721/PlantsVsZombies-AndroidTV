@@ -82,6 +82,7 @@ public:
     void ConvertToPea(int theGridX);
     void Update();
     void UpdateNormalMotion();
+    void UpdateLobMotion();
     void DoImpact(Zombie *theZombie);
     void CheckForCollision();
     Zombie *FindCollisionMindControlledTarget();

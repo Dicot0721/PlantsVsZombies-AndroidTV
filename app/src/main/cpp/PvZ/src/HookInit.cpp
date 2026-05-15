@@ -374,6 +374,7 @@ void InitHookFunction() {
     homura::HookFunc(Projectile_DrawAddr, &Projectile::Draw, &old_Projectile_Draw);
     homura::HookFunc(Projectile_DrawShadowAddr, &Projectile::DrawShadow, &old_Projectile_DrawShadow);
     homura::HookFunc(Projectile_FindCollisionTargetGridItemAddr, &Projectile::FindCollisionTargetGridItem, nullptr);
+    homura::HookFunc(Projectile_FindCollisionTargetAddr, &Projectile::FindCollisionTarget, nullptr);
 
 
     homura::HookFunc(SeedPacket_UpdateAddr, &SeedPacket::Update, nullptr);
