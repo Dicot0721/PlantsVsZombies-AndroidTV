@@ -20,7 +20,7 @@
 #ifndef PVZ_SEXYAPPFRAMEWORK_SOUND_AUDIERE_SOUND_MANAGER_H
 #define PVZ_SEXYAPPFRAMEWORK_SOUND_AUDIERE_SOUND_MANAGER_H
 
-#include "PvZ/STL/pvzstl_string.h"
+#include "PvZ/STL/string.h"
 #include "PvZ/Symbols.h"
 
 namespace Sexy {

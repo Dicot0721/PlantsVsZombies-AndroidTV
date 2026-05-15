@@ -21,7 +21,7 @@
 #define PVZ_SEXYAPPFRAMEWORK_MISC_COMMON_H
 
 #include "Homura/TypeUtils.h"
-#include "PvZ/STL/pvzstl_string.h"
+#include "PvZ/STL/string.h"
 #include "PvZ/Symbols.h"
 
 #include <cstdarg>

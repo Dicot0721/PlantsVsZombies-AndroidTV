@@ -25,7 +25,7 @@
 #include "Misc/Common.h"
 #include "Misc/Rect.h"
 #include "PvZ/MagicNumbers.h"
-#include "PvZ/STL/pvzstl_string.h"
+#include "PvZ/STL/string.h"
 #include "PvZ/SexyAppFramework/Widget/WidgetManager.h"
 #include "PvZ/Symbols.h"
 #include "Sound/AudiereSoundManager.h"

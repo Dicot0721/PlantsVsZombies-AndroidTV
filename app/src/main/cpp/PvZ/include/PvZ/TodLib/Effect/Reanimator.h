@@ -21,7 +21,7 @@
 #define PVZ_SEXYAPPFRAMEWORK_EFFECT_REANIMATION_H
 
 #include "Homura/TypeUtils.h"
-#include "PvZ/STL/pvzstl_string.h"
+#include "PvZ/STL/string.h"
 #include "PvZ/SexyAppFramework/Graphics/Color.h"
 #include "PvZ/SexyAppFramework/Misc/SexyMatrix.h"
 #include "PvZ/Symbols.h"

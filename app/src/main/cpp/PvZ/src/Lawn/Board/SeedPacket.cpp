@@ -594,14 +594,14 @@ void DrawSeedPacket(Sexy::Graphics *g,
         pvzstl::string aCostStr;
         if (lawnApp->mBoard && lawnApp->mBoard->PlantUsesAcceleratedPricing(realSeedType)) {
             if (theUseCurrentCost) {
-                aCostStr = StrFormat("%d", lawnApp->mBoard->GetCurrentPlantCost(theSeedType, theImitaterType));
+                aCostStr = pvzstl::to_string(lawnApp->mBoard->GetCurrentPlantCost(theSeedType, theImitaterType));
             } else {
-                aCostStr = StrFormat("%d+", Plant::GetCost(theSeedType, theImitaterType));
+                aCostStr = pvzstl::to_string(Plant::GetCost(theSeedType, theImitaterType)) + '+';
             }
         } else {
-            aCostStr = StrFormat("%d", Plant::GetCost(theSeedType, theImitaterType));
+            aCostStr = pvzstl::to_string(Plant::GetCost(theSeedType, theImitaterType));
             if (realSeedType == SeedType::SEED_ZOMBIE_MOUND) {
-                aCostStr = StrFormat("%d", lawnApp->mBoard->GetCurrentPlantCost(theSeedType, theImitaterType));
+                aCostStr = pvzstl::to_string(lawnApp->mBoard->GetCurrentPlantCost(theSeedType, theImitaterType));
             }
         }
 

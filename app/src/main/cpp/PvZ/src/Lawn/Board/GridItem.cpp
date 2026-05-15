@@ -652,7 +652,7 @@ void GridItem::DrawGraveStone(Graphics *g) {
             aReanim->DrawRenderGroup(g, 1);
             g->mClipRect = Rect(g->mClipRect.mX, g->mClipRect.mY, g->mClipRect.mWidth, g->mClipRect.mHeight);
         }
-        g->DrawString(StrFormat("%d", mVSGraveStoneHealth), x, y);
+        g->DrawString(pvzstl::to_string(mVSGraveStoneHealth), x, y);
     } else {
         g->DrawImage(IMAGE_TOMBSTONES, x, y - aVisibleHeight + aExtraTopClip, aSrcRect);
         g->DrawImage(IMAGE_TOMBSTONE_MOUNDS, x, y - aVisibleHeightDirt, aSrcRectDirt);

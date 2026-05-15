@@ -20,7 +20,7 @@
 #include "PvZ/Lawn/Board/MessageWidget.h"
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/LawnApp.h"
-#include "PvZ/STL/pvzstl_string.h"
+#include "PvZ/STL/string.h"
 #include "PvZ/SexyAppFramework/Graphics/Font.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/SexyAppFramework/Misc/Common.h"

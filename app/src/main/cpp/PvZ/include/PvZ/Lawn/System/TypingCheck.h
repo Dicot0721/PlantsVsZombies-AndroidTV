@@ -21,7 +21,7 @@
 #define PVZ_LAWN_SYSTEM_TYPING_CHECK_H
 
 #include "Homura/TypeUtils.h"
-#include "PvZ/STL/pvzstl_string.h"
+#include "PvZ/STL/string.h"
 #include "PvZ/Symbols.h"
 
 class TypingCheck {

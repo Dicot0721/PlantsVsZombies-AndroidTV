@@ -17,8 +17,10 @@
  * PlantsVsZombies-AndroidTV.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef PVZ_STL_PVZSTL_STRING_H
-#define PVZ_STL_PVZSTL_STRING_H
+#ifndef PVZ_STL_STRING_H
+#define PVZ_STL_STRING_H
+
+#include "ext/string_conversions.h"
 
 #include <cassert>
 
@@ -40,6 +42,7 @@ template <typename Range, typename Tp>
 concept _container_compatible_range = std::ranges::input_range<Range> && std::convertible_to<std::ranges::range_reference_t<Range>, Tp>;
 
 /**
+ * @class basic_string
  * @brief 采用写时复制 (COW) 实现的字符串类模板
  *
  * g++ 在版本 5 前 std::string 的实现 (简化版).
@@ -579,6 +582,27 @@ public:
 
     void resize(size_type n) {
         resize(n, CharT{});
+    }
+
+    template <typename Operation>
+    void resize_and_overwrite(size_type n, Operation op) {
+        reserve(n);
+        CharT *p = _dataplus;
+        struct Terminator {
+            ~Terminator() {
+                _this->_get_rep()->_set_size(_r);
+            }
+            basic_string *_this;
+            size_type _r;
+        };
+        Terminator term{this, 0};
+        auto r = std::move(op)(p, n);
+        static_assert(std::is_integral_v<decltype(r)>, "resize_and_overwrite operation must return an integer");
+        assert((r >= 0) && (size_type(r) <= n));
+        term._r = size_type(r);
+        if (term._r > n) {
+            std::unreachable();
+        }
     }
 
     void swap(basic_string &other) noexcept /* strengthened */ {
@@ -1159,11 +1183,83 @@ using u8string = basic_string<char8_t>;
 using u16string = basic_string<char16_t>;
 #endif
 
+[[nodiscard]] inline string to_string(int val) {
+    return _to_xstring<string, 4 * sizeof(int)>(std::vsnprintf, "%d", val);
+}
+
+[[nodiscard]] inline string to_string(unsigned val) {
+    return _to_xstring<string, 4 * sizeof(unsigned)>(std::vsnprintf, "%u", val);
+}
+
+[[nodiscard]] inline string to_string(long val) {
+    return _to_xstring<string, 4 * sizeof(long)>(std::vsnprintf, "%ld", val);
+}
+
+[[nodiscard]] inline string to_string(unsigned long val) {
+    return _to_xstring<string, 4 * sizeof(unsigned long)>(std::vsnprintf, "%lu", val);
+}
+
+[[nodiscard]] inline string to_string(long long val) {
+    return _to_xstring<string, 4 * sizeof(long long)>(std::vsnprintf, "%lld", val);
+}
+
+[[nodiscard]] inline string to_string(unsigned long long val) {
+    return _to_xstring<string, 4 * sizeof(unsigned long long)>(std::vsnprintf, "%llu", val);
+}
+
+[[nodiscard]] inline string to_string(float val) {
+    return _to_xstring<string, std::numeric_limits<float>::max_exponent10 + 20>(std::vsnprintf, "%f", val);
+}
+
+[[nodiscard]] inline string to_string(double val) {
+    return _to_xstring<string, std::numeric_limits<double>::max_exponent10 + 20>(std::vsnprintf, "%f", val);
+}
+
+[[nodiscard]] inline string to_string(long double val) {
+    return _to_xstring<string, std::numeric_limits<long double>::max_exponent10 + 20>(std::vsnprintf, "%Lf", val);
+}
+
+[[nodiscard]] inline wstring to_wstring(int val) {
+    return _to_xstring<wstring, 4 * sizeof(int)>(std::vswprintf, L"%d", val);
+}
+
+[[nodiscard]] inline wstring to_wstring(unsigned val) {
+    return _to_xstring<wstring, 4 * sizeof(unsigned)>(std::vswprintf, L"%u", val);
+}
+
+[[nodiscard]] inline wstring to_wstring(long val) {
+    return _to_xstring<wstring, 4 * sizeof(long)>(std::vswprintf, L"%ld", val);
+}
+
+[[nodiscard]] inline wstring to_wstring(unsigned long val) {
+    return _to_xstring<wstring, 4 * sizeof(unsigned long)>(std::vswprintf, L"%lu", val);
+}
+
+[[nodiscard]] inline wstring to_wstring(long long val) {
+    return _to_xstring<wstring, 4 * sizeof(long long)>(std::vswprintf, L"%lld", val);
+}
+
+[[nodiscard]] inline wstring to_wstring(unsigned long long val) {
+    return _to_xstring<wstring, 4 * sizeof(unsigned long long)>(std::vswprintf, L"%llu", val);
+}
+
+[[nodiscard]] inline wstring to_wstring(float val) {
+    return _to_xstring<wstring, std::numeric_limits<float>::max_exponent10 + 20>(std::vswprintf, L"%f", val);
+}
+
+[[nodiscard]] inline wstring to_wstring(double val) {
+    return _to_xstring<wstring, std::numeric_limits<double>::max_exponent10 + 20>(std::vswprintf, L"%f", val);
+}
+
+[[nodiscard]] inline wstring to_wstring(long double val) {
+    return _to_xstring<wstring, std::numeric_limits<long double>::max_exponent10 + 20>(std::vswprintf, L"%Lf", val);
+}
+
 } // namespace pvzstl
 
 template <typename CharT>
 struct std::hash<pvzstl::basic_string<CharT>> {
-    [[nodiscard]] static size_t operator()(const pvzstl::basic_string<CharT> &val) noexcept {
+    [[nodiscard]] size_t operator()(const pvzstl::basic_string<CharT> &val) noexcept {
         using StringView = basic_string_view<CharT>;
         return hash<StringView>{}(StringView{val});
     }
@@ -1195,4 +1291,4 @@ namespace pvzstl::inline literals::inline string_literals {
 
 } // namespace pvzstl::inline literals::inline string_literals
 
-#endif // PVZ_STL_PVZSTL_STRING_H
+#endif // PVZ_STL_STRING_H
