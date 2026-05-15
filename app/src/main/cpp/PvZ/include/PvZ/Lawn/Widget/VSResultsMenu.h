@@ -23,6 +23,7 @@
 #include "PvZ/Lawn/Common/ConstEnums.h"
 #include "PvZ/Lawn/Common/LawnCommon.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/GameButton.h"
 #include "PvZ/NetPlay.h"
 #include "PvZ/SexyAppFramework/Widget/Checkbox.h"
 #include "PvZ/SexyAppFramework/Widget/CheckboxListener.h"
@@ -37,6 +38,7 @@ public:
     enum {
         VSResultsMenu_Play_Again = 0,
         VSResultsMenu_Quit_VS = 1,
+        VSResultsMenu_Back,
     };
 
     static int (&msPlayerRecords)[2][5];
@@ -51,7 +53,8 @@ public:
     ParticleSystemID mSparkleParticleID; // 82
     ParticleSystemID mSmokeParticleID;   // 83
     int mUpdateCounter;                  // 84
-    class VSResultsCheckboxController *mCheckboxController;
+    class VSResultsCheckboxController *mCheckboxController = nullptr;
+    NewLawnButton *mBackButton = nullptr;
 
     void Update();
     void OnExit();

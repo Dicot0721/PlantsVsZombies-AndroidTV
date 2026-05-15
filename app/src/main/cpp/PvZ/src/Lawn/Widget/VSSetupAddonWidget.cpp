@@ -228,9 +228,6 @@ void VSSetupAddonWidget::Draw(Graphics *g) {
 }
 
 void PickMPRandomSeeds(LawnApp *theApp, std::vector<SeedType> &thePlantSeeds, std::vector<SeedType> &theZombieSeeds, bool theIsZombie) {
-    thePlantSeeds.clear();
-    theZombieSeeds.clear();
-
     int alreadyPicked = 0;
     if ((theApp->mPlayerInfo->mLevel > 20 || theApp->HasFinishedAdventure()) && Sexy::Rand(5) == 1) {
         thePlantSeeds.push_back(SEED_INSTANT_COFFEE);

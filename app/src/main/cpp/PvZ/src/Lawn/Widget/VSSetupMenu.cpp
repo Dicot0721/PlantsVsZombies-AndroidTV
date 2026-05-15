@@ -952,6 +952,8 @@ void VSSetupMenu::ButtonDepress_Origin(int theId) {
                 if (Challenge::msVSShuffleMode) {
                     gFreeForFristShuffle[0] = gFreeForFristShuffle[1] = true;
                     aPlantBank->mNumPackets = aZombieBank->mNumPackets = 7;
+                    aZombieSeeds.clear();
+                    aPlantSeeds.clear();
                     PickMPRandomSeeds(mApp, aPlantSeeds, aZombieSeeds, true);
                     if (!aZombieSeeds.empty()) {
                         for (int aPacketIndex = 1; aPacketIndex <= aZombieSeeds.size(); ++aPacketIndex) {

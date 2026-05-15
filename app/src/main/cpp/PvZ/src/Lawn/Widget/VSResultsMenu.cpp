@@ -21,6 +21,7 @@
 #include "Homura/Logger.h"
 #include "PvZ/GlobalVariable.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/GameButton.h"
 #include "PvZ/NetPlay.h"
 #include "PvZ/SexyAppFramework/Graphics/Graphics.h"
 #include "PvZ/TodLib/Common/TodCommon.h"
@@ -41,7 +42,17 @@ void VSResultsMenu::_constructor() {
     gVSResultRequestState = -1;
     gNetDelayNow = 0; // 清除旧的延时数据
 
-    mCheckboxController = nullptr;
+    // TODO: 新增返回模式选择按钮
+    //    mBackButton = MakeNewButton(
+    //        VSResultsMenu::VSResultsMenu_Back, this, this, "[CLOSE]", nullptr, Sexy::IMAGE_SEEDCHOOSER_BUTTON_DISABLED, Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW, Sexy::IMAGE_SEEDCHOOSER_BUTTON_GLOW);
+    //    mBackButton->mTextOffsetX = -2;
+    //    mBackButton->mTextOffsetY = -4;
+    //    mBackButton->mTextDownOffsetX = 1;
+    //    mBackButton->mTextDownOffsetY = 1;
+    //    mBackButton->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
+    //    (*mBackButton->mColors)[ButtonWidget::COLOR_LABEL_HILITE] = Color(0, 205, 0);
+    //    mBackButton->Resize(800, 520, 160, 50);
+    //    AddWidget(mBackButton);
 }
 
 void VSResultsMenu::processClientEvent(const BaseEvent *event) {
@@ -86,12 +97,21 @@ void VSResultsMenu::OnExit() {
         // 改为返回关卡选择页面
         gLawnApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS);
         gLawnApp->KillVSResultsScreen();
+    } else if (mResultsButtonId == VSResultsMenu_Back) {
+        //        gLawnApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS);
+        //        gLawnApp->KillVSResultsScreen();
     }
 }
 
 void VSResultsMenu::ButtonDepress(int theId) {
     if (mIsFading)
         return;
+
+    //    if (theId == VSResultsMenu::VSResultsMenu_Back) {
+    //        mResultsButtonId = theId;
+    //        OnExit();
+    //        return;
+    //    }
 
     if (gIsServerModeSpectator && (gTcpConnected || gTcpServerSocket >= 0 || gTcpClientSocket >= 0)) {
         if (gTcpServerSocket >= 0) {

@@ -469,6 +469,7 @@ void SeedChooserScreen::ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, in
                     if (mSeedsInBanned == mNumBanPackets) {
                         mApp->mSeedChooserScreen->mBanningPhase = false;
                         mApp->mZombieChooserScreen->mBanningPhase = false;
+                        OnPlayerPickedSeed(aGamepadIndex);
                     }
                 }
 
@@ -550,13 +551,14 @@ void SeedChooserScreen::ClickedSeedInChooser_Orgin(ChosenSeed &theChosenSeed, in
         OnPlayerPickedSeed(aGamepadIndex);
 
         // 当植物完成第三次选卡，开启第二轮禁用
-        if (mIsZombieChooser && mSeedsInBanned > 0 && mSeedsIn1PBank == 4) {
+        if (!mIsZombieChooser && mSeedsInBanned > 0 && mSeedsIn1PBank == 4) {
             // 需禁用数量增加1，额外卡槽模式则为2
             mApp->mSeedChooserScreen->mNumBanPackets += mHas7Packets ? 2 : 1;
             mApp->mZombieChooserScreen->mNumBanPackets += mHas7Packets ? 2 : 1;
             // 重新开启禁用阶段
             mApp->mSeedChooserScreen->mBanningPhase = true;
             mApp->mZombieChooserScreen->mBanningPhase = true;
+            OnPlayerPickedSeed(aGamepadIndex);
         }
     }
 }
@@ -1748,24 +1750,27 @@ void SeedChooserScreen::Draw(Graphics *g) {
             // 联机光标上绘制双方玩家昵称
             char *firstPlayerName = mBoard->mApp->mPlayerInfo->mName;
             if (gTcpConnected || gTcpClientSocket >= 0) {
-                if (gIsServerModeSpectator || gServerHostName[0] != '\0') {
-                    const char *hostName = (gServerHostName[0] != '\0') ? gServerHostName : "Host";
-                    const char *guestName = (gSecondPlayerName[0] != '\0') ? gSecondPlayerName : "Guest";
-                    const bool isHostSide = (aPlayerIndex == 0);
+                const bool localIsClient = gTcpConnected;
+                const bool hasServerHostName = (gServerHostName[0] != '\0');
+                const bool hasSecondPlayerName = (gSecondPlayerName[0] != '\0');
+
+                const char *hostName = nullptr;
+                const char *guestName = nullptr;
+                if (hasServerHostName || gIsServerModeSpectator) {
+                    hostName = hasServerHostName ? gServerHostName : "Host";
+                    guestName = hasSecondPlayerName ? gSecondPlayerName : "Guest";
+                } else if (hasSecondPlayerName) {
+                    hostName = localIsClient ? gSecondPlayerName : firstPlayerName;
+                    guestName = localIsClient ? firstPlayerName : gSecondPlayerName;
+                }
+
+                if (hostName != nullptr && guestName != nullptr) {
+                    bool isHostSide = (aPlayerIndex == 0);
+                    if (mBanningPhase) {
+                        isHostSide = !isHostSide;
+                    }
                     const char *name = isHostSide ? hostName : guestName;
                     Color color = isHostSide ? Color(255, 242, 14, 255) : Color(68, 207, 255, 255);
-                    g->DrawImageF(aArrowImage, float(aCursorX + 25 - aArrowImage->mWidth / 2), float(aCursorY - 8) + aBounce);
-                    TodDrawString(g, name, aCursorX + 25 - aArrowImage->mWidth / 2, aCursorY - 10, Sexy::FONT_DWARVENTODCRAFT18, color, DrawStringJustification::DS_ALIGN_CENTER);
-                } else if (gSecondPlayerName[0] != '\0') {
-                    char *name = mPlayerIndex ? (gTcpConnected ? gSecondPlayerName : firstPlayerName) : (gTcpClientSocket >= 0 ? gSecondPlayerName : firstPlayerName);
-                    Color color = mPlayerIndex ? Color(68, 207, 255, 255) : Color(255, 242, 14, 255);
-                    if (mBanningPhase) {
-                        name = mPlayerIndex ? (gTcpClientSocket >= 0 ? firstPlayerName : gSecondPlayerName) : (gTcpConnected ? firstPlayerName : gSecondPlayerName);
-                        color = mPlayerIndex ? Color(255, 242, 14, 255) : Color(68, 207, 255, 255);
-                    } else {
-                        name = mPlayerIndex ? (gTcpConnected ? firstPlayerName : gSecondPlayerName) : (gTcpClientSocket >= 0 ? firstPlayerName : gSecondPlayerName);
-                        color = mPlayerIndex ? Color(68, 207, 255, 255) : Color(255, 242, 14, 255);
-                    }
                     g->DrawImageF(aArrowImage, float(aCursorX + 25 - aArrowImage->mWidth / 2), float(aCursorY - 8) + aBounce);
                     TodDrawString(g, name, aCursorX + 25 - aArrowImage->mWidth / 2, aCursorY - 10, Sexy::FONT_DWARVENTODCRAFT18, color, DrawStringJustification::DS_ALIGN_CENTER);
                 }
