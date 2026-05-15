@@ -1631,8 +1631,10 @@ int Plant::GetRefreshTime(SeedType theSeedType, SeedType theImitaterType) {
                 case SeedType::SEED_JALAPENO:
                 case SeedType::SEED_DOOMSHROOM:
                 case SeedType::SEED_ICESHROOM:
-                    if (Challenge::msVSShuffleMode || VSSetupAddonWidget::msBalancePatchMode)
+                    if (Challenge::msVSShuffleMode || VSSetupAddonWidget::msBalancePatchMode) {
                         return aRefreshTime / 2;
+                    }
+                    [[fallthrough]];
                 default:
                     return aRefreshTime / 3;
             }

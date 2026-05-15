@@ -385,6 +385,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_android_support_Preferences_Changes(J
             break;
         case 145:
             setSeedPacket = boolean; // 更换卡片
+            break;
         case 200:
             checkZombiesAllowed[ZombieType::ZOMBIE_NORMAL] = boolean; // 普通僵尸
             break;
