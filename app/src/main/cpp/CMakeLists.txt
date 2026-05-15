@@ -18,19 +18,20 @@ if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif ()
 
 file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
-    "Homura/src/*.cpp"
-    "PvZ/src/*.cpp"
+        "Homura/src/*.cpp"
+        "PvZ/src/*.cpp"
 )
 add_library(Homura SHARED Main.cpp ${SRC_FILES})
 
 target_include_directories(Homura PRIVATE Homura/include PvZ/include)
 
 target_compile_options(Homura PRIVATE
-    -Wall
-    -Werror=array-bounds
-    -Werror=nonnull
-    -Werror=return-type
-    -Werror=unused-result
+        -Wall
+        -Werror=array-bounds
+        -Werror=implicit-fallthrough
+        -Werror=nonnull
+        -Werror=return-type
+        -Werror=unused-result
 )
 
 target_compile_definitions(Homura PRIVATE PVZ_VERSION=${PVZ_VERSION})
@@ -46,10 +47,10 @@ find_library(GLESv2-lib GLESv2)
 find_library(log-lib log)
 find_library(OpenSLES-lib OpenSLES)
 target_link_libraries(Homura PRIVATE
-    Substrate
-    ${android-lib}
-    ${EGL-lib}
-    ${GLESv2-lib}
-    ${log-lib}
-    ${OpenSLES-lib}
+        Substrate
+        ${android-lib}
+        ${EGL-lib}
+        ${GLESv2-lib}
+        ${log-lib}
+        ${OpenSLES-lib}
 )
