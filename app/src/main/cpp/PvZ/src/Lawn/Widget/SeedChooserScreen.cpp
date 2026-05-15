@@ -1013,7 +1013,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
         SeedType aSeedType = SeedHitTest(x, y);
         for (auto &aBannedSeed : mBannedSeed) {
             if (aSeedType == aBannedSeed.mSeedType) {
-                aToolTip->SetWarningText("本轮已禁用");
+                aToolTip->SetWarningText("[BANNED_ON_THIS_TURN]");
             }
         }
 
@@ -1077,7 +1077,7 @@ void SeedChooserScreen::ShowToolTip(unsigned int thePlayerIndex) {
             if (mBanningPhase) {
                 if (mChosenSeeds[aSeedType].mSeedState == ChosenSeedState::SEED_IN_CHOOSER) {
                     if (aToolTipSeed == SeedType::SEED_INSTANT_COFFEE || aToolTipSeed == SeedType::SEED_LILYPAD || aToolTipSeed == SeedType::SEED_FLOWERPOT) {
-                        aToolTip->SetWarningText("在此阶段不允许");
+                        aToolTip->SetWarningText("[NOT_ALLOWED_ON_THIS_PHASE]");
                     }
                 }
             }
