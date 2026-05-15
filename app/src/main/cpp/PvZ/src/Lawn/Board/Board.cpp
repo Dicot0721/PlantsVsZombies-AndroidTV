@@ -2239,6 +2239,14 @@ void Board::processServerEvent(const BaseEvent *event) {
                     if (aZombie->mZombiePhase == ZombiePhase::PHASE_DANCER_SNAPPING_FINGERS_WITH_LIGHT) {
                         aZombie->PlayZombieReanim("anim_point", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
                     }
+                } else if (aZombie->mZombieType == ZombieType::ZOMBIE_CATAPULT) {
+                    if (aZombie->mZombiePhase == ZombiePhase::PHASE_ZOMBIE_NORMAL) {
+                        aZombie->StartWalkAnim(20);
+                    } else if (aZombie->mZombiePhase == ZombiePhase::PHASE_CATAPULT_LAUNCHING) {
+                        aZombie->PlayZombieReanim("anim_shoot", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 20, 24.0f);
+                    } else if (aZombie->mZombiePhase == ZombiePhase::PHASE_CATAPULT_RELOADING) {
+                        aZombie->PlayZombieReanim("anim_idle", ReanimLoopType::REANIM_LOOP, 20, 12.0f);
+                    }
                 }
             }
         } break;
