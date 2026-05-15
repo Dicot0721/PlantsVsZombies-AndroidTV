@@ -20,8 +20,9 @@
 #ifndef PVZ_STL_EXT_STRING_CONVERSIONS_H
 #define PVZ_STL_EXT_STRING_CONVERSIONS_H
 
-/** @file string_conversions.h
- *  https://gcc.gnu.org/onlinedocs/gcc-4.9.4/libstdc++/api/a01277.html#aa2909347e3b9614ab08f9493159eadac
+/**
+ * @file string_conversions.h
+ * https://gcc.gnu.org/onlinedocs/gcc-4.9.4/libstdc++/api/a01277.html#aa2909347e3b9614ab08f9493159eadac
  */
 
 #include <cstdarg>

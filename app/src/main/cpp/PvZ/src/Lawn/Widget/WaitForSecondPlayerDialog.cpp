@@ -286,7 +286,7 @@ static void Mode3RememberRecentServer(LawnPlayerInfo *playerInfo, std::string_vi
         return;
     }
 
-    const std::string normalized = ip + ":" + std::to_string(port);
+    const std::string normalized = ip + ':' + std::to_string(port);
     char ordered[kMode3ServerRecentCount][kMode3ServerTargetMaxLen]{};
     std::strncpy(ordered[0], normalized.c_str(), kMode3ServerTargetMaxLen - 1);
 
@@ -3309,7 +3309,7 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
         pvzstl::string tag = r.gaming ? tagGaming : (r.full ? tagFull : "");
 
         pvzstl::string probeTag = TodStringTranslate(r.hostProbeDone ? "[P2P_READY]" : "[P2P_NOT_READY]");
-        tag = tag.empty() ? probeTag : tag + " " + probeTag;
+        tag = tag.empty() ? probeTag : tag + ' ' + probeTag;
 
         if (!r.gaming && r.spectateAllowed) {
             tag = TodStringTranslate("[SPECTATE]");
@@ -3531,7 +3531,7 @@ bool WaitForSecondPlayerDialog::ServerConnectFromInput() {
     }
 
     if (mApp && mApp->mPlayerInfo) {
-        const std::string normalizedAddr = ip + ":" + std::to_string(port);
+        const std::string normalizedAddr = ip + ':' + std::to_string(port);
         Mode3RememberRecentServer(mApp->mPlayerInfo, normalizedAddr);
     }
 
