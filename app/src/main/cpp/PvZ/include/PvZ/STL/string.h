@@ -590,7 +590,7 @@ public:
         CharT *p = _dataplus;
         struct Terminator {
             ~Terminator() {
-                _this->_get_rep()->_set_size(_r);
+                _this->_get_rep()->_set_size_and_sharable(_r);
             }
             basic_string *_this;
             size_type _r;
@@ -600,9 +600,7 @@ public:
         static_assert(std::is_integral_v<decltype(r)>, "resize_and_overwrite operation must return an integer");
         assert((r >= 0) && (size_type(r) <= n));
         term._r = size_type(r);
-        if (term._r > n) {
-            std::unreachable();
-        }
+        [[assume(term._r <= n)]];
     }
 
     void swap(basic_string &other) noexcept /* strengthened */ {
