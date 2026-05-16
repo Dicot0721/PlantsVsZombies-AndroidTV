@@ -106,7 +106,7 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
         g->SetColorizeImages(false);
     }
 
-    if (gVSSetupRequestState != 0 && mState != VSSetupState::VS_SETUP_STATE_CUSTOM_BATTLE) {
+    if (!gIsServerModeSpectator && gVSSetupRequestState != 0 && mState != VSSetupState::VS_SETUP_STATE_CUSTOM_BATTLE) {
 
         // ======================
         // 我是 guest：已提醒房主...

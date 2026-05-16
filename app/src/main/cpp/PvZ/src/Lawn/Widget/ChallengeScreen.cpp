@@ -405,7 +405,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
             }
         }
 
-        if (gChallengeScreenRequestState != 0) {
+        if (!gIsServerModeSpectator && gChallengeScreenRequestState != 0) {
             // ======================
             // 我是 guest：已提醒房主...
             // (gTcpConnected == true 代表我作为 client 连接到 host)

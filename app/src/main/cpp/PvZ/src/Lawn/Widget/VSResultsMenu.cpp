@@ -113,7 +113,7 @@ void VSResultsMenu::ButtonDepress(int theId) {
     //        return;
     //    }
 
-    if (gIsServerModeSpectator && (gTcpConnected || gTcpServerSocket >= 0 || gTcpClientSocket >= 0)) {
+    if (gIsServerModeSpectator && (gTcpConnected || gTcpServerSocket >= 0 || gTcpClientSocket >= 0) && theId == VSResultsMenu::VSResultsMenu_Quit_VS) {
         if (gTcpServerSocket >= 0) {
             shutdown(gTcpServerSocket, SHUT_RDWR);
             close(gTcpServerSocket);
@@ -163,6 +163,11 @@ void VSResultsMenu::ButtonDepress(int theId) {
 
 void VSResultsMenu::Draw(Graphics *g) {
     old_VSResultsMenu_Draw(this, g);
+
+    // 观战者不绘制这些
+    if (gIsServerModeSpectator) {
+        return;
+    }
 
     if (gIsServerModeNetplay && gServerModeTransport == ServerModeTransport::RELAY && mCheckboxController != nullptr) {
         mCheckboxController->DrawCheckboxLabel(g);
