@@ -34,6 +34,7 @@
 #include "PvZ/Lawn/Widget/VSSetupMenu.h"
 #include "PvZ/Lawn/Widget/WaitForSecondPlayerDialog.h"
 #include "PvZ/STL/string.h"
+#include "PvZ/SexyAppFramework/Widget/ButtonWidget.h"
 #include "PvZ/SexyAppFramework/Widget/Dialog.h"
 #include "PvZ/Symbols.h"
 #include "PvZ/TodLib/Common/TodStringFile.h"
@@ -305,6 +306,15 @@ void LawnApp::DoSettingsDialog(bool theIsModal) {
 
 void LawnApp::DoNewOptions(bool theFromGameSelector, unsigned int a3) {
     old_LawnApp_DoNewOptions(this, theFromGameSelector, a3);
+    if (gIsServerModeSpectator) {
+        if (auto *dialog = GetDialog(Dialogs::DIALOG_NEWOPTIONS)) {
+
+            if (auto *concedeButton = dialog->FindWidget(5)) {
+                concedeButton->mDisabled = true;
+                ((Sexy::ButtonWidget *)concedeButton)->mBtnNoDraw = true;
+            }
+        }
+    }
 }
 
 bool LawnApp::Is3DAccelerated() {
@@ -446,7 +456,9 @@ void LawnApp::HandleTcpServerMessage(const std::byte *buf, size_t bufSize) {
             }
         } else if (event->type >= EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS && event->type < NUM_EVENT_VSSETUPMENU) {
             if (mVSSetupMenu != nullptr) {
-                const bool spectatorClientVsSetupEvent = gIsServerModeSpectator && (event->type == EVENT_CLIENT_VSSETUPMENU_MOVE_CONTROLLER || event->type == EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED);
+                const bool spectatorClientVsSetupEvent = gIsServerModeSpectator
+                    && (event->type == EVENT_CLIENT_VSSETUPMENU_MOVE_CONTROLLER || event->type == EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED || event->type == EVENT_CLIENT_SEEDCHOOSER_BAN_SEED
+                        || event->type == EVENT_CLIENT_SEEDCHOOSER_BUTTON_DEPRESS);
                 if (spectatorClientVsSetupEvent) {
                     // Spectator consumes selected client->host VS setup/seedchooser events locally.
                     mVSSetupMenu->processClientEvent(event);

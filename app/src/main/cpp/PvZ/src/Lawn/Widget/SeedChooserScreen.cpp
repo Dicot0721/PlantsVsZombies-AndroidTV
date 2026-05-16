@@ -1100,6 +1100,9 @@ SeedType SeedChooserScreen::GetZombieIndexBySeedType(SeedType theSeedType) {
 }
 
 void SeedChooserScreen::MouseMove(int x, int y) {
+    if (gIsServerModeSpectator) {
+        return;
+    }
     if (mApp->IsVSMode() && !IsLocalChooserInputAllowed(this)) {
         return;
     }

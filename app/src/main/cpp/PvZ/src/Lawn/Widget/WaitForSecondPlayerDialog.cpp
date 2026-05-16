@@ -3305,18 +3305,22 @@ void WaitForSecondPlayerDialog::DrawServerRoomList(Sexy::Graphics *g) {
         const ServerRoomItem &r = mServerRooms[i];
         pvzstl::string tagGaming = TodStringTranslate("[TAG_GAMING]");
         pvzstl::string tagFull = TodStringTranslate("[TAG_FULL]");
-        const bool versionMismatch = (r.protocolVersion != 0 && r.protocolVersion != NETPLAY_VERSION);
+        const bool versionLower = (r.protocolVersion != 0 && r.protocolVersion < NETPLAY_VERSION);
+        const bool versionHigher = (r.protocolVersion != 0 && r.protocolVersion > NETPLAY_VERSION);
         pvzstl::string tag = r.gaming ? tagGaming : (r.full ? tagFull : "");
 
         pvzstl::string probeTag = TodStringTranslate(r.hostProbeDone ? "[P2P_READY]" : "[P2P_NOT_READY]");
         tag = tag.empty() ? probeTag : tag + ' ' + probeTag;
 
-        if (!r.gaming && r.spectateAllowed) {
+        if (!r.gaming && r.spectateAllowed && r.full) {
             tag = TodStringTranslate("[SPECTATE]");
         }
 
-        if (versionMismatch) {
-            tag = TodStringTranslate("[SERVER_ROOM_VERSION_ERROR]");
+        if (versionLower) {
+            tag = TodStringTranslate("[SERVER_ROOM_VERSION_ERROR_LOWER]");
+        }
+        if (versionHigher) {
+            tag = TodStringTranslate("[SERVER_ROOM_VERSION_ERROR_HIGHER]");
         }
 
         pvzstl::string roomTitle = StrFormat(TodStringTranslate("[SERVER_ROOM_JOINED]").c_str(), r.name);

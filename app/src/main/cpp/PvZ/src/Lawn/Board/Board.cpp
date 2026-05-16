@@ -1467,12 +1467,12 @@ void Board::processClientEvent(const BaseEvent *event) {
             mApp->KillNewOptionsDialog();
             mApp->KillDialog(DIALOG_CONFIRM_IN_GAME_RESTART);
             GamepadControls *clientGamepadControls = mGamepadControls[(mGamepadControls[1]->mPlayerIndex2 == 1) ? 1 : 0];
-            if (!clientGamepadControls->mIsZombie) {
-                mApp->SetBoardResult(7);
-                mApp->mGameScene = SCENE_ZOMBIES_WON;
-            } else {
+            if (clientGamepadControls->mIsZombie) {
                 mApp->SetBoardResult(8);
                 mApp->mGameScene = SCENE_PLANTS_WON;
+            } else {
+                mApp->SetBoardResult(7);
+                mApp->mGameScene = SCENE_ZOMBIES_WON;
             }
             if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
                 const bool plantWin = (mApp->mGameScene == SCENE_PLANTS_WON);
@@ -2348,12 +2348,13 @@ void Board::processServerEvent(const BaseEvent *event) {
             mApp->mSoundSystem->CancelPausedFoley();
             mApp->KillNewOptionsDialog();
             mApp->KillDialog(DIALOG_CONFIRM_IN_GAME_RESTART);
-            if (mGamepadControls[0]->mPlayerIndex2 == 1) {
-                mApp->SetBoardResult(7);
-                mApp->mGameScene = SCENE_ZOMBIES_WON;
-            } else {
+            GamepadControls *serverGamepadControls = mGamepadControls[0]->mPlayerIndex2 == 0 ? mGamepadControls[0] : mGamepadControls[1];
+            if (serverGamepadControls->mIsZombie) {
                 mApp->SetBoardResult(8);
                 mApp->mGameScene = SCENE_PLANTS_WON;
+            } else {
+                mApp->SetBoardResult(7);
+                mApp->mGameScene = SCENE_ZOMBIES_WON;
             }
 
             mApp->ShowVSResultsScreen();
