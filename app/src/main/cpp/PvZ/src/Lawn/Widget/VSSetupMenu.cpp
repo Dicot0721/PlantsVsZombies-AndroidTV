@@ -85,7 +85,7 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
         TodDrawString(g, "[VS_PICK_BATTLES]", 350, 110, Sexy::FONT_DWARVENTODCRAFT18, Color::White, DrawStringJustification::DS_ALIGN_LEFT);
     }
 
-    if (drawTipArrowAlphaCounter > 200) {
+    if (!gIsServerModeSpectator && drawTipArrowAlphaCounter > 200) {
         int aAlpha = TodAnimateCurve(0, 100, drawTipArrowAlphaCounter % 100, 50, 255, TodCurves::CURVE_BOUNCE);
         g->SetColorizeImages(true);
         g->SetColor(Color(255, 255, 255, aAlpha));

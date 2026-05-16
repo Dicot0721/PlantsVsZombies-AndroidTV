@@ -563,6 +563,7 @@ void LawnApp::UpdateFrames() {
                 gTcpServerSocket = -1;
                 gTcpConnecting = false;
                 gTcpConnected = false;
+                gIsServerModeSpectator = false;
                 clientRecvBuffer.clear();
                 serverRecvBuffer.clear();
                 netplay::ClearSendBuffer();
