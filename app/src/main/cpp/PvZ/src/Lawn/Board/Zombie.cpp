@@ -3962,7 +3962,9 @@ void Zombie::StartWalkAnim(int theBlendTime) {
         PlayZombieReanim("anim_swim", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
     } else if ((mZombieType == ZombieType::ZOMBIE_NORMAL || mZombieType == ZombieType::ZOMBIE_TRAFFIC_CONE || mZombieType == ZombieType::ZOMBIE_PAIL) && mBoard->mDanceMode) {
         PlayZombieReanim("anim_dance", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
-    } else if (mZombiePhase == ZombiePhase::PHASE_POGO_BOUNCING) {
+    } else if (mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT) { // 修复撑杆僵尸被蹦极空投落地后动画异常
+        PlayZombieReanim("anim_run", ReanimLoopType::REANIM_LOOP, 0, 0.0f);
+    } else if (mZombiePhase == ZombiePhase::PHASE_POGO_BOUNCING) { // 修复蹦蹦僵尸被蹦极空投落地后动画异常
         PlayZombieReanim("anim_pogo", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 40.0f);
     } else if (mZombiePhase == ZombiePhase::PHASE_FOOTBALL_CHARGING) {
         PlayZombieReanim("anim_charge", ReanimLoopType::REANIM_LOOP, theBlendTime, 0.0f);
