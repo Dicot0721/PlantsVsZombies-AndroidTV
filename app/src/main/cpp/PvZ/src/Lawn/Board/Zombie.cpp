@@ -3828,9 +3828,9 @@ Zombie *Zombie::FindZombieGigaFootball() {
 
     Zombie *aZombie = nullptr;
     while (mBoard->IterateZombies(aZombie)) {
-        if (mMindControlled == aZombie->mMindControlled && mZombiePhase != ZombiePhase::PHASE_IMP_GETTING_THROWN && mZombiePhase != ZombiePhase::PHASE_IMP_POPPING
-            && mZombiePhase != ZombiePhase::PHASE_IMP_GETTING_BLOCKED && mZombiePhase != ZombiePhase::PHASE_RISING_FROM_GRAVE && mZombieHeight != ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED
-            && aZombie->mZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL && !aZombie->IsDeadOrDying() && aZombie->mRow == mRow) {
+        if (mMindControlled == aZombie->mMindControlled && mZombiePhase != ZombiePhase::PHASE_IMP_GETTING_THROWN && mZombiePhase != ZombiePhase::PHASE_IMP_LANDING
+            && mZombiePhase != ZombiePhase::PHASE_IMP_POPPING && mZombiePhase != ZombiePhase::PHASE_IMP_GETTING_BLOCKED && mZombiePhase != ZombiePhase::PHASE_RISING_FROM_GRAVE
+            && mZombieHeight != ZombieHeight::HEIGHT_GETTING_BUNGEE_DROPPED && aZombie->mZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL && !aZombie->IsDeadOrDying() && aZombie->mRow == mRow) {
             Rect aZombieFootballRect = aZombie->GetZombieAttackRect();
             int aOverlap = GetRectOverlap(aZombieImpRect, aZombieFootballRect);
             if (aOverlap > -20) {
