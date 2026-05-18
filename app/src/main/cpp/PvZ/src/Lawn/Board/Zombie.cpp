@@ -839,9 +839,10 @@ void Zombie::UpdateGigaFootball() {
         if (mApp->IsVSMode() && gTcpConnected)
             return;
 
-        Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW);
-        Zombie *aZombie = FindZombieTarget();
-        if (aPlant || aZombie) {
+        bool doTackle = false;
+        if (FindZombieTarget()) {
+            doTackle = true;
+        } else if (Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW)) {
             if (mBoard->GetLadderAt(aPlant->mPlantCol, aPlant->mRow)) {
                 float aPlantX = mBoard->GridToPixelX(aPlant->mPlantCol, aPlant->mRow) + 40;
                 if (aPlantX > mPosX && mZombieHeight == ZombieHeight::HEIGHT_ZOMBIE_NORMAL && mUseLadderCol != aPlant->mPlantCol) {
@@ -850,7 +851,10 @@ void Zombie::UpdateGigaFootball() {
                 }
                 return;
             }
+            doTackle = true;
+        }
 
+        if (doTackle) {
             mZombiePhase = ZombiePhase::PHASE_FOOTBALL_TACKLING;
             PlayZombieReanim("anim_tackle", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 24.0f);
             syncFootballPhaseCounter();
