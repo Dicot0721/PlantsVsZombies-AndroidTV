@@ -87,7 +87,7 @@ public:
     SeedType mLastConveyorSeedType;                         // 32
     int mSurvivalStage;                                     // 33
     int mSlotMachineRollCount;                              // 34
-    int mReanimChallenge;                                   // 35
+    ReanimationID mReanimChallenge;                         // 35
     int mReanimCloud[6];                                    // 36 ~ 41
     int mCloudCounter[6];                                   // 42 ~ 47
     int mChallengeGridX;                                    // 48
@@ -97,11 +97,12 @@ public:
     int mTreeOfWisdomTalkIndex;                             // 52
     int unk53[3];                                           // 53 ~ 55
     int mBobSledMPCounter;                                  // 56
-    int unk57[2];                                           // 57 ~ 58
+    int mSuddenDeathStartTick;                              // 57
+    int mPauseStartTick;                                    // 58
     bool mIsMPSuddenDeathNow;                               // 59 * 4
     SeedType mSuddenDeathDisableSeeds1[3];                  // 60 ~ 62
     SeedType mSuddenDeathDisableSeeds2[3];                  // 63 ~ 65
-    int unk66;                                              // 66
+    int mSuddenDeathBoomCount;                              // 66
     float mHeavyWeaponX;                                    // 67
     float mHeavyWeaponY;                                    // 68
     float mHeavyWeaponAngle;                                // 69

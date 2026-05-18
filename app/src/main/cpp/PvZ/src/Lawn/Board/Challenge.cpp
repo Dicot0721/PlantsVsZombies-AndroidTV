@@ -161,16 +161,13 @@ void Challenge::Update() {
 
     if (mApp->IsVSMode()) {
         if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING || mBoard->HasLevelAwardDropped())
-            return;
+            return old_Challenge_Update(this); // 执行旧函数，即可修复游戏不记录mPauseStartTick (SD的暂停Tick) 的BUG，
 
-        if (mBoard->CanAddBobSledMP()) {
-            --mBobSledMPCounter;
+        if (mBoard->CanAddBobSledMP() && IsMPSuddenDeath() && Challenge::gVSSuddenDeathMode == 1) {
+            mBobSledMPCounter -= 2; // SD模式雪橇车召唤倒计时缩减至 1/3
             if (mBobSledMPCounter <= 0) {
-                // SD模式雪橇车召唤倒计时缩减至 1/3
-                mBobSledMPCounter = (IsMPSuddenDeath() && Challenge::gVSSuddenDeathMode == 1) ? 2000 : 6000;
-                mBoard->AddZombie(ZombieType::ZOMBIE_BOBSLED, Zombie::ZOMBIE_WAVE_VS, true);
+                mBobSledMPCounter = 1; // 由于没重写旧函数，此处需要手动将Counter对齐到1，以触发旧函数的(mBobSledMPCounter - 1) == 0判定
             }
-            return;
         }
 
         UpdateVSAddPlants();
