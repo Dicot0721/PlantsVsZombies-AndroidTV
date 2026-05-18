@@ -160,6 +160,9 @@ void Challenge::Update() {
     }
 
     if (mApp->IsVSMode()) {
+        if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING || mBoard->HasLevelAwardDropped())
+            return;
+
         if (mBoard->CanAddBobSledMP()) {
             --mBobSledMPCounter;
             if (mBobSledMPCounter <= 0) {
@@ -169,9 +172,6 @@ void Challenge::Update() {
             }
             return;
         }
-
-        if (mBoard->mPaused || mApp->mGameScene != SCENE_PLAYING || mBoard->HasLevelAwardDropped())
-            return;
 
         UpdateVSAddPlants();
 
