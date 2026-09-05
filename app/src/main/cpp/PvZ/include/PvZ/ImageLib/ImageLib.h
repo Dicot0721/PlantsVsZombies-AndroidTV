@@ -26,16 +26,18 @@ namespace ImageLib {
 
 class Image {
 public:
-    void **vTable;       // 0
-    int mWidth;          // 1
-    int mHeight;         // 2
-    unsigned int *mBits; // 3
-    int *mText1;         // 4
-    int *mText2;         // 5
-    bool unkBool;        // 24
-    int unk1[256];       // 7 ~ 262
-    int unkInt;          // 263
-}; // 264个整数
+    void **vTable;       // Offset 0: Virtual table pointer
+    int mWidth;          // Offset 8: Image width
+    int mHeight;         // Offset 12: Image height
+    unsigned int *mBits; // Offset 16: Pixel data (ARGB)
+    int *mText1;         // Offset 24: Text/string pointer 1
+    int *mText2;         // Offset 32: Text/string pointer 2
+    bool unkBool;        // Offset 40: Unknown boolean flag
+    // Padding: 3 bytes (auto-alignment)
+    int unk1[256];       // Offset 44: Unknown array of 256 integers
+    int unkInt;          // Offset 1068: Unknown integer
+};
+// Total size: ~1072 bytes (64-bit) or ~1060 bytes (32-bit)
 
 } // namespace ImageLib
 
