@@ -22,6 +22,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <ctime>
 
 #include "PvZ/STL/string.h"
 #include <concepts>
@@ -33,9 +34,9 @@
 
 inline constexpr uint32_t NETPLAY_VERSION = 3196;
 
-// 联机事件只传输 DataArray ID 的低 16 位；slot/index 0 是合法对象 ID，
-// 因此不能使用游戏内部值为 0 的 PLANTID_NULL / ZOMBIEID_NULL / GRIDITEMID_NULL 作为网络空值。
-// DataArray 容量远小于 UINT16_MAX，因此 0xFFFF 可安全保留为网络协议专用空值。
+// Network events only transmit the lower 16 bits of DataArray ID; slot/index 0 is a valid object ID,
+// so we cannot use the game's internal PLANTID_NULL / ZOMBIEID_NULL / GRIDITEMID_NULL (value 0) as network null.
+// DataArray capacity is far less than UINT16_MAX, so 0xFFFF is safely reserved as protocol-specific null.
 inline constexpr uint16_t NETPLAY_PLANT_ID_NULL = UINT16_MAX;
 inline constexpr uint16_t NETPLAY_ZOMBIE_ID_NULL = UINT16_MAX;
 inline constexpr uint16_t NETPLAY_GRIDITEM_ID_NULL = UINT16_MAX;
@@ -43,8 +44,8 @@ inline constexpr uint16_t NETPLAY_GRIDITEM_ID_NULL = UINT16_MAX;
 enum EventType : uint8_t {
     EVENT_NULL,
 
-    EVENT_PING, // 双方都会发PING
-    EVENT_PONG, // 双方都会回PONG
+    EVENT_PING, // Both sides send PING
+    EVENT_PONG, // Both sides reply PONG
     /************************************************************/
     EVENT_SERVER_WAITFORSECONDPALYER_VERSION_CHECK,
 
@@ -122,44 +123,44 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_GRIDITEM_TAEGETZOMBIE_DIE,
     EVENT_SERVER_BOARD_GRIDITEM_TAKE_DAMAGE,
 
-    EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER,                // 同步生产植物如向日葵、阳光菇的生产发光
-    EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH,               // 播放杨桃、三线射手的开火动画
-    EVENT_SERVER_BOARD_PLANT_FINDTARGETANDFIRE,            // 播放其他植物的开火动画
-    EVENT_SERVER_BOARD_PLANT_KERNELPLUT_FINDTARGETANDFIRE, // 黄油投手
-    EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION,           // 似乎无用，先不同步
-    EVENT_SERVER_BOARD_PLANT_OTHER_ANIMATION,              // 同步摇摆动画、开火动画的帧率和播放进度
-    EVENT_SERVER_BOARD_PLANT_FIRE,                         // 射出子弹
+    EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER,                // Sync production plants like Sunflower, Sun-shroom glow
+    EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH,               // Play Starfruit, Threepeater firing animation
+    EVENT_SERVER_BOARD_PLANT_FINDTARGETANDFIRE,            // Play other plants' firing animation
+    EVENT_SERVER_BOARD_PLANT_KERNELPLUT_FINDTARGETANDFIRE, // Kernel-pult
+    EVENT_SERVER_BOARD_PLANT_PINGPONG_ANIMATION,           // Seems unused, skip syncing
+    EVENT_SERVER_BOARD_PLANT_OTHER_ANIMATION,              // Sync sway animation, firing animation frame rate and progress
+    EVENT_SERVER_BOARD_PLANT_FIRE,                         // Shoot projectile
     EVENT_SERVER_BOARD_PLANT_ADD,
     EVENT_SERVER_BOARD_PLANT_DIE,
-    EVENT_SERVER_BOARD_PLANT_DO_SPECIAL, // 同步植物触发特性
+    EVENT_SERVER_BOARD_PLANT_DO_SPECIAL, // Sync plant special ability trigger
     EVENT_SERVER_BOARD_PLANT_ICE_A_ZOMBIE,
     EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT,
     EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK,
     EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK_LADDER,
     EVENT_SERVER_BOARD_PLANT_SQUASH_STATE,
     EVENT_SERVER_BOARD_PLANT_ICEBERG_LETTUCE_LAUNCH,
-    EVENT_SERVER_BOARD_PLANT_WIN, // 植物方通过杀够3只靶子胜利，目前版本由于已同步上级GridItemDie，故不需要同步
+    EVENT_SERVER_BOARD_PLANT_WIN, // Plant side wins by killing 3 targets; already synced via parent GridItemDie, no need to sync
 
     EVENT_SERVER_BOARD_ZOMBIE_DIE,
     EVENT_SERVER_BOARD_ZOMBIE_MIND_CONTROLLED,
     EVENT_SERVER_BOARD_ZOMBIE_CONVERT_TO_IMP,
-    EVENT_SERVER_BOARD_ZOMBIE_ADD,                   // AddZombieInRow触发的同步
-    EVENT_SERVER_BOARD_ZOMBIE_BOBSELD_ADD,           // 单独同步雪橇小队
-    EVENT_SERVER_BOARD_ZOMBIE_DOGWALKER_ADD,         // 单独同步遛狗僵尸和僵尸狗
-    EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_SET_STEAL_GRID, // 蹦极僵尸在AddZombieInRow之后还会设置靶标位置，所以单独同步
+    EVENT_SERVER_BOARD_ZOMBIE_ADD,                   // Sync triggered by AddZombieInRow
+    EVENT_SERVER_BOARD_ZOMBIE_BOBSELD_ADD,           // Separately sync Bobsled team
+    EVENT_SERVER_BOARD_ZOMBIE_DOGWALKER_ADD,         // Separately sync Dogwalker zombie and zombie dog
+    EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_SET_STEAL_GRID, // Bungee zombie sets target position after AddZombieInRow, sync separately
     EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_LIFT_TARGET,
     EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_DROP_ZOMBIE,
     EVENT_SERVER_BOARD_ZOMBIE_BUNGEE_HIT_UMBRELLA,
-    EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT, // 修改器放置僵尸会在执行AddZombieInRow后额外设置僵尸的位置，本事件就是追加同步僵尸位置
+    EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT, // Cheat menu places zombie, then sets position after AddZombieInRow; this event syncs the extra position
     EVENT_SERVER_BOARD_ZOMBIE_RIZE_FORM_GRAVE,
     EVENT_SERVER_BOARD_ZOMBIE_SUMMON_BACKUP_DANCERS,
     EVENT_SERVER_BOARD_ZOMBIE_RAISE_DEAD,
     EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED,
     EVENT_SERVER_BOARD_ZOMBIE_ICE_TRAP,
-    EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_IN_VAULT,   // 撑杆僵尸开始跳跃
-    EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_POST_VAULT, // 撑杆僵尸落地
-    EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH, // 开始播放砸地动画
-    EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW, // 开始播放扔小鬼动画
+    EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_IN_VAULT,   // Pole vaulter starts jumping
+    EVENT_SERVER_BOARD_ZOMBIE_POLEVAULTER_POST_VAULT, // Pole vaulter lands
+    EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_SMASH, // Start playing ground smash animation
+    EVENT_SERVER_BOARD_ZOMBIE_GARGANTUAR_START_THROW, // Start playing imp throw animation
     EVENT_SERVER_BOARD_ZOMBIE_GIGA_GARGANTUAR_START_LIGHTNING,
     EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_LAUNCHIING,
     EVENT_SERVER_BOARD_ZOMBIE_CATAPLUT_FIRE,
@@ -170,25 +171,25 @@ enum EventType : uint8_t {
     EVENT_SERVER_BOARD_ZOMBIE_IMP_THROWN,
     EVENT_SERVER_BOARD_ZOMBIE_IMP_KICKED,
     EVENT_SERVER_BOARD_ZOMBIE_IMP_POP,
-    EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE, // 同步"一大波僵尸"提示
-    EVENT_SERVER_BOARD_ZOMBIE_SET_ROW,   // 同步僵尸换行
+    EVENT_SERVER_BOARD_ZOMBIE_HUGE_WAVE, // Sync "A huge wave of zombies" notification
+    EVENT_SERVER_BOARD_ZOMBIE_SET_ROW,   // Sync zombie row change
     EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER,
-    EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL, // 同步僵尸触发特性
+    EVENT_SERVER_BOARD_ZOMBIE_DO_SPECIAL, // Sync zombie special ability trigger
     EVENT_SERVER_BOARD_ZOMBIE_EXPLORER_BURN_PLANT,
     EVENT_SERVER_BOARD_ZOMBIE_SQUISH_ALL_IN_SQUARE,
     EVENT_SERVER_BOARD_ZOMBIE_TAKE_DAMAGE,
     EVENT_SERVER_BOARD_ZOMBIE_DROP_HEAD,
-    EVENT_SERVER_BOARD_ZOMBIE_WIN, // 僵尸方通过进家胜利
+    EVENT_SERVER_BOARD_ZOMBIE_WIN, // Zombie side wins by entering house
     EVENT_SERVER_BOARD_ZOMBIE_MOW_DOWN,
     EVENT_SERVER_BOARD_ZOMBIE_TELEPORTATION_SHOOT,
     EVENT_SERVER_BOARD_ZOMBIE_TELEPORT,
     EVENT_SERVER_BOARD_PLANT_TELEPORT,
-    EVENT_SERVER_BOARD_ZOMBIE_SUN_BEAN_SUN, // 同步僵尸吃下阳光豆后的剩余可掉落阳光
+    EVENT_SERVER_BOARD_ZOMBIE_SUN_BEAN_SUN, // Sync remaining droppable sun after zombie eats Sun Bean
 
     EVENT_SERVER_BOARD_LAWNMOWER_START,
 
-    EVENT_SERVER_BOARD_PLAY_SOUND,    // 播放音效
-    EVENT_SERVER_BOARD_PLAY_SOUND_SR, // 仅供观战/回放解析的音效同步
+    EVENT_SERVER_BOARD_PLAY_SOUND,    // Play sound effect
+    EVENT_SERVER_BOARD_PLAY_SOUND_SR, // Sound sync for spectator/replay parsing only
 
     EVENT_SERVER_BOARD_TAKE_SUNMONEY,
     EVENT_SERVER_BOARD_TAKE_DEATHMONEY,
@@ -321,7 +322,7 @@ struct B1x8_Event : BaseEvent {
 };
 
 struct VSSetupGlobalBpSyncEvent : BaseEvent {
-    static constexpr int kMaxSeedsPerPlayer = 30; // 额外卡槽模式每局消耗6张卡，BO5最多消耗30张
+    static constexpr int kMaxSeedsPerPlayer = 30; // Extra slot mode consumes 6 cards per game, BO5 max 30 cards
     int8_t mode;
     uint8_t count[2];
     uint8_t seeds[2][kMaxSeedsPerPlayer];
@@ -402,10 +403,10 @@ struct U8x2U16x4UNI32x8_Event : BaseEvent {
     Union32Bit data4[4];
 };
 
-// 双方都需要
+// Both sides need
 inline constexpr int UDP_PORT = 8888;
 
-// 主机端需要
+// Server side needs
 inline int gUdpBroadcastSocket = -1;
 inline int gTcpListenSocket = -1;
 inline int gTcpClientSocket = -1;
@@ -414,7 +415,7 @@ inline int gLastBroadcastTime = 0;
 inline sockaddr_in gBroadcastAddr;
 inline std::string gIfname;
 
-// 使用联机模块筛选出的本机 IPv4，生成最后两段各三位的六位玩家编号。
+// Generate six-digit player code from the last two octets of local IPv4 filtered by netplay module.
 pvzstl::string GetLocalIpPlayerCode();
 
 inline char gSecondPlayerName[32];
@@ -423,25 +424,25 @@ inline char gReplayHostName[32];
 inline char gReplayGuestName[32];
 inline bool gMetricsHostSendNameAllowed = true;
 
-// 客户端需要
+// Client side needs
 inline constexpr int MAX_SERVERS = 3;
-inline constexpr int UDP_TIMEOUT = 3; // 超时时间为3秒
+inline constexpr int UDP_TIMEOUT = 3; // Timeout is 3 seconds
 inline constexpr int NAME_LENGTH = 256;
 
-// 全局变量，用于保存发现的服务端IP和时间戳
+// Global variables for storing discovered server IPs and timestamps
 struct ServerInfo {
     char ip[INET_ADDRSTRLEN];
     int tcpPort;
     char name[NAME_LENGTH];
-    time_t lastSeen; // 记录最后一次收到广播的时间
+    time_t lastSeen; // Records the last time a broadcast was received
 } inline gServers[MAX_SERVERS];
 
-inline int gScannedServerCount = 0; // 已发现的服务端数量
+inline int gScannedServerCount = 0; // Number of discovered servers
 inline int gUdpScanSocket = -1;
 
-// 客户端TCP socket
+// Client TCP socket
 inline int gTcpServerSocket = -1;
-inline bool gTcpConnecting = false; // 正在尝试连接
+inline bool gTcpConnecting = false; // Attempting to connect
 inline bool gTcpConnected = false;
 inline std::string gMetricsServerIp;
 inline int gMetricsServerPort = 0;
@@ -460,7 +461,7 @@ inline int gMetricsSunflowerLoss = 0;
 inline std::unordered_map<int, int> gMetricsPlantUseCount;
 inline std::unordered_map<int, int> gMetricsZombieUseCount;
 
-// TODO: 完善服务器连接判断
+// TODO: Improve server connection detection
 inline bool gIsConnectedToServer = false;
 inline bool gIsServerModeNetplay = false;
 
@@ -470,7 +471,7 @@ inline bool IsOnlineModeActive() noexcept {
 }
 
 inline bool IsOnlineServerModeActive() noexcept {
-    //    return false; // 测试时用到
+    //    return false; // For testing
     return IsOnlineModeActive() && gIsServerModeNetplay;
 }
 
@@ -487,12 +488,13 @@ namespace detail {
 } // namespace detail
 
 template <typename T>
-    requires(std::is_same_v<std::remove_reference_t<T>, std::remove_cvref_t<T>> && std::derived_from<std::remove_reference_t<T>, BaseEvent>)
+    requires std::derived_from<std::remove_cvref_t<T>, BaseEvent>
 void PutEvent(T &&event) {
-    static_assert(std::is_trivially_copyable_v<std::remove_reference_t<T>>, "Event must be trivially copyable");
-    static_assert(std::in_range<decltype(BaseEvent::size)>(sizeof(T)), "'BaseEvent::size' is too small");
-    event.BaseEvent::size = sizeof(T);
-    detail::PutEventData(reinterpret_cast<std::byte *>(&event), sizeof(T));
+    using EventType = std::remove_cvref_t<T>;
+    static_assert(std::is_trivially_copyable_v<EventType>, "Event must be trivially copyable");
+    static_assert(std::in_range<decltype(BaseEvent::size)>(sizeof(EventType)), "'BaseEvent::size' is too small");
+    event.BaseEvent::size = static_cast<uint8_t>(sizeof(EventType));
+    detail::PutEventData(reinterpret_cast<const std::byte *>(&event), sizeof(EventType));
 }
 
 bool FlushSendBuffer(int socket);
@@ -501,10 +503,10 @@ void ClearSendBuffer() noexcept;
 std::size_t ParseEventSize(const std::byte *data);
 
 /**
- * @param [out] dest 事件写入缓冲区 (要求已对齐)
- * @param [in] src 事件读取缓冲区
+ * @param [out] dest Event write buffer (must be aligned)
+ * @param [in] src Event read buffer
  *
- * @return dest 强制转换为 BaseEvent * 的结果
+ * @return dest cast to BaseEvent * result
  */
 BaseEvent *GetEvent(std::byte *dest, const std::byte *src);
 
