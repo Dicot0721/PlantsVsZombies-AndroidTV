@@ -37,13 +37,13 @@ namespace cheat {
 template <std::size_t N>
 using StringArray = std::array<const char *const, N>;
 
-using SettingsList = StringArray<4>;
-using FeatureList = StringArray<123>;
-
 template <std::size_t N>
 consteval bool CheckList(const StringArray<N> &list) {
     return std::ranges::none_of(list, [](const char *item) { return item == nullptr || *item == '\0'; });
 }
+
+using SettingsList = StringArray<4>;
+using FeatureList = StringArray<123>;
 
 namespace lang {
 
