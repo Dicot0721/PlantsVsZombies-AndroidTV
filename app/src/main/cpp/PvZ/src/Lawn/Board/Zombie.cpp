@@ -2542,6 +2542,9 @@ void Zombie::ExplorerBurnPlant(Plant *thePlant) {
 
 void Zombie::ExplorerTorchConvert(bool theBurn) {
     if (theBurn) {
+        if (IsMovingAtChilledSpeed()) {
+            return;
+        }
         mApp->PlayFoley(FoleyType::FOLEY_EXPLORER_IGNITE);
         mHasObject = true;
         mZombieAttackRect = Rect(-10, 0, 50, 115);
