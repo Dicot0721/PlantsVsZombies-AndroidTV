@@ -187,6 +187,9 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
     }
 
     switch (theType) {
+        // 默认值
+        // mZombieRect = Rect(36, 0, 42, 115);
+        // mZombieAttackRect = Rect(50, 0, 20, 115);
         case ZombieType::ZOMBIE_BALLOON:
             if (mApp->IsVSMode() && IsOnBoard()) {
                 mAltitude = 0.0f;
@@ -292,15 +295,13 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
             break;
 
         case ZombieType::ZOMBIE_ZOMBLOB_MIDDLE:
-            mZombieAttackRect = Rect(20, 30, 50, 85);
-            mZombieRect = Rect(36, 30, 42, 85);
+            mZombieAttackRect = Rect(20, 0, 50, 115);
             mBodyHealth = 140;
             mVariant = false;
             break;
 
         case ZombieType::ZOMBIE_ZOMBLOB_SMALL:
-            mZombieAttackRect = Rect(50, 60, 20, 55);
-            mZombieRect = Rect(36, 60, 42, 55);
+            mZombieAttackRect = Rect(50, 0, 20, 115);
             mBodyHealth = 85;
             mVariant = false;
             break;
@@ -315,8 +316,8 @@ void Zombie::ZombieInitialize(int theRow, ZombieType theType, bool theVariant, Z
         case ZombieType::ZOMBIE_DOG:
             mBodyHealth = 330;
             mVariant = false;
-            mZombieRect = Rect(20, 60, 50, 55);
-            mZombieAttackRect = Rect(15, 60, 40, 55);
+            mZombieRect = Rect(20, 0, 50, 115);
+            mZombieAttackRect = Rect(15, 0, 40, 115);
             mTargetRow = theRow; // 固定保存出生行，索敌范围始终是出生行及上下相邻行
             mZombiePhase = ZombiePhase::PHASE_DOG_WALKING;
             PickRandomSpeed();
@@ -4387,7 +4388,7 @@ void Zombie::UpdateDeath() {
 void Zombie::Draw(Sexy::Graphics *g) {
     // 根据玩家的“僵尸显血”功能是否开启，决定是否在游戏的原始old_Zombie_Draw函数执行完后额外绘制血量文本。
     old_Zombie_Draw(this, g);
-    int drawHeightOffset = 0;
+    int drawHeightOffset = mZombieType == ZombieType::ZOMBIE_DOG ? 60 : 0;
     if (showZombieBodyHealth || (showGargantuarHealth && IsGargantuar())) { // 如果玩家开了"僵尸显血"
         if (!IsOnlineServerModeActive()) {
             g->SetColor(gColorWhite);
