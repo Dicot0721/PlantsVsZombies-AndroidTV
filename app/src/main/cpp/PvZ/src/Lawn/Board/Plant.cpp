@@ -285,6 +285,10 @@ bool Plant::IsSpiky() const {
     return mSeedType == SeedType::SEED_SPIKEWEED || mSeedType == SeedType::SEED_SPIKEROCK;
 }
 
+bool Plant::IsCeleryStalkerLow() const {
+    return mState == PlantState::STATE_CELERY_STALKER_LOW || mState == PlantState::STATE_CELERY_STALKER_LOWERING;
+}
+
 bool Plant::IsLowProfile() const {
     switch (mSeedType) {
         case SeedType::SEED_PUFFSHROOM:
@@ -297,7 +301,7 @@ bool Plant::IsLowProfile() const {
             return true;
 
         case SeedType::SEED_CELERY_STALKER:
-            return mState == PlantState::STATE_CELERY_STALKER_LOW || mState == PlantState::STATE_CELERY_STALKER_LOWERING;
+            return IsCeleryStalkerLow();
 
         default:
             return false;

@@ -417,6 +417,7 @@ public:
     void UpdateZombiePeaHead();
     void UpdateZombieGatlingHead();
     void BurnRow(int theRow);
+    bool FindJalapenoHeadTarget();
     void UpdateZombieJalapenoHead();
     void UpdateZombieSquashHead();
     void UpdateZombieDancer();

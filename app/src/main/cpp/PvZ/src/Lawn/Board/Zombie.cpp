@@ -3663,34 +3663,54 @@ void Zombie::BurnRow(int theRow) {
     }
 }
 
+bool Zombie::FindJalapenoHeadTarget() {
+    Plant *aPlant = nullptr;
+    while (mBoard->IteratePlants(aPlant)) {
+        if (aPlant->mRow == mRow && mX >= aPlant->mX + 40 && !aPlant->NotOnGround() && !aPlant->IsSpiky() && !aPlant->IsCeleryStalkerLow()) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void Zombie::UpdateZombieJalapenoHead() {
     if (!mHasHead) {
         return;
     }
 
     if (mApp->IsVSMode()) {
-        // 对战改为碰到目标时爆炸
+        // 对战模式在倒计时结束或碰到目标时爆炸
         if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_NORMAL) {
-            bool doBurn = false;
+            float aDistance = 275.0f + Rand(175.0f);
+            mPhaseCounter = int(aDistance / mVelX) * ZOMBIE_LIMP_SPEED_FACTOR;
+            mZombiePhase = PHASE_JALAPENO_PRE_BURN;
+        } else if (mZombiePhase == ZombiePhase::PHASE_JALAPENO_PRE_BURN) {
+            bool doBurn = mPhaseCounter == 0;
             if (mMindControlled) {
-                if (FindZombieTarget()) {
+                if (mIsEating && FindZombieTarget()) {
                     doBurn = true;
                 }
             } else {
-                if (FindZombieTarget()) {
-                    doBurn = true;
-                } else if (Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW)) {
-                    if (aPlant->IsInvulnerable() || aPlant->mSeedType == SeedType::SEED_HYPNOSHROOM || aPlant->mSeedType == SeedType::SEED_GARLIC || aPlant->mSeedType == SeedType::SEED_SUN_BEAN) {
-                        if (!aPlant->mIsAsleep) {
-                            return;
-                        }
-                    }
+                if (FindJalapenoHeadTarget()) {
                     doBurn = true;
                 }
+                if (mIsEating) {
+                    if (FindZombieTarget()) {
+                        doBurn = true;
+                    } else if (Plant *aPlant = FindPlantTarget(ZombieAttackType::ATTACKTYPE_CHEW)) {
+                        const bool aTargetIgnored =
+                            (aPlant->IsInvulnerable() || aPlant->mSeedType == SeedType::SEED_HYPNOSHROOM || aPlant->mSeedType == SeedType::SEED_GARLIC || aPlant->mSeedType == SeedType::SEED_SUN_BEAN)
+                            && !aPlant->mIsAsleep;
+
+                        if (!aTargetIgnored) {
+                            doBurn = true;
+                        }
+                    }
+                }
             }
-            if (doBurn && mIsEating) {
+            if (doBurn) {
                 mPhaseCounter = 100;
-                mZombiePhase = ZombiePhase::PHASE_JALAPENO_PRE_BURN;
+                mZombiePhase = ZombiePhase::PHASE_JALAPENO_BURNNING;
 
                 Reanimation *aHeadReanim = mApp->ReanimationTryToGet(mSpecialHeadReanimID);
                 if (aHeadReanim) {
@@ -3700,7 +3720,7 @@ void Zombie::UpdateZombieJalapenoHead() {
 
                 mApp->PlayFoley(FoleyType::FOLEY_REVERSE_EXPLOSION);
             }
-        } else if (mZombiePhase == ZombiePhase::PHASE_JALAPENO_PRE_BURN) {
+        } else if (mZombiePhase == ZombiePhase::PHASE_JALAPENO_BURNNING) {
             if (mApp->IsVSMode() && (gTcpConnected || gIsReplayMode)) {
                 return;
             }
@@ -7022,7 +7042,7 @@ bool Zombie::CanTargetPlant(Plant *thePlant, ZombieAttackType theAttackType) {
 
     if (thePlant->mSeedType == SeedType::SEED_CELERY_STALKER) {
         return IsGargantuar() || mZombieType == ZombieType::ZOMBIE_DOG || theAttackType == ZombieAttackType::ATTACKTYPE_DRIVE_OVER
-            || (theAttackType != ZombieAttackType::ATTACKTYPE_LADDER && thePlant->mState != PlantState::STATE_CELERY_STALKER_LOW && thePlant->mState != PlantState::STATE_CELERY_STALKER_LOWERING);
+            || (theAttackType != ZombieAttackType::ATTACKTYPE_LADDER && !thePlant->IsCeleryStalkerLow());
     }
 
     if (thePlant->IsSpiky()) {
@@ -9194,11 +9214,7 @@ Plant *Zombie::FindCatapultTarget() {
 
     Plant *aPlant = nullptr;
     while (mBoard->IteratePlants(aPlant)) {
-        if (aPlant->mState == PlantState::STATE_CELERY_STALKER_LOW || aPlant->mState == PlantState::STATE_CELERY_STALKER_LOWERING) {
-            continue;
-        }
-
-        if (aPlant->mRow == mRow && mX >= aPlant->mX + 100 && !aPlant->NotOnGround() && !aPlant->IsSpiky()) {
+        if (aPlant->mRow == mRow && mX >= aPlant->mX + 100 && !aPlant->NotOnGround() && !aPlant->IsSpiky() && !aPlant->IsCeleryStalkerLow()) {
             if (aTarget == nullptr || aPlant->mPlantCol < aTarget->mPlantCol) {
                 aTarget = mBoard->GetTopPlantAt(aPlant->mPlantCol, aPlant->mRow, PlantPriority::TOPPLANT_CATAPULT_ORDER);
             }

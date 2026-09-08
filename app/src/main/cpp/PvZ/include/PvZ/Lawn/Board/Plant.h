@@ -320,6 +320,7 @@ public:
     void SpikeweedAttack();
     void SpikeRockTakeDamage();
     bool IsSpiky() const;
+    bool IsCeleryStalkerLow() const;
     bool IsLowProfile() const;
     bool DrawMagnetItemsOnTop();
     void SetImitaterFilterEffect();
