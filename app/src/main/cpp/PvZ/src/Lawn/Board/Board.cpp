@@ -467,6 +467,7 @@ bool Board::TeleportPlant(Plant *thePlant, int theDestGridX, int theDestGridY) {
 
     const int aOriginGridX = thePlant->mPlantCol;
     const int aOriginGridY = thePlant->mRow;
+    GridItem *aLadder = GetLadderAt(aOriginGridX, aOriginGridY);
     SpawnTeleportEffect(GridToPixelX(aOriginGridX, aOriginGridY), GridToPixelY(aOriginGridX, aOriginGridY) + 20.0f, aOriginGridY);
 
     const SeedType aSeedType = thePlant->mSeedType == SeedType::SEED_IMITATER ? thePlant->mImitaterType : thePlant->mSeedType;
@@ -492,6 +493,13 @@ bool Board::TeleportPlant(Plant *thePlant, int theDestGridX, int theDestGridY) {
     thePlant->mX = GridToPixelX(aDestGridX, aDestGridY);
     thePlant->mY = GridToPixelY(aDestGridX, aDestGridY);
     thePlant->mEatenFlashCountdown = 150;
+
+    if (aLadder != nullptr) {
+        aLadder->mGridX = aDestGridX;
+        aLadder->mGridY = aDestGridY;
+        aLadder->mRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_PLANT, aDestGridY, 800);
+    }
+
     thePlant->UpdateReanim();
     SpawnTeleportEffect(GridToPixelX(aDestGridX, aDestGridY), GridToPixelY(aDestGridX, aDestGridY) + 20.0f, aDestGridY);
     return true;

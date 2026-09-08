@@ -634,7 +634,7 @@ bool Zombie::FindTeleportationTarget() {
     if (!mMindControlled) {
         Plant *aPlant = nullptr;
         while (mBoard->IteratePlants(aPlant)) {
-            if (aPlant->NotOnGround() || aPlant->mRow != mRow || aPlant->IsLowProfile() || aPlant->mSeedType == SeedType::SEED_INSTANT_COFFEE) {
+            if (aPlant->NotOnGround() || aPlant->IsInvulnerable() || aPlant->mRow != mRow || aPlant->IsLowProfile() || aPlant->mSeedType == SeedType::SEED_INSTANT_COFFEE) {
                 continue;
             }
 
@@ -662,8 +662,9 @@ bool Zombie::FindTeleportationTarget() {
 }
 
 bool Zombie::IsValidTeleportationTarget() {
-    return !IsDeadOrDying() && mZombieType != ZombieType::ZOMBIE_BUNGEE && mZombieType != ZombieType::ZOMBIE_DOG && !IsBobsledTeamWithSled() && mZombiePhase != ZombiePhase::PHASE_DIGGER_TUNNELING
-        && mZombiePhase != ZombiePhase::PHASE_POLEVAULTER_IN_VAULT;
+    return mHasHead && !IsDeadOrDying() && mZombieType != ZombieType::ZOMBIE_BUNGEE && mZombieType != ZombieType::ZOMBIE_DOG && !IsBobsledTeamWithSled()
+        && mZombiePhase != ZombiePhase::PHASE_DIGGER_TUNNELING && mZombiePhase != ZombiePhase::PHASE_POLEVAULTER_IN_VAULT && mZombiePhase != ZombiePhase::PHASE_GARGANTUAR_THROWING
+        && mZombiePhase != ZombiePhase::PHASE_IMP_GETTING_THROWN && mZombiePhase != ZombiePhase::PHASE_IMP_GETTING_BLOCKED;
 }
 
 void Zombie::UpdatePlaying() {

@@ -184,7 +184,7 @@ Plant *Projectile::FindCollisionTargetPlant() {
             || mProjectileType == ProjectileType::PROJECTILE_TELEPORTATION) {
             if (aPlant->IsLowProfile()) // 僵尸子弹不能击中低矮植物
                 continue;
-            if (mProjectileType == ProjectileType::PROJECTILE_TELEPORTATION && aPlant->mSeedType == SeedType::SEED_INSTANT_COFFEE)
+            if (mProjectileType == ProjectileType::PROJECTILE_TELEPORTATION && (aPlant->mSeedType == SeedType::SEED_INSTANT_COFFEE || aPlant->IsInvulnerable()))
                 continue;
         }
 
