@@ -546,7 +546,7 @@ void Projectile::UpdateLobMotion() {
         mPosZ = 0.0f;
 
         const auto aZombieType = ZombieType(mHitTorchwoodGridX);
-        const bool aIsAuthoritativeZomblobSpawn = !mApp->IsVSMode() || (!gTcpConnected && !gIsServerModeSpectator && !gIsReplayMode);
+        const bool aIsAuthoritativeZomblobSpawn = !mApp->IsVSMode() || !IsRemoteClient();
         if (aIsAuthoritativeZomblobSpawn && (aZombieType == ZombieType::ZOMBIE_ZOMBLOB_MIDDLE || aZombieType == ZombieType::ZOMBIE_ZOMBLOB_SMALL)) {
             Zombie *aZombie = mBoard->AddZombieInRow(aZombieType, aTargetRow, mDamageRangeFlags, false);
             if (aZombie) {
@@ -1255,7 +1255,7 @@ void Projectile::CheckForCollision() {
             aBulletFlash->mLoopType = ReanimLoopType::REANIM_PLAY_ONCE_FULL_LAST_FRAME;
             aBulletFlash->mAnimRate = 24.0f;
         }
-        const bool aRemoteClient = mApp->IsVSMode() && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode);
+        const bool aRemoteClient = IsRemoteClient();
         if (!aRemoteClient) {
             if (aHitPlant) {
                 const int aSearchStartGridX = aPlant->mPlantCol + 2;

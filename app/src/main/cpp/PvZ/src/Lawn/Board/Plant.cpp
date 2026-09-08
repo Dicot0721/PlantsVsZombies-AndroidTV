@@ -1148,7 +1148,7 @@ void Plant::DoSpecial() {
     // 试图修复辣椒爆炸后反而在本行的末尾处产生冰道。失败。
 
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode) {
+        if (IsRemoteClient()) {
             return;
         }
         if (gTcpClientSocket >= 0) {
@@ -1324,7 +1324,7 @@ void Plant::CobCannonFire(int x, int y) {
 
 void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem) {
     if (mApp->IsVSMode()) {
-        if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)
+        if (IsRemoteClient())
             return;
 
         if (gTcpClientSocket >= 0) {
@@ -2049,7 +2049,7 @@ GridItem *Plant::FindTargetGridItem(int theRow, PlantWeapon thePlantWeapon) {
 
 void Plant::Die() {
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)
+        if (IsRemoteClient())
             return;
 
         if (gTcpClientSocket >= 0) {
@@ -2825,7 +2825,7 @@ void Plant::UpdateProductionPlant() {
         if (mLaunchCounter <= 0)
         // 生产
         {
-            if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode) {
+            if (IsRemoteClient()) {
                 return;
             }
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
@@ -3080,7 +3080,7 @@ void Plant::UpdateShooting() {
 }
 
 void Plant::UpdateShooter() {
-    if (mApp->mGameMode == GAMEMODE_MP_VS && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)) {
+    if (IsRemoteClient()) {
         return;
     }
 
@@ -3240,7 +3240,7 @@ void Plant::SyncAnimationToClient() {
 
 bool Plant::FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
     // 此函数用于在mLaunchCounter到0之后播放投手的投掷动画、豌豆的发射动画
-    if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode) {
+    if (IsRemoteClient()) {
         return false;
     }
 
@@ -3358,7 +3358,7 @@ void Plant::UpdateChomper() {
             } else if (doMiss) {
                 mState = PlantState::STATE_CHOMPER_BITING_MISSED;
             } else {
-                if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)
+                if (IsRemoteClient())
                     return;
 
                 if (gTcpClientSocket >= 0) {
@@ -3473,7 +3473,7 @@ void Plant::UpdateMagnetShroom() {
         }
 
         if (aClosestZombie) {
-            if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)
+            if (IsRemoteClient())
                 return;
 
             if (gTcpClientSocket >= 0) {
@@ -3508,7 +3508,7 @@ void Plant::UpdateMagnetShroom() {
         }
 
         if (aClosestLadder) {
-            if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)
+            if (IsRemoteClient())
                 return;
 
             if (gTcpClientSocket >= 0) {
@@ -3536,7 +3536,7 @@ void Plant::UpdateMagnetShroom() {
 
 void Plant::UpdateSquash() {
     // mApp->ReanimationTryToGet(mBodyReanimID); // disassembled code
-    bool isRemoteClient = mApp->IsVSMode() && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode);
+    bool isRemoteClient = IsRemoteClient();
     auto syncSquashState = [this]() {
         if (gTcpClientSocket < 0) {
             return;
@@ -3639,7 +3639,7 @@ void Plant::UpdateSquash() {
 }
 
 void Plant::UpdateIcebergLettuce() {
-    bool isRemoteClient = mApp->IsVSMode() && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode);
+    bool isRemoteClient = IsRemoteClient();
     auto syncIcebergLettuceState = [this]() {
         if (gTcpClientSocket < 0) {
             return;
@@ -3664,7 +3664,7 @@ void Plant::UpdateIcebergLettuce() {
         }
     } else if (mState == PlantState::STATE_READY) {
         if (mStateCountdown <= 0) {
-            if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode) {
+            if (IsRemoteClient()) {
                 return;
             }
 

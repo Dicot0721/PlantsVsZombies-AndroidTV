@@ -31,7 +31,7 @@ void LawnMower::Update() {
 
 void LawnMower::StartMower() {
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)
+        if (IsRemoteClient())
             return;
 
         if (gTcpClientSocket >= 0) {

@@ -23,6 +23,7 @@
 #include <cstddef>
 #include <cstdint>
 
+#include "PvZ/GlobalVariable.h"
 #include "PvZ/STL/string.h"
 #include <concepts>
 #include <netinet/in.h>
@@ -467,6 +468,10 @@ inline bool gIsServerModeNetplay = false;
 inline bool IsOnlineModeActive() noexcept {
     return gTcpConnected || gTcpClientSocket >= 0;
     //    return gTcpConnecting || gTcpConnected || gTcpClientSocket >= 0 || gTcpServerSocket >= 0 || gTcpListenSocket >= 0;
+}
+
+inline bool IsRemoteClient() noexcept {
+    return gTcpConnected || gIsServerModeSpectator || gIsReplayMode;
 }
 
 inline bool IsOnlineServerModeActive() noexcept {

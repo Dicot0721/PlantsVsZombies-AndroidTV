@@ -890,7 +890,7 @@ void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int t
 
 
     if (mApp->mGameMode == GAMEMODE_MP_VS) {
-        if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode) {
+        if (IsRemoteClient()) {
             return;
         }
 

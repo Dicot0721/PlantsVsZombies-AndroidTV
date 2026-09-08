@@ -575,7 +575,7 @@ void Zombie::UpdateZombieTeleportation() {
     if (aBodyReanim == nullptr || IsDeadOrDying()) {
         return;
     }
-    const bool aRemoteClient = mApp->IsVSMode() && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode);
+    const bool aRemoteClient = IsRemoteClient();
 
     if (mZombiePhase == ZombiePhase::PHASE_TELEPORTATION_PRE_SHOOT) {
         mPhaseCounter = 500;
@@ -951,7 +951,7 @@ void Zombie::UpdateZombieDog() {
         return;
     }
 
-    if (mApp->IsVSMode() && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)) {
+    if (IsRemoteClient()) {
         return;
     }
 
@@ -2428,7 +2428,7 @@ void Zombie::UpdateZombieExplorer() {
                 return;
             }
             if (mApp->IsVSMode()) {
-                if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode) {
+                if (IsRemoteClient()) {
                     return;
                 }
             }
@@ -2577,7 +2577,7 @@ void Zombie::UpdateGigaGargantuar() {
         return;
     }
 
-    const bool isRemoteClient = mApp->IsVSMode() && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode);
+    const bool isRemoteClient = IsRemoteClient();
 
     auto spawnLightningHitEffectAt = [this](int theX, int theY, int theRow) {
         const int aRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_PARTICLE, theRow, 1);
@@ -5467,7 +5467,7 @@ void Zombie::AddButter() {
 
 void Zombie::MowDown() {
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode) {
+        if (IsRemoteClient()) {
             return;
         }
         if (gTcpClientSocket >= 0) {
@@ -5664,7 +5664,7 @@ void Zombie::DieNoLoot() {
     }
 
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)
+        if (IsRemoteClient())
             return;
 
         if (gTcpClientSocket >= 0) {
@@ -7573,7 +7573,7 @@ void Zombie::SetRow(int theRow) {
 
 void Zombie::StartMindControlled() {
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)
+        if (IsRemoteClient())
             return;
 
         if (gTcpClientSocket >= 0) {
@@ -7636,7 +7636,7 @@ void Zombie::StartMindControlled_Origin() {
 
 void Zombie::ConvertToImp() {
     if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)
+        if (IsRemoteClient())
             return;
 
         if (gTcpClientSocket >= 0) {
@@ -8766,7 +8766,7 @@ void Zombie::UpdateYuckyFace() {
                 canGoUp = false;
             }
             // 客机不允许随机换行
-            if (gTcpConnected || gIsServerModeSpectator || gIsReplayMode) {
+            if (IsRemoteClient()) {
                 return;
             }
             if (canGoDown && !canGoUp) {
@@ -8829,6 +8829,10 @@ void Zombie::AnimateChewSound() {
     }
 
     if (aPlant->mSeedType == SeedType::SEED_SUN_BEAN) {
+        if (IsRemoteClient()) {
+            return;
+        }
+
         mApp->PlaySample(SOUND_GULP);
         aPlant->Die();
 
@@ -9137,7 +9141,7 @@ void Zombie::UpdateZombieBungee() {
 
             case ZombiePhase::PHASE_BUNGEE_GRABBING:
                 if (mApp->ReanimationGet(mBodyReanimID)->mLoopCount > 0) {
-                    if (mApp->IsVSMode() && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)) {
+                    if (IsRemoteClient()) {
                         return;
                     }
 
@@ -9217,7 +9221,7 @@ void Zombie::UpdateZombieCatapult() {
     };
 
     if (mZombiePhase == PHASE_CATAPULT_LAUNCHING) {
-        if (mApp->IsVSMode() && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)) {
+        if (IsRemoteClient()) {
             return;
         }
 
@@ -9258,7 +9262,7 @@ void Zombie::UpdateZombieCatapult() {
         return;
     }
 
-    if (mApp->IsVSMode() && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)) {
+    if (IsRemoteClient()) {
         return;
     }
 
@@ -9320,7 +9324,7 @@ void Zombie::UpdateLadder() {
     if (mZombiePhase == PHASE_LADDER_CARRYING && mZombieHeight == HEIGHT_ZOMBIE_NORMAL) {
         Plant *plant = FindPlantTarget(ATTACKTYPE_LADDER);
         if (plant != nullptr) {
-            if (mApp->IsVSMode() && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode)) {
+            if (IsRemoteClient()) {
                 return;
             }
 
@@ -9340,7 +9344,7 @@ void Zombie::UpdateLadder() {
     } else if (mZombiePhase == PHASE_LADDER_PLACING) {
         Reanimation *reanimation = mApp->ReanimationTryToGet(mBodyReanimID);
         if (reanimation != nullptr && reanimation->mLoopCount > 0) {
-            if (mApp->IsVSMode() && (gTcpConnected || gIsServerModeSpectator || gIsReplayMode) && mShieldType == SHIELDTYPE_LADDER) {
+            if (IsRemoteClient() && mShieldType == SHIELDTYPE_LADDER) {
                 return;
             }
 
