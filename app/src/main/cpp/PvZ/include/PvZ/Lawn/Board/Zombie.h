@@ -432,6 +432,8 @@ public:
     void DetachShield();
     void CheckForBoardEdge();
     void DrawBossPart(Sexy::Graphics *g, int theBossPart);
+    bool IsGargantuar() const;
+    static bool IsGargantuar(ZombieType theZombieType);
     static bool IsZombotany(ZombieType theZombieType);
     static bool IsZomblob(ZombieType theZombieType);
     static bool ZombieTypeCanGoInPool(ZombieType theZombieType);

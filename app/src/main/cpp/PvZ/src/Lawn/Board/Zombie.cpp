@@ -388,8 +388,7 @@ void Zombie::CheckIfPreyCaught() {
         }
     }
 
-    if (mZombieType == ZombieType::ZOMBIE_BUNGEE || mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR
-        || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_ZAMBONI || mZombieType == ZombieType::ZOMBIE_CATAPULT || mZombieType == ZombieType::ZOMBIE_BOSS
+    if (mZombieType == ZombieType::ZOMBIE_BUNGEE || IsGargantuar() || mZombieType == ZombieType::ZOMBIE_ZAMBONI || mZombieType == ZombieType::ZOMBIE_CATAPULT || mZombieType == ZombieType::ZOMBIE_BOSS
         || IsBouncingPogo() || IsBobsledTeamWithSled() || mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_IN_VAULT || mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PRE_VAULT
         || mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_THROW || mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PICK || mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_TAKE
         || mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_PREPARE || mZombiePhase == ZombiePhase::PHASE_NEWSPAPER_MADDENING || mZombiePhase == ZombiePhase::PHASE_DIGGER_RISING
@@ -676,7 +675,7 @@ void Zombie::UpdatePlaying() {
             aPitch = RandRangeFloat(40.0f, 50.0f);
         }
 
-        if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR) {
+        if (IsGargantuar()) {
             mApp->PlayFoley(FoleyType::FOLEY_LOW_GROAN);
         } else if (mVariant) {
             mApp->PlayFoleyPitch(FoleyType::FOLEY_BRAINS, aPitch);
@@ -1595,9 +1594,8 @@ bool Zombie::CanRevived() const {
 
     return mZombieType != ZombieType::ZOMBIE_DANCER && mZombieType != ZombieType::ZOMBIE_SNORKEL && mZombieType != ZombieType::ZOMBIE_ZAMBONI && mZombieType != ZombieType::ZOMBIE_BOBSLED
         && mZombieType != ZombieType::ZOMBIE_DOLPHIN_RIDER && mZombieType != ZombieType::ZOMBIE_BALLOON && mZombieType != ZombieType::ZOMBIE_DIGGER && mZombieType != ZombieType::ZOMBIE_POGO
-        && mZombieType != ZombieType::ZOMBIE_BUNGEE && mZombieType != ZombieType::ZOMBIE_CATAPULT && mZombieType != ZombieType::ZOMBIE_GARGANTUAR && mZombieType != ZombieType::ZOMBIE_BOSS
-        && mZombieType != ZombieType::ZOMBIE_REDEYE_GARGANTUAR && mZombieType != ZombieType::ZOMBIE_JACKSON && mZombieType != ZombieType::ZOMBIE_GIGA_GARGANTUAR
-        && mZombieType != ZombieType::ZOMBIE_DOGWALKER && mZombieType != ZombieType::ZOMBIE_DOG && !IsZomblob(mZombieType);
+        && mZombieType != ZombieType::ZOMBIE_BUNGEE && mZombieType != ZombieType::ZOMBIE_CATAPULT && !IsGargantuar() && mZombieType != ZombieType::ZOMBIE_BOSS
+        && mZombieType != ZombieType::ZOMBIE_JACKSON && mZombieType != ZombieType::ZOMBIE_DOGWALKER && mZombieType != ZombieType::ZOMBIE_DOG && !IsZomblob(mZombieType);
 }
 
 ZombieID Zombie::RaiseDeadZombie(ZombieType theZombieType, int theRow, int theCol) {
@@ -4121,8 +4119,7 @@ void Zombie::PlayDeathAnim(unsigned int theDamageFlags) {
     }
 
     if (TestBit(theDamageFlags, (int)DamageFlags::DAMAGE_DOESNT_LEAVE_BODY)) {
-        if (mZombieType != ZombieType::ZOMBIE_BOSS && mZombieType != ZombieType::ZOMBIE_GARGANTUAR && mZombieType != ZombieType::ZOMBIE_REDEYE_GARGANTUAR
-            && mZombieType != ZombieType::ZOMBIE_GIGA_GARGANTUAR) {
+        if (mZombieType != ZombieType::ZOMBIE_BOSS && !IsGargantuar()) {
             DieNoLoot();
             return;
         }
@@ -4159,7 +4156,7 @@ void Zombie::PlayDeathAnim(unsigned int theDamageFlags) {
     float aDeathAnimRate = NAN;
     if (mZombieType == ZombieType::ZOMBIE_FOOTBALL || mZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL) {
         aDeathAnimRate = 24.0f;
-    } else if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR) {
+    } else if (IsGargantuar()) {
         aDeathAnimRate = 14.0f;
         mApp->PlayFoley(FoleyType::FOLEY_GARGANTUDEATH);
     } else if (mZombieType == ZombieType::ZOMBIE_SNORKEL) {
@@ -4210,7 +4207,7 @@ void Zombie::UpdateDeath() {
     if (mZombieHeight == ZombieHeight::HEIGHT_FALLING) {
         UpdateZombieFalling();
     }
-    if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR) {
+    if (IsGargantuar()) {
         if (aBodyReanim->ShouldTriggerTimedEvent(0.89f)) {
             mBoard->ShakeBoard(0, 3);
         } else if (aBodyReanim->ShouldTriggerTimedEvent(0.98f)) {
@@ -4320,7 +4317,7 @@ void Zombie::UpdateDeath() {
 
         if (aFallTime > 0 && aBodyReanim->ShouldTriggerTimedEvent(aFallTime)) {
             mApp->PlayFoley(FoleyType::FOLEY_ZOMBIE_FALLING);
-            if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR) {
+            if (IsGargantuar()) {
                 mApp->PlayFoley(FoleyType::FOLEY_THUMP);
             }
 
@@ -4390,7 +4387,7 @@ void Zombie::Draw(Sexy::Graphics *g) {
     // 根据玩家的“僵尸显血”功能是否开启，决定是否在游戏的原始old_Zombie_Draw函数执行完后额外绘制血量文本。
     old_Zombie_Draw(this, g);
     int drawHeightOffset = 0;
-    if (showZombieBodyHealth || (showGargantuarHealth && (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR))) { // 如果玩家开了"僵尸显血"
+    if (showZombieBodyHealth || (showGargantuarHealth && IsGargantuar())) { // 如果玩家开了"僵尸显血"
         if (!IsOnlineServerModeActive()) {
             g->SetColor(gColorWhite);
             g->SetFont(Sexy::FONT_DWARVENTODCRAFT18);
@@ -4514,7 +4511,7 @@ void Zombie::DrawShadow(Graphics *g) {
         } else {
             aShadowOffsetX += 3.0f;
         }
-    } else if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR) {
+    } else if (IsGargantuar()) {
         aScale *= 1.5f;
         aShadowOffsetX += 27.0f;
         aShadowOffsetY += 7.0f;
@@ -4615,6 +4612,14 @@ int Zombie::GetDancerFrame() {
     } else {
         return (mApp->mAppCounter % (aFrameLength * aFramesCount)) / aFrameLength;
     }
+}
+
+bool Zombie::IsGargantuar() const {
+    return IsGargantuar(mZombieType);
+}
+
+bool Zombie::IsGargantuar(ZombieType theZombieType) {
+    return theZombieType == ZombieType::ZOMBIE_GARGANTUAR || theZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || theZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR;
 }
 
 bool Zombie::IsZombotany(ZombieType theZombieType) {
@@ -4752,8 +4757,7 @@ void Zombie::CheckForBoardEdge() {
         return;
     }
     int boardEdge = 0;
-    if (mZombieType == ZombieType::ZOMBIE_POLEVAULTER || mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR
-        || mZombieType == ZombieType::ZOMBIE_GIGA_POLEVAULTER || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR) {
+    if (mZombieType == ZombieType::ZOMBIE_POLEVAULTER || mZombieType == ZombieType::ZOMBIE_GIGA_POLEVAULTER || IsGargantuar()) {
         // 如果是撑杆、巨人、红眼巨人
         boardEdge = -100;
     } else if (mZombieType == ZombieType::ZOMBIE_FOOTBALL || mZombieType == ZombieType::ZOMBIE_ZAMBONI || mZombieType == ZombieType::ZOMBIE_CATAPULT
@@ -5494,8 +5498,7 @@ void Zombie::MowDown_Original() {
     }
 
     if (mZombiePhase == ZombiePhase::PHASE_ZOMBIE_DYING || mZombiePhase == ZombiePhase::PHASE_POLEVAULTER_IN_VAULT || mZombiePhase == ZombiePhase::PHASE_RISING_FROM_GRAVE
-        || mZombiePhase == ZombiePhase::PHASE_DANCER_RISING || mZombiePhase == ZombiePhase::PHASE_SNORKEL_INTO_POOL || mZombiePhase == ZombiePhase::PHASE_ZOMBIE_BURNED
-        || mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR
+        || mZombiePhase == ZombiePhase::PHASE_DANCER_RISING || mZombiePhase == ZombiePhase::PHASE_SNORKEL_INTO_POOL || mZombiePhase == ZombiePhase::PHASE_ZOMBIE_BURNED || IsGargantuar()
         || mZombieType == ZombieType::ZOMBIE_BUNGEE || mZombieType == ZombieType::ZOMBIE_DIGGER || mZombieType == ZombieType::ZOMBIE_IMP || mZombieType == ZombieType::ZOMBIE_SUPER_FAN_IMP
         || mZombieType == ZombieType::ZOMBIE_GIGA_IMP || mZombieType == ZombieType::ZOMBIE_YETI || mZombieType == ZombieType::ZOMBIE_DOLPHIN_RIDER || IsBobsledTeamWithSled() || IsFlying()
         || mInPool) {
@@ -7016,14 +7019,12 @@ bool Zombie::CanTargetPlant(Plant *thePlant, ZombieAttackType theAttackType) {
     }
 
     if (thePlant->mSeedType == SeedType::SEED_CELERY_STALKER) {
-        return mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR
-            || mZombieType == ZombieType::ZOMBIE_DOG || theAttackType == ZombieAttackType::ATTACKTYPE_DRIVE_OVER
+        return IsGargantuar() || mZombieType == ZombieType::ZOMBIE_DOG || theAttackType == ZombieAttackType::ATTACKTYPE_DRIVE_OVER
             || (theAttackType != ZombieAttackType::ATTACKTYPE_LADDER && thePlant->mState != PlantState::STATE_CELERY_STALKER_LOW && thePlant->mState != PlantState::STATE_CELERY_STALKER_LOWERING);
     }
 
     if (thePlant->IsSpiky()) {
-        return mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR
-            || mZombieType == ZombieType::ZOMBIE_ZAMBONI || mZombieType == ZombieType::ZOMBIE_DOG || mBoard->IsPoolSquare(thePlant->mPlantCol, thePlant->mRow)
+        return IsGargantuar() || mZombieType == ZombieType::ZOMBIE_ZAMBONI || mZombieType == ZombieType::ZOMBIE_DOG || mBoard->IsPoolSquare(thePlant->mPlantCol, thePlant->mRow)
             || mBoard->GetFlowerPotAt(thePlant->mPlantCol, thePlant->mRow); // 扶梯僵尸给花盆上的地刺/地刺王搭梯的原理
     }
 
@@ -8087,7 +8088,7 @@ void Zombie::ApplyBurn() {
             aCharredPosX -= 36.0f;
             aCharredPosY -= 20.0f;
         }
-        if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR) {
+        if (IsGargantuar()) {
             aReanimType = ReanimationType::REANIM_ZOMBIE_CHARRED_GARGANTUAR;
             aCharredPosX -= 15.0f;
             aCharredPosY -= 10.0f;
@@ -8099,7 +8100,7 @@ void Zombie::ApplyBurn() {
             aCharredReanim->SetFramesForLayer("anim_crumble_noaxe");
         } else if (mZombieType == ZombieType::ZOMBIE_DIGGER) {
             aCharredReanim->SetFramesForLayer("anim_crumble");
-        } else if ((mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR) && !mHasObject) {
+        } else if (IsGargantuar() && !mHasObject) {
             aCharredReanim->SetImageOverride("impblink", IMAGE_BLANK);
             aCharredReanim->SetImageOverride("imphead", IMAGE_BLANK);
         }
@@ -9522,7 +9523,7 @@ void Zombie::WalkIntoHouse() {
         mZombieHeight = ZombieHeight::HEIGHT_IN_TO_CHIMNEY;
         mRenderOrder = Board::MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, 0, 2);
 
-        if (mZombieType == ZombieType::ZOMBIE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR) {
+        if (IsGargantuar()) {
             mPosY += 5.0f;
         } else if (mZombieType == ZombieType::ZOMBIE_FOOTBALL || mZombieType == ZombieType::ZOMBIE_GIGA_FOOTBALL) {
             mPosX -= 14.0f;

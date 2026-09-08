@@ -4460,8 +4460,7 @@ int Board::GetLiveGargantuarCount() {
     int num = 0;
     Zombie *aZombie = nullptr;
     while (IterateZombies(aZombie)) {
-        if (!aZombie->mDead && aZombie->mHasHead && !aZombie->IsDeadOrDying() && aZombie->IsOnBoard()
-            && (aZombie->mZombieType == ZombieType::ZOMBIE_GARGANTUAR || aZombie->mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR)) {
+        if (!aZombie->mDead && aZombie->mHasHead && !aZombie->IsDeadOrDying() && aZombie->IsOnBoard() && aZombie->IsGargantuar()) {
             num++;
         }
     }
@@ -6824,7 +6823,7 @@ bool Board::RowCanHaveZombieType(int theRow, ZombieType theZombieType) {
     }
     // “自古一路无巨人”（生存模式除外）
     if (theRow == 0 && !LawnApp::IsSurvivalEndless(mApp->mGameMode)) {
-        if (theZombieType == ZombieType::ZOMBIE_GARGANTUAR || theZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR) {
+        if (Zombie::IsGargantuar(theZombieType)) {
             return false;
         }
     }

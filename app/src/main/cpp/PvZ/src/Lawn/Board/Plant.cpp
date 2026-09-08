@@ -3338,8 +3338,7 @@ void Plant::UpdateChomper() {
             Zombie *aZombie = FindTargetZombie(mRow, PlantWeapon::WEAPON_PRIMARY);
             bool doBite = false;
             if (aZombie) {
-                if (aZombie->mZombieType == ZombieType::ZOMBIE_GARGANTUAR || aZombie->mZombieType == ZombieType::ZOMBIE_REDEYE_GARGANTUAR || aZombie->mZombieType == ZombieType::ZOMBIE_BOSS
-                    || aZombie->mZombieType == ZombieType::ZOMBIE_ZOMBLOB_SMALL || aZombie->mZombieType == ZombieType::ZOMBIE_GIGA_GARGANTUAR) {
+                if (aZombie->IsGargantuar() || aZombie->mZombieType == ZombieType::ZOMBIE_BOSS || aZombie->mZombieType == ZombieType::ZOMBIE_ZOMBLOB_SMALL) {
                     doBite = true;
                 }
             }
