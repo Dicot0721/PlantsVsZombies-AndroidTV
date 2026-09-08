@@ -3674,7 +3674,7 @@ bool Zombie::FindJalapenoHeadTarget() {
 }
 
 void Zombie::UpdateZombieJalapenoHead() {
-    if (!mHasHead) {
+    if (!mHasHead || IsRemoteClient()) {
         return;
     }
 
@@ -3685,15 +3685,14 @@ void Zombie::UpdateZombieJalapenoHead() {
             mPhaseCounter = int(aDistance / mVelX) * ZOMBIE_LIMP_SPEED_FACTOR;
             mZombiePhase = PHASE_JALAPENO_PRE_BURN;
         } else if (mZombiePhase == ZombiePhase::PHASE_JALAPENO_PRE_BURN) {
-            bool doBurn = mPhaseCounter == 0;
+            bool doBurn = false;
             if (mMindControlled) {
                 if (mIsEating && FindZombieTarget()) {
                     doBurn = true;
                 }
             } else {
-                if (FindJalapenoHeadTarget()) {
-                    doBurn = true;
-                }
+                doBurn = mPhaseCounter == 0 && FindJalapenoHeadTarget();
+
                 if (mIsEating) {
                     if (FindZombieTarget()) {
                         doBurn = true;
@@ -3711,6 +3710,14 @@ void Zombie::UpdateZombieJalapenoHead() {
             if (doBurn) {
                 mPhaseCounter = 100;
                 mZombiePhase = ZombiePhase::PHASE_JALAPENO_BURNNING;
+                if (gTcpClientSocket >= 0) {
+                    U8U8U16U16_Event event{};
+                    event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PHASE_COUNTER;
+                    event.data1 = uint8_t(mZombiePhase);
+                    event.data3 = uint16_t(mBoard->mZombies.DataArrayGetID(this));
+                    event.data4 = uint16_t(mPhaseCounter);
+                    netplay::PutEvent(event);
+                }
 
                 Reanimation *aHeadReanim = mApp->ReanimationTryToGet(mSpecialHeadReanimID);
                 if (aHeadReanim) {
@@ -3721,9 +3728,6 @@ void Zombie::UpdateZombieJalapenoHead() {
                 mApp->PlayFoley(FoleyType::FOLEY_REVERSE_EXPLOSION);
             }
         } else if (mZombiePhase == ZombiePhase::PHASE_JALAPENO_BURNNING) {
-            if (mApp->IsVSMode() && (gTcpConnected || gIsReplayMode)) {
-                return;
-            }
             if (mPhaseCounter == 0) {
                 DoSpecial();
             }
