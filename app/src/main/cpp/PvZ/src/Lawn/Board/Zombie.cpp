@@ -4743,6 +4743,11 @@ void Zombie::CheckForBoardEdge() {
     }
 
     if (IsWalkingBackwards() && mPosX > 850.0f) {
+        // 雪人成功逃跑属于离场，不结算阳光豆储存的阳光
+        if (mZombieType == ZombieType::ZOMBIE_YETI && mZombiePhase == ZombiePhase::PHASE_YETI_RUNNING) {
+            mSunBeanSun = 0;
+            mSunBeanDamageRemainder = 0;
+        }
         DieNoLoot();
         return;
     }
