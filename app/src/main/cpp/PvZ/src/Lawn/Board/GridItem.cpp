@@ -946,7 +946,7 @@ void GridItem::TakeDamage_Origin(int theDamage, unsigned int theDamageFlags) {
                 aReanim->AssignRenderGroupToTrack("target", RENDER_GROUP_HIDDEN);
                 aReanim->PlayReanim("anim_death2", ReanimLoopType::REANIM_PLAY_ONCE_AND_HOLD, 0, 12.0f);
             }
-            mTargetJustGotShotCounter = 300;
+            mVSTargetZombieDieCounter = 300;
             return;
         }
 

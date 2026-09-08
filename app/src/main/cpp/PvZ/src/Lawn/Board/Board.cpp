@@ -7547,7 +7547,7 @@ GridItem *Board::AddAGraveStone(int theGridX, int theGridY) {
     }
 
     if (mApp->IsVSMode()) {
-        aGraveStone->unkBool = true;
+        aGraveStone->mIsVSGraveStone = true;
         int aX = GridToPixelX(theGridX, theGridY);
         int aY = GridToPixelY(theGridX, theGridY);
         int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, theGridY, 0);
@@ -7590,7 +7590,7 @@ GridItem *Board::AddAMound(int theGridX, int theGridY, int theMoundLevel) {
     aMound->mRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, theGridY, 3);
 
     if (mApp->IsVSMode()) {
-        aMound->unkBool = true;
+        aMound->mIsVSGraveStone = true;
         int aX = GridToPixelX(theGridX, theGridY);
         int aY = GridToPixelY(theGridX, theGridY);
         int aRenderOrder = MakeRenderOrder(RenderLayer::RENDER_LAYER_GRAVE_STONE, theGridY, 0);
