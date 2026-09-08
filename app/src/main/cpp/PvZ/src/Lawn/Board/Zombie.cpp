@@ -3688,7 +3688,7 @@ void Zombie::UpdateZombieJalapenoHead() {
                     doBurn = true;
                 }
             }
-            if (doBurn) {
+            if (doBurn && mIsEating) {
                 mPhaseCounter = 100;
                 mZombiePhase = ZombiePhase::PHASE_JALAPENO_PRE_BURN;
 
