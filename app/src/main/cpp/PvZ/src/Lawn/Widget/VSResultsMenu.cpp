@@ -47,7 +47,7 @@ constexpr int kVSResultRequestStateOpponentDisconnected = -3;
 constexpr int kVSResultRequestStateSelfDisconnected = -4;
 
 static bool IsOnlineResultsSessionActive() {
-    return gTcpConnected || gTcpClientSocket >= 0;
+    return IsRemoteClient() || IsRemoteServer();
 }
 
 static void CloseResultsSocketsAndResetNetState() {
@@ -56,7 +56,7 @@ static void CloseResultsSocketsAndResetNetState() {
         close(gTcpServerSocket);
         gTcpServerSocket = -1;
     }
-    if (gTcpClientSocket >= 0) {
+    if (IsRemoteServer()) {
         shutdown(gTcpClientSocket, SHUT_RDWR);
         close(gTcpClientSocket);
         gTcpClientSocket = -1;
@@ -381,7 +381,7 @@ void VSResultsMenu::HideReplayButton(bool forceHide) {
     if (saveBtn == nullptr) {
         return;
     }
-    const bool connected = (gTcpConnected || gTcpClientSocket >= 0);
+    const bool connected = (IsRemoteClient() || IsRemoteServer());
     if (forceHide || !connected || mIsReplaySession) {
         saveBtn->SetVisible(false);
         saveBtn->mDisabled = true;
@@ -508,7 +508,7 @@ void VSResultsMenu::ButtonDepress(int theId) {
         return;
     }
 
-    if (gTcpConnected) {
+    if (IsRemoteClient()) {
         // 客户端点击再来一局或返回模式选择
         U8_Event event = {{EventType::EVENT_CLIENT_VSRESULT_BUTTON_DEPRESS}, uint8_t(theId)};
         netplay::PutEvent(event);
@@ -516,7 +516,7 @@ void VSResultsMenu::ButtonDepress(int theId) {
         return;
     }
 
-    if (gTcpClientSocket >= 0) {
+    if (IsRemoteServer()) {
         U8_Event event = {{EventType::EVENT_SERVER_VSRESULT_BUTTON_DEPRESS}, uint8_t(theId)};
         netplay::PutEvent(event);
     }
@@ -544,7 +544,7 @@ void VSResultsMenu::Draw(Graphics *g) {
     } else if (gVSResultRequestState == kVSResultRequestStateSelfDisconnected) {
         TodDrawString(g, "[VS_RESULT_SELF_DISCONNECTED]", 400, -20, Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
     } else {
-        if (gTcpConnected) {
+        if (IsRemoteClient()) {
             switch (gVSResultRequestState) {
                 case VSResultsMenu::VSResultsMenu_Play_Again:
                     TodDrawString(g, "[VS_RESULT_REMIND_HOST_PLAY_AGAIN]", 400, -20, Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);
@@ -557,7 +557,7 @@ void VSResultsMenu::Draw(Graphics *g) {
             }
         }
 
-        if (gTcpClientSocket >= 0) {
+        if (IsRemoteServer()) {
             switch (gVSResultRequestState) {
                 case VSResultsMenu::VSResultsMenu_Play_Again:
                     TodDrawString(g, "[VS_RESULT_OPPONENT_REQUEST_PLAY_AGAIN]", 400, -20, Sexy::FONT_HOUSEOFTERROR28, Color(0, 205, 0, 255), DrawStringJustification::DS_ALIGN_CENTER);

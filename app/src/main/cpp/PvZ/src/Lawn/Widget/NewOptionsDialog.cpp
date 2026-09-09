@@ -40,7 +40,7 @@ void NewOptionsDialog::RemovedFromManager(WidgetManager *theWidgetManager) {
 }
 
 void NewOptionsDialog::ButtonDepress(int theId) {
-    if (theId == NewOptionsDialog::NewOptionsDialog_MainMenu && (gTcpConnected || gTcpClientSocket >= 0)) {
+    if (theId == NewOptionsDialog::NewOptionsDialog_MainMenu && (IsRemoteClient() || IsRemoteServer())) {
         // 对战时返回主菜单，加一层退出确认
         mApp->DoConfirmBackToMain(false);
         auto aConfirmDialog = reinterpret_cast<ConfirmBackToMainDialog *>(mApp->GetDialog(DIALOG_CONFIRM_BACK_TO_MAIN));
@@ -55,7 +55,7 @@ void NewOptionsDialog::ButtonDepress(int theId) {
         mApp->ShowChallengeScreen(ChallengePage::CHALLENGE_PAGE_VS);
         return;
     }
-    if (theId == 5 && (gTcpConnected || gTcpClientSocket >= 0)) {
+    if (theId == 5 && (IsRemoteClient() || IsRemoteServer())) {
         if (gIsServerModeSpectator) {
             mApp->PlaySample(Sexy::SOUND_BUZZER);
             return;
@@ -76,7 +76,7 @@ void NewOptionsDialog::ButtonDepress(int theId) {
                 mApp->mSoundSystem->CancelPausedFoley();
                 mApp->KillNewOptionsDialog();
 
-                if (gTcpConnected) {
+                if (IsRemoteClient()) {
                     // 客户端点击投降
                     BaseEvent event = {EventType::EVENT_CLIENT_BOARD_CONCEDE};
                     netplay::PutEvent(event);
@@ -90,7 +90,7 @@ void NewOptionsDialog::ButtonDepress(int theId) {
                     }
                 }
 
-                if (gTcpClientSocket >= 0) {
+                if (IsRemoteServer()) {
                     // 主机端点击投降
                     BaseEvent event = {EventType::EVENT_SERVER_BOARD_CONCEDE};
                     netplay::PutEvent(event);

@@ -467,13 +467,21 @@ inline std::unordered_map<int, int> gMetricsZombieUseCount;
 inline bool gIsConnectedToServer = false;
 inline bool gIsServerModeNetplay = false;
 
-inline bool IsOnlineModeActive() noexcept {
-    return gTcpConnected || gTcpClientSocket >= 0;
-    //    return gTcpConnecting || gTcpConnected || gTcpClientSocket >= 0 || gTcpServerSocket >= 0 || gTcpListenSocket >= 0;
+inline bool IsRemoteServer() noexcept {
+    return gTcpClientSocket >= 0;
 }
 
 inline bool IsRemoteClient() noexcept {
-    return gTcpConnected || gIsServerModeSpectator || gIsReplayMode;
+    return gTcpConnected;
+}
+
+inline bool IsRemoteClientOrViewer() noexcept {
+    return IsRemoteClient() || gIsServerModeSpectator || gIsReplayMode;
+}
+
+inline bool IsOnlineModeActive() noexcept {
+    return IsRemoteClient() || IsRemoteServer();
+    //    return gTcpConnecting || gTcpConnected || gTcpClientSocket >= 0 || gTcpServerSocket >= 0 || gTcpListenSocket >= 0;
 }
 
 inline bool IsOnlineServerModeActive() noexcept {

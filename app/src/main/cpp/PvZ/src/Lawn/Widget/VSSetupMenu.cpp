@@ -164,14 +164,14 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
         g->SetColorizeImages(true);
         g->SetColor(Color(255, 255, 255, aAlpha));
 
-        if (!gTcpConnected && mSides[0] == VSSide::VS_SIDE_NONE && CanControlSideSlot(this, 0)) {
+        if (!IsRemoteClient() && mSides[0] == VSSide::VS_SIDE_NONE && CanControlSideSlot(this, 0)) {
             Sexy::Widget *theController1Widget = FindWidget(CONTROLLER_0);
             g->DrawImage(Sexy::IMAGE_ZEN_NEXTGARDEN, theController1Widget->mX + 160, theController1Widget->mY + 40);
             g->DrawImageMirror(Sexy::IMAGE_ZEN_NEXTGARDEN, theController1Widget->mX - 50, theController1Widget->mY + 40, true);
         }
 
 
-        if (gTcpClientSocket < 0 && mSides[1] == VSSide::VS_SIDE_NONE && CanControlSideSlot(this, 1)) {
+        if (!IsRemoteServer() && mSides[1] == VSSide::VS_SIDE_NONE && CanControlSideSlot(this, 1)) {
             Sexy::Widget *theController2Widget = FindWidget(CONTROLLER_1);
             g->DrawImage(Sexy::IMAGE_ZEN_NEXTGARDEN, theController2Widget->mX + 160, theController2Widget->mY + 40);
             g->DrawImageMirror(Sexy::IMAGE_ZEN_NEXTGARDEN, theController2Widget->mX - 50, theController2Widget->mY + 40, true);
@@ -186,7 +186,7 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
         // 我是 guest：已提醒房主...
         // (gTcpConnected == true 代表我作为 client 连接到 host)
         // ======================
-        if (gTcpConnected) {
+        if (IsRemoteClient()) {
             switch (gVSSetupRequestState) {
                 case VSSetupMenu_Quick_Play: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_REMIND_HOST_FMT]");
@@ -280,9 +280,9 @@ void VSSetupMenu::DrawOverlay(Graphics *g) {
 
         // ======================
         // 我是 host：对方想玩/想要...
-        // (gTcpClientSocket >= 0 表示我作为 host 收到了 client 连接)
+        // (IsRemoteServer() 表示我作为 host 收到了 client 连接)
         // ======================
-        if (gTcpClientSocket >= 0) {
+        if (IsRemoteServer()) {
             switch (gVSSetupRequestState) {
                 case VSSetupMenu_Quick_Play: {
                     pvzstl::string fmt = TodStringTranslate("[VS_TIP_OPPONENT_WANTS_PLAY_FMT]");
@@ -528,14 +528,14 @@ void VSSetupMenu::MouseDown(int x, int y, int theCount) {
         Sexy::Widget *theController1Widget = FindWidget(CONTROLLER_0);
         Sexy::Widget *theController2Widget = FindWidget(CONTROLLER_1);
         if (x > theController1Widget->mX && x < theController1Widget->mX + 170 && y > theController1Widget->mY && y < theController1Widget->mY + 122) {
-            if (gTcpConnected || !CanControlSideSlot(this, 0)) {
+            if (IsRemoteClient() || !CanControlSideSlot(this, 0)) {
                 return;
             }
             is1PControllerMoving = true;
             drawTipArrowAlphaCounter = 0;
             touchingOnWhichController = 1;
         } else if (x > theController2Widget->mX && x < theController2Widget->mX + 170 && y > theController2Widget->mY && y < theController2Widget->mY + 122) {
-            if (gTcpClientSocket >= 0 || !CanControlSideSlot(this, 1)) {
+            if (IsRemoteServer() || !CanControlSideSlot(this, 1)) {
                 return;
             }
             is2PControllerMoving = true;
@@ -551,16 +551,16 @@ void VSSetupMenu::MouseDrag(int x, int y) {
         return;
     }
     if (touchingOnWhichController == 1) {
-        if (gTcpConnected || gIsReplayMode)
+        if (IsRemoteClient())
             return;
         Sexy::Widget *theController1Widget = FindWidget(CONTROLLER_0);
         theController1Widget->Move(theController1Widget->mX + x - touchDownX, theController1Widget->mY);
-        if (gTcpClientSocket >= 0) {
+        if (IsRemoteServer()) {
             U16_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_MOVE_CONTROLLER}, uint16_t(theController1Widget->mX)};
             netplay::PutEvent(event);
         }
     } else if (touchingOnWhichController == 2) {
-        if (gTcpClientSocket >= 0)
+        if (IsRemoteServer())
             return;
         Sexy::Widget *theController2Widget = FindWidget(CONTROLLER_1);
         theController2Widget->Move(theController2Widget->mX + x - touchDownX, theController2Widget->mY);
@@ -579,7 +579,7 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
 
     bool handledControllerMouseUp = false;
     if (touchingOnWhichController == 1) {
-        if (gTcpConnected) {
+        if (IsRemoteClient()) {
             touchingOnWhichController = 0;
             return;
         }
@@ -590,13 +590,13 @@ void VSSetupMenu::MouseUp(int x, int y, int theCount) {
         mSides[0] = resolvedSideP1;
         mSideLocked[0] = (mSides[0] != VS_SIDE_NONE);
         aControllerWidgetP1->Move(GetControllerSideAnchorX(mSides[0]), aControllerWidgetP1->mY);
-        if (gTcpClientSocket >= 0) {
+        if (IsRemoteServer()) {
             U8U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_SET_SIDE}, 0, mSides[0] == -1 ? uint8_t(2) : uint8_t(mSides[0])};
             netplay::PutEvent(event);
         }
         is1PControllerMoving = false;
     } else if (touchingOnWhichController == 2) {
-        if (gTcpClientSocket >= 0) {
+        if (IsRemoteServer()) {
             touchingOnWhichController = 0;
             return;
         }
@@ -646,7 +646,7 @@ void VSSetupMenu::Update() {
     if (mState == VS_SETUP_STATE_CONTROLLERS) {
         return;
     }
-    if (mState == VS_SETUP_STATE_SIDES && !gTcpConnected && gTcpClientSocket == -1 && !isKeyboardTwoPlayerMode) {
+    if (mState == VS_SETUP_STATE_SIDES && !IsRemoteClient() && !IsRemoteServer() && !isKeyboardTwoPlayerMode) {
         // 本地游戏
         // 自动分配阵营
         //        mSides[0] = 0;
@@ -825,7 +825,7 @@ void VSSetupMenu::processClientEvent(const BaseEvent *event) {
             else
                 seedChooser->mSeedIndex2 = cursorSeedIndex;
 
-            if (gTcpClientSocket >= 0) {
+            if (IsRemoteServer()) {
                 EventType syncType = event->type == EVENT_CLIENT_SEEDCHOOSER_BAN_SEED ? EventType::EVENT_SERVER_SEEDCHOOSER_BAN_SEED : EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED;
                 U8x3_Event syncEvent = {{syncType}, {event1->data[0], event1->data[1], event1->data[2]}};
                 netplay::PutEvent(syncEvent);
@@ -885,7 +885,7 @@ void VSSetupMenu::processClientEvent(const BaseEvent *event) {
                 controllerWidget->Move(GetControllerSideAnchorX(mSides[1]), controllerWidget->mY);
             }
             is2PControllerMoving = false;
-            if (gTcpClientSocket >= 0) {
+            if (IsRemoteServer()) {
                 uint8_t sideData = (resolvedSide == VS_SIDE_NONE) ? 2 : uint8_t(resolvedSide);
                 U8U8_Event syncEvent = {{EventType::EVENT_SERVER_VSSETUPMENU_SET_SIDE}, 1, sideData};
                 netplay::PutEvent(syncEvent);
@@ -1120,7 +1120,7 @@ void VSSetupMenu::KeyDown(Sexy::KeyCode theKey) {
 
 void VSSetupMenu::OnStateEnter(VSSetupState theState) {
 
-    if (gTcpClientSocket >= 0) {
+    if (IsRemoteServer()) {
         U8_Event event = {{EventType::EVENT_VSSETUPMENU_ENTER_STATE}, uint8_t(theState)};
         netplay::PutEvent(event);
     }
@@ -1128,7 +1128,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
     if (theState == VSSetupState::VS_SETUP_STATE_SIDES) {
         drawTipArrowAlphaCounter = 0;
 
-        if (gTcpClientSocket >= 0 && !Challenge::msVSShuffleMode) {
+        if (IsRemoteServer() && !Challenge::msVSShuffleMode) {
             B1x8_Event event = {
                 {EventType::EVENT_SERVER_VSSETUP_ADDON_BUTTON_INIT},
                 mAddonWidget->mExtraPacketMode,
@@ -1161,7 +1161,7 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
     if (theState == VSSetupState::VS_SETUP_STATE_CONTROLLERS) {
 
         // 此事件仅针对中途加入的观战者，告知观战者本局对战的模式。Guest无需处理此事件。
-        if (gTcpClientSocket >= 0) {
+        if (IsRemoteServer()) {
             U8U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_SYNC_VS_MODE}, uint8_t(Challenge::msVSShuffleMode), uint8_t(mApp->mBoard->mBackground)};
             netplay::PutEvent(event);
         }
@@ -1200,10 +1200,10 @@ void VSSetupMenu::OnStateEnter(VSSetupState theState) {
         gGamepad1ToPlayerIndex = mSides[0];
 
         if (Challenge::msVSShuffleMode) {
-            if (gOpeningEncounter && Rand(10) == 0 && !IsRemoteClient()) {
+            if (gOpeningEncounter && Rand(10) == 0 && !IsRemoteClientOrViewer()) {
                 gOpeningEncounter->mType = EncounterType(Rand(NUM_ENCOUNTER));
                 gOpeningEncounter->OpeningEncounterInitialize(gOpeningEncounter->mType);
-                if (gTcpClientSocket >= 0) {
+                if (IsRemoteServer()) {
                     U16_Event event = {{EventType::EVENT_SERVER_ENCOUNTER_PICK}, uint16_t(gOpeningEncounter->mType)};
                     netplay::PutEvent(event);
                 }
@@ -1240,14 +1240,14 @@ void VSSetupMenu::ButtonDepress(int theId) {
         return;
     }
 
-    if (gTcpConnected) {
+    if (IsRemoteClient()) {
         U8_Event event = {{EventType::EVENT_CLIENT_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
         netplay::PutEvent(event);
         gVSSetupRequestState = theId;
         return;
     }
 
-    if (gTcpClientSocket >= 0) {
+    if (IsRemoteServer()) {
         U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_BUTTON_DEPRESS}, uint8_t(theId)};
         netplay::PutEvent(event);
     }
@@ -1373,7 +1373,7 @@ void VSSetupMenu::ButtonDepress_Origin(int theId) {
                 mSetupMode = VSSetupMode::VS_SETUP_MODE_RANDOM_BATTLE;
                 CloseVSSetup(false);
 
-                if (gTcpClientSocket >= 0) {
+                if (IsRemoteServer()) {
                     U16x12_Event event{};
                     event.type = EventType::EVENT_VSSETUPMENU_RANDOM_PICK;
                     std::ranges::copy(aPlantSeeds, event.data);
@@ -1412,7 +1412,7 @@ void VSSetupMenu::ButtonDepress_Origin(int theId) {
 //     // 如果修改器里开启了更换场地
 //     if (VSBackGround != 0 && VSBackGround != mApp->mBoard->mBackground + 1) {
 //
-//         if (gTcpConnected) {
+//         if (IsRemoteClient()) {
 //             // 客户端
 //             return;
 //         }
@@ -1428,7 +1428,7 @@ void VSSetupMenu::ButtonDepress_Origin(int theId) {
 //         mApp->mBoard->mCutScene->PlaceLawnItems();
 //
 //
-//         if (gTcpClientSocket >= 0) {
+//         if (IsRemoteServer()) {
 //             U8_Event event = {{EventType::EVENT_SERVER_VSSETUPMENU_PICKBACKGROUND}, uint8_t(VSBackGround)};
 //             netplay::PutEvent(event);
 //         }

@@ -255,7 +255,7 @@ void SeedPacket::SetNextRandomSeed() {
     if (Challenge::IsMPResourceProducer(mPacketType) || mPacketType == SEED_BEGHOULED_BUTTON_SHUFFLE || mPacketType == SEED_ZOMBIE_BEGHOULED_BUTTON_SHUFFLE)
         return;
 
-    if (IsRemoteClient())
+    if (IsRemoteClientOrViewer())
         return;
 
     SeedType seedType = SeedType::SEED_NONE;
@@ -263,7 +263,7 @@ void SeedPacket::SetNextRandomSeed() {
     seedType = PickNextRandomSeed(mApp, plantSeeds, zombieSeeds, mSeedBank->mIsZombie, mIndex);
     SetPacketType(seedType, SeedType::SEED_NONE);
 
-    if (gTcpClientSocket >= 0) {
+    if (IsRemoteServer()) {
         U8U8U16U16_Event event{};
         event.type = EventType::EVENT_SERVER_BOARD_SHUFFLE_RANDOM_PICK_NEXT;
         event.data1 = mSeedBank->mIsZombie;
@@ -686,7 +686,7 @@ void SeedPacket::WasPlanted(int thePlayerIndex) {
         gFreeForFristShuffle[mSeedBank->mIsZombie] = false; // 首次免费在使用当下失效
     }
 
-    if (gTcpClientSocket >= 0) {
+    if (IsRemoteServer()) {
         U8U8_Event event = {{EventType::EVENT_SERVER_BOARD_SEEDPACKET_WASPLANTED}, uint8_t(mIndex), mSeedBank == mBoard->mSeedBank[0]};
         netplay::PutEvent(event);
     }

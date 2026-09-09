@@ -51,11 +51,11 @@ void GridItem::_constructor() {
 }
 
 void GridItem::GridItemDie() {
-    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (IsRemoteClient())
-            return;
+    if (IsRemoteClientOrViewer())
+        return;
 
-        if (gTcpClientSocket >= 0) {
+    if (mApp->mGameScene == SCENE_PLAYING) {
+        if (IsRemoteServer()) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_DIE}, uint16_t(mBoard->mGridItems.DataArrayGetID(this))};
             netplay::PutEvent(event);
             // 靶子和墓碑战损
@@ -334,7 +334,7 @@ void GridItem::Update() {
         UpdatePole();
     }
 
-    if ((mGridItemType == GridItemType::GRIDITEM_GRAVESTONE || mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) && mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
+    if ((mGridItemType == GridItemType::GRIDITEM_GRAVESTONE || mGridItemType == GridItemType::GRIDITEM_MP_BURIAL_MOUND) && mApp->mGameScene == SCENE_PLAYING) {
         Reanimation *aGridItemReanim = mApp->ReanimationTryToGet(mGridItemReanimID);
         if (aGridItemReanim) {
             aGridItemReanim->Update();
@@ -368,14 +368,14 @@ void GridItem::Update() {
         }
 
         if (mLaunchCounter <= 0) { // 生产
-            if (IsRemoteClient()) {
+            if (IsRemoteClientOrViewer()) {
                 return;
             }
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if (vsai::HasEnhancedAIProduction(mBoard, vsai::VSSide::Zombies)) {
                 mLaunchCounter = vsai::ScaleEnhancedAIProductionCooldown(mLaunchCounter);
             }
-            if (gTcpClientSocket >= 0) {
+            if (IsRemoteServer()) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_LAUNCHCOUNTER}, uint16_t(mBoard->mGridItems.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
                 netplay::PutEvent(event);
             }
@@ -451,7 +451,7 @@ void GridItem::UpdateBurialMound() {
     if (mSummonCounter > 0) {
         --mSummonCounter;
 
-        if (IsRemoteClient()) {
+        if (IsRemoteClientOrViewer()) {
             return;
         }
 
@@ -495,7 +495,7 @@ void GridItem::UpdateBurialMound() {
 
             mSummonCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
 
-            if (gTcpClientSocket >= 0) {
+            if (IsRemoteServer()) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_GRIDITEM_SUMMONCOUNTER}, uint16_t(mBoard->mGridItems.DataArrayGetID(this)), uint16_t(mSummonCounter)};
                 netplay::PutEvent(event);
             }
@@ -908,11 +908,11 @@ void GridItem::TakeDamage(int theDamage, unsigned int theDamageFlags) {
         return;
     }
 
-    if (IsRemoteClient()) {
+    if (IsRemoteClientOrViewer()) {
         return;
     }
 
-    if (gTcpClientSocket >= 0) {
+    if (IsRemoteServer()) {
         U16U16U8_Event event{};
         event.type = EventType::EVENT_SERVER_BOARD_GRIDITEM_TAKE_DAMAGE;
         event.data1 = uint16_t(mBoard->mGridItems.DataArrayGetID(this));

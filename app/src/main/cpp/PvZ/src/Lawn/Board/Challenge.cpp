@@ -393,7 +393,7 @@ void Challenge::Update() {
 }
 
 void Challenge::UpdateVSAddPlants() const {
-    if (gTcpConnected) {
+    if (IsRemoteClient()) {
         return;
     }
     if (gIsServerModeSpectator || gIsReplayMode) {
@@ -888,24 +888,21 @@ void Challenge::IZombiePlaceZombie(ZombieType theZombieType, int theGridX, int t
         aZombie->mPosX = mBoard->GridToPixelX(theGridX, theGridY) - 30.0f;
     }
 
+    if (IsRemoteClientOrViewer()) {
+        return;
+    }
 
-    if (mApp->mGameMode == GAMEMODE_MP_VS) {
-        if (IsRemoteClient()) {
-            return;
+    if (IsRemoteServer()) {
+        U16UNI32UNI32_Event event{};
+        event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT;
+        event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombie));
+        event.data2.u8x4.u8_1 = uint8_t(theGridX);
+        event.data2.u8x4.u8_2 = uint8_t(theGridY);
+        //            event.data3.u16x2.u16_2 = uint16_t(theZombieType);
+        if (theZombieType == ZOMBIE_BUNGEE) {
+            event.data3.f32 = aZombie->mAltitude;
         }
-
-        if (gTcpClientSocket >= 0) {
-            U16UNI32UNI32_Event event{};
-            event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_ADD_BY_CHEAT;
-            event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombie));
-            event.data2.u8x4.u8_1 = uint8_t(theGridX);
-            event.data2.u8x4.u8_2 = uint8_t(theGridY);
-            //            event.data3.u16x2.u16_2 = uint16_t(theZombieType);
-            if (theZombieType == ZOMBIE_BUNGEE) {
-                event.data3.f32 = aZombie->mAltitude;
-            }
-            netplay::PutEvent(event);
-        }
+        netplay::PutEvent(event);
     }
 }
 

@@ -30,11 +30,11 @@ void LawnMower::Update() {
 }
 
 void LawnMower::StartMower() {
-    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (IsRemoteClient())
-            return;
+    if (IsRemoteClientOrViewer())
+        return;
 
-        if (gTcpClientSocket >= 0) {
+    if (mApp->mGameScene == SCENE_PLAYING) {
+        if (IsRemoteServer()) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_LAWNMOWER_START}, uint16_t(mRow)};
             netplay::PutEvent(event);
             // 小推车战损

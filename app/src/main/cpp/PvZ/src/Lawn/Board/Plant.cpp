@@ -165,11 +165,11 @@ void Plant::PlantInitialize(int theGridX, int theGridY, SeedType theSeedType, Se
         //                mLaunchCounter = RandRangeInt(0, mLaunchRate);
         //        } else
         //            mLaunchCounter = 0;
+    }
 
-        if (gTcpClientSocket >= 0) {
-            U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
-            netplay::PutEvent(event);
-        }
+    if (IsRemoteServer()) {
+        U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
+        netplay::PutEvent(event);
     }
 
     // 在对战模式修改指定植物的血量
@@ -582,7 +582,7 @@ void Plant::UpdateBloomerang() {
 }
 
 void Plant::UpdateSweetPotato() {
-    if (mApp->IsVSMode() && (gTcpConnected || gIsReplayMode)) {
+    if (IsRemoteClientOrViewer()) {
         return;
     }
 
@@ -670,7 +670,7 @@ void Plant::UpdateSweetPotato() {
         aZombie->StartWalkAnim(20);
         aZombie->SetRow(mRow);
 
-        if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
+        if (IsRemoteServer()) {
             U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_ZOMBIE_SET_ROW}, uint16_t(mBoard->mZombies.DataArrayGetID(aZombie)), uint16_t(mRow)};
             netplay::PutEvent(event);
         }
@@ -1151,11 +1151,12 @@ void Plant::KillAllPlantsNearDoom() {
 void Plant::DoSpecial() {
     // 试图修复辣椒爆炸后反而在本行的末尾处产生冰道。失败。
 
-    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (IsRemoteClient()) {
-            return;
-        }
-        if (gTcpClientSocket >= 0) {
+    if (IsRemoteClientOrViewer()) {
+        return;
+    }
+
+    if (mApp->mGameScene == SCENE_PLAYING) {
+        if (IsRemoteServer()) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_DO_SPECIAL}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
             netplay::PutEvent(event);
         }
@@ -1327,28 +1328,26 @@ void Plant::CobCannonFire(int x, int y) {
 }
 
 void Plant::Fire(Zombie *theTargetZombie, int theRow, PlantWeapon thePlantWeapon, GridItem *theTargetGridItem) {
-    if (mApp->IsVSMode()) {
-        if (IsRemoteClient())
-            return;
+    if (IsRemoteClientOrViewer())
+        return;
 
-        if (gTcpClientSocket >= 0) {
-            U16U16U16UNI32UNI32_Event event{};
+    if (IsRemoteServer()) {
+        U16U16U16UNI32UNI32_Event event{};
 
-            event.type = EventType::EVENT_SERVER_BOARD_PLANT_FIRE;
-            event.data1 = uint16_t(mBoard->mPlants.DataArrayGetID(this));
-            event.data2 = theTargetZombie == nullptr ? NETPLAY_ZOMBIE_ID_NULL : uint16_t(mBoard->mZombies.DataArrayGetID(theTargetZombie));
-            event.data4.u16x2.u16_1 = uint16_t(theRow);
-            event.data4.u16x2.u16_2 = uint16_t(thePlantWeapon);
-            // 如果同时传入有效的 theTargetZombie 和 theTargetGridItem 会导致投手弹道计算错误
-            if (theTargetZombie) { // 存在僵尸目标时传入空的场地物 ID
-                event.data5.u16x2.u16_1 = NETPLAY_GRIDITEM_ID_NULL;
-            } else {
-                event.data5.u16x2.u16_1 = theTargetGridItem == nullptr ? NETPLAY_GRIDITEM_ID_NULL : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
-            }
-            netplay::PutEvent(event);
-            //            SyncPingPongAnimationToClient();
-            //            SyncAnimationToClient();
+        event.type = EventType::EVENT_SERVER_BOARD_PLANT_FIRE;
+        event.data1 = uint16_t(mBoard->mPlants.DataArrayGetID(this));
+        event.data2 = theTargetZombie == nullptr ? NETPLAY_ZOMBIE_ID_NULL : uint16_t(mBoard->mZombies.DataArrayGetID(theTargetZombie));
+        event.data4.u16x2.u16_1 = uint16_t(theRow);
+        event.data4.u16x2.u16_2 = uint16_t(thePlantWeapon);
+        // 如果同时传入有效的 theTargetZombie 和 theTargetGridItem 会导致投手弹道计算错误
+        if (theTargetZombie) { // 存在僵尸目标时传入空的场地物 ID
+            event.data5.u16x2.u16_1 = NETPLAY_GRIDITEM_ID_NULL;
+        } else {
+            event.data5.u16x2.u16_1 = theTargetGridItem == nullptr ? NETPLAY_GRIDITEM_ID_NULL : uint16_t(mBoard->mGridItems.DataArrayGetID(theTargetGridItem));
         }
+        netplay::PutEvent(event);
+        //            SyncPingPongAnimationToClient();
+        //            SyncAnimationToClient();
     }
 
     Fire_Origin(theTargetZombie, theRow, thePlantWeapon, theTargetGridItem);
@@ -2052,11 +2051,11 @@ GridItem *Plant::FindTargetGridItem(int theRow, PlantWeapon thePlantWeapon) {
 }
 
 void Plant::Die() {
-    if (mApp->IsVSMode() && mApp->mGameScene == SCENE_PLAYING) {
-        if (IsRemoteClient())
-            return;
+    if (IsRemoteClientOrViewer())
+        return;
 
-        if (gTcpClientSocket >= 0) {
+    if (mApp->mGameScene == SCENE_PLAYING) {
+        if (IsRemoteServer()) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_DIE}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
             netplay::PutEvent(event);
             // 向日葵战损
@@ -2799,7 +2798,7 @@ bool Plant::MakesSun() const {
 }
 
 void Plant::UpdateProductionPlant() {
-    if (mApp->mGameMode == GAMEMODE_MP_VS && (gTcpConnected || gTcpClientSocket >= 0 || gIsServerModeSpectator || gIsReplayMode)) {
+    if (IsRemoteClientOrViewer() || IsRemoteServer()) {
         if (!IsInPlay()) {
             return;
         }
@@ -2829,14 +2828,14 @@ void Plant::UpdateProductionPlant() {
         if (mLaunchCounter <= 0)
         // 生产
         {
-            if (IsRemoteClient()) {
+            if (IsRemoteClientOrViewer()) {
                 return;
             }
             mLaunchCounter = RandRangeInt(mLaunchRate - 150, mLaunchRate);
             if ((mSeedType == SeedType::SEED_SUNFLOWER || mSeedType == SeedType::SEED_SUNSHROOM) && vsai::HasEnhancedAIProduction(mBoard, vsai::VSSide::Plants)) {
                 mLaunchCounter = vsai::ScaleEnhancedAIProductionCooldown(mLaunchCounter);
             }
-            if (gTcpClientSocket >= 0) {
+            if (IsRemoteServer()) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_LAUNCHCOUNTER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mLaunchCounter)};
                 netplay::PutEvent(event);
             }
@@ -3084,7 +3083,7 @@ void Plant::UpdateShooting() {
 }
 
 void Plant::UpdateShooter() {
-    if (IsRemoteClient()) {
+    if (IsRemoteClientOrViewer()) {
         return;
     }
 
@@ -3095,7 +3094,7 @@ void Plant::UpdateShooter() {
     }
     if (mLaunchCounter <= 0) {
         mLaunchCounter = mLaunchRate - Sexy::Rand(15);
-        if (gTcpClientSocket >= 0) {
+        if (IsRemoteServer()) {
             U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_SHOOTER_LAUNCH}, uint16_t(mBoard->mPlants.DataArrayGetID(this))};
             netplay::PutEvent(event);
         }
@@ -3244,7 +3243,7 @@ void Plant::SyncAnimationToClient() {
 
 bool Plant::FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
     // 此函数用于在mLaunchCounter到0之后播放投手的投掷动画、豌豆的发射动画
-    if (IsRemoteClient()) {
+    if (IsRemoteClientOrViewer()) {
         return false;
     }
 
@@ -3278,7 +3277,7 @@ bool Plant::FindTargetAndFire(int theRow, PlantWeapon thePlantWeapon) {
     }
 
     if (result) {
-        if (gTcpClientSocket >= 0) {
+        if (IsRemoteServer()) {
 
             if (mSeedType == SEED_KERNELPULT) {
                 U8U8U16U16_Event event = {
@@ -3362,10 +3361,10 @@ void Plant::UpdateChomper() {
             } else if (doMiss) {
                 mState = PlantState::STATE_CHOMPER_BITING_MISSED;
             } else {
-                if (IsRemoteClient())
+                if (IsRemoteClientOrViewer())
                     return;
 
-                if (gTcpClientSocket >= 0) {
+                if (IsRemoteServer()) {
                     U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_CHOMPER_BIT}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mBoard->mZombies.DataArrayGetID(aZombie))};
                     netplay::PutEvent(event);
                 }
@@ -3477,10 +3476,10 @@ void Plant::UpdateMagnetShroom() {
         }
 
         if (aClosestZombie) {
-            if (IsRemoteClient())
+            if (IsRemoteClientOrViewer())
                 return;
 
-            if (gTcpClientSocket >= 0) {
+            if (IsRemoteServer()) {
                 U16U16_Event event = {
                     {EventType::EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mBoard->mZombies.DataArrayGetID(aClosestZombie))};
                 netplay::PutEvent(event);
@@ -3512,10 +3511,10 @@ void Plant::UpdateMagnetShroom() {
         }
 
         if (aClosestLadder) {
-            if (IsRemoteClient())
+            if (IsRemoteClientOrViewer())
                 return;
 
-            if (gTcpClientSocket >= 0) {
+            if (IsRemoteServer()) {
                 U16U16_Event event = {
                     {EventType::EVENT_SERVER_BOARD_PLANT_MAGNETSHROOM_ATTACK_LADDER}, uint16_t(mBoard->mPlants.DataArrayGetID(this)), uint16_t(mBoard->mGridItems.DataArrayGetID(aClosestLadder))};
                 netplay::PutEvent(event);
@@ -3540,9 +3539,8 @@ void Plant::UpdateMagnetShroom() {
 
 void Plant::UpdateSquash() {
     // mApp->ReanimationTryToGet(mBodyReanimID); // disassembled code
-    bool isRemoteClient = IsRemoteClient();
     auto syncSquashState = [this]() {
-        if (gTcpClientSocket < 0) {
+        if (!IsRemoteServer()) {
             return;
         }
         U16U16I16I16_Event event{};
@@ -3555,7 +3553,7 @@ void Plant::UpdateSquash() {
     };
 
     if (mState == PlantState::STATE_NOTREADY) {
-        if (isRemoteClient) {
+        if (IsRemoteClientOrViewer()) {
             return;
         }
         Zombie *aZombie = FindSquashTarget();
@@ -3569,7 +3567,7 @@ void Plant::UpdateSquash() {
             syncSquashState();
         }
     } else if (mState == PlantState::STATE_SQUASH_LOOK) {
-        if (isRemoteClient) {
+        if (IsRemoteClientOrViewer()) {
             return;
         }
         if (mStateCountdown <= 0) {
@@ -3582,7 +3580,7 @@ void Plant::UpdateSquash() {
         if (mStateCountdown == 1) {
             TriggerVibration(VibrationEffect::VIBRATION_JUMP); // 这窝瓜有力气!!
         }
-        if (isRemoteClient) {
+        if (IsRemoteClientOrViewer()) {
             return;
         }
         if (mStateCountdown <= 0) {
@@ -3643,9 +3641,8 @@ void Plant::UpdateSquash() {
 }
 
 void Plant::UpdateIcebergLettuce() {
-    bool isRemoteClient = IsRemoteClient();
     auto syncIcebergLettuceState = [this]() {
-        if (gTcpClientSocket < 0) {
+        if (!IsRemoteServer()) {
             return;
         }
         U16_Event event{};
@@ -3655,7 +3652,7 @@ void Plant::UpdateIcebergLettuce() {
     };
 
     if (mState == PlantState::STATE_NOTREADY) {
-        if (isRemoteClient) {
+        if (IsRemoteClientOrViewer()) {
             return;
         }
         if (Zombie *aZombie = FindTargetZombie(mRow, PlantWeapon::WEAPON_PRIMARY)) {
@@ -3668,12 +3665,12 @@ void Plant::UpdateIcebergLettuce() {
         }
     } else if (mState == PlantState::STATE_READY) {
         if (mStateCountdown <= 0) {
-            if (IsRemoteClient()) {
+            if (IsRemoteClientOrViewer()) {
                 return;
             }
 
             Zombie *aZombie = mBoard->ZombieGet(mTargetZombieID);
-            if (gTcpClientSocket >= 0) {
+            if (IsRemoteServer()) {
                 U16U16_Event event = {{EventType::EVENT_SERVER_BOARD_PLANT_ICE_A_ZOMBIE},
                                       uint16_t(mBoard->mPlants.DataArrayGetID(this)),
                                       aZombie == nullptr ? NETPLAY_ZOMBIE_ID_NULL : uint16_t(mBoard->mZombies.DataArrayGetID(aZombie))};

@@ -513,7 +513,7 @@ void GamepadControls::Draw(Sexy::Graphics *g) {
         return;
     }
     // 联机光标上绘制双方玩家昵称
-    if (gTcpConnected || gTcpClientSocket >= 0 || gIsReplayMode) {
+    if (IsRemoteClient() || IsRemoteServer() || gIsReplayMode) {
         const char *hostName = gIsReplayMode ? ((gReplayHostName[0] != '\0') ? gReplayHostName : gServerHostName) : ((gServerHostName[0] != '\0') ? gServerHostName : mBoard->mApp->mPlayerInfo->mName);
         const char *guestName = gIsReplayMode ? ((gReplayGuestName[0] != '\0') ? gReplayGuestName : gSecondPlayerName) : ((gSecondPlayerName[0] != '\0') ? gSecondPlayerName : "Guest");
         if (mPlayerIndex == 0 && guestName[0] != '\0') {
@@ -1188,12 +1188,12 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
     if (mBoard->HasLevelAwardDropped() || (mBoard->mChallenge->IsMPSuddenDeath() && Challenge::gVSSuddenDeathMode <= 1 && Challenge::IsMPResourceProducer(aSeedPacket->mPacketType))
         || mBoard->mChallenge->ISMPSeedSuddenDeathDisabled(aSeedBank->mIsZombie, aPacketType)) {
         bool isClientGamepadControl = mGamepadIndex == 1;
-        if (gTcpClientSocket >= 0 && isClientGamepadControl) { // 让对方播放音效
+        if (IsRemoteServer() && isClientGamepadControl) { // 让对方播放音效
             U8_Event event = {{EventType::EVENT_SERVER_BOARD_PLAY_SOUND}, 1};
             netplay::PutEvent(event);
         } else {
             mApp->PlaySample(SOUND_BUZZER);
-            if (gTcpClientSocket >= 0) {
+            if (IsRemoteServer()) {
                 U8U8_Event event = {{EventType::EVENT_SERVER_BOARD_PLAY_SOUND_SR}, 0, uint8_t(SOUND_BUZZER)};
                 netplay::PutEvent(event);
             }
@@ -1209,12 +1209,12 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
 
         if (!mBoard->CanTakeDeathMoney(aPacketCost) || !aSeedPacket->CanPickUp() || mBoard->CanPlantAt(aGridX, aGridY, aPacketType) != PlantingReason::PLANTING_OK || mBoard->HasLevelAwardDropped()) {
             bool isClientGamepadControl = mGamepadIndex == 1;
-            if (gTcpClientSocket >= 0 && isClientGamepadControl) { // 让对方播放音效
+            if (IsRemoteServer() && isClientGamepadControl) { // 让对方播放音效
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_PLAY_SOUND}, 1};
                 netplay::PutEvent(event);
             } else {
                 mApp->PlaySample(SOUND_BUZZER);
-                if (gTcpClientSocket >= 0) {
+                if (IsRemoteServer()) {
                     U8U8_Event event = {{EventType::EVENT_SERVER_BOARD_PLAY_SOUND_SR}, 0, uint8_t(SOUND_BUZZER)};
                     netplay::PutEvent(event);
                 }
@@ -1325,12 +1325,12 @@ void GamepadControls::OnButtonDown(Sexy::GamepadButton theButton, int thePlayerI
             // 优化玩家体验：不执行旧函数，使未成功种下的卡槽不会退回未选取状态
             //                old_GamepadControls_OnButtonDown(this, theButton, thePlayerIndex, unk);
             bool isClientGamepadControl = mGamepadIndex == 1;
-            if (gTcpClientSocket >= 0 && isClientGamepadControl) { // 让对方播放音效
+            if (IsRemoteServer() && isClientGamepadControl) { // 让对方播放音效
                 U8_Event event = {{EventType::EVENT_SERVER_BOARD_PLAY_SOUND}, 1};
                 netplay::PutEvent(event);
             } else {
                 mApp->PlaySample(SOUND_BUZZER);
-                if (gTcpClientSocket >= 0) {
+                if (IsRemoteServer()) {
                     U8U8_Event event = {{EventType::EVENT_SERVER_BOARD_PLAY_SOUND_SR}, 0, uint8_t(SOUND_BUZZER)};
                     netplay::PutEvent(event);
                 }

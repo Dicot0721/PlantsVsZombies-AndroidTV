@@ -721,7 +721,7 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
             if (mIsCreatingRoom) {
                 // left: 设置端口
                 mLeftButton->SetLabel("[SET_ROOM_PORT]");
-                mLeftButton->mDisabled = (gTcpClientSocket != -1);
+                mLeftButton->mDisabled = IsRemoteServer();
 
                 // right: 退出房间
                 mRightButton->SetLabel("[EXIT_ROOM_BUTTON]");
@@ -729,7 +729,7 @@ void WaitForSecondPlayerDialog::RefreshButtons() {
 
                 // Yes: 开始游戏（有人加入才可点）
                 mLawnYesButton->SetLabel("[START_GAME]");
-                mLawnYesButton->mDisabled = (gTcpClientSocket == -1);
+                mLawnYesButton->mDisabled = !IsRemoteServer();
 
                 // No: 返回模式选择
                 mLawnNoButton->SetLabel("[BACK_TO_MODE_SELECT]");
@@ -1146,7 +1146,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
             TodDrawString(g, str2, 400, lineY, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
 
             // 是否有玩家加入
-            if (gTcpClientSocket == -1) {
+            if (!IsRemoteServer()) {
                 pvzstl::string str3 = TodStringTranslate("[WAIT_OTHER_JOIN]");
                 TodDrawString(g, str3, 400, lineY + 50, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
             } else {
@@ -1165,7 +1165,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
             if (mUseManualTarget) {
                 // 手动连接
 
-                if (gTcpConnected) {
+                if (IsRemoteClient()) {
                     pvzstl::string joinedFmt = TodStringTranslate("[JOINED_MANUAL_FMT]");
                     pvzstl::string str3 = StrFormat(joinedFmt.c_str(), gSecondPlayerName);
                     TodDrawString(g, str3, 400, 150, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
@@ -1188,7 +1188,7 @@ void WaitForSecondPlayerDialog::Draw(Graphics *g) {
                 if (gScannedServerCount <= 0) {
                     TodDrawString(g, TodStringTranslate("[NO_AVAILABLE_ROOMS]"), 400, 150, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
                 } else {
-                    pvzstl::string fmtJoin = TodStringTranslate(gTcpConnected ? "[JOINED_ROOM_FMT]" : "[JOINING_ROOM_FMT]");
+                    pvzstl::string fmtJoin = TodStringTranslate(IsRemoteClient() ? "[JOINED_ROOM_FMT]" : "[JOINING_ROOM_FMT]");
                     pvzstl::string str = StrFormat(fmtJoin.c_str(), gServers[idx].name);
                     TodDrawString(g, str, 400, 150, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
                     TodDrawString(g, StrFormat("IP: %s:%d", gServers[idx].ip, gServers[idx].tcpPort), 400, 200, g->GetFont(), g->GetColor(), DS_ALIGN_CENTER);
@@ -1535,7 +1535,7 @@ void WaitForSecondPlayerDialog::Update() {
 
         // 创建房间时：开始游戏按钮是否可点
         if (mIsCreatingRoom) {
-            mLawnYesButton->mDisabled = (gTcpClientSocket == -1);
+            mLawnYesButton->mDisabled = !IsRemoteServer();
         }
 
         // UDP 广播/扫描节拍
@@ -1552,7 +1552,7 @@ void WaitForSecondPlayerDialog::Update() {
         if (gTcpListenSocket >= 0) {
             CheckTcpAccept();
         }
-        if (mIsJoiningRoom && !gTcpConnected) {
+        if (mIsJoiningRoom && !IsRemoteClient()) {
             TryTcpConnect();
         }
     }
@@ -2046,7 +2046,7 @@ void WaitForSecondPlayerDialog::UdpBroadcastRoom() {
 bool WaitForSecondPlayerDialog::CheckTcpAccept() {
     if (gTcpListenSocket < 0)
         return false;
-    if (gTcpClientSocket >= 0) {
+    if (IsRemoteServer()) {
         return true;
     }
     sockaddr_in clientAddr{};
@@ -2178,7 +2178,7 @@ void WaitForSecondPlayerDialog::ScanUdpBroadcastRoom() {
 }
 
 void WaitForSecondPlayerDialog::TryTcpConnect() {
-    if (gTcpConnected || gIsReplayMode)
+    if (IsRemoteClient() || gIsReplayMode)
         return;
 
     // 既不是手动目标，也没有扫描到房间，就没法连
@@ -2328,7 +2328,7 @@ void WaitForSecondPlayerDialog::ButtonDepress_Thunk(this ButtonListener &self, i
                     if (aDialog->mIsCreatingRoom) {
                         // 开始游戏（房主）：根据是否有玩家加入决定是否可点（RefreshButtons里已禁用）
                         aDialog->LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Enter);
-                        if (gTcpClientSocket >= 0) {
+                        if (IsRemoteServer()) {
                             BaseEvent event = {EventType::EVENT_WAITFORSECONDPALYER_START_GAME};
                             netplay::PutEvent(event);
                         }
@@ -2390,7 +2390,7 @@ void WaitForSecondPlayerDialog::ButtonDepress_Thunk(this ButtonListener &self, i
                     aDialog->RefreshButtons();
                     return;
                 }
-                if (aUIMode == UIMode::MODE3_SERVER && gTcpConnected && gIsServerModeSpectator) {
+                if (aUIMode == UIMode::MODE3_SERVER && IsRemoteClient() && gIsServerModeSpectator) {
                     aDialog->mApp->ClearSecondPlayer();
                 }
                 if (aDialog->ServerHostRoomLocked()) {
@@ -4161,7 +4161,7 @@ bool WaitForSecondPlayerDialog::ServerConnectFromInput() {
 }
 
 void WaitForSecondPlayerDialog::ServerDisconnect([[maybe_unused]] const char *why) {
-    const bool hasActiveVsSocket = (gTcpClientSocket >= 0) || gTcpConnected || (gTcpServerSocket >= 0);
+    const bool hasActiveVsSocket = IsRemoteServer() || IsRemoteClient() || (gTcpServerSocket >= 0);
     CloseSocketFd(mServerSock);
     Mode3ResetTargetLatencyProbes(this);
     ServerResetP2PState(false);

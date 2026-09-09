@@ -238,7 +238,7 @@ void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
         return;
     }
     // guest 不能直接改选项，只能发起请求，随后回滚到当前状态
-    if (gTcpConnected) {
+    if (IsRemoteClient()) {
         U8_Event event = {{EventType::EVENT_CLIENT_VSSETUP_ADDON_CHECKBOX_CHECKED}, uint8_t(theId)};
         netplay::PutEvent(event);
         gVSSetupRequestState = theId;
@@ -253,7 +253,7 @@ void VSSetupAddonWidget::CheckboxChecked(int theId, bool checked) {
         gVSSetupRequestState = 0;
     }
 
-    if (gTcpClientSocket >= 0 && !IsLocalAIOption(theId)) {
+    if (IsRemoteServer() && !IsLocalAIOption(theId)) {
         U8U8_Event event = {{EventType::EVENT_SERVER_VSSETUP_ADDON_CHECKBOX_CHECKED}, uint8_t(theId), uint8_t(checked)};
         netplay::PutEvent(event);
     }

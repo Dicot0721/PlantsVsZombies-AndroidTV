@@ -683,7 +683,7 @@ void LawnApp::UpdateFrames() {
     if (replayActive && !replayPaused) {
         runReplayFrame = replay::ConsumePlaybackFrameStep();
     }
-    if ((gTcpClientSocket >= 0 || gTcpConnected || replay::IsPlaybackActive()) && !replayPaused) {
+    if ((IsRemoteServer() || IsRemoteClient() || replay::IsPlaybackActive()) && !replayPaused) {
         ++gNetPingNowTick;
         if (!gIsServerModeSpectator) {
             TickNetDelayAwaitingPong();
@@ -1569,7 +1569,7 @@ void LawnApp::ShowVSResultsScreen() {
     mWidgetManager->AddWidget(mVSResultsMenu);
     mWidgetManager->BringToFront(mVSResultsMenu);
     mWidgetManager->SetFocus(mVSResultsMenu);
-    const bool connected = (gTcpConnected || gTcpClientSocket >= 0);
+    const bool connected = (IsRemoteClient() || IsRemoteServer());
     if (connected && !mVSResultsMenu->mIsReplaySession && !gIsServerModeSpectator) {
         mVSResultsMenu->mCheckboxController = new VSResultsCheckboxController();
         mVSResultsMenu->mCheckboxController->InitCheckboxWidget(mVSResultsMenu);

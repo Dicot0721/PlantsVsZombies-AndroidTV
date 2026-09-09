@@ -396,14 +396,14 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
                 pvzstl::string delayText = gIsServerModeSpectator ? StrFormat("%s %dms", TodStringTranslate("[SPECTATE]").c_str(), gNetDelayNow * 10) : StrFormat(fmt.c_str(), gNetDelayNow * 10);
                 TodDrawString(g, GetServerModeTransportSuffix() + std::move(delayText), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             }
-        } else if (gTcpConnected) {
+        } else if (IsRemoteClient()) {
             if (gNetDelayNow == 0) {
                 TodDrawString(g, GetServerModeTransportSuffix() + TodStringTranslate("[VS_STATUS_IN_ROOM]"), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             } else {
                 pvzstl::string fmt = TodStringTranslate("[VS_STATUS_IN_ROOM_MS_FMT]");
                 TodDrawString(g, GetServerModeTransportSuffix() + StrFormat(fmt.c_str(), gNetDelayNow * 10), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             }
-        } else if (gTcpClientSocket >= 0) {
+        } else if (IsRemoteServer()) {
             if (gNetDelayNow == 0) {
                 TodDrawString(g, GetServerModeTransportSuffix() + TodStringTranslate("[VS_STATUS_HOST]"), 400, -20, Sexy::FONT_DWARVENTODCRAFT18, aColor, DS_ALIGN_CENTER);
             } else {
@@ -419,7 +419,7 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
             // ======================
 
 
-            if (gTcpConnected) {
+            if (IsRemoteClient()) {
                 pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_REMIND_HOST_FMT]");
                 pvzstl::string name = "unknown";
 
@@ -452,9 +452,9 @@ void ChallengeScreen::Draw(Sexy::Graphics *g) {
 
             // ======================
             // 我是 host：对方想玩/想要...
-            // (gTcpClientSocket >= 0 表示我作为 host 收到了 client 连接)
+            // (IsRemoteServer() 表示我作为 host 收到了 client 连接)
             // ======================
-            if (gTcpClientSocket >= 0) {
+            if (IsRemoteServer()) {
                 pvzstl::string fmt = TodStringTranslate("[CHALLENGESCREEN_TIP_OPPONENT_WANTS_PLAY_FMT]");
                 pvzstl::string name = "unknown";
 
@@ -491,7 +491,7 @@ void ChallengeScreen::Update() {
     old_ChallengeScreen_Update(this);
 
     if (mPage == ChallengePage::CHALLENGE_PAGE_VS) {
-        if (mConnectDialog == nullptr && mApp->mHelpTextScreen == nullptr && !gTcpConnected && gTcpClientSocket < 0) {
+        if (mConnectDialog == nullptr && mApp->mHelpTextScreen == nullptr && !IsRemoteClient() && !IsRemoteServer()) {
             mConnectDialog = new WaitForSecondPlayerDialog(mApp);
             mApp->AddDialog(mConnectDialog);
             VSSetupAddonWidget::ResetGlobalBpState();
@@ -654,12 +654,12 @@ void ChallengeScreen::MouseUp(int x, int y) {
             KeyDown(Sexy::KEYCODE_RETURN);
         } else {
             mApp->PlaySample(Sexy::SOUND_BUTTONCLICK);
-            if (gTcpConnected) {
+            if (IsRemoteClient()) {
                 // 房客
                 U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE}, uint16_t(nextMode)};
                 netplay::PutEvent(event);
                 gChallengeScreenRequestState = nextMode;
-            } else if (gTcpClientSocket >= 0) {
+            } else if (IsRemoteServer()) {
                 // 房主
                 mSelectedChallengeIndex = GameMode(nextMode);
                 U16_Event event = {{EventType::EVENT_SERVER_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mSelectedChallengeIndex)};
@@ -679,14 +679,14 @@ void ChallengeScreen::KeyDown(Sexy::KeyCode theKey) {
         return;
     }
     if (theKey == Sexy::KEYCODE_RETURN && mPage == ChallengePage::CHALLENGE_PAGE_VS) {
-        if (gTcpConnected) {
+        if (IsRemoteClient()) {
             U16_Event event = {{EventType::EVENT_CLIENT_CHALLENGESCREEN_SELECT_MODE}, uint16_t(mSelectedChallengeIndex)};
             netplay::PutEvent(event);
             gChallengeScreenRequestState = mSelectedChallengeIndex;
             return;
         }
 
-        if (gTcpClientSocket >= 0) {
+        if (IsRemoteServer()) {
             U16_Event event = {{EventType::EVENT_SERVER_CHALLENGESCREEN_BUTTON_DEPRESS}, uint16_t(mSelectedChallengeIndex)};
             netplay::PutEvent(event);
         }

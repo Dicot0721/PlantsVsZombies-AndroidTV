@@ -74,9 +74,9 @@ bool IsLocalChooserInputAllowed(SeedChooserScreen *screen) {
 
     VSSide chooserSide = screen->mIsZombieChooser ? VSSide::VS_SIDE_ZOMBIE : VSSide::VS_SIDE_PLANT;
     VSSide localSide = VSSide::VS_SIDE_NONE;
-    if (gTcpConnected) {
+    if (IsRemoteClient()) {
         localSide = vsSetup->mSides[1];
-    } else if (gTcpClientSocket >= 0) {
+    } else if (IsRemoteServer()) {
         localSide = vsSetup->mSides[0];
     } else {
         return true;
@@ -128,7 +128,7 @@ int GetZombieIndexBySeedType(SeedType theSeedType) {
 }
 
 bool IsLocalBuiltinAIChooser(const SeedChooserScreen *screen) {
-    return screen != nullptr && screen->mApp != nullptr && screen->mApp->IsVSMode() && !gTcpConnected && gTcpClientSocket < 0 && !gIsReplayMode && !gIsServerModeSpectator;
+    return screen != nullptr && screen->mApp != nullptr && screen->mApp->IsVSMode() && !IsRemoteClient() && !IsRemoteServer() && !gIsReplayMode && !gIsServerModeSpectator;
 }
 
 bool IsChooserFilled(const SeedChooserScreen *screen) {
@@ -2505,13 +2505,13 @@ void SeedChooserScreen::ClickedSeedInChooser(ChosenSeed &theChosenSeed, int theP
 
     if (mApp->IsVSMode()) {
         const uint8_t cursorFlags = (mPageIndex == 1) ? kCursorPageOneEventFlag : 0;
-        if (gTcpConnected) {
+        if (IsRemoteClient()) {
             // 客户端始终上报点击事件：即使选卡失败，也用于同步光标位置。
             U8x3_Event event = {{mBanningPhase ? EventType::EVENT_CLIENT_SEEDCHOOSER_BAN_SEED : EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED},
                                 {uint8_t(selectedSeedType), uint8_t(mIsZombieChooser), cursorFlags}};
             netplay::PutEvent(event);
             return;
-        } else if (gTcpClientSocket >= 0) {
+        } else if (IsRemoteServer()) {
             // 主机也广播该点击，远端可据此同步光标，再由主机权威决定是否入槽。
             U8x3_Event event = {{mBanningPhase ? EventType::EVENT_SERVER_SEEDCHOOSER_BAN_SEED : EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED},
                                 {uint8_t(selectedSeedType), uint8_t(mIsZombieChooser), cursorFlags}};
@@ -3345,10 +3345,10 @@ void SeedChooserScreen::GameButtonDown(GamepadButton theButton, int thePlayerInd
                     SeedType aSeedType = SeedHitTest(x, y);
                     if (aSeedType != SeedType::SEED_NONE) {
                         const uint8_t cursorFlags = kCursorMoveOnlyEventFlag | ((mPageIndex == 1) ? kCursorPageOneEventFlag : 0);
-                        if (gTcpConnected) {
+                        if (IsRemoteClient()) {
                             U8x3_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED}, {uint8_t(aSeedType), uint8_t(mIsZombieChooser), cursorFlags}};
                             netplay::PutEvent(event);
-                        } else if (gTcpClientSocket >= 0) {
+                        } else if (IsRemoteServer()) {
                             U8x3_Event event = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, {uint8_t(aSeedType), uint8_t(mIsZombieChooser), cursorFlags}};
                             netplay::PutEvent(event);
                         }
@@ -3493,10 +3493,10 @@ void SeedChooserScreen::ButtonDepress(int theId) {
     }
 
     if (mApp->IsVSMode()) {
-        if (gTcpConnected) {
+        if (IsRemoteClient()) {
             U8U8_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_BUTTON_DEPRESS}, uint8_t(theId), uint8_t(mIsZombieChooser)};
             netplay::PutEvent(event);
-        } else if (gTcpClientSocket >= 0) {
+        } else if (IsRemoteServer()) {
             U8U8_Event event = {{EventType::EVENT_SERVER_SEEDCHOOSER_BUTTON_DEPRESS}, uint8_t(theId), uint8_t(mIsZombieChooser)};
             netplay::PutEvent(event);
         }
@@ -4064,10 +4064,10 @@ void SeedChooserScreen::MouseDrag(int x, int y) {
 
             // data3 flags: bit0 = moveOnly(sync cursor without picking), bit1 = sender page index for zombie chooser
             const uint8_t cursorFlags = kCursorMoveOnlyEventFlag | ((mPageIndex == 1) ? kCursorPageOneEventFlag : 0);
-            if (gTcpConnected) {
+            if (IsRemoteClient()) {
                 U8x3_Event event = {{EventType::EVENT_CLIENT_SEEDCHOOSER_SELECT_SEED}, {uint8_t(hoverSeedType), uint8_t(mIsZombieChooser), cursorFlags}};
                 netplay::PutEvent(event);
-            } else if (gTcpClientSocket >= 0) {
+            } else if (IsRemoteServer()) {
                 U8x3_Event event = {{EventType::EVENT_SERVER_SEEDCHOOSER_SELECT_SEED}, {uint8_t(hoverSeedType), uint8_t(mIsZombieChooser), cursorFlags}};
                 netplay::PutEvent(event);
             }
@@ -4456,8 +4456,8 @@ void SeedChooserScreen::Draw(Graphics *g) { // Early returns for dialogsif (mApp
 
             // 联机光标上绘制双方玩家昵称
             char *firstPlayerName = mBoard->mApp->mPlayerInfo->mName;
-            if (gTcpConnected || gTcpClientSocket >= 0 || gIsReplayMode) {
-                const bool localIsClient = gTcpConnected;
+            if (IsRemoteClient() || IsRemoteServer() || gIsReplayMode) {
+                const bool localIsClient = IsRemoteClient();
                 const bool hasServerHostName = (gServerHostName[0] != '\0');
                 const bool hasSecondPlayerName = (gSecondPlayerName[0] != '\0');
                 const bool hasReplayHostName = (gReplayHostName[0] != '\0');
@@ -4782,7 +4782,7 @@ void SeedChooserScreen::VSAutoPickResourceGen() {
 
 bool SeedChooserScreen::KeyDown(Sexy::KeyCode theKey) {
     // 联机对战屏蔽按键，仅允许返回键
-    if (gTcpConnected || gTcpClientSocket >= 0) {
+    if (IsRemoteClient() || IsRemoteServer()) {
         return theKey == KEYCODE_BACK;
     }
 
@@ -4791,7 +4791,7 @@ bool SeedChooserScreen::KeyDown(Sexy::KeyCode theKey) {
 
 bool SeedChooserScreen::KeyUp(Sexy::KeyCode theKey) {
     // 联机对战屏蔽按键，仅允许返回键
-    if (gTcpConnected || gTcpClientSocket >= 0) {
+    if (IsRemoteClient() || IsRemoteServer()) {
         return theKey == KEYCODE_BACK;
     }
 

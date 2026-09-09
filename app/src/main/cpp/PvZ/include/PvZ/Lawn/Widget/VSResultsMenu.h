@@ -170,7 +170,7 @@ public:
         mParentMenu->AddWidget(mAutoSaveReplayCheckbox);
 
         SetSendPlayerNameCheckboxVisible(gIsServerModeNetplay && gServerModeTransport == ServerModeTransport::RELAY && !gIsServerModeSpectator);
-        SetAutoSaveReplayCheckboxVisible((gTcpConnected || gTcpClientSocket >= 0) && !gIsServerModeSpectator);
+        SetAutoSaveReplayCheckboxVisible((IsRemoteClient() || IsRemoteServer()) && !gIsServerModeSpectator);
     }
 
     void DrawCheckboxLabel(Sexy::Graphics *g) const {

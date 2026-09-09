@@ -546,7 +546,7 @@ void Projectile::UpdateLobMotion() {
         mPosZ = 0.0f;
 
         const auto aZombieType = ZombieType(mHitTorchwoodGridX);
-        const bool aIsAuthoritativeZomblobSpawn = !mApp->IsVSMode() || !IsRemoteClient();
+        const bool aIsAuthoritativeZomblobSpawn = !IsRemoteClientOrViewer();
         if (aIsAuthoritativeZomblobSpawn && (aZombieType == ZombieType::ZOMBIE_ZOMBLOB_MIDDLE || aZombieType == ZombieType::ZOMBIE_ZOMBLOB_SMALL)) {
             Zombie *aZombie = mBoard->AddZombieInRow(aZombieType, aTargetRow, mDamageRangeFlags, false);
             if (aZombie) {
@@ -556,7 +556,7 @@ void Projectile::UpdateLobMotion() {
                 aZombie->mY = int(aZombie->mPosY);
                 aZombie->mVariant = false;
 
-                if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
+                if (IsRemoteServer()) {
                     U16U16U16UNI32UNI32_Event event{};
                     event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_PICK_SPEED;
                     event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(aZombie));
@@ -1255,14 +1255,13 @@ void Projectile::CheckForCollision() {
             aBulletFlash->mLoopType = ReanimLoopType::REANIM_PLAY_ONCE_FULL_LAST_FRAME;
             aBulletFlash->mAnimRate = 24.0f;
         }
-        const bool aRemoteClient = IsRemoteClient();
-        if (!aRemoteClient) {
+        if (!IsRemoteClientOrViewer()) {
             if (aHitPlant) {
                 const int aSearchStartGridX = aPlant->mPlantCol + 2;
                 const int aDestGridY = aPlant->mRow;
                 const uint16_t aPlantID = uint16_t(mBoard->mPlants.DataArrayGetID(aPlant));
                 const bool aDidTeleport = mBoard->TeleportPlant(aPlant, aSearchStartGridX, aDestGridY);
-                if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
+                if (IsRemoteServer()) {
                     U16U16_Event event{};
                     event.type = EventType::EVENT_SERVER_BOARD_PLANT_TELEPORT;
                     event.data1 = aPlantID;
@@ -1272,7 +1271,7 @@ void Projectile::CheckForCollision() {
             } else {
                 const float aDestX = mReturning ? aBestZombie->mPosX + 160.0f : std::max(0.0f, aBestZombie->mPosX - 160.0f);
                 mBoard->TeleportZombie(aBestZombie, aDestX);
-                if (mApp->IsVSMode() && gTcpClientSocket >= 0) {
+                if (IsRemoteServer()) {
                     U16UNI32_Event event{};
                     event.type = EventType::EVENT_SERVER_BOARD_ZOMBIE_TELEPORT;
                     event.data1 = uint16_t(mBoard->mZombies.DataArrayGetID(aBestZombie));
