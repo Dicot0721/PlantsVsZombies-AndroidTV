@@ -1029,6 +1029,7 @@ void LawnApp::_destructor() {
     delete addonFonts.PICO;
     delete addonFonts.JN_BOBO_HEI20;
     delete addonFonts.JN_BOBO_HEI24;
+    delete addonFonts.JN_BOBO_HEI36;
     delete addonFonts.TIEJILI_SC;
 
     old_LawnApp__destructor(this);
@@ -1183,6 +1184,7 @@ void LawnApp::LoadingThreadProc() {
     addonFonts.PICO = new FreeTypeFont(this, "addonFiles/data/Pico.ttf", 16, false, false, false);
     addonFonts.JN_BOBO_HEI20 = new FreeTypeFont(this, "addonFiles/data/JNBoBoHei.ttf", 20, false, false, false);
     addonFonts.JN_BOBO_HEI24 = new FreeTypeFont(this, "addonFiles/data/JNBoBoHei.ttf", 24, false, false, false);
+    addonFonts.JN_BOBO_HEI36 = new FreeTypeFont(this, "addonFiles/data/JNBoBoHei.ttf", 36, false, false, false);
     addonFonts.TIEJILI_SC = new FreeTypeFont(this, "addonFiles/data/TiejiliSC.ttf", 16, false, false, false);
 
     // //试图修复偶现的地图错位现象。不知道是否有效

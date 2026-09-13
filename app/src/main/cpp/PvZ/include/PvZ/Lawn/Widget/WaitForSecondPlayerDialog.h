@@ -42,6 +42,7 @@ enum class InputPurpose {
 };
 
 class GameButton;
+class NetplayLobbyWidget;
 
 struct ServerRoomItem {
     int roomId;
@@ -82,6 +83,7 @@ public:
     bool mIsCreatingRoom;
     bool mIsJoiningRoom;
     ReplayManageWidget *mReplayManageWidget;
+    NetplayLobbyWidget *mNetplayLobbyWidget;
 
     int mSelectedServerIndex;
 
@@ -229,6 +231,12 @@ public:
     void ShowTextInput(const char *title, const char *hint);
     void OpenReplayManageWidget();
     void CloseReplayManageWidget();
+    void CloseNetplayLobbyWidget();
+    int GetLobbyServerTargetCount() const;
+    bool GetLobbyServerTargetAddress(int index, char *outAddress, int outSize) const;
+    bool ConnectLobbyServerTarget(int index);
+    void OpenCustomServerInput();
+    void ExitNetplayLobby();
 
     void GameButtonDown(Sexy::GamepadButton theButton, int thePlayerIndex, unsigned int theModifierFlag) {
         reinterpret_cast<void (*)(WaitForSecondPlayerDialog *, Sexy::GamepadButton, int, unsigned int)>(WaitForSecondPlayerDialog_GameButtonDownAddr)(this, theButton, thePlayerIndex, theModifierFlag);

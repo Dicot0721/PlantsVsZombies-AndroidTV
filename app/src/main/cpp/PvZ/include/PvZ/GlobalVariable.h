@@ -581,6 +581,7 @@ struct AddonFonts {
     // 以下字体含中文
     Sexy::FreeTypeFont *JN_BOBO_HEI20;
     Sexy::FreeTypeFont *JN_BOBO_HEI24;
+    Sexy::FreeTypeFont *JN_BOBO_HEI36;
     Sexy::FreeTypeFont *TIEJILI_SC;
 } inline addonFonts;
 

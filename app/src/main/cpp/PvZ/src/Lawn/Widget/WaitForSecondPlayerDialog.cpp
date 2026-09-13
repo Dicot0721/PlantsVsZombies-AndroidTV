@@ -27,6 +27,7 @@
 #include "PvZ/Lawn/Board/Board.h"
 #include "PvZ/Lawn/Board/Challenge.h"
 #include "PvZ/Lawn/LawnApp.h"
+#include "PvZ/Lawn/Widget/NetplayLobbyWidget.h"
 #include "PvZ/Lawn/Widget/VSResultsMenu.h"
 #include "PvZ/Lawn/Widget/VSSetupAddonWidget.h"
 #include "PvZ/SexyAppFramework/Graphics/Font.h"
@@ -926,6 +927,80 @@ void WaitForSecondPlayerDialog::CloseReplayManageWidget() {
     mReplayManageWidget = nullptr;
 }
 
+void WaitForSecondPlayerDialog::CloseNetplayLobbyWidget() {
+    if (mNetplayLobbyWidget == nullptr) {
+        return;
+    }
+    RemoveWidget(mNetplayLobbyWidget);
+    delete mNetplayLobbyWidget;
+    mNetplayLobbyWidget = nullptr;
+}
+
+int WaitForSecondPlayerDialog::GetLobbyServerTargetCount() const {
+    int count = 2;
+    if (mApp == nullptr || mApp->mPlayerInfo == nullptr) {
+        return count;
+    }
+    for (int i = 0; i < kMode3ServerRecentCount; ++i) {
+        char address[kMode3ServerTargetMaxLen]{};
+        if (Mode3LoadRecentServer(mApp->mPlayerInfo, i, address)) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+bool WaitForSecondPlayerDialog::GetLobbyServerTargetAddress(int index, char *outAddress, int outSize) const {
+    if (outAddress == nullptr || outSize <= 0) {
+        return false;
+    }
+    outAddress[0] = '\0';
+    const char *address = nullptr;
+    char recentAddress[kMode3ServerTargetMaxLen]{};
+    if (index == 0) {
+        address = kOfficialServer1Addr;
+    } else if (index == 1) {
+        address = kOfficialServer2Addr;
+    } else if (mApp != nullptr && mApp->mPlayerInfo != nullptr && Mode3LoadRecentServer(mApp->mPlayerInfo, index - 2, recentAddress)) {
+        address = recentAddress;
+    }
+    if (address == nullptr) {
+        return false;
+    }
+    std::strncpy(outAddress, address, static_cast<size_t>(outSize - 1));
+    outAddress[outSize - 1] = '\0';
+    return true;
+}
+
+bool WaitForSecondPlayerDialog::ConnectLobbyServerTarget(int index) {
+    if (index < 0 || index >= GetLobbyServerTargetCount()) {
+        return false;
+    }
+    mSelectedRoomIndex_Server = index;
+    return Mode3ConnectSelectedTarget(this);
+}
+
+void WaitForSecondPlayerDialog::OpenCustomServerInput() {
+    if (mUIMode != UIMode::MODE3_SERVER) {
+        SetMode(UIMode::MODE3_SERVER);
+    }
+    mInputPurpose = InputPurpose::SERVER_CONNECT_ADDR;
+    ShowTextInput("[INPUT_TITLE_CONNECT_SERVER]", "[HINT_IP_PORT]");
+}
+
+void WaitForSecondPlayerDialog::ExitNetplayLobby() {
+    if (mUIMode == UIMode::MODE3_SERVER) {
+        if (mServerHosting) {
+            ServerSendExitRoom();
+        } else if (mServerJoined || mServerSpectating) {
+            ServerSendLeaveRoom();
+        }
+        ServerDisconnect("leave netplay lobby");
+    }
+    SetMode(UIMode::MODE1_INIT);
+    LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Back);
+}
+
 WaitForSecondPlayerDialog *WaitForSecondPlayerDialog::GetInstance() {
     return gWaitForSecondPlayerDialogInstance;
 }
@@ -974,10 +1049,10 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mRightButton->mWidth = mLawnNoButton->mWidth;
     mRightButton->mHeight = mLawnNoButton->mHeight;
 
-    InitUdpScanSocket();
     mIsCreatingRoom = false;
     mIsJoiningRoom = false;
     mReplayManageWidget = nullptr;
+    mNetplayLobbyWidget = nullptr;
 
     mSelectedServerIndex = 0;
     mUseManualTarget = false;
@@ -1080,6 +1155,16 @@ void WaitForSecondPlayerDialog::_constructor(LawnApp *theApp) {
     mServerP2PStatusText = "P2P: idle";
 
     SetMode(UIMode::MODE1_INIT);
+
+    // Keep this hooked dialog as the networking/state owner, but replace its
+    // original 800x600 presentation with a dedicated fullscreen lobby.
+    mLawnYesButton->SetVisible(false);
+    mLawnNoButton->SetVisible(false);
+    mLeftButton->SetVisible(false);
+    mRightButton->SetVisible(false);
+    mNetplayLobbyWidget = new NetplayLobbyWidget(this);
+    AddWidget(mNetplayLobbyWidget);
+    SetMode(UIMode::MODE2_WIFI);
 }
 
 WaitForSecondPlayerDialog::~WaitForSecondPlayerDialog() {
@@ -1087,6 +1172,7 @@ WaitForSecondPlayerDialog::~WaitForSecondPlayerDialog() {
         gWaitForSecondPlayerDialogInstance = nullptr;
     }
     CloseReplayManageWidget();
+    CloseNetplayLobbyWidget();
     ServerDisconnect("dialog destroy");
     old_WaitForSecondPlayerDialog__destructorAddr(this);
 }
@@ -1096,6 +1182,7 @@ void WaitForSecondPlayerDialog::_destructor() {
         gWaitForSecondPlayerDialogInstance = nullptr;
     }
     CloseReplayManageWidget();
+    CloseNetplayLobbyWidget();
     ServerDisconnect("dialog destroy");
     mServerP2PStatusText.~basic_string();
     mServerStatusText.~basic_string();
@@ -2510,6 +2597,31 @@ void WaitForSecondPlayerDialog::ButtonDepress_Thunk(this ButtonListener &self, i
             return;
         case WaitForSecondPlayerDialog::WaitForSecondPlayerDialog_ReplayClose:
             aDialog->CloseReplayManageWidget();
+            return;
+        case NetplayLobbyWidget::NetplayLobbyWidget_AddServer:
+            if (!aDialog->mIsCreatingRoom && !aDialog->mIsJoiningRoom && !aDialog->mServerConnecting && !aDialog->mServerHosting && !aDialog->mServerJoined && !aDialog->mServerSpectating) {
+                aDialog->OpenCustomServerInput();
+            }
+            return;
+        case NetplayLobbyWidget::NetplayLobbyWidget_ReplayManage:
+            if (!aDialog->mIsCreatingRoom && !aDialog->mIsJoiningRoom && !aDialog->mServerConnected && !aDialog->mServerConnecting) {
+                aDialog->OpenReplayManageWidget();
+            }
+            return;
+        case NetplayLobbyWidget::NetplayLobbyWidget_LocalBattle:
+            if (!aDialog->mIsCreatingRoom && !aDialog->mIsJoiningRoom && !aDialog->mServerConnecting && !aDialog->mServerHosting && !aDialog->mServerJoined && !aDialog->mServerSpectating) {
+                aDialog->SetMode(UIMode::MODE1_INIT);
+                aDialog->LawnDialog::ButtonDepress(WaitForSecondPlayerDialog_Enter);
+            }
+            return;
+        case NetplayLobbyWidget::NetplayLobbyWidget_Back:
+            aDialog->ExitNetplayLobby();
+            return;
+        case NetplayLobbyWidget::NetplayLobbyWidget_PrimaryAction:
+            aDialog->ButtonDepress_Thunk(WaitForSecondPlayerDialog_Enter);
+            return;
+        case NetplayLobbyWidget::NetplayLobbyWidget_RoomOption:
+            aDialog->ButtonDepress_Thunk(WaitForSecondPlayerDialog_Back);
             return;
         default:
             break;
@@ -4155,6 +4267,10 @@ bool WaitForSecondPlayerDialog::ServerConnectFromInput() {
     if (mApp && mApp->mPlayerInfo) {
         const std::string normalizedAddr = ip + ':' + std::to_string(port);
         Mode3RememberRecentServer(mApp->mPlayerInfo, normalizedAddr);
+        if (mNetplayLobbyWidget != nullptr) {
+            // The newly entered endpoint is always moved to recent-server slot 0.
+            mNetplayLobbyWidget->mSelectedServerListIndex = 3;
+        }
     }
 
     return Mode3ConnectToTarget(this, ip, port);
